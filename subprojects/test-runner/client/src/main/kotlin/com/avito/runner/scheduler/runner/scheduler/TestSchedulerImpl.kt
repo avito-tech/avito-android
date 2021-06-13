@@ -9,6 +9,7 @@ import com.avito.android.runner.devices.model.ReservationData
 import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.model.TestStaticData
 import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.Reservation
@@ -45,7 +46,7 @@ internal class TestSchedulerImpl(
     loggerFactory: LoggerFactory,
     private val executionParameters: ExecutionParameters,
     private val devicesProvider: DevicesProvider,
-    private val testRunnerFactoryFactory: (List<TestWithTarget>) -> TestRunnerFactory,
+    private val testRunnerFactoryFactory: (Map<TestCase, TestStaticData>) -> TestRunnerFactory,
 ) : TestScheduler {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
@@ -108,7 +109,7 @@ internal class TestSchedulerImpl(
 
                 runBlocking {
                     withContext(scope.coroutineContext) {
-                        testRunnerFactoryFactory.invoke(testsToRun).createTestRunner(
+                        testRunnerFactoryFactory.invoke(testStaticDataByTestCase(testsToRun)).createTestRunner(
                             devices = devices
                         ).runTests(testRequests)
                     }
@@ -122,6 +123,18 @@ internal class TestSchedulerImpl(
             testSuite = testSuite,
             testResults = report.getTestResults()
         )
+    }
+
+    private fun testStaticDataByTestCase(
+        testsToRun: List<TestWithTarget>
+    ): Map<TestCase, TestStaticData> {
+        return testsToRun.associate { testWithTarget ->
+            TestCase(
+                className = testWithTarget.test.name.className,
+                methodName = testWithTarget.test.name.methodName,
+                deviceName = testWithTarget.target.deviceName
+            ) to testWithTarget.test
+        }
     }
 
     private fun reservations(

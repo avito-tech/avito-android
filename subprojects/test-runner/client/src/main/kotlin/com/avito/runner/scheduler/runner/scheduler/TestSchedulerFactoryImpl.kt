@@ -25,7 +25,6 @@ import com.avito.runner.scheduler.listener.TestArtifactsProcessorImpl
 import com.avito.runner.scheduler.listener.TestArtifactsUploader
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
-import com.avito.runner.scheduler.runner.model.TestWithTarget
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
@@ -76,9 +75,9 @@ public class TestSchedulerFactoryImpl(
             loggerFactory = params.loggerFactory,
             executionParameters = params.executionParameters,
             devicesProvider = devicesProvider,
-            testRunnerFactoryFactory = { testsToRun: List<TestWithTarget> ->
+            testRunnerFactoryFactory = { testStaticDataByTestCase ->
                 createTestRunnerFactory(
-                    testsToRun = testsToRun,
+                    testStaticDataByTestCase = testStaticDataByTestCase,
                     devicesProvider = devicesProvider,
                     tempLogcatDir = tempDir,
                     metricsSender = metricsSender
@@ -88,7 +87,7 @@ public class TestSchedulerFactoryImpl(
     }
 
     private fun createTestRunnerFactory(
-        testsToRun: List<TestWithTarget>,
+        testStaticDataByTestCase: Map<TestCase, TestStaticData>,
         devicesProvider: DevicesProvider,
         tempLogcatDir: File,
         metricsSender: InstrumentationMetricsSender
@@ -97,7 +96,7 @@ public class TestSchedulerFactoryImpl(
             config = TestRunnerFactoryConfig(
                 loggerFactory = params.loggerFactory,
                 listener = createTestReporter(
-                    testsToRun = testsToRun,
+                    testStaticDataByTestCase = testStaticDataByTestCase,
                     tempLogcatDir = tempLogcatDir,
                     metricsSender = metricsSender
                 ),
@@ -116,19 +115,13 @@ public class TestSchedulerFactoryImpl(
     ).apply { mkdirs() }
 
     private fun createTestReporter(
-        testsToRun: List<TestWithTarget>,
+        testStaticDataByTestCase: Map<TestCase, TestStaticData>,
         tempLogcatDir: File,
         metricsSender: InstrumentationMetricsSender
     ): TestLifecycleListener {
         return LogcatTestLifecycleListener(
             logcatDir = tempLogcatDir,
-            reportProcessor = createReportProcessor(testsToRun.associate { testWithTarget ->
-                TestCase(
-                    className = testWithTarget.test.name.className,
-                    methodName = testWithTarget.test.name.methodName,
-                    deviceName = testWithTarget.target.deviceName
-                ) to testWithTarget.test
-            }, metricsSender),
+            reportProcessor = createReportProcessor(testStaticDataByTestCase, metricsSender),
             report = report,
         )
     }
