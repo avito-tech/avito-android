@@ -75,7 +75,6 @@ public class TestSchedulerFactoryImpl(
             ),
             loggerFactory = params.loggerFactory,
             executionParameters = params.executionParameters,
-            outputDir = params.outputDir,
             devicesProvider = devicesProvider,
             testRunnerFactoryFactory = { testsToRun: List<TestWithTarget> ->
                 createTestRunnerFactory(
@@ -95,7 +94,7 @@ public class TestSchedulerFactoryImpl(
         metricsSender: InstrumentationMetricsSender
     ): TestRunnerFactory {
         return TestRunnerFactory(
-            TestRunnerFactoryConfig(
+            config = TestRunnerFactoryConfig(
                 loggerFactory = params.loggerFactory,
                 listener = createTestReporter(
                     testsToRun = testsToRun,
@@ -106,9 +105,15 @@ public class TestSchedulerFactoryImpl(
                 metricsConfig = metricsConfig,
                 saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
                 fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
-            )
+            ),
+            outputDirectory = outputFolder(params.outputDir)
         )
     }
+
+    private fun outputFolder(output: File): File = File(
+        output,
+        "test-runner"
+    ).apply { mkdirs() }
 
     private fun createTestReporter(
         testsToRun: List<TestWithTarget>,

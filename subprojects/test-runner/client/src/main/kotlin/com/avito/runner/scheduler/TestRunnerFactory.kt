@@ -25,6 +25,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import java.io.File
 
 internal class TestRunnerFactory(
+    private val outputDirectory: File,
     private val config: TestRunnerFactoryConfig
 ) {
     private val loggerFactory = config.loggerFactory
@@ -43,7 +44,6 @@ internal class TestRunnerFactory(
     )
 
     fun createTestRunner(
-        outputDirectory: File,
         devices: ReceiveChannel<Device>
     ): TestRunner {
         val executionState = TestRunnerExecutionState()
