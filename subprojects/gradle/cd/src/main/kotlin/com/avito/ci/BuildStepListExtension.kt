@@ -1,9 +1,12 @@
 package com.avito.ci
 
+import com.avito.android.Problem
+import com.avito.android.asRuntimeException
 import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.ConfigurationCheck
+import com.avito.ci.steps.CustomTaskStep
 import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.DetektCheck
 import com.avito.ci.steps.FlakyReportStep
@@ -28,6 +31,7 @@ import org.gradle.kotlin.dsl.property
 @Suppress("UnstableApiUsage")
 open class BuildStepListExtension(
     internal val buildStepListName: String,
+    private val explicitOverride: Boolean,
     objects: ObjectFactory
 ) : Named {
 
@@ -81,6 +85,9 @@ open class BuildStepListExtension(
         }
         registerFactory(VerifyArtifactsStep::class.java) { name ->
             VerifyArtifactsStep(buildStepListName, artifactsConfig, name)
+        }
+        registerFactory(CustomTaskStep::class.java) { name ->
+            CustomTaskStep(buildStepListName, name)
         }
     }
 
@@ -211,15 +218,24 @@ open class BuildStepListExtension(
         configureAndAdd("deploy", action)
     }
 
-    fun artifacts(closure: Closure<ArtifactsConfiguration>) {
-        artifacts(
-            Action {
-                closure.delegate = artifactsConfig
-                closure.resolveStrategy = Closure.DELEGATE_FIRST
-                closure.call()
-            }
-        )
+    /**
+     * @name any unique name of a step
+     */
+    fun customTask(name: String, configuration: Action<CustomTaskStep>) {
+        configureAndAdd(name, configuration)
     }
+
+    /**
+     * @name any unique name of a step
+     */
+    fun customTask(name: String, configuration: Closure<CustomTaskStep>) {
+        configureAndAdd(name, configuration)
+    }
+
+    fun artifacts(closure: Closure<ArtifactsConfiguration>) =
+        artifacts(
+            closure.toAction(delegate = artifactsConfig)
+        )
 
     fun artifacts(action: Action<ArtifactsConfiguration>) {
         action.execute(artifactsConfig)
@@ -227,28 +243,79 @@ open class BuildStepListExtension(
         step.useImpactAnalysis = this.useImpactAnalysis
     }
 
-    private inline fun <reified T : BuildStep> configureAndAdd(
-        name: String,
-        configure: Closure<T>
-    ) {
-        configureAndAdd(
-            name,
-            Action<T> { step ->
-                configure.delegate = step
-                configure.resolveStrategy = Closure.DELEGATE_FIRST
-                configure.call()
-            }
-        )
+    fun <T : BuildStep> overrideStep(type: Class<T>, configuration: Closure<T>) =
+        overrideStep(type, configuration.toAction())
+
+    inline fun <reified T : BuildStep> overrideStep(configuration: Action<T>) =
+        overrideStep(T::class.java, configuration)
+
+    fun <T : BuildStep> overrideStep(type: Class<T>, configuration: Action<T>) {
+        val steps = steps.withType(type).toList()
+        require(steps.isNotEmpty()) {
+            "Build step ${type.simpleName} is not registered in $buildStepListName"
+        }
+        require(steps.size == 1) {
+            "Found multiple steps ${type.simpleName} in $buildStepListName. Please, specify the name."
+        }
+        val step = steps.first()
+        configuration.execute(step)
+    }
+
+    fun <T : BuildStep> overrideStep(name: String, type: Class<T>, configuration: Closure<T>) =
+        overrideStep(name, type, configuration.toAction())
+
+    fun <T : BuildStep> overrideStep(name: String, type: Class<T>, configuration: Action<T>) {
+        val step = requireNotNull(steps.findByName(name)) {
+            "Build step '$name' is not registered in $buildStepListName"
+        }
+        require(type.isAssignableFrom(step::class.java)) {
+            "Build step '$name' is ${step::class.java} but expected ${type.name}"
+        }
+        @Suppress("UNCHECKED_CAST")
+        configuration.execute(step as T)
     }
 
     private inline fun <reified T : BuildStep> configureAndAdd(
         name: String,
-        action: Action<T>
+        configuration: Closure<T>
+    ) = configureAndAdd(name, configuration.toAction())
+
+    private inline fun <reified T : BuildStep> configureAndAdd(
+        name: String,
+        configuration: Action<T>
     ) {
+        ensureNotRegistered(name)
+
         val step = steps.maybeCreate(name, T::class.java)
-        action.execute(step)
+
+        configuration.execute(step)
+
         if (step is ImpactAnalysisAwareBuildStep) {
             step.useImpactAnalysis = this.useImpactAnalysis
         }
+    }
+
+    private fun ensureNotRegistered(name: String) {
+        val step = steps.findByName(name)
+        if (step != null && explicitOverride) {
+            throw Problem.Builder(
+                shortDescription = "Overriding existing build step '$name' (${step::class.java.simpleName}) " +
+                    "in '$buildStepListName' chain",
+                context = "Adding a build step '$name' to $buildStepListName"
+            )
+                .because("Forbid implicit overriding of build steps")
+                .addSolution("Configure the build step in one place")
+                .addSolution("Override the build step explicitly by overrideStep() method")
+                .build()
+                .asRuntimeException()
+        }
+    }
+
+    private fun <T> Closure<T>.toAction(
+        delegate: Any? = null
+    ): Action<T> = Action<T> {
+        this.delegate = delegate ?: it
+        this.resolveStrategy = Closure.DELEGATE_FIRST
+        this.call()
     }
 }

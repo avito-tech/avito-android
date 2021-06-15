@@ -327,6 +327,47 @@ Checks a repository configuration. See `:build-script-test` for details.
     configuration {}
     ```
 
+### Custom steps
+
+If you need to run a simple task:
+
+```kotlin
+customTask("myStep") {
+    tasksPredicate = TasksPredicate.byName("myTask")
+}
+```
+
+### Overriding steps
+
+It's useful when you want to setup default settings and override them per-project.  
+Overriding is explicit to avoid accidental changes.
+
+```kotlin
+// Root project:
+subprojects {
+    plugins.withType<CiStepsPlugin> {
+        extensions.configure<NamedDomainObjectContainer<BuildStepListExtension>> {
+            register("release") {
+                uiTests {
+                    configurations("configurationName")
+                    suppressFailures = false
+                }
+            }
+        }
+    }
+}
+
+// Application:
+
+builds {
+    getByName("release") {
+        overrideStep<UiTestCheck> {
+            suppressFailures = true
+        }
+    }
+}
+```
+
 ### Using impact analysis in step
 
 Step can use [Impact analysis](../ci/ImpactAnalysis.md). It is enabled by default.
@@ -441,7 +482,3 @@ There are different types of artifacts:
     ```
 
 The first argument is a key for upload steps.
-
-### Writing a custom step
-
-Inherit from `BuildStep`, check available implementations as examples
