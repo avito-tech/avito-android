@@ -2,6 +2,7 @@ package com.avito.instrumentation
 
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
+import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
@@ -11,6 +12,25 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal class InstrumentationTestsPluginTest {
+
+    @Test
+    fun `configuration - ok - empty instrumentation block`(@TempDir projectDir: File) {
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                "app",
+                plugins = plugins {
+                    id("com.avito.android.instrumentation-tests")
+                },
+                buildGradleExtra = """
+                    instrumentation {
+                    }
+                """.trimIndent()
+            )
+        )
+
+        gradlew(projectDir, "help", dryRun = true).assertThat().buildSuccessful()
+    }
 
     @Test
     fun `run instrumentation by name - ok - in application project`(@TempDir projectDir: File) {

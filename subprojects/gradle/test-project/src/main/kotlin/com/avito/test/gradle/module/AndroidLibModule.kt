@@ -6,6 +6,7 @@ import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.files.androidManifest
 import com.avito.test.gradle.files.build_gradle
+import com.avito.test.gradle.files.build_gradle_kts
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.module
@@ -22,6 +23,7 @@ class AndroidLibModule(
     override val modules: List<Module> = emptyList(),
     override val enableKotlinAndroidPlugin: Boolean = true,
     override val dependencies: Set<GradleDependency> = emptySet(),
+    override val useKts: Boolean = false,
     private val mutator: File.() -> Unit = {}
 ) : AndroidModule {
 
@@ -33,38 +35,46 @@ class AndroidLibModule(
     override fun generateIn(file: File) {
         file.module(name) {
 
-            build_gradle {
-                writeText(
-                    """
-${plugins()}
-
-$buildGradleExtra
-
-android {
-    compileSdkVersion $sdkVersion
-    buildToolsVersion "$buildToolsVersion"
-    ${
-                        if (enableKotlinAndroidPlugin) {
-                            """
-                            sourceSets {
-                                main {
-                                    java.srcDir("src/main/kotlin")
-                                }
-                            }
-                            """.trimIndent()
-                        } else {
-                            ""
-                        }
-                    }
-}
-
-dependencies {
-    ${dependencies.joinToString(separator = "\n\t", transform = { it.getScriptRepresentation() })}
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-}
-    """.trimIndent()
-                )
+            val kotlinPluginExtra = if (enableKotlinAndroidPlugin) {
+                """
+                |sourceSets {
+                |   getByName("main") {
+                |       java.srcDirs(file("src/main/kotlin"))
+                |   }
+                |}
+                """.trimMargin()
+            } else {
+                ""
             }
+
+            val buildGradleContent = """
+                |${plugins()}
+                |
+                |$buildGradleExtra
+                |
+                |android {
+                |   compileSdkVersion($sdkVersion)
+                |   buildToolsVersion("$buildToolsVersion")
+                |   
+                |   $kotlinPluginExtra
+                |}
+                |
+                |dependencies {
+                |   ${dependencies.joinToString(separator = "\n\t", transform = { it.getScriptRepresentation() })}
+                |   implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+                |}
+                """.trimMargin()
+
+            if (useKts) {
+                build_gradle_kts {
+                    writeText(buildGradleContent)
+                }
+            } else {
+                build_gradle {
+                    writeText(buildGradleContent)
+                }
+            }
+
             dir("src/main") {
                 androidManifest(packageName = packageName)
                 if (enableKotlinAndroidPlugin) {

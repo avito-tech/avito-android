@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.avito.android
 
 import com.android.build.api.component.ComponentIdentity
@@ -5,6 +7,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.TestedExtension
@@ -23,17 +26,23 @@ fun Project.withAndroidLib(block: (appExtension: LibraryExtension) -> Unit) {
     plugins.withType<LibraryPlugin> { block(androidLibraryExtension) }
 }
 
+/**
+ * TODO somehow withType on deprecated BasePlugin works,
+ *  and construction: `plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded { }` not
+ */
 fun Project.withAndroidModule(block: (testedExtension: TestedExtension) -> Unit) {
-    withAndroidApp(block)
-    withAndroidLib(block)
+    plugins.withType<BasePlugin> { block(testedExtension) }
 }
 
 @Suppress("UnstableApiUsage")
-val Project.androidCommonExtension
+val Project.androidCommonExtension: CommonExtension<*, *, *, *, *, *, *, *>
     get() = extensions.getByType(CommonExtension::class.java)
 
 val Project.androidBaseExtension: BaseExtension
     get() = extensions.getByName<BaseExtension>("android")
+
+val Project.testedExtension: TestedExtension
+    get() = extensions.getByName<TestedExtension>("android")
 
 val Project.androidAppExtension: AppExtension
     get() = androidBaseExtension as AppExtension

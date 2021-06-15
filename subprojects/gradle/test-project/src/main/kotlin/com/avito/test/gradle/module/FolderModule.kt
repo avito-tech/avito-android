@@ -16,6 +16,7 @@ class FolderModule(
     override val dependencies: Set<GradleDependency> = emptySet()
     override val plugins: PluginsSpec = PluginsSpec()
     override val buildGradleExtra = ""
+    override val useKts: Boolean = false
 
     override fun generateIn(file: File) {
         file.module(name) {

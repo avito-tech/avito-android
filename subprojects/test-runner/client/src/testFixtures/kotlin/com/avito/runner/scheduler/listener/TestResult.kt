@@ -7,7 +7,7 @@ import java.io.File
 public fun TestResult.Companion.success(
     resultsDir: File = File(".")
 ): TestResult.Complete =
-    TestResult.Complete(Result.Success(resultsDir))
+    TestResult.Complete(resultsDir)
 
 public fun TestResult.Companion.timeout(
     timeoutMin: Long = 5,

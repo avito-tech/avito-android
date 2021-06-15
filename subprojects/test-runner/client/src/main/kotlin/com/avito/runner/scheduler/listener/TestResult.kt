@@ -6,7 +6,8 @@ import java.io.File
 
 public sealed class TestResult {
 
-    public class Complete(public val artifacts: Result<File>) : TestResult() {
+    public class Complete(public val artifacts: File) : TestResult() {
+
         internal companion object
     }
 
@@ -14,6 +15,7 @@ public sealed class TestResult {
         public val infraError: TestCaseRun.Result.Failed.InfrastructureError,
         public val logcat: Result<String>
     ) : TestResult() {
+
         internal companion object
     }
 

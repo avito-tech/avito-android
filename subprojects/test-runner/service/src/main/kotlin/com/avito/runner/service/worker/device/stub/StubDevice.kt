@@ -161,7 +161,7 @@ open class StubDevice(
         return result
     }
 
-    override fun logcat(lines: Int): Result<String> {
+    override fun logcat(lines: Int?): Result<String> {
         TODO("Not yet implemented")
     }
 

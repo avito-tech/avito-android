@@ -2,6 +2,7 @@ package com.avito.ci.steps
 
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.impact.configuration.internalModule
+import com.avito.instrumentation.extractReportCoordinates
 import com.avito.instrumentation.instrumentationTask
 import com.avito.plugin.markReportAsSourceTask
 import com.avito.plugin.tmsPluginId
@@ -32,14 +33,7 @@ class MarkReportAsSourceForTMSStep(context: String, name: String) : BuildStep(co
         markReportAsSourceTask.configure {
             it.dependsOn(instrumentationTask)
 
-            @Suppress("UnstableApiUsage")
-            it.reportCoordinates.set(
-                instrumentationTask.flatMap { task ->
-                    task.instrumentationConfiguration.map { config ->
-                        config.instrumentationParams.reportCoordinates()
-                    }
-                }
-            )
+            it.reportCoordinates.set(instrumentationTask.extractReportCoordinates())
         }
 
         rootTask.dependsOn(markReportAsSourceTask)

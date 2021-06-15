@@ -1,7 +1,6 @@
 package com.avito.runner.scheduler.listener
 
 import com.avito.android.Problem
-import com.avito.android.Result
 import com.avito.android.asPlainText
 import com.avito.android.asRuntimeException
 import com.avito.logger.LoggerFactory
@@ -46,37 +45,22 @@ internal class ReportProcessorImpl(
 
         return when (result) {
             is TestResult.Complete ->
-                result.artifacts
-                    .flatMap { reportDir ->
-                        testArtifactsProcessor.process(
-                            reportDir = reportDir,
-                            testStaticData = testFromSuite,
-                            logcatAccessor = logcatAccessor
-                        )
-                    }
-                    .rescue { throwable ->
-                        val errorMessage = "Can't get report artifacts"
-
-                        logger.warn(errorMessage, throwable)
-
-                        metricsSender.sendReportFileNotAvailable()
-
-                        val problem = Problem(
-                            shortDescription = errorMessage,
-                            context = "ReportProcessor forms fallback Error status report",
-                            because = "There is not enough context here about cause",
-                            possibleSolutions = listOf(
-                                "MBS-11281 to return tests with such errors back to retry queue"
-                            ),
-                            throwable = throwable
-                        )
-
-                        processFailure(
-                            problem = problem,
-                            testStaticData = testFromSuite,
-                            logcatAccessor = logcatAccessor
-                        )
-                    }.getOrThrow()
+                testArtifactsProcessor.process(
+                    reportDir = result.artifacts,
+                    testStaticData = testFromSuite,
+                    logcatAccessor = logcatAccessor
+                ).getOrElse { throwable ->
+                    recoverWithInfrastructureFailure(
+                        problem = Problem(
+                            shortDescription = "Can't process test artifacts",
+                            context = "Processing test artifacts caused unexpected exception",
+                            because = "Needs investigation, see cause",
+                            throwable = throwable,
+                        ),
+                        testStaticData = testFromSuite,
+                        logcatAccessor = logcatAccessor,
+                    )
+                }
 
             is TestResult.Incomplete ->
                 with(result.infraError) {
@@ -107,6 +91,14 @@ internal class ReportProcessorImpl(
                             )
                         }
 
+                        is TestCaseRun.Result.Failed.InfrastructureError.FailOnPullingArtifacts -> {
+                            problemBuilder
+                                .because("Can't get report artifacts")
+                                .addSolution("MBS-11281 to return tests with such errors back to retry queue")
+
+                            metricsSender.sendReportFileNotAvailable()
+                        }
+
                         is TestCaseRun.Result.Failed.InfrastructureError.Unexpected -> {
                             metricsSender.sendUnexpectedInfraError()
                         }
@@ -116,20 +108,20 @@ internal class ReportProcessorImpl(
 
                     logger.warn(problem.asPlainText(), this.error)
 
-                    processFailure(
+                    recoverWithInfrastructureFailure(
                         problem = problem,
                         testStaticData = testFromSuite,
                         logcatAccessor = logcatAccessor
-                    ).getOrThrow()
+                    )
                 }
         }
     }
 
-    private fun processFailure(
+    private fun recoverWithInfrastructureFailure(
         problem: Problem,
         testStaticData: TestStaticData,
         logcatAccessor: LogcatAccessor
-    ): Result<AndroidTest> {
+    ): AndroidTest {
         val scope = CoroutineScope(CoroutineName("test-artifacts-failure-${testStaticData.name}") + dispatcher)
 
         return runBlocking {
@@ -141,24 +133,22 @@ internal class ReportProcessorImpl(
 
                 val now = timeProvider.nowInSeconds()
 
-                Result.Success(
-                    AndroidTest.Lost.fromTestStaticData(
-                        testStaticData,
-                        startTime = now,
-                        lastSignalTime = now,
-                        logcat = logcat.await(),
-                        incident = Incident(
-                            type = Incident.Type.INFRASTRUCTURE_ERROR,
-                            timestamp = now,
-                            trace = problem.throwable?.stackTraceToList()
-                                ?: problem.asRuntimeException().stackTraceToList(),
-                            chain = listOf(
-                                IncidentElement(
-                                    message = problem.asPlainText()
-                                )
-                            ),
-                            entryList = emptyList()
-                        )
+                AndroidTest.Lost.fromTestStaticData(
+                    testStaticData,
+                    startTime = now,
+                    lastSignalTime = now,
+                    logcat = logcat.await(),
+                    incident = Incident(
+                        type = Incident.Type.INFRASTRUCTURE_ERROR,
+                        timestamp = now,
+                        trace = problem.throwable?.stackTraceToList()
+                            ?: problem.asRuntimeException().stackTraceToList(),
+                        chain = listOf(
+                            IncidentElement(
+                                message = problem.asPlainText()
+                            )
+                        ),
+                        entryList = emptyList()
                     )
                 )
             }

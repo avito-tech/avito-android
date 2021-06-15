@@ -3,6 +3,7 @@ package com.avito.test.gradle.module
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.files.build_gradle
+import com.avito.test.gradle.files.build_gradle_kts
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.module
@@ -17,26 +18,34 @@ class KotlinModule(
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
     override val dependencies: Set<GradleDependency> = emptySet(),
+    override val useKts: Boolean = false,
     private val mutator: File.() -> Unit = {}
 ) : Module {
 
     override fun generateIn(file: File) {
         file.module(name) {
 
-            build_gradle {
-                writeText(
-                    """
-${plugins()}
+            val buildGradleContent = """
+                |${plugins()}
+                |
+                |$buildGradleExtra
+                |
+                |dependencies {
+                |   ${dependencies.joinToString(separator = "\n\t", transform = { it.getScriptRepresentation() })}
+                |   implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+                |}
+                """.trimMargin()
 
-$buildGradleExtra
-
-dependencies {
-    ${dependencies.joinToString(separator = "\n\t", transform = { it.getScriptRepresentation() })}
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-}
-""".trimIndent()
-                )
+            if (useKts) {
+                build_gradle_kts {
+                    writeText(buildGradleContent)
+                }
+            } else {
+                build_gradle {
+                    writeText(buildGradleContent)
+                }
             }
+
             dir("src/main") {
                 dir("kotlin") {
                     kotlinClass("SomeClass", packageName)

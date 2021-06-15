@@ -7,6 +7,7 @@ import com.avito.logger.create
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.files.build_gradle
+import com.avito.test.gradle.files.build_gradle_kts
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
@@ -61,6 +62,7 @@ class TestProjectGenerator(
         AndroidLibModule(sharedModule),
         AndroidLibModule(independentModule)
     ),
+    override val useKts: Boolean = false,
     val localBuildCache: File? = null,
     val androidHome: String? = null
 ) : Module {
@@ -73,9 +75,7 @@ class TestProjectGenerator(
         with(file) {
             modules.forEach { it.generateIn(file) }
 
-            build_gradle {
-                writeText(
-                    """
+            val buildGradleContent = """
                     |${plugins()}
                     |
                     |subprojects {
@@ -83,7 +83,15 @@ class TestProjectGenerator(
                     |}
                     |$buildGradleExtra
                     """.trimMargin()
-                )
+
+            if (useKts) {
+                build_gradle_kts {
+                    writeText(buildGradleContent)
+                }
+            } else {
+                build_gradle {
+                    writeText(buildGradleContent)
+                }
             }
 
             var settingsGradleContent = """
@@ -113,7 +121,11 @@ buildCache {
                 """.trimIndent()
             }
 
-            file("settings.gradle", settingsGradleContent)
+            if (useKts) {
+                file("settings.gradle.kts", settingsGradleContent)
+            } else {
+                file("settings.gradle", settingsGradleContent)
+            }
 
             file(
                 ".gitignore",
@@ -124,10 +136,6 @@ buildCache {
             )
 
             FileOutputStream(file("local.properties")).use { file ->
-                /**
-                 * вместо того что писать строку, лучше доверить это properties, он например сам знает как правильно
-                 * заэскейпить пути в windows
-                 */
                 Properties().run {
                     setProperty("sdk.dir", androidHome ?: androidHomeFromLocalPropertiesFallback(logger))
                     store(file, null)
@@ -147,45 +155,49 @@ buildCache {
             id("org.jetbrains.kotlin.jvm").version(kotlinVersion).apply(false)
         }.plus(plugins)
 
+    private fun generateIncludes(modules: List<Module>, prefix: String): String =
+        modules.joinToString(separator = "\n") {
+            "include(\"$prefix:${it.name}\")" + "\n" + generateIncludes(it.modules, "$prefix:${it.name}")
+        }
+
+    private fun repositories(): String = if (artifactoryUrl == null) {
+        """
+    |repositories {
+    |    mavenCentral()
+    |    gradlePluginPortal()
+    |    google()
+    |}
+    """.trimMargin()
+    } else {
+        """
+    |repositories {
+    |    ${artifactoryProxyMavenRepo("Proxy for https://repo1.maven.org/maven2", "mavenCentral")}
+    |    ${artifactoryProxyMavenRepo("Proxy for https://dl.google.com/dl/android/maven2/", "google-android")}
+    |    ${artifactoryProxyMavenRepo("Proxy for https://plugins.gradle.org/m2/", "gradle-plugins")}
+    |}
+    """.trimMargin()
+    }
+
+    private fun artifactoryProxyMavenRepo(name: String, repo: String): String {
+        val allowInsecure = if (useKts) {
+            "isAllowInsecureProtocol = true"
+        } else {
+            "allowInsecureProtocol = true"
+        }
+
+        return """
+        |maven {
+        |    name = "$name"
+        |    setUrl("$artifactoryUrl/$repo")
+        |    $allowInsecure
+        |}
+        """.trimMargin()
+    }
+
     companion object {
         const val appA = "appA"
         const val appB = "appB"
         const val sharedModule = "shared"
         const val independentModule = "independent"
     }
-}
-
-private fun generateIncludes(modules: List<Module>, prefix: String): String =
-    modules.joinToString(separator = "\n") {
-        "include('$prefix:${it.name}')" + "\n" + generateIncludes(it.modules, "$prefix:${it.name}")
-    }
-
-private fun repositories(): String = if (artifactoryUrl == null) {
-    """
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-        google()
-    }
-    """.trimIndent()
-} else {
-    """
-    repositories {
-        maven {
-            name = "Proxy for https://repo1.maven.org/maven2"
-            setUrl("$artifactoryUrl/mavenCentral")
-            allowInsecureProtocol = true
-        }
-        maven {
-            name = "Proxy for https://dl.google.com/dl/android/maven2/"
-            setUrl("$artifactoryUrl/google-android")
-            allowInsecureProtocol = true
-        }
-        maven {
-            name = "Proxy for https://plugins.gradle.org/m2/"
-            setUrl("$artifactoryUrl/gradle-plugins")
-            allowInsecureProtocol = true
-        }
-    }
-    """.trimIndent()
 }

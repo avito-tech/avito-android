@@ -2,18 +2,19 @@ package com.avito.runner.config
 
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.reservation.request.Device
+import java.io.File
 import java.io.Serializable
 
 public data class InstrumentationConfigurationData(
     val name: String,
     val instrumentationParams: InstrumentationParameters,
     val reportSkippedTests: Boolean,
-    val runOnlyChangedTests: Boolean,
     val kubernetesNamespace: String,
     val targets: List<TargetConfigurationData>,
     val enableDeviceDebug: Boolean,
     val timeoutInSeconds: Long,
-    val filter: InstrumentationFilterData
+    val filter: InstrumentationFilterData,
+    val outputFolder: File,
 ) : Serializable {
 
     val requestedDeviceType: DeviceType = determineRequestedDeviceType(targets.map { it.reservation.device })

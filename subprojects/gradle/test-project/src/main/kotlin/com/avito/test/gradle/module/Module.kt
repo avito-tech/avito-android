@@ -10,4 +10,5 @@ interface Module : Generator {
     val buildGradleExtra: String
     val dependencies: Set<GradleDependency>
     val modules: List<Module>
+    val useKts: Boolean
 }
