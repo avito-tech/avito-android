@@ -27,12 +27,12 @@ class PluginSpec(
 
     override fun getScriptRepresentation(): String {
         return buildString {
-            append("id \"$id\"")
+            append("id(\"$id\")")
             if (version != null) {
-                append(" version \"$version\"")
+                append(" version(\"$version\")")
             }
             if (!apply) {
-                append(" apply false")
+                append(" apply(false)")
             }
         }
     }

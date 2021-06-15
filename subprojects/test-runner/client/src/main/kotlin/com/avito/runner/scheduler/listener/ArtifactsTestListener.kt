@@ -52,8 +52,10 @@ internal class ArtifactsTestListener(
     ) {
         val tempDirectory = if (saveTestArtifactsToOutputs) {
             File(outputDirectory, "test-artifacts").apply {
-                parentFile.mkdirs()
-                require(mkdir()) { "can't mkdir $this" }
+                if (!exists()) {
+                    parentFile.mkdirs()
+                    require(mkdir()) { "can't mkdir $this" }
+                }
             }.toPath()
         } else {
             createTempDirectory()
@@ -62,31 +64,33 @@ internal class ArtifactsTestListener(
         logger.info("Pulling artifacts to $tempDirectory")
 
         val testResult = when (result) {
-            Passed,
-            is Failed.InRun -> {
-                val artifacts = testArtifactsDir.flatMap { dir ->
-                    device.pullDir(
-                        deviceDir = dir.toPath(),
-                        hostDir = tempDirectory,
-                        validator = ReportAwarePullValidator(
-                            testArtifactsProviderFactory = TestArtifactsProviderFactory
-                        )
+
+            Passed, is Failed.InRun -> testArtifactsDir.flatMap { dir ->
+                device.pullDir(
+                    deviceDir = dir.toPath(),
+                    hostDir = tempDirectory,
+                    validator = ReportAwarePullValidator(
+                        testArtifactsProviderFactory = TestArtifactsProviderFactory
+                    )
+                )
+            }.fold(
+                onSuccess = { dir ->
+                    TestResult.Complete(dir)
+                },
+                onFailure = { throwable ->
+                    handleIncompleteTest(
+                        result = InfrastructureError.FailOnPullingArtifacts(throwable),
+                        device = device,
+                        tempDirectory = tempDirectory.toFile()
                     )
                 }
-                TestResult.Complete(artifacts)
-            }
+            )
 
-            is InfrastructureError ->
-                TestResult.Incomplete(
-                    infraError = result,
-                    logcat = if (fetchLogcatForIncompleteTests) {
-                        device.logcat(LOGCAT_LAST_LINES)
-                    } else {
-                        Result.Failure(
-                            RuntimeException("fetchLogcatForIncompleteTests is disabled in config")
-                        )
-                    }
-                )
+            is InfrastructureError -> handleIncompleteTest(
+                result = result,
+                device = device,
+                tempDirectory = tempDirectory.toFile()
+            )
 
             Ignored ->
                 TestResult.Incomplete(
@@ -111,6 +115,27 @@ internal class ArtifactsTestListener(
             }
         }
     }
-}
 
-private const val LOGCAT_LAST_LINES = 300
+    private fun handleIncompleteTest(
+        result: InfrastructureError,
+        device: Device,
+        tempDirectory: File
+    ): TestResult.Incomplete {
+        return TestResult.Incomplete(
+            infraError = result,
+            logcat = if (fetchLogcatForIncompleteTests) {
+                val logcatResult = device.logcat(null)
+                if (saveTestArtifactsToOutputs) {
+                    logcatResult.onSuccess {
+                        File(tempDirectory, "logcat.txt").writeText(it)
+                    }
+                }
+                logcatResult
+            } else {
+                Result.Failure(
+                    RuntimeException("fetchLogcatForIncompleteTests is disabled in config")
+                )
+            }
+        )
+    }
+}

@@ -8,9 +8,6 @@ plugins {
 dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
     api(project(":gradle:kubernetes"))
-    api(project(":test-runner:client")) {
-        because("InstrumentationParams used in CiSteps")
-    }
 
     implementation(libs.gson)
     implementation(project(":common:time"))
@@ -29,6 +26,7 @@ dependencies {
     implementation(project(":test-runner:report"))
     implementation(project(":test-runner:test-annotations"))
     implementation(project(":test-runner:device-provider"))
+    implementation(project(":test-runner:client"))
 
     testImplementation(project(":common:result"))
     testImplementation(project(":test-runner:report-api"))
@@ -44,6 +42,7 @@ dependencies {
     testImplementation(testFixtures(project(":test-runner:report")))
 
     gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(project(":common:truth-extensions"))
 }
 
 kotlin {

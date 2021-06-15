@@ -53,9 +53,9 @@ interface Device {
     fun deviceStatus(): DeviceStatus
 
     /**
-     * Fetch logcat [lines] deep
+     * Fetch logcat [lines] deep, or whole buffer if null
      */
-    fun logcat(lines: Int): Result<String>
+    fun logcat(lines: Int?): Result<String>
 
     sealed class DeviceStatus {
 

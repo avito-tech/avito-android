@@ -1,22 +1,22 @@
 package com.avito.runner.config
 
 import com.avito.runner.scheduler.suite.filter.Filter
+import java.io.File
 
 public fun InstrumentationConfigurationData.Companion.createStubInstance(
     name: String = "name",
     instrumentationParams: InstrumentationParameters = InstrumentationParameters(),
     reportSkippedTests: Boolean = true,
-    runOnlyChangedTests: Boolean = false,
     kubernetesNamespace: String = "kubernetesNamespace",
     targets: List<TargetConfigurationData> = emptyList(),
     enableDeviceDebug: Boolean = false,
     timeoutInSecond: Long = 100,
-    previousRunExcluded: Set<RunStatus> = emptySet()
+    previousRunExcluded: Set<RunStatus> = emptySet(),
+    outputFolder: File = File("")
 ): InstrumentationConfigurationData = InstrumentationConfigurationData(
     name = name,
     instrumentationParams = instrumentationParams,
     reportSkippedTests = reportSkippedTests,
-    runOnlyChangedTests = runOnlyChangedTests,
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
     enableDeviceDebug = enableDeviceDebug,
@@ -41,5 +41,6 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
             ),
             reportFilter = null
         )
-    )
+    ),
+    outputFolder = outputFolder
 )
