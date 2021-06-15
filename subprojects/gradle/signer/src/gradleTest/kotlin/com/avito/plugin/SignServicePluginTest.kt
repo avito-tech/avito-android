@@ -40,7 +40,6 @@ class SignServicePluginTest {
         generateTestProject(
             signServiceExtension = """
              signService {
-                // host
                 apk(android.buildTypes.release, "signToken")
                 bundle(android.buildTypes.release, "signToken")
              }
@@ -56,7 +55,31 @@ class SignServicePluginTest {
 
         result.assertThat()
             .buildFailed()
-            .outputContains("host")
+            .outputContains("Invalid signer url value: ''")
+    }
+
+    @Test
+    fun `plugin apply - fails - configuration with invalid url`() {
+        generateTestProject(
+            signServiceExtension = """
+             signService {
+                url = "some_incorrect_url"
+                apk(android.buildTypes.release, "signToken")
+                bundle(android.buildTypes.release, "signToken")
+             }
+        """.trimIndent()
+        )
+
+        val result = ciRun(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            dryRun = true,
+            expectFailure = true
+        )
+
+        result.assertThat()
+            .buildFailed()
+            .outputContains("Invalid signer url value: 'some_incorrect_url'")
     }
 
     @Test

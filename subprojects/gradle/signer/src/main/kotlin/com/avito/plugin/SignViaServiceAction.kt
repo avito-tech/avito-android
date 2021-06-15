@@ -5,6 +5,7 @@ import com.avito.http.internal.RequestMetadata
 import com.avito.utils.ExistingFile
 import com.avito.utils.createOrClear
 import com.avito.utils.toExisting
+import okhttp3.HttpUrl
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -13,7 +14,7 @@ import okhttp3.Response
 import java.io.File
 
 internal class SignViaServiceAction(
-    private val serviceUrl: String,
+    private val serviceUrl: HttpUrl,
     private val httpClient: OkHttpClient,
     private val token: String,
     private val unsignedFile: File,
@@ -49,10 +50,12 @@ internal class SignViaServiceAction(
             )
             .build()
 
-        val hostWithoutSlash = serviceUrl.removeSuffix("/")
-
         return Request.Builder()
-            .url(hostWithoutSlash + apiPath)
+            .url(
+                serviceUrl.newBuilder()
+                    .encodedPath(apiPath)
+                    .build()
+            )
             .post(body)
             .tag(
                 RequestMetadata::class.java,

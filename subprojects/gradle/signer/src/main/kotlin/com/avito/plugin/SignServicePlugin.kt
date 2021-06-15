@@ -8,6 +8,7 @@ import com.avito.android.bundleTaskProvider
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.hasTasks
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
@@ -76,12 +77,6 @@ class SignServicePlugin : Plugin<Project> {
         //  Is it feasible to have only one?
         val skipSigning: Boolean = target.getBooleanProperty("avito.signer.allowSkip")
 
-        target.afterEvaluate {
-            if (!skipSigning) {
-                require(!signExtension.host.isNullOrBlank()) { "signService.host must be set" }
-            }
-        }
-
         val registeredBuildTypes = mutableMapOf<String, String>()
 
         target.withAndroidApp { appExtension ->
@@ -94,8 +89,8 @@ class SignServicePlugin : Plugin<Project> {
                     type = SignApkTask::class.java,
                     variant = this,
                     taskName = signApkTaskName(variant),
-                    serviceUrl = signExtension.host.orEmpty(),
-                    signTokensMap = signExtension.apkSignTokens
+                    signTokensMap = signExtension.apkSignTokens,
+                    extension = signExtension,
                 )
 
                 registerTask(
@@ -103,8 +98,8 @@ class SignServicePlugin : Plugin<Project> {
                     type = SignBundleTask::class.java,
                     variant = this,
                     taskName = signBundleTaskName(variant),
-                    serviceUrl = signExtension.host.orEmpty(),
-                    signTokensMap = signExtension.bundleSignTokens
+                    signTokensMap = signExtension.bundleSignTokens,
+                    extension = signExtension,
                 )
 
                 registeredBuildTypes[variant.name] = requireNotNull(variant.buildType)
@@ -166,8 +161,8 @@ class SignServicePlugin : Plugin<Project> {
         type: Class<out SignArtifactTask>,
         variant: Variant<*>,
         taskName: String,
-        serviceUrl: String,
-        signTokensMap: Map<String, String?>
+        signTokensMap: Map<String, String?>,
+        extension: SignExtension,
     ) {
         val buildTypeName = requireNonNull(variant.buildType)
         val token: String? = signTokensMap[buildTypeName]
@@ -178,10 +173,30 @@ class SignServicePlugin : Plugin<Project> {
             it.group = taskGroup
             it.description = "Sign ${variant.name} with in-house service"
 
-            it.serviceUrl.set(serviceUrl)
+            it.serviceUrl.set(resolveServiceUrl(extension))
             it.tokenProperty.set(token)
 
+            it.readWriteTimeoutSec.set(extension.readWriteTimeoutSec.convention(DEFAULT_TIMEOUT_SEC))
+
             it.onlyIf { isSignNeeded }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun resolveServiceUrl(extension: SignExtension): String {
+        val value = extension.url
+            .orElse(extension.host.orEmpty())
+            .get()
+
+        return validateUrl(value)
+    }
+
+    private fun validateUrl(url: String): String {
+        return try {
+            url.toHttpUrl()
+            url
+        } catch (e: Throwable) {
+            throw IllegalArgumentException("Invalid signer url value: '$url'", e)
         }
     }
 
@@ -234,3 +249,5 @@ private fun String?.hasContent(): Boolean {
     if (this == "null") return false
     return true
 }
+
+private const val DEFAULT_TIMEOUT_SEC = 40L

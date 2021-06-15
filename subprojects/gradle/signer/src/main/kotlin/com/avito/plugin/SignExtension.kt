@@ -1,15 +1,23 @@
 package com.avito.plugin
 
 import com.android.builder.model.BuildType
+import org.gradle.api.provider.Property
 
-open class SignExtension {
+abstract class SignExtension {
 
     internal val apkSignTokens = mutableMapOf<String, String?>()
 
     internal val bundleSignTokens = mutableMapOf<String, String?>()
 
-    // todo rename to url
+    @Deprecated("use url")
     var host: String? = null
+
+    abstract val url: Property<String>
+
+    /**
+     * http client read and write timeouts
+     */
+    abstract val readWriteTimeoutSec: Property<Long>
 
     fun apk(variant: BuildType, token: String?) {
         apkSignTokens[variant.name] = token

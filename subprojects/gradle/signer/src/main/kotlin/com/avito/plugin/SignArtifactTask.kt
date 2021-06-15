@@ -8,22 +8,26 @@ import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.BuildFailer
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.DefaultTask
-import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+@Suppress("UnstableApiUsage", "LeakingThis")
+abstract class SignArtifactTask : DefaultTask() {
 
-    @Input
-    val tokenProperty = objects.property<String>()
+    @get:Input
+    abstract val tokenProperty: Property<String>
 
-    @Input
-    val serviceUrl = objects.property<String>()
+    @get:Input
+    abstract val serviceUrl: Property<String>
+
+    @get:Input
+    abstract val readWriteTimeoutSec: Property<Long>
 
     protected abstract fun unsignedFile(): File
 
@@ -43,15 +47,17 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
         val unsignedFile = unsignedFile()
         val signedFile = signedFile()
         val timeProvider: TimeProvider = DefaultTimeProvider()
-        val serviceUrl: String = serviceUrl.get()
+        val serviceUrl: HttpUrl = serviceUrl.map { it.toHttpUrl() }.get()
+
+        val timeout = readWriteTimeoutSec.get()
+
         val httpClient = HttpClientProvider(
             statsDSender = project.statsd.get(),
             timeProvider = timeProvider,
             loggerFactory = loggerFactory
         ).provide()
-            .connectTimeout(10L, TimeUnit.SECONDS)
-            .writeTimeout(40L, TimeUnit.SECONDS)
-            .readTimeout(40L, TimeUnit.SECONDS)
+            .writeTimeout(timeout, TimeUnit.SECONDS)
+            .readTimeout(timeout, TimeUnit.SECONDS)
             .addInterceptor(
                 RetryInterceptor(
                     retries = 3,
