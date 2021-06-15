@@ -2,20 +2,17 @@ package com.avito.plugin
 
 import com.avito.android.getApkOrThrow
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import java.io.File
-import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
-abstract class SignApkTask @Inject constructor(objects: ObjectFactory) : SignArtifactTask(objects) {
+abstract class SignApkTask : SignArtifactTask() {
 
-    @InputDirectory
-    val unsignedDirProperty: DirectoryProperty = objects.directoryProperty()
+    @get:InputDirectory
+    abstract val unsignedDirProperty: DirectoryProperty
 
-    @OutputDirectory
-    val signedDirProperty: DirectoryProperty = objects.directoryProperty()
+    @get:OutputDirectory
+    abstract val signedDirProperty: DirectoryProperty
 
     override fun unsignedFile(): File {
         return unsignedDirProperty.get().getApkOrThrow()

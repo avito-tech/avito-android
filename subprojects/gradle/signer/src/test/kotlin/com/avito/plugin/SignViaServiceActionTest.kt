@@ -30,7 +30,7 @@ class SignViaServiceActionTest {
 
     private val signViaServiceAction: SignViaServiceAction
         get() = SignViaServiceAction(
-            serviceUrl = server.url("/").toString(),
+            serviceUrl = server.url("/"),
             httpClient = httpClientProvider.provide().build(),
             token = "123456",
             unsignedFile = apk,
