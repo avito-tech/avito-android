@@ -1,44 +1,25 @@
 package com.avito.instrumentation
 
 import com.avito.kotlin.dsl.typedNamed
-import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.report.model.ReportCoordinates
-import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import java.util.Locale
 
 internal fun instrumentationTaskName(configuration: String): String =
-    "instrumentation${configuration.capitalize()}"
+    "instrumentation${configuration.capitalize(Locale.getDefault())}"
 
-// todo доступен только afterEvaluate и то ненадежно MBS-6926
+/**
+ * Available only afterEvaluate MBS-6926
+ */
 public fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
     typedNamed(instrumentationTaskName(configuration))
 
-@Suppress("UnstableApiUsage")
 public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
+    @Suppress("UnstableApiUsage")
     flatMap { task ->
         task.instrumentationConfiguration.map { config ->
             config.instrumentationParams.reportCoordinates()
         }
     }
-
-public fun TaskContainer.instrumentationTask(
-    configuration: String,
-    callback: (TaskProvider<InstrumentationTestsTask>) -> Unit
-) {
-    val name = instrumentationTaskName(configuration)
-    val taskProvider = typedNamedOrNull<InstrumentationTestsTask>(name)
-    if (taskProvider != null) {
-        callback(taskProvider)
-    } else {
-        whenTaskAdded {
-            if (it.name == name) {
-                callback.invoke(typedNamed(name))
-            }
-        }
-    }
-}
-
-@VisibleForTesting
-internal val instrumentationDumpPath: String = "instrumentation-extension-dump.bin"

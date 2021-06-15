@@ -36,7 +36,7 @@ class UploadCdBuildResultIntegrationTest {
     private val uiTestConfigurationName = "regress"
     private val reportId = "123"
     private val versionName = "11"
-    private val versionCode = "12"
+    private val versionCode = 12
     private val artifactoryUser = "deployer"
     private val artifactoryPassword = "deployer_password"
     private val reportsApiUrl = "https://reports"
@@ -187,7 +187,7 @@ class RealTest {
             schemaVersion = schemaVersion,
             teamcityBuildUrl = "xxx/viewLog.html?buildId=100&tab=buildLog",
             releaseVersion = releaseVersion,
-            buildNumber = versionCode,
+            buildNumber = versionCode.toString(),
             testResults = uiTestConfiguration,
             artifacts = artifacts,
             gitBranch = gitBranch
@@ -213,6 +213,7 @@ class RealTest {
         val result = runTask(
             projectDir,
             ":app:release",
+            "-Pavito.git.state=env",
             "-Pcd.build.config.file=$configFileName",
             "-PartifactoryUrl=$mockUrl",
             "-Partifactory_deployer=$artifactoryUser",

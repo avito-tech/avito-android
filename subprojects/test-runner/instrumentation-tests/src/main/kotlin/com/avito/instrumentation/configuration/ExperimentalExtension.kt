@@ -5,8 +5,9 @@ import org.gradle.api.provider.Property
 public abstract class ExperimentalExtension {
 
     /**
-     * Enable experimental test run via Shared Build Service
-     * https://docs.gradle.org/current/userguide/build_services.html
+     * Deprecated, not used anymore
+     *
+     * todo check avito usages and remove
      */
     public abstract val useService: Property<Boolean>
 
@@ -19,4 +20,6 @@ public abstract class ExperimentalExtension {
     public abstract val saveTestArtifactsToOutputs: Property<Boolean>
 
     public abstract val fetchLogcatForIncompleteTests: Property<Boolean>
+
+    public abstract val uploadArtifactsFromRunner: Property<Boolean>
 }

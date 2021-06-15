@@ -2,7 +2,7 @@ package com.avito.test.gradle
 
 import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PluginsSpecTest {
 
@@ -14,7 +14,7 @@ class PluginsSpecTest {
 
         assertThat(plugin.getScriptRepresentation()).isEqualTo(
             """|plugins {
-               |    id "plugin-id"
+               |    id("plugin-id")
                |}""".trimMargin()
         )
     }
@@ -27,7 +27,7 @@ class PluginsSpecTest {
 
         assertThat(plugin.getScriptRepresentation()).isEqualTo(
             """|plugins {
-               |    id "plugin-id" version "1.0"
+               |    id("plugin-id") version("1.0")
                |}""".trimMargin()
         )
     }
@@ -40,7 +40,7 @@ class PluginsSpecTest {
 
         assertThat(plugin.getScriptRepresentation()).isEqualTo(
             """|plugins {
-               |    id "plugin-id" apply false
+               |    id("plugin-id") apply(false)
                |}""".trimMargin()
         )
     }
@@ -53,7 +53,7 @@ class PluginsSpecTest {
 
         assertThat(plugin.getScriptRepresentation()).isEqualTo(
             """|plugins {
-               |    id "plugin-id" version "1.0" apply false
+               |    id("plugin-id") version("1.0") apply(false)
                |}""".trimMargin()
         )
     }
@@ -70,8 +70,8 @@ class PluginsSpecTest {
 
         assertThat(plugins.getScriptRepresentation()).isEqualTo(
             """|plugins {
-               |    id "one"
-               |    id "two"
+               |    id("one")
+               |    id("two")
                |}""".trimMargin()
         )
     }

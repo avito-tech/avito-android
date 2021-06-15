@@ -10,9 +10,7 @@ fun <T> waitFor(
     onWaiterRetry: (e: Throwable) -> Unit = { },
     action: () -> T
 ): T {
-    var timer = 0L
     var caughtAllowedException: Throwable
-
     val startTime = System.currentTimeMillis()
 
     do {
@@ -27,13 +25,26 @@ fun <T> waitFor(
             when {
                 isExceptionAllowed -> {
                     sleepAction(frequencyMs)
-                    timer += frequencyMs
                     caughtAllowedException = e
                 }
                 else -> throw e
             }
         }
-    } while (timer <= timeoutMs && System.currentTimeMillis() - startTime <= timeoutMs)
+    } while (System.currentTimeMillis() - startTime <= timeoutMs)
 
     throw caughtAllowedException
+}
+
+fun repeatFor(
+    frequencyMs: Long = 50L,
+    timeoutMs: Long = TimeUnit.SECONDS.toMillis(2),
+    sleepAction: (frequencyMs: Long) -> Unit = { Thread.sleep(it) },
+    action: () -> Unit
+) {
+    val startTime = System.currentTimeMillis()
+
+    do {
+        action.invoke()
+        sleepAction(frequencyMs)
+    } while (System.currentTimeMillis() - startTime <= timeoutMs)
 }

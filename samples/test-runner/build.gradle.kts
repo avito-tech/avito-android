@@ -11,13 +11,6 @@ plugins {
 android {
     defaultConfig {
         testInstrumentationRunner = "com.avito.android.test.TestRunner"
-
-        // TODO: describe in docs that they are updated in IDE configuration only after sync!
-        testInstrumentationRunnerArguments(
-            mapOf(
-                "planSlug" to "AndroidTestApp"
-            )
-        )
     }
 
     testOptions {
@@ -49,9 +42,8 @@ instrumentation {
 
     experimental {
         useInMemoryReport.set(true)
-        useService.set(false) // todo fix broken
         fetchLogcatForIncompleteTests.set(true)
-        saveTestArtifactsToOutputs.set(false)
+        saveTestArtifactsToOutputs.set(true)
     }
 
     val credentials = project.kubernetesCredentials
@@ -67,24 +59,30 @@ instrumentation {
             memoryLimit = "4Gi"
         )
 
-        configurationsContainer.register("ui") {
-            reportSkippedTests = true
-            filter = "ci"
+        configurations {
+            register("ui") {
+                reportSkippedTests = true
+                filter = "ci"
 
-            targetsContainer.register("api29") {
-                deviceName = "API29"
+                kubernetesNamespace = "android-emulator"
 
-                scheduling {
-                    quota {
-                        retryCount = 1
-                        minimumSuccessCount = 1
-                    }
+                targets {
+                    register("api29") {
+                        deviceName = "API29"
 
-                    testsCountBasedReservation {
-                        device = emulator29
-                        maximum = 1
-                        minimum = 1
-                        testsPerEmulator = 1
+                        scheduling {
+                            quota {
+                                retryCount = 1
+                                minimumSuccessCount = 1
+                            }
+
+                            testsCountBasedReservation {
+                                device = emulator29
+                                maximum = 1
+                                minimum = 1
+                                testsPerEmulator = 1
+                            }
+                        }
                     }
                 }
             }

@@ -10,12 +10,11 @@ import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
+import com.avito.instrumentation.configuration.Experiments
+import com.avito.instrumentation.configuration.ReportViewer
 import com.avito.instrumentation.internal.GetTestResultsAction
 import com.avito.instrumentation.internal.InstrumentationTestsAction
-import com.avito.instrumentation.service.TestRunParams
-import com.avito.instrumentation.service.TestRunnerService
-import com.avito.instrumentation.service.TestRunnerWorkAction
+import com.avito.instrumentation.internal.RunnerInputTester
 import com.avito.logger.GradleLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.InstrumentationTestsActionParams
@@ -37,7 +36,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
@@ -49,75 +47,70 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
-    @Optional
-    @InputDirectory
-    public val application: DirectoryProperty = objects.directoryProperty()
+    @get:Optional
+    @get:InputDirectory
+    public abstract val application: DirectoryProperty
 
-    @InputDirectory
-    public val testApplication: DirectoryProperty = objects.directoryProperty()
+    @get:InputDirectory
+    public abstract val testApplication: DirectoryProperty
 
-    @Input
-    public val runOnlyChangedTests: Property<Boolean> = objects.property()
+    @get:Input
+    public abstract val runOnlyChangedTests: Property<Boolean>
 
-    @Optional
-    @InputFile
-    public val changedTests: RegularFileProperty = objects.fileProperty()
+    @get:Optional
+    @get:InputFile
+    public abstract val changedTests: RegularFileProperty
 
-    @Optional
-    @InputFile
-    public val applicationProguardMapping: RegularFileProperty = objects.fileProperty()
+    @get:Optional
+    @get:InputFile
+    public abstract val applicationProguardMapping: RegularFileProperty
 
-    @Optional
-    @InputFile
-    public val testProguardMapping: RegularFileProperty = objects.fileProperty()
+    @get:Optional
+    @get:InputFile
+    public abstract val testProguardMapping: RegularFileProperty
 
-    @Input
-    public val buildId: Property<String> = objects.property()
+    @get:Input
+    public abstract val buildId: Property<String>
 
-    @Input
-    public val buildType: Property<String> = objects.property()
+    @get:Input
+    public abstract val buildType: Property<String>
 
-    @Input
-    public val gitCommit: Property<String> = objects.property()
+    @get:Input
+    public abstract val gitCommit: Property<String>
 
-    @Input
-    public val gitBranch: Property<String> = objects.property()
+    @get:Input
+    public abstract val gitBranch: Property<String>
 
-    @Input
-    public val useInMemoryReport: Property<Boolean> = objects.property()
+    @get:Input
+    public abstract val experiments: Property<Experiments>
 
-    @Input
-    public val saveTestArtifactsToOutputs: Property<Boolean> = objects.property()
+    @get:Input
+    @get:Optional
+    public abstract val suppressFailure: Property<Boolean>
 
-    @Input
-    public val fetchLogcatForIncompleteTests: Property<Boolean> = objects.property()
+    @get:Input
+    @get:Optional
+    public abstract val suppressFlaky: Property<Boolean>
 
-    @Input
-    public val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
+    @get:Input
+    public abstract val instrumentationConfiguration: Property<InstrumentationConfigurationData>
 
-    @Input
-    public val suppressFlaky: Property<Boolean> = objects.property<Boolean>().convention(false)
+    @get:Input
+    public abstract val parameters: Property<ExecutionParameters>
 
-    @Input
-    public val instrumentationConfiguration: Property<InstrumentationConfigurationData> = objects.property()
+    @get:Input
+    @get:Optional
+    public abstract val reportViewerProperty: Property<ReportViewer>
 
-    @Input
-    public val parameters: Property<ExecutionParameters> = objects.property()
+    @get:Input
+    @get:Optional
+    public abstract val dumpParams: Property<Boolean>
 
-    @Input
-    public val uploadAllTestArtifacts: Property<Boolean> = objects.property<Boolean>().convention(false)
+    @get:Internal
+    public abstract val kubernetesCredentials: Property<KubernetesCredentials>
 
-    @Internal
-    public val reportViewerProperty: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
-
-    @Internal
-    public val kubernetesCredentials: Property<KubernetesCredentials> = objects.property()
-
-    @Internal
-    public val testRunnerService: Property<TestRunnerService> = objects.property()
-
-    @OutputDirectory
-    public val output: DirectoryProperty = objects.directoryProperty()
+    @get:OutputDirectory
+    public abstract val output: DirectoryProperty
 
     private val verdictFile = objects.fileProperty().convention(output.file("verdict.json"))
 
@@ -158,6 +151,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             null
         }
 
+        val experiments = experiments.get()
+
         val testRunParams = InstrumentationTestsActionParams(
             mainApk = application.orNull?.getApk(),
             testApk = testApplication.get().getApkOrThrow(),
@@ -184,28 +179,18 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 applicationProguardMapping,
                 testProguardMapping
             ).mapNotNull { it.orNull?.asFile },
-            useInMemoryReport = useInMemoryReport.get(),
-            uploadTestArtifacts = uploadAllTestArtifacts.get(),
+            useInMemoryReport = experiments.useInMemoryReport,
+            uploadTestArtifacts = experiments.uploadArtifactsFromRunner,
             reportViewerConfig = reportViewerConfig,
-            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests.get(),
-            saveTestArtifactsToOutputs = saveTestArtifactsToOutputs.get(),
+            fetchLogcatForIncompleteTests = experiments.fetchLogcatForIncompleteTests,
+            saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
         )
 
-        if (testRunnerService.isPresent) {
-            val service = testRunnerService.get()
-            val queue = workerExecutor.noIsolation()
-
-            queue.submit(TestRunnerWorkAction::class.java) { params ->
-                params.service.set(service)
-                params.statsDConfig.set(statsDConfig)
-                params.testRunParams.set(
-                    TestRunParams(
-                        projectName = project.name,
-                        instrumentationConfigName = configuration.name
-                    )
-                )
-                params.legacyTestRunParams.set(testRunParams)
-            }
+        if (dumpParams.getOrElse(false)) {
+            RunnerInputTester.dumpInput(
+                rootDir = project.rootDir,
+                input = testRunParams
+            )
         } else {
             workerExecutor.inMemoryWork {
                 InstrumentationTestsAction(testRunParams).run()

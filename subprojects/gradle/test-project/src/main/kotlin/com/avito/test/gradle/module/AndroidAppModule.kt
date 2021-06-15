@@ -7,6 +7,7 @@ import com.avito.test.gradle.file
 import com.avito.test.gradle.files.InstrumentationTest
 import com.avito.test.gradle.files.androidManifest
 import com.avito.test.gradle.files.build_gradle
+import com.avito.test.gradle.files.build_gradle_kts
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.module
@@ -23,10 +24,11 @@ class AndroidAppModule(
     override val modules: List<Module> = emptyList(),
     override val enableKotlinAndroidPlugin: Boolean = true,
     override val dependencies: Set<GradleDependency> = emptySet(),
+    override val useKts: Boolean = false,
     private val enableKapt: Boolean = false,
     private val instrumentationTests: List<InstrumentationTest> = emptyList(),
     private val versionName: String = "",
-    private val versionCode: String = "",
+    private val versionCode: Int = 1,
     private val customScript: String = "",
     private val imports: List<String> = emptyList(),
     private val mutator: File.(AndroidAppModule) -> Unit = {}
@@ -75,21 +77,27 @@ class AndroidAppModule(
                 """.trimIndent()
             )
 
-            build_gradle {
-                writeText(
-                    """
-${imports()}
-${plugins()}
+            val buildGradleContent = """
+                |${imports()}
+                |${plugins()}
+                |
+                |$buildGradleExtra
+                |
+                |${androidExtension(useKts)}
+                |
+                |${dependencies()}
+                |
+                |$customScript
+                """.trimMargin()
 
-$buildGradleExtra
-
-${androidExtension()}
-
-${dependencies()}
-
-$customScript
-""".trimIndent()
-                )
+            if (useKts) {
+                build_gradle_kts {
+                    writeText(buildGradleContent)
+                }
+            } else {
+                build_gradle {
+                    writeText(buildGradleContent)
+                }
             }
             this.mutator(this@AndroidAppModule)
         }
@@ -114,47 +122,75 @@ $customScript
 }"""
     }
 
-    private fun androidExtension(): String {
-        return """android {
-    compileSdkVersion $sdkVersion
-    buildToolsVersion "$buildToolsVersion"
-    defaultConfig {
-        applicationId "$packageName"
-        versionCode $versionCode
-        versionName "$versionName"
-    }
-    buildTypes {
-        release {}
-        debug {}
-        staging {
-            initWith(debug)
-            matchingFallbacks = ["debug"]
+    private fun androidExtension(useKts: Boolean): String {
+        val enableKotlinAndroid = if (enableKotlinAndroidPlugin || enableKapt) {
+            """
+            |sourceSets {
+            |   getByName("main") {
+            |       java.srcDirs(file("src/main/kotlin"))
+            |   }
+            |   getByName("test") {
+            |       java.srcDirs(file("src/test/kotlin"))
+            |   }
+            |   getByName("androidTest") {
+            |       java.srcDirs(file("src/androidTest/kotlin"))
+            |   }
+            |}
+            """.trimMargin()
+        } else {
+            ""
         }
-    }
-    ${
-            if (enableKotlinAndroidPlugin || enableKapt) {
-                """
-        sourceSets {
-        main {
-            java.srcDir("src/main/kotlin")
-        }
-        test {
-            java.srcDir("src/test/kotlin")
-        }
-        androidTest {
-            java.srcDir("src/androidTest/kotlin")
-        }
-    }
-    """.trimIndent()
-            } else {
-                ""
-            }
-        }
-afterEvaluate{
-    tasks.named("lintVitalRelease").configure { onlyIf { false } }
-}
 
-}"""
+        val disableLintVitalRelease = """
+            |afterEvaluate{
+            |       tasks.named("lintVitalRelease").configure { onlyIf { false } }
+            |}
+            """.trimMargin()
+
+        return if (useKts) {
+            """
+            |android {
+            |   compileSdkVersion($sdkVersion)
+            |   buildToolsVersion = "$buildToolsVersion"
+            |   defaultConfig {
+            |       applicationId = "$packageName"
+            |       versionCode = $versionCode
+            |       versionName = "$versionName"
+            |   }
+            |   buildTypes {
+            |       val debug = getByName("debug")
+            |       register("staging") {
+            |           initWith(debug)
+            |           matchingFallbacks += listOf("debug")
+            |       }
+            |   }
+            |   $enableKotlinAndroid
+            |   $disableLintVitalRelease
+            |}
+            """.trimMargin()
+        } else {
+            """
+            |android {
+            |   compileSdkVersion $sdkVersion
+            |   buildToolsVersion "$buildToolsVersion"
+            |   defaultConfig {
+            |       applicationId "$packageName"
+            |       versionCode $versionCode
+            |       versionName "$versionName"
+            |   }
+            |   buildTypes {
+            |       release {}
+            |       debug {}
+            |       staging {
+            |           initWith(debug)
+            |           matchingFallbacks = ["debug"]
+            |       }
+            |   }
+            |   $enableKotlinAndroid
+            |   $disableLintVitalRelease
+            |}
+            """.trimMargin()
+        }
     }
 
     private fun plugins(): PluginsSpec =
