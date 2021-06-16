@@ -77,22 +77,24 @@ internal class VerdictDeterminerImpl(
     }
 
     private fun getFailedTests(testVerdicts: Collection<AndroidTest>): Set<TestStaticData> {
-        return testVerdicts.filterIsInstance<AndroidTest.Completed>().filter { it.incident != null }.toSet()
+        val completedWithIncident =
+            testVerdicts.filterIsInstance<AndroidTest.Completed>().filter { it.incident != null }
+        val infrastructureError = testVerdicts.filterIsInstance<AndroidTest.Lost>()
+
+        return (completedWithIncident + infrastructureError).toSet()
     }
 
     private fun getLostTests(
         initialTestSuite: Set<TestStaticData>,
         testResults: Collection<AndroidTest>
     ): Set<AndroidTest.Lost> {
-        val lostTests = testResults.filterIsInstance<AndroidTest.Lost>()
-
-        val notReportedTests: List<AndroidTest.Lost> = initialTestSuite.subtract(testResults).map {
+        return initialTestSuite.subtract(testResults).map {
             AndroidTest.Lost.createWithoutInfo(
                 testStaticData = it,
                 currentTimeSec = timeProvider.nowInSeconds()
             )
-        }
-
-        return (lostTests + notReportedTests).toSet()
+        }.toSet()
     }
+
+    companion object
 }

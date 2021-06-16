@@ -28,7 +28,7 @@ internal class LegacyFinalizer(
 
         val testResults = report.getTests()
             .map { testsFromReport ->
-                val testsToRun = testSchedulerResults.testSuite.testsToRun.map { it.test.name }
+                val testsToRun = testSchedulerResults.testsToRun.map { it.name }
                 testsFromReport.filter { TestName(it.className, it.methodName) in testsToRun }
             }
             .onFailure { throwable ->
@@ -40,7 +40,7 @@ internal class LegacyFinalizer(
 
         val notReportedTests = hasNotReportedTestsDeterminer.determine(
             runResult = testResults,
-            allTests = testSchedulerResults.testSuite.testsToRun.map { it.test }
+            allTests = testSchedulerResults.testsToRun
         )
 
         val testRunResult = TestRunResult(

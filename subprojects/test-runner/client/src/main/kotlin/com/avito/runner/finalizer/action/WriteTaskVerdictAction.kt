@@ -68,4 +68,6 @@ internal class WriteTaskVerdictAction(
             testUrl = reportLinkGenerator.generateTestLink(name),
             title = "$name $device $prefix"
         )
+
+    companion object
 }
