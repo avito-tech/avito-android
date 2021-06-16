@@ -100,7 +100,7 @@ public class FinalizerFactoryImpl(
             actions = actions,
             verdictFile = params.verdictFile,
             verdictDeterminer = verdictDeterminer,
-            finalizerFileDumper = FinalizerFileDumper(
+            finalizerFileDumper = FinalizerFileDumperImpl(
                 outputDir = params.outputDir,
                 loggerFactory = loggerFactory
             )

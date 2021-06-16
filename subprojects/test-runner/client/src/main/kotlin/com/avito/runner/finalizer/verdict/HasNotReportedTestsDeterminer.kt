@@ -8,7 +8,7 @@ internal interface HasNotReportedTestsDeterminer {
 
     fun determine(
         runResult: List<SimpleRunTest>,
-        allTests: List<TestStaticData>
+        allTests: Collection<TestStaticData>
     ): Result
 
     sealed class Result {

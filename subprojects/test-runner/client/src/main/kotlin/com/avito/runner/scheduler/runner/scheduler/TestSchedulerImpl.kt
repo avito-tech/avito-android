@@ -120,7 +120,7 @@ internal class TestSchedulerImpl(
         }
 
         return TestSchedulerResult(
-            testSuite = testSuite,
+            testsToRun = testSuite.testsToRun.map { it.test },
             testResults = report.getTestResults()
         )
     }

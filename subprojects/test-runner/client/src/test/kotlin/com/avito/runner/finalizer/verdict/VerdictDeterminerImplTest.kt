@@ -209,7 +209,7 @@ internal class VerdictDeterminerImplTest {
     }
 
     @Test
-    fun `verdict - lost - single lost test`() {
+    fun `verdict - failed with unsuppressedFailedTest - single lost(infra error) test`() {
         val verdictDeterminer = createVerdictDeterminer()
 
         val test = TestStaticDataPackage.createStubInstance(
@@ -225,12 +225,12 @@ internal class VerdictDeterminerImplTest {
         )
 
         assertThat<Verdict.Failure>(verdict) {
-            assertThat(notReportedTests).contains(test)
+            assertThat(unsuppressedFailedTests).contains(test)
         }
     }
 
     @Test
-    fun `verdict - failed and unsuppressedFailedTests is empty - lost and failed reported and fails suppressed`() {
+    fun `verdict - failed with unsuppressedFailedTests - lost(infra error) and failed reported and fails suppressed`() {
         val verdictDeterminer = createVerdictDeterminer(suppressFailure = true)
 
         val lostTest = TestStaticDataPackage.createStubInstance(
@@ -243,25 +243,26 @@ internal class VerdictDeterminerImplTest {
             deviceName = DeviceName("DEVICE")
         )
 
+        val results = listOf(
+            createLostTestExecution(testStaticData = lostTest),
+            createFailedTestExecution(testStaticData = failedTest)
+        )
+
         val verdict = verdictDeterminer.determine(
             initialTestSuite = setOf(
                 lostTest,
                 failedTest
             ),
-            testResults = listOf(
-                createLostTestExecution(testStaticData = lostTest),
-                createFailedTestExecution(testStaticData = failedTest)
-            )
+            testResults = results
         )
 
-        assertThat<Verdict.Failure>(verdict) {
-            assertThat(notReportedTests).contains(lostTest)
-            assertThat(unsuppressedFailedTests).isEmpty()
+        assertThat<Verdict.Success.Suppressed>(verdict) {
+            assertThat(failedTests).containsExactlyElementsIn(results)
         }
     }
 
     @Test
-    fun `verdict - failed - lost and failed reported`() {
+    fun `verdict - failed - lost(infra error) and failed reported`() {
         val verdictDeterminer = createVerdictDeterminer(suppressFailure = false)
 
         val lostTest = TestStaticDataPackage.createStubInstance(
@@ -274,20 +275,21 @@ internal class VerdictDeterminerImplTest {
             deviceName = DeviceName("DEVICE")
         )
 
+        val results = listOf(
+            createLostTestExecution(testStaticData = lostTest),
+            createFailedTestExecution(testStaticData = failedTest)
+        )
+
         val verdict = verdictDeterminer.determine(
             initialTestSuite = setOf(
                 lostTest,
                 failedTest
             ),
-            testResults = listOf(
-                createLostTestExecution(testStaticData = lostTest),
-                createFailedTestExecution(testStaticData = failedTest)
-            )
+            testResults = results
         )
 
         assertThat<Verdict.Failure>(verdict) {
-            assertThat(notReportedTests).contains(lostTest)
-            assertThat(unsuppressedFailedTests).contains(failedTest)
+            assertThat(unsuppressedFailedTests).containsExactlyElementsIn(results)
         }
     }
 

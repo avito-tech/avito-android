@@ -13,7 +13,7 @@ internal class LegacyNotReportedTestsDeterminer(
 
     override fun determine(
         runResult: List<SimpleRunTest>,
-        allTests: List<TestStaticData>
+        allTests: Collection<TestStaticData>
     ): HasNotReportedTestsDeterminer.Result {
         val allReportedTests = runResult.map { TestStaticDataPackage.fromSimpleRunTest(it) }
 

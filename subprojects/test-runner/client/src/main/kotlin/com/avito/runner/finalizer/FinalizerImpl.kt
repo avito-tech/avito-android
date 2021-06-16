@@ -16,7 +16,7 @@ internal class FinalizerImpl(
 
     override fun finalize(testSchedulerResults: TestSchedulerResult): Finalizer.Result {
 
-        val initialTestSuite: Set<TestStaticData> = testSchedulerResults.testSuite.testsToRun.map { it.test }.toSet()
+        val initialTestSuite: Set<TestStaticData> = testSchedulerResults.testsToRun.toSet()
 
         finalizerFileDumper.dump(
             initialTestSuite = initialTestSuite,
@@ -38,4 +38,6 @@ internal class FinalizerImpl(
                 Finalizer.Result.Failure("Instrumentation task failed. Look at verdict in the file: $verdictFile")
         }
     }
+
+    companion object
 }
