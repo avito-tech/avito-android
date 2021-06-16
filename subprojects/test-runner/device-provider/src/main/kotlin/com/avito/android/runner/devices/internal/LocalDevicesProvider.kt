@@ -6,11 +6,9 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
+import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.Serial
-import com.avito.runner.service.worker.device.adb.Adb
-import com.avito.runner.service.worker.device.adb.AdbDevice
-import com.avito.runner.service.worker.device.adb.AdbDevicesManager
-import com.avito.time.TimeProvider
+import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,11 +21,10 @@ import kotlinx.coroutines.launch
 
 internal class LocalDevicesProvider(
     private val androidDebugBridge: AndroidDebugBridge,
-    private val devicesManager: AdbDevicesManager,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
-    private val adb: Adb,
-    private val loggerFactory: LoggerFactory,
-    private val timeProvider: TimeProvider
+    private val adbDeviceFactory: AdbDeviceFactory,
+    private val devicesManager: DevicesManager,
+    loggerFactory: LoggerFactory,
 ) : DevicesProvider {
 
     private val logger = loggerFactory.create<LocalDevicesProvider>()
@@ -91,13 +88,9 @@ internal class LocalDevicesProvider(
                 .asSequence()
                 .filter { it.id is Serial.Local }
                 .map { adbDeviceParams ->
-                    AdbDevice(
+                    adbDeviceFactory.create(
                         coordinate = DeviceCoordinate.Local(adbDeviceParams.id as Serial.Local),
-                        model = adbDeviceParams.model,
-                        online = adbDeviceParams.online,
-                        loggerFactory = loggerFactory,
-                        adb = adb,
-                        timeProvider = timeProvider
+                        adbDeviceParams = adbDeviceParams
                     )
                 }
                 .filter { !acquiredDevices.contains(it.coordinate) }

@@ -14,8 +14,10 @@ import com.avito.retrace.ProguardRetracer
 import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.scheduler.TestRunnerFactory
 import com.avito.runner.scheduler.args.TestRunnerFactoryConfig
+import com.avito.runner.scheduler.listener.ArtifactsTestListener
 import com.avito.runner.scheduler.listener.AvitoFileStorageUploader
 import com.avito.runner.scheduler.listener.LegacyTestArtifactsProcessor
+import com.avito.runner.scheduler.listener.LogListener
 import com.avito.runner.scheduler.listener.LogcatProcessor
 import com.avito.runner.scheduler.listener.LogcatTestLifecycleListener
 import com.avito.runner.scheduler.listener.ReportProcessor
@@ -25,9 +27,14 @@ import com.avito.runner.scheduler.listener.TestArtifactsProcessorImpl
 import com.avito.runner.scheduler.listener.TestArtifactsUploader
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
+import com.avito.runner.scheduler.metrics.TestMetricsListenerImpl
+import com.avito.runner.scheduler.metrics.TestMetricsSender
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
+import com.avito.runner.service.DeviceWorkerPoolProvider
+import com.avito.runner.service.listener.CompositeListener
+import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
@@ -92,27 +99,53 @@ public class TestSchedulerFactoryImpl(
         tempLogcatDir: File,
         metricsSender: InstrumentationMetricsSender
     ): TestRunnerFactory {
+        val statsDSender: StatsDSender = StatsDSender.Impl(
+            config = metricsConfig.statsDConfig,
+            loggerFactory = params.loggerFactory
+        )
+        val testMetricsSender = TestMetricsListenerImpl(
+            testMetricsSender = TestMetricsSender(
+                statsDSender = statsDSender,
+                prefix = metricsConfig.runnerPrefix
+            ),
+            timeProvider = timeProvider,
+            loggerFactory = params.loggerFactory
+        )
+
         return TestRunnerFactory(
+            outputDir = params.outputDir,
             config = TestRunnerFactoryConfig(
                 loggerFactory = params.loggerFactory,
-                listener = createTestReporter(
-                    testStaticDataByTestCase = testStaticDataByTestCase,
-                    tempLogcatDir = tempLogcatDir,
-                    metricsSender = metricsSender
-                ),
                 reservation = devicesProvider,
-                metricsConfig = metricsConfig,
-                saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
-                fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
             ),
-            outputDirectory = outputFolder(params.outputDir)
+            deviceWorkerPoolProvider = DeviceWorkerPoolProvider(
+                timeProvider = timeProvider,
+                loggerFactory = params.loggerFactory,
+                testListenerProvider = { testRunnerOutputDir ->
+                    CompositeListener(
+                        listeners = mutableListOf<TestListener>().apply {
+                            add(LogListener())
+                            add(
+                                ArtifactsTestListener(
+                                    lifecycleListener = createTestReporter(
+                                        testStaticDataByTestCase = testStaticDataByTestCase,
+                                        tempLogcatDir = tempLogcatDir,
+                                        metricsSender = metricsSender
+                                    ),
+                                    outputDirectory = testRunnerOutputDir,
+                                    loggerFactory = params.loggerFactory,
+                                    saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
+                                    fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
+                                )
+                            )
+                        }
+                    )
+                },
+                deviceListener = testMetricsSender
+            ),
+            testMetricsListener = testMetricsSender
         )
     }
-
-    private fun outputFolder(output: File): File = File(
-        output,
-        "test-runner"
-    ).apply { mkdirs() }
 
     private fun createTestReporter(
         testStaticDataByTestCase: Map<TestCase, TestStaticData>,

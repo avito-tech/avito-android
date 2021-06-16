@@ -1,7 +1,6 @@
 package com.avito.instrumentation.internal
 
 import com.avito.android.TestSuiteLoaderImpl
-import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.ReportFactoryImpl
@@ -59,22 +58,21 @@ internal interface InstrumentationTestsActionFactory {
 
             val report = reportFactory.createReport()
 
-            this.devicesProviderFactory = DeviceProviderFactoryImpl(
-                kubernetesCredentials = params.kubernetesCredentials,
-                buildId = params.buildId,
-                buildType = params.buildType,
+            this.devicesProviderFactory = DevicesProviderFactory.create(
                 loggerFactory = params.loggerFactory,
                 timeProvider = timeProvider,
-                statsDConfig = params.statsDConfig,
                 deviceType = params.instrumentationConfiguration.requestedDeviceType,
-                projectName = params.projectName,
-                configurationName = params.instrumentationConfiguration.name,
-                outputDir = params.outputDir,
-                logcatTags = params.executionParameters.logcatTags,
                 kubernetesNamespace = params.executionParameters.namespace,
-                runnerPrefix = metricsConfig.runnerPrefix,
+                credentials = params.kubernetesCredentials,
+                statsDConfig = params.statsDConfig,
+                configurationName = params.instrumentationConfiguration.name,
+                projectName = params.projectName,
+                buildId = params.buildId,
+                buildType = params.buildType,
+                logcatTags = params.executionParameters.logcatTags,
+                outputDir = params.outputDir,
+                metricsConfig = metricsConfig
             )
-
             this.schedulerFactory = TestSchedulerFactoryImpl(
                 params = params,
                 report = report,

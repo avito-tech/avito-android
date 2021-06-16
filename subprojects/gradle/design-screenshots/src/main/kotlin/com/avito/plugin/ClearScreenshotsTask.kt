@@ -4,6 +4,7 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.adb.Adb
+import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.time.DefaultTimeProvider
 import org.gradle.api.DefaultTask
@@ -29,10 +30,13 @@ abstract class ClearScreenshotsTask : DefaultTask() {
             adb = adb
         )
         val currentDevice = DeviceProviderLocal(
-            adb = adb,
             adbDevicesManager = adbDevicesManager,
-            loggerFactory = loggerFactory,
-            timeProvider = DefaultTimeProvider()
+            adbDeviceFactory = AdbDeviceFactory(
+                loggerFactory = loggerFactory,
+                adb = adb,
+                timeProvider = DefaultTimeProvider(),
+                metricsConfig = null
+            )
         ).getDevice()
 
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")

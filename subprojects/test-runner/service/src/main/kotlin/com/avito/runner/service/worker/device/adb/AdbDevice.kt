@@ -5,9 +5,7 @@ import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
 import com.avito.android.Result
 import com.avito.android.asRuntimeException
-import com.avito.android.stats.StatsDSender
 import com.avito.logger.Logger
-import com.avito.logger.LoggerFactory
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -19,10 +17,6 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.device.adb.listener.AdbDeviceEventsListener
-import com.avito.runner.service.worker.device.adb.listener.AdbDeviceEventsLogger
-import com.avito.runner.service.worker.device.adb.listener.AdbDeviceMetrics
-import com.avito.runner.service.worker.device.adb.listener.CompositeAdbDeviceEventListener
-import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
@@ -43,15 +37,9 @@ data class AdbDevice(
     override val online: Boolean,
     private val adb: Adb,
     private val timeProvider: TimeProvider,
-    private val loggerFactory: LoggerFactory,
-    private val metricsConfig: RunnerMetricsConfig? = null,
     // MBS-8531: don't use "ADB" here to avoid possible recursion
-    override val logger: Logger = loggerFactory.create("[${coordinate.serial}]"),
-    private val eventsListener: AdbDeviceEventsListener = createEventListener(
-        loggerFactory = loggerFactory,
-        logger = logger,
-        runnerMetricsConfig = metricsConfig
-    ),
+    override val logger: Logger,
+    private val eventsListener: AdbDeviceEventsListener,
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl(),
     private val retryAction: RetryAction = RetryAction(timeProvider)
@@ -640,26 +628,3 @@ private const val DDMLIB_SOCKET_TIME_OUT_SECONDS = 20L
 private const val WAIT_FOR_ADB_TIME_OUT_MINUTES = 1L
 private const val DEFAULT_RETRY_COUNT = 5
 private const val DEFAULT_DELAY_SEC = 3L
-
-private fun createEventListener(
-    loggerFactory: LoggerFactory,
-    logger: Logger,
-    runnerMetricsConfig: RunnerMetricsConfig?
-): AdbDeviceEventsListener {
-    return if (runnerMetricsConfig == null) {
-        AdbDeviceEventsLogger(logger)
-    } else {
-        CompositeAdbDeviceEventListener(
-            listOf(
-                AdbDeviceEventsLogger(logger),
-                AdbDeviceMetrics(
-                    statsDSender = StatsDSender.Impl(
-                        config = runnerMetricsConfig.statsDConfig,
-                        loggerFactory = loggerFactory
-                    ),
-                    runnerPrefix = runnerMetricsConfig.runnerPrefix
-                )
-            )
-        )
-    }
-}
