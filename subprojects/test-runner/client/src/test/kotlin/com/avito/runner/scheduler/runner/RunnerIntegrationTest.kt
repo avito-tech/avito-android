@@ -598,7 +598,7 @@ internal class RunnerIntegrationTest {
             outputDirectory = outputDirectory,
             loggerFactory = loggerFactory,
             testListener = testListener,
-            deviceMetricsListener = StubDeviceListener(),
+            deviceListener = StubDeviceListener(),
             deviceWorkersDispatcher = TestDispatcher,
             timeProvider = StubTimeProvider(),
             state = DeviceWorkerPool.State(

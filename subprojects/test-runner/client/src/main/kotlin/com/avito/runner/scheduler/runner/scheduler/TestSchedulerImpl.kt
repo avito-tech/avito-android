@@ -9,6 +9,7 @@ import com.avito.android.runner.devices.model.ReservationData
 import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.model.TestStaticData
 import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.Reservation
@@ -44,9 +45,8 @@ internal class TestSchedulerImpl(
     private val filterInfoWriter: FilterInfoWriter,
     loggerFactory: LoggerFactory,
     private val executionParameters: ExecutionParameters,
-    private val outputDir: File,
     private val devicesProvider: DevicesProvider,
-    private val testRunnerFactoryFactory: (List<TestWithTarget>) -> TestRunnerFactory,
+    private val testRunnerFactoryFactory: (Map<TestCase, TestStaticData>) -> TestRunnerFactory,
 ) : TestScheduler {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
@@ -54,8 +54,6 @@ internal class TestSchedulerImpl(
     private val logger = loggerFactory.create<TestSchedulerImpl>()
 
     private val scope = CoroutineScope(CoroutineName("test-scheduler") + Dispatchers.IO)
-
-    private val outputDirectoryName = "test-runner"
 
     private val configurationName: String = params.instrumentationConfiguration.name
 
@@ -111,8 +109,7 @@ internal class TestSchedulerImpl(
 
                 runBlocking {
                     withContext(scope.coroutineContext) {
-                        testRunnerFactoryFactory.invoke(testsToRun).createTestRunner(
-                            outputDirectory = outputFolder(outputDir),
+                        testRunnerFactoryFactory.invoke(testStaticDataByTestCase(testsToRun)).createTestRunner(
                             devices = devices
                         ).runTests(testRequests)
                     }
@@ -128,10 +125,17 @@ internal class TestSchedulerImpl(
         )
     }
 
-    private fun outputFolder(output: File): File = File(
-        output,
-        outputDirectoryName
-    ).apply { mkdirs() }
+    private fun testStaticDataByTestCase(
+        testsToRun: List<TestWithTarget>
+    ): Map<TestCase, TestStaticData> {
+        return testsToRun.associate { testWithTarget ->
+            TestCase(
+                className = testWithTarget.test.name.className,
+                methodName = testWithTarget.test.name.methodName,
+                deviceName = testWithTarget.target.deviceName
+            ) to testWithTarget.test
+        }
+    }
 
     private fun reservations(
         tests: List<TestWithTarget>
@@ -146,16 +150,9 @@ internal class TestSchedulerImpl(
 
         return testsGroupedByTargets
             .map { (target, tests) ->
-                val reservation = target.reservation.data(
+                target.reservation.data(
                     tests = tests.map { it.test.name }
                 )
-
-                logger.info(
-                    "Devices: ${reservation.count} devices will be allocated for " +
-                        "target: ${target.name} inside configuration: $configurationName"
-                )
-
-                reservation
             }
     }
 

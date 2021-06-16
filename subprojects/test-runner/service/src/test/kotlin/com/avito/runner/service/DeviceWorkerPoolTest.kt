@@ -201,7 +201,7 @@ class DeviceWorkerPoolTest {
         outputDirectory = File(""),
         loggerFactory = loggerFactory,
         testListener = NoOpTestListener,
-        deviceMetricsListener = StubDeviceListener(),
+        deviceListener = StubDeviceListener(),
         deviceWorkersDispatcher = TestDispatcher,
         timeProvider = StubTimeProvider(),
         state = DeviceWorkerPool.State(

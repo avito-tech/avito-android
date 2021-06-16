@@ -21,7 +21,7 @@ import java.io.File
 class DeviceWorkerPoolImpl(
     private val outputDirectory: File,
     private val testListener: TestListener,
-    private val deviceMetricsListener: DeviceListener,
+    private val deviceListener: DeviceListener,
     private val timeProvider: TimeProvider,
     private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread,
     private val state: DeviceWorkerPool.State,
@@ -48,7 +48,7 @@ class DeviceWorkerPoolImpl(
                             listOf(
                                 MessagesDeviceListener(messages),
                                 DeviceLogListener(device.logger),
-                                deviceMetricsListener
+                                deviceListener
                             )
                         ),
                         timeProvider = timeProvider,
