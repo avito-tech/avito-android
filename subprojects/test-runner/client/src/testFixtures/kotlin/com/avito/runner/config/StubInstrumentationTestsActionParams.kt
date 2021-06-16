@@ -8,7 +8,10 @@ import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.runner.scheduler.suite.filter.createStubInstance
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
 
+@OptIn(ExperimentalPathApi::class)
 public fun InstrumentationTestsActionParams.Companion.createStubInstance(
     mainApk: File = File(""),
     testApk: File = File(""),
@@ -27,7 +30,7 @@ public fun InstrumentationTestsActionParams.Companion.createStubInstance(
     suppressFlaky: Boolean = false,
     impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
     loggerFactory: LoggerFactory,
-    outputDir: File = File("."),
+    outputDir: File = createTempDirectory("runnerOutput").toFile(),
     verdictFile: File = File(outputDir, "verdict.json"),
     fileStorageUrl: String = "https://files",
     statsDConfig: StatsDConfig = StatsDConfig.Disabled,

@@ -8,7 +8,7 @@ import java.io.File
 
 internal fun FinalizerImpl.Companion.createStubInstance(
     actions: List<FinalizeAction> = emptyList(),
-    verdictFile: File = File("."),
+    verdictFile: File = File.createTempFile("verdict", ".json"),
     verdictDeterminer: VerdictDeterminer = VerdictDeterminerImpl.createStubInstance(),
     finalizerFileDumper: FinalizerFileDumper = StubFinalizerFileDumper()
 ): FinalizerImpl {

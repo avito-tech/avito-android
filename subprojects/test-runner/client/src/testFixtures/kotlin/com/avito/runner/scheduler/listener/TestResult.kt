@@ -3,9 +3,12 @@ package com.avito.runner.scheduler.listener
 import com.avito.android.Result
 import com.avito.runner.service.model.TestCaseRun
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
 
+@OptIn(ExperimentalPathApi::class)
 public fun TestResult.Companion.success(
-    resultsDir: File = File(".")
+    resultsDir: File = createTempDirectory("results").toFile()
 ): TestResult.Complete =
     TestResult.Complete(resultsDir)
 

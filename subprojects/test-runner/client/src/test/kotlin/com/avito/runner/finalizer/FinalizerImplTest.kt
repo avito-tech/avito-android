@@ -52,7 +52,7 @@ internal class FinalizerImplTest {
     }
 
     @Test
-    fun `finalized - ok - single test failure`(@TempDir output: File) {
+    fun `finalized - failure - single test with incident`(@TempDir output: File) {
         val verdictFile = File(output, "verdict")
 
         val finalizerImpl = createFinalizer(verdictFile)
