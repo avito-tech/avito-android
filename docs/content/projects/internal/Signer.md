@@ -13,6 +13,14 @@ plugins {
 }
 ```
 
+### Specify service host
+
+```kotlin
+signService {
+    host.set("https://my-inhouse-signer-service.service/path")
+}
+```
+
 ### Register which buildVariants to sign
 
 ```kotlin
@@ -31,6 +39,16 @@ signService {
 Variants not listed here will fallback
 to [default Android Gradle Plugin signing mechanism](https://developer.android.com/studio/publish/app-signing)
 
+### Use enabled to avoid signing
+
+```kotlin
+signService {
+    enabled.set(false)
+}
+```
+
+Can be useful to disable signing in different builds by some condition
+
 ### Plugin will generate tasks
 
 - `signApkViaService<Variant>`
@@ -41,4 +59,14 @@ e.g. `dependsOn(signApkViaService<Variant>)`
 
 ## Local development behavior
 
-If tokens not set, task will be skipped and default signing mechanism will be used
+By default local development not impacted at all:  
+Typical `assemble`, `install` tasks won't add signer tasks as dependencies.
+
+Signer tasks can be called locally, just don't forget to specify token as gradle property, like `-PavitoSignToken=XXX`
+
+## Relations with CiSteps plugin
+
+Signer tasks dependency implicitly wired
+in [Artifacts collection steps of CiSteps plugin](../CiSteps/#collecting-artifacts)
+
+See: `com.avito.ci.steps.VerifyArtifactsStep`

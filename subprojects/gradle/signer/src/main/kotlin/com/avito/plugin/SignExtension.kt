@@ -12,6 +12,8 @@ abstract class SignExtension {
     @Deprecated("use url")
     var host: String? = null
 
+    abstract val enabled: Property<Boolean>
+
     abstract val url: Property<String>
 
     /**

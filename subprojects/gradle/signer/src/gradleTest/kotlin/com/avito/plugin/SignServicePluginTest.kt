@@ -22,33 +22,21 @@ class SignServicePluginTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
-    private val defaultExtension = """
-         signService {
-            host = "${mockWebServer.url("/")}"
-            apk(android.buildTypes.release, project.properties.get("signToken"))
-            bundle(android.buildTypes.release, project.properties.get("signToken"))
-         }
-    """.trimIndent()
-
     @AfterEach
     fun teardown() {
         mockWebServer.shutdown()
     }
 
     @Test
-    fun `plugin apply - fails - configuration without host`() {
+    fun `plugin apply - fails - configuration without url`() {
         generateTestProject(
-            signServiceExtension = """
-             signService {
-                apk(android.buildTypes.release, "signToken")
-                bundle(android.buildTypes.release, "signToken")
-             }
-        """.trimIndent()
+            signServiceExtension = configureExtension(url = "")
         )
 
         val result = ciRun(
             testProjectDir,
             ":app:signApkViaServiceRelease",
+            "-PsignToken=12345",
             dryRun = true,
             expectFailure = true
         )
@@ -61,18 +49,13 @@ class SignServicePluginTest {
     @Test
     fun `plugin apply - fails - configuration with invalid url`() {
         generateTestProject(
-            signServiceExtension = """
-             signService {
-                url = "some_incorrect_url"
-                apk(android.buildTypes.release, "signToken")
-                bundle(android.buildTypes.release, "signToken")
-             }
-        """.trimIndent()
+            signServiceExtension = configureExtension(url = "some_incorrect_url")
         )
 
         val result = ciRun(
             testProjectDir,
             ":app:signApkViaServiceRelease",
+            "-PsignToken=12345",
             dryRun = true,
             expectFailure = true
         )
@@ -83,7 +66,7 @@ class SignServicePluginTest {
     }
 
     @Test
-    fun `apk signing fails - without required params - when sign tasks in graph (on ci)`() {
+    fun `apk signing - fails - without required params, sign tasks in graph (on ci)`() {
         generateTestProject()
 
         val result = ciRun(
@@ -94,17 +77,45 @@ class SignServicePluginTest {
 
         result.assertThat()
             .buildFailed()
-            .outputContains("can't sign")
+            .outputContains("Can't sign variant: 'release'; token is not set")
     }
 
     @Test
-    fun `apk signing skipped - without required params - with allowSkip`() {
+    fun `apk signing - skipped - without required params, sign task not called`() {
         generateTestProject()
 
         val result = gradlew(
             testProjectDir,
+            ":app:assembleRelease",
+        )
+
+        result.assertThat().buildSuccessful()
+    }
+
+    @Test
+    fun `apk signing - skipped - token set, sign task in graph, signing disabled`() {
+        generateTestProject(
+            signServiceExtension = configureExtension(enabled = false)
+        )
+
+        val result = gradlew(
+            testProjectDir,
             ":app:signApkViaServiceRelease",
-            "-Pavito.signer.allowSkip=true"
+            "-PsignToken=12345"
+        )
+
+        result.assertThat().buildSuccessful()
+    }
+
+    @Test
+    fun `apk signing - skipped - token not set, sign task in graph, signing disabled`() {
+        generateTestProject(
+            signServiceExtension = configureExtension(enabled = false)
+        )
+
+        val result = gradlew(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
         )
 
         result.assertThat().buildSuccessful()
@@ -123,6 +134,7 @@ class SignServicePluginTest {
             ":app:signBundleViaServiceRelease",
             "-PsignToken=12345"
         )
+
         result.assertThat().buildSuccessful()
 
         val request = mockWebServer.takeRequest()
@@ -186,7 +198,7 @@ class SignServicePluginTest {
         assertThat(resultArtifact.readText()).isEqualTo("SIGNED_CONTENT")
     }
 
-    private fun generateTestProject(signServiceExtension: String = defaultExtension) {
+    private fun generateTestProject(signServiceExtension: String = configureExtension()) {
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
@@ -202,4 +214,16 @@ class SignServicePluginTest {
             )
         ).generateIn(testProjectDir)
     }
+
+    private fun configureExtension(
+        enabled: Boolean = true,
+        url: String = "${mockWebServer.url("/")}"
+    ) = """
+         signService {
+            enabled = $enabled
+            url = "$url"
+            apk(android.buildTypes.release, project.properties.get("signToken"))
+            bundle(android.buildTypes.release, project.properties.get("signToken"))
+         }
+    """.trimIndent()
 }
