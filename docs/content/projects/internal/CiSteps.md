@@ -370,7 +370,7 @@ builds {
 
 ### Using impact analysis in step
 
-Step can use [Impact analysis](../ci/ImpactAnalysis.md). It is enabled by default.
+Step can use [Impact analysis](../../ci/ImpactAnalysis.md). It is enabled by default.
 
 === "Kotlin"
 

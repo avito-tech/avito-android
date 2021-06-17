@@ -79,13 +79,14 @@ nav:
             -   Build checks: projects/BuildChecks.md
             -   Build properties: projects/BuildProperties.md
             -   Build trace: projects/BuildTrace.md
-            -   CI Steps: projects/CiSteps.md
             -   Internal:
                     - projects/internal/Internal.md
                     - projects/internal/BuildMetrics.md
                     - projects/internal/CriticalPath.md
+                    - projects/internal/Signer.md
+                    - projects/internal/CiSteps.md
+
     -   CI:
-            -   CI Gradle Plugin: projects/CiSteps.md
             -   Impact analysis: ci/ImpactAnalysis.md
             -   Containers: ci/Containers.md
     -   Testing:

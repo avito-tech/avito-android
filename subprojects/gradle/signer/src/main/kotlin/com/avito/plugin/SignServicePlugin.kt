@@ -20,45 +20,6 @@ import java.util.Objects.requireNonNull
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-/**
- * Подписываем apk при помощи собственного сервиса.
- *
- * Пример использования:
- *
- * ```
- * применяем к модулю приложения (порядок не важен)
- * plugins {
- *   id("com.android.application")
- *   id("com.avito.android.signer")
- * }
- *
- * регистрируем какие buildVariant'ы мы хотим подписывать при помощи сервиса
- * неуказанные варианты будут использовать стандартный механизм подписи android gradle plugin
- * https://developer.android.com/studio/publish/app-signing
- *
- * signService {
- *
- *          buildType                     String токен сервиса       sha1 от подписи для проверки перед отправкой
- *
- *   apk(android.buildTypes.release, project.properties.get("avitoSignToken"), "<sha1 checksum>")
- *   bundle(android.buildTypes.release, project.properties.get("avitoSignBundleToken"), "<sha1 checksum>")
- * }
- * ```
- * [SignExtension]
- *
- * Плагин генерирует каждому варианту следущие таски:
- * - signApkViaService<Variant>
- * - signBundleViaService<Variant>
- *
- * Если какой-то таске требуется получить подписанную apk/bundle, следует указать dependsOn(signXXX)
-
- * Локально таски молча скипнутся если не предоставить нужный для варианта token,
- * на CI есть механизм защиты от этого, [failOnMissingToken]
- *
- * Плагин соблюдает неявный контракт: apk и aab файлы заменяются после подписи по тому же пути где лежали неподписанными
- *
- * Есть возможность отключить плагин флагом билда: `disableSignService` = true
- */
 @Suppress("UnstableApiUsage")
 class SignServicePlugin : Plugin<Project> {
 
