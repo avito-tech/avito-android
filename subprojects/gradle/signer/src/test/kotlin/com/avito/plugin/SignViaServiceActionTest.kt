@@ -17,7 +17,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class SignViaServiceActionTest {
+internal class SignViaServiceActionTest {
 
     private lateinit var testProjectDir: File
 

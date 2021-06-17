@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class SignServicePluginTest {
+internal class SignServicePluginTest {
 
     @TempDir
     lateinit var testProjectDir: File

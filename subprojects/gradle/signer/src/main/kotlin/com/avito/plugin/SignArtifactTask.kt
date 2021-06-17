@@ -21,18 +21,18 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 @Suppress("UnstableApiUsage", "LeakingThis")
-abstract class SignArtifactTask constructor(
+public abstract class SignArtifactTask constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
     @get:Input
-    abstract val tokenProperty: Property<String>
+    public abstract val tokenProperty: Property<String>
 
     @get:Input
-    abstract val serviceUrl: Property<String>
+    public abstract val serviceUrl: Property<String>
 
     @get:Input
-    abstract val readWriteTimeoutSec: Property<Long>
+    public abstract val readWriteTimeoutSec: Property<Long>
 
     protected abstract fun unsignedFile(): File
 
@@ -47,7 +47,7 @@ abstract class SignArtifactTask constructor(
     protected abstract fun hackForArtifactsApi()
 
     @TaskAction
-    fun run() {
+    public fun run() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val unsignedFile = unsignedFile()
         val signedFile = signedFile()

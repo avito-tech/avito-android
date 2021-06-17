@@ -7,15 +7,15 @@ import org.gradle.workers.WorkerExecutor
 import java.io.File
 import javax.inject.Inject
 
-abstract class SignBundleTask @Inject constructor(
+public abstract class SignBundleTask @Inject constructor(
     workerExecutor: WorkerExecutor
 ) : SignArtifactTask(workerExecutor) {
 
     @get:InputFile
-    abstract val unsignedFileProperty: RegularFileProperty
+    public abstract val unsignedFileProperty: RegularFileProperty
 
     @get:OutputFile
-    abstract val signedFileProperty: RegularFileProperty
+    public abstract val signedFileProperty: RegularFileProperty
 
     override fun unsignedFile(): File {
         return unsignedFileProperty.get().asFile

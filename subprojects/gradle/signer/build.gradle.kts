@@ -31,6 +31,10 @@ dependencies {
     gradleTestImplementation(project(":common:test-okhttp"))
 }
 
+kotlin {
+    explicitApi()
+}
+
 gradlePlugin {
     plugins {
         create("signer") {

@@ -10,7 +10,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 
 @Suppress("UnstableApiUsage")
-class SignServicePlugin : Plugin<Project> {
+public class SignServicePlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
 

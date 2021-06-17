@@ -8,15 +8,15 @@ import org.gradle.workers.WorkerExecutor
 import java.io.File
 import javax.inject.Inject
 
-abstract class SignApkTask @Inject constructor(
+public abstract class SignApkTask @Inject constructor(
     workerExecutor: WorkerExecutor
 ) : SignArtifactTask(workerExecutor) {
 
     @get:InputDirectory
-    abstract val unsignedDirProperty: DirectoryProperty
+    public abstract val unsignedDirProperty: DirectoryProperty
 
     @get:OutputDirectory
-    abstract val signedDirProperty: DirectoryProperty
+    public abstract val signedDirProperty: DirectoryProperty
 
     override fun unsignedFile(): File {
         return unsignedDirProperty.get().getApkOrThrow()

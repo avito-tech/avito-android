@@ -1,10 +1,11 @@
 package com.avito.ci
 
 import com.avito.android.androidSdk
+import com.avito.ci.internal.SignVerifier
+import com.avito.ci.internal.SignVerifierImpl
 import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.Output
 import com.avito.logger.GradleLoggerFactory
-import com.avito.plugin.SignVerifier
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
@@ -36,7 +37,7 @@ abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFactory) : D
 
     @TaskAction
     fun doWork() {
-        val signVerifier = SignVerifier.Impl(project.androidSdk)
+        val signVerifier: SignVerifier = SignVerifierImpl(project.androidSdk)
         val outputsVerifier = OutputsVerifier(
             androidSdk = project.androidSdk,
             signVerifier = signVerifier,
