@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":common:http-client"))
     implementation(project(":common:result"))
+    implementation(project(":common:problem"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:statsd-config"))

@@ -1,7 +1,9 @@
 package com.avito.plugin
 
 import com.android.build.api.variant.Variant
+import com.avito.android.Problem
 import com.avito.android.Result
+import com.avito.android.asRuntimeException
 import com.avito.kotlin.dsl.getBooleanProperty
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.Project
@@ -27,17 +29,41 @@ internal inline fun <reified T : SignArtifactTask> registerTask(
 
         val isCustomSigningEnabled = isCustomSigningEnabled(project, extension)
 
-        serviceUrl.set(resolveServiceUrl(extension))
-        tokenProperty.set(token.toPropertyOrThrow(isCustomSigningEnabled))
+        serviceUrl.set(resolveServiceUrl(taskName, extension))
+        tokenProperty.set(token.toPropertyOrThrow(taskName, isCustomSigningEnabled))
         readWriteTimeoutSec.set(extension.readWriteTimeoutSec.convention(DEFAULT_TIMEOUT_SEC))
 
         onlyIf { isCustomSigningEnabled }
     }
 }
 
-private fun Result<String>.toPropertyOrThrow(isCustomSigningEnabled: Boolean): Provider<String> {
+private fun describeMisconfiguration(taskName: String, throwable: Throwable): Problem {
+    return Problem(
+        shortDescription = throwable.localizedMessage,
+        context = "Configuring '$taskName' task",
+        because = "Plugin is not properly configured",
+        possibleSolutions = emptyList(),
+        documentedAt = "https://avito-tech.github.io/avito-android/projects/internal/Signer/",
+        throwable = throwable,
+    )
+}
+
+private fun failOnConfiguration(problem: Problem): Nothing {
+    throw problem.asRuntimeException()
+}
+
+private fun Result<String>.toPropertyOrThrow(taskName: String, isCustomSigningEnabled: Boolean): Provider<String> {
     return if (isCustomSigningEnabled) {
-        Providers.of(getOrThrow())
+        try {
+            Providers.of(getOrThrow())
+        } catch (e: Throwable) {
+            failOnConfiguration(
+                problem = describeMisconfiguration(
+                    taskName = taskName,
+                    throwable = e
+                )
+            )
+        }
     } else {
         Providers.notDefined()
     }
@@ -67,20 +93,25 @@ private fun isCustomSigningEnabled(project: Project, extension: SignExtension): 
 }
 
 @Suppress("DEPRECATION", "UnstableApiUsage")
-private fun resolveServiceUrl(extension: SignExtension): String {
+private fun resolveServiceUrl(taskName: String, extension: SignExtension): String {
     val value = extension.url
         .orElse(extension.host.orEmpty())
         .get()
 
-    return validateUrl(value)
+    return validateUrl(taskName, value)
 }
 
-private fun validateUrl(url: String): String {
+private fun validateUrl(taskName: String, url: String): String {
     return try {
         url.toHttpUrl()
         url
     } catch (e: Throwable) {
-        throw IllegalArgumentException("Invalid signer url value: '$url'", e)
+        failOnConfiguration(
+            problem = describeMisconfiguration(
+                taskName = taskName,
+                throwable = IllegalArgumentException("Invalid signer url value: '$url'", e)
+            )
+        )
     }
 }
 
