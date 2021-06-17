@@ -129,7 +129,6 @@ internal class ReportProcessorImplTest {
                     Logcat is not available:
                     stub description
                     Where : StubLogcatAccessor
-                    Why? : unknown
                     
                     """.trimIndent()
             )
