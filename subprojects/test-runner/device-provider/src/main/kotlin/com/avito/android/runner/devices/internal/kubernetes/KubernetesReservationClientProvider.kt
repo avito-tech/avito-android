@@ -6,7 +6,7 @@ import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
 import com.avito.logger.LoggerFactory
 import java.io.File
 
-internal class KubernetesReservationClientProvider(
+public class KubernetesReservationClientProvider(
     private val loggerFactory: LoggerFactory,
     private val kubernetesApiProvider: KubernetesApiProvider,
     private val reservationDeploymentFactoryProvider: ReservationDeploymentFactoryProvider,
@@ -14,7 +14,7 @@ internal class KubernetesReservationClientProvider(
     private val androidDebugBridgeProvider: AndroidDebugBridgeProvider
 ) {
 
-    fun provide(
+    internal fun provide(
         tempLogcatDir: File
     ): KubernetesReservationClient {
         return KubernetesReservationClient(

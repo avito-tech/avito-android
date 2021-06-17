@@ -5,11 +5,13 @@ import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClientProvider
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.logger.LoggerFactory
+import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
+import kotlinx.coroutines.channels.Channel
 import java.io.File
 
 internal class DeviceProviderFactoryImpl(
@@ -22,10 +24,13 @@ internal class DeviceProviderFactoryImpl(
     private val metricsConfig: RunnerMetricsConfig
 ) : DevicesProviderFactory {
 
-    override fun create(tempLogcatDir: File): DevicesProvider {
+    override fun create(
+        tempLogcatDir: File,
+        deviceWorkerPoolProvider: DeviceWorkerPoolProvider
+    ): DevicesProvider {
         return when (deviceType) {
             DeviceType.MOCK ->
-                StubDevicesProvider(loggerFactory)
+                FakeDevicesProvider(loggerFactory, deviceWorkerPoolProvider, Channel(Channel.UNLIMITED))
 
             DeviceType.LOCAL ->
                 LocalDevicesProvider(
@@ -42,6 +47,7 @@ internal class DeviceProviderFactoryImpl(
                         metricsConfig = null
                     ),
                     loggerFactory = loggerFactory,
+                    deviceWorkerPoolProvider = deviceWorkerPoolProvider
                 )
 
             DeviceType.CLOUD ->
@@ -56,7 +62,8 @@ internal class DeviceProviderFactoryImpl(
                     devicesManager = AdbDevicesManager(
                         loggerFactory = loggerFactory,
                         adb = Adb()
-                    )
+                    ),
+                    deviceWorkerPoolProvider = deviceWorkerPoolProvider
                 )
         }
     }

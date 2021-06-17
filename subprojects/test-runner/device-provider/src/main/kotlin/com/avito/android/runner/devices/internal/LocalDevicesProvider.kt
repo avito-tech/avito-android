@@ -4,6 +4,9 @@ import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.runner.service.DeviceWorkerPool
+import com.avito.runner.service.DeviceWorkerPoolProvider
+import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
@@ -13,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.take
 import kotlinx.coroutines.delay
@@ -24,6 +26,7 @@ internal class LocalDevicesProvider(
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
     private val adbDeviceFactory: AdbDeviceFactory,
     private val devicesManager: DevicesManager,
+    private val deviceWorkerPoolProvider: DeviceWorkerPoolProvider,
     loggerFactory: LoggerFactory,
 ) : DevicesProvider {
 
@@ -36,8 +39,9 @@ internal class LocalDevicesProvider(
     @ExperimentalCoroutinesApi
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
+        testListener: TestListener,
         scope: CoroutineScope
-    ): ReceiveChannel<Device> {
+    ): DeviceWorkerPool {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
         scope.launch(Dispatchers.IO) {
             reservations.forEach { reservation ->
@@ -68,7 +72,8 @@ internal class LocalDevicesProvider(
         }
         // todo use flow
         @Suppress("DEPRECATION")
-        return devices.distinctBy { it.coordinate }.take(devicesRequired)
+        val devices = devices.distinctBy { it.coordinate }.take(devicesRequired)
+        return deviceWorkerPoolProvider.provide(devices, testListener)
     }
 
     override suspend fun releaseDevice(
