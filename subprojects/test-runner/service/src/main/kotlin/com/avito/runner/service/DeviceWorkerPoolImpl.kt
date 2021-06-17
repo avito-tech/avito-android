@@ -23,7 +23,7 @@ class DeviceWorkerPoolImpl(
     private val testListener: TestListener,
     private val deviceListener: DeviceListener,
     private val timeProvider: TimeProvider,
-    private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread,
+    private val deviceWorkersDispatcher: Dispatchers,
     private val state: DeviceWorkerPool.State,
     loggerFactory: LoggerFactory
 ) : DeviceWorkerPool {

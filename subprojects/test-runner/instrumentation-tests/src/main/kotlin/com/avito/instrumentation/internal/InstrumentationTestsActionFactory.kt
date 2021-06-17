@@ -2,6 +2,11 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.TestSuiteLoaderImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
+import com.avito.android.runner.devices.KubernetesApiProvider
+import com.avito.android.runner.devices.internal.AndroidDebugBridgeProvider
+import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
+import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClientProvider
+import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactoryProvider
 import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.ReportFactoryImpl
 import com.avito.android.stats.StatsDSender
@@ -10,6 +15,7 @@ import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.Finalizer
 import com.avito.runner.finalizer.FinalizerFactory
 import com.avito.runner.finalizer.FinalizerFactoryImpl
+import com.avito.runner.scheduler.TestRunnerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestScheduler
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactory
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryImpl
@@ -26,8 +32,6 @@ internal interface InstrumentationTestsActionFactory {
         params: InstrumentationTestsActionParams,
         metricsConfig: RunnerMetricsConfig
     ) : InstrumentationTestsActionFactory {
-
-        private val devicesProviderFactory: DevicesProviderFactory
 
         private val schedulerFactory: TestSchedulerFactory
 
@@ -58,30 +62,52 @@ internal interface InstrumentationTestsActionFactory {
 
             val report = reportFactory.createReport()
 
-            this.devicesProviderFactory = DevicesProviderFactory.create(
+            val androidDebugBridgeProvider = AndroidDebugBridgeProvider(
                 loggerFactory = params.loggerFactory,
-                timeProvider = timeProvider,
-                deviceType = params.instrumentationConfiguration.requestedDeviceType,
-                kubernetesNamespace = params.executionParameters.namespace,
-                credentials = params.kubernetesCredentials,
-                statsDConfig = params.statsDConfig,
-                configurationName = params.instrumentationConfiguration.name,
-                projectName = params.projectName,
-                buildId = params.buildId,
-                buildType = params.buildType,
+            )
+            val emulatorsLogsReporterProvider = EmulatorsLogsReporterProvider(
                 logcatTags = params.executionParameters.logcatTags,
-                outputDir = params.outputDir,
-                metricsConfig = metricsConfig
+                outputDir = params.outputDir
             )
             this.schedulerFactory = TestSchedulerFactoryImpl(
                 params = params,
                 report = report,
-                timeProvider = timeProvider,
-                httpClientProvider = httpClientProvider,
-                metricsConfig = metricsConfig,
                 testSuiteLoader = TestSuiteLoaderImpl(),
                 reportFactory = reportFactory,
-                devicesProviderFactory = devicesProviderFactory
+                testRunnerFactoryProvider = TestRunnerFactoryProvider(
+                    params = params,
+                    timeProvider = timeProvider,
+                    httpClientProvider = httpClientProvider,
+                    report = report,
+                    devicesProviderFactory = DevicesProviderFactory.create(
+                        loggerFactory = params.loggerFactory,
+                        timeProvider = timeProvider,
+                        deviceType = params.instrumentationConfiguration.requestedDeviceType,
+                        kubernetesReservationClientProvider = KubernetesReservationClientProvider(
+                            loggerFactory = params.loggerFactory,
+                            kubernetesApiProvider = KubernetesApiProvider(
+                                timeProvider = timeProvider,
+                                kubernetesNamespace = params.executionParameters.namespace,
+                                kubernetesCredentials = params.kubernetesCredentials,
+                                loggerFactory = params.loggerFactory,
+                                statsDConfig = params.statsDConfig
+                            ),
+                            androidDebugBridgeProvider = androidDebugBridgeProvider,
+                            reservationDeploymentFactoryProvider = ReservationDeploymentFactoryProvider(
+                                configurationName = params.instrumentationConfiguration.name,
+                                projectName = params.projectName,
+                                buildId = params.buildId,
+                                buildType = params.buildType,
+                                loggerFactory = params.loggerFactory
+                            ),
+                            emulatorsLogsReporterProvider = emulatorsLogsReporterProvider
+                        ),
+                        androidDebugBridgeProvider = androidDebugBridgeProvider,
+                        emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
+                        metricsConfig = metricsConfig
+                    ),
+                    metricsConfig = metricsConfig
+                )
             )
 
             this.finalizerFactory = FinalizerFactoryImpl(

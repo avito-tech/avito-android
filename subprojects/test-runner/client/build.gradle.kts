@@ -12,6 +12,7 @@ publish {
 dependencies {
     compileOnly(gradleApi())
     api(project(":test-runner:service"))
+    api(project(":common:result"))
 
     implementation(project(":test-runner:test-annotations"))
     implementation(project(":test-runner:instrumentation-tests-dex-loader"))

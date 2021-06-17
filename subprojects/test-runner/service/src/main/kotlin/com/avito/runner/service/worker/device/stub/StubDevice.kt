@@ -31,9 +31,7 @@ open class StubDevice(
     gettingDeviceStatusResults: List<Device.DeviceStatus> = emptyList(),
     runTestsResults: List<StubActionResult<TestCaseRun.Result>> = emptyList(),
     clearPackageResults: List<StubActionResult<Result<Unit>>> = emptyList(),
-    private val apiResult: StubActionResult<Int> = StubActionResult.Success(
-        22
-    ),
+    private val apiResult: StubActionResult<Int> = StubActionResult.Success(22),
     override val online: Boolean = true,
     override val model: String = "model"
 ) : Device {

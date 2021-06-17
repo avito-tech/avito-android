@@ -1,11 +1,12 @@
 package com.avito.runner.scheduler.runner
 
-import com.avito.runner.scheduler.runner.model.TestRunRequest
+import com.avito.android.Result
 import com.avito.runner.scheduler.runner.model.TestRunnerResult
+import com.avito.runner.scheduler.runner.model.TestWithTarget
 
 internal interface TestRunner {
 
     suspend fun runTests(
-        tests: List<TestRunRequest>
-    ): TestRunnerResult
+        tests: List<TestWithTarget>
+    ): Result<TestRunnerResult>
 }

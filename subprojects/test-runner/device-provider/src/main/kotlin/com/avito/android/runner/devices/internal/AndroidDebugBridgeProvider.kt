@@ -3,7 +3,7 @@ package com.avito.android.runner.devices.internal
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 
-internal class AndroidDebugBridgeProvider(
+public class AndroidDebugBridgeProvider(
     loggerFactory: LoggerFactory
 ) {
     private val instance by lazy {
@@ -13,5 +13,5 @@ internal class AndroidDebugBridgeProvider(
         )
     }
 
-    fun provide(): AndroidDebugBridge = instance
+    internal fun provide(): AndroidDebugBridge = instance
 }

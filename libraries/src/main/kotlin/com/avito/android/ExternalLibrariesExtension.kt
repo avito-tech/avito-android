@@ -17,7 +17,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
         const val androidX = "1.0.0"
         const val espresso = "3.3.0"
         const val mockito = "3.3.3"
-        const val coroutines = "1.3.7"
+        const val coroutines = "1.3.8"
     }
 
     val javaVersion = JavaVersion.VERSION_1_8

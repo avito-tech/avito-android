@@ -9,7 +9,7 @@ import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.createKubernetesClient
 
-internal class KubernetesApiProvider(
+public class KubernetesApiProvider(
     private val timeProvider: TimeProvider,
     private val kubernetesCredentials: KubernetesCredentials,
     private val kubernetesNamespace: String,
@@ -17,7 +17,7 @@ internal class KubernetesApiProvider(
     private val statsDConfig: StatsDConfig
 ) {
 
-    fun provide(): KubernetesApi {
+    internal fun provide(): KubernetesApi {
         return KubernetesApi.Impl(
             kubernetesClient = createKubernetesClient(
                 httpClientProvider = HttpClientProvider(

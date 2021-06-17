@@ -1,13 +1,8 @@
 package com.avito.instrumentation
 
 import com.avito.android.Result
-import com.avito.android.StubTestSuiteLoader
-import com.avito.android.runner.devices.StubDeviceProviderFactory
-import com.avito.android.runner.report.StubReport
 import com.avito.android.runner.report.StubReportFactory
 import com.avito.android.stats.SeriesName
-import com.avito.http.HttpClientProvider
-import com.avito.http.createStubInstance
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi
@@ -19,7 +14,6 @@ import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
 import com.avito.runner.finalizer.FinalizerFactoryImpl
-import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryImpl
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.StubTimeProvider
 import com.avito.utils.StubBuildFailer
@@ -36,7 +30,6 @@ internal class InstrumentationTestsActionIntegrationTest {
     private lateinit var apk: File
     private lateinit var outputDir: File
     private val reportsApi = StubReportsApi()
-    private val testSuiteLoader = StubTestSuiteLoader()
     private val reportCoordinates = ReportCoordinates.createStubInstance()
     private val buildFailer = StubBuildFailer()
     private val loggerFactory = StubLoggerFactory
@@ -49,7 +42,7 @@ internal class InstrumentationTestsActionIntegrationTest {
     }
 
     @Test
-    fun `action - ok - 0 tests to run, no previous reports`() {
+    fun `0 tests to run and no previous reports - action success`() {
         val configuration = InstrumentationConfigurationData.createStubInstance(
             name = "newUi",
             targets = singletonList(TargetConfigurationData.createStubInstance())
@@ -75,21 +68,11 @@ internal class InstrumentationTestsActionIntegrationTest {
         configuration: InstrumentationConfigurationData,
         params: InstrumentationTestsActionParams = params(configuration),
         seriesName: SeriesName = SeriesName.create("test"),
-        reportFactory: StubReportFactory = StubReportFactory(),
         timeProvider: StubTimeProvider = StubTimeProvider()
     ) = InstrumentationTestsAction(
         params = params,
         loggerFactory = params.loggerFactory,
-        scheduler = TestSchedulerFactoryImpl(
-            params = params,
-            report = StubReport(),
-            timeProvider = timeProvider,
-            httpClientProvider = HttpClientProvider.createStubInstance(),
-            metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
-            testSuiteLoader = testSuiteLoader,
-            reportFactory = reportFactory,
-            devicesProviderFactory = StubDeviceProviderFactory(loggerFactory)
-        ).create(),
+        scheduler = StubTestScheduler(),
         finalizer = FinalizerFactoryImpl(
             params = params,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),
