@@ -88,6 +88,14 @@ internal class SignViaServiceAction(
                     appendLine("Request headers:")
                     append(request.headers)
                 }
+                val requestBody = request.body
+                if (requestBody != null) {
+                    if (requestBody.contentLength() != -1L) {
+                        if (request.headers["Content-Length"] == null) {
+                            appendLine("Request body size: ${requestBody.contentLength()} bytes")
+                        }
+                    }
+                }
                 appendLine("Response: ${response.code}")
                 if (response.headers.size > 0) {
                     appendLine("Response headers:")

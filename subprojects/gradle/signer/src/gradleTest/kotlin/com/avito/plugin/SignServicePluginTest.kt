@@ -202,6 +202,7 @@ class SignServicePluginTest {
             .outputContains("${mockWebServer.url("/sign")}")
             .outputContains("Response body is empty")
             .outputContains("Content-Length: 0")
+            .outputContains("Request body size: ")
     }
 
     private fun generateTestProject(
