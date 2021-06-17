@@ -17,7 +17,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class SignViaServiceActionTest {
+internal class SignViaServiceActionTest {
 
     private lateinit var testProjectDir: File
 
@@ -63,7 +63,15 @@ class SignViaServiceActionTest {
         val result = signViaServiceAction.sign()
 
         assertThat<Result.Failure<*>>(result) {
-            assertThat(throwable.message).contains("Failed to sign APK via service: code 500")
+            assertThat(throwable.message).run {
+                contains("Failed to sign $testProjectDir/test.apk via service")
+                contains("Request: POST ${server.url("/sign")}")
+                contains("Request body size: ")
+                contains("Response: 500")
+                contains("Response headers:")
+                contains("Content-Length: 0")
+                contains("Response body is empty")
+            }
         }
     }
 

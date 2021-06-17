@@ -1,11 +1,11 @@
 package com.avito.ci
 
 import com.avito.android.AndroidSdk
-import com.avito.plugin.SignVerifier
+import com.avito.ci.internal.SignVerifier
 import com.avito.utils.ExistingFile
 import java.io.File
 
-class OutputsVerifier(
+internal class OutputsVerifier(
     private val androidSdk: AndroidSdk,
     private val signVerifier: SignVerifier,
     private val outputsDir: File

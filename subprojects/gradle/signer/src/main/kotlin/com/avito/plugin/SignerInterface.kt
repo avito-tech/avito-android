@@ -19,18 +19,18 @@ internal fun signBundleTaskName(variantName: String): String =
 
 internal fun signBundleTaskName(component: ComponentIdentity): String = taskName("signBundleViaService", component)
 
-fun TaskContainer.signedApkTaskProvider(variantName: String): TaskProvider<SignApkTask> {
+public fun TaskContainer.signedApkTaskProvider(variantName: String): TaskProvider<SignApkTask> {
     return typedNamed(signApkTaskName(variantName))
 }
 
-fun TaskContainer.signedApkTaskProvider(component: ComponentIdentity): TaskProvider<SignApkTask> {
+public fun TaskContainer.signedApkTaskProvider(component: ComponentIdentity): TaskProvider<SignApkTask> {
     return typedNamed(signApkTaskName(component))
 }
 
-fun TaskContainer.signedBundleTaskProvider(variantName: String): TaskProvider<SignBundleTask> {
+public fun TaskContainer.signedBundleTaskProvider(variantName: String): TaskProvider<SignBundleTask> {
     return typedNamed(signBundleTaskName(variantName))
 }
 
-fun TaskContainer.signedBundleTaskProvider(component: ComponentIdentity): TaskProvider<SignBundleTask> {
+public fun TaskContainer.signedBundleTaskProvider(component: ComponentIdentity): TaskProvider<SignBundleTask> {
     return typedNamed(signBundleTaskName(component))
 }

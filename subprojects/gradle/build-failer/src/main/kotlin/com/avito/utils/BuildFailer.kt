@@ -1,5 +1,7 @@
 package com.avito.utils
 
+import com.avito.android.Problem
+import com.avito.android.asRuntimeException
 import org.gradle.api.Project
 
 @Suppress("unused")
@@ -7,6 +9,10 @@ val Project.buildFailer: BuildFailer
     get() = BuildFailer.RealFailer()
 
 interface BuildFailer {
+
+    fun failBuild(
+        problem: Problem
+    )
 
     fun failBuild(
         message: String
@@ -18,6 +24,10 @@ interface BuildFailer {
     )
 
     class RealFailer : BuildFailer {
+
+        override fun failBuild(problem: Problem) {
+            throw problem.asRuntimeException()
+        }
 
         override fun failBuild(message: String) {
             throw IllegalStateException(message)

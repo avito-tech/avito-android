@@ -10,8 +10,10 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":common:http-client"))
     implementation(project(":common:result"))
+    implementation(project(":common:problem"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:android"))
+    implementation(project(":gradle:worker"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:build-failer"))
     implementation(project(":gradle:gradle-extensions"))
@@ -27,6 +29,10 @@ dependencies {
 
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":common:test-okhttp"))
+}
+
+kotlin {
+    explicitApi()
 }
 
 gradlePlugin {
