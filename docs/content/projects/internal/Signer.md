@@ -84,13 +84,14 @@ It should be sent to service owners for investigation
 Example: 
 
 ```text
-Can't sign: /tmp/junit4486213684005116232/app/build/intermediates/apk/release/signApkViaServiceRelease/app-release.apk
+Can't sign: /tmp/junit7019843706336345100/app/build/intermediates/apk/release/signApkViaServiceRelease/app-release.apk
 Where : Signing artifact via service
 You can learn more about this problem at https://avito-tech.github.io/avito-android/projects/internal/Signer/#troubleshooting
-Cause exception message: Failed to sign /tmp/junit4486213684005116232/app/build/outputs/apk/release/app-release-unsigned.apk via service
-Request: POST http://localhost:50093/sign
+Cause exception message: Failed to sign /tmp/junit7019843706336345100/app/build/outputs/apk/release/app-release-unsigned.apk via service
+Request: POST http://localhost:54801/sign
+Request body size: 539997 bytes
 Response: 404
-Headers:
+Response headers:
 Content-Length: 0
-Body is empty  
+Response body is empty
 ```
