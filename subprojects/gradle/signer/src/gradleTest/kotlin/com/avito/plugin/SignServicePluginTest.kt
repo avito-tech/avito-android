@@ -62,7 +62,7 @@ internal class SignServicePluginTest {
     }
 
     @Test
-    fun `apk signing - fails - without required params, sign tasks in graph (on ci)`() {
+    fun `apk signing - fails - without required params, sign tasks in graph`() {
         generateTestProject()
 
         ciRun(
@@ -72,6 +72,16 @@ internal class SignServicePluginTest {
         ).assertThat()
             .buildFailed()
             .outputContains("Can't sign variant: 'release'; token is not set")
+    }
+
+    @Test
+    fun `apk signing - skipped - sign tasks in graph, variant not registered, no token`() {
+        generateTestProject()
+
+        ciRun(
+            testProjectDir,
+            ":app:signApkViaServiceDebug",
+        ).assertThat().buildSuccessful()
     }
 
     @Test
