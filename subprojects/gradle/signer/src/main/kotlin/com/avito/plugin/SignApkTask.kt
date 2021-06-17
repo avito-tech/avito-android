@@ -4,9 +4,13 @@ import com.avito.android.getApkOrThrow
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.workers.WorkerExecutor
 import java.io.File
+import javax.inject.Inject
 
-abstract class SignApkTask : SignArtifactTask() {
+abstract class SignApkTask @Inject constructor(
+    workerExecutor: WorkerExecutor
+) : SignArtifactTask(workerExecutor) {
 
     @get:InputDirectory
     abstract val unsignedDirProperty: DirectoryProperty

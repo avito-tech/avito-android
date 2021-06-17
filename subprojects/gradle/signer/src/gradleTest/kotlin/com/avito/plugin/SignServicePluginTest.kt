@@ -33,15 +33,13 @@ class SignServicePluginTest {
             signServiceExtension = configureExtension(url = "")
         )
 
-        val result = ciRun(
+        ciRun(
             testProjectDir,
             ":app:signApkViaServiceRelease",
             "-PsignToken=12345",
             dryRun = true,
             expectFailure = true
-        )
-
-        result.assertThat()
+        ).assertThat()
             .buildFailed()
             .outputContains("Invalid signer url value: ''")
     }
@@ -52,15 +50,13 @@ class SignServicePluginTest {
             signServiceExtension = configureExtension(url = "some_incorrect_url")
         )
 
-        val result = ciRun(
+        ciRun(
             testProjectDir,
             ":app:signApkViaServiceRelease",
             "-PsignToken=12345",
             dryRun = true,
             expectFailure = true
-        )
-
-        result.assertThat()
+        ).assertThat()
             .buildFailed()
             .outputContains("Invalid signer url value: 'some_incorrect_url'")
     }
@@ -69,13 +65,11 @@ class SignServicePluginTest {
     fun `apk signing - fails - without required params, sign tasks in graph (on ci)`() {
         generateTestProject()
 
-        val result = ciRun(
+        ciRun(
             testProjectDir,
             ":app:signApkViaServiceRelease",
             expectFailure = true
-        )
-
-        result.assertThat()
+        ).assertThat()
             .buildFailed()
             .outputContains("Can't sign variant: 'release'; token is not set")
     }
@@ -84,12 +78,10 @@ class SignServicePluginTest {
     fun `apk signing - skipped - without required params, sign task not called`() {
         generateTestProject()
 
-        val result = gradlew(
+        gradlew(
             testProjectDir,
             ":app:assembleRelease",
-        )
-
-        result.assertThat().buildSuccessful()
+        ).assertThat().buildSuccessful()
     }
 
     @Test
@@ -98,13 +90,11 @@ class SignServicePluginTest {
             signServiceExtension = configureExtension(enabled = false)
         )
 
-        val result = gradlew(
+        gradlew(
             testProjectDir,
             ":app:signApkViaServiceRelease",
             "-PsignToken=12345"
-        )
-
-        result.assertThat().buildSuccessful()
+        ).assertThat().buildSuccessful()
     }
 
     @Test
@@ -113,12 +103,10 @@ class SignServicePluginTest {
             signServiceExtension = configureExtension(enabled = false)
         )
 
-        val result = gradlew(
+        gradlew(
             testProjectDir,
             ":app:signApkViaServiceRelease",
-        )
-
-        result.assertThat().buildSuccessful()
+        ).assertThat().buildSuccessful()
     }
 
     /**
@@ -148,17 +136,17 @@ class SignServicePluginTest {
     fun `apk signing task - runs after packaging`() {
         generateTestProject()
 
-        val result = gradlew(
+        gradlew(
             testProjectDir,
             ":app:signApkViaServiceRelease",
             "-PsignToken=12345",
             dryRun = true
-        )
-
-        result.assertThat().tasksShouldBeTriggered(
-            ":app:packageRelease",
-            ":app:signApkViaServiceRelease"
-        ).inOrder()
+        ).assertThat()
+            .buildSuccessful()
+            .tasksShouldBeTriggered(
+                ":app:packageRelease",
+                ":app:signApkViaServiceRelease"
+            ).inOrder()
     }
 
     @Test
@@ -170,7 +158,7 @@ class SignServicePluginTest {
             testProjectDir,
             ":app:signApkViaServiceRelease",
             "-PsignToken=12345"
-        )
+        ).assertThat().buildSuccessful()
 
         val unsignedApk = File(testProjectDir, "app/build/outputs/apk/release/app-release-unsigned.apk")
         assertWithMessage("Preserve original unsigned APK").that(unsignedApk.exists()).isTrue()
@@ -190,7 +178,7 @@ class SignServicePluginTest {
             testProjectDir,
             ":app:signBundleViaServiceRelease",
             "-PsignToken=12345"
-        )
+        ).assertThat().buildSuccessful()
 
         // See explanation for this hack inside SignTask
         val resultArtifact = File(testProjectDir, "app/build/outputs/bundle/release/app-release.aab")
@@ -216,7 +204,9 @@ class SignServicePluginTest {
             .outputContains("Content-Length: 0")
     }
 
-    private fun generateTestProject(signServiceExtension: String = configureExtension()) {
+    private fun generateTestProject(
+        signServiceExtension: String = configureExtension(),
+    ) {
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
@@ -229,7 +219,7 @@ class SignServicePluginTest {
                     },
                     buildGradleExtra = signServiceExtension
                 )
-            )
+            ),
         ).generateIn(testProjectDir)
     }
 

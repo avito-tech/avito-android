@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":common:problem"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:android"))
+    implementation(project(":gradle:worker"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:build-failer"))
     implementation(project(":gradle:gradle-extensions"))

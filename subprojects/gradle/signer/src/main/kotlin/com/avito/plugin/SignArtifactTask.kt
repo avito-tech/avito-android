@@ -2,6 +2,7 @@ package com.avito.plugin
 
 import com.avito.android.Problem
 import com.avito.android.stats.statsd
+import com.avito.gradle.worker.inMemoryWork
 import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.logger.GradleLoggerFactory
@@ -15,11 +16,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.workers.WorkerExecutor
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 @Suppress("UnstableApiUsage", "LeakingThis")
-abstract class SignArtifactTask : DefaultTask() {
+abstract class SignArtifactTask constructor(
+    private val workerExecutor: WorkerExecutor
+) : DefaultTask() {
 
     @get:Input
     abstract val tokenProperty: Property<String>
@@ -71,30 +75,31 @@ abstract class SignArtifactTask : DefaultTask() {
 
         val logger = loggerFactory.create<SignArtifactTask>()
 
-        // TODO: Use workers
-        SignViaServiceAction(
-            serviceUrl = serviceUrl,
-            httpClient = httpClient,
-            token = tokenProperty.get(),
-            unsignedFile = unsignedFile,
-            signedFile = signedFile,
-        )
-            .sign()
-            .map { file ->
-                hackForArtifactsApi()
-                file
-            }
-            .fold(
-                { file -> logger.info("signed successfully: ${file.file.path}") },
-                { throwable ->
-                    buildFailer.failBuild(
-                        problem = describeSingingError(
-                            signedFile = signedFile(),
-                            throwable = throwable
-                        )
-                    )
-                }
+        workerExecutor.inMemoryWork {
+            SignViaServiceAction(
+                serviceUrl = serviceUrl,
+                httpClient = httpClient,
+                token = tokenProperty.get(),
+                unsignedFile = unsignedFile,
+                signedFile = signedFile,
             )
+                .sign()
+                .map { file ->
+                    hackForArtifactsApi()
+                    file
+                }
+                .fold(
+                    { file -> logger.info("signed successfully: ${file.file.path}") },
+                    { throwable ->
+                        buildFailer.failBuild(
+                            problem = describeSingingError(
+                                signedFile = signedFile(),
+                                throwable = throwable
+                            )
+                        )
+                    }
+                )
+        }
     }
 
     private fun describeSingingError(signedFile: File, throwable: Throwable): Problem {
