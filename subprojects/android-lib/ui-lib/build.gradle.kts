@@ -7,5 +7,4 @@ plugins {
 dependencies {
     api(libs.material)
     implementation(libs.androidAnnotations)
-    implementation(project(":android-lib:ui-lib"))
 }

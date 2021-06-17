@@ -100,6 +100,7 @@ include(":android-test:rx3-idler")
 
 include(":android-lib:proxy-toast")
 include(":android-lib:snackbar-proxy")
+include(":android-lib:ui-lib")
 
 include(":test-runner:test-report-artifacts")
 include(":test-runner:test-annotations")
