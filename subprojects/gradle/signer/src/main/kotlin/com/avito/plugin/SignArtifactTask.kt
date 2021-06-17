@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.android.Problem
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
@@ -66,24 +67,42 @@ abstract class SignArtifactTask : DefaultTask() {
             )
             .build()
 
+        val buildFailer = BuildFailer.RealFailer()
+
+        val logger = loggerFactory.create<SignArtifactTask>()
+
         // TODO: Use workers
-        val signResult = SignViaServiceAction(
+        SignViaServiceAction(
             serviceUrl = serviceUrl,
             httpClient = httpClient,
             token = tokenProperty.get(),
             unsignedFile = unsignedFile,
             signedFile = signedFile,
-        ).sign()
+        )
+            .sign()
+            .map { file ->
+                hackForArtifactsApi()
+                file
+            }
+            .fold(
+                { file -> logger.info("signed successfully: ${file.file.path}") },
+                { throwable ->
+                    buildFailer.failBuild(
+                        problem = describeSingingError(
+                            signedFile = signedFile(),
+                            throwable = throwable
+                        )
+                    )
+                }
+            )
+    }
 
-        hackForArtifactsApi()
-
-        val buildFailer = BuildFailer.RealFailer()
-
-        val logger = loggerFactory.create<SignArtifactTask>()
-
-        signResult.fold(
-            { logger.info("signed successfully: ${signedFile.path}") },
-            { buildFailer.failBuild("Can't sign: ${signedFile.path};", it) }
+    private fun describeSingingError(signedFile: File, throwable: Throwable): Problem {
+        return Problem(
+            shortDescription = "Can't sign: ${signedFile.path}",
+            context = "Signing artifact via service",
+            documentedAt = "https://avito-tech.github.io/avito-android/projects/internal/Signer/#troubleshooting",
+            throwable = throwable
         )
     }
 }

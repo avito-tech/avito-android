@@ -66,7 +66,9 @@ public data class Problem(
 public fun Problem.asPlainText(): String = buildString {
     appendLine(shortDescription)
     appendLine("Where : $context")
-    appendLine("Why? : ${because ?: "unknown"}")
+    if (!because.isNullOrBlank()) {
+        appendLine("Why? : $because")
+    }
     if (possibleSolutions.isNotEmpty()) {
         appendLine("Possible solutions:")
         possibleSolutions.forEach {

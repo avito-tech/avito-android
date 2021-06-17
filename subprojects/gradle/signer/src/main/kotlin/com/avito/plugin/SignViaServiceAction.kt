@@ -30,7 +30,11 @@ internal class SignViaServiceAction(
             .newCall(request)
             .execute()
 
-        writeResponse(response, outputFile = signedFile)
+        writeResponse(
+            request = request,
+            response = response,
+            outputFile = signedFile
+        )
 
         signedFile.toExisting()
     }
@@ -64,7 +68,7 @@ internal class SignViaServiceAction(
             .build()
     }
 
-    private fun writeResponse(response: Response, outputFile: File) {
+    private fun writeResponse(request: Request, response: Response, outputFile: File) {
         if (response.isSuccessful) {
             outputFile.createOrClear()
             response.body
@@ -75,11 +79,28 @@ internal class SignViaServiceAction(
                     }
                 }
         } else {
-            val stringBody = response.body
-                ?.string()
-                ?: "Cannot read the response body"
+            val stringBody = response.body?.string()
 
-            error("Failed to sign APK via service: code ${response.code}, body: $stringBody")
+            val errorMessage = buildString {
+                appendLine("Failed to sign $unsignedFile via service")
+                appendLine("Request: ${request.method} ${request.url}")
+                if (request.headers.size > 0) {
+                    appendLine("Request headers:")
+                    append(request.headers)
+                }
+                appendLine("Response: ${response.code}")
+                if (response.headers.size > 0) {
+                    appendLine("Response headers:")
+                    append(response.headers)
+                }
+                if (stringBody.isNullOrBlank()) {
+                    appendLine("Response body is empty")
+                } else {
+                    appendLine("Response body: $stringBody")
+                }
+            }
+
+            error(errorMessage)
         }
     }
 }

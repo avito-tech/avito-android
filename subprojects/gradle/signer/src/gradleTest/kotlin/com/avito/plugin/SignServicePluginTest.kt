@@ -198,6 +198,24 @@ class SignServicePluginTest {
         assertThat(resultArtifact.readText()).isEqualTo("SIGNED_CONTENT")
     }
 
+    @Test
+    fun `apk signing task - failed - service error`() {
+        generateTestProject()
+        mockWebServer.enqueue(MockResponse().setResponseCode(HttpCodes.NOT_FOUND))
+
+        gradlew(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            "-PsignToken=12345",
+            expectFailure = true
+        ).assertThat().buildFailed()
+            .outputContains("Can't sign")
+            .outputContains("404")
+            .outputContains("${mockWebServer.url("/sign")}")
+            .outputContains("Response body is empty")
+            .outputContains("Content-Length: 0")
+    }
+
     private fun generateTestProject(signServiceExtension: String = configureExtension()) {
         TestProjectGenerator(
             modules = listOf(

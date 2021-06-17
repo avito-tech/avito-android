@@ -70,3 +70,27 @@ Signer tasks dependency implicitly wired
 in [Artifacts collection steps of CiSteps plugin](../CiSteps/#collecting-artifacts)
 
 See: `com.avito.ci.steps.VerifyArtifactsStep`
+
+## Metrics ([Internal Grafana](http://links.k.avito.ru/AndroidExternalServicesGrafana))
+
+
+Signer service http calls data available under `<namespace>.signer.sign.*`.
+
+## Troubleshooting
+
+Network call data posted right into exception message that failing the build.  
+It should be sent to service owners for investigation
+
+Example: 
+
+```text
+Can't sign: /tmp/junit4486213684005116232/app/build/intermediates/apk/release/signApkViaServiceRelease/app-release.apk
+Where : Signing artifact via service
+You can learn more about this problem at https://avito-tech.github.io/avito-android/projects/internal/Signer/#troubleshooting
+Cause exception message: Failed to sign /tmp/junit4486213684005116232/app/build/outputs/apk/release/app-release-unsigned.apk via service
+Request: POST http://localhost:50093/sign
+Response: 404
+Headers:
+Content-Length: 0
+Body is empty  
+```
