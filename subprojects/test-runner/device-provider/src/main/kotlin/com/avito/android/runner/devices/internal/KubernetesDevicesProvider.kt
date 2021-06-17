@@ -9,7 +9,6 @@ import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.map
 
 internal class KubernetesDevicesProvider(
@@ -21,10 +20,9 @@ internal class KubernetesDevicesProvider(
 
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
-        testListener: TestListener,
-        scope: CoroutineScope
+        testListener: TestListener
     ): DeviceWorkerPool {
-        val claim = client.claim(reservations, scope)
+        val claim = client.claim(reservations)
         // TODO parallel device getting
         @Suppress("DEPRECATION")
         val devices = claim.deviceCoordinates.map { coordinate ->
@@ -40,10 +38,7 @@ internal class KubernetesDevicesProvider(
         return deviceWorkerPoolProvider.provide(devices, testListener)
     }
 
-    override suspend fun releaseDevice(
-        coordinate: DeviceCoordinate,
-        scope: CoroutineScope
-    ) {
+    override suspend fun releaseDevice(coordinate: DeviceCoordinate) {
         check(coordinate is DeviceCoordinate.Kubernetes)
         client.remove(coordinate.podName)
     }

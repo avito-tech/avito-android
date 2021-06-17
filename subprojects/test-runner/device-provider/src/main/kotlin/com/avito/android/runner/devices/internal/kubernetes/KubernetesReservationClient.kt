@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -30,7 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.cancellation.CancellationException
+import kotlin.coroutines.coroutineContext
 
 /**
  * You should know that canceling jobs manually or via throwing exception
@@ -56,38 +55,35 @@ internal class KubernetesReservationClient(
     private val lock = Mutex()
 
     override suspend fun claim(
-        reservations: Collection<ReservationData>,
-        scope: CoroutineScope
+        reservations: Collection<ReservationData>
     ): ReservationClient.ClaimResult {
         require(reservations.isNotEmpty()) {
             "Must have at least one reservation but empty"
         }
         return lock.withLock {
+            // TODO close serialsChannel
             val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
             if (state !is State.Idling) {
-                scope.cancel(
-                    CancellationException(
-                        "Unable claim reservation. State is already started",
-                        IllegalStateException()
-                    )
-                )
+                throw IllegalStateException("Unable claim reservation. State is already started")
             }
-            scope.launch(CoroutineName("main-reservation") + dispatcher) {
-                val podsChannel = Channel<Pod>(Channel.UNLIMITED)
-                val deploymentsChannel = Channel<String>(reservations.size)
-                state = State.Reserving(pods = podsChannel, deployments = deploymentsChannel)
+            with(CoroutineScope(coroutineContext + dispatcher)) {
+                launch(CoroutineName("main-reservation")) {
+                    val podsChannel = Channel<Pod>(Channel.UNLIMITED)
+                    val deploymentsChannel = Channel<String>(reservations.size)
+                    state = State.Reserving(pods = podsChannel, deployments = deploymentsChannel)
 
-                reservations.forEach { reservation ->
-                    launch(CoroutineName("create-deployment")) {
-                        createDeployment(
-                            reservation,
-                            deploymentsChannel,
-                            podsChannel,
-                            serialsChannel
-                        )
+                    reservations.forEach { reservation ->
+                        launch(CoroutineName("create-deployment")) {
+                            createDeployment(
+                                reservation,
+                                deploymentsChannel,
+                                podsChannel,
+                                serialsChannel
+                            )
+                        }
                     }
+                    initializeDevices(podsChannel, serialsChannel)
                 }
-                initializeDevices(podsChannel, serialsChannel)
             }
 
             ReservationClient.ClaimResult(

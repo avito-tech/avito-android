@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 internal class TestExecutionScheduler(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -23,50 +24,49 @@ internal class TestExecutionScheduler(
 
     private val states: MutableMap<TestCase, TestExecutionState> = mutableMapOf()
 
-    fun start(
-        requests: List<TestRunRequest>,
-        scope: CoroutineScope
-    ) {
-        scope.launch(dispatcher + CoroutineName("test-state-verdict")) {
-            for (result in intentionResults) {
-                val state = requireNotNull(states[result.intention.action.test]) {
-                    "Can't find state for $result"
-                }
-                when (val verdict = state.verdict(result.actionResult.testCaseRun)) {
-                    is TestExecutionState.Verdict.SendResult ->
-                        results.send(
-                            TestRunResult(
-                                request = state.request,
-                                result = verdict.results
+    suspend fun start(requests: List<TestRunRequest>) {
+        with(CoroutineScope(coroutineContext + dispatcher)) {
+            launch(CoroutineName("test-state-verdict")) {
+                for (result in intentionResults) {
+                    val state = requireNotNull(states[result.intention.action.test]) {
+                        "Can't find state for $result"
+                    }
+                    when (val verdict = state.verdict(result.actionResult.testCaseRun)) {
+                        is TestExecutionState.Verdict.SendResult ->
+                            results.send(
+                                TestRunResult(
+                                    request = state.request,
+                                    result = verdict.results
+                                )
                             )
-                        )
 
-                    is TestExecutionState.Verdict.Run ->
-                        verdict.intentions.forEach { intention ->
-                            intentions.send(intention)
-                        }
+                        is TestExecutionState.Verdict.Run ->
+                            verdict.intentions.forEach { intention ->
+                                intentions.send(intention)
+                            }
+                    }
                 }
             }
-        }
-        scope.launch(dispatcher + CoroutineName("test-state-verdict")) {
-            for (request in requests) {
-                val testState =
-                    TestExecutionStateImplementation(
-                        request = request,
-                        retryManager = SchedulingBasedRetryManager(
-                            scheduling = request.scheduling
+            launch(CoroutineName("test-state-verdict")) {
+                for (request in requests) {
+                    val testState =
+                        TestExecutionStateImplementation(
+                            request = request,
+                            retryManager = SchedulingBasedRetryManager(
+                                scheduling = request.scheduling
+                            )
                         )
-                    )
-                states[request.testCase] = testState
+                    states[request.testCase] = testState
 
-                when (val verdict = testState.verdict(incomingTestCaseRun = null)) {
-                    is TestExecutionState.Verdict.Run ->
-                        verdict.intentions.forEach { intention ->
-                            intentions.send(intention)
-                        }
+                    when (val verdict = testState.verdict(incomingTestCaseRun = null)) {
+                        is TestExecutionState.Verdict.Run ->
+                            verdict.intentions.forEach { intention ->
+                                intentions.send(intention)
+                            }
 
-                    is TestExecutionState.Verdict.SendResult ->
-                        throw IllegalStateException("Trying to send empty result")
+                        is TestExecutionState.Verdict.SendResult ->
+                            throw IllegalStateException("Trying to send empty result")
+                    }
                 }
             }
         }

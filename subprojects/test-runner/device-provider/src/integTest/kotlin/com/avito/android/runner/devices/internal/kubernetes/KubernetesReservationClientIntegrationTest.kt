@@ -43,8 +43,7 @@ internal class KubernetesReservationClientIntegrationTest {
                             device = CloudEmulator.createStubInstance(),
                             count = 1
                         )
-                    ),
-                    scope = this
+                    )
                 )
             }
         }
@@ -92,8 +91,7 @@ internal class KubernetesReservationClientIntegrationTest {
                                 device = CloudEmulator.createStubInstance(),
                                 count = 1
                             )
-                        ),
-                        scope = this
+                        )
                     )
                 },
                 {
@@ -104,8 +102,7 @@ internal class KubernetesReservationClientIntegrationTest {
                                 device = CloudEmulator.createStubInstance(),
                                 count = 1
                             )
-                        ),
-                        scope = this
+                        )
                     )
                 }
             )

@@ -12,8 +12,6 @@ import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
-import com.avito.runner.service.worker.device.Device.DeviceStatus.Alive
-import com.avito.runner.service.worker.device.Device.DeviceStatus.Freeze
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.time.TimeProvider
@@ -22,6 +20,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.coroutines.coroutineContext
 
 internal class DeviceWorker(
     private val intentionsRouter: IntentionsRouter,
@@ -37,63 +36,65 @@ internal class DeviceWorker(
 
     private val stateWorker: DeviceStateWorker = DeviceStateWorker(device)
 
-    fun run(scope: CoroutineScope) = scope.launch(dispatcher + CoroutineName("device-worker")) {
+    suspend fun run() = with(CoroutineScope(coroutineContext)) {
+        launch(dispatcher + CoroutineName("device-worker")) {
 
-        var state: State = when (val status = device.deviceStatus()) {
+            var state: State = when (val status = device.deviceStatus()) {
 
-            is Freeze -> {
-                deviceListener.onDeviceDied(
-                    device = device,
-                    message = "DeviceWorker died. Device status is `Freeze`",
-                    reason = status.reason
-                )
-                return@launch
+                is Device.DeviceStatus.Freeze -> {
+                    deviceListener.onDeviceDied(
+                        device = device,
+                        message = "DeviceWorker died. Device status is `Freeze`",
+                        reason = status.reason
+                    )
+                    return@launch
+                }
+
+                is Device.DeviceStatus.Alive -> device.state()
             }
 
-            is Alive -> device.state()
-        }
+            deviceListener.onDeviceCreated(device, state)
 
-        deviceListener.onDeviceCreated(device, state)
+            try {
 
-        try {
+                for (intention in intentionsRouter.observeIntentions(state)) {
 
-            for (intention in intentionsRouter.observeIntentions(state)) {
+                    deviceListener.onIntentionReceived(device, intention)
 
-                deviceListener.onIntentionReceived(device, intention)
+                    when (val status = device.deviceStatus()) {
 
-                when (val status = device.deviceStatus()) {
+                        is Device.DeviceStatus.Freeze -> {
+                            onDeviceDieWhenPrepareState(intention, status.reason)
+                            return@launch
+                        }
 
-                    is Freeze -> {
-                        onDeviceDieWhenPrepareState(intention, status.reason)
-                        return@launch
-                    }
-
-                    is Alive -> prepareDeviceState(
-                        currentState = state,
-                        intendedState = intention.state
-                    ).onFailure { reason ->
-                        onDeviceDieWhenPrepareState(intention, reason)
-                        return@launch
-                    }.onSuccess { newState ->
-                        state = newState
-                        deviceListener.onStatePrepared(device, newState)
-                        deviceListener.onTestStarted(device, intention)
-                        executeAction(action = intention.action)
-                            .onSuccess { result ->
-                                deviceListener.onTestCompleted(
-                                    device = device,
-                                    intention = intention,
-                                    result = result
-                                )
-                            }.onFailure { failure ->
-                                onDeviceDieWhenExecutingTest(intention, failure)
-                                return@launch
-                            }
+                        is Device.DeviceStatus.Alive -> prepareDeviceState(
+                            currentState = state,
+                            intendedState = intention.state
+                        ).onFailure { reason ->
+                            onDeviceDieWhenPrepareState(intention, reason)
+                            return@launch
+                        }.onSuccess { newState ->
+                            state = newState
+                            deviceListener.onStatePrepared(device, newState)
+                            deviceListener.onTestStarted(device, intention)
+                            executeAction(action = intention.action)
+                                .onSuccess { result ->
+                                    deviceListener.onTestCompleted(
+                                        device = device,
+                                        intention = intention,
+                                        result = result
+                                    )
+                                }.onFailure { failure ->
+                                    onDeviceDieWhenExecutingTest(intention, failure)
+                                    return@launch
+                                }
+                        }
                     }
                 }
+            } finally {
+                deviceListener.onFinished(device)
             }
-        } finally {
-            deviceListener.onFinished(device)
         }
     }
 
