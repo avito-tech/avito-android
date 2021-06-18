@@ -54,8 +54,8 @@ internal class LegacyWriteJUnitReportAction(
 
             testRunResult.reportedTests.forEach { test ->
                 append("<testcase ")
-                append("""classname="${test.className}" """)
-                append("""name="${test.methodName}" """)
+                append("""classname="${test.name.className}" """)
+                append("""name="${test.name.methodName}" """)
                 append("""caseId="${test.testCaseId}" """)
                 append("""time="${test.lastAttemptDurationInSeconds}"""")
                 appendLine(">")
@@ -82,13 +82,24 @@ internal class LegacyWriteJUnitReportAction(
                     is Status.Failure -> {
                         appendLine("<failure>")
                         appendEscapedLine((test.status as Status.Failure).verdict)
-                        appendLine(reportLinkGenerator.generateTestLink(TestName(test.className, test.methodName)))
+                        appendLine(
+                            reportLinkGenerator.generateTestLink(
+                                TestName(test.name.className, test.name.methodName)
+                            )
+                        )
                         appendLine("</failure>")
                     }
                     is Status.Lost -> {
                         appendLine("<error>")
                         appendLine("LOST (no info in report)")
-                        appendLine(reportLinkGenerator.generateTestLink(TestName(test.className, test.methodName)))
+                        appendLine(
+                            reportLinkGenerator.generateTestLink(
+                                TestName(
+                                    test.name.className,
+                                    test.name.methodName
+                                )
+                            )
+                        )
                         appendLine("</error>")
                     }
                     Status.Success -> { /* do nothing */

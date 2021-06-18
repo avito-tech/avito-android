@@ -123,7 +123,7 @@ internal class ReportsFetchApiImpl(
                     else ->
                         CrossDeviceStatus.Inconsistent
                 }
-                CrossDeviceRunTest(TestName(testName), status)
+                CrossDeviceRunTest(testName, status)
             }
             .let { CrossDeviceSuite(it) }
     }
@@ -136,17 +136,15 @@ internal class ReportsFetchApiImpl(
                     params = mapOf("run_id" to reportId)
                 )
             ).result?.map { listResult ->
-                val testName = "${listResult.className}.${listResult.methodName}"
+                val testName = TestName(listResult.className, listResult.methodName)
                 SimpleRunTest(
                     id = listResult.id,
                     reportId = reportId,
-                    name = testName,
                     deviceName = requireNotNull(listResult.environment) {
                         "deviceName(environment) is null for test $testName, that's illegal!"
                     },
                     testCaseId = getTestCaseId(listResult),
-                    className = listResult.className,
-                    methodName = listResult.methodName,
+                    name = testName,
                     status = deserializeStatus(listResult),
                     stability = determineStability(listResult),
                     groupList = listResult.groupList ?: emptyList(),

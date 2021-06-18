@@ -2,7 +2,7 @@ package com.avito.report.model
 
 public fun TestStaticDataPackage.Companion.fromSimpleRunTest(simpleRunTest: SimpleRunTest): TestStaticDataPackage =
     TestStaticDataPackage(
-        name = TestName(simpleRunTest.name),
+        name = simpleRunTest.name,
         device = DeviceName(simpleRunTest.deviceName),
         description = simpleRunTest.description,
         testCaseId = simpleRunTest.testCaseId,

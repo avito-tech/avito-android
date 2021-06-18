@@ -36,12 +36,12 @@ internal class VerdictDeterminerImplTest {
         val verdictDeterminer = createVerdictDeterminer()
 
         val lostTest = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
         val executedTest = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test2.test"),
+            name = TestName("com.test.Test2", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
@@ -69,7 +69,7 @@ internal class VerdictDeterminerImplTest {
 
         val extraTest = createTestExecution(
             TestStaticDataPackage.createStubInstance(
-                name = TestName("com.test.Test2.test"),
+                name = TestName("com.test.Test2", "test"),
                 deviceName = DeviceName("DEVICE")
             )
         )
@@ -77,14 +77,14 @@ internal class VerdictDeterminerImplTest {
         val verdict = verdictDeterminer.determine(
             initialTestSuite = setOf(
                 TestStaticDataPackage.createStubInstance(
-                    name = TestName("com.test.Test1.test"),
+                    name = TestName("com.test.Test1", "test"),
                     deviceName = DeviceName("DEVICE")
                 )
             ),
             testResults = listOf(
                 createTestExecution(
                     TestStaticDataPackage.createStubInstance(
-                        name = TestName("com.test.Test1.test"),
+                        name = TestName("com.test.Test1", "test"),
                         deviceName = DeviceName("DEVICE")
                     )
                 ),
@@ -100,7 +100,7 @@ internal class VerdictDeterminerImplTest {
         val verdictDeterminer = createVerdictDeterminer()
 
         val test = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
@@ -122,7 +122,7 @@ internal class VerdictDeterminerImplTest {
         )
 
         val test = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
@@ -146,7 +146,7 @@ internal class VerdictDeterminerImplTest {
         )
 
         val test = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
@@ -168,7 +168,7 @@ internal class VerdictDeterminerImplTest {
         )
 
         val test = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE"),
             flakiness = Flakiness.Flaky("flaky")
         )
@@ -191,7 +191,7 @@ internal class VerdictDeterminerImplTest {
         )
 
         val test = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE"),
             flakiness = Flakiness.Stable
         )
@@ -213,7 +213,7 @@ internal class VerdictDeterminerImplTest {
         val verdictDeterminer = createVerdictDeterminer()
 
         val test = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
@@ -234,12 +234,12 @@ internal class VerdictDeterminerImplTest {
         val verdictDeterminer = createVerdictDeterminer(suppressFailure = true)
 
         val lostTest = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
         val failedTest = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test2.test"),
+            name = TestName("com.test.Test2", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
@@ -266,12 +266,12 @@ internal class VerdictDeterminerImplTest {
         val verdictDeterminer = createVerdictDeterminer(suppressFailure = false)
 
         val lostTest = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test1.test"),
+            name = TestName("com.test.Test1", "test"),
             deviceName = DeviceName("DEVICE")
         )
 
         val failedTest = TestStaticDataPackage.createStubInstance(
-            name = TestName("com.test.Test2.test"),
+            name = TestName("com.test.Test2", "test"),
             deviceName = DeviceName("DEVICE")
         )
 

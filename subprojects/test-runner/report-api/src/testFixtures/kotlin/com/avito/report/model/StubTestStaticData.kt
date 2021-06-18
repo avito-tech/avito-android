@@ -4,7 +4,7 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 
 public fun TestStaticDataPackage.Companion.createStubInstance(
-    name: TestName = TestName("com.avito.Test.test"),
+    name: TestName = TestName("com.avito.Test", "test"),
     deviceName: DeviceName = DeviceName("api22"),
     description: String = "just a test",
     testCaseId: Int? = null,

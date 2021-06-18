@@ -6,7 +6,7 @@ import com.avito.android.test.annotations.TestCasePriority
 public fun SimpleRunTest.Companion.createStubInstance(
     id: String = "1234",
     reportId: String = "12345",
-    name: String = "com.Test.test",
+    name: TestName = TestName("com.Test", "test"),
     testCaseId: Int? = null,
     deviceName: String = "api22",
     tcBuild: String = "12345",
@@ -32,8 +32,6 @@ public fun SimpleRunTest.Companion.createStubInstance(
     id = id,
     reportId = reportId,
     name = name,
-    className = name.substringBeforeLast('.'),
-    methodName = name.substringAfterLast('.'),
     testCaseId = testCaseId,
     deviceName = deviceName,
     groupList = groupList,

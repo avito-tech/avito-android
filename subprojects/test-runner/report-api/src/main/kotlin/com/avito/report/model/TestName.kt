@@ -6,11 +6,6 @@ public data class TestName(val className: String, val methodName: String) {
 
     val name: String = "$className.$methodName"
 
-    public constructor(name: String) : this(
-        className = name.substringBeforeLast(delimiter),
-        methodName = name.substringAfterLast(delimiter)
-    )
-
     override fun toString(): String = name
 
     public companion object {

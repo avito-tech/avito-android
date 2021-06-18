@@ -22,17 +22,5 @@ public val TestName.team: Team
         else -> Team.UNDEFINED
     }
 
-// todo убрать определение features из пакета, будут явно указаны в аннотации к тесту
-public val TestName.features: List<String>
-    get() = when {
-        packageName.startsWith(domofondPrefix) ->
-            packageName.substringAfter("$domofondPrefix.")
-                .split(delimiter)
-        packageName.startsWith(avitoPrefix) -> packageName.substringAfter("$avitoPrefix.")
-            .split(delimiter)
-            .drop(1) // unit
-        else -> emptyList()
-    }
-
 private const val avitoPrefix = "com.avito.android.test"
 private const val domofondPrefix = "ru.domofond.test"

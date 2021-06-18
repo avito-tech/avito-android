@@ -1,6 +1,6 @@
 package com.avito.report.model
 
 public fun CrossDeviceRunTest.Companion.createStubInstance(
-    name: TestName = TestName("com.test.Test.test"),
+    name: TestName = TestName("com.test.Test", "test"),
     status: CrossDeviceStatus = CrossDeviceStatus.Success
-) = CrossDeviceRunTest(name, status)
+): CrossDeviceRunTest = CrossDeviceRunTest(name, status)

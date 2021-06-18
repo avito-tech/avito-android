@@ -20,9 +20,7 @@ import com.avito.android.test.annotations.TestCasePriority
 public data class SimpleRunTest(
     val id: String,
     val reportId: String,
-    val name: String,
-    val className: String,
-    val methodName: String,
+    val name: TestName,
     val testCaseId: Int?,
     val deviceName: String,
     val status: Status,
@@ -46,7 +44,7 @@ public data class SimpleRunTest(
     val flakiness: Flakiness
 ) {
 
-    override fun toString(): String = name
+    override fun toString(): String = "$name#$deviceName"
 
     public companion object
 }

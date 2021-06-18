@@ -28,7 +28,8 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
 )
 
 public fun AndroidTest.Lost.Companion.createStubInstance(
-    name: String = "com.avito.Test.test",
+    className: String = "com.avito.Test",
+    methodName: String = "test",
     deviceName: String = "api22",
     description: String = "just a test",
     startTime: Long = 0,
@@ -46,7 +47,7 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
     incident: Incident? = null
 ): AndroidTest.Lost = fromTestStaticData(
     TestStaticDataPackage(
-        name = TestName(name),
+        name = TestName(className, methodName),
         device = DeviceName(deviceName),
         description = description,
         testCaseId = testCaseId,
@@ -66,7 +67,8 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
 )
 
 public fun AndroidTest.Skipped.Companion.createStubInstance(
-    name: String = "com.avito.Test.test",
+    className: String = "com.avito.Test",
+    methodName: String = "test",
     deviceName: String = "api22",
     description: String = "just a test",
     reportTime: Long = 0,
@@ -82,7 +84,7 @@ public fun AndroidTest.Skipped.Companion.createStubInstance(
     skipReason: String = "просто потомучто"
 ): AndroidTest.Skipped = fromTestMetadata(
     TestStaticDataPackage(
-        name = TestName(name),
+        name = TestName(className, methodName),
         device = DeviceName(deviceName),
         description = description,
         testCaseId = testCaseId,

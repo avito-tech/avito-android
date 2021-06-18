@@ -4,6 +4,7 @@ import com.avito.android.Result
 import com.avito.android.runner.report.StubReport
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
+import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.InstrumentationFilterData.FromRunHistory.ReportFilter
@@ -180,12 +181,12 @@ internal class FilterFactoryImplTest {
         report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
-                    name = "test1",
+                    name = TestName("", "test1"),
                     deviceName = "25",
                     status = Status.Success
                 ),
                 SimpleRunTest.createStubInstance(
-                    name = "test2",
+                    name = TestName("", "test2"),
                     deviceName = "25",
                     status = Status.Lost
                 )

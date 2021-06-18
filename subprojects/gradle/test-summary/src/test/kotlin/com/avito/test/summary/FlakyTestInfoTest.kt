@@ -17,7 +17,6 @@ internal class FlakyTestInfoTest {
             report = Result.Success(
                 listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.avito.Test.test",
                         stability = Stability.Flaky(attemptsCount = 3, successCount = 1),
                         lastAttemptDurationInSeconds = 22
                     )
@@ -29,7 +28,6 @@ internal class FlakyTestInfoTest {
             report = Result.Success(
                 listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.avito.Test.test",
                         stability = Stability.Flaky(attemptsCount = 2, successCount = 1),
                         lastAttemptDurationInSeconds = 10
                     )
