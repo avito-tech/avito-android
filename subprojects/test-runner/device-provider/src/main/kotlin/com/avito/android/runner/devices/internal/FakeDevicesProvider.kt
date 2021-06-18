@@ -17,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import kotlin.coroutines.coroutineContext
 
 internal class FakeDevicesProvider(
     private val loggerFactory: LoggerFactory,
@@ -27,31 +28,32 @@ internal class FakeDevicesProvider(
     @ExperimentalCoroutinesApi
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
-        testListener: TestListener,
-        scope: CoroutineScope
+        testListener: TestListener
     ): DeviceWorkerPool {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
-        scope.launch {
-            reservations.forEach { reservation ->
-                check(reservation.device is com.avito.instrumentation.reservation.request.Device.MockEmulator) {
-                    "Non-mock emulator ${reservation.device} is unsupported in mock reservation"
+        with(CoroutineScope(coroutineContext)) {
+            launch {
+                reservations.forEach { reservation ->
+                    check(reservation.device is com.avito.instrumentation.reservation.request.Device.MockEmulator) {
+                        "Non-mock emulator ${reservation.device} is unsupported in mock reservation"
+                    }
+                    do {
+                        val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
+                        val acquiredDevice = successfulStubDevice(
+                            model = reservation.device.model,
+                            api = reservation.device.api,
+                            loggerFactory = loggerFactory
+                        )
+                        devices.send(acquiredDevice)
+                        acquiredCoordinates.add(acquiredDevice.coordinate)
+                    } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
                 }
-                do {
-                    val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
-                    val acquiredDevice = successfulStubDevice(
-                        model = reservation.device.model,
-                        api = reservation.device.api,
-                        loggerFactory = loggerFactory
-                    )
-                    devices.send(acquiredDevice)
-                    acquiredCoordinates.add(acquiredDevice.coordinate)
-                } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
             }
         }
         return deviceWorkerPoolProvider.provide(devices, testListener)
     }
 
-    override suspend fun releaseDevice(coordinate: DeviceCoordinate, scope: CoroutineScope) {
+    override suspend fun releaseDevice(coordinate: DeviceCoordinate) {
         // empty
     }
 
