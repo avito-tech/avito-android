@@ -13,14 +13,16 @@ import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
 import com.avito.instrumentation.configuration.ReportViewer
 import com.avito.instrumentation.internal.GetTestResultsAction
-import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.RunnerInputTester
 import com.avito.logger.GradleLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
-import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.utils.BuildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -153,7 +155,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
         val experiments = experiments.get()
 
-        val testRunParams = InstrumentationTestsActionParams(
+        val testRunParams = RunnerInputParams(
             mainApk = application.orNull?.getApk(),
             testApk = testApplication.get().getApkOrThrow(),
             instrumentationConfiguration = configuration,
@@ -193,9 +195,23 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             )
         } else {
             workerExecutor.inMemoryWork {
-                InstrumentationTestsAction(testRunParams).run()
+                when (
+                    val result = TestSchedulerFactoryProvider()
+                        .provide(testRunParams)
+                        .create()
+                        .schedule()
+                ) {
+                    TestSchedulerResult.Ok -> {
+                        // do nothing
+                    }
+                    is TestSchedulerResult.Failure -> createBuildFailer().failBuild(result.message)
+                }
             }
         }
+    }
+
+    private fun createBuildFailer(): BuildFailer {
+        return BuildFailer.RealFailer()
     }
 
     /**

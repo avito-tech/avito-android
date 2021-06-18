@@ -9,7 +9,7 @@ import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
 import java.io.Serializable
 
-public data class InstrumentationTestsActionParams(
+public data class RunnerInputParams(
     val mainApk: File?,
     val testApk: File,
     val instrumentationConfiguration: InstrumentationConfigurationData,

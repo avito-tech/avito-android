@@ -12,7 +12,7 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
 @OptIn(ExperimentalPathApi::class)
-public fun InstrumentationTestsActionParams.Companion.createStubInstance(
+public fun RunnerInputParams.Companion.createStubInstance(
     mainApk: File = File(""),
     testApk: File = File(""),
     instrumentationConfiguration: InstrumentationConfigurationData =
@@ -38,7 +38,7 @@ public fun InstrumentationTestsActionParams.Companion.createStubInstance(
     uploadTestArtifacts: Boolean = false,
     fetchLogcatForIncompleteTests: Boolean = false,
     saveTestArtifactsToOutputs: Boolean = false,
-): InstrumentationTestsActionParams = InstrumentationTestsActionParams(
+): RunnerInputParams = RunnerInputParams(
     mainApk = mainApk,
     testApk = testApk,
     instrumentationConfiguration = instrumentationConfiguration,
