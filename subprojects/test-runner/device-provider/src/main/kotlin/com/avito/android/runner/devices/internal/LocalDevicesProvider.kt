@@ -12,6 +12,7 @@ import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +28,7 @@ internal class LocalDevicesProvider(
     private val adbDeviceFactory: AdbDeviceFactory,
     private val devicesManager: DevicesManager,
     private val deviceWorkerPoolProvider: DeviceWorkerPoolProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     loggerFactory: LoggerFactory,
 ) : DevicesProvider {
 
@@ -42,7 +44,7 @@ internal class LocalDevicesProvider(
         testListener: TestListener,
     ): DeviceWorkerPool {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
-        with(CoroutineScope(Dispatchers.IO)) {
+        with(CoroutineScope(dispatcher)) {
             launch {
                 reservations.forEach { reservation ->
                     check(reservation.device is com.avito.instrumentation.reservation.request.Device.LocalEmulator) {
