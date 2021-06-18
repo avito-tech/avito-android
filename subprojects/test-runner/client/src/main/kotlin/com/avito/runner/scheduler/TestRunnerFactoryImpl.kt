@@ -8,7 +8,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.report.model.TestStaticData
 import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer
-import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.listener.ArtifactsTestListener
 import com.avito.runner.scheduler.listener.AvitoFileStorageUploader
@@ -50,7 +50,7 @@ internal class TestRunnerFactoryImpl(
     private val testRunnerRequestFactory: TestRunRequestFactory,
     private val executionState: TestRunnerExecutionState,
     private val httpClientProvider: HttpClientProvider,
-    private val params: InstrumentationTestsActionParams,
+    private val params: RunnerInputParams,
     private val tempLogcatDir: File,
     private val metricsSender: InstrumentationMetricsSender,
     private val report: Report

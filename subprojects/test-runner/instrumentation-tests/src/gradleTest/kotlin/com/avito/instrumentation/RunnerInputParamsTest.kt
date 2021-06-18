@@ -4,8 +4,8 @@ import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.internal.RunnerInputTester
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.report.model.RunId
-import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.config.Reservation
+import com.avito.runner.config.RunnerInputParams
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.git
@@ -133,7 +133,7 @@ internal class RunnerInputParamsTest {
 
         buildResult.assertThat().buildSuccessful()
 
-        val runnerInput: InstrumentationTestsActionParams = RunnerInputTester.readInput(projectDir)
+        val runnerInput: RunnerInputParams = RunnerInputTester.readInput(projectDir)
 
         return cases(projectDir, commit, runnerInput, "kts")
     }
@@ -237,7 +237,7 @@ internal class RunnerInputParamsTest {
 
         buildResult.assertThat().buildSuccessful()
 
-        val runnerInput: InstrumentationTestsActionParams = RunnerInputTester.readInput(projectDir)
+        val runnerInput: RunnerInputParams = RunnerInputTester.readInput(projectDir)
 
         return cases(projectDir, commit, runnerInput, "groovy")
     }
@@ -245,7 +245,7 @@ internal class RunnerInputParamsTest {
     private fun cases(
         projectDir: File,
         commit: String,
-        runnerInput: InstrumentationTestsActionParams,
+        runnerInput: RunnerInputParams,
         lang: String,
     ): List<DynamicTest> {
 
@@ -496,6 +496,6 @@ internal class RunnerInputParamsTest {
 
     private data class Case(
         val name: String,
-        val assertion: (InstrumentationTestsActionParams) -> Unit
+        val assertion: (RunnerInputParams) -> Unit
     )
 }

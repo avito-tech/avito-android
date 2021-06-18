@@ -4,7 +4,7 @@ import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
-import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
 import com.avito.runner.scheduler.metrics.TestMetricsListenerImpl
 import com.avito.runner.scheduler.metrics.TestMetricsSender
@@ -18,7 +18,7 @@ import java.io.File
 import java.nio.file.Files
 
 public class TestRunnerFactoryProvider(
-    private val params: InstrumentationTestsActionParams,
+    private val params: RunnerInputParams,
     private val timeProvider: TimeProvider,
     private val httpClientProvider: HttpClientProvider,
     private val report: Report,

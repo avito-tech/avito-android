@@ -2,46 +2,39 @@ package com.avito.runner.scheduler.runner.scheduler
 
 import com.avito.android.TestSuiteLoader
 import com.avito.android.runner.report.Report
-import com.avito.android.runner.report.ReportFactory
-import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.logger.LoggerFactory
+import com.avito.runner.config.InstrumentationFilterData
+import com.avito.runner.finalizer.FinalizerFactory
 import com.avito.runner.scheduler.TestRunnerFactoryProvider
 import com.avito.runner.scheduler.suite.TestSuiteProvider
-import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
+import java.io.File
 
-public class TestSchedulerFactoryImpl(
-    private val params: InstrumentationTestsActionParams,
+internal class TestSchedulerFactoryImpl(
+    private val finalizerFactory: FinalizerFactory,
     private val report: Report,
-    private val testSuiteLoader: TestSuiteLoader,
-    private val reportFactory: ReportFactory,
+    private val testSuiteProvider: TestSuiteProvider,
     private val testRunnerFactoryProvider: TestRunnerFactoryProvider,
+    private val testSuiteLoader: TestSuiteLoader,
+    private val loggerFactory: LoggerFactory,
+    private val fileInfoWriter: FilterInfoWriter,
+    private val filter: InstrumentationFilterData,
+    private val testApk: File,
+    private val outputDir: File,
 ) : TestSchedulerFactory {
 
     override fun create(): TestScheduler {
-        val testSuiteProvider: TestSuiteProvider = createTestSuiteProvider()
-
         return TestSchedulerImpl(
-            params = params,
             report = report,
             testSuiteProvider = testSuiteProvider,
             testSuiteLoader = testSuiteLoader,
-            filterInfoWriter = FilterInfoWriter.Impl(
-                outputDir = params.outputDir,
-            ),
-            loggerFactory = params.loggerFactory,
+            filterInfoWriter = fileInfoWriter,
+            loggerFactory = loggerFactory,
             testRunnerFactory = testRunnerFactoryProvider.provide(),
+            finalizer = finalizerFactory.create(),
+            filter = filter,
+            testApk = testApk,
+            outputDir = outputDir,
         )
     }
-
-    private fun createTestSuiteProvider(): TestSuiteProvider = TestSuiteProvider.Impl(
-        report = report,
-        targets = params.instrumentationConfiguration.targets,
-        reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
-        filterFactory = FilterFactory.create(
-            filterData = params.instrumentationConfiguration.filter,
-            impactAnalysisResult = params.impactAnalysisResult,
-            reportFactory = reportFactory,
-            loggerFactory = params.loggerFactory
-        )
-    )
 }
