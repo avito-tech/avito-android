@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":gradle:lint-report"))
     implementation(project(":gradle:prosector"))
     implementation(project(":gradle:qapps"))
-    implementation(project(":gradle:signer"))
+    implementation(project(":signer"))
     implementation(project(":gradle:slack"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:test-summary"))

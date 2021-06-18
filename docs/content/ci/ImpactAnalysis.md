@@ -20,5 +20,5 @@ AppY:::changed --> FeatureD:::changed
 classDef changed fill:#f96;
 ```
 
-These optimizations are supported in [CI Steps Plugin](../projects/CiSteps.md).  
+These optimizations are supported in [CI Steps Plugin](../projects/internal/CiSteps.md).  
 See implementation in `impact` module.
