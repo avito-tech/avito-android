@@ -2,7 +2,6 @@ package com.avito.android.runner.devices.internal
 
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.runner.service.worker.device.DeviceCoordinate
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 
 internal interface ReservationClient {
@@ -11,10 +10,7 @@ internal interface ReservationClient {
         val deviceCoordinates: ReceiveChannel<DeviceCoordinate>
     )
 
-    suspend fun claim(
-        reservations: Collection<ReservationData>,
-        scope: CoroutineScope
-    ): ClaimResult
+    suspend fun claim(reservations: Collection<ReservationData>): ClaimResult
 
     suspend fun remove(
         podName: String

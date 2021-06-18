@@ -92,7 +92,7 @@ class DeviceWorkerPoolTest {
             )
 
             devices.send(successfulDevice)
-            pool.start(this)
+            pool.start()
             intentions.forEach {
                 intentionsChannel.send(it)
             }
@@ -120,7 +120,7 @@ class DeviceWorkerPoolTest {
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val pool = provideDeviceWorkerPool(devices = devices)
-            pool.start(this)
+            pool.start()
 
             val compatibleWithDeviceState = State(
                 layers = listOf(

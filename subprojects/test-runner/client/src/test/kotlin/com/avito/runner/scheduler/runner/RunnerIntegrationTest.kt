@@ -38,7 +38,6 @@ import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installA
 import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -663,7 +662,7 @@ internal class RunnerIntegrationTest {
             loggerFactory = loggerFactory,
             state = state,
             reservationWatcher = object : DeviceReservationWatcher {
-                override fun watch(deviceSignals: ReceiveChannel<Signal>, scope: CoroutineScope) {
+                override suspend fun watch(deviceSignals: ReceiveChannel<Signal>) {
                     // empty
                 }
             },

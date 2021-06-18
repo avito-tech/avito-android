@@ -8,7 +8,6 @@ import com.avito.android.runner.devices.model.ReservationData
 import com.avito.android.runner.devices.model.stub
 import com.avito.logger.StubLoggerFactory
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -53,7 +52,7 @@ internal class KubernetesReservationClientTest {
         val client = client()
         val exception = assertThrows<IllegalArgumentException> {
             runBlockingTest {
-                client.claim(emptyList(), this)
+                client.claim(emptyList())
             }
         }
         assertThat(exception.message)
@@ -67,7 +66,7 @@ internal class KubernetesReservationClientTest {
         kubernetesApi.createDeployment = { throw RuntimeException(message) }
         val exception = assertThrows<RuntimeException>(message = message) {
             runBlockingTest {
-                client.claim(listOf(ReservationData.stub()), this)
+                client.claim(listOf(ReservationData.stub()))
             }
         }
         assertThat(exception.message)
@@ -93,8 +92,7 @@ internal class KubernetesReservationClientTest {
                     listOf(
                         ReservationData.stub(),
                         ReservationData.stub()
-                    ),
-                    this
+                    )
                 )
             }
         }
@@ -105,12 +103,12 @@ internal class KubernetesReservationClientTest {
     @Test
     fun `claim twice - throws exception`() {
         val client = client()
-        val exception = assertThrows<CancellationException> {
+        val exception = assertThrows<IllegalStateException> {
             runBlockingTest {
                 // first
-                client.claim(listOf(ReservationData.stub()), this)
+                client.claim(listOf(ReservationData.stub()))
                 // second
-                client.claim(listOf(ReservationData.stub()), this)
+                client.claim(listOf(ReservationData.stub()))
             }
         }
         assertThat(exception.message)
@@ -131,7 +129,7 @@ internal class KubernetesReservationClientTest {
             results.poll()
         }
         runBlockingTest {
-            client.claim(listOf(ReservationData.stub()), this)
+            client.claim(listOf(ReservationData.stub()))
         }
     }
 
@@ -143,7 +141,7 @@ internal class KubernetesReservationClientTest {
             Result.Success(listOf(StubPod()))
         }
         runBlocking {
-            val result = client.claim(listOf(ReservationData.stub()), this)
+            val result = client.claim(listOf(ReservationData.stub()))
             result.deviceCoordinates.cancel()
         }
     }
@@ -157,7 +155,7 @@ internal class KubernetesReservationClientTest {
             Result.Success(listOf(StubPod()))
         }
         runBlocking {
-            client.claim(listOf(ReservationData.stub()), this)
+            client.claim(listOf(ReservationData.stub()))
             delay(100) // wait inner parts of `claim` fun
             client.release()
         }
@@ -178,7 +176,7 @@ internal class KubernetesReservationClientTest {
         val client = client(dispatcher = Dispatchers.Default)
         val exception = assertThrows<RuntimeException> {
             runBlocking {
-                client.claim(listOf(ReservationData.stub()), this)
+                client.claim(listOf(ReservationData.stub()))
             }
         }
         assertThat(exception.message)

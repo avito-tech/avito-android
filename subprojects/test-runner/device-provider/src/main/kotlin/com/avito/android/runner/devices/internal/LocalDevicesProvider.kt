@@ -12,6 +12,7 @@ import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +28,7 @@ internal class LocalDevicesProvider(
     private val adbDeviceFactory: AdbDeviceFactory,
     private val devicesManager: DevicesManager,
     private val deviceWorkerPoolProvider: DeviceWorkerPoolProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     loggerFactory: LoggerFactory,
 ) : DevicesProvider {
 
@@ -40,46 +42,43 @@ internal class LocalDevicesProvider(
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
         testListener: TestListener,
-        scope: CoroutineScope
     ): DeviceWorkerPool {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
-        scope.launch(Dispatchers.IO) {
-            reservations.forEach { reservation ->
-                check(reservation.device is com.avito.instrumentation.reservation.request.Device.LocalEmulator) {
-                    "Non-local emulator ${reservation.device} is unsupported in local reservation"
-                }
-                launch {
-                    do {
-                        val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
-                        val adbDevices = findDevices(reservation, acquiredCoordinates)
+        with(CoroutineScope(dispatcher)) {
+            launch {
+                reservations.forEach { reservation ->
+                    check(reservation.device is com.avito.instrumentation.reservation.request.Device.LocalEmulator) {
+                        "Non-local emulator ${reservation.device} is unsupported in local reservation"
+                    }
+                    launch {
+                        do {
+                            val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
+                            val adbDevices = findDevices(reservation, acquiredCoordinates)
 
-                        logger.debug("Found local devices: $adbDevices")
+                            logger.debug("Found local devices: $adbDevices")
 
-                        adbDevices.forEach { device ->
-                            val coordinate = device.coordinate
-                            check(coordinate is DeviceCoordinate.Local)
-                            emulatorsLogsReporter.redirectLogcat(
-                                emulatorName = coordinate.serial,
-                                device = androidDebugBridge.getLocalDevice(coordinate.serial)
-                            )
-                            devices.send(device)
-                            acquiredCoordinates.add(coordinate)
-                        }
-                        delay(adbQueryIntervalMs)
-                    } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
+                            adbDevices.forEach { device ->
+                                val coordinate = device.coordinate
+                                check(coordinate is DeviceCoordinate.Local)
+                                emulatorsLogsReporter.redirectLogcat(
+                                    emulatorName = coordinate.serial,
+                                    device = androidDebugBridge.getLocalDevice(coordinate.serial)
+                                )
+                                devices.send(device)
+                                acquiredCoordinates.add(coordinate)
+                            }
+                            delay(adbQueryIntervalMs)
+                        } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
+                    }
                 }
             }
         }
-        // todo use flow
         @Suppress("DEPRECATION")
         val devices = devices.distinctBy { it.coordinate }.take(devicesRequired)
         return deviceWorkerPoolProvider.provide(devices, testListener)
     }
 
-    override suspend fun releaseDevice(
-        coordinate: DeviceCoordinate,
-        scope: CoroutineScope
-    ) {
+    override suspend fun releaseDevice(coordinate: DeviceCoordinate) {
         // empty
     }
 

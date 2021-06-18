@@ -45,14 +45,12 @@ internal class TestRunnerImpl(
             val deviceWorkerPool: DeviceWorkerPool = devicesProvider.provideFor(
                 reservations = getReservations(tests),
                 testListener = testListenerProvider(testStaticDataByTestCase(tests)),
-                scope = this
             )
             try {
-                deviceWorkerPool.start(this)
-                reservationWatcher.watch(state.deviceSignals, this)
+                deviceWorkerPool.start()
+                reservationWatcher.watch(state.deviceSignals)
                 scheduler.start(
                     requests = getTestRequests(tests),
-                    scope = this
                 )
 
                 val expectedResultsCount = tests.count()

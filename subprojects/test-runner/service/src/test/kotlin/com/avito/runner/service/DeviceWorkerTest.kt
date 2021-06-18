@@ -104,7 +104,7 @@ class DeviceWorkerTest {
                 device = successfulDevice,
                 router = router,
                 deviceListener = MessagesDeviceListener(resultsChannel)
-            ).run(this)
+            ).run()
 
             router.cancel()
             worker.join()
@@ -196,7 +196,7 @@ class DeviceWorkerTest {
                         stubListener
                     )
                 )
-            ).run(this)
+            ).run()
 
             router.cancel()
             worker.join()
@@ -225,7 +225,7 @@ class DeviceWorkerTest {
                 device = freezeDevice,
                 router = router,
                 deviceListener = MessagesDeviceListener(resultsChannel)
-            ).run(this)
+            ).run()
 
             router.cancel()
             worker.join()
@@ -285,7 +285,7 @@ class DeviceWorkerTest {
                 device = freezeDevice,
                 router = router,
                 deviceListener = MessagesDeviceListener(resultsChannel)
-            ).run(this)
+            ).run()
 
             router.cancel()
             worker.join()

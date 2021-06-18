@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.coroutines.coroutineContext
 
 class DeviceWorkerPoolImpl(
     private val outputDirectory: File,
@@ -35,64 +36,66 @@ class DeviceWorkerPoolImpl(
     private val messages: Channel<DeviceWorkerMessage> =
         Channel(Channel.UNLIMITED)
 
-    override fun start(scope: CoroutineScope) {
-        scope.launch(CoroutineName("device-workers-pool")) {
-            launch(CoroutineName("device-workers")) {
-                for (device in state.devices) {
-                    DeviceWorker(
-                        intentionsRouter = intentionsRouter,
-                        device = device,
-                        outputDirectory = outputDirectory,
-                        testListener = testListener,
-                        deviceListener = CompositeDeviceListener(
-                            listOf(
-                                MessagesDeviceListener(messages),
-                                DeviceLogListener(device.logger),
-                                deviceListener
-                            )
-                        ),
-                        timeProvider = timeProvider,
-                        dispatchers = deviceWorkersDispatcher
-                    ).run(scope)
+    override suspend fun start() {
+        with(CoroutineScope(coroutineContext)) {
+            launch(CoroutineName("device-workers-pool")) {
+                launch(CoroutineName("device-workers")) {
+                    for (device in state.devices) {
+                        DeviceWorker(
+                            intentionsRouter = intentionsRouter,
+                            device = device,
+                            outputDirectory = outputDirectory,
+                            testListener = testListener,
+                            deviceListener = CompositeDeviceListener(
+                                listOf(
+                                    MessagesDeviceListener(messages),
+                                    DeviceLogListener(device.logger),
+                                    deviceListener
+                                )
+                            ),
+                            timeProvider = timeProvider,
+                            dispatchers = deviceWorkersDispatcher
+                        ).run()
+                    }
+                    throw IllegalStateException("devices channel was closed")
                 }
-                throw IllegalStateException("devices channel was closed")
-            }
 
-            launch(CoroutineName("send-intentions")) {
-                for (intention in state.intentions) {
-                    logger.debug("received intention: $intention")
-                    intentionsRouter.sendIntention(intention = intention)
+                launch(CoroutineName("send-intentions")) {
+                    for (intention in state.intentions) {
+                        logger.debug("received intention: $intention")
+                        intentionsRouter.sendIntention(intention = intention)
+                    }
                 }
-            }
 
-            launch(CoroutineName("worker-messages")) {
-                for (message in messages) {
-                    logger.debug("received message: $message")
-                    when (message) {
-                        is DeviceWorkerMessage.ApplicationInstalled ->
-                            logger.debug("Application: ${message.installation.installation.application} installed")
+                launch(CoroutineName("worker-messages")) {
+                    for (message in messages) {
+                        logger.debug("received message: $message")
+                        when (message) {
+                            is DeviceWorkerMessage.ApplicationInstalled ->
+                                logger.debug("Application: ${message.installation.installation.application} installed")
 
-                        is DeviceWorkerMessage.FailedIntentionProcessing -> {
-                            logger.debug(
-                                "Received worker failed message during executing intention:" +
-                                    " ${message.intention}. Rescheduling..."
-                            )
+                            is DeviceWorkerMessage.FailedIntentionProcessing -> {
+                                logger.debug(
+                                    "Received worker failed message during executing intention:" +
+                                        " ${message.intention}. Rescheduling..."
+                                )
 
-                            intentionsRouter.sendIntention(intention = message.intention)
+                                intentionsRouter.sendIntention(intention = message.intention)
+                            }
+
+                            is DeviceWorkerMessage.Result ->
+                                state.intentionResults.send(message.intentionResult)
+
+                            is DeviceWorkerMessage.WorkerDied ->
+                                state.deviceSignals.send(Device.Signal.Died(message.coordinate))
                         }
-
-                        is DeviceWorkerMessage.Result ->
-                            state.intentionResults.send(message.intentionResult)
-
-                        is DeviceWorkerMessage.WorkerDied ->
-                            state.deviceSignals.send(Device.Signal.Died(message.coordinate))
                     }
                 }
             }
         }
     }
 
-    override fun stop() {
+    override suspend fun stop() {
         intentionsRouter.cancel()
         messages.cancel()
         state.devices.cancel()
