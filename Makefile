@@ -38,6 +38,7 @@ make clear_gradle_lock_files
 make clear_docker_containers
 docker run --rm \
 	--volume "$(shell pwd)":/app \
+	--volume "$(shell pwd)/ci/gradle.properties":/gradle/gradle.properties \
 	--volume "$(GRADLE_CACHE_DIR)":/gradle/caches/modules-2 \
 	--volume "$(GRADLE_WRAPPER_DIR)":/gradle/wrapper \
 	--workdir /app \
@@ -208,9 +209,9 @@ internal_publish_android_builder:
 	docker run --rm \
         --volume /var/run/docker.sock:/var/run/docker.sock \
         --volume "$(shell pwd)/ci/docker/android-builder":/build \
-        --env DOCKER_REGISTRY=${DOCKER_REGISTRY} \
-        --env DOCKER_LOGIN=${DOCKER_LOGIN} \
-        --env DOCKER_PASSWORD=${DOCKER_PASSWORD} \
+        --env DOCKER_REGISTRY=$(DOCKER_REGISTRY) \
+        --env DOCKER_LOGIN=$(DOCKER_LOGIN) \
+        --env DOCKER_PASSWORD=$(DOCKER_PASSWORD) \
         ${IMAGE_DOCKER_IN_DOCKER} publish_docker_image publish /build
 
 # run after new ANDROID_BUILDER_TAG set
@@ -270,3 +271,40 @@ dependency_updates:
 
 benchmark_fast_check:
 	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios fastCheck
+
+## Gradle cache node
+internal_publish_gradle_cache_node_image: check-docker-creds
+	docker run --rm \
+		--volume /var/run/docker.sock:/var/run/docker.sock \
+		--volume "$(shell pwd)/ci/docker/gradle-cache-node-github":/build \
+		--env DOCKER_REGISTRY=$(DOCKER_REGISTRY) \
+		--env DOCKER_LOGIN=$(DOCKER_LOGIN) \
+		--env DOCKER_PASSWORD=$(DOCKER_PASSWORD) \
+		${IMAGE_DOCKER_IN_DOCKER} publish_docker_image publish /build
+
+GRADLE_CACHE_NODE_TAG=4c224da9f6
+
+deploy_gradle_cache_node: check-host-env
+	cd ./ci/k8s/gradle-remote-cache && \
+	sed -e 's|GRADLE_CACHE_NODE_HOST|$(GRADLE_CACHE_NODE_HOST)|g' -e 's|NODE_IMAGE|$(DOCKER_REGISTRY)/android/gradle-cache-node-github:$(GRADLE_CACHE_NODE_TAG)|g' github-project.yaml | kubectl apply -f - && \
+	echo "Gradle Cache Node web interface should be available soon here: http://$(GRADLE_CACHE_NODE_HOST)"
+
+delete_gradle_cache_node:
+	cd ./ci/k8s/gradle-remote-cache && \
+	kubectl delete -f github-project.yaml
+
+check-host-env:
+ifndef GRADLE_CACHE_NODE_HOST
+	$(error GRADLE_CACHE_NODE_HOST is undefined)
+endif
+
+check-docker-creds:
+ifndef DOCKER_REGISTRY
+	$(error DOCKER_REGISTRY is undefined)
+endif
+ifndef DOCKER_LOGIN
+	$(error DOCKER_LOGIN is undefined)
+endif
+ifndef DOCKER_PASSWORD
+	$(error DOCKER_PASSWORD is undefined)
+endif

@@ -1,0 +1,74 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+    name: gradle-remote-cache-github
+    namespace: gradle-remote-cache
+    labels:
+        app: gradle-remote-cache-github
+        service: gradle-remote-cache-github
+spec:
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: gradle-remote-cache-github
+                service: gradle-remote-cache-github
+        spec:
+            containers:
+                -   name: gradle-remote-cache-github
+                    image: NODE_IMAGE
+                    imagePullPolicy: IfNotPresent
+                    resources:
+                        requests:
+                            memory: 3Gi
+                            cpu: 0.5
+                        limits:
+                            memory: 5Gi
+                            cpu: 1.5
+                    ports:
+                        -   containerPort: 5071
+                    env:
+                        -   name: JAVA_OPTS
+                            value: "-Xms3g -Xmx3g -XX:MaxDirectMemorySize=1g"
+            tolerations:
+                -   key: dedicated
+                    operator: Equal
+                    value: android
+                    effect: NoSchedule
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: gradle-remote-cache-github
+    namespace: gradle-remote-cache
+    labels:
+        name: gradle-remote-cache-github
+        service: gradle-remote-cache-github
+spec:
+    selector:
+        app: gradle-remote-cache-github
+    ports:
+        -   protocol: TCP
+            port: 80
+            targetPort: 5071
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+    name: gradle-remote-cache-github
+    namespace: gradle-remote-cache
+    annotations:
+        kubernetes.io/ingress.class: service
+        ingress.kubernetes.io/proxy-body-size: 200m
+        nginx.ingress.kubernetes.io/proxy-body-size: 200m
+        nginx.org/client-max-body-size: 200m
+spec:
+    rules:
+        -   host: "GRADLE_CACHE_NODE_HOST"
+            http:
+                paths:
+                    -   path: "/"
+                        backend:
+                            serviceName: gradle-remote-cache-github
+                            servicePort: 80

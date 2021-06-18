@@ -301,6 +301,61 @@ dependencyResolutionManagement {
     }
 }
 
+@Suppress("UnstableApiUsage")
+val avitoGithubRemoteCacheHost = settings.providers
+    .environmentVariable("GRADLE_CACHE_NODE_HOST")
+    .forUseAtConfigurationTime()
+
+val avitoGithubRemoteCachePush: String? by settings
+
+/**
+ * Included builds will inherit this cache config
+ * https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
+ *
+ * TODO it is not working as expected with --project-dir subprojects
+ *  problem is that's how IDE runs tasks from included builds by default
+ *  enabled only for "subprojects" for now
+ */
+buildCache {
+    remote<HttpBuildCache> {
+        url = remoteCacheUrl()
+        isEnabled = hasRemoteCacheUrl()
+        isPush = isRemoteCachePushEnabled()
+        isAllowUntrustedServer = true
+        isAllowInsecureProtocol = true
+    }
+}
+
+fun remoteCacheUrl(): java.net.URI {
+    val url = "http://${avitoGithubRemoteCacheHost.orNull}/cache/"
+    logger.lifecycle("[RemoteCache] url = $url")
+    return uri(url)
+}
+
+fun isRemoteCachePushEnabled(): Boolean {
+    val result = avitoGithubRemoteCachePush?.toBoolean() ?: false
+    return if (result) {
+        logger.lifecycle("[RemoteCache] push enabled")
+        true
+    } else {
+        logger.lifecycle("[RemoteCache] push disabled")
+        false
+    }
+}
+
+fun hasRemoteCacheUrl(): Boolean {
+    return if (avitoGithubRemoteCacheHost.orNull != null) {
+        logger.lifecycle("[RemoteCache] enabled")
+        true
+    } else {
+        logger.lifecycle(
+            "[RemoteCache] disabled: 'remoteCacheUrl' not set " +
+                "(cache node currently only available for Avito employees, because of security reasons)"
+        )
+        false
+    }
+}
+
 plugins {
     id("com.gradle.enterprise") version "3.6.1"
 }
