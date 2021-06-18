@@ -45,7 +45,6 @@ include(":gradle:ui-test-bytecode-analyzer")
 include(":gradle:upload-cd-build-result")
 include(":gradle:upload-to-googleplay")
 include(":gradle:teamcity")
-include(":gradle:signer")
 include(":gradle:qapps")
 include(":gradle:tms")
 include(":gradle:trace-event")
@@ -123,6 +122,8 @@ include(":logger:logger")
 include(":logger:slf4j-logger")
 include(":logger:sentry-logger")
 include(":logger:elastic-logger")
+
+include(":signer")
 
 @Suppress("UnstableApiUsage")
 pluginManagement {
