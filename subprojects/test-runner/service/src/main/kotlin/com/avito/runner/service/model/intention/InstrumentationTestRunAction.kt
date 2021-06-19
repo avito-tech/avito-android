@@ -13,7 +13,7 @@ data class InstrumentationTestRunAction(
     val enableDeviceDebug: Boolean
 ) {
 
-    override fun toString(): String = "Run ${test.testName} test"
+    override fun toString(): String = "$test, execution=$executionNumber"
 
     companion object
 }

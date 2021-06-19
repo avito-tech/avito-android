@@ -24,6 +24,7 @@ import com.avito.android.test.annotations.UnitTest
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
+import com.avito.report.model.TestName
 
 class TestMetadataAnnotationResolver : TestMetadataResolver {
 
@@ -88,8 +89,7 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             replacement = TestMetadata(
                 caseId = caseId,
                 description = description,
-                className = test.testClass.name,
-                methodName = test.testMethod?.name,
+                name = TestName(test.testClass.name, test.testMethod?.name ?: ""),
                 dataSetNumber = dataSetNumber,
                 kind = kind,
                 priority = priority,

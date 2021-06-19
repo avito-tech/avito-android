@@ -6,6 +6,7 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
+import com.avito.report.model.TestName
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
@@ -36,7 +37,10 @@ internal class ReportProcessorImplTest {
 
     @Test
     fun `process - returns test with no status and contains timeout message - on test run timeout`() {
-        val testCase = TestCase(className = "com.avito.Test", methodName = "test", deviceName = "29")
+        val testCase = TestCase(
+            name = TestName("com.avito.Test", "test"),
+            deviceName = "29"
+        )
 
         val postProcessor = createReportProcessor(
             testSuite = mapOf(
@@ -68,8 +72,7 @@ internal class ReportProcessorImplTest {
         )
 
         val testCase = TestCase(
-            className = testStaticData.name.className,
-            methodName = testStaticData.name.methodName,
+            name = testStaticData.name,
             deviceName = testStaticData.device.name
         )
 
@@ -103,8 +106,7 @@ internal class ReportProcessorImplTest {
         )
 
         val testCase = TestCase(
-            className = testStaticData.name.className,
-            methodName = testStaticData.name.methodName,
+            name = testStaticData.name,
             deviceName = testStaticData.device.name
         )
 

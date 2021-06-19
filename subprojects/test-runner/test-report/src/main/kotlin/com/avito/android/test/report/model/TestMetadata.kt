@@ -4,14 +4,13 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
+import com.avito.report.model.TestName
 import java.io.Serializable
 
 data class TestMetadata(
     val caseId: Int?,
     val description: String?,
-    val className: String,
-    // TODO why nullable
-    val methodName: String?,
+    val name: TestName,
     val dataSetNumber: Int?,
     val kind: Kind,
     val priority: TestCasePriority?,
@@ -21,8 +20,6 @@ data class TestMetadata(
     val tagIds: List<Int>,
     val flakiness: Flakiness
 ) : Serializable {
-
-    val testName = "$className.$methodName"
 
     companion object
 }

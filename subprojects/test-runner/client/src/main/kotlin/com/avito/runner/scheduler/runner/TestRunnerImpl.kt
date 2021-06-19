@@ -62,7 +62,7 @@ internal class TestRunnerImpl(
 
                     logger.debug(
                         "Result for test: %s received after %d tries. Progress (%s)".format(
-                            result.request.testCase.testName,
+                            result.request.testCase.name,
                             result.result.size,
                             "$gottenCount/$expectedResultsCount"
                         )
@@ -127,8 +127,7 @@ internal class TestRunnerImpl(
     ): Map<TestCase, TestStaticData> {
         return testsToRun.associate { testWithTarget ->
             TestCase(
-                className = testWithTarget.test.name.className,
-                methodName = testWithTarget.test.name.methodName,
+                name = testWithTarget.test.name,
                 deviceName = testWithTarget.target.deviceName
             ) to testWithTarget.test
         }

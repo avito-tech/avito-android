@@ -15,8 +15,7 @@ internal class TestRunRequestFactory(
         val quota = test.target.reservation.quota
         return TestRunRequest(
             testCase = TestCase(
-                className = test.test.name.className,
-                methodName = test.test.name.methodName,
+                name = test.test.name,
                 deviceName = test.target.deviceName
             ),
             configuration = DeviceConfiguration(

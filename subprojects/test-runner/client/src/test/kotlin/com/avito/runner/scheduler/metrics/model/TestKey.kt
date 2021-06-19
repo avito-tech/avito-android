@@ -1,13 +1,14 @@
 package com.avito.runner.scheduler.metrics.model
 
+import com.avito.report.model.TestName
 import com.avito.runner.service.model.TestCase
 
 // todo move to :service
-fun TestCase.Companion.createStubInstance(
+public fun TestCase.Companion.createStubInstance(
     className: String = "com.avito.Test",
     methodName: String = "test",
     deviceName: String = "api22"
-) = TestCase(className, methodName, deviceName)
+): TestCase = TestCase(TestName(className, methodName), deviceName)
 
 internal fun TestKey.Companion.createStubInstance(
     testCase: TestCase = TestCase.createStubInstance(),

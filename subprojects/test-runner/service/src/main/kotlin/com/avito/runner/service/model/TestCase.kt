@@ -1,14 +1,16 @@
 package com.avito.runner.service.model
 
+import com.avito.report.model.TestName
 import java.io.Serializable
 
 data class TestCase(
-    val className: String,
-    val methodName: String,
+    val name: TestName,
     val deviceName: String
 ) : Serializable {
 
-    val testName: String = "$className.$methodName.$deviceName"
+    override fun toString(): String {
+        return "$name.$deviceName"
+    }
 
     companion object
 }

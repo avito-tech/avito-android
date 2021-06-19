@@ -592,7 +592,7 @@ internal class RunnerIntegrationTest {
     ): DeviceTestCaseRun {
         return deviceTestCaseRun(
             device = device,
-            test = TestCase(test.name.className, test.name.methodName, target.deviceName),
+            test = TestCase(test.name, target.deviceName),
             result = TestCaseRun.Result.Passed
         )
     }
@@ -602,7 +602,7 @@ internal class RunnerIntegrationTest {
     ): DeviceTestCaseRun {
         return deviceTestCaseRun(
             device = device,
-            test = TestCase(test.name.className, test.name.methodName, target.deviceName),
+            test = TestCase(test.name, target.deviceName),
             result = TestCaseRun.Result.Failed.InRun("Failed")
         )
     }

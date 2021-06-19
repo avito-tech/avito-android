@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import java.io.File
 
@@ -11,20 +12,18 @@ public object TestArtifactsProviderFactory {
     ): TestArtifactsProvider {
         return create(
             testReportRootDir,
-            testStaticData.name.className,
-            testStaticData.name.methodName,
+            testStaticData.name
         )
     }
 
     public fun create(
         testReportRootDir: Lazy<File>,
-        className: String,
-        methodName: String
+        name: TestName
     ): TestArtifactsProvider {
         return DirectTestArtifactsProvider(
             provider = ReportDirProviderWithCreation(
                 rootDir = testReportRootDir,
-                testDirGenerator = TestDirGenerator.Impl(className, methodName)
+                testDirGenerator = TestDirGenerator.Impl(name)
             )
         )
     }
@@ -39,16 +38,14 @@ public object TestArtifactsProviderFactory {
     @Suppress("SdCardPath")
     public fun createForAdbAccess(
         appUnderTestPackage: String,
-        className: String,
-        methodName: String
+        name: TestName,
     ): TestArtifactsProvider {
         val dataPath = "/sdcard/Android/data/$appUnderTestPackage/files"
         return create(
             ReportDirProviderForAdb(
                 rootDir = lazy { File(dataPath) },
                 testDirGenerator = TestDirGenerator.Impl(
-                    className = className,
-                    methodName = methodName
+                    name = name
                 )
 
             )

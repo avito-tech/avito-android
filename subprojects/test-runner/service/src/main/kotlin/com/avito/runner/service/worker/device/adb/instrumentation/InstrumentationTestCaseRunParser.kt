@@ -1,6 +1,7 @@
 package com.avito.runner.service.worker.device.adb.instrumentation
 
 import com.android.annotations.VisibleForTesting
+import com.avito.report.model.TestName
 import com.avito.runner.ProcessNotification
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
@@ -103,8 +104,7 @@ interface InstrumentationTestCaseRunParser {
 
                                 entries.map {
                                     InstrumentationTestCaseRun.CompletedTestCaseRun(
-                                        className = it.clazz,
-                                        name = it.test,
+                                        name = TestName(it.clazz, it.test),
                                         result = TestCaseRun.Result.Failed.InRun(errorMessage = newEntry.getError()),
                                         timestampStartedMilliseconds = now,
                                         timestampCompletedMilliseconds = now
@@ -122,7 +122,9 @@ interface InstrumentationTestCaseRunParser {
                                 tests
                                     .asSequence()
                                     .filterIsInstance<InstrumentationTestCaseRun.CompletedTestCaseRun>()
-                                    .firstOrNull { it.className == entry.clazz && it.name == entry.test } == null
+                                    .firstOrNull {
+                                        it.name.className == entry.clazz && it.name.methodName == entry.test
+                                    } == null
                             },
                         tests = tests,
                         totalTestsCount = previousResult.totalTestsCount + tests.size
@@ -165,8 +167,7 @@ interface InstrumentationTestCaseRunParser {
                 .filterNotNull()
                 .map { (first, second) ->
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = first.clazz,
-                        name = first.test,
+                        name = TestName(first.clazz, first.test),
                         result = when (second.statusCode) {
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok ->
                                 TestCaseRun.Result.Passed

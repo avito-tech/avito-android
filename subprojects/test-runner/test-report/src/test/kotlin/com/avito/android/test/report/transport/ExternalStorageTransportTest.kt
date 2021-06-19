@@ -25,7 +25,7 @@ internal class ExternalStorageTransportTest {
 
     @Test
     fun `sendReport - file written`(@TempDir tempDir: File) {
-        val testMetadata = TestMetadata.createStubInstance(className = "com.Test", methodName = "test")
+        val testMetadata = TestMetadata.createStubInstance()
 
         val reportState = Initialized.Started.createStubInstance(testMetadata = testMetadata)
 
@@ -36,7 +36,7 @@ internal class ExternalStorageTransportTest {
 
         createTransport(outputFileProvider).sendReport(reportState)
 
-        val reportFile = File(tempDir, "runner/com.Test#test/report.json")
+        val reportFile = File(tempDir, "runner/com.Test.test/report.json")
 
         assertThat(reportFile.exists()).isTrue()
     }
@@ -59,7 +59,7 @@ internal class ExternalStorageTransportTest {
 
         assertThat<Entry.File>(result.get()) {
             assertThat<FileAddress.File>(fileAddress) {
-                val contentFile = File(tempDir, "runner/com.Test#test/${this.fileName}")
+                val contentFile = File(tempDir, "runner/com.Test.test/${this.fileName}")
 
                 assertThat(contentFile.exists()).isTrue()
 
@@ -85,8 +85,7 @@ internal class ExternalStorageTransportTest {
     ): TestArtifactsProvider {
         return TestArtifactsProviderFactory.create(
             testReportRootDir = lazy { rootDir },
-            className = testMetadata.className,
-            methodName = testMetadata.methodName!!
+            name = testMetadata.name
         )
     }
 }

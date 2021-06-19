@@ -4,12 +4,12 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
+import com.avito.report.model.TestName
 
 internal fun TestMetadata.Companion.createStubInstance(
     caseId: Int? = null,
     description: String? = null,
-    className: String = "com.Test",
-    methodName: String? = "test",
+    name: TestName = TestName("com.Test", "test"),
     dataSetNumber: Int? = null,
     kind: Kind = Kind.UNKNOWN,
     priority: TestCasePriority? = null,
@@ -21,8 +21,7 @@ internal fun TestMetadata.Companion.createStubInstance(
 ) = TestMetadata(
     caseId = caseId,
     description = description,
-    className = className,
-    methodName = methodName,
+    name = name,
     dataSetNumber = dataSetNumber,
     kind = kind,
     priority = priority,

@@ -13,6 +13,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
+import com.avito.report.model.TestName
 import com.avito.time.TimeProvider
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
@@ -60,8 +61,7 @@ class ReportTestExtension(
 
     fun initTestCaseHelper(
         testCaseId: Int? = null,
-        testClass: String = "com.avito.test.Test",
-        testMethod: String = "test",
+        name: TestName = TestName("com.avito.test.Test", "test"),
         testDescription: String? = null,
         dataSetNumber: Int? = null,
         kind: Kind = Kind.UNKNOWN,
@@ -76,8 +76,7 @@ class ReportTestExtension(
             testMetadata = TestMetadata(
                 caseId = testCaseId,
                 description = testDescription,
-                className = testClass,
-                methodName = testMethod,
+                name = name,
                 dataSetNumber = dataSetNumber,
                 kind = kind,
                 priority = priority,

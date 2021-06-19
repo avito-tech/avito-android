@@ -1,11 +1,11 @@
 package com.avito.runner.service.worker.model
 
+import com.avito.report.model.TestName
 import com.avito.runner.service.model.TestCaseRun
 
 sealed class InstrumentationTestCaseRun {
     data class CompletedTestCaseRun(
-        val className: String,
-        val name: String,
+        val name: TestName,
         val result: TestCaseRun.Result,
         val timestampStartedMilliseconds: Long,
         val timestampCompletedMilliseconds: Long
