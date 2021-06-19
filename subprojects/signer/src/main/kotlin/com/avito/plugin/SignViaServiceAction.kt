@@ -21,8 +21,6 @@ internal class SignViaServiceAction(
     private val signedFile: File,
 ) {
 
-    private val apiPath = "/sign"
-
     fun sign(): Result<ExistingFile> = Result.tryCatch {
         val request = buildRequest()
 
@@ -55,11 +53,7 @@ internal class SignViaServiceAction(
             .build()
 
         return Request.Builder()
-            .url(
-                serviceUrl.newBuilder()
-                    .encodedPath(apiPath)
-                    .build()
-            )
+            .url(serviceUrl)
             .post(body)
             .tag(
                 RequestMetadata::class.java,

@@ -14,13 +14,16 @@ internal class UrlResolver(
 
         return validateUrl(value, onFailure)
     }
+}
 
-    private fun validateUrl(url: String, onFailure: (Throwable) -> Nothing): String {
-        return try {
-            url.toHttpUrl()
-            url
-        } catch (e: Throwable) {
-            onFailure(IllegalArgumentException("Invalid signer url value: '$url'", e))
-        }
+internal fun validateUrl(url: String, onFailure: (Throwable) -> Nothing): String {
+    return try {
+        url.toHttpUrl()
+            .newBuilder()
+            .addEncodedPathSegment("sign")
+            .build()
+            .toString()
+    } catch (e: Throwable) {
+        onFailure(IllegalArgumentException("Invalid signer url value: '$url'", e))
     }
 }
