@@ -273,24 +273,22 @@ benchmark_fast_check:
 	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios fastCheck
 
 ## Gradle cache node
+GRADLE_CACHE_NODE_TAG=9.9
+
+# publish to internal repo to avoid rate limits problems
 internal_publish_gradle_cache_node_image:
 	$(call check_defined, DOCKER_REGISTRY)
 	$(call check_defined, DOCKER_LOGIN)
 	$(call check_defined, DOCKER_PASSWORD)
-	docker run --rm \
-		--volume /var/run/docker.sock:/var/run/docker.sock \
-		--volume "$(shell pwd)/ci/docker/gradle-cache-node-github":/build \
-		--env DOCKER_REGISTRY=$(DOCKER_REGISTRY) \
-		--env DOCKER_LOGIN=$(DOCKER_LOGIN) \
-		--env DOCKER_PASSWORD=$(DOCKER_PASSWORD) \
-		${IMAGE_DOCKER_IN_DOCKER} publish_docker_image publish /build
-
-GRADLE_CACHE_NODE_TAG=4c224da9f6
+	echo $(DOCKER_PASSWORD) | docker login --username $(DOCKER_LOGIN) --password-stdin $(DOCKER_REGISTRY) && \
+	docker pull gradle/build-cache-node:$(GRADLE_CACHE_NODE_TAG) && \
+	docker tag gradle/build-cache-node:$(GRADLE_CACHE_NODE_TAG) $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG) && \
+	docker push $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)
 
 deploy_gradle_cache_node:
 	$(call check_defined, GRADLE_CACHE_NODE_HOST)
 	cd ./ci/k8s/gradle-remote-cache && \
-	sed -e 's|GRADLE_CACHE_NODE_HOST|$(GRADLE_CACHE_NODE_HOST)|g' -e 's|NODE_IMAGE|$(DOCKER_REGISTRY)/android/gradle-cache-node-github:$(GRADLE_CACHE_NODE_TAG)|g' github-project.yaml | kubectl apply -f - && \
+	sed -e 's|GRADLE_CACHE_NODE_HOST|$(GRADLE_CACHE_NODE_HOST)|g' -e 's|NODE_IMAGE|$(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)|g' github-project.yaml | kubectl apply -f - && \
 	echo "Gradle Cache Node web interface should be available soon here: http://$(GRADLE_CACHE_NODE_HOST)"
 
 delete_gradle_cache_node:

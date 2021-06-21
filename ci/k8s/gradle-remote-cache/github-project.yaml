@@ -15,6 +15,17 @@ spec:
                 app: gradle-remote-cache-github
                 service: gradle-remote-cache-github
         spec:
+            volumes:
+                -   name: node-config
+                    emptyDir: { }
+            initContainers:
+                -   name: create-config
+                    image: busybox:1.33.1
+                    # Scheme: https://docs.gradle.com/build-cache-node/schema/build-cache-node-config-schema-2.json
+                    command: [ 'sh','-c','mkdir -p /data/conf; printf "%s\n" "version: 2" "cache:" "  targetSize: 60000" "  maxArtifactSize: 100" "  credentials:" "    anonymousLevel: \"READWRITE\"" "    users: []" > /data/conf/config.yaml' ]
+                    volumeMounts:
+                        -   name: node-config
+                            mountPath: /data
             containers:
                 -   name: gradle-remote-cache-github
                     image: NODE_IMAGE
@@ -31,6 +42,9 @@ spec:
                     env:
                         -   name: JAVA_OPTS
                             value: "-Xms3g -Xmx3g -XX:MaxDirectMemorySize=1g"
+                    volumeMounts:
+                        -   name: node-config
+                            mountPath: /data
             tolerations:
                 -   key: dedicated
                     operator: Equal
