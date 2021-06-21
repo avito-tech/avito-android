@@ -107,7 +107,7 @@ check_defined = \
         $(call __check_defined,$1,$(strip $(value 2)))))
 __check_defined = \
     $(if $(value $1),, \
-      $(error Undefined $1$(if $2, ($2)) argument))
+      $(error Undefined argument: $1$(if $2, ($2))))
 
 clean:
 	rm -rf `find . -type d -name build`
@@ -190,14 +190,14 @@ build_health:
 # Builds dependencies graph
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin
 # Example: make project_graph_report id=:test-runner:client
-# TODO: remove --rerun-tasks after 0.74
 project_graph_report:
 	$(call check_defined, id)
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) projectGraphReport --id $(id) --rerun-tasks
+	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) projectGraphReport --id $(id)
 	cd $(project)/build/reports/dependency-analysis && \
 		dot -Tsvg merged-graph.gv -o merged-graph.svg && \
 		dot -Tsvg merged-graph-rev.gv -o merged-graph-rev.svg && \
-		dot -Tsvg merged-graph-rev-sub.gv -o merged-graph-rev-sub.svg
+		dot -Tsvg merged-graph-rev-sub.gv -o merged-graph-rev-sub.svg && \
+		echo "See artifacts in $(project)/build/reports/dependency-analysis"
 
 build_android_image:
 	cd ./ci/docker/android-builder && \
