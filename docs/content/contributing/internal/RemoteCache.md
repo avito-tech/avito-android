@@ -21,7 +21,7 @@ Set environment variable `GRADLE_CACHE_NODE_HOST`
     - DOCKER_REGISTRY env set
     - GRADLE_CACHE_NODE_HOST env set
     - [kubernetes credentials configured](http://links.k.avito.ru/kubectl)
-    - Write access to `gradle-remote-cache` namespace in cluster
+    - Write access to `gradle-remote-cache` namespace in cluster (see MBS-5444)
 
 `make deploy_gradle_cache_node`
 
