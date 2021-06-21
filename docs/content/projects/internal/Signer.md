@@ -39,7 +39,7 @@ signService {
 Variants not listed here will fallback
 to [default Android Gradle Plugin signing mechanism](https://developer.android.com/studio/publish/app-signing)
 
-### Use enabled to avoid signing
+### Disable to avoid signing
 
 ```kotlin
 signService {
