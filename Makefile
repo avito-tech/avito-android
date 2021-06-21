@@ -294,3 +294,13 @@ deploy_gradle_cache_node:
 delete_gradle_cache_node:
 	cd ./ci/k8s/gradle-remote-cache && \
 	kubectl delete -f github-project.yaml
+
+deploy_avito_cache_node:
+	$(call check_defined, AVITO_CACHE_NODE_HOST)
+	cd ./ci/k8s/gradle-remote-cache && \
+	sed -e 's|GRADLE_CACHE_NODE_HOST|$(AVITO_CACHE_NODE_HOST)|g' -e 's|NODE_IMAGE|$(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)|g' avito-project.yaml | kubectl apply -f - && \
+	echo "Gradle Cache Node web interface should be available soon here: http://$(AVITO_CACHE_NODE_HOST)"
+
+delete_avito_cache_node:
+	cd ./ci/k8s/gradle-remote-cache && \
+	kubectl delete -f avito-project.yaml
