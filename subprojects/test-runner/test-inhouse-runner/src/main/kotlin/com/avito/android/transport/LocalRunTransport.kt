@@ -11,11 +11,11 @@ import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.DeviceName
 import com.avito.report.model.Entry
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
+import com.avito.test.model.DeviceName
 import java.io.File
 
 internal class LocalRunTransport(

@@ -1,6 +1,6 @@
 package com.avito.test.summary
 
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 internal data class FlakyInfo(
     val testName: TestName,

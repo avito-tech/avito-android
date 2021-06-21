@@ -4,8 +4,6 @@ import com.avito.android.Result
 import com.avito.android.runner.devices.StubDevicesProvider
 import com.avito.coroutines.extensions.Dispatchers
 import com.avito.logger.StubLoggerFactory
-import com.avito.report.model.DeviceName
-import com.avito.report.model.TestName
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
@@ -33,6 +31,8 @@ import com.avito.runner.service.worker.device.stub.StubDevice
 import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationFailure
 import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.listener.StubDeviceListener
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -693,12 +693,12 @@ internal class RunnerIntegrationTest {
                     dispatchers = object : Dispatchers {
                         override fun dispatcher() = testCoroutineDispatcher
                     },
-                    testRunnerOutputDir = outputDirectory
+                    testRunnerOutputDir = outputDirectory,
+                    testListener = NoOpTestListener
                 ),
                 devices = devices
             ),
             testRunRequestFactory = testRunRequestFactory,
-            testListener = NoOpTestListener,
             targets = targets
         )
     }

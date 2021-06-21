@@ -13,7 +13,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 import com.avito.time.TimeProvider
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock

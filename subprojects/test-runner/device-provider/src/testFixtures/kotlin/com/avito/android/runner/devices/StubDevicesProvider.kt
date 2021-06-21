@@ -3,7 +3,6 @@ package com.avito.android.runner.devices
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolProvider
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -15,8 +14,7 @@ public class StubDevicesProvider(
 
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
-        testListener: TestListener,
-    ): DeviceWorkerPool = provider.provide(devices, testListener)
+    ): DeviceWorkerPool = provider.provide(devices)
 
     override suspend fun releaseDevices() {
         // do nothing

@@ -10,9 +10,7 @@ import com.avito.runner.scheduler.metrics.TestMetricsListenerImpl
 import com.avito.runner.scheduler.metrics.TestMetricsSender
 import com.avito.runner.scheduler.runner.TestRunnerExecutionState
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
-import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
-import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.time.TimeProvider
 import java.io.File
 import java.nio.file.Files
@@ -65,10 +63,8 @@ public class TestRunnerFactoryProvider(
             testRunnerOutputDir = testRunnerOutputDir,
             loggerFactory = loggerFactory,
             testMetricsListener = testMetricsSender,
-            devicesProvider = devicesProviderFactory.create(
-                tempLogcatDir,
-                deviceWorkerPoolProvider(testMetricsSender)
-            ),
+            deviceListener = testMetricsSender,
+            devicesProviderFactory = devicesProviderFactory,
             testRunnerRequestFactory = testRunRequestFactory(),
             executionState = testRunnerExecutionState,
             httpClientProvider = httpClientProvider,
@@ -87,20 +83,6 @@ public class TestRunnerFactoryProvider(
             testApplication = params.testApk,
             executionParameters = params.executionParameters,
             targets = params.instrumentationConfiguration.targets.associateBy { it.deviceName }
-        )
-    }
-
-    private fun deviceWorkerPoolProvider(
-        deviceListener: DeviceListener
-    ): DeviceWorkerPoolProvider {
-        return DeviceWorkerPoolProvider(
-            testRunnerOutputDir = testRunnerOutputDir,
-            timeProvider = timeProvider,
-            loggerFactory = loggerFactory,
-            deviceListener = deviceListener,
-            intentions = testRunnerExecutionState.intentions,
-            intentionResults = testRunnerExecutionState.intentionResults,
-            deviceSignals = testRunnerExecutionState.deviceSignals
         )
     }
 }

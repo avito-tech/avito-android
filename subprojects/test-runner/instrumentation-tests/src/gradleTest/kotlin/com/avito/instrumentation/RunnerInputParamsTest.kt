@@ -3,7 +3,6 @@ package com.avito.instrumentation
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.internal.RunnerInputTester
 import com.avito.instrumentation.reservation.request.Device
-import com.avito.report.model.DeviceName
 import com.avito.report.model.RunId
 import com.avito.runner.config.Reservation
 import com.avito.runner.config.RunnerInputParams
@@ -12,6 +11,7 @@ import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.git
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
+import com.avito.test.model.DeviceName
 import com.avito.truth.isInstanceOf
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.common.truth.Truth.assertThat

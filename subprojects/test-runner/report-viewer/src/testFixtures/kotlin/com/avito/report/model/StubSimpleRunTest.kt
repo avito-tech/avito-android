@@ -2,6 +2,7 @@ package com.avito.report.model
 
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
+import com.avito.test.model.TestName
 
 public fun SimpleRunTest.Companion.createStubInstance(
     id: String = "1234",

@@ -6,7 +6,6 @@ import com.avito.android.runner.devices.model.ReservationData
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolProvider
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
@@ -27,8 +26,7 @@ internal class FakeDevicesProvider(
 
     @ExperimentalCoroutinesApi
     override suspend fun provideFor(
-        reservations: Collection<ReservationData>,
-        testListener: TestListener
+        reservations: Collection<ReservationData>
     ): DeviceWorkerPool {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
         with(CoroutineScope(coroutineContext)) {
@@ -50,7 +48,7 @@ internal class FakeDevicesProvider(
                 }
             }
         }
-        return deviceWorkerPoolProvider.provide(devices, testListener)
+        return deviceWorkerPoolProvider.provide(devices)
     }
 
     override suspend fun releaseDevice(coordinate: DeviceCoordinate) {

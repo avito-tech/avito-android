@@ -3,8 +3,8 @@ package com.avito.runner.finalizer.verdict
 import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
-import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
+import com.avito.test.model.TestName
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat

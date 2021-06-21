@@ -2,7 +2,7 @@ package com.avito.report
 
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 

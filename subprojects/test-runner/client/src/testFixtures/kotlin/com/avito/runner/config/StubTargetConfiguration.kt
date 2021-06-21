@@ -1,7 +1,7 @@
 package com.avito.runner.config
 
 import com.avito.instrumentation.reservation.request.Device
-import com.avito.report.model.DeviceName
+import com.avito.test.model.DeviceName
 
 public fun TargetConfigurationData.Companion.createStubInstance(
     api: Int = 22,

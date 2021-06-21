@@ -1,4 +1,4 @@
-package com.avito.report.model
+package com.avito.test.model
 
 public data class TestName(val className: String, val methodName: String) {
 

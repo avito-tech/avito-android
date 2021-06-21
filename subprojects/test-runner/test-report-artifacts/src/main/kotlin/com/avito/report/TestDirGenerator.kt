@@ -1,6 +1,6 @@
 package com.avito.report
 
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 public interface TestDirGenerator {
 
@@ -17,7 +17,7 @@ public interface TestDirGenerator {
          * dataset number not needed because method names are unique for them
          */
         override fun generateUniqueDir(): String {
-            return name.toString()
+            return "${name.className}#${name.methodName}"
         }
     }
 }

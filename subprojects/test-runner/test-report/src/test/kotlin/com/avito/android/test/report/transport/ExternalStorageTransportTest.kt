@@ -36,7 +36,7 @@ internal class ExternalStorageTransportTest {
 
         createTransport(outputFileProvider).sendReport(reportState)
 
-        val reportFile = File(tempDir, "runner/com.Test.test/report.json")
+        val reportFile = File(tempDir, "runner/com.Test#test/report.json")
 
         assertThat(reportFile.exists()).isTrue()
     }
@@ -59,7 +59,7 @@ internal class ExternalStorageTransportTest {
 
         assertThat<Entry.File>(result.get()) {
             assertThat<FileAddress.File>(fileAddress) {
-                val contentFile = File(tempDir, "runner/com.Test.test/${this.fileName}")
+                val contentFile = File(tempDir, "runner/com.Test#test/${this.fileName}")
 
                 assertThat(contentFile.exists()).isTrue()
 

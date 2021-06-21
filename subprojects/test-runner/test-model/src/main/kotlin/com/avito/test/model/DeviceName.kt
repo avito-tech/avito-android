@@ -1,4 +1,4 @@
-package com.avito.report.model
+package com.avito.test.model
 
 import java.io.Serializable
 

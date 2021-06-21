@@ -23,7 +23,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 internal class ReportsFetchApiImpl(
     private val client: JsonRpcClient,

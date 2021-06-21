@@ -4,12 +4,12 @@ import com.avito.report.NoOpReportLinkGenerator
 import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
-import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
 import com.avito.runner.finalizer.TestRunResult
 import com.avito.runner.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.runner.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.runner.finalizer.verdict.LegacyVerdict
+import com.avito.test.model.TestName
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

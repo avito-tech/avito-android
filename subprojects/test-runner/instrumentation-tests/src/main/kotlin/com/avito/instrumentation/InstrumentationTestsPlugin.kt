@@ -30,7 +30,6 @@ import com.avito.instrumentation.internal.RunIdResolver
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerFactory
-import com.avito.report.model.DeviceName
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.InstrumentationParameters
@@ -39,6 +38,7 @@ import com.avito.runner.config.SchedulingConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.suite.filter.Filter
+import com.avito.test.model.DeviceName
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials

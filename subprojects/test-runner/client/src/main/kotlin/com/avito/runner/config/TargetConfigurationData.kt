@@ -1,6 +1,6 @@
 package com.avito.runner.config
 
-import com.avito.report.model.DeviceName
+import com.avito.test.model.DeviceName
 import java.io.Serializable
 
 public data class TargetConfigurationData(

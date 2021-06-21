@@ -1,6 +1,7 @@
 package com.avito.report.model
 
-import com.avito.report.model.TestName.Companion.delimiter
+import com.avito.test.model.TestName
+import com.avito.test.model.TestName.Companion.delimiter
 
 /**
  * Название теста устроено так:

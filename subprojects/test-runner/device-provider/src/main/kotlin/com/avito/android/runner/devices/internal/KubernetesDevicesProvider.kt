@@ -5,7 +5,6 @@ import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservatio
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolProvider
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
@@ -19,8 +18,7 @@ internal class KubernetesDevicesProvider(
 ) : DevicesProvider {
 
     override suspend fun provideFor(
-        reservations: Collection<ReservationData>,
-        testListener: TestListener
+        reservations: Collection<ReservationData>
     ): DeviceWorkerPool {
         val claim = client.claim(reservations)
         // TODO parallel device getting
@@ -35,7 +33,7 @@ internal class KubernetesDevicesProvider(
                 adbDeviceParams = adbDeviceParams
             )
         }
-        return deviceWorkerPoolProvider.provide(devices, testListener)
+        return deviceWorkerPoolProvider.provide(devices)
     }
 
     override suspend fun releaseDevice(coordinate: DeviceCoordinate) {

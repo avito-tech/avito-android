@@ -24,7 +24,7 @@ import com.avito.android.test.annotations.UnitTest
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 class TestMetadataAnnotationResolver : TestMetadataResolver {
 

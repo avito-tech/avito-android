@@ -4,7 +4,7 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 internal fun TestMetadata.Companion.createStubInstance(
     caseId: Int? = null,

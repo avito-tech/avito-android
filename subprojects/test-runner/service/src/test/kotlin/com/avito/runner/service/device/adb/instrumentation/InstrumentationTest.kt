@@ -1,12 +1,12 @@
 package com.avito.runner.service.device.adb.instrumentation
 
-import com.avito.report.model.TestName
 import com.avito.runner.ProcessNotification
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
+import com.avito.test.model.TestName
 import com.avito.truth.isInstanceOf
 import com.avito.utils.fileFromJarResources
 import com.google.common.truth.Truth.assertThat

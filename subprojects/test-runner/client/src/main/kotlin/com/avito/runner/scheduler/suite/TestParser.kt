@@ -22,11 +22,11 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.test.annotations.UnitTest
-import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
+import com.avito.test.model.DeviceName
 
 internal fun parseTest(
     testInApk: TestInApk,

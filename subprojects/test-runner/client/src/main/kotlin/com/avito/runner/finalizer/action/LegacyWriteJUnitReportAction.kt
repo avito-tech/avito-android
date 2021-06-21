@@ -4,10 +4,10 @@ import com.avito.report.ReportLinkGenerator
 import com.avito.report.TestSuiteNameProvider
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
-import com.avito.report.model.TestName
 import com.avito.runner.finalizer.TestRunResult
 import com.avito.runner.finalizer.verdict.LegacyVerdict
 import com.avito.runner.finalizer.verdict.TestStatisticsCounterFactory
+import com.avito.test.model.TestName
 import org.apache.commons.text.StringEscapeUtils
 import java.io.File
 

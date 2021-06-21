@@ -4,7 +4,6 @@ import com.avito.android.Result
 import com.avito.android.runner.report.StubReport
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
-import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.InstrumentationFilterData.FromRunHistory.ReportFilter
@@ -12,6 +11,7 @@ import com.avito.runner.config.RunStatus
 import com.avito.runner.config.createStub
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.Source
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignature
+import com.avito.test.model.TestName
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

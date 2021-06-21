@@ -1,7 +1,7 @@
 package com.avito.report
 
-import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
+import com.avito.test.model.TestName
 import java.io.File
 
 public object TestArtifactsProviderFactory {

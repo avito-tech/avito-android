@@ -5,11 +5,11 @@ import com.avito.android.runner.report.StubReport
 import com.avito.android.runner.report.StubReportFactory
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
-import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.RunStatus
 import com.avito.runner.config.createStub
+import com.avito.test.model.TestName
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 

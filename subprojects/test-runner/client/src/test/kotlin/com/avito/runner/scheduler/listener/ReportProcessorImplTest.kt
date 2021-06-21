@@ -5,9 +5,7 @@ import com.avito.android.stats.StubStatsdSender
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.DeviceName
 import com.avito.report.model.Incident
-import com.avito.report.model.TestName
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
@@ -18,6 +16,8 @@ import com.avito.retrace.ProguardRetracer
 import com.avito.runner.scheduler.logcat.StubLogcatAccessor
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
 import com.avito.runner.service.model.TestCase
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat

@@ -1,9 +1,9 @@
 package com.avito.runner.scheduler.runner.model
 
-import com.avito.report.model.DeviceName
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
+import com.avito.test.model.DeviceName
 import java.io.File
 
 internal class TestRunRequestFactory(

@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.metrics.model
 
-import com.avito.report.model.DeviceName
-import com.avito.report.model.TestName
 import com.avito.runner.service.model.TestCase
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 
 // todo move to :service
 public fun TestCase.Companion.createStubInstance(

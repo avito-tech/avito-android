@@ -5,7 +5,6 @@ import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.DeviceName
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.millisecondsToHumanReadableTime
 import com.avito.runner.reservation.DeviceReservationWatcher
@@ -17,8 +16,8 @@ import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.model.TestRunnerResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
+import com.avito.test.model.DeviceName
 import kotlinx.coroutines.coroutineScope
 
 internal class TestRunnerImpl(
@@ -30,7 +29,6 @@ internal class TestRunnerImpl(
     private val testMetricsListener: TestMetricsListener,
     private val devicesProvider: DevicesProvider,
     private val testRunRequestFactory: TestRunRequestFactory,
-    private val testListener: TestListener,
     private val targets: List<TargetConfigurationData>,
     loggerFactory: LoggerFactory
 ) : TestRunner {
@@ -44,7 +42,6 @@ internal class TestRunnerImpl(
             logger.info("Test run started")
             val deviceWorkerPool: DeviceWorkerPool = devicesProvider.provideFor(
                 reservations = getReservations(tests),
-                testListener = testListener,
             )
             try {
                 deviceWorkerPool.start()

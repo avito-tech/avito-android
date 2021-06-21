@@ -1,5 +1,6 @@
 package com.avito.report.model
 
+import com.avito.test.model.TestName
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
