@@ -27,6 +27,16 @@ buildscript {
     }
 }
 
+dependencyAnalysis {
+    issues {
+        all {
+            onRedundantPlugins {
+                severity("fail")
+            }
+        }
+    }
+}
+
 dependencies {
     add("detektPlugins", libs.detektFormatting)
 }
