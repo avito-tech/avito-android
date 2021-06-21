@@ -1,5 +1,7 @@
 package com.avito.runner.scheduler.runner.model
 
+import com.avito.report.model.DeviceName
+import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import java.io.File
@@ -7,16 +9,20 @@ import java.io.File
 internal class TestRunRequestFactory(
     private val application: File?,
     private val testApplication: File,
-    private val executionParameters: ExecutionParameters
+    private val executionParameters: ExecutionParameters,
+    private val targets: Map<DeviceName, TargetConfigurationData>
 ) {
 
-    fun create(test: TestWithTarget): TestRunRequest {
-        val reservation = test.target.reservation
-        val quota = test.target.reservation.quota
+    fun create(test: TestCase): TestRunRequest {
+        val target = requireNotNull(targets[test.deviceName]) {
+            "Can't find target ${test.deviceName}"
+        }
+        val reservation = target.reservation
+        val quota = target.reservation.quota
         return TestRunRequest(
             testCase = TestCase(
-                name = test.test.name,
-                deviceName = test.target.deviceName
+                name = test.name,
+                deviceName = test.deviceName
             ),
             configuration = DeviceConfiguration(
                 api = reservation.device.api,
@@ -33,7 +39,7 @@ internal class TestRunRequestFactory(
             testPackage = executionParameters.applicationTestPackageName,
             testRunner = executionParameters.testRunner,
             timeoutMinutes = TEST_TIMEOUT_MINUTES,
-            instrumentationParameters = test.target.instrumentationParams,
+            instrumentationParameters = target.instrumentationParams,
             enableDeviceDebug = executionParameters.enableDeviceDebug
         )
     }

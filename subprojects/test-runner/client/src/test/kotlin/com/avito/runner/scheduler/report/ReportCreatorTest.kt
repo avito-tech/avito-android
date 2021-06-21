@@ -3,7 +3,7 @@ package com.avito.runner.scheduler.report
 import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
 import com.avito.runner.scheduler.runner.model.TestRunRequest
-import com.avito.runner.scheduler.runner.model.TestRunnerResult
+import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.model.createStubInstance
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
@@ -209,9 +209,7 @@ internal class ReportCreatorTest {
     ): SummaryReport {
         val reportCreator = SummaryReportMakerImpl()
         return reportCreator.make(
-            runResult = TestRunnerResult(
-                runs = runs.toMap()
-            ),
+            results = runs.map { TestRunResult(it.first, it.second) },
             startTimeMilliseconds = startTimeMilliseconds
         )
     }

@@ -1,5 +1,6 @@
 package com.avito.runner.scheduler.metrics.model
 
+import com.avito.report.model.DeviceName
 import com.avito.report.model.TestName
 import com.avito.runner.service.model.TestCase
 
@@ -7,7 +8,7 @@ import com.avito.runner.service.model.TestCase
 public fun TestCase.Companion.createStubInstance(
     className: String = "com.avito.Test",
     methodName: String = "test",
-    deviceName: String = "api22"
+    deviceName: DeviceName = DeviceName("api22")
 ): TestCase = TestCase(TestName(className, methodName), deviceName)
 
 internal fun TestKey.Companion.createStubInstance(

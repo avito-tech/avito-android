@@ -3,6 +3,7 @@ package com.avito.instrumentation
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.internal.RunnerInputTester
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.report.model.DeviceName
 import com.avito.report.model.RunId
 import com.avito.runner.config.Reservation
 import com.avito.runner.config.RunnerInputParams
@@ -299,7 +300,7 @@ internal class RunnerInputParamsTest {
             },
             Case("target device name") {
                 assertThat(it.instrumentationConfiguration.targets[0].deviceName)
-                    .isEqualTo("api22")
+                    .isEqualTo(DeviceName("api22"))
             },
             Case("target name") {
                 assertThat(it.instrumentationConfiguration.targets[0].name)

@@ -30,6 +30,7 @@ import com.avito.instrumentation.internal.RunIdResolver
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerFactory
+import com.avito.report.model.DeviceName
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.InstrumentationParameters
@@ -328,7 +329,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         return TargetConfigurationData(
             name = targetConfiguration.name,
             reservation = getScheduling(targetConfiguration.scheduling).reservation,
-            deviceName = deviceName,
+            deviceName = DeviceName(deviceName),
             instrumentationParams = parentInstrumentationParameters
                 .applyParameters(targetConfiguration.instrumentationParams)
                 .applyParameters(

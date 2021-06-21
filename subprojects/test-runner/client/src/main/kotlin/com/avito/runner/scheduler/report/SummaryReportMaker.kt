@@ -2,13 +2,13 @@ package com.avito.runner.scheduler.report
 
 import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
-import com.avito.runner.scheduler.runner.model.TestRunnerResult
+import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.service.model.TestCaseRun
 
 internal interface SummaryReportMaker {
 
     fun make(
-        runResult: TestRunnerResult,
+        results: List<TestRunResult>,
         startTimeMilliseconds: Long
     ): SummaryReport
 }
@@ -16,11 +16,11 @@ internal interface SummaryReportMaker {
 internal class SummaryReportMakerImpl : SummaryReportMaker {
 
     override fun make(
-        runResult: TestRunnerResult,
+        results: List<TestRunResult>,
         startTimeMilliseconds: Long
     ): SummaryReport {
 
-        val reports = runResult.runs.map { (request, results) ->
+        val reports = results.map { (request, results) ->
             val failedRuns = results.count { it.testCaseRun.result is TestCaseRun.Result.Failed }
             val ignoredRuns = results.count { it.testCaseRun.result is TestCaseRun.Result.Ignored }
             val successRuns = results.count { it.testCaseRun.result is TestCaseRun.Result.Passed }

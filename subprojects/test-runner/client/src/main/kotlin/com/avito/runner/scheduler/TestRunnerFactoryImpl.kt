@@ -9,6 +9,7 @@ import com.avito.report.model.TestStaticData
 import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.config.RunnerInputParams
+import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.listener.ArtifactsTestListener
 import com.avito.runner.scheduler.listener.AvitoFileStorageUploader
@@ -53,10 +54,13 @@ internal class TestRunnerFactoryImpl(
     private val params: RunnerInputParams,
     private val tempLogcatDir: File,
     private val metricsSender: InstrumentationMetricsSender,
-    private val report: Report
+    private val report: Report,
+    private val targets: List<TargetConfigurationData>
 ) : TestRunnerFactory {
 
-    override fun createTestRunner(): TestRunner {
+    override fun createTestRunner(
+        tests: List<TestStaticData>
+    ): TestRunner {
         return TestRunnerImpl(
             scheduler = TestExecutionScheduler(
                 results = executionState.results,
@@ -80,25 +84,35 @@ internal class TestRunnerFactoryImpl(
             ),
             testMetricsListener = testMetricsListener,
             testRunRequestFactory = testRunnerRequestFactory,
-            testListenerProvider = { testStaticDataByTestCase ->
-                CompositeListener(
-                    listeners = mutableListOf<TestListener>().apply {
-                        add(LogListener())
-                        add(
-                            ArtifactsTestListener(
-                                lifecycleListener = createTestReporter(
-                                    testStaticDataByTestCase = testStaticDataByTestCase,
-                                ),
-                                outputDirectory = testRunnerOutputDir,
-                                loggerFactory = loggerFactory,
-                                saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
-                                fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
-                            )
+            testListener = CompositeListener(
+                listeners = mutableListOf<TestListener>().apply {
+                    add(LogListener())
+                    add(
+                        ArtifactsTestListener(
+                            lifecycleListener = createTestReporter(
+                                testStaticDataByTestCase = testStaticDataByTestCase(tests),
+                            ),
+                            outputDirectory = testRunnerOutputDir,
+                            loggerFactory = loggerFactory,
+                            saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
+                            fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
                         )
-                    }
-                )
-            }
+                    )
+                }
+            ),
+            targets = targets
         )
+    }
+
+    private fun testStaticDataByTestCase(
+        testsToRun: List<TestStaticData>
+    ): Map<TestCase, TestStaticData> {
+        return testsToRun.associateBy { test ->
+            TestCase(
+                name = test.name,
+                deviceName = test.device
+            )
+        }
     }
 
     private fun createTestReporter(

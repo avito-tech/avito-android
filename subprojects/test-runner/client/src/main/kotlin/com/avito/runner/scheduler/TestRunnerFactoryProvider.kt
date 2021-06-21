@@ -76,7 +76,8 @@ public class TestRunnerFactoryProvider(
             params = params,
             tempLogcatDir = tempLogcatDir,
             metricsSender = metricsSender,
-            report = report
+            report = report,
+            targets = params.instrumentationConfiguration.targets
         )
     }
 
@@ -84,7 +85,8 @@ public class TestRunnerFactoryProvider(
         return TestRunRequestFactory(
             application = params.mainApk,
             testApplication = params.testApk,
-            executionParameters = params.executionParameters
+            executionParameters = params.executionParameters,
+            targets = params.instrumentationConfiguration.targets.associateBy { it.deviceName }
         )
     }
 
