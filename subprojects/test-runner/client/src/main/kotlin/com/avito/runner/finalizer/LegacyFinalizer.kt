@@ -4,27 +4,28 @@ import com.avito.android.runner.report.LegacyReport
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.TestName
-import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.action.LegacyFinalizeAction
 import com.avito.runner.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.runner.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.runner.finalizer.verdict.LegacyVerdict
 import com.avito.runner.finalizer.verdict.LegacyVerdictDeterminer
-import com.avito.runner.scheduler.runner.model.TestSchedulerResult
+import com.avito.runner.scheduler.runner.model.TestRunnerResults
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
+import java.io.File
 
 internal class LegacyFinalizer(
     private val hasFailedTestDeterminer: HasFailedTestDeterminer,
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer,
     private val legacyVerdictDeterminer: LegacyVerdictDeterminer,
     private val actions: List<LegacyFinalizeAction>,
-    private val params: InstrumentationTestsActionParams,
-    loggerFactory: LoggerFactory,
     private val report: LegacyReport,
+    private val verdictFile: File,
+    loggerFactory: LoggerFactory,
 ) : Finalizer {
 
     private val logger = loggerFactory.create<LegacyFinalizer>()
 
-    override fun finalize(testSchedulerResults: TestSchedulerResult): Finalizer.Result {
+    override fun finalize(testSchedulerResults: TestRunnerResults): TestSchedulerResult {
 
         val testResults = report.getTests()
             .map { testsFromReport ->
@@ -58,11 +59,11 @@ internal class LegacyFinalizer(
 
         return when (verdict) {
             is LegacyVerdict.Success ->
-                Finalizer.Result.Ok
+                TestSchedulerResult.Ok
 
             is LegacyVerdict.Failure ->
-                Finalizer.Result.Failure(
-                    "Instrumentation task failed. Look at verdict in the file: ${params.verdictFile}"
+                TestSchedulerResult.Failure(
+                    "Instrumentation task failed. Look at verdict in the file: $verdictFile"
                 )
         }
     }

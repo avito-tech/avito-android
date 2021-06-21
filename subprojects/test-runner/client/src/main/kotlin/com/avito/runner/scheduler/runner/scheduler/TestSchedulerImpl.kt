@@ -7,9 +7,10 @@ import com.avito.android.check.AllChecks
 import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.config.InstrumentationFilterData
+import com.avito.runner.finalizer.Finalizer
 import com.avito.runner.scheduler.TestRunnerFactory
-import com.avito.runner.scheduler.runner.model.TestSchedulerResult
+import com.avito.runner.scheduler.runner.model.TestRunnerResults
 import com.avito.runner.scheduler.suite.TestSuite
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
@@ -19,12 +20,15 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 
 internal class TestSchedulerImpl(
-    private val params: InstrumentationTestsActionParams,
     private val report: Report,
     private val testSuiteProvider: TestSuiteProvider,
     private val testSuiteLoader: TestSuiteLoader,
     private val filterInfoWriter: FilterInfoWriter,
     private val testRunnerFactory: TestRunnerFactory,
+    private val finalizer: Finalizer,
+    private val filter: InstrumentationFilterData,
+    private val testApk: File,
+    private val outputDir: File,
     loggerFactory: LoggerFactory,
 ) : TestScheduler {
 
@@ -33,10 +37,10 @@ internal class TestSchedulerImpl(
     private val logger = loggerFactory.create<TestSchedulerImpl>()
 
     override fun schedule(): TestSchedulerResult {
-        logger.debug("Filter config: ${params.instrumentationConfiguration.filter}")
-        filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
+        logger.debug("Filter config: $filter")
+        filterInfoWriter.writeFilterConfig(filter)
 
-        val tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
+        val tests = testSuiteLoader.loadTestSuite(testApk, AllChecks())
 
         tests.fold(
             { result ->
@@ -46,7 +50,7 @@ internal class TestSchedulerImpl(
             { error -> logger.critical("Can't parse tests from apk", error) }
         )
 
-        writeParsedTests(tests)
+        writeParsedTests(outputDir, tests)
 
         val testSuite = testSuiteProvider.getTestSuite(
             tests = tests.getOrThrow()
@@ -63,7 +67,7 @@ internal class TestSchedulerImpl(
         filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
         filterInfoWriter.writeFilterExcludes(testSuite.skippedTests)
 
-        writeTestSuite(testSuite)
+        writeTestSuite(outputDir, testSuite)
 
         if (testsToRun.isNotEmpty()) {
             runBlocking {
@@ -71,22 +75,24 @@ internal class TestSchedulerImpl(
             }
         }
 
-        return TestSchedulerResult(
+        val testSchedulerResult = TestRunnerResults(
             testsToRun = testSuite.testsToRun.map { it.test },
             testResults = report.getTestResults()
         )
+
+        return finalizer.finalize(testSchedulerResult)
     }
 
-    private fun writeParsedTests(parsedTests: Result<List<TestInApk>>) {
-        val file = File(params.outputDir, "parsed-tests.json")
+    private fun writeParsedTests(outputDir: File, parsedTests: Result<List<TestInApk>>) {
+        val file = File(outputDir, "parsed-tests.json")
         parsedTests.fold(
             { tests -> file.writeText(gson.toJson(tests)) },
             { t -> file.writeText("There was an error while parsing tests:\n $t") }
         )
     }
 
-    private fun writeTestSuite(testSuite: TestSuite) {
-        File(params.outputDir, "test-suite.json")
+    private fun writeTestSuite(outputDir: File, testSuite: TestSuite) {
+        File(outputDir, "test-suite.json")
             .writeText(gson.toJson(testSuite.testsToRun.map { it.test }))
     }
 }

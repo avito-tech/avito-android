@@ -11,7 +11,7 @@ internal class TestsActionParamsSerializationTest {
 
     @Test
     fun `params is serializable`() {
-        val params = InstrumentationTestsActionParams.createStubInstance(loggerFactory = loggerFactory)
+        val params = RunnerInputParams.createStubInstance(loggerFactory = loggerFactory)
 
         assertSerializable(params)
     }

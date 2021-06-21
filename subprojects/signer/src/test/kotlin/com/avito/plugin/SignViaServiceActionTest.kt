@@ -65,7 +65,7 @@ internal class SignViaServiceActionTest {
         assertThat<Result.Failure<*>>(result) {
             assertThat(throwable.message).run {
                 contains("Failed to sign $testProjectDir/test.apk via service")
-                contains("Request: POST ${server.url("/sign")}")
+                contains("Request: POST ${server.url("/")}")
                 contains("Request body size: ")
                 contains("Response: 500")
                 contains("Response headers:")
@@ -84,7 +84,7 @@ internal class SignViaServiceActionTest {
         assertThat(server.requestCount).isEqualTo(1)
         val recordedRequest = server.takeRequest()
 
-        assertThat(recordedRequest.path).isEqualTo("/sign")
+        assertThat(recordedRequest.path).isEqualTo("/")
         assertThat(recordedRequest.body.readUtf8()).contains("12345")
 
         assertThat(result).isInstanceOf<Result.Success<*>>()

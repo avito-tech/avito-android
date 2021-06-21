@@ -4,7 +4,8 @@ import com.avito.report.model.TestStaticData
 import com.avito.runner.finalizer.action.FinalizeAction
 import com.avito.runner.finalizer.verdict.Verdict
 import com.avito.runner.finalizer.verdict.VerdictDeterminer
-import com.avito.runner.scheduler.runner.model.TestSchedulerResult
+import com.avito.runner.scheduler.runner.model.TestRunnerResults
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 import java.io.File
 
 internal class FinalizerImpl(
@@ -14,7 +15,7 @@ internal class FinalizerImpl(
     private val finalizerFileDumper: FinalizerFileDumper,
 ) : Finalizer {
 
-    override fun finalize(testSchedulerResults: TestSchedulerResult): Finalizer.Result {
+    override fun finalize(testSchedulerResults: TestRunnerResults): TestSchedulerResult {
 
         val initialTestSuite: Set<TestStaticData> = testSchedulerResults.testsToRun.toSet()
 
@@ -32,10 +33,10 @@ internal class FinalizerImpl(
 
         return when (verdict) {
             is Verdict.Success ->
-                Finalizer.Result.Ok
+                TestSchedulerResult.Ok
 
             is Verdict.Failure ->
-                Finalizer.Result.Failure("Instrumentation task failed. Look at verdict in the file: $verdictFile")
+                TestSchedulerResult.Failure("Instrumentation task failed. Look at verdict in the file: $verdictFile")
         }
     }
 
