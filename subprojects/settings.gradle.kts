@@ -285,7 +285,8 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
-                includeGroup("com.google.test.platform")
+                includeGroup("com.google.test.platform") // todo remove after upgrade to 4.2.x+
+                includeGroup("com.google.testing.platform")
             }
         }
         exclusiveContent {

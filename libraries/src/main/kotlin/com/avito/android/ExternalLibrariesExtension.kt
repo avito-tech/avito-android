@@ -32,7 +32,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
      * We use exact version to provide consistent environment and avoid build cache issues
      * (AGP tasks has artifacts from build tools)
      */
-    val buildToolsVersion = "29.0.3"
+    val buildToolsVersion = "30.0.2"
 
     val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion").get()
     val androidLintVersion = systemProperty("androidLintVersion").get()
