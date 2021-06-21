@@ -302,11 +302,12 @@ dependencyResolutionManagement {
 }
 
 @Suppress("UnstableApiUsage")
-val avitoGithubRemoteCacheHost = settings.providers
+val avitoGithubRemoteCacheHost: Provider<String> = settings.providers
     .environmentVariable("GRADLE_CACHE_NODE_HOST")
     .forUseAtConfigurationTime()
 
-val avitoGithubRemoteCachePush: String? by settings
+val avitoGithubRemoteCachePush: String =
+    extra.properties.getOrDefault("avitoGithub.gradle.buildCache.remote.push", "false").toString()
 
 /**
  * Included builds will inherit this cache config
@@ -318,41 +319,11 @@ val avitoGithubRemoteCachePush: String? by settings
  */
 buildCache {
     remote<HttpBuildCache> {
-        url = remoteCacheUrl()
-        isEnabled = hasRemoteCacheUrl()
-        isPush = isRemoteCachePushEnabled()
+        setUrl("http://${avitoGithubRemoteCacheHost.orNull}/cache/")
+        isEnabled = avitoGithubRemoteCacheHost.orNull != null
+        isPush = avitoGithubRemoteCachePush.toBoolean()
         isAllowUntrustedServer = true
         isAllowInsecureProtocol = true
-    }
-}
-
-fun remoteCacheUrl(): java.net.URI {
-    val url = "http://${avitoGithubRemoteCacheHost.orNull}/cache/"
-    logger.lifecycle("[RemoteCache] url = $url")
-    return uri(url)
-}
-
-fun isRemoteCachePushEnabled(): Boolean {
-    val result = avitoGithubRemoteCachePush?.toBoolean() ?: false
-    return if (result) {
-        logger.lifecycle("[RemoteCache] push enabled")
-        true
-    } else {
-        logger.lifecycle("[RemoteCache] push disabled")
-        false
-    }
-}
-
-fun hasRemoteCacheUrl(): Boolean {
-    return if (avitoGithubRemoteCacheHost.orNull != null) {
-        logger.lifecycle("[RemoteCache] enabled")
-        true
-    } else {
-        logger.lifecycle(
-            "[RemoteCache] disabled: 'remoteCacheUrl' not set " +
-                "(cache node currently only available for Avito employees, because of security reasons)"
-        )
-        false
     }
 }
 
