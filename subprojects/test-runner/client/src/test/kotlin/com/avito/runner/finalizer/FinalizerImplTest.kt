@@ -7,7 +7,8 @@ import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.runner.finalizer.action.WriteTaskVerdictAction
-import com.avito.runner.scheduler.runner.model.TestSchedulerResult
+import com.avito.runner.scheduler.runner.model.TestRunnerResults
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -22,14 +23,14 @@ internal class FinalizerImplTest {
 
         val test = TestStaticDataPackage.createStubInstance()
 
-        val testSchedulerResult = TestSchedulerResult(
+        val testSchedulerResult = TestRunnerResults(
             testsToRun = listOf(test),
             testResults = listOf(AndroidTest.Completed.createStubInstance(testStaticData = test))
         )
 
         val result = finalizerImpl.finalize(testSchedulerResult)
 
-        assertThat(result).isInstanceOf<Finalizer.Result.Ok>()
+        assertThat(result).isInstanceOf<TestSchedulerResult.Ok>()
     }
 
     @Test
@@ -40,14 +41,14 @@ internal class FinalizerImplTest {
 
         val test = TestStaticDataPackage.createStubInstance()
 
-        val testSchedulerResult = TestSchedulerResult(
+        val testSchedulerResult = TestRunnerResults(
             testsToRun = listOf(test),
             testResults = emptyList()
         )
 
         val result = finalizerImpl.finalize(testSchedulerResult)
 
-        assertThat(result).isInstanceOf<Finalizer.Result.Failure>()
+        assertThat(result).isInstanceOf<TestSchedulerResult.Failure>()
         assertThat(verdictFile.readText()).contains("${test.name} ${test.device} NOT REPORTED")
     }
 
@@ -59,7 +60,7 @@ internal class FinalizerImplTest {
 
         val test = TestStaticDataPackage.createStubInstance()
 
-        val testSchedulerResult = TestSchedulerResult(
+        val testSchedulerResult = TestRunnerResults(
             testsToRun = listOf(test),
             testResults = listOf(
                 AndroidTest.Completed.createStubInstance(
@@ -73,7 +74,7 @@ internal class FinalizerImplTest {
 
         val result = finalizerImpl.finalize(testSchedulerResult)
 
-        assertThat(result).isInstanceOf<Finalizer.Result.Failure>()
+        assertThat(result).isInstanceOf<TestSchedulerResult.Failure>()
         assertThat(verdictFile.readText()).contains("${test.name} ${test.device} FAILED")
     }
 

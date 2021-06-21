@@ -1,10 +1,10 @@
 package com.avito.runner.finalizer
 
 import com.avito.android.runner.report.ReportFactory
+import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportLinkGenerator
-import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.action.AvitoReportViewerFinishAction
 import com.avito.runner.finalizer.action.FinalizeAction
 import com.avito.runner.finalizer.action.LegacyAvitoReportViewerFinishAction
@@ -28,12 +28,17 @@ import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import java.io.File
 
-public class FinalizerFactoryImpl(
-    private val params: InstrumentationTestsActionParams,
+internal class FinalizerFactoryImpl(
     private val reportFactory: ReportFactory,
     private val metricsConfig: RunnerMetricsConfig,
     private val timeProvider: TimeProvider,
-    private val loggerFactory: LoggerFactory
+    private val loggerFactory: LoggerFactory,
+    private val reportViewerConfig: ReportViewerConfig?,
+    private val useInMemoryReport: Boolean,
+    private val suppressFailure: Boolean,
+    private val suppressFlaky: Boolean,
+    private val verdictFile: File,
+    private val outputDir: File,
 ) : FinalizerFactory {
 
     override fun create(): Finalizer {
@@ -45,14 +50,13 @@ public class FinalizerFactoryImpl(
 
         val reportLinkGenerator = reportFactory.createReportLinkGenerator()
 
-        return if (params.useInMemoryReport) {
+        return if (useInMemoryReport) {
             createFinalizer(
                 reportLinkGenerator = reportLinkGenerator,
                 metricsSender = metricsSender
             )
         } else {
             createLegacyFinalizer(
-                params = params,
                 timeProvider = timeProvider,
                 reportLinkGenerator = reportLinkGenerator,
                 metricsSender = metricsSender
@@ -66,8 +70,8 @@ public class FinalizerFactoryImpl(
     ): FinalizerImpl {
 
         val verdictDeterminer: VerdictDeterminer = VerdictDeterminerImpl(
-            suppressFailure = params.suppressFailure,
-            suppressFlaky = params.suppressFlaky,
+            suppressFailure = suppressFailure,
+            suppressFlaky = suppressFlaky,
             timeProvider = timeProvider
         )
 
@@ -76,46 +80,45 @@ public class FinalizerFactoryImpl(
         actions += SendMetricsAction(metricsSender)
 
         actions += WriteTaskVerdictAction(
-            verdictDestination = params.verdictFile,
+            verdictDestination = verdictFile,
             reportLinkGenerator = reportLinkGenerator
         )
 
         actions += WriteJUnitReportAction(
-            destination = File(params.outputDir, "junit-report.xml"),
+            destination = File(outputDir, "junit-report.xml"),
             reportLinkGenerator = reportLinkGenerator,
             testSuiteNameProvider = reportFactory.createTestSuiteNameGenerator()
         )
 
-        if (params.reportViewerConfig != null) {
+        if (reportViewerConfig != null) {
 
             actions += AvitoReportViewerFinishAction(legacyReport = reportFactory.createAvitoReport())
 
             actions += WriteReportViewerLinkFile(
-                outputDir = params.outputDir,
+                outputDir = outputDir,
                 reportLinkGenerator = reportLinkGenerator
             )
         }
 
         return FinalizerImpl(
             actions = actions,
-            verdictFile = params.verdictFile,
+            verdictFile = verdictFile,
             verdictDeterminer = verdictDeterminer,
             finalizerFileDumper = FinalizerFileDumperImpl(
-                outputDir = params.outputDir,
+                outputDir = outputDir,
                 loggerFactory = loggerFactory
             )
         )
     }
 
     private fun createLegacyFinalizer(
-        params: InstrumentationTestsActionParams,
         timeProvider: TimeProvider,
         reportLinkGenerator: ReportLinkGenerator,
         metricsSender: InstrumentationMetricsSender,
     ): LegacyFinalizer {
         val hasFailedTestDeterminer: HasFailedTestDeterminer = LegacyFailedTestDeterminer(
-            suppressFailure = params.suppressFailure,
-            suppressFlaky = params.suppressFlaky
+            suppressFailure = suppressFailure,
+            suppressFlaky = suppressFlaky
         )
 
         val verdictDeterminer = LegacyVerdictDeterminerFactory.create()
@@ -125,22 +128,22 @@ public class FinalizerFactoryImpl(
         actions += LegacySendMetricsAction(metricsSender)
 
         actions += LegacyWriteTaskVerdictAction(
-            verdictDestination = params.verdictFile,
+            verdictDestination = verdictFile,
             reportLinkGenerator = reportLinkGenerator
         )
 
         actions += LegacyWriteJUnitReportAction(
-            destination = File(params.outputDir, "junit-report.xml"),
+            destination = File(outputDir, "junit-report.xml"),
             testSuiteNameProvider = reportFactory.createTestSuiteNameGenerator(),
             reportLinkGenerator = reportLinkGenerator,
         )
 
-        if (params.reportViewerConfig != null) {
+        if (reportViewerConfig != null) {
 
             actions += LegacyAvitoReportViewerFinishAction(legacyReport = reportFactory.createAvitoReport())
 
             actions += LegacyWriteReportViewerLinkFile(
-                outputDir = params.outputDir,
+                outputDir = outputDir,
                 reportLinkGenerator = reportLinkGenerator
             )
         }
@@ -152,9 +155,9 @@ public class FinalizerFactoryImpl(
             ),
             legacyVerdictDeterminer = verdictDeterminer,
             actions = actions,
-            params = params,
-            loggerFactory = params.loggerFactory,
-            report = reportFactory.createAvitoReport()
+            report = reportFactory.createAvitoReport(),
+            verdictFile = verdictFile,
+            loggerFactory = loggerFactory
         )
     }
 }
