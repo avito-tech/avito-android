@@ -1,8 +1,0 @@
-# Scheme: https://docs.gradle.com/build-cache-node/schema/build-cache-node-config-schema-1.json
-version: 1
-cache:
-  targetSize: 500000
-  maxArtifactSize: 200
-  credentials:
-    anonymousLevel: "READWRITE"
-    users: []

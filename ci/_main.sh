@@ -95,10 +95,12 @@ function runInBuilder() {
         --volume /var/run/docker.sock:/var/run/docker.sock \
         --volume "${GRADLE_CACHE_DIR}":/gradle/caches/modules-2 \
         --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
+        --volume "$DIR/gradle.properties":/gradle/gradle.properties \
         --workdir /app \
         --env TZ="Europe/Moscow" \
         --env LOCAL_USER_ID="$USER_ID" \
         --env GRADLE_USER_HOME=/gradle \
-        ${IMAGE_ANDROID_BUILDER} \
+        --env GRADLE_CACHE_NODE_HOST="$GRADLE_CACHE_NODE_HOST" \
+        "${IMAGE_ANDROID_BUILDER}" \
         bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }

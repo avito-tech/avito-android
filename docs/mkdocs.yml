@@ -75,6 +75,8 @@ nav:
                     -   Networking: contributing/Networking.md
                     -   Testing: contributing/Testing.md
                     -   Release: contributing/Release.md
+                    -   Internal:
+                            - contributing/internal/RemoteCache.md
     -   Projects:
             -   Build checks: projects/BuildChecks.md
             -   Build properties: projects/BuildProperties.md
