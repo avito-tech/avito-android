@@ -121,42 +121,46 @@ instrumentation {
             memoryLimit = "4Gi"
         )
 
-        configurationsContainer.register("ui") {
-            reportSkippedTests = true
-            filter = "ci"
+        configurations {
+            register("ui") {
+                reportSkippedTests = true
+                filter = "ci"
 
-            targetsContainer.register("api22") {
-                deviceName = "API22"
+                targets {
+                    register("api22") {
+                        deviceName = "API22"
 
-                scheduling {
-                    quota {
-                        retryCount = 1
-                        minimumSuccessCount = 1
+                        scheduling {
+                            quota {
+                                retryCount = 1
+                                minimumSuccessCount = 1
+                            }
+
+                            testsCountBasedReservation {
+                                device = emulator22
+                                maximum = 50
+                                minimum = 2
+                                testsPerEmulator = 3
+                            }
+                        }
                     }
 
-                    testsCountBasedReservation {
-                        device = emulator22
-                        maximum = 50
-                        minimum = 2
-                        testsPerEmulator = 3
-                    }
-                }
-            }
+                    register("api29") {
+                        deviceName = "API29"
 
-            targetsContainer.register("api29") {
-                deviceName = "API29"
+                        scheduling {
+                            quota {
+                                retryCount = 1
+                                minimumSuccessCount = 1
+                            }
 
-                scheduling {
-                    quota {
-                        retryCount = 1
-                        minimumSuccessCount = 1
-                    }
-
-                    testsCountBasedReservation {
-                        device = emulator29
-                        maximum = 50
-                        minimum = 2
-                        testsPerEmulator = 3
+                            testsCountBasedReservation {
+                                device = emulator29
+                                maximum = 50
+                                minimum = 2
+                                testsPerEmulator = 3
+                            }
+                        }
                     }
                 }
             }
