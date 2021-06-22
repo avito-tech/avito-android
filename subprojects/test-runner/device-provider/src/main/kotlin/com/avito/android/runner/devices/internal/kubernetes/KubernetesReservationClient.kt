@@ -134,42 +134,48 @@ internal class KubernetesReservationClient(
                 .distinctBy { it.metadata.name }
                 .consumeEach { pod ->
                     launch(CoroutineName("boot-pod-${pod.metadata.name}")) {
-                        pod.bootAndSendDevice(serialsChannel)
+                        pod.initializeDevice()
+                            .onSuccess { device ->
+                                device.sendTo(
+                                    pod.metadata.name,
+                                    serialsChannel
+                                )
+                            }
                     }
                 }
             logger.debug("initializeDevices finished")
         }
     }
 
-    private suspend fun Pod.bootAndSendDevice(serialsChannel: Channel<DeviceCoordinate>) {
+    private suspend fun RemoteDevice.sendTo(
+        podName: String,
+        serials: Channel<DeviceCoordinate>,
+    ) {
+        if (serials.isClosedForSend) {
+            logger.debug("Pod $podName boot device but serials channel closed")
+            return
+        }
+        emulatorsLogsReporter.redirectLogcat(
+            emulatorName = serial,
+            device = this
+        )
+        serials.send(
+            DeviceCoordinate.Kubernetes(
+                serial = serial,
+                podName = podName
+            )
+        )
+
+        logger.debug("Pod $podName sent outside for further usage")
+    }
+
+    private suspend fun Pod.initializeDevice(): Result<RemoteDevice> {
         val podName = metadata.name
         logger.debug("Found new pod: $podName")
-        when (val result = bootDevice()) {
-            is Result.Success -> {
-                val device = result.value
-                val serial = device.serial
-                if (serialsChannel.isClosedForSend) {
-                    logger.debug("Pod $podName boot device but serials channel closed")
-                    return
-                }
-                emulatorsLogsReporter.redirectLogcat(
-                    emulatorName = serial,
-                    device = device
-                )
-                serialsChannel.send(
-                    DeviceCoordinate.Kubernetes(
-                        serial = serial,
-                        podName = podName
-                    )
-                )
-
-                logger.debug("Pod $podName sent outside for further usage")
-            }
-            is Result.Failure -> {
-                logger.warn("Pod $podName can't load device. Disconnect and delete", result.throwable)
-                val isDeleted = kubernetesApi.deletePod(podName)
-                logger.debug("Pod $podName is deleted: $isDeleted")
-            }
+        return bootDevice().onFailure { error ->
+            logger.warn("Pod $podName can't load device. Disconnect and delete", error)
+            val isDeleted = kubernetesApi.deletePod(podName)
+            logger.debug("Pod $podName is deleted: $isDeleted")
         }
     }
 
