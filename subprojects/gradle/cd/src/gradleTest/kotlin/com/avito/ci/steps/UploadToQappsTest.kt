@@ -94,7 +94,7 @@ class UploadToQappsTest {
                                 comment = "build #1"
                             }
                             signService {
-                                host = "http://stub"
+                                url.set("http://stub")
                                 // no keys to skip a task
                             }
                             builds {

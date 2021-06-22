@@ -51,8 +51,8 @@ class CiStepsPluginTest {
                             import com.avito.cd.BuildVariant
                             ${registerUiTestConfigurations("regress", "pr")}
                             signService {
+                                url.set("https://signer/")
                                 bundle(android.buildTypes.release, "no_matter")
-                                host("https://signer/")
                             }
                             prosector {
                                 host("https://prosector")

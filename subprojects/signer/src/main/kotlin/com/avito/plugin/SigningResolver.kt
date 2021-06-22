@@ -2,14 +2,11 @@ package com.avito.plugin
 
 import com.android.build.api.variant.Variant
 import com.avito.android.Result
-import com.avito.kotlin.dsl.getBooleanProperty
-import org.gradle.api.Project
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
 @Suppress("UnstableApiUsage")
 internal class SigningResolver(
-    private val project: Project,
     private val extension: SignExtension,
     private val variant: Variant<*>,
     private val signTokensMap: Map<String, String?>,
@@ -34,13 +31,7 @@ internal class SigningResolver(
 
     val isCustomSigningEnabled: Boolean by lazy {
         val isEnabled = extension.enabled.getOrElse(true)
-
-        // todo use extension enabled in avito and disableSignService property read after "2021.21" version
-        if (project.getBooleanProperty("disableSignService")) {
-            false
-        } else {
-            isEnabled && hasTokenRegistered
-        }
+        isEnabled && hasTokenRegistered
     }
 
     fun resolveToken(onFailure: (Throwable) -> Nothing): Provider<String> {
