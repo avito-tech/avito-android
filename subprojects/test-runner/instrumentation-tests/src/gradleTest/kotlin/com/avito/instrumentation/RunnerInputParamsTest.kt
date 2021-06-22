@@ -150,9 +150,10 @@ internal class RunnerInputParamsTest {
                         plugins = plugins {
                             id("com.avito.android.instrumentation-tests")
                         },
+                        imports = listOf(
+                            "import static com.avito.instrumentation.reservation.request.Device.LocalEmulator"
+                        ),
                         buildGradleExtra = """
-                         import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
-
                          android {
                             defaultConfig {
                                 testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

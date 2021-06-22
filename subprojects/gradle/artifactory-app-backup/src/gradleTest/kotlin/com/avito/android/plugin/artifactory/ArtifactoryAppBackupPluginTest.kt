@@ -37,10 +37,12 @@ internal class ArtifactoryAppBackupPluginTest {
                     plugins = plugins {
                         id("com.avito.android.artifactory-app-backup")
                     },
-                    customScript = """
-                        import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt.getArtifactoryAndroidArtifactsBuildVariants
-                        import com.avito.cd.BuildVariant
-                        
+                    imports = listOf(
+                        "import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt." +
+                            "getArtifactoryAndroidArtifactsBuildVariants",
+                        "import com.avito.cd.BuildVariant",
+                    ),
+                    buildGradleExtra = """
                         $artifactoryBackupExtensionName {
                             backup {
                                 name = "name"
@@ -92,10 +94,12 @@ internal class ArtifactoryAppBackupPluginTest {
                         id("com.avito.android.artifactory-app-backup")
                         id("maven-publish")
                     },
-                    customScript = """
-                        import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt.getArtifactoryAndroidArtifactsBuildVariants
-                        import com.avito.cd.BuildVariant
-                        
+                    imports = listOf(
+                        "import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt." +
+                            "getArtifactoryAndroidArtifactsBuildVariants",
+                        "import com.avito.cd.BuildVariant"
+                    ),
+                    buildGradleExtra = """
                         $artifactoryBackupExtensionName {
                             backup {
                                 name = "$backupName"
@@ -176,8 +180,6 @@ internal class ArtifactoryAppBackupPluginTest {
                         id("maven-publish")
                     },
                     buildGradleExtra = """
-                    """.trimIndent(),
-                    customScript = """
                         $artifactoryBackupExtensionName {
                             backup {
                                 name = "$backupName"
@@ -195,7 +197,7 @@ internal class ArtifactoryAppBackupPluginTest {
                     }
                             }
                         }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             )
         ).generateIn(projectDir)

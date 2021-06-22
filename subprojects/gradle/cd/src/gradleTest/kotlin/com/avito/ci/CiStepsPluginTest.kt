@@ -47,8 +47,10 @@ class CiStepsPluginTest {
                         id("com.avito.android.cd")
                         id("maven-publish")
                     },
-                    customScript = """
-                            import com.avito.cd.BuildVariant
+                    imports = listOf(
+                        "import com.avito.cd.BuildVariant"
+                    ),
+                    buildGradleExtra = """
                             ${registerUiTestConfigurations("regress", "pr")}
                             signService {
                                 url.set("https://signer/")
@@ -86,7 +88,6 @@ class CiStepsPluginTest {
                                         mapping("releaseMapping", BuildVariant.RELEASE, "${'$'}{project.buildDir}/reports/mapping.txt")
                                         file("nonExistedJson","${'$'}{project.buildDir}/reports/not-existed-file.json")
                                     }
-
 
                                     uploadToQapps {
                                         artifacts = ['releaseApk']
