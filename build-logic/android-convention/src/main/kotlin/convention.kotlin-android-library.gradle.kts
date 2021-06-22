@@ -10,6 +10,13 @@ plugins {
 
 val generatedJavaResDir = project.layout.buildDirectory.file("generated/avito/java_res")
 
+// AGP 4.2
+//androidComponents {
+//    beforeAndroidTests {
+//        it.enabled = false
+//    }
+//}
+
 android {
 
     /**
@@ -22,6 +29,7 @@ android {
         }
     }
 
+    // todo remove updating to AGP 4.2
     @Suppress("UnstableApiUsage")
     onVariants {
         androidTest {

@@ -26,6 +26,28 @@ public abstract class SignBundleTask @Inject constructor(
     }
 
     override fun hackForArtifactsApi() {
-        signedFile().copyTo(unsignedFile(), overwrite = true)
+        val agpVersion = project.providers.systemProperty("androidGradlePluginVersion").get()
+
+        val to = when {
+            agpVersion.startsWith("4.1") -> unsignedFile()
+            agpVersion.startsWith("4.2") -> resultLocation()
+            agpVersion.startsWith("7.") -> resultLocation()
+            else -> throw IllegalArgumentException(
+                "Unknown AGP version $agpVersion, can't say if Signer plugin will act correctly"
+            )
+        }
+
+        signedFile().copyTo(to, overwrite = true)
+    }
+
+    /**
+     * transform API is broken for ArtifactType.Bundle, hacking here to provide expected result
+     * https://issuetracker.google.com/issues/174678813
+     */
+    private fun resultLocation(): File {
+        return signedFile().path
+            .replaceAfterLast("/", unsignedFile().name) // replace bugged `out` file name with original one
+            .replace("/$name", "") // remove `signBundleViaServiceVariant` from path, bugged
+            .let { File(it) }
     }
 }

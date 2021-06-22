@@ -80,7 +80,7 @@ internal class SignServicePluginTest {
 
         ciRun(
             testProjectDir,
-            ":app:signApkViaServiceDebug",
+            ":app:signApkViaServiceDebug", // mind that only release is registered in extension
         ).assertThat().buildSuccessful()
     }
 
