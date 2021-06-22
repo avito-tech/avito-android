@@ -141,11 +141,19 @@ class AndroidAppModule(
             ""
         }
 
-        val disableLintVitalRelease = """
-            |afterEvaluate{
-            |       tasks.named("lintVitalRelease").configure { onlyIf { false } }
+        val disableLintVitalRelease = if (useKts) {
+            """
+            |lintOptions {
+            |   isCheckReleaseBuilds = false
             |}
             """.trimMargin()
+        } else {
+            """
+            |lintOptions {
+            |   checkReleaseBuilds = false
+            |}
+            """.trimMargin()
+        }
 
         return if (useKts) {
             """
