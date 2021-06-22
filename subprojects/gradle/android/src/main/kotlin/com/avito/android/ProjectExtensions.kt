@@ -11,7 +11,6 @@ import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.TestedExtension
-import com.android.build.gradle.api.ApplicationVariant
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
@@ -60,8 +59,12 @@ fun Project.isAndroidLibrary(): Boolean =
     plugins.hasPlugin("com.android.library")
 
 @Suppress("DefaultLocale")
-fun TaskContainer.bundleTaskProvider(variant: ApplicationVariant): TaskProvider<*> =
-    named("bundle${variant.name.capitalize()}")
+fun TaskContainer.packageTaskProvider(variantName: String): TaskProvider<*> =
+    named("package${variantName.capitalize()}")
+
+@Suppress("DefaultLocale")
+fun TaskContainer.bundleTaskProvider(variantName: String): TaskProvider<*> =
+    named("bundle${variantName.capitalize()}")
 
 @Suppress("DefaultLocale", "UnstableApiUsage")
 fun taskName(prefix: String, component: ComponentIdentity) =

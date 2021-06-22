@@ -53,12 +53,13 @@ class SignerIntegrationTest {
                 signService {
                     url.set("${webServer.url("/")}")
                     apk(android.buildTypes.release, '12345')
-                    bundle(android.buildTypes.release, '12345')
                 }
                 builds {
                     fullCheck {
                         artifacts {
-                            apk("releaseApk",BuildVariant.RELEASE,"", "${'$'}{project.buildDir}/outputs/apk/release/app-release.apk") { }
+                            apk("releaseApk",BuildVariant.RELEASE,"", "${'$'}{project.buildDir}/outputs/apk/release/app-release.apk") { 
+                                signature = "12321e1e12e1"
+                            }
                         }
                     }
                 }
