@@ -38,6 +38,7 @@ import com.avito.runner.config.SchedulingConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.suite.filter.Filter
+import com.avito.test.model.DeviceName
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
@@ -328,7 +329,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         return TargetConfigurationData(
             name = targetConfiguration.name,
             reservation = getScheduling(targetConfiguration.scheduling).reservation,
-            deviceName = deviceName,
+            deviceName = DeviceName(deviceName),
             instrumentationParams = parentInstrumentationParameters
                 .applyParameters(targetConfiguration.instrumentationParams)
                 .applyParameters(

@@ -3,9 +3,7 @@ package com.avito.runner.scheduler.suite
 import com.avito.android.TestInApk
 import com.avito.android.runner.report.Report
 import com.avito.instrumentation.suite.parseTest
-import com.avito.report.model.DeviceName
 import com.avito.runner.config.TargetConfigurationData
-import com.avito.runner.scheduler.runner.model.TestWithTarget
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.TestsFilter
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Excluded
@@ -34,8 +32,8 @@ internal interface TestSuiteProvider {
                     .filter { (_, verdict) ->
                         verdict !is Excluded.BySignatures || verdict.source != TestsFilter.Signatures.Source.PreviousRun
                     }
-                    .map { (targetTest, verdict) ->
-                        targetTest.test to verdict.reason
+                    .map { (test, verdict) ->
+                        test to verdict.reason
                     }
 
                 report.addSkippedTests(skippedTests)
@@ -49,13 +47,10 @@ internal interface TestSuiteProvider {
             filter: TestsFilter
         ): TestSuite {
             val source = targets.flatMap { target ->
-                val deviceName = DeviceName(target.deviceName)
+                val deviceName = target.deviceName
                 tests.map { testInApk ->
                     val testStaticData = parseTest(testInApk, deviceName, target.reservation.device.api)
-                    TestWithTarget(
-                        test = testStaticData,
-                        target = target
-                    ) to filter.filter(
+                    testStaticData to filter.filter(
                         TestsFilter.Test(
                             name = testInApk.testName.name,
                             annotations = testInApk.annotations,

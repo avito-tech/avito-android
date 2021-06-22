@@ -157,7 +157,7 @@ internal class FilterFactoryImpl(
             .filter { testRun -> statuses.any { it.statusClass.isInstance(testRun.status) } }
             .map { testRun ->
                 TestSignature(
-                    name = testRun.name,
+                    name = testRun.name.name,
                     deviceName = testRun.deviceName
                 )
             }.toSet()

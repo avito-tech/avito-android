@@ -41,7 +41,7 @@ internal class ReportProcessorImpl(
         logcatAccessor: LogcatAccessor
     ): AndroidTest {
 
-        val testFromSuite = requireNotNull(testSuite[test]) { "Can't find test in suite: ${test.testName}" }
+        val testFromSuite = requireNotNull(testSuite[test]) { "Can't find test in suite: $test" }
 
         return when (result) {
             is TestResult.Complete ->

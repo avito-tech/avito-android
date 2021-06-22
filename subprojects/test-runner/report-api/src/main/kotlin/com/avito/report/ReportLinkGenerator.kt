@@ -1,6 +1,6 @@
 package com.avito.report
 
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 public interface ReportLinkGenerator {
 

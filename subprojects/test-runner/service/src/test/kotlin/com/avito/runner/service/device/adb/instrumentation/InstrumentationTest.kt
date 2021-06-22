@@ -6,6 +6,7 @@ import com.avito.runner.service.worker.device.adb.instrumentation.Instrumentatio
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
+import com.avito.test.model.TestName
 import com.avito.truth.isInstanceOf
 import com.avito.utils.fileFromJarResources
 import com.google.common.truth.Truth.assertThat
@@ -248,8 +249,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         assertThat(tests).containsExactlyElementsIn(
             listOf<InstrumentationTestCaseRun>(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test1",
+                    name = TestName("com.example.test.TestClass", "test1"),
                     result = TestCaseRun.Result.Failed.InRun(
                         errorMessage = """java.net.UnknownHostException: Test Exception
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:245)
@@ -294,22 +294,19 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test2",
+                    name = TestName("com.example.test.TestClass", "test2"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test3",
+                    name = TestName("com.example.test.TestClass", "test3"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test4",
+                    name = TestName("com.example.test.TestClass", "test4"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
@@ -551,22 +548,19 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         assertThat(tests).containsExactlyElementsIn(
             listOf<InstrumentationTestCaseRun>(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test1",
+                    name = TestName("com.example.test.TestClass", "test1"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test2",
+                    name = TestName("com.example.test.TestClass", "test2"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test3",
+                    name = TestName("com.example.test.TestClass", "test3"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
@@ -718,15 +712,13 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         assertThat(entries).containsExactlyElementsIn(
             listOf<InstrumentationTestCaseRun>(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test1",
+                    name = TestName("com.example.test.TestClass", "test1"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test2",
+                    name = TestName("com.example.test.TestClass", "test2"),
                     result = TestCaseRun.Result.Ignored,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
@@ -784,8 +776,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         assertThat(entries).containsExactlyElementsIn(
             listOf<InstrumentationTestCaseRun>(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "ru.test.testapplication.ExampleInstrumentedTest",
-                    name = "failedTestCrash",
+                    name = TestName("ru.test.testapplication.ExampleInstrumentedTest", "failedTestCrash"),
                     result = TestCaseRun.Result.Failed.InRun("Process crashed."),
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
@@ -904,8 +895,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         assertThat(entries).containsExactlyElementsIn(
             listOf(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.example.test.TestClass",
-                    name = "test1",
+                    name = TestName("com.example.test.TestClass", "test1"),
                     result = TestCaseRun.Result.Passed,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
@@ -989,9 +979,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         assertThat(entries).containsExactlyElementsIn(
             listOf<InstrumentationTestCaseRun>(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    className = "com.avito.android.feature.advert.publish.verticals." +
-                        "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
-                    name = "dataSet5",
+                    name = TestName(
+                        "com.avito.android.feature.advert.publish.verticals." +
+                            "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
+                        "dataSet5"
+                    ),
                     result = TestCaseRun.Result.Failed.InRun(
                         errorMessage = ""
                     ),

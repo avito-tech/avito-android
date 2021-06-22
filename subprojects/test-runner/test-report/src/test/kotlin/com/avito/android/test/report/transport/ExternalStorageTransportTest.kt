@@ -25,7 +25,7 @@ internal class ExternalStorageTransportTest {
 
     @Test
     fun `sendReport - file written`(@TempDir tempDir: File) {
-        val testMetadata = TestMetadata.createStubInstance(className = "com.Test", methodName = "test")
+        val testMetadata = TestMetadata.createStubInstance()
 
         val reportState = Initialized.Started.createStubInstance(testMetadata = testMetadata)
 
@@ -85,8 +85,7 @@ internal class ExternalStorageTransportTest {
     ): TestArtifactsProvider {
         return TestArtifactsProviderFactory.create(
             testReportRootDir = lazy { rootDir },
-            className = testMetadata.className,
-            methodName = testMetadata.methodName!!
+            name = testMetadata.name
         )
     }
 }

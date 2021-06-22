@@ -9,6 +9,7 @@ import com.avito.runner.finalizer.TestRunResult
 import com.avito.runner.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.runner.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.runner.finalizer.verdict.LegacyVerdict
+import com.avito.test.model.TestName
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -79,8 +80,10 @@ internal class WriteJUnitReportActionTest {
             TestRunResult(
                 reportedTests = listOf(
                     SimpleRunTest.createStubInstance(
-                        name =
-                        "com.avito.android.deep_linking.DeepLinkingActivityIntentFilterTest.resolve_advert_legacyFormat"
+                        name = TestName(
+                            "com.avito.android.deep_linking.DeepLinkingActivityIntentFilterTest",
+                            "resolve_advert_legacyFormat"
+                        )
                     )
                 ),
                 failed = HasFailedTestDeterminer.Result.NoFailed,

@@ -1,7 +1,6 @@
 package com.avito.runner.finalizer.verdict
 
 import com.avito.composite_exception.composeWith
-import com.avito.report.model.TestName
 
 internal class LegacyVerdictDeterminerImpl : LegacyVerdictDeterminer {
 
@@ -74,7 +73,7 @@ internal class LegacyVerdictDeterminerImpl : LegacyVerdictDeterminer {
 
     private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests() =
         notSuppressed.groupBy(
-            { test -> TestName(test.className, test.methodName) },
+            { test -> test.name },
             { test -> test.deviceName }
         )
             .map { (testName, devices) ->

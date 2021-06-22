@@ -8,9 +8,9 @@ import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportsApiFactory
 import com.avito.report.TestArtifactsProvider
-import com.avito.report.model.DeviceName
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.serialize.ReportSerializer
+import com.avito.test.model.DeviceName
 import com.avito.time.TimeProvider
 
 class ReportTransportFactory(

@@ -83,9 +83,7 @@ abstract class InHouseInstrumentationTestRunner :
 
         TestArtifactsProviderFactory.create(
             testReportRootDir = runEnvironment.outputDirectory,
-            className = runEnvironment.testMetadata.className,
-            // todo remove enforced unwrap
-            methodName = runEnvironment.testMetadata.methodName!!
+            name = runEnvironment.testMetadata.name
         )
     }
 
@@ -125,7 +123,7 @@ abstract class InHouseInstrumentationTestRunner :
         AndroidLoggerFactory(
             elasticConfig = elasticConfig,
             sentryConfig = sentryConfig,
-            testName = runEnvironment.testMetadata.testName
+            testName = runEnvironment.testMetadata.name.toString()
         )
     }
 

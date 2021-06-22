@@ -5,6 +5,7 @@ import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
+import com.avito.test.model.TestName
 import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.utils.fileFromJarResources
 import com.github.salomonbrys.kotson.jsonObject
@@ -77,7 +78,12 @@ internal class ReportsApiTest {
         )
 
         assertThat(result).isSuccess().withValue {
-            assertThat(it.first().name).isEqualTo("ru.domofond.features.RemoteToggleMonitorTest.check_remote_toggle")
+            assertThat(it.first().name).isEqualTo(
+                TestName(
+                    "ru.domofond.features.RemoteToggleMonitorTest",
+                    "check_remote_toggle"
+                )
+            )
         }
     }
 

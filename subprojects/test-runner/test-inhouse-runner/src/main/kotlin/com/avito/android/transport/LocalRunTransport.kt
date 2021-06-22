@@ -11,12 +11,11 @@ import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.DeviceName
 import com.avito.report.model.Entry
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.TestName
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
+import com.avito.test.model.DeviceName
 import java.io.File
 
 internal class LocalRunTransport(
@@ -47,13 +46,8 @@ internal class LocalRunTransport(
 
     private fun sendInternal(state: Started) {
         try {
-            val testName = TestName(
-                className = state.testMetadata.className,
-                methodName = state.testMetadata.methodName!!
-            )
-
             val testStaticData = TestStaticDataPackage(
-                name = testName,
+                name = state.testMetadata.name,
                 device = deviceName,
                 description = state.testMetadata.description,
                 testCaseId = state.testMetadata.caseId,
@@ -87,7 +81,7 @@ internal class LocalRunTransport(
             )
 
             logger.info(
-                "Report link for test ${testName.name}: " +
+                "Report link for test ${testStaticData.name}: " +
                     "${reportViewer.generateSingleTestRunUrl(result.getOrThrow())}"
             )
 

@@ -1,6 +1,6 @@
 package com.avito.runner.finalizer.verdict
 
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 internal sealed class LegacyVerdict {
 

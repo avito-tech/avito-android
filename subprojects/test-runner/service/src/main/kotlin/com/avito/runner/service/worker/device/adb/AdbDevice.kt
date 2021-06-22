@@ -124,7 +124,7 @@ data class AdbDevice(
     ): DeviceTestCaseRun {
 
         val finalInstrumentationArguments = action.instrumentationParams.plus(
-            "class" to "${action.test.className}#${action.test.methodName}"
+            "class" to "${action.test.name.className}#${action.test.name.methodName}"
         )
 
         val startTime = timeProvider.nowInMillis()
@@ -141,29 +141,28 @@ data class AdbDevice(
             .map {
                 when (it) {
                     is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
-                        val testName = "${it.className}.${it.name}"
                         when (it.result) {
                             TestCaseRun.Result.Passed -> eventsListener.onRunTestPassed(
                                 device = this,
-                                testName = testName,
+                                testName = it.name.toString(),
                                 durationMs = timeProvider.nowInMillis() - startTime
                             )
                             TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(
                                 device = this,
-                                testName = testName,
+                                testName = it.name.toString(),
                                 durationMs = timeProvider.nowInMillis() - startTime
                             )
                             is Failed.InRun ->
                                 eventsListener.onRunTestRunError(
                                     device = this,
-                                    testName = testName,
+                                    testName = it.name.toString(),
                                     errorMessage = it.result.errorMessage,
                                     durationMs = timeProvider.nowInMillis() - startTime
                                 )
                             is Failed.InfrastructureError ->
                                 eventsListener.onRunTestInfrastructureError(
                                     device = this,
-                                    testName = testName,
+                                    testName = it.name.toString(),
                                     errorMessage = it.result.error.message ?: "Empty error message",
                                     throwable = it.result.error,
                                     durationMs = timeProvider.nowInMillis() - startTime
@@ -172,8 +171,7 @@ data class AdbDevice(
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = TestCase(
-                                    className = it.className,
-                                    methodName = it.name,
+                                    name = it.name,
                                     deviceName = action.test.deviceName
                                 ),
                                 result = it.result,
@@ -495,7 +493,7 @@ data class AdbDevice(
                 instrumentationArguments.formatInstrumentationOptions(),
                 "$testPackageName/$testRunnerClass"
             ),
-            redirectOutputTo = File(logsDir, "instrumentation-${test.className}#${test.methodName}.txt")
+            redirectOutputTo = File(logsDir, "instrumentation-${test.name}.txt")
         ).ofType(ProcessNotification.Output::class.java)
 
         return instrumentationParser
@@ -505,8 +503,7 @@ data class AdbDevice(
                 TimeUnit.MINUTES,
                 Observable.just(
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = test.className,
-                        name = test.methodName,
+                        name = test.name,
                         result = Failed.InfrastructureError.Timeout(
                             timeoutMin = timeoutMinutes,
                             error = RuntimeException("Failed on Timeout")

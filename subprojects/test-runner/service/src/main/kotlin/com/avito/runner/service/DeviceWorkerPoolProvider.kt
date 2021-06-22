@@ -17,6 +17,7 @@ class DeviceWorkerPoolProvider(
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
     private val deviceListener: DeviceListener,
+    private val testListener: TestListener,
     private val intentions: Channel<Intention>,
     private val intentionResults: Channel<IntentionResult>,
     private val deviceSignals: Channel<Device.Signal>,
@@ -24,8 +25,7 @@ class DeviceWorkerPoolProvider(
 ) {
 
     fun provide(
-        devices: ReceiveChannel<Device>,
-        testListener: TestListener,
+        devices: ReceiveChannel<Device>
     ): DeviceWorkerPool {
         return DeviceWorkerPoolImpl(
             outputDirectory = testRunnerOutputDir,
