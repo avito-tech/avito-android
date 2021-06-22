@@ -7,7 +7,7 @@ import io.fabric8.kubernetes.api.model.Pod
 internal fun StubPod(
     name: String = "stub-pod-name",
     phase: String = KubernetesApi.POD_STATUS_RUNNING,
-    ip: String = "stub-pod-ip"
+    ip: String? = "stub-pod-ip"
 ): Pod = Pod().apply {
     metadata {
         this.name = name

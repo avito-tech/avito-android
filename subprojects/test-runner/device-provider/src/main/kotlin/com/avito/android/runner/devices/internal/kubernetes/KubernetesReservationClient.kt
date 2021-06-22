@@ -134,20 +134,20 @@ internal class KubernetesReservationClient(
                 .distinctBy { it.metadata.name }
                 .consumeEach { pod ->
                     launch(CoroutineName("boot-pod-${pod.metadata.name}")) {
-                        pod.bootDevice(serialsChannel)
+                        pod.bootAndSendDevice(serialsChannel)
                     }
                 }
             logger.debug("initializeDevices finished")
         }
     }
 
-    private suspend fun Pod.bootDevice(serialsChannel: Channel<DeviceCoordinate>) {
+    private suspend fun Pod.bootAndSendDevice(serialsChannel: Channel<DeviceCoordinate>) {
         val podName = metadata.name
         logger.debug("Found new pod: $podName")
-        val device = getDevice(this)
-        val serial = device.serial
-        when (val result = device.waitForBoot()) {
+        when (val result = bootDevice()) {
             is Result.Success -> {
+                val device = result.value
+                val serial = device.serial
                 if (serialsChannel.isClosedForSend) {
                     logger.debug("Pod $podName boot device but serials channel closed")
                     return
@@ -167,7 +167,6 @@ internal class KubernetesReservationClient(
             }
             is Result.Failure -> {
                 logger.warn("Pod $podName can't load device. Disconnect and delete", result.throwable)
-                device.disconnect()
                 val isDeleted = kubernetesApi.deletePod(podName)
                 logger.debug("Pod $podName is deleted: $isDeleted")
             }
@@ -202,27 +201,28 @@ internal class KubernetesReservationClient(
                                     for (pod in runningPods) {
                                         launch(CoroutineName("get-pod-logs-${pod.metadata.name}")) {
                                             val podName = pod.metadata.name
-                                            val device = getDevice(pod)
-                                            val serial = device.serial
-                                            try {
-                                                emulatorsLogsReporter.reportEmulatorLogs(
-                                                    emulatorName = serial,
-                                                    log = kubernetesApi.getPodLogs(podName)
-                                                )
-                                            } catch (throwable: Throwable) {
-                                                // TODO must be fixed after adding affinity to POD
-                                                val podDescription = kubernetesApi.getPodDescription(podName)
-                                                logger.warn(
-                                                    "Get logs from emulator failed; pod=$podName; " +
-                                                        "podDescription=$podDescription; " +
-                                                        "container serial=$serial",
-                                                    throwable
+                                            pod.getDevice().onSuccess { device ->
+                                                val serial = device.serial
+                                                try {
+                                                    emulatorsLogsReporter.reportEmulatorLogs(
+                                                        emulatorName = serial,
+                                                        log = kubernetesApi.getPodLogs(podName)
+                                                    )
+                                                } catch (throwable: Throwable) {
+                                                    // TODO must be fixed after adding affinity to POD
+                                                    val podDescription = kubernetesApi.getPodDescription(podName)
+                                                    logger.warn(
+                                                        "Get logs from emulator failed; pod=$podName; " +
+                                                            "podDescription=$podDescription; " +
+                                                            "container serial=$serial",
+                                                        throwable
+                                                    )
+                                                }
+                                                device.disconnect().fold(
+                                                    { logger.debug("Device: $serial disconnected") },
+                                                    { error -> logger.warn("Failed to disconnect device: $serial", error) }
                                                 )
                                             }
-                                            device.disconnect().fold(
-                                                { logger.debug("Device: $serial disconnected") },
-                                                { error -> logger.warn("Failed to disconnect device: $serial", error) }
-                                            )
                                         }
                                     }
                                 }
@@ -241,16 +241,27 @@ internal class KubernetesReservationClient(
         logger.debug("release finished")
     }
 
-    private fun getDevice(pod: Pod): RemoteDevice {
-        requireNotNull(pod.status.podIP) { "Pod: ${pod.metadata.name} must has an IP" }
+    private suspend fun Pod.bootDevice(): Result<RemoteDevice> {
+        return getDevice()
+            .flatMap { device ->
+                device.waitForBoot()
+                    .map { device }
+                    .onFailure { device.disconnect() }
+            }
+    }
 
-        val serial = emulatorSerialName(
-            name = pod.status.podIP
-        )
+    private fun Pod.getDevice(): Result<RemoteDevice> {
+        return Result.tryCatch {
+            requireNotNull(status.podIP) { "Pod: ${metadata.name} must has an IP" }
 
-        return androidDebugBridge.getRemoteDevice(
-            serial = serial
-        )
+            val serial = emulatorSerialName(
+                name = status.podIP
+            )
+
+            androidDebugBridge.getRemoteDevice(
+                serial = serial
+            )
+        }
     }
 
     private suspend fun listenPodsFromDeployment(
