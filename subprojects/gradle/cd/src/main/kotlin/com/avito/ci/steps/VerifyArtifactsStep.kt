@@ -1,5 +1,7 @@
 package com.avito.ci.steps
 
+import com.avito.android.bundleTaskProvider
+import com.avito.android.packageTaskProvider
 import com.avito.ci.VerifyOutputsTask
 import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.typedNamed
@@ -28,8 +30,16 @@ open class VerifyArtifactsStep(
         rootTask.configure { task ->
             artifactsConfig.outputs.forEach { (_, output) ->
                 when (output) {
-                    is Output.ApkOutput -> task.dependsOn(project.tasks.signedApkTaskProvider(output.variantName))
-                    is Output.BundleOutput -> task.dependsOn(project.tasks.signedBundleTaskProvider(output.variantName))
+                    is Output.ApkOutput -> if (output.signature != null) {
+                        task.dependsOn(project.tasks.signedApkTaskProvider(output.variantName))
+                    } else {
+                        task.dependsOn(project.tasks.packageTaskProvider(output.variantName))
+                    }
+                    is Output.BundleOutput -> if (output.signature != null) {
+                        task.dependsOn(project.tasks.signedBundleTaskProvider(output.variantName))
+                    } else {
+                        task.dependsOn(project.tasks.bundleTaskProvider(output.variantName))
+                    }
                     is Output.ProguardMapping,
                     is Output.FileOutput -> {
                         // do nothing

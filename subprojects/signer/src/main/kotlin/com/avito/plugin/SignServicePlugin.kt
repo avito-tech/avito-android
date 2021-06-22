@@ -5,7 +5,6 @@ import com.android.build.api.variant.Variant
 import com.avito.android.Problem
 import com.avito.android.androidCommonExtension
 import com.avito.android.asRuntimeException
-import com.avito.android.bundleTaskProvider
 import com.avito.android.withAndroidApp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -26,7 +25,6 @@ public class SignServicePlugin : Plugin<Project> {
 
         target.withAndroidApp { appExtension ->
 
-            // AGP 4.2 remove this block completely
             appExtension.applicationVariants.all { variant: com.android.build.gradle.api.ApplicationVariant ->
 
                 val buildTypeName = variant.buildType.name
@@ -34,14 +32,6 @@ public class SignServicePlugin : Plugin<Project> {
                 val bundleToken: String? = extension.bundleSignTokens[buildTypeName]
 
                 variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
-
-                target.tasks.signedApkTaskProvider(variant.name).configure { signApkTask ->
-                    signApkTask.dependsOn(variant.packageApplicationProvider)
-                }
-
-                target.tasks.signedBundleTaskProvider(variant.name).configure { signBundleTask ->
-                    signBundleTask.dependsOn(target.tasks.bundleTaskProvider(variant))
-                }
             }
 
             // AGP 4.2 variant
@@ -80,14 +70,13 @@ public class SignServicePlugin : Plugin<Project> {
             }
 
             target.androidCommonExtension.onVariantProperties {
-                val variant = this
 
-                val buildTypeName = variant.buildType
+                val buildTypeName = buildType
 
                 val apkToken: String? = extension.apkSignTokens[buildTypeName]
 
                 if (apkToken.hasContent()) {
-                    variant.artifacts.use(target.tasks.signedApkTaskProvider(variant))
+                    artifacts.use(target.tasks.signedApkTaskProvider(this))
                         .wiredWithDirectories(
                             taskInput = SignApkTask::unsignedDirProperty,
                             taskOutput = SignApkTask::signedDirProperty
@@ -98,7 +87,7 @@ public class SignServicePlugin : Plugin<Project> {
                 val bundleToken: String? = extension.bundleSignTokens[buildTypeName]
 
                 if (bundleToken.hasContent()) {
-                    variant.artifacts.use(target.tasks.signedBundleTaskProvider(variant))
+                    artifacts.use(target.tasks.signedBundleTaskProvider(this))
                         .wiredWithFiles(
                             taskInput = SignBundleTask::unsignedFileProperty,
                             taskOutput = SignBundleTask::signedFileProperty
