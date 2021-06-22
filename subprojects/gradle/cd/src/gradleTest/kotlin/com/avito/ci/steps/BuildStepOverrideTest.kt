@@ -1,6 +1,5 @@
 package com.avito.ci.steps
 
-import com.avito.ci.explicitBuildStepsOverrideProperty
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -19,31 +18,6 @@ internal class BuildStepOverrideTest {
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         projectDir = tempPath.toFile()
-    }
-
-    @Test
-    fun `register with the same name - overrides previous one - disabled explicit override mode`() {
-        generateProject(
-            """
-            customTask("step") {
-                tasksPredicate = com.avito.ci.TasksPredicate.byName("tasks")
-            }
-            customTask("step") {
-                tasksPredicate = com.avito.ci.TasksPredicate.byName("help")
-            }
-        """.trimIndent()
-        )
-
-        val buildResult = runBuild(
-            explicitOverride = false
-        )
-
-        buildResult.assertThat()
-            .buildSuccessful()
-            .tasksShouldBeTriggered(":app:help", ":app:release")
-
-        buildResult.assertThat()
-            .tasksShouldNotBeTriggered(":app:tasks")
     }
 
     @Test
@@ -142,14 +116,12 @@ internal class BuildStepOverrideTest {
     }
 
     private fun runBuild(
-        expectFailure: Boolean = false,
-        explicitOverride: Boolean = true,
+        expectFailure: Boolean = false
     ): TestResult {
         return gradlew(
             projectDir,
             "release",
             "-Pci=true",
-            "-P$explicitBuildStepsOverrideProperty=$explicitOverride",
             expectFailure = expectFailure
         )
     }
