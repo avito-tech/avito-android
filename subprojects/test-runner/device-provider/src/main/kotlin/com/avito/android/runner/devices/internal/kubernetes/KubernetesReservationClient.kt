@@ -220,7 +220,9 @@ internal class KubernetesReservationClient(
                                                 }
                                                 device.disconnect().fold(
                                                     { logger.debug("Device: $serial disconnected") },
-                                                    { error -> logger.warn("Failed to disconnect device: $serial", error) }
+                                                    { error ->
+                                                        logger.warn("Failed to disconnect device: $serial", error)
+                                                    }
                                                 )
                                             }
                                         }

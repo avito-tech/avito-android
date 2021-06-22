@@ -21,6 +21,7 @@ import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import com.avito.utils.ProcessRunner
 
 public class TestSchedulerFactoryProvider {
 
@@ -46,8 +47,8 @@ public class TestSchedulerFactoryProvider {
         )
 
         val report = reportFactory.createReport()
-
-        val androidDebugBridgeProvider = AndroidDebugBridgeProvider(params.loggerFactory)
+        val processRunner = ProcessRunner.Real(null)
+        val androidDebugBridgeProvider = AndroidDebugBridgeProvider(params.loggerFactory, processRunner)
 
         val emulatorsLogsReporterProvider = EmulatorsLogsReporterProvider(
             logcatTags = params.executionParameters.logcatTags,
@@ -88,6 +89,7 @@ public class TestSchedulerFactoryProvider {
                     loggerFactory = params.loggerFactory,
                     timeProvider = timeProvider,
                     deviceType = params.instrumentationConfiguration.requestedDeviceType,
+                    processRunner = processRunner,
                     kubernetesReservationClientProvider = KubernetesReservationClientProvider(
                         loggerFactory = params.loggerFactory,
                         kubernetesApiProvider = KubernetesApiProvider(

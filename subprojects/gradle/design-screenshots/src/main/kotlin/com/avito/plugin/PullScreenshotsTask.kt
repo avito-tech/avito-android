@@ -8,6 +8,7 @@ import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.time.DefaultTimeProvider
+import com.avito.utils.ProcessRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -34,7 +35,8 @@ abstract class PullScreenshotsTask : DefaultTask() {
                 loggerFactory = loggerFactory,
                 adb = adb,
                 timeProvider = DefaultTimeProvider(),
-                metricsConfig = null
+                metricsConfig = null,
+                processRunner = ProcessRunner.Real(null)
             )
         ).getDevice()
 

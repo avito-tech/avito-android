@@ -93,7 +93,7 @@ internal class LocalDevicesProvider(
                     adbDeviceFactory.create(
                         coordinate = DeviceCoordinate.Local(adbDeviceParams.id as Serial.Local),
                         adbDeviceParams = adbDeviceParams
-                    )
+                    ).getOrThrow()
                 }
                 .filter { !acquiredDevices.contains(it.coordinate) }
                 .filter { fitsReservation(it, reservation) }

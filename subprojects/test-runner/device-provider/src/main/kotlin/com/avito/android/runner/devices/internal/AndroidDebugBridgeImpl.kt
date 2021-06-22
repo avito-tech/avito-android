@@ -7,10 +7,9 @@ import com.avito.utils.ProcessRunner
 
 internal class AndroidDebugBridgeImpl(
     private val adb: Adb,
-    private val loggerFactory: LoggerFactory
+    private val loggerFactory: LoggerFactory,
+    private val processRunner: ProcessRunner
 ) : AndroidDebugBridge {
-
-    private val processRunner = ProcessRunner.Real(null)
 
     override fun getRemoteDevice(serial: Serial.Remote): RemoteDeviceImpl {
         return RemoteDeviceImpl(

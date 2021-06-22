@@ -8,6 +8,7 @@ import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
+import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.channels.map
 
 internal class KubernetesDevicesProvider(
@@ -31,8 +32,10 @@ internal class KubernetesDevicesProvider(
             adbDeviceFactory.create(
                 coordinate = coordinate,
                 adbDeviceParams = adbDeviceParams
-            )
+            ).onFailure { releaseDevice(coordinate) }
         }
+            .filter { it.isSuccess() }
+            .map { it.getOrThrow() }
         return deviceWorkerPoolProvider.provide(devices)
     }
 
