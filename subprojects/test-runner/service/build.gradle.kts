@@ -14,6 +14,7 @@ dependencies {
     api(project(":common:statsd"))
     api(project(":common:time"))
     api(project(":test-runner:command-line-executor"))
+    api(project(":gradle:process"))
 
     implementation(project(":common:result"))
     implementation(project(":common:problem"))

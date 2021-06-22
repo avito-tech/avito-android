@@ -11,6 +11,7 @@ import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
+import com.avito.utils.ProcessRunner
 import kotlinx.coroutines.channels.Channel
 import java.io.File
 
@@ -21,7 +22,8 @@ internal class DeviceProviderFactoryImpl(
     private val kubernetesReservationClientProvider: KubernetesReservationClientProvider,
     private val androidDebugBridgeProvider: AndroidDebugBridgeProvider,
     private val emulatorsLogsReporterProvider: EmulatorsLogsReporterProvider,
-    private val metricsConfig: RunnerMetricsConfig
+    private val metricsConfig: RunnerMetricsConfig,
+    private val processRunner: ProcessRunner
 ) : DevicesProviderFactory {
 
     override fun create(
@@ -44,7 +46,8 @@ internal class DeviceProviderFactoryImpl(
                         loggerFactory = loggerFactory,
                         adb = Adb(),
                         timeProvider = timeProvider,
-                        metricsConfig = null
+                        metricsConfig = null,
+                        processRunner = processRunner
                     ),
                     loggerFactory = loggerFactory,
                     deviceWorkerPoolProvider = deviceWorkerPoolProvider
@@ -57,7 +60,8 @@ internal class DeviceProviderFactoryImpl(
                         loggerFactory = loggerFactory,
                         adb = Adb(),
                         timeProvider = timeProvider,
-                        metricsConfig = metricsConfig
+                        metricsConfig = metricsConfig,
+                        processRunner = processRunner
                     ),
                     devicesManager = AdbDevicesManager(
                         loggerFactory = loggerFactory,
