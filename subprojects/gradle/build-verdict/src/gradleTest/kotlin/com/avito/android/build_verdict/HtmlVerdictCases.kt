@@ -1,4 +1,5 @@
 @file:Suppress("MaxLineLength")
+
 package com.avito.android.build_verdict
 
 import java.io.File
@@ -115,7 +116,24 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
     }
 
     class Configuration(private val dir: File) : VerdictCases.Configuration {
-        override fun illegalMethodFails() = """
+
+        override fun wrongProjectDependencyFails() = """
+<html>
+  <head>
+    <title>Build failed</title>
+  </head>
+  <body>
+    <h2>FAILURE: Build failed with an exception</h2>
+    <h3>What went wrong:</h3>
+    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 8
+A problem occurred evaluating project ':app'.
+	&gt; A problem occurred evaluating project ':app'.
+		&gt; Project with path ':not-existed' could not be found in project ':app'.
+</pre>
+  </body>
+</html>""".trimIndent()
+
+        override fun illegalMethodFails41() = """
 <html>
   <head>
     <title>Build failed</title>
@@ -134,19 +152,23 @@ A problem occurred evaluating project ':app'.
   </body>
 </html>""".trimIndent()
 
-        override fun wrongProjectDependencyFails() = """
+        override fun illegalMethodFails42() = """
 <html>
   <head>
     <title>Build failed</title>
   </head>
   <body>
-    <h2>FAILURE: Build failed with an exception</h2>
-    <h3>What went wrong:</h3>
-    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 8
+    <h2>FAILURE: Build completed with 2 failures.</h2>
+    <h3>1: Task failed with an exception</h3>
+    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 7
 A problem occurred evaluating project ':app'.
 	&gt; A problem occurred evaluating project ':app'.
-		&gt; Project with path ':not-existed' could not be found in project ':app'.
-</pre>
+		&gt; Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.</pre>
+    <h3>2: Task failed with an exception</h3>
+    <pre>A problem occurred configuring project ':app'.
+	&gt; A problem occurred configuring project ':app'.
+		&gt; com.android.builder.errors.EvalIssueException: compileSdkVersion is not specified. Please add it to build.gradle
+			&gt; compileSdkVersion is not specified. Please add it to build.gradle</pre>
   </body>
 </html>""".trimIndent()
     }

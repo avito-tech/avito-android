@@ -44,8 +44,10 @@ private fun appModule(name: String, dependencies: Set<GradleDependency>) = Andro
         id("com.avito.android.signer")
         id("com.avito.android.cd")
     },
-    customScript = """
-        import com.avito.cd.BuildVariant
+    imports = listOf(
+        "import com.avito.cd.BuildVariant"
+    ),
+    buildGradleExtra = """
         android {
             buildTypes {
                 release {

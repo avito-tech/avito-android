@@ -48,7 +48,7 @@ class LintCheckTest {
                     plugins = plugins {
                         id("com.avito.android.cd")
                     },
-                    customScript = """
+                    buildGradleExtra = """
                             builds {
                                 release {
                                     useImpactAnalysis = false

@@ -46,8 +46,10 @@ class SignerIntegrationTest {
                         id("com.avito.android.signer")
                         id("com.avito.android.cd")
                     },
+                    imports = listOf(
+                        "import com.avito.cd.BuildVariant"
+                    ),
                     buildGradleExtra = """
-                        import com.avito.cd.BuildVariant
                 signService {
                     url.set("${webServer.url("/")}")
                     apk(android.buildTypes.release, '12345')

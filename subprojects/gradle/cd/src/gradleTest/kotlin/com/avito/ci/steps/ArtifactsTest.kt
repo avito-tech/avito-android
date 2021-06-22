@@ -25,7 +25,7 @@ internal class ArtifactsTest {
                         id("com.avito.android.signer")
                         id("com.avito.android.cd")
                     },
-                    customScript = """
+                    buildGradleExtra = """
                             signService {
                                 bundle(android.buildTypes.release, "no_matter")
                             }

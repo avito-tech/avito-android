@@ -29,7 +29,6 @@ class AndroidAppModule(
     private val instrumentationTests: List<InstrumentationTest> = emptyList(),
     private val versionName: String = "",
     private val versionCode: Int = 1,
-    private val customScript: String = "",
     private val imports: List<String> = emptyList(),
     private val mutator: File.(AndroidAppModule) -> Unit = {}
 ) : AndroidModule {
@@ -87,7 +86,6 @@ class AndroidAppModule(
                 |
                 |${dependencies()}
                 |
-                |$customScript
                 """.trimMargin()
 
             if (useKts) {

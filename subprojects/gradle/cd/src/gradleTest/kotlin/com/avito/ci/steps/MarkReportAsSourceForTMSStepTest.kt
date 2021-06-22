@@ -25,9 +25,10 @@ internal class MarkReportAsSourceForTMSStepTest {
                         id("com.avito.android.instrumentation-tests")
                         id("com.avito.android.cd")
                     },
+                    imports = listOf(
+                        "import static com.avito.instrumentation.reservation.request.Device.LocalEmulator"
+                    ),
                     buildGradleExtra = """
-                        import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
-                        
                         android {
                             defaultConfig {
                                 testInstrumentationRunner = "no_matter"

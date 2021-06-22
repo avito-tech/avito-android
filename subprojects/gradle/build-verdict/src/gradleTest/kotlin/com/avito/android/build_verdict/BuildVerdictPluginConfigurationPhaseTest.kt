@@ -51,10 +51,20 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
             expectFailure = true
         )
         result.assertThat().buildFailed()
-        assertBuildVerdictFiles(
-            expectedPlainTextVerdict = plainTextVerdicts.illegalMethodFails(),
-            expectedHtmlVerdict = htmlVerdicts.illegalMethodFails()
-        )
+
+        val agpVersion = System.getProperty("androidGradlePluginVersion")
+
+        if (agpVersion.startsWith("4.1")) {
+            assertBuildVerdictFiles(
+                expectedPlainTextVerdict = plainTextVerdicts.illegalMethodFails41(),
+                expectedHtmlVerdict = htmlVerdicts.illegalMethodFails41()
+            )
+        } else {
+            assertBuildVerdictFiles(
+                expectedPlainTextVerdict = plainTextVerdicts.illegalMethodFails42(),
+                expectedHtmlVerdict = htmlVerdicts.illegalMethodFails42()
+            )
+        }
         val actualBuildVerdict = gson.fromJson(jsonBuildVerdict.readText(), BuildVerdict.Configuration::class.java)
 
         assertThat(actualBuildVerdict.error.message).isEqualTo("Build completed with 2 failures.")
@@ -63,7 +73,6 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
 
         assertThat(errors).hasSize(2)
 
-        @Suppress("MaxLineLength")
         errors[0].assertSingleError(
             expectedMessageLines = listOf(
                 "$temp/app/build.gradle' line: 7",
@@ -75,14 +84,25 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
             )
         )
 
+        val expectedCauses = if (agpVersion.startsWith("4.1")) {
+            listOf(
+                "A problem occurred configuring project ':app'.",
+                "compileSdkVersion is not specified",
+            )
+        } else {
+            listOf(
+                "A problem occurred configuring project ':app'.",
+                "com.android.builder.errors.EvalIssueException: compileSdkVersion is not specified. " +
+                    "Please add it to build.gradle",
+                "compileSdkVersion is not specified",
+            )
+        }
+
         errors[1].assertSingleError(
             expectedMessageLines = listOf(
                 "A problem occurred configuring project ':app'."
             ),
-            expectedCauseMessages = listOf(
-                "A problem occurred configuring project ':app'.",
-                "compileSdkVersion is not specified"
-            )
+            expectedCauseMessages = expectedCauses
         )
     }
 
