@@ -17,3 +17,7 @@ if [ -n "${INTERNAL_URLS}" ]; then
   echo >&2 "${INTERNAL_URLS}"
   exit 1
 fi
+
+if [ "$COMMIT_CHECK" == "true" ]; then
+  make fast_check
+fi
