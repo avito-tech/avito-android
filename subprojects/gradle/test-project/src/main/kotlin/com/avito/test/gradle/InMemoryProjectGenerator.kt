@@ -2,6 +2,8 @@ package com.avito.test.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaLibraryPlugin
+import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.initialization.GradlePropertiesController
 import org.gradle.testfixtures.ProjectBuilder
 
 fun rootProject(): Project =
@@ -49,8 +51,14 @@ private fun Project.dependency(configuration: String, dependency: Project) {
     }
 }
 
-private fun buildProject(name: String, parent: Project): Project =
-    ProjectBuilder.builder()
+private fun buildProject(name: String, parent: Project): Project {
+    val project = ProjectBuilder.builder()
         .withName(name)
         .withParent(parent)
         .build()
+
+    // workaround for https://github.com/gradle/gradle/issues/16774
+    parent.serviceOf<GradlePropertiesController>().loadGradlePropertiesFrom(parent.rootDir)
+
+    return project
+}
