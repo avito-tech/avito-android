@@ -11,6 +11,7 @@ import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.git
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
+import com.avito.test.model.DeviceName
 import com.avito.truth.isInstanceOf
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.common.truth.Truth.assertThat
@@ -299,7 +300,7 @@ internal class RunnerInputParamsTest {
             },
             Case("target device name") {
                 assertThat(it.instrumentationConfiguration.targets[0].deviceName)
-                    .isEqualTo("api22")
+                    .isEqualTo(DeviceName("api22"))
             },
             Case("target name") {
                 assertThat(it.instrumentationConfiguration.targets[0].name)

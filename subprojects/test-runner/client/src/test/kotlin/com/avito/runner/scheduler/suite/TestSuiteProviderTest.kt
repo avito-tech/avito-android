@@ -29,7 +29,7 @@ internal class TestSuiteProviderTest {
             tests = listOf(simpleTestInApk)
         )
 
-        assertThat(result.testsToRun.map { it.test.name }).containsExactly(simpleTestInApk.testName)
+        assertThat(result.testsToRun.map { it.name }).containsExactly(simpleTestInApk.testName)
     }
 
     @Test

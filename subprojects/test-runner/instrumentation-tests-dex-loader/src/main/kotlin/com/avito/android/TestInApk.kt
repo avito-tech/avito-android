@@ -1,6 +1,6 @@
 package com.avito.android
 
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 
 /**
  * Тест это обязательно метод, запуск на классе хоть и поддерживается из IDE или фильтром по классу,

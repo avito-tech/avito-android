@@ -1,10 +1,10 @@
 package com.avito.runner.finalizer.verdict
 
-import com.avito.report.model.DeviceName
 import com.avito.report.model.SimpleRunTest
-import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
@@ -19,9 +19,9 @@ internal class HasNotReportedTestsDeterminerTest {
         val result = LegacyNotReportedTestsDeterminer(timeProvider)
             .determine(
                 runResult = listOf(
-                    SimpleRunTest.createStubInstance(name = "com.Test.test1", deviceName = "api22"),
-                    SimpleRunTest.createStubInstance(name = "com.Test.test2", deviceName = "api22"),
-                    SimpleRunTest.createStubInstance(name = "com.Test.test3", deviceName = "api22")
+                    SimpleRunTest.createStubInstance(name = TestName("com.Test", "test1"), deviceName = "api22"),
+                    SimpleRunTest.createStubInstance(name = TestName("com.Test", "test2"), deviceName = "api22"),
+                    SimpleRunTest.createStubInstance(name = TestName("com.Test", "test3"), deviceName = "api22")
                 ),
                 allTests = listOf(
                     TestStaticDataPackage.createStubInstance(
@@ -47,8 +47,8 @@ internal class HasNotReportedTestsDeterminerTest {
         val result = LegacyNotReportedTestsDeterminer(timeProvider)
             .determine(
                 runResult = listOf(
-                    SimpleRunTest.createStubInstance(name = "com.Test.test1", deviceName = "api22"),
-                    SimpleRunTest.createStubInstance(name = "com.Test.test3", deviceName = "api22")
+                    SimpleRunTest.createStubInstance(name = TestName("com.Test", "test1"), deviceName = "api22"),
+                    SimpleRunTest.createStubInstance(name = TestName("com.Test", "test3"), deviceName = "api22")
                 ),
                 allTests = listOf(
                     TestStaticDataPackage.createStubInstance(

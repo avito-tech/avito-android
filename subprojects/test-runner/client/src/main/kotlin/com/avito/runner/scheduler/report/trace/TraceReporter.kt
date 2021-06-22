@@ -32,7 +32,7 @@ internal class TraceReporter(
                     durationMicroseconds = TimeUnit.MILLISECONDS.toMicros(it.testCaseRun.durationMilliseconds),
                     processId = runName,
                     threadId = "${it.device.serial} (${it.device.configuration.api})",
-                    eventName = it.testCaseRun.test.testName,
+                    eventName = it.testCaseRun.test.name.toString(),
                     color = when (it.testCaseRun.result) {
                         is TestCaseRun.Result.Passed -> TraceEvent.COLOR_GOOD
                         is TestCaseRun.Result.Failed -> TraceEvent.COLOR_BAD

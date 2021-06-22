@@ -65,7 +65,7 @@ class VideoCaptureTestListener(
                     logger.warn(
                         "Video uploading enabled. " +
                             "Failed to upload video for " +
-                            "${state.testMetadata.testName}.",
+                            "${state.testMetadata.name}.",
                         throwable
                     )
                 }

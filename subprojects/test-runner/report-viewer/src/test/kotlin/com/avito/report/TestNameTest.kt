@@ -2,9 +2,9 @@ package com.avito.report
 
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
+import com.avito.test.model.TestName
 import com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test

@@ -5,21 +5,19 @@ import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.TestStaticData
+import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.millisecondsToHumanReadableTime
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.metrics.TestMetricsListener
 import com.avito.runner.scheduler.report.Reporter
 import com.avito.runner.scheduler.report.SummaryReportMaker
-import com.avito.runner.scheduler.runner.model.TargetGroup
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.model.TestRunnerResult
-import com.avito.runner.scheduler.runner.model.TestWithTarget
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
+import com.avito.test.model.DeviceName
 import kotlinx.coroutines.coroutineScope
 
 internal class TestRunnerImpl(
@@ -31,20 +29,19 @@ internal class TestRunnerImpl(
     private val testMetricsListener: TestMetricsListener,
     private val devicesProvider: DevicesProvider,
     private val testRunRequestFactory: TestRunRequestFactory,
-    private val testListenerProvider: (Map<TestCase, TestStaticData>) -> TestListener,
+    private val targets: List<TargetConfigurationData>,
     loggerFactory: LoggerFactory
 ) : TestRunner {
 
     private val logger = loggerFactory.create<TestRunner>()
 
-    override suspend fun runTests(tests: List<TestWithTarget>): Result<TestRunnerResult> {
+    override suspend fun runTests(tests: List<TestCase>): Result<TestRunnerResult> {
         return coroutineScope {
             val startTime = System.currentTimeMillis()
             testMetricsListener.onTestSuiteStarted()
             logger.info("Test run started")
             val deviceWorkerPool: DeviceWorkerPool = devicesProvider.provideFor(
                 reservations = getReservations(tests),
-                testListener = testListenerProvider(testStaticDataByTestCase(tests)),
             )
             try {
                 deviceWorkerPool.start()
@@ -62,7 +59,7 @@ internal class TestRunnerImpl(
 
                     logger.debug(
                         "Result for test: %s received after %d tries. Progress (%s)".format(
-                            result.request.testCase.testName,
+                            result.request.testCase.name,
                             result.result.size,
                             "$gottenCount/$expectedResultsCount"
                         )
@@ -74,11 +71,11 @@ internal class TestRunnerImpl(
                 }
                 val result = TestRunnerResult(
                     runs = gottenResults.associate {
-                        it.request to it.result
+                        it.request.testCase to it.result
                     }
                 )
 
-                val summaryReport = summaryReportMaker.make(result, startTime)
+                val summaryReport = summaryReportMaker.make(gottenResults, startTime)
                 reporter.report(report = summaryReport)
                 logger.debug(
                     "Test run finished. The results: " +
@@ -108,32 +105,20 @@ internal class TestRunnerImpl(
         }
     }
 
-    private fun getReservations(tests: List<TestWithTarget>): Collection<ReservationData> {
-        val testsGroupedByTargets: Map<TargetGroup, List<TestWithTarget>> = tests.groupBy { test ->
-            val target = test.target
-            TargetGroup(target.name, target.reservation)
+    private fun getReservations(tests: List<TestCase>): Collection<ReservationData> {
+        val testsGroupedByDevice: Map<DeviceName, List<TestCase>> = tests.groupBy { test ->
+            test.deviceName
         }
 
-        return testsGroupedByTargets
-            .map { (target, tests) ->
-                target.reservation.data(
-                    tests = tests.map { it.test.name }
-                )
+        return testsGroupedByDevice
+            .map { (deviceName, tests) ->
+                val target = requireNotNull(targets.firstOrNull { it.deviceName == deviceName }) {
+                    "Can't find target $deviceName"
+                }
+                target.reservation.data(tests.size)
             }
     }
 
-    private fun testStaticDataByTestCase(
-        testsToRun: List<TestWithTarget>
-    ): Map<TestCase, TestStaticData> {
-        return testsToRun.associate { testWithTarget ->
-            TestCase(
-                className = testWithTarget.test.name.className,
-                methodName = testWithTarget.test.name.methodName,
-                deviceName = testWithTarget.target.deviceName
-            ) to testWithTarget.test
-        }
-    }
-
-    private fun getTestRequests(tests: List<TestWithTarget>) =
+    private fun getTestRequests(tests: List<TestCase>) =
         tests.map { test -> testRunRequestFactory.create(test) }
 }

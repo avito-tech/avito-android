@@ -162,8 +162,7 @@ internal class DeviceWorker(
 
             val reportFileProvider = TestArtifactsProviderFactory.createForAdbAccess(
                 appUnderTestPackage = action.targetPackage,
-                className = action.test.className,
-                methodName = action.test.methodName
+                name = action.test.name
             )
 
             val testArtifactsDir = reportFileProvider.provideReportDir()

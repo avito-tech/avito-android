@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.suite.filter
 
 import com.avito.android.AnnotationData
-import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
+import com.avito.test.model.DeviceName
 
 internal fun TestsFilter.Test.Companion.createStub(
     name: String = "Stub",

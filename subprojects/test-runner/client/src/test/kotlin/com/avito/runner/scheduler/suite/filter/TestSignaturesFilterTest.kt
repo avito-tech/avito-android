@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.report.model.DeviceName
+import com.avito.test.model.DeviceName
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test

@@ -16,6 +16,8 @@ import com.avito.retrace.ProguardRetracer
 import com.avito.runner.scheduler.logcat.StubLogcatAccessor
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
 import com.avito.runner.service.model.TestCase
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
@@ -36,7 +38,10 @@ internal class ReportProcessorImplTest {
 
     @Test
     fun `process - returns test with no status and contains timeout message - on test run timeout`() {
-        val testCase = TestCase(className = "com.avito.Test", methodName = "test", deviceName = "29")
+        val testCase = TestCase(
+            name = TestName("com.avito.Test", "test"),
+            deviceName = DeviceName("29")
+        )
 
         val postProcessor = createReportProcessor(
             testSuite = mapOf(
@@ -68,9 +73,8 @@ internal class ReportProcessorImplTest {
         )
 
         val testCase = TestCase(
-            className = testStaticData.name.className,
-            methodName = testStaticData.name.methodName,
-            deviceName = testStaticData.device.name
+            name = testStaticData.name,
+            deviceName = testStaticData.device
         )
 
         val postProcessor = createReportProcessor(
@@ -103,9 +107,8 @@ internal class ReportProcessorImplTest {
         )
 
         val testCase = TestCase(
-            className = testStaticData.name.className,
-            methodName = testStaticData.name.methodName,
-            deviceName = testStaticData.device.name
+            name = testStaticData.name,
+            deviceName = testStaticData.device
         )
 
         val postProcessor = createReportProcessor(

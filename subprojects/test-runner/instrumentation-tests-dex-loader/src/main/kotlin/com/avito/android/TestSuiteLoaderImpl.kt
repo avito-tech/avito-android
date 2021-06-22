@@ -4,7 +4,7 @@ import com.avito.android.check.TestSignatureCheck
 import com.avito.android.internal.AnnotationExtractor
 import com.avito.android.internal.AnnotationType
 import com.avito.android.internal.ApkDexFileExtractor
-import com.avito.report.model.TestName
+import com.avito.test.model.TestName
 import org.jf.dexlib2.iface.Annotation
 import org.jf.dexlib2.iface.ClassDef
 import org.jf.dexlib2.iface.Method

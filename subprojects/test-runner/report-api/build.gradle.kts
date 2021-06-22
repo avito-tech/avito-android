@@ -15,6 +15,8 @@ dependencies {
         because("module provides TypeAdapterFactory for Entries; JsonElement in the IncidentElement")
     }
 
+    api(project(":test-runner:test-model"))
+
     implementation(project(":common:okhttp")) {
         because("Result extension used")
     }

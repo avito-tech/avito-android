@@ -4,6 +4,7 @@ import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.report.model.createStubInstance
+import com.avito.test.model.TestName
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
@@ -17,16 +18,16 @@ internal class HasFailedTestDeterminerTest {
             .determine(
                 runResult = listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test1",
+                        name = TestName("com.Test", "test1"),
                         deviceName = "api22"
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test2",
+                        name = TestName("com.Test", "test2"),
                         deviceName = "api22",
                         status = Status.Skipped("because")
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test3",
+                        name = TestName("com.Test", "test3"),
                         deviceName = "api22"
                     )
                 )
@@ -49,15 +50,15 @@ internal class HasFailedTestDeterminerTest {
             .determine(
                 runResult = listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test1",
+                        name = TestName("com.Test", "test1"),
                         deviceName = "api22"
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test2",
+                        name = TestName("com.Test", "test2"),
                         deviceName = "api22"
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test3",
+                        name = TestName("com.Test", "test3"),
                         deviceName = "api22"
                     )
                 )
@@ -72,16 +73,16 @@ internal class HasFailedTestDeterminerTest {
             .determine(
                 runResult = listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test1",
+                        name = TestName("com.Test", "test1"),
                         deviceName = "api22"
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test2",
+                        name = TestName("com.Test", "test2"),
                         deviceName = "api22",
                         status = Status.Failure("", "")
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test3",
+                        name = TestName("com.Test", "test3"),
                         deviceName = "api22"
                     )
                 )
@@ -96,17 +97,17 @@ internal class HasFailedTestDeterminerTest {
             .determine(
                 runResult = listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test1",
+                        name = TestName("com.Test", "test1"),
                         deviceName = "api22"
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test2",
+                        name = TestName("com.Test", "test2"),
                         deviceName = "api22",
                         status = Status.Failure("", ""),
                         flakiness = Flakiness.Flaky("oops")
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test3",
+                        name = TestName("com.Test", "test3"),
                         deviceName = "api22"
                     )
                 )
@@ -116,7 +117,7 @@ internal class HasFailedTestDeterminerTest {
             assertThat(notSuppressedCount).isEqualTo(0)
             assertThat(suppression).isInstanceOf<HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky>()
             assertThat(suppression.tests).hasSize(1)
-            assertThat(suppression.tests[0].name).isEqualTo("com.Test.test2")
+            assertThat(suppression.tests[0].name).isEqualTo(TestName("com.Test", "test2"))
         }
     }
 
@@ -126,17 +127,17 @@ internal class HasFailedTestDeterminerTest {
             .determine(
                 runResult = listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test1",
+                        name = TestName("com.Test", "test1"),
                         deviceName = "api22"
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test2",
+                        name = TestName("com.Test", "test2"),
                         deviceName = "api22",
                         status = Status.Failure("", ""),
                         flakiness = Flakiness.Flaky("oops")
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test3",
+                        name = TestName("com.Test", "test3"),
                         deviceName = "api22"
                     )
                 )
@@ -144,7 +145,7 @@ internal class HasFailedTestDeterminerTest {
 
         assertThat<HasFailedTestDeterminer.Result.Failed>(result) {
             assertThat(notSuppressedCount).isEqualTo(1)
-            assertThat(notSuppressed[0].name).isEqualTo("com.Test.test2")
+            assertThat(notSuppressed[0].name).isEqualTo(TestName("com.Test", "test2"))
             assertThat(suppression).isInstanceOf<HasFailedTestDeterminer.Result.Failed.Suppression.NoSuppressed>()
         }
     }
@@ -155,17 +156,17 @@ internal class HasFailedTestDeterminerTest {
             .determine(
                 runResult = listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test1",
+                        name = TestName("com.Test", "test1"),
                         deviceName = "api22"
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test2",
+                        name = TestName("com.Test", "test2"),
                         deviceName = "api22",
                         status = Status.Failure("", ""),
                         flakiness = Flakiness.Flaky("oops")
                     ),
                     SimpleRunTest.createStubInstance(
-                        name = "com.Test.test3",
+                        name = TestName("com.Test", "test3"),
                         deviceName = "api22",
                         status = Status.Failure("", "")
                     )
@@ -174,10 +175,10 @@ internal class HasFailedTestDeterminerTest {
 
         assertThat<HasFailedTestDeterminer.Result.Failed>(result) {
             assertThat(notSuppressedCount).isEqualTo(1)
-            assertThat(notSuppressed[0].name).isEqualTo("com.Test.test3")
+            assertThat(notSuppressed[0].name).isEqualTo(TestName("com.Test", "test3"))
             assertThat(suppression).isInstanceOf<HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky>()
             assertThat(suppression.tests).hasSize(1)
-            assertThat(suppression.tests[0].name).isEqualTo("com.Test.test2")
+            assertThat(suppression.tests[0].name).isEqualTo(TestName("com.Test", "test2"))
         }
     }
 

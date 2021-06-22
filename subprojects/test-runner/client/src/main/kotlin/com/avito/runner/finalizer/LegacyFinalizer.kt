@@ -3,7 +3,6 @@ package com.avito.runner.finalizer
 import com.avito.android.runner.report.LegacyReport
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.TestName
 import com.avito.runner.finalizer.action.LegacyFinalizeAction
 import com.avito.runner.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.runner.finalizer.verdict.HasNotReportedTestsDeterminer
@@ -30,7 +29,7 @@ internal class LegacyFinalizer(
         val testResults = report.getTests()
             .map { testsFromReport ->
                 val testsToRun = testSchedulerResults.testsToRun.map { it.name }
-                testsFromReport.filter { TestName(it.className, it.methodName) in testsToRun }
+                testsFromReport.filter { it.name in testsToRun }
             }
             .onFailure { throwable ->
                 logger.critical("Can't get test results", throwable)

@@ -4,9 +4,6 @@ import com.avito.android.Result
 import com.avito.android.runner.devices.StubDevicesProvider
 import com.avito.coroutines.extensions.Dispatchers
 import com.avito.logger.StubLoggerFactory
-import com.avito.report.model.TestName
-import com.avito.report.model.TestStaticDataPackage
-import com.avito.report.model.createStubInstance
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
@@ -15,10 +12,8 @@ import com.avito.runner.scheduler.metrics.StubTestMetricsListener
 import com.avito.runner.scheduler.report.CompositeReporter
 import com.avito.runner.scheduler.report.SummaryReportMakerImpl
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
-import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
 import com.avito.runner.scheduler.runner.model.TestRunnerResult
-import com.avito.runner.scheduler.runner.model.TestWithTarget
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.listener.NoOpTestListener
@@ -36,6 +31,8 @@ import com.avito.runner.service.worker.device.stub.StubDevice
 import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationFailure
 import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.listener.StubDeviceListener
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,14 +56,15 @@ internal class RunnerIntegrationTest {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
     private val state = TestRunnerExecutionState()
-    private val testRunRequestFactory = TestRunRequestFactory(
-        application = File("stub"),
-        testApplication = File("stub"),
-        executionParameters = ExecutionParameters.Companion.createStubInstance()
+    private val deviceModel = "stub"
+    private val deviceName = DeviceName("api22")
+    private val deviceApi = 22
+    private val defaultQuota = QuotaConfigurationData(
+        retryCount = 0,
+        minimumSuccessCount = 1,
+        minimumFailedCount = 0
     )
     private val loggerFactory = StubLoggerFactory
-    private val deviceModel = "stub"
-    private val deviceApi = 22
 
     @TempDir
     lateinit var outputDirectory: File
@@ -74,22 +72,20 @@ internal class RunnerIntegrationTest {
     @Test
     fun `all tests passed - for 1 successful device`() =
         runBlockingTest {
-            val runner = provideRunner()
-
+            val targets = listOf(createTarget())
+            val runner = provideRunner(targets)
             val tests = createTests(count = 4)
-
             val device = createSuccessfulDevice(tests.size)
 
             devices.send(device)
-
             val result = runner.runTests(tests = tests)
-            device.verify()
 
+            device.verify()
             assertRunTestResult(
                 runnerResult = result.getOrThrow(),
                 expected = tests.map { test ->
                     ExpectedTestResult(
-                        testRunRequest = testRunRequestFactory.create(test),
+                        testCase = test,
                         deviceTestCaseRuns = listOf(test.toPassedRun(device))
                     )
                 }
@@ -100,8 +96,8 @@ internal class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first and second devices - first device completes half of tests and fails, second connects later and completes all remaining tests`() =
         runBlockingTest {
-            val runner = provideRunner()
-
+            val targets = listOf(createTarget())
+            val runner = provideRunner(targets)
             val tests = createTests(count = 4)
 
             val firstFailedDevice = StubDevice(
@@ -172,13 +168,13 @@ internal class RunnerIntegrationTest {
 
             val resultsByFirstDevice = tests.slice(0..1).map { test ->
                 ExpectedTestResult(
-                    testRunRequest = testRunRequestFactory.create(test),
+                    testCase = test,
                     deviceTestCaseRuns = listOf(test.toPassedRun(firstFailedDevice))
                 )
             }
             val resultsBySecondDevice = tests.slice(2..3).map { test ->
                 ExpectedTestResult(
-                    testRunRequest = testRunRequestFactory.create(test),
+                    testCase = test,
                     deviceTestCaseRuns = listOf(test.toPassedRun(secondDevice))
                 )
             }
@@ -192,7 +188,8 @@ internal class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first device - for 1 successful and 1 freeze device`() =
         runBlockingTest {
-            val runner = provideRunner()
+            val targets = listOf(createTarget())
+            val runner = provideRunner(targets)
 
             val tests = createTests(count = 4)
 
@@ -216,7 +213,7 @@ internal class RunnerIntegrationTest {
                 runnerResult = result.getOrThrow(),
                 expected = tests.map { test ->
                     ExpectedTestResult(
-                        testRunRequest = testRunRequestFactory.create(test),
+                        testCase = test,
                         deviceTestCaseRuns = listOf(test.toPassedRun(successfulDevice))
                     )
                 }
@@ -226,7 +223,8 @@ internal class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first device - for 1 successful and 1 failed to get status device`() =
         runBlockingTest {
-            val runner = provideRunner()
+            val targets = listOf(createTarget())
+            val runner = provideRunner(targets)
 
             val tests = createTests(count = 4)
 
@@ -249,7 +247,7 @@ internal class RunnerIntegrationTest {
                 runnerResult = result.getOrThrow(),
                 expected = tests.map { test ->
                     ExpectedTestResult(
-                        testRunRequest = testRunRequestFactory.create(test),
+                        testCase = test,
                         deviceTestCaseRuns = listOf(test.toPassedRun(successfulDevice))
                     )
                 }
@@ -259,7 +257,8 @@ internal class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first device - when second device failed on application installing`() =
         runBlockingTest {
-            val runner = provideRunner()
+            val targets = listOf(createTarget())
+            val runner = provideRunner(targets)
 
             val tests = createTests(count = 4)
 
@@ -296,7 +295,7 @@ internal class RunnerIntegrationTest {
                 runnerResult = result.getOrThrow(),
                 expected = tests.map { test ->
                     ExpectedTestResult(
-                        testRunRequest = testRunRequestFactory.create(test),
+                        testCase = test,
                         deviceTestCaseRuns = listOf(test.toPassedRun(successfulDevice))
                     )
                 }
@@ -305,15 +304,17 @@ internal class RunnerIntegrationTest {
 
     @Test
     fun `test passed after retry of failed test`() = runBlockingTest {
-        val runner = provideRunner()
-
-        val quota = QuotaConfigurationData(
-            retryCount = 1,
-            minimumSuccessCount = 1,
-            minimumFailedCount = 0
+        val targets = listOf(
+            createTarget(
+                quota = QuotaConfigurationData(
+                    retryCount = 1,
+                    minimumSuccessCount = 1,
+                    minimumFailedCount = 0
+                )
+            )
         )
-
-        val tests = createTests(count = 2, quota = quota)
+        val runner = provideRunner(targets)
+        val tests = createTests(count = 2)
 
         val device = StubDevice(
             loggerFactory = loggerFactory,
@@ -351,14 +352,14 @@ internal class RunnerIntegrationTest {
 
         val firstTestResult = tests.slice(listOf(0)).map { test ->
             ExpectedTestResult(
-                testRunRequest = testRunRequestFactory.create(test),
+                testCase = test,
                 deviceTestCaseRuns = listOf(test.toPassedRun(device))
             )
         }
 
         val secondTestResult = tests.slice(listOf(1)).map { test ->
             ExpectedTestResult(
-                testRunRequest = testRunRequestFactory.create(test),
+                testCase = test,
                 deviceTestCaseRuns = listOf(test.toFailedRun(device), test.toPassedRun(device))
             )
         }
@@ -372,15 +373,17 @@ internal class RunnerIntegrationTest {
     @Test
     fun `test passed after retry of failed test when minimal passed count is 2 and retry quota is 4`() =
         runBlockingTest {
-            val runner = provideRunner()
-
-            val quota = QuotaConfigurationData(
-                retryCount = 4,
-                minimumSuccessCount = 2,
-                minimumFailedCount = 0
+            val targets = listOf(
+                createTarget(
+                    quota = QuotaConfigurationData(
+                        retryCount = 4,
+                        minimumSuccessCount = 2,
+                        minimumFailedCount = 0
+                    )
+                )
             )
-
-            val tests = createTests(count = 2, quota = quota)
+            val runner = provideRunner(targets)
+            val tests = createTests(count = 2)
 
             val device = StubDevice(
                 loggerFactory = loggerFactory,
@@ -433,7 +436,7 @@ internal class RunnerIntegrationTest {
 
             val firstTestResult = tests.slice(listOf(0)).map { test ->
                 ExpectedTestResult(
-                    testRunRequest = testRunRequestFactory.create(test),
+                    testCase = test,
                     deviceTestCaseRuns = listOf(
                         test.toPassedRun(device),
                         test.toFailedRun(device),
@@ -444,7 +447,7 @@ internal class RunnerIntegrationTest {
 
             val secondTestResult = tests.slice(listOf(1)).map { test ->
                 ExpectedTestResult(
-                    testRunRequest = testRunRequestFactory.create(test),
+                    testCase = test,
                     deviceTestCaseRuns = listOf(
                         test.toFailedRun(device),
                         test.toPassedRun(device),
@@ -463,15 +466,17 @@ internal class RunnerIntegrationTest {
     @Test
     fun `test completed after 1 success and 1 fail for that requirements with retryCount 4`() =
         runBlockingTest {
-            val runner = provideRunner()
-
-            val quota = QuotaConfigurationData(
-                retryCount = 4,
-                minimumSuccessCount = 1,
-                minimumFailedCount = 1
+            val targets = listOf(
+                createTarget(
+                    quota = QuotaConfigurationData(
+                        retryCount = 4,
+                        minimumSuccessCount = 1,
+                        minimumFailedCount = 1
+                    )
+                )
             )
-
-            val tests = createTests(count = 2, quota = quota)
+            val runner = provideRunner(targets)
+            val tests = createTests(count = 2)
 
             val device = StubDevice(
                 loggerFactory = loggerFactory,
@@ -516,7 +521,7 @@ internal class RunnerIntegrationTest {
                 runnerResult = result.getOrThrow(),
                 expected = tests.map { test ->
                     ExpectedTestResult(
-                        testRunRequest = testRunRequestFactory.create(test),
+                        testCase = test,
                         deviceTestCaseRuns = listOf(
                             test.toPassedRun(device),
                             test.toFailedRun(device)
@@ -531,8 +536,7 @@ internal class RunnerIntegrationTest {
         val exception = assertThrows<IllegalStateException> {
             runBlockingTest {
                 devices.close()
-                val runner = provideRunner()
-
+                val runner = provideRunner(targets = listOf(createTarget()))
                 val tests = createTests(count = 2)
                 runner.runTests(tests)
             }
@@ -542,8 +546,16 @@ internal class RunnerIntegrationTest {
             .isEqualTo("devices channel was closed")
     }
 
+    private fun createTarget(quota: QuotaConfigurationData = defaultQuota) =
+        TargetConfigurationData.createStubInstance(
+            api = deviceApi,
+            model = deviceModel,
+            deviceName = deviceName,
+            quota = quota
+        )
+
     private class ExpectedTestResult(
-        val testRunRequest: TestRunRequest,
+        val testCase: TestCase,
         val deviceTestCaseRuns: List<DeviceTestCaseRun>
     )
 
@@ -553,9 +565,9 @@ internal class RunnerIntegrationTest {
     ) {
         val actual = runnerResult.runs.toList()
         assertThat(actual).hasSize(expected.size)
-        actual.forEachIndexed { testIndex, (testRunRequest, runs) ->
+        actual.forEachIndexed { testIndex, (testCase, runs) ->
             val expectedTestResult = expected[testIndex]
-            assertThat(testRunRequest).isEqualTo(expectedTestResult.testRunRequest)
+            assertThat(testCase).isEqualTo(expectedTestResult.testCase)
             assertThat(runs).hasSize(expectedTestResult.deviceTestCaseRuns.size)
             runs.forEachIndexed { runIndex, run ->
                 assertThat(run).isEqualTo(expectedTestResult.deviceTestCaseRuns[runIndex])
@@ -576,33 +588,26 @@ internal class RunnerIntegrationTest {
         )
     }
 
-    private fun createTests(
-        count: Int,
-        quota: QuotaConfigurationData = QuotaConfigurationData(
-            retryCount = 0,
-            minimumSuccessCount = 1,
-            minimumFailedCount = 0
-        )
-    ): List<TestWithTarget> {
-        return (1..count).map { index -> testRunWithTarget(TestName("Test", "test_$index"), quota) }
+    private fun createTests(count: Int): List<TestCase> {
+        return (1..count).map { index -> TestCase(TestName("Test", "test_$index"), deviceName) }
     }
 
-    private fun TestWithTarget.toPassedRun(
+    private fun TestCase.toPassedRun(
         device: StubDevice
     ): DeviceTestCaseRun {
         return deviceTestCaseRun(
             device = device,
-            test = TestCase(test.name.className, test.name.methodName, target.deviceName),
+            test = this,
             result = TestCaseRun.Result.Passed
         )
     }
 
-    private fun TestWithTarget.toFailedRun(
+    private fun TestCase.toFailedRun(
         device: StubDevice
     ): DeviceTestCaseRun {
         return deviceTestCaseRun(
             device = device,
-            test = TestCase(test.name.className, test.name.methodName, target.deviceName),
+            test = this,
             result = TestCaseRun.Result.Failed.InRun("Failed")
         )
     }
@@ -649,7 +654,15 @@ internal class RunnerIntegrationTest {
 
     private fun succeedClearPackage() = StubActionResult.Success<Result<Unit>>(Result.Success(Unit))
 
-    private fun provideRunner(): TestRunner {
+    private fun provideRunner(
+        targets: List<TargetConfigurationData>
+    ): TestRunner {
+        val testRunRequestFactory = TestRunRequestFactory(
+            application = File("stub"),
+            testApplication = File("stub"),
+            executionParameters = ExecutionParameters.Companion.createStubInstance(),
+            targets = targets.associateBy { it.deviceName }
+        )
         val scheduler = TestExecutionScheduler(
             dispatcher = testCoroutineDispatcher,
             results = state.results,
@@ -680,29 +693,15 @@ internal class RunnerIntegrationTest {
                     dispatchers = object : Dispatchers {
                         override fun dispatcher() = testCoroutineDispatcher
                     },
-                    testRunnerOutputDir = outputDirectory
+                    testRunnerOutputDir = outputDirectory,
+                    testListener = NoOpTestListener
                 ),
                 devices = devices
             ),
             testRunRequestFactory = testRunRequestFactory,
-            testListenerProvider = { NoOpTestListener },
+            targets = targets
         )
     }
-
-    private fun testRunWithTarget(
-        testName: TestName,
-        quota: QuotaConfigurationData
-    ) =
-        TestWithTarget(
-            test = TestStaticDataPackage.createStubInstance(
-                name = testName
-            ),
-            target = TargetConfigurationData.createStubInstance(
-                quota = quota,
-                api = deviceApi,
-                model = deviceModel
-            )
-        )
 
     private fun deviceTestCaseRun(
         device: Device,
