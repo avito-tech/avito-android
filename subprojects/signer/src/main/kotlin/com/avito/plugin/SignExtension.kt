@@ -9,9 +9,6 @@ public abstract class SignExtension {
 
     internal val bundleSignTokens = mutableMapOf<String, String?>()
 
-    @Deprecated("use url")
-    public var host: String? = null
-
     public abstract val enabled: Property<Boolean>
 
     public abstract val url: Property<String>

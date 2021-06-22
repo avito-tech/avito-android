@@ -55,7 +55,7 @@ private fun appModule(name: String, dependencies: Set<GradleDependency>) = Andro
             }
         }
         signService {
-            host("https://signer/")
+            url.set("https://signer/")
         }                            
         builds {
             fastCheck {

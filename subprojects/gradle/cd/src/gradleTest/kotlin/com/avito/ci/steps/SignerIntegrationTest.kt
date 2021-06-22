@@ -49,9 +49,9 @@ class SignerIntegrationTest {
                     buildGradleExtra = """
                         import com.avito.cd.BuildVariant
                 signService {
+                    url.set("${webServer.url("/")}")
                     apk(android.buildTypes.release, '12345')
                     bundle(android.buildTypes.release, '12345')
-                    host = "${webServer.url("/")}"
                 }
                 builds {
                     fullCheck {

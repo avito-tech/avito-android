@@ -6,10 +6,10 @@ internal class UrlResolver(
     private val extension: SignExtension,
 ) {
 
-    @Suppress("DEPRECATION", "UnstableApiUsage")
+    @Suppress("UnstableApiUsage")
     fun resolveServiceUrl(onFailure: (Throwable) -> Nothing): String {
         val value = extension.url
-            .orElse(extension.host.orEmpty())
+            .orElse("")
             .get()
 
         return validateUrl(value, onFailure)

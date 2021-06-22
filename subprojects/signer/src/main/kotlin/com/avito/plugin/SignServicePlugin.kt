@@ -34,7 +34,6 @@ public class SignServicePlugin : Plugin<Project> {
                     taskName = signApkTaskName(variant),
                     extension = extension,
                     signingResolver = SigningResolver(
-                        project = target,
                         extension = extension,
                         variant = this,
                         signTokensMap = extension.apkSignTokens
@@ -48,7 +47,6 @@ public class SignServicePlugin : Plugin<Project> {
                     taskName = signBundleTaskName(variant),
                     extension = extension,
                     signingResolver = SigningResolver(
-                        project = target,
                         extension = extension,
                         variant = this,
                         signTokensMap = extension.bundleSignTokens
