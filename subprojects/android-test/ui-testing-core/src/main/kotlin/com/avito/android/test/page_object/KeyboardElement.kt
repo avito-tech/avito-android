@@ -56,10 +56,12 @@ class KeyboardElement : PageObject() {
             try {
                 output = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
                     .executeShellCommand(KEYBOARD_STATE_CHECK_CMD)
+                    .split("\n")
+                    .first { it.contains(KEYBOARD_STATE_FLAG) }
             } catch (e: IOException) {
-                throw RuntimeException("Keyboard check failed", e)
+                throw RuntimeException("An error occurred while executing '$KEYBOARD_STATE_CHECK_CMD'", e)
             }
-            val actual = output.contains(KEYBOARD_STATE_OPENED_FLAG)
+            val actual = output.contains(KEYBOARD_STATE_FLAG_OPENED)
             assertThat(generateErrorMessage(expected, actual, output), actual, `is`(expected))
         }
 
@@ -79,13 +81,14 @@ class KeyboardElement : PageObject() {
             return buildString {
                 append("Keyboard ${message(actual)} on the screen. ")
                 append("Expected: ${message(expected)}. ")
-                append("Cmd output is \"$cmdOutput\"")
+                append("Cmd output is:\n\"$cmdOutput\"")
             }
         }
 
         companion object {
             private const val KEYBOARD_STATE_CHECK_CMD = "dumpsys input_method | grep mInputShown"
-            private const val KEYBOARD_STATE_OPENED_FLAG = "mInputShown=true"
+            private const val KEYBOARD_STATE_FLAG = "mInputShown"
+            private const val KEYBOARD_STATE_FLAG_OPENED = "mInputShown=true"
         }
     }
 }
