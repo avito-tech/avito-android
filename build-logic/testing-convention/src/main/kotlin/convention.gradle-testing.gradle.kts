@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.api.internal.classpath.ModuleRegistry
+import org.gradle.configurationcache.extensions.serviceOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
@@ -55,6 +57,13 @@ dependencies {
     "gradleTestRuntimeOnly"(libs.junitJupiterEngine)
     "gradleTestRuntimeOnly"(libs.junitPlatformRunner)
     "gradleTestRuntimeOnly"(libs.junitPlatformLauncher)
+
+    // workaround for https://github.com/gradle/gradle/issues/16774
+    "gradleTestRuntimeOnly"(
+        files(
+            serviceOf<ModuleRegistry>().getModule("gradle-tooling-api-builders").classpath.asFiles.first()
+        )
+    )
 }
 
 gradlePlugin {
