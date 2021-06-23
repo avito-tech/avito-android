@@ -29,6 +29,7 @@ internal class KubernetesReservationClientTest {
     private val kubernetesApi = FakeKubernetesApi()
     private val androidDebugBridge = FakeAndroidDebugBridge()
     private val dispatcher = TestCoroutineDispatcher()
+    private val podsQueryInterval = 1L
     private fun runBlockingTest(block: suspend TestCoroutineScope.() -> Unit) {
         dispatcher.runBlockingTest(block)
     }
@@ -43,7 +44,7 @@ internal class KubernetesReservationClientTest {
             loggerFactory = StubLoggerFactory,
             reservationDeploymentFactory = FakeReservationDeploymentFactory(),
             dispatcher = dispatcher,
-            podsQueryIntervalMs = 1L
+            podsQueryIntervalMs = podsQueryInterval
         )
     }
 
@@ -181,5 +182,24 @@ internal class KubernetesReservationClientTest {
         }
         assertThat(exception.message)
             .isEqualTo(expectedMessage)
+    }
+
+    @Test
+    fun `first pod hasn't ip - success`() {
+        val client = client()
+        val results = LinkedList(
+            listOf(
+                Result.Success(listOf(StubPod(name = "stub-1", ip = null))),
+                Result.Success(listOf(StubPod(name = "stub-2"))),
+            ),
+        )
+
+        kubernetesApi.getPods = {
+            results.poll()
+        }
+        runBlockingTest {
+            val claim = client.claim(listOf(ReservationData.stub()))
+            claim.deviceCoordinates.cancel() // stop client
+        }
     }
 }

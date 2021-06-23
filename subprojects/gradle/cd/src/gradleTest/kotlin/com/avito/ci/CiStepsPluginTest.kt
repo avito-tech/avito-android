@@ -47,11 +47,14 @@ class CiStepsPluginTest {
                         id("com.avito.android.cd")
                         id("maven-publish")
                     },
-                    customScript = """
-                            import com.avito.cd.BuildVariant
+                    imports = listOf(
+                        "import com.avito.cd.BuildVariant"
+                    ),
+                    buildGradleExtra = """
                             ${registerUiTestConfigurations("regress", "pr")}
                             signService {
                                 url.set("https://signer/")
+                                apk(android.buildTypes.release, "no_matter")
                                 bundle(android.buildTypes.release, "no_matter")
                             }
                             prosector {
@@ -81,12 +84,15 @@ class CiStepsPluginTest {
 
                                     artifacts {
                                         apk("debugApk", BuildVariant.DEBUG, "com.appA", "${'$'}{project.buildDir}/outputs/apk/debug/appA-debug.apk") {}
-                                        apk("releaseApk", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/apk/release/appA-release.apk") {}
-                                        bundle("releaseBundle", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/release/debug/appA-release.aab") {}
+                                        apk("releaseApk", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/apk/release/appA-release.apk") {
+                                            signature = "1221e21e21e"
+                                        }
+                                        bundle("releaseBundle", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/release/debug/appA-release.aab") {
+                                            signature = "12e23rrr34r"
+                                        }
                                         mapping("releaseMapping", BuildVariant.RELEASE, "${'$'}{project.buildDir}/reports/mapping.txt")
                                         file("nonExistedJson","${'$'}{project.buildDir}/reports/not-existed-file.json")
                                     }
-
 
                                     uploadToQapps {
                                         artifacts = ['releaseApk']
@@ -188,7 +194,7 @@ class CiStepsPluginTest {
             ":appB",
             ":independent"
         ).map { module ->
-            dynamicTest("$module tasks should not be triggered by :appA:release") {
+            dynamicTest("$module should not be triggered by :appA:release") {
                 result.assertThat().moduleTaskShouldNotBeTriggered(module)
             }
         }
@@ -216,7 +222,7 @@ class CiStepsPluginTest {
             ":shared:test",
             ":transitive:test"
         ).map { task ->
-            dynamicTest("$task task should be triggered by :appA:release") {
+            dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)
             }
         }
@@ -243,7 +249,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:instrumentationRegress"
         ).map { task ->
-            dynamicTest("$task task should be triggered by :appA:release") {
+            dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)
             }
         }
@@ -256,7 +262,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:instrumentationPrDebug"
         ).map { task ->
-            dynamicTest("$task task should NOT be triggered by :appA:release") {
+            dynamicTest("$task should NOT be triggered by :appA:release") {
                 result.assertThat().tasksShouldNotBeTriggered(task)
             }
         }
@@ -267,10 +273,10 @@ class CiStepsPluginTest {
         val result = runTask(":appA:release")
 
         return listOf(
-            ":appA:bundleRelease",
+            ":appA:packageReleaseBundle",
             ":appA:signBundleViaServiceRelease"
         ).map { task ->
-            dynamicTest("$task task should be triggered by :appA:release") {
+            dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)
             }
         }
@@ -283,7 +289,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:signApkViaServiceRelease"
         ).map { task ->
-            dynamicTest("$task task should be triggered by :appA:release") {
+            dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)
             }
         }
@@ -296,7 +302,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:signApkViaServiceStaging"
         ).map { task ->
-            dynamicTest("$task task should not be triggered by :appA:release") {
+            dynamicTest("$task should not be triggered by :appA:release") {
                 result.assertThat().tasksShouldNotBeTriggered(task)
             }
         }
@@ -309,7 +315,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:prosectorUploadDebug"
         ).map { task ->
-            dynamicTest("$task task should be triggered by :appA:release") {
+            dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)
             }
         }
@@ -322,7 +328,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:qappsUploadRelease"
         ).map { task ->
-            dynamicTest("$task task should be triggered by :appA:release") {
+            dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)
             }
         }

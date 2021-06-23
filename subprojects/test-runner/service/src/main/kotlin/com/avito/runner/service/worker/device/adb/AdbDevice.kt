@@ -35,6 +35,7 @@ data class AdbDevice(
     override val coordinate: DeviceCoordinate,
     override val model: String,
     override val online: Boolean,
+    override val api: Int,
     private val adb: Adb,
     private val timeProvider: TimeProvider,
     // MBS-8531: don't use "ADB" here to avoid possible recursion
@@ -44,28 +45,6 @@ data class AdbDevice(
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl(),
     private val retryAction: RetryAction = RetryAction(timeProvider)
 ) : Device {
-
-    override val api: Int by lazy {
-        retryAction.retry(
-            retriesCount = DEFAULT_RETRY_COUNT,
-            delaySeconds = DEFAULT_DELAY_SEC,
-            action = {
-                loadProperty(
-                    key = "ro.build.version.sdk",
-                    cast = { it.toInt() }
-                )
-            },
-            onError = { attempt, _, durationMs ->
-                eventsListener.onGetSdkPropertyError(attempt, durationMs)
-            },
-            onFailure = { throwable, durationMs ->
-                eventsListener.onGetSdkPropertyFailure(throwable, durationMs)
-            },
-            onSuccess = { attempt, result, durationMs ->
-                eventsListener.onGetSdkPropertySuccess(attempt, result, durationMs)
-            }
-        ).getOrThrow()
-    }
 
     override fun installApplication(applicationPackage: String): Result<DeviceInstallation> {
         var installStartedTimestamp: Long

@@ -11,6 +11,7 @@ object VerdictCases {
 
     interface Configuration {
         fun wrongProjectDependencyFails(): String
-        fun illegalMethodFails(): String
+        fun illegalMethodFails41(): String
+        fun illegalMethodFails42(): String
     }
 }

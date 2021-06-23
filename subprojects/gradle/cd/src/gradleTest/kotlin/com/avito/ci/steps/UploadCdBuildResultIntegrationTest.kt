@@ -78,8 +78,10 @@ class UploadCdBuildResultIntegrationTest {
                 id("com.avito.android.cd")
                 id("maven-publish")
             },
-            customScript = """
-                        import com.avito.cd.BuildVariant
+            imports = listOf(
+                "import com.avito.cd.BuildVariant"
+            ),
+            buildGradleExtra = """
                         ${registerUiTestConfigurations("regress")}
                         signService {
                             url.set("https://signer/")

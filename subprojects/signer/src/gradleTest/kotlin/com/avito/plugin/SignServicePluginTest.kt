@@ -168,7 +168,9 @@ internal class SignServicePluginTest {
             testProjectDir,
             ":app:signApkViaServiceRelease",
             "-PsignToken=12345"
-        ).assertThat().buildSuccessful()
+        ).assertThat()
+            .buildSuccessful()
+            .tasksShouldBeTriggered(":app:packageRelease")
 
         val unsignedApk = File(testProjectDir, "app/build/outputs/apk/release/app-release-unsigned.apk")
         assertWithMessage("Preserve original unsigned APK").that(unsignedApk.exists()).isTrue()

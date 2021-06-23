@@ -9,6 +9,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
+import com.avito.utils.ProcessRunner
 import java.io.File
 
 public interface DevicesProviderFactory {
@@ -27,6 +28,7 @@ public interface DevicesProviderFactory {
             androidDebugBridgeProvider: AndroidDebugBridgeProvider,
             emulatorsLogsReporterProvider: EmulatorsLogsReporterProvider,
             metricsConfig: RunnerMetricsConfig,
+            processRunner: ProcessRunner
         ): DevicesProviderFactory {
             return DeviceProviderFactoryImpl(
                 loggerFactory = loggerFactory,
@@ -35,7 +37,8 @@ public interface DevicesProviderFactory {
                 kubernetesReservationClientProvider = kubernetesReservationClientProvider,
                 emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
                 androidDebugBridgeProvider = androidDebugBridgeProvider,
-                metricsConfig = metricsConfig
+                metricsConfig = metricsConfig,
+                processRunner = processRunner
             )
         }
     }
