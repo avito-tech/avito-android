@@ -86,7 +86,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         throwable: Throwable,
         durationMs: Long
     ) {
-        logger.debug("Attempt $attempt: failed to clear package $name")
+        logger.warn("Attempt $attempt: failed to clear package $name in ${durationMs}ms", throwable)
     }
 
     override fun onClearPackageFailure(
