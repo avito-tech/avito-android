@@ -15,16 +15,8 @@ class CiStepsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
 
         val buildContainer = project.container { name ->
-            @Suppress("UnstableApiUsage")
-            val explicitOverride = project.providers
-                .gradleProperty(explicitBuildStepsOverrideProperty)
-                .forUseAtConfigurationTime()
-                .map { it.toBoolean() }
-                .getOrElse(false)
-
             BuildStepListExtension(
                 buildStepListName = name,
-                explicitOverride,
                 project.objects
             )
         }
@@ -48,9 +40,3 @@ class CiStepsPlugin : Plugin<Project> {
         }
     }
 }
-
-/**
- * Temporary feature toggle for a new behaviour. It breaks backward compatibility.
- * It will be deleted in next releases.
- */
-internal const val explicitBuildStepsOverrideProperty = "com.avito.ci.build.step.explicitOverride"

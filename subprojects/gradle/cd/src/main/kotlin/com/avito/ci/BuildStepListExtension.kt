@@ -28,10 +28,9 @@ import org.gradle.api.Named
 import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.property
 
-@Suppress("UnstableApiUsage")
+@Suppress("UnstableApiUsage", "unused", "MemberVisibilityCanBePrivate")
 open class BuildStepListExtension(
     internal val buildStepListName: String,
-    private val explicitOverride: Boolean,
     objects: ObjectFactory
 ) : Named {
 
@@ -286,7 +285,7 @@ open class BuildStepListExtension(
     ) {
         ensureNotRegistered(name)
 
-        val step = steps.maybeCreate(name, T::class.java)
+        val step = steps.create(name, T::class.java)
 
         configuration.execute(step)
 
@@ -297,7 +296,7 @@ open class BuildStepListExtension(
 
     private fun ensureNotRegistered(name: String) {
         val step = steps.findByName(name)
-        if (step != null && explicitOverride) {
+        if (step != null) {
             throw Problem.Builder(
                 shortDescription = "Overriding existing build step '$name' (${step::class.java.simpleName}) " +
                     "in '$buildStepListName' chain",
