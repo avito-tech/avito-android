@@ -1,6 +1,3 @@
-import org.gradle.api.internal.classpath.ModuleRegistry
-import org.gradle.configurationcache.extensions.serviceOf
-
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
@@ -31,13 +28,6 @@ dependencies {
     gradleTestImplementation(testFixtures(project(":common:statsd")))
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":gradle:impact-shared-test-fixtures"))
-
-    // workaround for https://github.com/gradle/gradle/issues/16774
-    gradleTestRuntimeOnly(
-        files(
-            serviceOf<ModuleRegistry>().getModule("gradle-tooling-api-builders").classpath.asFiles.first()
-        )
-    )
 }
 
 gradlePlugin {

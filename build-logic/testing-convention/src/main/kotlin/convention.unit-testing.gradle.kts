@@ -37,7 +37,7 @@ tasks.withType<Test>().configureEach {
     )
 }
 
-plugins.withType<KotlinBasePluginWrapper>() {
+plugins.withType<KotlinBasePluginWrapper> {
     dependencies {
         add("testImplementation", libs.junitJupiterApi)
         add("testImplementation", libs.truth)
@@ -48,7 +48,7 @@ plugins.withType<KotlinBasePluginWrapper>() {
     }
 }
 
-plugins.withType<JavaTestFixturesPlugin>() {
+plugins.withType<JavaTestFixturesPlugin> {
 
     configure<KotlinJvmProjectExtension> {
         target.compilations.getByName("test")
