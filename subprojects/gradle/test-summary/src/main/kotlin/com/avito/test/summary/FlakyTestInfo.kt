@@ -2,7 +2,6 @@ package com.avito.test.summary
 
 import com.avito.android.Result
 import com.avito.report.model.SimpleRunTest
-import com.avito.report.model.TestName
 
 internal class FlakyTestInfo {
 
@@ -33,7 +32,7 @@ internal class FlakyTestInfo {
         return report.filter { it.lastAttemptDurationInSeconds > 0 }
             .map {
                 FlakyInfo(
-                    testName = TestName(it.name),
+                    testName = it.name,
                     attempts = it.stability.attemptsCount,
                     // предположение что проходит тест примерно за одно время, подробнее информации пока нет в api
                     wastedTimeEstimateInSec = it.lastAttemptDurationInSeconds * it.stability.attemptsCount

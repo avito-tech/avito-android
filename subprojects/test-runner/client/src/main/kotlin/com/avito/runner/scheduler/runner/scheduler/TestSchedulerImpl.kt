@@ -14,6 +14,7 @@ import com.avito.runner.scheduler.runner.model.TestRunnerResults
 import com.avito.runner.scheduler.suite.TestSuite
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
+import com.avito.runner.service.model.TestCase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.runBlocking
@@ -57,30 +58,31 @@ internal class TestSchedulerImpl(
         )
 
         val skippedTests = testSuite.skippedTests.map {
-            "${it.first.test.name} on ${it.first.target.deviceName} because ${it.second.reason}"
+            "${it.first.name} on ${it.first.device} because ${it.second.reason}"
         }
         logger.debug("Skipped tests: $skippedTests")
 
         val testsToRun = testSuite.testsToRun
-        logger.debug("Tests to run: ${testsToRun.map { "${it.test.name} on ${it.target.deviceName}" }}")
+        logger.debug("Tests to run: ${testsToRun.map { "${it.name} on ${it.device}" }}")
 
         filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
         filterInfoWriter.writeFilterExcludes(testSuite.skippedTests)
 
         writeTestSuite(outputDir, testSuite)
+        val testCases = testsToRun.map { test -> TestCase(test.name, test.device) }
 
         if (testsToRun.isNotEmpty()) {
             runBlocking {
-                testRunnerFactory.createTestRunner().runTests(testsToRun)
+                testRunnerFactory.createTestRunner(testsToRun).runTests(testCases)
             }
         }
 
-        val testSchedulerResult = TestRunnerResults(
-            testsToRun = testSuite.testsToRun.map { it.test },
+        val testRunnerResults = TestRunnerResults(
+            testsToRun = testsToRun,
             testResults = report.getTestResults()
         )
 
-        return finalizer.finalize(testSchedulerResult)
+        return finalizer.finalize(testRunnerResults)
     }
 
     private fun writeParsedTests(outputDir: File, parsedTests: Result<List<TestInApk>>) {
@@ -93,6 +95,6 @@ internal class TestSchedulerImpl(
 
     private fun writeTestSuite(outputDir: File, testSuite: TestSuite) {
         File(outputDir, "test-suite.json")
-            .writeText(gson.toJson(testSuite.testsToRun.map { it.test }))
+            .writeText(gson.toJson(testSuite.testsToRun.map { it.name }))
     }
 }

@@ -54,7 +54,7 @@ internal class LintReportTest {
                         id("com.avito.android.cd")
                         id("com.avito.android.lint-report")
                     },
-                    customScript = """
+                    buildGradleExtra = """
                             lintReport {
                                 slackToken.set("stub")
                                 slackWorkspace.set("stub")

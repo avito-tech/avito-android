@@ -9,6 +9,7 @@ import com.avito.report.model.createStubInstance
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.RunStatus
 import com.avito.runner.config.createStub
+import com.avito.test.model.TestName
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
@@ -27,12 +28,12 @@ internal class AvitoReportAwareFilterFactoryImplTest {
         report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
-                    name = "test1",
+                    name = TestName("Test", "test1"),
                     deviceName = "25",
                     status = Status.Success
                 ),
                 SimpleRunTest.createStubInstance(
-                    name = "test2",
+                    name = TestName("Test", "test2"),
                     deviceName = "25",
                     status = Status.Lost
                 )
@@ -60,7 +61,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
                         source = TestsFilter.Signatures.Source.Report,
                         signatures = setOf(
                             TestsFilter.Signatures.TestSignature(
-                                name = "test1",
+                                name = "Test.test1",
                                 deviceName = "25"
                             )
                         )
@@ -79,12 +80,12 @@ internal class AvitoReportAwareFilterFactoryImplTest {
         report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
-                    name = "test1",
+                    name = TestName("Test", "test1"),
                     deviceName = "25",
                     status = Status.Success
                 ),
                 SimpleRunTest.createStubInstance(
-                    name = "test2",
+                    name = TestName("Test", "test2"),
                     deviceName = "25",
                     status = Status.Lost
                 )
@@ -110,7 +111,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
                     source = TestsFilter.Signatures.Source.PreviousRun,
                     signatures = setOf(
                         TestsFilter.Signatures.TestSignature(
-                            name = "test1",
+                            name = "Test.test1",
                             deviceName = "25"
                         )
                     )
@@ -128,12 +129,12 @@ internal class AvitoReportAwareFilterFactoryImplTest {
         report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
-                    name = "test1",
+                    name = TestName("Test", "test1"),
                     deviceName = "25",
                     status = Status.Success
                 ),
                 SimpleRunTest.createStubInstance(
-                    name = "test2",
+                    name = TestName("Test", "test2"),
                     deviceName = "25",
                     status = Status.Lost
                 )
@@ -161,7 +162,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
                         source = TestsFilter.Signatures.Source.Report,
                         signatures = setOf(
                             TestsFilter.Signatures.TestSignature(
-                                name = "test1",
+                                name = "Test.test1",
                                 deviceName = "25"
                             )
                         )
@@ -180,12 +181,12 @@ internal class AvitoReportAwareFilterFactoryImplTest {
         report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
-                    name = "test1",
+                    name = TestName("Test", "test1"),
                     deviceName = "25",
                     status = Status.Success
                 ),
                 SimpleRunTest.createStubInstance(
-                    name = "test2",
+                    name = TestName("Test", "test2"),
                     deviceName = "25",
                     status = Status.Lost
                 )
@@ -211,7 +212,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
                     source = TestsFilter.Signatures.Source.PreviousRun,
                     signatures = setOf(
                         TestsFilter.Signatures.TestSignature(
-                            name = "test1",
+                            name = "Test.test1",
                             deviceName = "25"
                         )
                     )

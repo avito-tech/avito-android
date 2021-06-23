@@ -23,10 +23,10 @@ internal class TestReporterTest {
         )
 
         val lostTestsToReport = listOf(
-            AndroidTest.Lost.createStubInstance(name = "lostTest1", deviceName = device),
-            AndroidTest.Lost.createStubInstance(name = "lostTest2", deviceName = device),
-            AndroidTest.Lost.createStubInstance(name = "lostTest3", deviceName = device),
-            AndroidTest.Lost.createStubInstance(name = "lostTest4", deviceName = device)
+            AndroidTest.Lost.createStubInstance(methodName = "lostTest1", deviceName = device),
+            AndroidTest.Lost.createStubInstance(methodName = "lostTest2", deviceName = device),
+            AndroidTest.Lost.createStubInstance(methodName = "lostTest3", deviceName = device),
+            AndroidTest.Lost.createStubInstance(methodName = "lostTest4", deviceName = device)
         )
 
         reporter.sendLostTests(lostTests = lostTestsToReport)

@@ -1,9 +1,9 @@
 package com.avito.runner.finalizer.verdict
 
 import com.avito.report.model.SimpleRunTest
-import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
 import com.avito.runner.finalizer.verdict.LegacyVerdict.Failure
+import com.avito.test.model.TestName
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

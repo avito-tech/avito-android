@@ -87,7 +87,7 @@ class UploadToQappsTest {
                         id("com.avito.android.signer")
                         id("com.avito.android.cd")
                     },
-                    customScript = """
+                    buildGradleExtra = """
                             qapps {
                                 serviceUrl = "${mockWebServer.url("/")}"
                                 branchName = "develop"

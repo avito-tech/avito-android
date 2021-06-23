@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.suite.filter
 
+import com.avito.report.model.TestStaticData
 import com.avito.runner.config.InstrumentationFilterData
-import com.avito.runner.scheduler.runner.model.TestWithTarget
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Excluded
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -10,7 +10,7 @@ import java.io.File
 internal interface FilterInfoWriter {
     fun writeFilterConfig(config: InstrumentationFilterData)
     fun writeAppliedFilter(filter: TestsFilter)
-    fun writeFilterExcludes(excludes: List<Pair<TestWithTarget, Excluded>>)
+    fun writeFilterExcludes(excludes: List<Pair<TestStaticData, Excluded>>)
 
     class Impl(
         outputDir: File,
@@ -31,7 +31,7 @@ internal interface FilterInfoWriter {
             filterApplied.writeText(gson.toJson(filter))
         }
 
-        override fun writeFilterExcludes(excludes: List<Pair<TestWithTarget, Excluded>>) {
+        override fun writeFilterExcludes(excludes: List<Pair<TestStaticData, Excluded>>) {
             filterExcludesFile.writeText(
                 gson.toJson(
                     excludes.groupBy(
@@ -40,8 +40,8 @@ internal interface FilterInfoWriter {
                         },
                         valueTransform = { (test, _) ->
                             mapOf(
-                                "testName" to test.test.name.name,
-                                "device" to test.test.device.name
+                                "testName" to test.name,
+                                "device" to test.device.name
                             )
                         }
                     )

@@ -3,13 +3,13 @@ package com.avito.runner.finalizer.action
 import com.avito.report.NoOpReportLinkGenerator
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.DeviceName
 import com.avito.report.model.Incident
-import com.avito.report.model.TestName
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.runner.finalizer.verdict.Verdict
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir

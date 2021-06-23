@@ -2,9 +2,11 @@ package com.avito.report.model
 
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 
 public fun TestStaticDataPackage.Companion.createStubInstance(
-    name: TestName = TestName("com.avito.Test.test"),
+    name: TestName = TestName("com.avito.Test", "test"),
     deviceName: DeviceName = DeviceName("api22"),
     description: String = "just a test",
     testCaseId: Int? = null,

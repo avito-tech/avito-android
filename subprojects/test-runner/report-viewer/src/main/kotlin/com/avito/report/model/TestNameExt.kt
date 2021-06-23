@@ -1,6 +1,7 @@
 package com.avito.report.model
 
-import com.avito.report.model.TestName.Companion.delimiter
+import com.avito.test.model.TestName
+import com.avito.test.model.TestName.Companion.delimiter
 
 /**
  * Название теста устроено так:
@@ -20,18 +21,6 @@ public val TestName.team: Team
                 Team.UNDEFINED
             }
         else -> Team.UNDEFINED
-    }
-
-// todo убрать определение features из пакета, будут явно указаны в аннотации к тесту
-public val TestName.features: List<String>
-    get() = when {
-        packageName.startsWith(domofondPrefix) ->
-            packageName.substringAfter("$domofondPrefix.")
-                .split(delimiter)
-        packageName.startsWith(avitoPrefix) -> packageName.substringAfter("$avitoPrefix.")
-            .split(delimiter)
-            .drop(1) // unit
-        else -> emptyList()
     }
 
 private const val avitoPrefix = "com.avito.android.test"

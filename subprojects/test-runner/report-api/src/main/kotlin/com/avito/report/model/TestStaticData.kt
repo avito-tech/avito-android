@@ -1,11 +1,14 @@
 package com.avito.report.model
 
+import com.avito.android.test.annotations.TestCaseBehavior
+import com.avito.android.test.annotations.TestCasePriority
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
+
 /**
  * Test data that can be parsed even without actual test run
- *
- * todo avito specific properties shouldn't be in generic model
  */
-public interface TestStaticData : AvitoSpecificTestStaticData {
+public interface TestStaticData {
 
     public val name: TestName
 
@@ -16,4 +19,18 @@ public interface TestStaticData : AvitoSpecificTestStaticData {
     public val dataSetNumber: Int?
 
     public val flakiness: Flakiness
+
+    public val testCaseId: Int?
+
+    public val externalId: String?
+
+    public val featureIds: List<Int>
+
+    public val tagIds: List<Int>
+
+    public val priority: TestCasePriority?
+
+    public val behavior: TestCaseBehavior?
+
+    public val kind: Kind
 }

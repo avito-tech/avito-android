@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler
 
-import com.avito.android.runner.devices.DevicesProvider
+import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
@@ -9,6 +9,7 @@ import com.avito.report.model.TestStaticData
 import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.config.RunnerInputParams
+import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.listener.ArtifactsTestListener
 import com.avito.runner.scheduler.listener.AvitoFileStorageUploader
@@ -32,9 +33,11 @@ import com.avito.runner.scheduler.runner.TestRunnerExecutionState
 import com.avito.runner.scheduler.runner.TestRunnerImpl
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
+import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
+import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -46,17 +49,27 @@ internal class TestRunnerFactoryImpl(
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
     private val testMetricsListener: TestMetricsListener,
-    private val devicesProvider: DevicesProvider,
+    private val deviceListener: DeviceListener,
+    private val devicesProviderFactory: DevicesProviderFactory,
     private val testRunnerRequestFactory: TestRunRequestFactory,
     private val executionState: TestRunnerExecutionState,
     private val httpClientProvider: HttpClientProvider,
     private val params: RunnerInputParams,
     private val tempLogcatDir: File,
     private val metricsSender: InstrumentationMetricsSender,
-    private val report: Report
+    private val report: Report,
+    private val targets: List<TargetConfigurationData>
 ) : TestRunnerFactory {
 
-    override fun createTestRunner(): TestRunner {
+    override fun createTestRunner(
+        tests: List<TestStaticData>
+    ): TestRunner {
+        val devicesProvider = devicesProviderFactory.create(
+            tempLogcatDir = tempLogcatDir,
+            deviceWorkerPoolProvider = devicesWorkerPoolProvider(
+                testListener(tests)
+            )
+        )
         return TestRunnerImpl(
             scheduler = TestExecutionScheduler(
                 results = executionState.results,
@@ -80,25 +93,51 @@ internal class TestRunnerFactoryImpl(
             ),
             testMetricsListener = testMetricsListener,
             testRunRequestFactory = testRunnerRequestFactory,
-            testListenerProvider = { testStaticDataByTestCase ->
-                CompositeListener(
-                    listeners = mutableListOf<TestListener>().apply {
-                        add(LogListener())
-                        add(
-                            ArtifactsTestListener(
-                                lifecycleListener = createTestReporter(
-                                    testStaticDataByTestCase = testStaticDataByTestCase,
-                                ),
-                                outputDirectory = testRunnerOutputDir,
-                                loggerFactory = loggerFactory,
-                                saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
-                                fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
-                            )
-                        )
-                    }
-                )
-            }
+            targets = targets
         )
+    }
+
+    private fun testListener(tests: List<TestStaticData>) = CompositeListener(
+        listeners = mutableListOf<TestListener>().apply {
+            add(LogListener())
+            add(
+                ArtifactsTestListener(
+                    lifecycleListener = createTestReporter(
+                        testStaticDataByTestCase = testStaticDataByTestCase(tests),
+                    ),
+                    outputDirectory = testRunnerOutputDir,
+                    loggerFactory = loggerFactory,
+                    saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
+                    fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
+                )
+            )
+        }
+    )
+
+    private fun devicesWorkerPoolProvider(
+        testListener: TestListener
+    ): DeviceWorkerPoolProvider {
+        return DeviceWorkerPoolProvider(
+            testRunnerOutputDir = testRunnerOutputDir,
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory,
+            deviceListener = deviceListener,
+            intentions = executionState.intentions,
+            intentionResults = executionState.intentionResults,
+            deviceSignals = executionState.deviceSignals,
+            testListener = testListener
+        )
+    }
+
+    private fun testStaticDataByTestCase(
+        testsToRun: List<TestStaticData>
+    ): Map<TestCase, TestStaticData> {
+        return testsToRun.associateBy { test ->
+            TestCase(
+                name = test.name,
+                deviceName = test.device
+            )
+        }
     }
 
     private fun createTestReporter(

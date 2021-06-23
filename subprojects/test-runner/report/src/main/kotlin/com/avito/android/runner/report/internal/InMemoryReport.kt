@@ -6,6 +6,8 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
 import com.avito.time.TimeProvider
 
 internal class InMemoryReport(
@@ -43,11 +45,20 @@ internal class InMemoryReport(
 
     @Synchronized
     override fun getTestResults(): Collection<AndroidTest> {
-        val grouped: Map<TestStaticData, List<TestAttempt>> =
-            testAttempts.groupBy(keySelector = { it.testResult })
+        val grouped: Map<TestKey, List<TestAttempt>> =
+            testAttempts.groupBy(
+                keySelector = {
+                    TestKey(
+                        testName = it.testResult.name,
+                        deviceName = it.testResult.device
+                    )
+                }
+            )
 
         return grouped.mapValues { (_, executions) ->
             testAttemptsAggregateStrategy.getTestResult(executions)
         }.values
     }
+
+    private data class TestKey(val testName: TestName, val deviceName: DeviceName)
 }

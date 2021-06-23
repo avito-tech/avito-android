@@ -1,11 +1,13 @@
 package com.avito.runner.service.model
 
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestName
+
 fun TestCase.Companion.createStubInstance(
     className: String = "com.avito.Test",
     methodName: String = "test",
-    deviceName: String = "api29"
+    deviceName: DeviceName = DeviceName("api29")
 ): TestCase = TestCase(
-    className = className,
-    methodName = methodName,
+    name = TestName(className, methodName),
     deviceName = deviceName
 )

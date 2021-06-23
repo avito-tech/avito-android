@@ -115,6 +115,7 @@ include(":test-runner:instrumentation-tests-dex-loader")
 include(":test-runner:file-storage")
 include(":test-runner:report-viewer")
 include(":test-runner:report-api")
+include(":test-runner:test-model")
 
 include(":logger:gradle-logger")
 include(":logger:android-log")

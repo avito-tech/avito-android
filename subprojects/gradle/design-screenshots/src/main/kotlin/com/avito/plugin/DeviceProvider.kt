@@ -30,7 +30,7 @@ internal class DeviceProviderLocal(
         return adbDeviceFactory.create(
             coordinate = DeviceCoordinate.Local(serial),
             adbDeviceParams
-        )
+        ).getOrThrow()
     }
 
     private fun connectedDeviceParams(): AdbDeviceParams {

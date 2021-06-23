@@ -1,5 +1,7 @@
 package com.avito.report
 
+import com.avito.test.model.TestName
+
 public interface TestDirGenerator {
 
     /**
@@ -8,19 +10,14 @@ public interface TestDirGenerator {
     public fun generateUniqueDir(): String
 
     public class Impl(
-        private val className: String,
-        private val methodName: String
+        private val name: TestName
     ) : TestDirGenerator {
 
         /**
          * dataset number not needed because method names are unique for them
          */
         override fun generateUniqueDir(): String {
-            return buildString {
-                append(className)
-                append('#')
-                append(methodName)
-            }
+            return "${name.className}#${name.methodName}"
         }
     }
 }

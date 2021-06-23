@@ -6,7 +6,6 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolProvider
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
@@ -41,7 +40,6 @@ internal class LocalDevicesProvider(
     @ExperimentalCoroutinesApi
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
-        testListener: TestListener,
     ): DeviceWorkerPool {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
         with(CoroutineScope(dispatcher)) {
@@ -75,7 +73,7 @@ internal class LocalDevicesProvider(
         }
         @Suppress("DEPRECATION")
         val devices = devices.distinctBy { it.coordinate }.take(devicesRequired)
-        return deviceWorkerPoolProvider.provide(devices, testListener)
+        return deviceWorkerPoolProvider.provide(devices)
     }
 
     override suspend fun releaseDevice(coordinate: DeviceCoordinate) {
@@ -95,7 +93,7 @@ internal class LocalDevicesProvider(
                     adbDeviceFactory.create(
                         coordinate = DeviceCoordinate.Local(adbDeviceParams.id as Serial.Local),
                         adbDeviceParams = adbDeviceParams
-                    )
+                    ).getOrThrow()
                 }
                 .filter { !acquiredDevices.contains(it.coordinate) }
                 .filter { fitsReservation(it, reservation) }
