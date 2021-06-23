@@ -68,15 +68,14 @@ google_analytics:
 nav:
     -   Infrastructure:
             - index.md
-            -   Contributing:
-                    -   Gradle Plugins: contributing/GradlePlugins.md
-                    -   Documentation: contributing/Documentation.md
-                    -   Logging: contributing/Logging.md
-                    -   Networking: contributing/Networking.md
-                    -   Testing: contributing/Testing.md
-                    -   Release: contributing/Release.md
-                    -   Internal:
-                            - contributing/internal/RemoteCache.md
+            -   How to start: contributing/HowToStart.md
+            -   Gradle plugins: contributing/GradlePlugins.md
+            -   Documentation: contributing/Documentation.md
+            -   Logging: contributing/Logging.md
+            -   Networking: contributing/Networking.md
+            -   Testing: contributing/Testing.md
+            -   Release: contributing/Release.md
+            -   Remote cache: contributing/internal/RemoteCache.md
     -   Projects:
             -   Build checks: projects/BuildChecks.md
             -   Build properties: projects/BuildProperties.md
