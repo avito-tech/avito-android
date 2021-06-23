@@ -1,9 +1,10 @@
 package com.avito.plugin
 
 import com.android.build.api.artifact.ArtifactType
+import com.android.build.api.extension.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.ApplicationVariant
 import com.android.build.api.variant.Variant
 import com.avito.android.Problem
-import com.avito.android.androidCommonExtension
 import com.avito.android.asRuntimeException
 import com.avito.android.withAndroidApp
 import org.gradle.api.Plugin
@@ -11,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 
 @Suppress("UnstableApiUsage")
@@ -19,9 +21,6 @@ public class SignServicePlugin : Plugin<Project> {
     override fun apply(target: Project) {
 
         val extension = target.extensions.create<SignExtension>("signService")
-
-        // AGP 4.2 variant
-        // target.extensions.getByType<ApplicationAndroidComponentsExtension>().run {
 
         target.withAndroidApp { appExtension ->
 
@@ -33,14 +32,15 @@ public class SignServicePlugin : Plugin<Project> {
 
                 variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
             }
+        }
 
-            // AGP 4.2 variant
-            // onVariants { variant: ApplicationVariant ->
-            target.androidCommonExtension.onVariants {
+        target.extensions.getByType<ApplicationAndroidComponentsExtension>().run {
 
-                val variant = this
+            onVariants { variant: ApplicationVariant ->
 
                 val urlResolver = UrlResolver(extension)
+
+                val buildTypeName = variant.buildType
 
                 registerTask<SignApkTask>(
                     tasks = target.tasks,
@@ -55,6 +55,17 @@ public class SignServicePlugin : Plugin<Project> {
                     urlResolver = urlResolver
                 )
 
+                val apkToken: String? = extension.apkSignTokens[buildTypeName]
+
+                if (apkToken.hasContent()) {
+                    variant.artifacts.use(target.tasks.signedApkTaskProvider(variant))
+                        .wiredWithDirectories(
+                            taskInput = SignApkTask::unsignedDirProperty,
+                            taskOutput = SignApkTask::signedDirProperty
+                        )
+                        .toTransform(ArtifactType.APK)
+                }
+
                 registerTask<SignBundleTask>(
                     tasks = target.tasks,
                     variant = variant,
@@ -67,27 +78,11 @@ public class SignServicePlugin : Plugin<Project> {
                     ),
                     urlResolver = urlResolver
                 )
-            }
-
-            target.androidCommonExtension.onVariantProperties {
-
-                val buildTypeName = buildType
-
-                val apkToken: String? = extension.apkSignTokens[buildTypeName]
-
-                if (apkToken.hasContent()) {
-                    artifacts.use(target.tasks.signedApkTaskProvider(this))
-                        .wiredWithDirectories(
-                            taskInput = SignApkTask::unsignedDirProperty,
-                            taskOutput = SignApkTask::signedDirProperty
-                        )
-                        .toTransform(ArtifactType.APK)
-                }
 
                 val bundleToken: String? = extension.bundleSignTokens[buildTypeName]
 
                 if (bundleToken.hasContent()) {
-                    artifacts.use(target.tasks.signedBundleTaskProvider(this))
+                    variant.artifacts.use(target.tasks.signedBundleTaskProvider(variant))
                         .wiredWithFiles(
                             taskInput = SignBundleTask::unsignedFileProperty,
                             taskOutput = SignBundleTask::signedFileProperty
@@ -101,7 +96,7 @@ public class SignServicePlugin : Plugin<Project> {
     @Suppress("UnstableApiUsage")
     private inline fun <reified T : SignArtifactTask> registerTask(
         tasks: TaskContainer,
-        variant: Variant<*>, // AGP 4.2 remove <*>
+        variant: Variant,
         taskName: String,
         extension: SignExtension,
         signingResolver: SigningResolver,
