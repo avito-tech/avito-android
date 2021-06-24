@@ -5,17 +5,12 @@ import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal class ConfigurationCacheCompatibilityTest {
 
-    /**
-     * TODO blocked by agp 4.2
-     */
-    @Disabled
     @Test
     fun `configuration with applied plugin - ok`(@TempDir projectDir: File) {
         TestProjectGenerator(
@@ -24,8 +19,9 @@ internal class ConfigurationCacheCompatibilityTest {
                     name = "app",
                     enableKotlinAndroidPlugin = false,
                     plugins = plugins {
+                        id("maven-publish")
                         id("com.avito.android.artifactory-app-backup")
-                    }
+                    },
                 )
             )
         ).generateIn(projectDir)
@@ -39,6 +35,9 @@ internal class ConfigurationCacheCompatibilityTest {
         return gradlew(
             tempDir,
             "help", // todo call backup task
+            "-PartifactoryUrl=http://stub",
+            "-Partifactory_deployer=xxx",
+            "-Partifactory_deployer_password=xxx",
             dryRun = true,
             configurationCache = true
         )
