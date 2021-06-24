@@ -28,9 +28,10 @@ tasks.withType<KotlinCompile>().configureEach {
     }
 }
 
-val kotlinVersion: String = checkNotNull(
-    System.getProperty("kotlinVersion")
-)
+@Suppress("UnstableApiUsage")
+val kotlinVersion: String = providers.systemProperty("kotlinVersion")
+    .forUseAtConfigurationTime()
+    .get()
 
 configurations.all {
     resolutionStrategy.eachDependency {
