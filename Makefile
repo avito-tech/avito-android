@@ -87,6 +87,10 @@ ifeq ($(gradle_debug),true)
 params +=-Dorg.gradle.debug=true --no-daemon
 endif
 
+ifeq ($(CONFIG_CACHE),true)
+params +=--configuration-cache
+endif
+
 ifeq ($(dry_run),true)
 params +=--dry-run
 endif
