@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 
-class RandomUtilsTest {
+internal class RandomUtilsTest {
 
     @TestFactory
     fun `randomString - generate string without forbidden symbols`(): List<DynamicTest> = listOf(
