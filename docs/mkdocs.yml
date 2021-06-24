@@ -69,7 +69,6 @@ nav:
     -   Infrastructure:
             - index.md
             -   How to start: contributing/HowToStart.md
-            -   Troubleshooting: contributing/Troubleshooting.md
             -   Gradle plugins: contributing/GradlePlugins.md
             -   Documentation: contributing/Documentation.md
             -   Logging: contributing/Logging.md
