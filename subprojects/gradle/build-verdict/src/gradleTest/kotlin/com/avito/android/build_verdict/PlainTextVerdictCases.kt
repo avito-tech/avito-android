@@ -81,24 +81,7 @@ A problem occurred evaluating project ':app'.
 		> Project with path ':not-existed' could not be found in project ':app'.
 """.trimIndent()
 
-        override fun illegalMethodFails41() = """
-FAILURE: Build completed with 2 failures.
-
-1: Task failed with an exception.
------------
-Build file '${dir.canonicalPath}/app/build.gradle' line: 7
-A problem occurred evaluating project ':app'.
-	> A problem occurred evaluating project ':app'.
-		> Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.
-
-2: Task failed with an exception.
------------
-A problem occurred configuring project ':app'.
-	> A problem occurred configuring project ':app'.
-		> compileSdkVersion is not specified. Please add it to build.gradle
-        """.trimIndent()
-
-        override fun illegalMethodFails42() = """
+        override fun illegalMethodFails() = """
 FAILURE: Build completed with 2 failures.
 
 1: Task failed with an exception.

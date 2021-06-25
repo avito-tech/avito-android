@@ -26,18 +26,7 @@ public abstract class SignBundleTask @Inject constructor(
     }
 
     override fun hackForArtifactsApi() {
-        val agpVersion = project.providers.systemProperty("androidGradlePluginVersion").get()
-
-        val to = when {
-            agpVersion.startsWith("4.1") -> unsignedFile()
-            agpVersion.startsWith("4.2") -> resultLocation()
-            agpVersion.startsWith("7.") -> resultLocation()
-            else -> throw IllegalArgumentException(
-                "Unknown AGP version $agpVersion, can't say if Signer plugin will act correctly"
-            )
-        }
-
-        signedFile().copyTo(to, overwrite = true)
+        signedFile().copyTo(resultLocation(), overwrite = true)
     }
 
     /**
