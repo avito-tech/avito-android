@@ -31,7 +31,7 @@ dependencyAnalysis {
     issues {
         all {
             onRedundantPlugins {
-                severity("fail")
+                severity("ignore")
             }
         }
     }
