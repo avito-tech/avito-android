@@ -111,7 +111,7 @@ internal class InstrumentationTestsPluginCIFalseTests {
                 AndroidAppModule(
                     "app",
                     plugins = plugins {
-                        id("com.avito.android.instrumentation-tests")
+                        id(instrumentationPluginId)
                     },
                     buildGradleExtra = instrumentationConfiguration(
                         device = device

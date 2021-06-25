@@ -26,9 +26,9 @@ dependencies {
     implementation(project(":gradle:slack"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:test-summary"))
-    implementation(project(":gradle:tms"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(project(":gradle:upload-to-googleplay"))
+    implementation(project(":gradle:statsd-config"))
 
     gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))

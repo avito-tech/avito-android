@@ -1,7 +1,7 @@
 package com.avito.ci
 
 import com.avito.android.AndroidSdk
-import com.avito.ci.internal.SignVerifier
+import com.avito.ci.internal.signer.SignVerifier
 import com.avito.utils.ExistingFile
 import java.io.File
 

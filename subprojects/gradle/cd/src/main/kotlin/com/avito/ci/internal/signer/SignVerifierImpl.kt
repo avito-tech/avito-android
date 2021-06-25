@@ -1,4 +1,4 @@
-package com.avito.ci.internal
+package com.avito.ci.internal.signer
 
 import com.avito.android.AndroidSdk
 import com.avito.utils.ExistingFile
