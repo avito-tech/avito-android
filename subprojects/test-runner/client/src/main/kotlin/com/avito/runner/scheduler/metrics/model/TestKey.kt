@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.metrics.model
 
-import com.avito.runner.service.model.TestCase
+import com.avito.test.model.TestCase
 
 internal data class TestKey(
     val test: TestCase,

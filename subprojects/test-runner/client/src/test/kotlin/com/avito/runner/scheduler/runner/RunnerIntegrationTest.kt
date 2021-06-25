@@ -18,7 +18,6 @@ import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.listener.NoOpTestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
@@ -32,6 +31,7 @@ import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installA
 import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.test.model.DeviceName
+import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat

@@ -1,6 +1,6 @@
 package com.avito.runner.service.model.intention
 
-import com.avito.runner.service.model.TestCase
+import com.avito.test.model.TestCase
 
 data class InstrumentationTestRunAction(
     val test: TestCase,

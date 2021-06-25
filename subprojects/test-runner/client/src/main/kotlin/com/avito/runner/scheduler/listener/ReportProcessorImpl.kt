@@ -11,8 +11,8 @@ import com.avito.report.model.IncidentElement
 import com.avito.report.model.TestStaticData
 import com.avito.runner.scheduler.logcat.LogcatAccessor
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
 import com.avito.utils.stackTraceToList
 import kotlinx.coroutines.CoroutineDispatcher

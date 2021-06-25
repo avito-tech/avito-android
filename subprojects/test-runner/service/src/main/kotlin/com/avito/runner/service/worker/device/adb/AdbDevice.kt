@@ -9,7 +9,6 @@ import com.avito.logger.Logger
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
@@ -21,6 +20,7 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
+import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
 import rx.Observable
 import rx.Single

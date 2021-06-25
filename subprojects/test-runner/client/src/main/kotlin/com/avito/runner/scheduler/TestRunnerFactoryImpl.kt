@@ -36,8 +36,8 @@ import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.listener.DeviceListener
+import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
