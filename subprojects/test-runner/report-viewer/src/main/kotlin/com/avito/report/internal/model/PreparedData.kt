@@ -9,7 +9,7 @@ internal data class PreparedData(
     @SerializedName("tc_build") val tcBuild: String?,
     @SerializedName("skip_reason") val skipReason: String?,
     @SerializedName("external_id") val externalId: String?,
-    @SerializedName("testcase") val testCase: TestCase?,
+    @SerializedName("testcase") val ktulhuTestCase: KtulhuTestCase?,
     @SerializedName("features") val features: List<String>?,
     @SerializedName("tag_id") val tagId: List<Int>?,
     @SerializedName("feature_id") val featureIds: List<Int>?,
