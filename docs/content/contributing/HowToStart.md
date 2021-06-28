@@ -19,7 +19,8 @@ Take a look at `./Makefile` for useful commands/shortcuts
 ## Build features to consider enabling
 
 - env `COMMIT_CHECK=true` to run optimal amount of CI checks on git pre-commit hook
-- env `CONFIG_CACHE=true` to enable [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html) for Makefile commands
+- env `CONFIG_CACHE=true` to enable [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html) for Makefile commands.  
+You can also override it per command: `make command CONFIG_CACHE=false`.
 
 ### Avito employees only
 
