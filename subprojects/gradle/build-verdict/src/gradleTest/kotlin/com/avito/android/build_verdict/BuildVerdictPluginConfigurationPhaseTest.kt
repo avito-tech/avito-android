@@ -52,19 +52,11 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
         )
         result.assertThat().buildFailed()
 
-        val agpVersion = System.getProperty("androidGradlePluginVersion")
+        assertBuildVerdictFiles(
+            expectedPlainTextVerdict = plainTextVerdicts.illegalMethodFails(),
+            expectedHtmlVerdict = htmlVerdicts.illegalMethodFails()
+        )
 
-        if (agpVersion.startsWith("4.1")) {
-            assertBuildVerdictFiles(
-                expectedPlainTextVerdict = plainTextVerdicts.illegalMethodFails41(),
-                expectedHtmlVerdict = htmlVerdicts.illegalMethodFails41()
-            )
-        } else {
-            assertBuildVerdictFiles(
-                expectedPlainTextVerdict = plainTextVerdicts.illegalMethodFails42(),
-                expectedHtmlVerdict = htmlVerdicts.illegalMethodFails42()
-            )
-        }
         val actualBuildVerdict = gson.fromJson(jsonBuildVerdict.readText(), BuildVerdict.Configuration::class.java)
 
         assertThat(actualBuildVerdict.error.message).isEqualTo("Build completed with 2 failures.")
@@ -84,25 +76,16 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
             )
         )
 
-        val expectedCauses = if (agpVersion.startsWith("4.1")) {
-            listOf(
-                "A problem occurred configuring project ':app'.",
-                "compileSdkVersion is not specified",
-            )
-        } else {
-            listOf(
+        errors[1].assertSingleError(
+            expectedMessageLines = listOf(
+                "A problem occurred configuring project ':app'."
+            ),
+            expectedCauseMessages = listOf(
                 "A problem occurred configuring project ':app'.",
                 "com.android.builder.errors.EvalIssueException: compileSdkVersion is not specified. " +
                     "Please add it to build.gradle",
                 "compileSdkVersion is not specified",
             )
-        }
-
-        errors[1].assertSingleError(
-            expectedMessageLines = listOf(
-                "A problem occurred configuring project ':app'."
-            ),
-            expectedCauseMessages = expectedCauses
         )
     }
 

@@ -8,9 +8,11 @@ plugins {
     id("convention.android-base")
 }
 
-val generatedJavaResDir = project.layout.buildDirectory.file("generated/avito/java_res")
+val generatedJavaResDir: Provider<RegularFile> = project.layout.buildDirectory.file("generated/avito/java_res")
 
 androidComponents {
+
+    @Suppress("UnstableApiUsage")
     beforeAndroidTests {
         it.enabled = false
     }

@@ -7,8 +7,8 @@ import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.CustomTaskStep
+import com.avito.ci.steps.DependencyAnalysisStep
 import com.avito.ci.steps.DeployStep
-import com.avito.ci.steps.DetektCheck
 import com.avito.ci.steps.FlakyReportStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.ImpactMetrics
@@ -64,8 +64,8 @@ open class BuildStepListExtension(
         registerFactory(FlakyReportStep::class.java) { name ->
             FlakyReportStep(buildStepListName, name)
         }
-        registerFactory(DetektCheck::class.java) { name ->
-            DetektCheck(buildStepListName, name)
+        registerFactory(DependencyAnalysisStep::class.java) { name ->
+            DependencyAnalysisStep(buildStepListName, name)
         }
         registerFactory(UploadToQapps::class.java) { name ->
             UploadToQapps(buildStepListName, artifactsConfig, name)
@@ -137,12 +137,12 @@ open class BuildStepListExtension(
         configureAndAdd("unitTests", action)
     }
 
-    fun detekt(closure: Closure<DetektCheck>) {
-        configureAndAdd("detekt", closure)
+    fun dependencyAnalysis(closure: Closure<DependencyAnalysisStep>) {
+        configureAndAdd("dependencyAnalysis", closure)
     }
 
-    fun detekt(action: Action<DetektCheck>) {
-        configureAndAdd("detekt", action)
+    fun dependencyAnalysis(action: Action<DependencyAnalysisStep>) {
+        configureAndAdd("dependencyAnalysis", action)
     }
 
     fun lint(closure: Closure<LintCheck>) {
