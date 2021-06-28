@@ -3,6 +3,7 @@ package com.avito.android.test
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
+import android.util.Log
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.OngoingStubbing
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -24,7 +25,14 @@ object Intents {
         Intents.intending(IntentMatchers.hasComponent(T::class.qualifiedName))
 
     fun stubEverything() =
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(resultCanceled())
+        Intents.intending(IntentMatchers.anyIntent()).respondWithFunction { intent: Intent ->
+            val result = resultCanceled()
+            Log.d("Intents", "Responding to $intent with ${result.toReadableString()}")
+            result
+        }
+
+    private fun Instrumentation.ActivityResult.toReadableString() =
+        "ActivityResult { resultCode=${this.resultCode} resultData=${this.resultData} }"
 
     class Checks {
 
