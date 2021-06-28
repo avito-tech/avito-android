@@ -26,6 +26,7 @@ dependencies {
     testImplementation(testFixtures(project(":common:statsd")))
     testImplementation(testFixtures(project(":gradle:build-environment")))
 
+    gradleTestImplementation(project(":common:junit-utils"))
     gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":gradle:git"))

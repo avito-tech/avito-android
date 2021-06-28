@@ -56,6 +56,17 @@ pluginManagement {
                 includeModule("com.fkorotkov", "kubernetes-dsl")
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
+                }
+            }
+            filter {
+                includeGroup("com.gradle")
+                includeGroup("org.gradle")
+            }
+        }
     }
 }
 
