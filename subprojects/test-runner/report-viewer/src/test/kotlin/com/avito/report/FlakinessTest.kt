@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(StubReportsExtension::class)
-class FlakinessTest {
+internal class FlakinessTest {
 
     @Test
     fun `prepared data contains flakiness - test is stable`(reports: StubReportApi) {
