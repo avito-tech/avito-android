@@ -18,7 +18,7 @@ import org.junit.runners.model.Statement
 
 abstract class InHouseScenarioScreenRule<A : Activity>(
     activityClass: Class<A>,
-    stubIntents: Boolean = false
+    stubIntents: Boolean = true
 ) : TestRule {
 
     protected val androidInstrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()
