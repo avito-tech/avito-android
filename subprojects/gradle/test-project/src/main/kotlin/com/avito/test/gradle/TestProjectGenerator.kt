@@ -1,5 +1,6 @@
 package com.avito.test.gradle
 
+import com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
 import com.avito.android.androidHomeFromLocalPropertiesFallback
 import com.avito.logger.Logger
 import com.avito.logger.StubLoggerFactory
@@ -19,7 +20,6 @@ import java.util.Properties
 
 internal val sdkVersion: Int by lazy { System.getProperty("compileSdkVersion").toInt() }
 internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
-internal val agpVersion: String by lazy { System.getProperty("androidGradlePluginVersion") }
 internal val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
 
 internal val artifactoryUrl: String? by lazy {
@@ -99,7 +99,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("com.android.")) {
-                useModule("com.android.tools.build:gradle:$agpVersion")
+                useModule("com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN_VERSION")
             }
         }
     }
