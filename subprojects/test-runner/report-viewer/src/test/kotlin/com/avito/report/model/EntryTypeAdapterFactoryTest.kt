@@ -1,6 +1,6 @@
 package com.avito.report.model
 
-import com.avito.report.ReportsApiFactory
+import com.avito.report.serialize.createReportGson
 import com.avito.truth.assertThat
 import com.github.salomonbrys.kotson.fromJson
 import com.google.common.truth.Truth.assertThat
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 
 internal class EntryTypeAdapterFactoryTest {
 
-    private val gsonWithEntryAdapter = ReportsApiFactory.gson
+    private val gsonWithEntryAdapter = createReportGson()
 
     @Test
     fun `serialize - contains placeholder - fileAddress is file to upload`() {

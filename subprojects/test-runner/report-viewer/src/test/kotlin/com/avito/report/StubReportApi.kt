@@ -4,21 +4,18 @@ import com.avito.http.HttpCodes
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.serialize.EntryTypeAdapterFactory
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.RequestCapturer
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.mockwebserver.MockResponse
 
-class StubReportApi(
+internal class StubReportApi(
     private val realApi: ReportsApi,
     private val mockDispatcher: MockDispatcher,
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-        .create()
 ) {
+
+    private val gson = Gson()
 
     fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): RequestCapturer.Checks {
         mockDispatcher.registerMock(
