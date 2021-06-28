@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(StubReportsExtension::class)
-class BuildIdTest {
+internal class BuildIdTest {
 
     @Test
     fun `buildId added to list via mongo method hack`(reports: StubReportApi) {
