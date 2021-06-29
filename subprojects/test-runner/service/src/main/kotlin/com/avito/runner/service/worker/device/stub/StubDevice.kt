@@ -206,7 +206,7 @@ open class StubDevice(
                         timestampCompletedMilliseconds = 0
                     ),
                     device = DeviceData(
-                        serial = Serial.from(""),
+                        serial = Serial.Local(""),
                         configuration = DeviceConfiguration(api = 28, model = "model")
                     )
                 )

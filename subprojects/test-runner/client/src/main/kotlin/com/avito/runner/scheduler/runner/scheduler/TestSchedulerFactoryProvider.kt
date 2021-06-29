@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.runner.scheduler
 
 import com.avito.android.TestSuiteLoaderImpl
-import com.avito.android.runner.devices.DevicesProviderFactory
+import com.avito.android.runner.devices.DeviceProviderFactoryProvider
 import com.avito.android.runner.devices.KubernetesApiProvider
 import com.avito.android.runner.devices.internal.AndroidDebugBridgeProvider
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
@@ -84,7 +84,7 @@ public class TestSchedulerFactoryProvider {
                 timeProvider = timeProvider,
                 httpClientProvider = httpClientProvider,
                 report = report,
-                devicesProviderFactory = DevicesProviderFactory.create(
+                devicesProviderFactory = DeviceProviderFactoryProvider(
                     loggerFactory = params.loggerFactory,
                     timeProvider = timeProvider,
                     deviceType = params.instrumentationConfiguration.requestedDeviceType,
@@ -111,7 +111,7 @@ public class TestSchedulerFactoryProvider {
                     androidDebugBridgeProvider = androidDebugBridgeProvider,
                     emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
                     metricsConfig = metricsConfig
-                ),
+                ).provide(),
                 metricsConfig = metricsConfig
             ),
             testSuiteLoader = TestSuiteLoaderImpl(),

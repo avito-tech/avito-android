@@ -25,7 +25,7 @@ class DeviceWorkerPoolImpl(
     private val deviceListener: DeviceListener,
     private val timeProvider: TimeProvider,
     private val deviceWorkersDispatcher: Dispatchers,
-    private val state: DeviceWorkerPool.State,
+    private val state: DeviceWorkerPoolState,
     loggerFactory: LoggerFactory
 ) : DeviceWorkerPool {
 

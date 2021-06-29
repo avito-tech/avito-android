@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":test-runner:instrumentation-tests-dex-loader"))
     implementation(project(":test-runner:test-report-artifacts"))
     implementation(project(":test-runner:report"))
-    implementation(project(":test-runner:device-provider"))
+    implementation(project(":test-runner:device-provider:impl"))
     implementation(project(":gradle:trace-event"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":common:math"))
@@ -50,7 +50,7 @@ dependencies {
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(libs.coroutinesTest)
 
-    testFixturesImplementation(testFixtures(project(":test-runner:device-provider")))
+    testFixturesImplementation(testFixtures(project(":test-runner:device-provider:impl")))
     testFixturesImplementation(testFixtures(project(":test-runner:report")))
     testFixturesImplementation(testFixtures(project(":test-runner:service")))
     testFixturesImplementation(testFixtures(project(":logger:logger")))

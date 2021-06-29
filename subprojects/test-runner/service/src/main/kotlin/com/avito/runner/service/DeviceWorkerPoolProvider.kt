@@ -33,7 +33,7 @@ class DeviceWorkerPoolProvider(
             loggerFactory = loggerFactory,
             testListener = testListener,
             deviceListener = deviceListener,
-            state = DeviceWorkerPool.State(
+            state = DeviceWorkerPoolState(
                 devices = devices,
                 intentions = intentions,
                 intentionResults = intentionResults,
