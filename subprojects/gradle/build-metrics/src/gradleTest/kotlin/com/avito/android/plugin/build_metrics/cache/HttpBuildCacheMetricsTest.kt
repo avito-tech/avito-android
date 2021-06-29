@@ -1,11 +1,11 @@
 package com.avito.android.plugin.build_metrics.cache
 
-import com.avito.android.plugin.build_metrics.assertHasMetric
 import com.avito.android.plugin.build_metrics.assertNoMetric
+import com.avito.android.plugin.build_metrics.statsdMetrics
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.StatsMetric
 import com.avito.test.gradle.TestResult
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -45,7 +45,6 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
 
     private class TestCase(
         val name: String,
-        val enabled: Boolean = true,
         val loadStatus: Int,
         val storeStatus: Int,
         val assertion: (result: TestResult) -> Unit
@@ -60,63 +59,43 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 result.assertNoMetric<StatsMetric>(".build.cache.errors.")
             }
         ),
-        // TODO: this case is flaky
-        //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "load error - 500 response",
-            enabled = false,
             loadStatus = 500,
             storeStatus = 200,
             assertion = { result ->
-                result.assertHasMetric<CountMetric>(".build.cache.errors.load.500").also {
-                    assertThat(it.delta).isEqualTo(1)
-                }
+                result.assertHasEvents(".build.cache.errors.load.500")
             }
         ),
-        // TODO: this case is flaky
-        //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "store error - 500 response",
-            enabled = false,
             loadStatus = 404,
             storeStatus = 500,
             assertion = { result ->
-                result.assertHasMetric<CountMetric>(".build.cache.errors.store.500").also {
-                    assertThat(it.delta).isEqualTo(1)
-                }
+                result.assertHasEvents(".build.cache.errors.store.500")
             }
         ),
-        // TODO: this case is flaky
-        //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "store error - unknown error",
-            enabled = false,
             loadStatus = 404,
             storeStatus = invalidHttpStatus,
             assertion = { result ->
-                result.assertHasMetric<CountMetric>(".build.cache.errors.store.unknown").also {
-                    assertThat(it.delta).isEqualTo(1)
-                }
+                result.assertHasEvents(".build.cache.errors.store.unknown")
             }
         ),
-        // TODO: this case is flaky
-        //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "load error - unknown error",
-            enabled = false,
             loadStatus = invalidHttpStatus,
             storeStatus = 200,
             assertion = { result ->
-                result.assertHasMetric<CountMetric>(".build.cache.errors.load.unknown").also {
-                    assertThat(it.delta).isEqualTo(1)
-                }
+                result.assertHasEvents(".build.cache.errors.load.unknown")
             }
         ),
     )
 
     @TestFactory
     fun `remote cache errors`(): List<DynamicTest> {
-        return cases.filter { it.enabled }.map { case ->
+        return cases.map { case ->
             DynamicTest.dynamicTest(case.name) {
                 setup()
 
@@ -135,6 +114,18 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 }
             }
         }
+    }
+
+    private fun TestResult.assertHasEvents(path: String) {
+        val metrics = statsdMetrics()
+        val filtered = metrics
+            .filterIsInstance(CountMetric::class.java)
+            .filter {
+                it.name.toString().contains(path)
+            }
+
+        assertWithMessage("Expected metrics ($path) in $metrics. Logs: $output")
+            .that(filtered.size).isAtLeast(1)
     }
 }
 

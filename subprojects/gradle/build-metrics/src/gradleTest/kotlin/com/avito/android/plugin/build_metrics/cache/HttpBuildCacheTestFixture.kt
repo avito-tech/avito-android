@@ -75,6 +75,12 @@ internal abstract class HttpBuildCacheTestFixture {
     protected fun build(vararg args: String) =
         BuildMetricsRunner(projectDir)
             .build(
-                args.toList().plus("--build-cache")
+                args.toList().plus(listOf(
+                    "--build-cache",
+                    // Cache errors can happen for Kotlin DSL scripts.
+                    // It disables cache before applying the plugin for metrics
+                    // This is why we have to intercept all errors in tests
+                    "-Dorg.gradle.unsafe.build-cache.remote-continue-on-error=true"
+                ))
             )
 }
