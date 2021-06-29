@@ -15,8 +15,8 @@ val isCi: Provider<Boolean> = providers.gradleProperty("ci")
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
-    @Suppress("MagicNumber")
-    maxParallelForks = 8
+    val halfOfAvailableProcessors = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+    maxParallelForks = halfOfAvailableProcessors
 
     failFast = false
 

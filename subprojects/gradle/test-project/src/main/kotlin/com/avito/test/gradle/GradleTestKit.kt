@@ -44,8 +44,25 @@ fun gradlew(
 
     val isInvokedFromIde = System.getProperty("isInvokedFromIde")?.toBoolean() ?: false
 
+    /**
+     * default is single temp dir for all tests using test kit, like /tmp/test-kit-dir-username
+     * it leads to concurrent issues between multiple modules in parallel:
+     *   "The file lock is held by a different Gradle process"
+     * and silent lock awaiting, increasing our test times on all gradleTest tasks in parallel to ~8min(for scale)
+     * probably because test kit dir also used as gradle-user-home for test
+     *
+     * Sharing test kit dir between different processes, using maxParallelForks>1, inside single module - is ok
+     * unique test-kit-dir per every tempDir in test is not ok! (19min)
+     * So we need unique test kit dir per module.
+     * This setup improves gradleTest times to ~3min
+     *
+     * Keeping it in build dir, to be reusable between local builds and affected by "clean" task
+     */
+    val testKitDir = File(System.getProperty("buildDir"), "test-kit-dir").apply { mkdir() }
+
     return try {
         val builder = GradleRunner.create()
+            .withTestKitDir(testKitDir)
             .withProjectDir(projectDir)
             .withArguments(finalArgs)
             .withEnvironment(environment)
