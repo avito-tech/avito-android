@@ -54,6 +54,9 @@ dependencyResolutionManagement {
         maven {
             setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")
         }
+        maven {
+            setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
+        }
 
         exclusiveContent {
             forRepository {
@@ -88,6 +91,8 @@ dependencyResolutionManagement {
                 }
             }
             filter {
+                includeGroup("com.gradle")
+                includeGroup("org.gradle")
                 includeModule("com.github.ben-manes", "gradle-versions-plugin")
             }
         }

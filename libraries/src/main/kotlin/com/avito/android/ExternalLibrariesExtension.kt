@@ -94,6 +94,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     val androidGradlePlugin = "com.android.tools.build:gradle:$androidGradlePluginVersion"
     val nebulaIntegTest = "com.netflix.nebula:nebula-project-plugin:$nebulaIntegTestVersion"
+    val gradleTestRetryPlugin = "org.gradle:test-retry-gradle-plugin:1.2.1"
 
     val androidXTestRunner = "androidx.test:runner:${Versions.androidXTest}"
     val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"

@@ -9,6 +9,7 @@ dependencies {
     implementation("com.avito.android.buildlogic:libraries")
     implementation(libs.kotlinPlugin)
     implementation(libs.nebulaIntegTest)
+    implementation(libs.gradleTestRetryPlugin)
 }
 
 kotlinDslPluginOptions {
