@@ -9,7 +9,10 @@ import com.avito.android.rule.base.BaseActivityScenarioRule
  * actions that send out intents which need to be verified or stubbed. This is similar to
  * MockitoAnnotations.initMocks.
  */
-class ActivityScenarioRule<T : Activity>(activityClass: Class<T>) : BaseActivityScenarioRule<T>(
+internal class ActivityScenarioRule<T : Activity>(
+    activityClass: Class<T>,
+    private val stubIntents: Boolean
+) : BaseActivityScenarioRule<T>(
     activityClass = activityClass,
     initialTouchMode = true,
     launchActivity = false,
@@ -17,7 +20,9 @@ class ActivityScenarioRule<T : Activity>(activityClass: Class<T>) : BaseActivity
 
     override fun afterActivityLaunched() {
         Intents.init()
-        com.avito.android.test.Intents.stubEverything()
+        if (stubIntents) {
+            com.avito.android.test.Intents.stubEverything()
+        }
         super.afterActivityLaunched()
     }
 

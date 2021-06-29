@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 
-class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
+internal class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     private var state: State? = null
 

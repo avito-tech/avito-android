@@ -12,6 +12,7 @@ import com.avito.report.internal.model.Step
 import com.avito.report.internal.model.TestStatus
 import com.avito.report.internal.model.Video
 import com.avito.report.model.AndroidTest
+import com.avito.report.model.FileAddress
 import com.avito.report.model.Flakiness
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Status
@@ -136,7 +137,13 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
         val description = test.description
         if (!description.isNullOrBlank()) report["description"] = description
 
-        if (video != null) report["video"] = video
+        if (video != null) {
+            when (val fileAddress = video.link) {
+                is FileAddress.URL -> report["video"] = video
+                is FileAddress.Error -> messageList.add("Не удалось загрузить видео: ${fileAddress.error.message}")
+                is FileAddress.File -> messageList.add("Не удалось загрузить видео")
+            }
+        }
         if (startTime != null) report["start_time"] = startTime
         if (endTime != null) report["end_time"] = endTime
 

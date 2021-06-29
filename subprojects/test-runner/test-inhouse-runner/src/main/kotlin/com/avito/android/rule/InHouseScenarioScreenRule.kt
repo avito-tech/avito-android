@@ -16,13 +16,16 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-abstract class InHouseScenarioScreenRule<A : Activity>(activityClass: Class<A>) : TestRule {
+abstract class InHouseScenarioScreenRule<A : Activity>(
+    activityClass: Class<A>,
+    stubIntents: Boolean = false
+) : TestRule {
 
     protected val androidInstrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()
     protected val appContext: Context = androidInstrumentation.targetContext.applicationContext
     protected val testContext: Context = androidInstrumentation.context
 
-    private val activityRule = ActivityScenarioRule(activityClass)
+    private val activityRule = ActivityScenarioRule(activityClass, stubIntents)
 
     val checks = ChecksLibrary { activityRule.scenario }
 

@@ -2,6 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     id("convention.libraries")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -20,9 +21,9 @@ dependencies {
     implementation(libs.okhttpLogging)
     implementation(libs.sentry)
 
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(testFixtures(project(":logger:logger")))
-    testImplementation(testFixtures(project(":common:http-client")))
+    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(project(":common:test-okhttp"))
+    gradleTestImplementation(project(":common:truth-extensions"))
+    gradleTestImplementation(testFixtures(project(":logger:logger")))
+    gradleTestImplementation(testFixtures(project(":common:http-client")))
 }

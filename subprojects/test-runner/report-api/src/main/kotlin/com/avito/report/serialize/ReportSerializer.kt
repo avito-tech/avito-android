@@ -14,9 +14,9 @@ public interface ReportSerializer {
     public fun deserialize(reportFile: File): Result<TestRuntimeData>
 }
 
-public fun ReportSerializer(): ReportSerializer = GsonReportSerializer(gson = reportGson)
+public fun ReportSerializer(): ReportSerializer = GsonReportSerializer(gson = createReportGson())
 
-internal val reportGson: Gson = GsonBuilder()
+public fun createReportGson(): Gson = GsonBuilder()
     .registerTypeAdapterFactory(EntryTypeAdapterFactory())
     .registerTypeAdapter(FileAddress::class.java, FileAddressTypeAdapter())
     .create()
