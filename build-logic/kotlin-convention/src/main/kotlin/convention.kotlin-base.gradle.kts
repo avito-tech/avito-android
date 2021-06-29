@@ -20,8 +20,16 @@ val compileAllTask: TaskProvider<Task> = tasks.register("compileAll") {
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
+
         jvmTarget = libs.javaVersion.toString()
-        allWarningsAsErrors = true
+
+        /**
+         * Can't enable because of warning
+         * "Runtime JAR files in the classpath should have the same version. These files were found in the classpath:"
+         * Gradle has 1.4.x bundled
+         */
+        allWarningsAsErrors = false
+
         freeCompilerArgs = freeCompilerArgs +
             "-Xopt-in=kotlin.RequiresOptIn" +
             "-progressive"
