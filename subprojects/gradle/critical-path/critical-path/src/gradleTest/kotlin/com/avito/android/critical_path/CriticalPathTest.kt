@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-@Flaky(reason = "Will be stabilized in MBS-11302")
+/**
+ * These tests check Gradle integration scenarios but not critical path logic itself.
+ */
 internal class CriticalPathTest {
 
     private lateinit var projectDir: File
@@ -71,11 +73,11 @@ internal class CriticalPathTest {
     fun `dependsOn dependent task - path has a dependent task`() {
         setupTasks(
             """
-            ${delayTaskDeclaration()}
+            ${customTaskDeclaration()}
             
-            tasks.register("first", DelayTask::class.java)
+            tasks.register("first", CustomTask::class.java)
             
-            tasks.register("second", DelayTask::class.java) {
+            tasks.register("second", CustomTask::class.java) {
                 dependsOn(":first")
             }
             """.trimIndent()
@@ -90,11 +92,11 @@ internal class CriticalPathTest {
     fun `mustRunAfter dependent task - path has a dependent task`() {
         setupTasks(
             """
-            ${delayTaskDeclaration()}
+            ${customTaskDeclaration()}
             
-            tasks.register("first", DelayTask::class.java)
+            tasks.register("first", CustomTask::class.java)
             
-            tasks.register("second", DelayTask::class.java) {
+            tasks.register("second", CustomTask::class.java) {
                 shouldRunAfter(":first")
             }
             """.trimIndent()
@@ -111,73 +113,14 @@ internal class CriticalPathTest {
         // no op
     }
 
-    // TODO: this test is flaky but enabled to collect more info
-    //  If it's failed, please add info to MBS-11302
-    @Test
-    fun `independent routes - path has the longest one`() {
-        setupTasks(
-            """
-            ${delayTaskDeclaration()}
-            
-            tasks.register("short_first", DelayTask::class.java) {
-                durationMs.set(0)
-            }
-            tasks.register("short_last", DelayTask::class.java) {
-                durationMs.set(0)
-                dependsOn(":short_first")
-            }
-            
-            tasks.register("long_first", DelayTask::class.java) {
-                durationMs.set(100)
-            }
-            tasks.register("long_last", DelayTask::class.java) {
-                durationMs.set(100)
-                dependsOn(":long_first")
-            }
-            """.trimIndent()
-        )
-
-        // TODO: remove verbose logging after stabilizing tests MBS-11302
-        val tasks = calculatePath(":short_last", ":long_last", args = listOf("--info"))
-
-        assertThat(tasks).containsExactly(":long_first", ":long_last")
-    }
-
-    @Test
-    fun `parallel routes - path has the longest task`() {
-        setupTasks(
-            """
-            ${delayTaskDeclaration()}
-            
-            tasks.register("first", DelayTask::class.java)
-            
-            tasks.register("intermediate_1", DelayTask::class.java){
-                durationMs.set(1)
-                dependsOn(":first")
-            }
-            tasks.register("intermediate_100", DelayTask::class.java){
-                durationMs.set(100)
-                dependsOn(":first")
-            }
-            
-            tasks.register("last", DelayTask::class.java) {
-                dependsOn(":intermediate_1", ":intermediate_100")
-            }
-            """.trimIndent()
-        )
-        val tasks = calculatePath(":last")
-
-        assertThat(tasks).containsExactly(":first", ":intermediate_100", ":last")
-    }
-
     @Test
     fun `disabled plugin - no report`() {
         setupTasks(
             enabledPlugin = false,
             buildScript = """
-            ${delayTaskDeclaration()}
+            ${customTaskDeclaration()}
             
-            tasks.register("work", DelayTask::class.java)
+            tasks.register("work", CustomTask::class.java)
             """.trimIndent()
         )
 
@@ -208,17 +151,16 @@ internal class CriticalPathTest {
         )
     }
 
-    private fun delayTaskDeclaration(): String {
+    private fun customTaskDeclaration(): String {
         return """
-            abstract class DelayTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+            abstract class CustomTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
             
-                @Input
-                var durationMs = objects.property<Long>().convention(1)
+                init {
+                    outputs.upToDateWhen { false }
+                }
             
                 @TaskAction
-                fun createFile() {
-                    Thread.sleep(durationMs.get())
-                }
+                fun action() { }
             }
         """.trimIndent()
     }
