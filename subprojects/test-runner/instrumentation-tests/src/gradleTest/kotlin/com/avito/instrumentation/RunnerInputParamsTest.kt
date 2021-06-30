@@ -272,13 +272,19 @@ internal class RunnerInputParamsTest {
 
         return listOf(
             Case("mainApk path") {
-                assertThat(it.mainApk?.path)
-                    .isEqualTo("$projectDir/$appModuleName/build/outputs/apk/debug/app-debug.apk")
+                val mainApk = requireNotNull(it.mainApk) {
+                    "main apk path must be not null"
+                }
+                assertThat(mainApk.canonicalPath)
+                    .isEqualTo("${projectDir.canonicalPath}/$appModuleName/build/outputs/apk/debug/app-debug.apk")
             },
             Case("testApk path") {
-                assertThat(it.testApk.path)
+                val testApk = requireNotNull(it.testApk) {
+                    "test apk path must be not null"
+                }
+                assertThat(testApk.canonicalPath)
                     .isEqualTo(
-                        "$projectDir/$appModuleName/" +
+                        "${projectDir.canonicalPath}/$appModuleName/" +
                             "build/outputs/apk/androidTest/debug/app-debug-androidTest.apk"
                     )
             },
@@ -428,16 +434,16 @@ internal class RunnerInputParamsTest {
                     .isEmpty()
             },
             Case("output dir") {
-                assertThat(it.outputDir.path)
+                assertThat(it.outputDir.canonicalPath)
                     .isEqualTo(
-                        "$projectDir/$appModuleName/" +
+                        "${projectDir.canonicalPath}/$appModuleName/" +
                             "outputs/stub.$commit.teamcity-buildType/functional"
                     )
             },
             Case("verdict file") {
-                assertThat(it.verdictFile.path)
+                assertThat(it.verdictFile.canonicalPath)
                     .isEqualTo(
-                        "$projectDir/$appModuleName/" +
+                        "${projectDir.canonicalPath}/$appModuleName/" +
                             "outputs/stub.$commit.teamcity-buildType/functional/verdict.json"
                     )
             },

@@ -67,8 +67,8 @@ internal class LintReportTest {
                                        slackChannelForAlerts = new com.avito.slack.model.SlackChannel("id", "#channel")
                                     }
                                     artifacts {
-                                        file("lintReportHtml", "${projectDir.path}/app/build/reports/lint-results-release.html")
-                                        file("lintReportXml", "${projectDir.path}/app/build/reports/lint-results-release.xml")
+                                        file("lintReportHtml", "${projectDir.canonicalPath}/app/build/reports/lint-results-release.html")
+                                        file("lintReportXml", "${projectDir.canonicalPath}/app/build/reports/lint-results-release.xml")
                                     }
                                 }
                             }
