@@ -1,38 +1,48 @@
 package com.avito.ci.steps
 
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.avito.impact.configuration.internalModule
-import com.avito.instrumentation.extractReportCoordinates
-import com.avito.instrumentation.instrumentationTask
-import com.avito.test.summary.flakyReportTask
-import com.avito.test.summary.testSummaryPluginId
-import org.gradle.api.Project
+import com.avito.ci.internal.ReportKey
+import com.avito.kotlin.dsl.typedNamedOrNull
+import com.avito.report.model.ReportCoordinates
+import com.avito.test.summary.FlakyReportTask
+import com.avito.test.summary.TestSummaryExtension
+import com.avito.test.summary.TestSummaryFactory
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.register
 
-class FlakyReportStep(context: String, name: String) : SuppressibleBuildStep(context, name),
-    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
+class FlakyReportStep(context: String, name: String) : TestSummaryPluginBuildStep(context, name) {
 
-    var configuration: String = ""
+    override val stepName: String = "FlakyReport"
 
-    override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
-        require(project.pluginManager.hasPlugin(testSummaryPluginId)) {
-            "FlakyReport step can't be initialized without $testSummaryPluginId plugin applied"
-        }
+    override fun getOrCreateTask(
+        rootTasksContainer: TaskContainer,
+        extension: TestSummaryExtension,
+        reportCoordinates: ReportCoordinates,
+        testSummaryFactory: TestSummaryFactory,
+    ): TaskProvider<out Task> {
 
-        require(configuration.isNotBlank()) {
-            "FlakyReport step can't be initialized without provided instrumentation configuration"
-        }
+        val reportKey = ReportKey.fromReportCoordinates(reportCoordinates)
 
-        if (useImpactAnalysis && !project.internalModule.isModified()) return
+        val taskName = reportKey.appendToTaskName("flakyReport")
 
-        val instrumentationTask = project.tasks.instrumentationTask(configuration)
+        return rootTasksContainer.typedNamedOrNull<FlakyReportTask>(taskName)
+            ?: rootTasksContainer.register<FlakyReportTask>(taskName) {
+                group = "ci"
+                description = "Sends flaky tests report to slack for [" +
+                    "planSlug:${reportCoordinates.planSlug}, " +
+                    "jobSlug:${reportCoordinates.jobSlug}" +
+                    "]"
 
-        val flakyReportTask = project.tasks.flakyReportTask()
-        flakyReportTask.configure {
-            it.dependsOn(instrumentationTask)
-            it.reportCoordinates.set(instrumentationTask.extractReportCoordinates())
-        }
-        rootTask.dependsOn(flakyReportTask)
+                this.reportCoordinates.set(reportCoordinates)
+                this.summaryChannel.set(extension.summaryChannel)
+                this.slackUsername.set(extension.slackUserName)
+                this.buildUrl.set(extension.buildUrl)
+                this.currentBranch.set(extension.currentBranch)
+                this.timeProvider.set(testSummaryFactory.timeProvider)
+                this.slackClient.set(testSummaryFactory.createSlackClient(extension))
+                this.reportsApi.set(testSummaryFactory.createReportsApi(extension))
+                this.reportViewerUrl.set(extension.reportViewerUrl)
+            }
     }
 }

@@ -14,41 +14,41 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
-abstract class TestSummaryTask : DefaultTask() {
+public abstract class TestSummaryTask : DefaultTask() {
 
     @get:Input
-    abstract val reportCoordinates: Property<ReportCoordinates>
+    public abstract val reportCoordinates: Property<ReportCoordinates>
 
     @get:Input
-    abstract val summaryChannel: Property<SlackChannel>
+    public abstract val summaryChannel: Property<SlackChannel>
 
     @get:Input
-    abstract val buildUrl: Property<String>
+    public abstract val buildUrl: Property<String>
 
     @Suppress("UnstableApiUsage")
     @get:Input
-    abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
+    public abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
 
     @get:Input
-    abstract val mentionOnFailures: SetProperty<Team>
+    public abstract val mentionOnFailures: SetProperty<Team>
 
     @get:Input
-    abstract val reserveSlackChannel: Property<SlackChannel>
+    public abstract val reserveSlackChannel: Property<SlackChannel>
 
     @get:Input
-    abstract val slackUserName: Property<String>
+    public abstract val slackUsername: Property<String>
 
     @get:Internal
-    abstract val slackClient: Property<SlackClient>
+    public abstract val slackClient: Property<SlackClient>
 
     @get:Internal
-    abstract val reportsApi: Property<ReportsApi>
+    public abstract val reportsApi: Property<ReportsApi>
 
     @get:Internal
-    abstract val reportViewerUrl: Property<String>
+    public abstract val reportViewerUrl: Property<String>
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val testSummarySender: TestSummarySender = TestSummarySenderImpl(
             slackClient = slackClient.get(),
             reportViewerUrl = reportViewerUrl.get(),
@@ -59,7 +59,7 @@ abstract class TestSummaryTask : DefaultTask() {
             globalSummaryChannel = summaryChannel.get(),
             unitToChannelMapping = unitToChannelMapping.get(),
             mentionOnFailures = mentionOnFailures.get(),
-            slackUserName = slackUserName.get()
+            slackUserName = slackUsername.get()
         )
 
         testSummarySender.send()

@@ -2,32 +2,32 @@ package com.avito.test.summary
 
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
-import org.gradle.api.model.ObjectFactory
-import org.gradle.kotlin.dsl.mapProperty
-import org.gradle.kotlin.dsl.property
-import javax.inject.Inject
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
-open class TestSummaryExtension @Inject constructor(objects: ObjectFactory) {
+public abstract class TestSummaryExtension {
 
-    val slackToken = objects.property<String>()
+    public abstract val slackToken: Property<String>
 
-    val slackWorkspace = objects.property<String>()
+    public abstract val slackWorkspace: Property<String>
 
-    val reportsHost = objects.property<String>()
+    public abstract val reportsHost: Property<String>
 
-    val summaryChannel = objects.property<SlackChannel>()
+    public abstract val summaryChannel: Property<SlackChannel>
 
-    val buildUrl = objects.property<String>()
+    public abstract val buildUrl: Property<String>
 
-    val currentBranch = objects.property<String>()
+    public abstract val currentBranch: Property<String>
 
-    val reportViewerUrl = objects.property<String>()
+    public abstract val reportViewerUrl: Property<String>
 
-    val unitToChannelMapping = objects.mapProperty<Team, SlackChannel>()
+    @Suppress("UnstableApiUsage")
+    public abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
 
-    val mentionOnFailures = objects.setProperty(String::class.java)
+    public abstract val mentionOnFailures: SetProperty<String>
 
-    val reserveSlackChannel = objects.property<SlackChannel>()
+    public abstract val reserveSlackChannel: Property<SlackChannel>
 
-    val slackUserName = objects.property<String>()
+    public abstract val slackUserName: Property<String>
 }

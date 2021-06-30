@@ -5,10 +5,15 @@ plugins {
     id("convention.gradle-testing")
 }
 
+kotlin {
+    explicitApi()
+}
+
 dependencies {
     implementation(project(":test-runner:report-viewer"))
     implementation(project(":common:time"))
     implementation(project(":common:math"))
+    implementation(project(":common:problem"))
     implementation(project(":common:http-client"))
     implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
