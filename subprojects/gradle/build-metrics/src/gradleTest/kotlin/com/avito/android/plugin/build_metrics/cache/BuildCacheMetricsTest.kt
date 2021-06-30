@@ -2,12 +2,15 @@ package com.avito.android.plugin.build_metrics.cache
 
 import com.avito.android.plugin.build_metrics.assertHasMetric
 import com.avito.android.stats.CountMetric
+import com.avito.test.Flaky
 import com.avito.test.gradle.TestResult
 import com.google.common.truth.Truth.assertThat
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.lang.RuntimeException
 
+@Flaky("")
 internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
 
     override fun setupProject(projectDir: File) {
@@ -61,6 +64,11 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
 
         result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
             assertThat(it.delta).isEqualTo(0)
+        }
+        val lock = File("./flaky-test.lock")
+        if (!lock.exists()) {
+            lock.createNewFile()
+            throw RuntimeException("")
         }
     }
 
