@@ -1,7 +1,6 @@
 package com.avito.android.critical_path
 
 import com.avito.android.critical_path.internal.CriticalPathReport
-import com.avito.test.Flaky
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth.assertThat
