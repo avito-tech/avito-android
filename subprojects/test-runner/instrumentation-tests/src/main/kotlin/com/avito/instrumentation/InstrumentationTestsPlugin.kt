@@ -19,6 +19,7 @@ import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfi
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.internal.AnalyticsResolver
+import com.avito.instrumentation.internal.AndroidInstrumentationArgsDumper
 import com.avito.instrumentation.internal.AndroidPluginInteractor
 import com.avito.instrumentation.internal.BuildEnvResolver
 import com.avito.instrumentation.internal.ExperimentsResolver
@@ -28,6 +29,7 @@ import com.avito.instrumentation.internal.PlanSlugResolver
 import com.avito.instrumentation.internal.ReportResolver
 import com.avito.instrumentation.internal.RunIdResolver
 import com.avito.kotlin.dsl.dependencyOn
+import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
@@ -71,12 +73,23 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withAndroidModule { testedExtension ->
 
-            var pluginLevelInstrumentationArgs: Map<String, String> = emptyMap()
+            val dumpDir = File(extension.output, dumpDirName).apply {
+                mkdirs()
+            }
+
+            val gradleTestKitRun = project.getBooleanProperty("isGradleTestKitRun")
+
+            if (gradleTestKitRun) {
+                project.afterEvaluate {
+                    val androidTestArgsTester = AndroidInstrumentationArgsDumper(dumpDir)
+                    androidTestArgsTester.dumpArgs(testedExtension.defaultConfig.testInstrumentationRunnerArguments)
+                }
+            }
 
             extension.configurationsContainer.all { configuration ->
 
-                // the only known place to resolve instrumentation args using extension values,
-                // and also early enough to set for local test run (from IDE)
+                var pluginLevelInstrumentationArgs: Map<String, String> = emptyMap()
+
                 if (pluginLevelInstrumentationArgs.isEmpty()) {
                     pluginLevelInstrumentationArgs = instrumentationArgsResolver.resolvePluginLevelParams(
                         argsFromScript = androidPluginInteractor.getInstrumentationArgs(testedExtension),
@@ -147,6 +160,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                         this.gitBranch.set(GitResolver.getGitBranch(project))
                         this.gitCommit.set(GitResolver.getGitCommit(project))
                         this.output.set(outputFolder)
+                        this.dumpDir.set(dumpDir)
 
                         if (reportViewer != null) {
                             this.reportViewerProperty.set(reportViewer)
@@ -167,7 +181,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                             }
                         }
 
-                        this.dumpParams.set(extension.testDumpParams)
+                        this.gradleTestKitRun.set(gradleTestKitRun)
 
                         dependencyOn(testVariant.packageApplicationProvider) { task ->
                             testApplication.set(task.apkDirectory())

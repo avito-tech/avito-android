@@ -1,7 +1,7 @@
 package com.avito.instrumentation
 
 import com.avito.android.stats.StatsDConfig
-import com.avito.instrumentation.internal.RunnerInputTester
+import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.report.model.RunId
 import com.avito.runner.config.Reservation
@@ -19,6 +19,8 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.div
 
 internal class RunnerInputParamsTest {
 
@@ -45,98 +47,14 @@ internal class RunnerInputParamsTest {
                         imports = listOf(
                             "import com.avito.instrumentation.reservation.request.Device"
                         ),
-                        buildGradleExtra = """
-                         android {
-                            defaultConfig {
-                                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                                testInstrumentationRunnerArguments(
-                                    mapOf(
-                                        "planSlug" to "AvitoAndroid",
-                                        "override" to "createdInInstrumentationRunnerArguments"
-                                    )
-                                )
-                            }
-                         }
-
-                         instrumentation {
-                             testDumpParams.set(true)
-                             output = project.file("outputs").path
-                             sentryDsn = "stub"
-
-                             instrumentationParams = mapOf(
-                                 "jobSlug" to "FunctionalTests",
-                                 "override" to "overrideInPlugin"
-                             )
-                             
-                             testReport {
-                                reportViewer {
-                                    reportApiUrl = "http://stub"
-                                    reportViewerUrl = "http://stub"
-                                    reportRunIdPrefix = "stub"
-                                    fileStorageUrl = "http://stub"
-                                }
-                             }
-
-                             configurations {
-
-                                 register("functional") {
-                                    instrumentationParams = mapOf(
-                                        "configuration" to "functional",
-                                        "override" to "overrideInConfiguration"
-                                    )
-
-                                    targets {
-                                        register("api22") {
-                                            instrumentationParams = mapOf(
-                                                "deviceName" to "invalid",
-                                                "target" to "yes",
-                                                "override" to "overrideInTarget"
-                                            )
-
-                                            deviceName = "api22"
-
-                                            scheduling {
-                                                quota {
-                                                    minimumSuccessCount = 1
-                                                }
-
-                                                staticDevicesReservation {
-                                                    device = Device.LocalEmulator.device(27)
-                                                    count = 1
-                                                }
-                                            }
-                                        }
-                                    }
-                                 }
-                             }
-                         }
-                    """.trimIndent()
+                        buildGradleExtra = kotlinStubConfig
                     )
                 ),
                 useKts = true,
             ).generateIn(this)
         }
 
-        with(projectDir) {
-            git("branch $targetBranch")
-        }
-
-        val commit = projectDir.git("rev-parse HEAD").trim()
-
-        val buildResult = ciRun(
-            projectDir,
-            "app:instrumentationFunctional",
-            "-PteamcityBuildId=0",
-            "-Pavito.git.state=env",
-            buildType = buildType,
-            targetBranch = targetBranch
-        )
-
-        buildResult.assertThat().buildSuccessful()
-
-        val runnerInput: RunnerInputParams = RunnerInputTester.readInput(projectDir)
-
-        return cases(projectDir, commit, runnerInput, "kts")
+        return cases(projectDir, "kts")
     }
 
     @TestFactory
@@ -153,74 +71,20 @@ internal class RunnerInputParamsTest {
                         imports = listOf(
                             "import static com.avito.instrumentation.reservation.request.Device.LocalEmulator"
                         ),
-                        buildGradleExtra = """
-                         android {
-                            defaultConfig {
-                                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-                                testInstrumentationRunnerArguments([
-                                    "planSlug" : "AvitoAndroid",
-                                    "override": "createdInInstrumentationRunnerArguments"
-                                ])
-                            }
-                         }
-
-                         instrumentation {
-                             testDumpParams = true
-                             output = project.file("outputs").path
-                             sentryDsn = "stub"
-
-                             instrumentationParams = [
-                                 "jobSlug": "FunctionalTests",
-                                 "override": "overrideInPlugin"
-                             ]
-                             
-                             testReport {
-                                reportViewer {
-                                    reportApiUrl = "http://stub"
-                                    reportViewerUrl = "http://stub"
-                                    reportRunIdPrefix = "stub"
-                                    fileStorageUrl = "http://stub"
-                                }
-                             }
-
-                             configurations {
-
-                                 functional {
-                                    instrumentationParams = [
-                                        "configuration": "functional",
-                                        "override": "overrideInConfiguration"
-                                    ]
-
-                                    targets {
-                                        api22 {
-                                            instrumentationParams = [
-                                                "deviceName": "invalid",
-                                                "target": "yes",
-                                                "override": "overrideInTarget"
-                                            ]
-
-                                            deviceName = "api22"
-
-                                            scheduling {
-                                                quota {
-                                                    minimumSuccessCount = 1
-                                                }
-
-                                                staticDevicesReservation {
-                                                    device = LocalEmulator.device(27)
-                                                    count = 1
-                                                }
-                                            }
-                                        }
-                                    }
-                                 }
-                             }
-                         }
-                    """.trimIndent()
+                        buildGradleExtra = groovyStubConfig
                     )
                 )
             ).generateIn(this)
         }
+
+        return cases(projectDir, "groovy")
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    private fun cases(
+        projectDir: File,
+        lang: String,
+    ): List<DynamicTest> {
 
         with(projectDir) {
             git("branch $targetBranch")
@@ -233,27 +97,20 @@ internal class RunnerInputParamsTest {
             "app:instrumentationFunctional",
             "-PteamcityBuildId=0",
             "-Pavito.git.state=env",
+            "-PisGradleTestKitRun=true",
             buildType = buildType,
             targetBranch = targetBranch
         )
 
         buildResult.assertThat().buildSuccessful()
 
-        val runnerInput: RunnerInputParams = RunnerInputTester.readInput(projectDir)
+        val dumpDir = projectDir.toPath() / appModuleName / "build" / "test-runner" / dumpDirName
 
-        return cases(projectDir, commit, runnerInput, "groovy")
-    }
-
-    private fun cases(
-        projectDir: File,
-        commit: String,
-        runnerInput: RunnerInputParams,
-        lang: String,
-    ): List<DynamicTest> {
+        val runnerInput: RunnerInputParams = RunnerInputDumper(dumpDir.toFile()).readInput()
 
         val expectedPluginInstrumentationParams = mapOf(
             "configuration" to "functional",
-            "planSlug" to "AvitoAndroid",
+            "planSlug" to "AppAndroid",
             "jobSlug" to "FunctionalTests",
             "override" to "overrideInConfiguration",
             "deviceName" to "local",
@@ -465,7 +322,7 @@ internal class RunnerInputParamsTest {
             },
             Case("report viewer plan slug") {
                 assertThat(it.reportViewerConfig?.reportCoordinates?.planSlug)
-                    .isEqualTo("AvitoAndroid")
+                    .isEqualTo("AppAndroid")
             },
             Case("report viewer job slug") {
                 assertThat(it.reportViewerConfig?.reportCoordinates?.jobSlug)
