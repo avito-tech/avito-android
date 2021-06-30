@@ -48,6 +48,12 @@ tasks.withType<Test>().configureEach {
             }
         }
     }
+    reports {
+        junitXml.apply {
+            // otherwise Teamcity will recognize rerun as failure
+            //mergeReruns.set(true)
+        }
+    }
 }
 
 plugins.withType<KotlinBasePluginWrapper> {
