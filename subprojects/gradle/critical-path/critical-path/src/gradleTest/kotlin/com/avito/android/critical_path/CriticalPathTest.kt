@@ -111,8 +111,7 @@ internal class CriticalPathTest {
         // no op
     }
 
-    // TODO: this test is flaky but enabled to collect more info
-    //  If it's failed, please add info to MBS-11302
+    @Disabled("Fails constantly")
     @Test
     fun `independent routes - path has the longest one`() {
         setupTasks(
