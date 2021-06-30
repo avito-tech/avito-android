@@ -54,8 +54,8 @@ class LintCheckTest {
                                     useImpactAnalysis = false
                                     lint { }
                                     artifacts {
-                                        file("lintReportHtml", "${projectDir.path}/app/build/reports/lint-results-release.html")
-                                        file("lintReportXml", "${projectDir.path}/app/build/reports/lint-results-release.xml")
+                                        file("lintReportHtml", "${projectDir.canonicalPath}/app/build/reports/lint-results-release.html")
+                                        file("lintReportXml", "${projectDir.canonicalPath}/app/build/reports/lint-results-release.xml")
                                     }
                                 }
                             }
