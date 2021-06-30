@@ -35,10 +35,15 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     useJUnitPlatform()
 
     /**
-     * timings provided only as relative to each other
-     * gradleTest:
-     *  1: 2m14s
-     *  16: 3m16s
+     * The only reason to have more forks is faster test suite because of parallel execution
+     * Additional forks requires more resources and should be faster
+     * Tests on powerful machine with a lot of resources to spare proves that actually 1 is the fastest value,
+     * at least for our project
+     *
+     * `make benchmark_gradle_test` used for tests (see gradle/performance.scenarios)
+     * forks median value:
+     *   1    4min 11sec
+     *   2    4min 39sec
      */
     maxParallelForks = 1
 

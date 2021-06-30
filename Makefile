@@ -276,6 +276,9 @@ dependency_updates:
 benchmark_fast_check:
 	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios fastCheck
 
+benchmark_gradle_test:
+	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios gradleTest
+
 ## Gradle cache node
 GRADLE_CACHE_NODE_TAG=9.9
 

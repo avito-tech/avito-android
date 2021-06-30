@@ -4,4 +4,15 @@ fastCheck {
     cleanup-tasks = ["clean"]
     gradle-args = ["--no-build-cache", "--parallel"]
     daemon = warm
+    warm-ups = 2
+    iterations = 5
+}
+gradleTest {
+    title = "gradleTest"
+    tasks = ["gradleTest"]
+    cleanup-tasks = ["clean"]
+    gradle-args = ["--no-build-cache", "--parallel"]
+    daemon = warm
+    warm-ups = 2
+    iterations = 5
 }
