@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.Date
 
 @ExtendWith(StubReportsExtension::class)
-class TestDurationTest {
+internal class TestDurationTest {
 
     @Test
     fun `startTime set`(reports: StubReportApi) {

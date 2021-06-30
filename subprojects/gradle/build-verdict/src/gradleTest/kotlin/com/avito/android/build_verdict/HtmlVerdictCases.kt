@@ -60,7 +60,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
   <body>
     <h2>What went wrong:</h2>
     <pre>Execution failed for task ':app:kaptDebugKotlin'.
-	&gt; A failure occurred while executing org.jetbrains.kotlin.gradle.internal.KaptExecution
+	&gt; A failure occurred while executing org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask${'$'}KaptExecutionWorkAction
 		&gt; class java.lang.reflect.InvocationTargetException (no error message)
 			&gt; Error while annotation processing
 </pre>

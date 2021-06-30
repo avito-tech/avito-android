@@ -34,12 +34,40 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 
     useJUnitPlatform()
 
-    @Suppress("MagicNumber")
-    maxParallelForks = 8
+    /**
+     * timings provided only as relative to each other
+     * gradleTest:
+     *  1: 2m14s
+     *  16: 3m16s
+     */
+    maxParallelForks = 1
+
+    /**
+     * usually there is a small amount of test classes per module, and tests are not so memory hungry
+     */
+    setForkEvery(null)
+
+    jvmArgs = listOf("-XX:+UseGCOverheadLimit", "-XX:GCTimeLimit=10")
+
+    minHeapSize = "128m"
+    maxHeapSize = "256m"
 
     failFast = false
 
+    /**
+     * fix for multiple `WARNING: Illegal reflective access`
+     */
+    jvmArgs = listOf(
+        "--add-opens",
+        "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens",
+        "java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens",
+        "java.base/java.util=ALL-UNNAMED"
+    )
+
     systemProperty("rootDir", "${project.rootDir}")
+    systemProperty("buildDir", "$buildDir")
     systemProperty("kotlinVersion", kotlinVersion)
     systemProperty("compileSdkVersion", libs.compileSdkVersion)
     systemProperty("buildToolsVersion", libs.buildToolsVersion)
@@ -93,7 +121,7 @@ configure<KotlinJvmProjectExtension> {
     target.compilations.getByName("gradleTest")
         .associateWith(target.compilations.getByName("main"))
 
-    plugins.withType<JavaTestFixturesPlugin>() {
+    plugins.withType<JavaTestFixturesPlugin> {
         target.compilations.getByName("gradleTest")
             .associateWith(target.compilations.getByName("testFixtures"))
     }

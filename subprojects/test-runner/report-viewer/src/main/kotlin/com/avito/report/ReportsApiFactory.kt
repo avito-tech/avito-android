@@ -5,21 +5,12 @@ import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.ReportsApiImpl
-import com.avito.report.serialize.EntryTypeAdapterFactory
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.avito.report.serialize.createReportGson
 import java.util.concurrent.TimeUnit
 
 public object ReportsApiFactory {
 
     private const val TIMEOUT_SEC = 10L
-
-    /**
-     * for tests
-     */
-    internal val gson: Gson = GsonBuilder()
-        .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-        .create()
 
     public fun create(
         host: String,
@@ -46,7 +37,7 @@ public object ReportsApiFactory {
                         }
                     }
                     .build(),
-                gson = gson
+                gson = createReportGson()
             )
         )
     }

@@ -5,13 +5,18 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
 plugins {
     id("convention.libraries")
+    id("org.gradle.test-retry")
 }
+
+val isCi: Provider<Boolean> = providers.gradleProperty("ci")
+    .forUseAtConfigurationTime()
+    .map { it.toBoolean() }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
-    @Suppress("MagicNumber")
-    maxParallelForks = 8
+    val halfOfAvailableProcessors = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+    maxParallelForks = halfOfAvailableProcessors
 
     failFast = false
 
@@ -35,6 +40,14 @@ tasks.withType<Test>().configureEach {
         "isInvokedFromIde",
         gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
     )
+    if (isCi.getOrElse(false)) {
+        retry {
+            maxRetries.set(1)
+            filter {
+                includeAnnotationClasses.add("com.avito.test.Flaky")
+            }
+        }
+    }
 }
 
 plugins.withType<KotlinBasePluginWrapper> {

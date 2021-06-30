@@ -13,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-@Suppress("UnstableApiUsage")
 internal class LintResultsParserTest {
 
     private lateinit var tempDir: File
