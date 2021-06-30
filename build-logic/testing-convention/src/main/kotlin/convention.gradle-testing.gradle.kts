@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.configurationcache.extensions.serviceOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -32,8 +30,6 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     testClassesDirs = gradleTest.output.classesDirs
     classpath = configurations[gradleTest.runtimeClasspathConfigurationName] + files(gradleTestJarTask)
 
-    useJUnitPlatform()
-
     /**
      * The only reason to have more forks is faster test suite because of parallel execution
      * Additional forks requires more resources and should be faster
@@ -52,24 +48,15 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
      */
     setForkEvery(null)
 
-    jvmArgs = listOf("-XX:+UseGCOverheadLimit", "-XX:GCTimeLimit=10")
+    jvmArgs(
+        listOf(
+            "-XX:+UseGCOverheadLimit",
+            "-XX:GCTimeLimit=10"
+        )
+    )
 
     minHeapSize = "128m"
     maxHeapSize = "256m"
-
-    failFast = false
-
-    /**
-     * fix for multiple `WARNING: Illegal reflective access`
-     */
-    jvmArgs = listOf(
-        "--add-opens",
-        "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.lang.invoke=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.util=ALL-UNNAMED"
-    )
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("buildDir", "$buildDir")

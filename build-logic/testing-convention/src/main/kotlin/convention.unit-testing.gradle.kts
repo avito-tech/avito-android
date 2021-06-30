@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
@@ -13,6 +11,7 @@ val isCi: Provider<Boolean> = providers.gradleProperty("ci")
     .map { it.toBoolean() }
 
 tasks.withType<Test>().configureEach {
+
     useJUnitPlatform()
 
     val halfOfAvailableProcessors = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
@@ -23,13 +22,15 @@ tasks.withType<Test>().configureEach {
     /**
      * fix for multiple `WARNING: Illegal reflective access`
      */
-    jvmArgs = listOf(
-        "--add-opens",
-        "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.lang.invoke=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.util=ALL-UNNAMED"
+    jvmArgs(
+        listOf(
+            "--add-opens",
+            "java.base/java.lang=ALL-UNNAMED",
+            "--add-opens",
+            "java.base/java.lang.invoke=ALL-UNNAMED",
+            "--add-opens",
+            "java.base/java.util=ALL-UNNAMED"
+        )
     )
 
     /**
