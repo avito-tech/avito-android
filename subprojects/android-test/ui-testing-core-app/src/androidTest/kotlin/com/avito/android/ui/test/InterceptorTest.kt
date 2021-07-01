@@ -36,7 +36,7 @@ class InterceptorTest {
         Screen.visibility.label.checks.isVisible()
 
         assertEquals(
-            "Check view has effective visibility=VISIBLE on AppCompatTextView(id=text;text=Test)",
+            "Check view has effective visibility <VISIBLE> on AppCompatTextView(id=text;text=Test)",
             intercepted
         )
     }

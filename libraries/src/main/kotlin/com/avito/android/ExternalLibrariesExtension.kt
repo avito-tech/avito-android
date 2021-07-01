@@ -11,11 +11,11 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
         const val okhttp = "4.9.0"
         const val sentry = "1.7.23"
         const val retrofit = "2.9.0"
-        const val androidXTest = "1.3.0"
+        const val androidXTest = "1.4.0"
         const val junit5 = "5.7.2"
         const val junit5Platform = "1.7.2"
         const val androidX = "1.0.0"
-        const val espresso = "3.3.0"
+        const val espresso = "3.4.0"
         const val mockito = "3.3.3"
         const val coroutines = "1.3.8"
     }

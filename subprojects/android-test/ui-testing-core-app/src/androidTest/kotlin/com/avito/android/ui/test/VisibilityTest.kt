@@ -32,7 +32,7 @@ class VisibilityTest {
             findViewById<View>(R.id.text).visibility = View.INVISIBLE
         }
         exception.expectMessage(
-            "'view has effective visibility=VISIBLE' " +
+            "'view has effective visibility <VISIBLE>' " +
                 "doesn't match the selected view."
         )
         Screen.visibility.label.checks.isVisible()
