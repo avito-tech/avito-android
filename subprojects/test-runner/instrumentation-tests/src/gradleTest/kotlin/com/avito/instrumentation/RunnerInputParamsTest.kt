@@ -479,10 +479,6 @@ internal class RunnerInputParamsTest {
                 assertThat(it.proguardMappings)
                     .isEmpty()
             },
-            Case("useInMemoryReport is disabled") {
-                assertThat(it.useInMemoryReport)
-                    .isFalse()
-            },
             Case("uploadTestArtifacts is disabled") {
                 assertThat(it.uploadTestArtifacts)
                     .isFalse()

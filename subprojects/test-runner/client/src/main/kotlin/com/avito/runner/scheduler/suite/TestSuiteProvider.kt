@@ -2,7 +2,6 @@ package com.avito.runner.scheduler.suite
 
 import com.avito.android.TestInApk
 import com.avito.android.runner.report.Report
-import com.avito.instrumentation.suite.parseTest
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.TestsFilter

@@ -3,7 +3,7 @@ package com.avito.runner.config
 import com.avito.runner.scheduler.suite.filter.Filter
 import java.io.Serializable
 
-public fun <T : Serializable> emptyFilter(): Filter.Value<T> = Filter.Value<T>(
+public fun <T : Serializable> emptyFilter(): Filter.Value<T> = Filter.Value(
     included = emptySet(),
     excluded = emptySet()
 )

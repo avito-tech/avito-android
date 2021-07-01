@@ -11,15 +11,10 @@ internal class ExperimentsResolver(private val project: Project) {
         extension: GradleInstrumentationPluginConfiguration
     ): Experiments {
         return Experiments(
-            useInMemoryReport = getUseInMemoryReport(extension),
             saveTestArtifactsToOutputs = getSaveTestArtifactsToOutputs(extension),
             fetchLogcatForIncompleteTests = getFetchLogcatForIncompleteTests(extension),
             uploadArtifactsFromRunner = getUploadArtifactsFromRunner(extension),
         )
-    }
-
-    private fun getUseInMemoryReport(extension: GradleInstrumentationPluginConfiguration): Boolean {
-        return extension.experimental.useInMemoryReport.getOrElse(false)
     }
 
     private fun getSaveTestArtifactsToOutputs(extension: GradleInstrumentationPluginConfiguration): Boolean {

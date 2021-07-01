@@ -1,4 +1,4 @@
-package com.avito.instrumentation.suite
+package com.avito.runner.scheduler.suite
 
 import com.avito.android.AnnotationData
 import com.avito.android.TestInApk
