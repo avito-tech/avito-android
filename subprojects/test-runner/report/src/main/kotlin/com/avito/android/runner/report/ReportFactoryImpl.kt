@@ -17,7 +17,6 @@ import com.avito.time.TimeProvider
 
 public class ReportFactoryImpl(
     private val timeProvider: TimeProvider,
-    private val useInMemoryReport: Boolean,
     private val buildId: String,
     private val loggerFactory: LoggerFactory,
     private val httpClientProvider: HttpClientProvider,
@@ -39,8 +38,7 @@ public class ReportFactoryImpl(
                 loggerFactory = loggerFactory,
                 testAttemptsAggregateStrategy = createTestAttemptsAggregateStrategy()
             ),
-            avitoReport = reportViewerConfig?.let { createAvitoReport(it) },
-            useInMemoryReport = useInMemoryReport
+            avitoReport = reportViewerConfig?.let { createAvitoReport(it) }
         )
     }
 

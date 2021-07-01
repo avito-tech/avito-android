@@ -3,13 +3,13 @@ package com.avito.time
 import java.io.Serializable
 import java.util.Date
 
-interface TimeProvider : Serializable {
+public interface TimeProvider : Serializable {
 
-    fun nowInMillis(): Long
+    public fun nowInMillis(): Long
 
-    fun nowInSeconds(): Long
+    public fun nowInSeconds(): Long
 
-    fun now(): Date
+    public fun now(): Date
 
-    fun toDate(seconds: Long): Date
+    public fun toDate(seconds: Long): Date
 }

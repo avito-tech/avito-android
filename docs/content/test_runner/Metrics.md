@@ -92,10 +92,6 @@ Don't know exact reason, delta between initial test suite and reported tests
 Test report data pulled from device and then pushed to report service.  
 These are cases when file was not found on device for some reason
 
-### `parse-errors`
-
-If test file was pulled, but there was a parsing error
-
 ### `instr-parsing`
 
 If fail when parse `am instrument` output
