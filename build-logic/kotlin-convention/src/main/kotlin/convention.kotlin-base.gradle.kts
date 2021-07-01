@@ -1,12 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("convention.libraries")
     id("convention.unit-testing")
 }
 
 dependencies {
-    add("implementation", libs.kotlinStdlib)
+    add("implementation", "org.jetbrains.kotlin:kotlin-stdlib:1.5.20")
 }
 
 /**
@@ -27,7 +26,7 @@ val compileAllTask: TaskProvider<Task> = tasks.register("compileAll") {
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
 
-        jvmTarget = libs.javaVersion.toString()
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
 
         /**
          * Can't enable because of warning

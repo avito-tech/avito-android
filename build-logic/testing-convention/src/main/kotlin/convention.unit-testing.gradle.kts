@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
 plugins {
-    id("convention.libraries")
     id("org.gradle.test-retry")
 }
 
@@ -51,14 +50,17 @@ tasks.withType<Test>().configureEach {
     }
 }
 
+val junit5Version = "5.7.2"
+val junit5PlatformVersion = "1.7.2"
+
 plugins.withType<KotlinBasePluginWrapper> {
     dependencies {
-        add("testImplementation", libs.junitJupiterApi)
-        add("testImplementation", libs.truth)
+        add("testImplementation", "org.junit.jupiter:junit-jupiter-api:$junit5Version")
+        add("testImplementation", "com.google.truth:truth:1.0")
 
-        add("testRuntimeOnly", libs.junitJupiterEngine)
-        add("testRuntimeOnly", libs.junitPlatformRunner)
-        add("testRuntimeOnly", libs.junitPlatformLauncher)
+        add("testRuntimeOnly", "org.junit.jupiter:junit-jupiter-engine:$junit5Version")
+        add("testRuntimeOnly", "org.junit.platform:junit-platform-runner:$junit5PlatformVersion")
+        add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher:$junit5PlatformVersion")
     }
 }
 

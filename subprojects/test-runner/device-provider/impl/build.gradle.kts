@@ -5,7 +5,6 @@ plugins {
     id("convention.publish-kotlin-library")
     id("convention.test-fixtures")
     id("convention.integration-testing")
-    id("convention.libraries")
 }
 
 dependencies {
