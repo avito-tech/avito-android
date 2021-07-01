@@ -2,11 +2,12 @@ package com.avito.logger.destination
 
 import com.avito.logger.LogLevel
 import com.avito.logger.LoggingDestination
+import java.io.Serializable
 
 data class VerboseMode(
     val verbosity: LogLevel,
     val printStackTrace: Boolean
-)
+) : Serializable
 
 /**
  * See Logging.md#Verbose-mode

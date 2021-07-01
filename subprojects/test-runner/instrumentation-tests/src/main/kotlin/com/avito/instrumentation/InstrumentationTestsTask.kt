@@ -13,7 +13,7 @@ import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
 import com.avito.instrumentation.configuration.ReportViewer
 import com.avito.instrumentation.internal.GetTestResultsAction
-import com.avito.instrumentation.internal.RunnerInputTester
+import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.logger.GradleLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.RunnerInputParams
@@ -105,8 +105,10 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val reportViewerProperty: Property<ReportViewer>
 
     @get:Input
-    @get:Optional
-    public abstract val dumpParams: Property<Boolean>
+    public abstract val gradleTestKitRun: Property<Boolean>
+
+    @get:Internal
+    public abstract val dumpDir: RegularFileProperty
 
     @get:Internal
     public abstract val kubernetesCredentials: Property<KubernetesCredentials>
@@ -187,12 +189,14 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
         )
 
-        if (dumpParams.getOrElse(false)) {
-            RunnerInputTester.dumpInput(
-                rootDir = project.rootDir,
-                input = testRunParams
-            )
-        } else {
+        val isGradleTestKitRun = gradleTestKitRun.get()
+
+        RunnerInputDumper(dumpDir = dumpDir.get().asFile).dumpInput(
+            input = testRunParams,
+            isGradleTestKitRun = isGradleTestKitRun
+        )
+
+        if (!isGradleTestKitRun) {
             workerExecutor.inMemoryWork {
                 when (
                     val result = TestSchedulerFactoryProvider()
