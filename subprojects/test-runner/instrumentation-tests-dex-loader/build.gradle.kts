@@ -5,19 +5,19 @@ plugins {
 }
 
 dependencies {
-    api(project(":test-runner:report-viewer")) {
+    api(projects.testRunner.reportViewer) {
         because("TestName model") // todo test models should be separated from reports
     }
     implementation(gradleApi())
     implementation(libs.dexlib)
     implementation(libs.kotson)
-    implementation(project(":common:files"))
-    implementation(project(":gradle:android")) {
+    implementation(projects.common.files)
+    implementation(projects.gradle.android) {
         because("For getApkOrThrow function only")
     }
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":common:resources"))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.common.resources)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
 }

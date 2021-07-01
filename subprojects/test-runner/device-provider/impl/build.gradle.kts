@@ -8,20 +8,20 @@ plugins {
 }
 
 dependencies {
-    api(project(":test-runner:service"))
-    api(project(":test-runner:device-provider:api"))
-    api(project(":gradle:kubernetes"))
+    api(projects.testRunner.service)
+    api(projects.testRunner.deviceProvider.api)
+    api(projects.gradle.kubernetes)
 
-    implementation(project(":gradle:process"))
-    implementation(project(":logger:logger"))
-    implementation(project(":common:result"))
+    implementation(projects.gradle.process)
+    implementation(projects.logger.logger)
+    implementation(projects.common.result)
 
-    integTestImplementation(project(":common:truth-extensions"))
+    integTestImplementation(projects.common.truthExtensions)
 
-    testImplementation(testFixtures(project(":logger:logger")))
+    testImplementation(testFixtures(projects.logger.logger))
     testImplementation(libs.coroutinesTest)
 
-    testFixturesApi(testFixtures(project(":common:http-client")))
+    testFixturesApi(testFixtures(projects.common.httpClient))
 }
 
 kotlin {

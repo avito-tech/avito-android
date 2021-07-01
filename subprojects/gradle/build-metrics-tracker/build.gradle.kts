@@ -4,12 +4,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:statsd"))
-    implementation(project(":gradle:build-environment"))
+    api(projects.common.statsd)
+    implementation(projects.gradle.buildEnvironment)
 
-    testImplementation(testFixtures(project(":common:graphite")))
-    testImplementation(testFixtures(project(":common:statsd")))
-    testImplementation(testFixtures(project(":gradle:build-environment")))
+    testImplementation(testFixtures(projects.common.graphite))
+    testImplementation(testFixtures(projects.common.statsd))
+    testImplementation(testFixtures(projects.gradle.buildEnvironment))
 }
 
 kotlin {

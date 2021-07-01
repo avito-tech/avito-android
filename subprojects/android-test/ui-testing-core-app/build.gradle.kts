@@ -40,18 +40,18 @@ dependencies {
     implementation(libs.playServicesMaps)
     implementation(libs.recyclerView)
 
-    implementation(project(":android-lib:proxy-toast"))
+    implementation(projects.androidLib.proxyToast)
 
-    androidTestImplementation(project(":test-runner:test-inhouse-runner"))
-    androidTestImplementation(project(":test-runner:test-report"))
-    androidTestImplementation(project(":test-runner:test-annotations"))
-    androidTestImplementation(project(":test-runner:report-viewer")) {
+    androidTestImplementation(projects.testRunner.testInhouseRunner)
+    androidTestImplementation(projects.testRunner.testReport)
+    androidTestImplementation(projects.testRunner.testAnnotations)
+    androidTestImplementation(projects.testRunner.reportViewer) {
         because("Priority/Behavior test annotations still there")
     }
 
-    androidTestImplementation(project(":android-test:ui-testing-core"))
-    androidTestImplementation(project(":android-test:toast-rule"))
-    androidTestImplementation(project(":common:truth-extensions"))
+    androidTestImplementation(projects.androidTest.uiTestingCore)
+    androidTestImplementation(projects.androidTest.toastRule)
+    androidTestImplementation(projects.common.truthExtensions)
 
     androidTestUtil(libs.testOrchestrator)
 }

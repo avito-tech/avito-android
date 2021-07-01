@@ -9,21 +9,21 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":test-runner:report-viewer"))
-    implementation(project(":common:time"))
-    implementation(project(":common:math"))
-    implementation(project(":common:problem"))
-    implementation(project(":common:http-client"))
-    implementation(project(":logger:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:slack"))
-    implementation(project(":gradle:statsd-config"))
+    implementation(projects.testRunner.reportViewer)
+    implementation(projects.common.time)
+    implementation(projects.common.math)
+    implementation(projects.common.problem)
+    implementation(projects.common.httpClient)
+    implementation(projects.logger.gradleLogger)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.slack)
+    implementation(projects.gradle.statsdConfig)
     implementation(libs.okhttp)
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(testFixtures(project(":test-runner:report-viewer")))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(testFixtures(projects.testRunner.reportViewer))
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

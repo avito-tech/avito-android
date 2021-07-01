@@ -7,27 +7,27 @@ plugins {
 dependencies {
     api(libs.gson)
 
-    api(project(":common:okhttp"))
-    api(project(":common:result"))
-    api(project(":test-runner:report-api"))
+    api(projects.common.okhttp)
+    api(projects.common.result)
+    api(projects.testRunner.reportApi)
 
-    implementation(project(":common:math"))
-    implementation(project(":logger:logger"))
-    implementation(project(":common:http-client"))
+    implementation(projects.common.math)
+    implementation(projects.logger.logger)
+    implementation(projects.common.httpClient)
     implementation(libs.kotson)
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":common:files"))
-    testImplementation(project(":common:resources"))
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(testFixtures(project(":logger:logger")))
-    testImplementation(testFixtures(project(":test-runner:report-viewer")))
-    testImplementation(testFixtures(project(":test-runner:report-api")))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.common.files)
+    testImplementation(projects.common.resources)
+    testImplementation(projects.common.testOkhttp)
+    testImplementation(testFixtures(projects.logger.logger))
+    testImplementation(testFixtures(projects.testRunner.reportViewer))
+    testImplementation(testFixtures(projects.testRunner.reportApi))
     testImplementation(libs.okhttpMockWebServer)
     testImplementation(libs.jsonPathAssert)
 
-    testFixturesImplementation(testFixtures(project(":logger:logger")))
-    testFixturesImplementation(testFixtures(project(":common:http-client")))
+    testFixturesImplementation(testFixtures(projects.logger.logger))
+    testFixturesImplementation(testFixtures(projects.common.httpClient))
 }
 
 kotlin {

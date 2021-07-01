@@ -5,18 +5,18 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":logger:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:critical-path:api"))
-    implementation(project(":gradle:trace-event"))
-    implementation(project(":gradle:gradle-profile"))
-    implementation(project(":common:composite-exception"))
-    implementation(project(":common:problem"))
-    implementation(project(":common:result"))
+    implementation(projects.logger.gradleLogger)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.criticalPath.api)
+    implementation(projects.gradle.traceEvent)
+    implementation(projects.gradle.gradleProfile)
+    implementation(projects.common.compositeException)
+    implementation(projects.common.problem)
+    implementation(projects.common.result)
     implementation(gradleApi())
 
-    gradleTestImplementation(project(":gradle:test-project"))
-    gradleTestImplementation(testFixtures(project(":logger:logger")))
+    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(testFixtures(projects.logger.logger))
 }
 
 gradlePlugin {
