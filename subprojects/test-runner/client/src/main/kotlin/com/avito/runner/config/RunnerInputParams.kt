@@ -28,7 +28,6 @@ public data class RunnerInputParams(
     val statsDConfig: StatsDConfig,
     val reportViewerConfig: ReportViewerConfig?,
     val proguardMappings: List<File>,
-    val useInMemoryReport: Boolean,
     val uploadTestArtifacts: Boolean,
     val fetchLogcatForIncompleteTests: Boolean,
     val saveTestArtifactsToOutputs: Boolean,

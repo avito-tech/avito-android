@@ -20,37 +20,37 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
-abstract class FlakyReportTask : DefaultTask() {
+public abstract class FlakyReportTask : DefaultTask() {
 
     @get:Input
-    abstract val reportCoordinates: Property<ReportCoordinates>
+    public abstract val reportCoordinates: Property<ReportCoordinates>
 
     @get:Input
-    abstract val summaryChannel: Property<SlackChannel>
+    public abstract val summaryChannel: Property<SlackChannel>
 
     @get:Input
-    abstract val slackUsername: Property<String>
+    public abstract val slackUsername: Property<String>
 
     @get:Input
-    abstract val buildUrl: Property<String>
+    public abstract val buildUrl: Property<String>
 
     @get:Input
-    abstract val currentBranch: Property<String>
+    public abstract val currentBranch: Property<String>
 
     @get:Internal
-    abstract val timeProvider: Property<TimeProvider>
+    public abstract val timeProvider: Property<TimeProvider>
 
     @get:Internal
-    abstract val slackClient: Property<SlackClient>
+    public abstract val slackClient: Property<SlackClient>
 
     @get:Internal
-    abstract val reportsApi: Property<ReportsApi>
+    public abstract val reportsApi: Property<ReportsApi>
 
     @get:Internal
-    abstract val reportViewerUrl: Property<String>
+    public abstract val reportViewerUrl: Property<String>
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val flakyTestInfo = FlakyTestInfo()
 
         flakyTestInfo.addReport(reportsApi.get().getTestsForRunId(reportCoordinates.get()))

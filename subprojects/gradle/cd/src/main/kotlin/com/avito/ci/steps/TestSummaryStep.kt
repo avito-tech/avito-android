@@ -1,38 +1,53 @@
 package com.avito.ci.steps
 
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.avito.impact.configuration.internalModule
-import com.avito.instrumentation.extractReportCoordinates
-import com.avito.instrumentation.instrumentationTask
-import com.avito.test.summary.testSummaryPluginId
-import com.avito.test.summary.testSummaryTask
-import org.gradle.api.Project
+import com.avito.ci.internal.ReportKey
+import com.avito.kotlin.dsl.typedNamedOrNull
+import com.avito.report.model.ReportCoordinates
+import com.avito.report.model.Team
+import com.avito.test.summary.TestSummaryExtension
+import com.avito.test.summary.TestSummaryFactory
+import com.avito.test.summary.TestSummaryTask
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.register
 
-class TestSummaryStep(context: String, name: String) : SuppressibleBuildStep(context, name),
-    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
+class TestSummaryStep(context: String, name: String) : TestSummaryPluginBuildStep(context, name) {
 
-    var configuration: String = ""
+    override val stepName: String = "TestSummary"
 
-    override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
-        require(project.pluginManager.hasPlugin(testSummaryPluginId)) {
-            "TestSummary step can't be initialized without $testSummaryPluginId plugin applied"
-        }
+    override fun getOrCreateTask(
+        rootTasksContainer: TaskContainer,
+        extension: TestSummaryExtension,
+        reportCoordinates: ReportCoordinates,
+        testSummaryFactory: TestSummaryFactory,
+    ): TaskProvider<out Task> {
 
-        require(configuration.isNotBlank()) {
-            "TestSummary step can't be initialized without provided instrumentation configuration"
-        }
+        val reportKey = ReportKey.fromReportCoordinates(reportCoordinates)
 
-        if (useImpactAnalysis && !project.internalModule.isModified()) return
+        val taskName = reportKey.appendToTaskName("testSummary")
 
-        val instrumentationTask = project.tasks.instrumentationTask(configuration)
+        return rootTasksContainer.typedNamedOrNull<TestSummaryTask>(taskName)
+            ?: rootTasksContainer.register<TestSummaryTask>(taskName) {
+                group = "ci"
+                description = "Sends test summary report to slack for [" +
+                    "planSlug:${reportCoordinates.planSlug}, " +
+                    "jobSlug:${reportCoordinates.jobSlug}" +
+                    "]"
 
-        val testSummaryTask = project.tasks.testSummaryTask()
-        testSummaryTask.configure {
-            it.dependsOn(instrumentationTask)
-            it.reportCoordinates.set(instrumentationTask.extractReportCoordinates())
-        }
-        rootTask.dependsOn(testSummaryTask)
+                this.reportCoordinates.set(reportCoordinates)
+                this.summaryChannel.set(extension.summaryChannel)
+                this.buildUrl.set(extension.buildUrl)
+                this.unitToChannelMapping.set(
+                    extension.unitToChannelMapping
+                        .map { map -> map.map { (key, value) -> key to value }.toMap() }
+                )
+                this.mentionOnFailures.set(extension.mentionOnFailures.map { set -> set.map { Team(it) }.toSet() })
+                this.reserveSlackChannel.set(extension.reserveSlackChannel)
+                this.slackUsername.set(extension.slackUserName)
+                this.slackClient.set(testSummaryFactory.createSlackClient(extension))
+                this.reportsApi.set(testSummaryFactory.createReportsApi(extension))
+                this.reportViewerUrl.set(extension.reportViewerUrl)
+            }
     }
 }

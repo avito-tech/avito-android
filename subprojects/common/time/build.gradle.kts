@@ -7,3 +7,7 @@ plugins {
 dependencies {
     api(project(":logger:logger"))
 }
+
+kotlin {
+    explicitApi()
+}

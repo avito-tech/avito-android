@@ -3,7 +3,7 @@ package com.avito.time
 import java.util.Calendar
 import java.util.Date
 
-fun Date.isSameDay(otherDate: Date): Boolean {
+public fun Date.isSameDay(otherDate: Date): Boolean {
     return isSameDay(
         Calendar.getInstance().apply { time = this@isSameDay },
         Calendar.getInstance().apply { time = otherDate }

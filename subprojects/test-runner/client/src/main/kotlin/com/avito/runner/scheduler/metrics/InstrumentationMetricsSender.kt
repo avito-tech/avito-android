@@ -16,10 +16,6 @@ public class InstrumentationMetricsSender(
         statsDSender.send(GaugeLongMetric(prefix.append("lost.not-reported"), count.toLong()))
     }
 
-    public fun sendReportFileParseErrors() {
-        statsDSender.send(CountMetric(prefix.append("lost.parse-errors")))
-    }
-
     public fun sendReportFileNotAvailable() {
         statsDSender.send(CountMetric(prefix.append("lost.no-file")))
     }

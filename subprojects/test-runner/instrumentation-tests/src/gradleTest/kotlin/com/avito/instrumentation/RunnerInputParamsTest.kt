@@ -39,7 +39,7 @@ internal class RunnerInputParamsTest {
                         name = appModuleName,
                         packageName = appPackageName,
                         plugins = plugins {
-                            id("com.avito.android.instrumentation-tests")
+                            id(instrumentationPluginId)
                         },
                         useKts = true,
                         imports = listOf(
@@ -148,7 +148,7 @@ internal class RunnerInputParamsTest {
                         name = appModuleName,
                         packageName = appPackageName,
                         plugins = plugins {
-                            id("com.avito.android.instrumentation-tests")
+                            id(instrumentationPluginId)
                         },
                         imports = listOf(
                             "import static com.avito.instrumentation.reservation.request.Device.LocalEmulator"
@@ -478,10 +478,6 @@ internal class RunnerInputParamsTest {
             Case("proguard mappings is empty") {
                 assertThat(it.proguardMappings)
                     .isEmpty()
-            },
-            Case("useInMemoryReport is disabled") {
-                assertThat(it.useInMemoryReport)
-                    .isFalse()
             },
             Case("uploadTestArtifacts is disabled") {
                 assertThat(it.uploadTestArtifacts)

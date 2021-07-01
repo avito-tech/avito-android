@@ -1,41 +1,38 @@
 package com.avito.ci.steps
 
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.avito.impact.configuration.internalModule
-import com.avito.instrumentation.extractReportCoordinates
-import com.avito.instrumentation.instrumentationTask
-import com.avito.plugin.markReportAsSourceTask
-import com.avito.plugin.tmsPluginId
-import org.gradle.api.Project
+import com.avito.ci.internal.ReportKey
+import com.avito.kotlin.dsl.typedNamedOrNull
+import com.avito.report.model.ReportCoordinates
+import com.avito.test.summary.MarkReportAsSourceTask
+import com.avito.test.summary.TestSummaryExtension
+import com.avito.test.summary.TestSummaryFactory
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.register
 
-class MarkReportAsSourceForTMSStep(context: String, name: String) : BuildStep(context, name),
-    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
+class MarkReportAsSourceForTMSStep(context: String, name: String) : TestSummaryPluginBuildStep(context, name) {
 
-    var configuration: String = ""
+    override val stepName: String = "MarkReportAsSourceForTMSStep"
 
-    override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
-        require(project.pluginManager.hasPlugin(tmsPluginId)) {
-            "MarkReportAsSourceForTMSStep can't be initialized without $tmsPluginId plugin applied"
-        }
+    override fun getOrCreateTask(
+        rootTasksContainer: TaskContainer,
+        extension: TestSummaryExtension,
+        reportCoordinates: ReportCoordinates,
+        testSummaryFactory: TestSummaryFactory
+    ): TaskProvider<out Task> {
+        val reportKey = ReportKey.fromReportCoordinates(reportCoordinates)
 
-        require(configuration.isNotBlank()) {
-            "MarkReportAsSourceForTMSStep can't be initialized without provided instrumentation configuration"
-        }
+        val taskName = reportKey.appendToTaskName("markReportForTms")
 
-        if (useImpactAnalysis && !project.internalModule.isModified()) return
+        return rootTasksContainer.typedNamedOrNull(taskName)
+            ?: rootTasksContainer.register<MarkReportAsSourceTask>(taskName) {
+                group = "ci"
+                description = "Marks this test report as source of truth for Avito TMS"
 
-        val instrumentationTask = project.tasks.instrumentationTask(configuration)
-
-        val markReportAsSourceTask = project.tasks.markReportAsSourceTask()
-
-        markReportAsSourceTask.configure {
-            it.dependsOn(instrumentationTask)
-
-            it.reportCoordinates.set(instrumentationTask.extractReportCoordinates())
-        }
-
-        rootTask.dependsOn(markReportAsSourceTask)
+                this.reportCoordinates.set(reportCoordinates)
+                this.reportsApi.set(testSummaryFactory.createReportsApi(extension))
+                this.timeProvider.set(testSummaryFactory.timeProvider)
+            }
     }
 }

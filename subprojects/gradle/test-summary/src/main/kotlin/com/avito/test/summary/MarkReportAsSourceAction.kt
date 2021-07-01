@@ -1,11 +1,12 @@
-package com.avito.plugin
+package com.avito.test.summary
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
-import com.github.salomonbrys.kotson.jsonObject
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 
 /**
  * TMS will use reports marked with special analyzer_key as source of truth
@@ -14,7 +15,7 @@ import com.github.salomonbrys.kotson.jsonObject
  * CTHL-495
  * MBS-6483
  */
-class MarkReportAsSourceAction(
+internal class MarkReportAsSourceAction(
     private val reportsApi: ReportsApi,
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
@@ -27,13 +28,14 @@ class MarkReportAsSourceAction(
 
         reportsApi.getReport(reportCoordinates)
             .map { report ->
+                val preparedData = JsonObject()
+                preparedData.add("full", JsonPrimitive(true))
+                preparedData.add("version", JsonPrimitive(testSuiteVersion))
+
                 reportsApi.pushPreparedData(
                     reportId = report.id,
                     analyzerKey = "test_suite",
-                    preparedData = jsonObject(
-                        "full" to true,
-                        "version" to testSuiteVersion
-                    )
+                    preparedData = preparedData
                 )
                 report
             }

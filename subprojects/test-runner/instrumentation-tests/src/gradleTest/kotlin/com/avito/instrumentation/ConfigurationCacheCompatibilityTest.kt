@@ -18,7 +18,7 @@ internal class ConfigurationCacheCompatibilityTest {
                 AndroidAppModule(
                     name = "app",
                     plugins = plugins {
-                        id("com.avito.android.instrumentation-tests")
+                        id(instrumentationPluginId)
                     },
                     buildGradleExtra = instrumentationConfiguration()
                 )

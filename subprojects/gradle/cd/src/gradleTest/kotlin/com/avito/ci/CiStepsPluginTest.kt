@@ -5,6 +5,7 @@ import com.avito.android.plugin.artifactory.artifactoryPasswordParameterName
 import com.avito.android.plugin.artifactory.artifactoryUserParameterName
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.steps.verifyTaskName
+import com.avito.instrumentation.instrumentationPluginId
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.file
@@ -40,7 +41,7 @@ class CiStepsPluginTest {
                     dependencies = setOf(project(":shared")),
                     plugins = plugins {
                         id("com.avito.android.signer")
-                        id("com.avito.android.instrumentation-tests")
+                        id(instrumentationPluginId)
                         id("com.avito.android.prosector")
                         id("com.avito.android.qapps")
                         id("com.avito.android.artifactory-app-backup")
