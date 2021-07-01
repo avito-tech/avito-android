@@ -1,6 +1,7 @@
 package com.avito.runner.service.worker.device.adb
 
 import com.avito.runner.service.worker.device.Serial
+import com.google.common.net.InetAddresses
 
 class AdbDeviceParser {
 
@@ -24,7 +25,7 @@ class AdbDeviceParser {
 
     private fun createDeviceParams(line: String): AdbDeviceParams {
         return AdbDeviceParams(
-            id = Serial.from(line.substringBefore(" ")),
+            id = createSerial(line.substringBefore(" ")),
             model = line.substringAfter("model:").substringBefore(" device"),
             online = when {
                 line.contains("offline", ignoreCase = true) -> false
@@ -32,6 +33,20 @@ class AdbDeviceParser {
                 else -> throw IllegalStateException("Unknown devicesManager output for device: $line")
             }
         )
+    }
+
+    private fun createSerial(value: String): Serial {
+        return if (isRemote(value)) {
+            Serial.Remote(value)
+        } else {
+            Serial.Local(value)
+        }
+    }
+
+    @Suppress("UnstableApiUsage")
+    private fun isRemote(serial: String): Boolean {
+        return serial.contains(':')
+            && InetAddresses.isInetAddress(serial.substringBefore(':'))
     }
 
     private fun adbDevicesLines(output: String): Sequence<String> {

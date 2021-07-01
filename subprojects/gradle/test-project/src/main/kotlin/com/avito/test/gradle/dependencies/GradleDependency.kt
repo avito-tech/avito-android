@@ -17,7 +17,6 @@ sealed class GradleDependency : GradleScriptCompatible {
     ) : GradleDependency() {
 
         enum class CONFIGURATION(private val representation: String) : GradleScriptCompatible {
-            COMPILE("compile"),
             IMPLEMENTATION("implementation"),
             TEST_IMPLEMENTATION("testImplementation"),
             ANDROID_TEST_IMPLEMENTATION("androidTestImplementation"),

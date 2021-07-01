@@ -15,6 +15,8 @@ dependencies {
     api(project(":common:time"))
     api(project(":test-runner:command-line-executor"))
     api(project(":gradle:process"))
+    api(project(":test-runner:test-model"))
+    api(project(":test-runner:device-provider:api"))
 
     implementation(project(":common:result"))
     implementation(project(":common:problem"))

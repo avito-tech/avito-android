@@ -87,7 +87,7 @@ internal class BuildTraceTest {
             abstract class CustomTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
             
                 @Input
-                var durationMs = objects.property<Long>().convention(1)
+                val durationMs = objects.property<Long>().convention(1)
             
                 @TaskAction
                 fun createFile() {

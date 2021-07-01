@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.logcat
 
-import com.avito.runner.service.model.TestCase
+import com.avito.test.model.TestCase
 
 internal class LogcatBuffers {
 

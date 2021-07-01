@@ -1,10 +1,8 @@
-package com.avito.runner.service.model
+package com.avito.test.model
 
-import com.avito.test.model.DeviceName
-import com.avito.test.model.TestName
 import java.io.Serializable
 
-data class TestCase(
+public data class TestCase(
     val name: TestName,
     val deviceName: DeviceName
 ) : Serializable {
@@ -13,5 +11,5 @@ data class TestCase(
         return "$name.$deviceName"
     }
 
-    companion object
+    public companion object
 }

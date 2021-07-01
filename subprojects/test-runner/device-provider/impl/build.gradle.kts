@@ -8,12 +8,9 @@ plugins {
     id("convention.libraries")
 }
 
-publish {
-    artifactId.set("runner-device-provider")
-}
-
 dependencies {
     api(project(":test-runner:service"))
+    api(project(":test-runner:device-provider:api"))
     api(project(":gradle:kubernetes"))
 
     implementation(project(":gradle:process"))

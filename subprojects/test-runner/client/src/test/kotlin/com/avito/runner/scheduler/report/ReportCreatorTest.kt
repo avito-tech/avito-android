@@ -6,9 +6,9 @@ import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.model.createStubInstance
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.createStubInstance
+import com.avito.test.model.TestCase
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

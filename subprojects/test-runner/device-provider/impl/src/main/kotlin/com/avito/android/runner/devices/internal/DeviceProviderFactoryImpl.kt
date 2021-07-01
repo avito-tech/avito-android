@@ -32,7 +32,11 @@ internal class DeviceProviderFactoryImpl(
     ): DevicesProvider {
         return when (deviceType) {
             DeviceType.MOCK ->
-                FakeDevicesProvider(loggerFactory, deviceWorkerPoolProvider, Channel(Channel.UNLIMITED))
+                FakeDevicesProvider(
+                    loggerFactory,
+                    deviceWorkerPoolProvider,
+                    Channel(Channel.UNLIMITED)
+                )
 
             DeviceType.LOCAL ->
                 LocalDevicesProvider(

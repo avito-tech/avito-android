@@ -1,5 +1,7 @@
 package com.avito.runner.service.model
 
+import com.avito.test.model.TestCase
+
 fun TestCaseRun.Companion.createStubInstance(
     testCase: TestCase = TestCase.createStubInstance(),
     result: TestCaseRun.Result = TestCaseRun.Result.Passed,

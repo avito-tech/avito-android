@@ -204,7 +204,7 @@ class DeviceWorkerPoolTest {
         deviceListener = StubDeviceListener(),
         deviceWorkersDispatcher = TestDispatcher,
         timeProvider = StubTimeProvider(),
-        state = DeviceWorkerPool.State(
+        state = DeviceWorkerPoolState(
             devices = devices,
             intentions = intentionsChannel,
             intentionResults = intentionResults,

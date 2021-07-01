@@ -14,7 +14,7 @@ import com.avito.runner.scheduler.runner.model.TestRunnerResults
 import com.avito.runner.scheduler.suite.TestSuite
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
-import com.avito.runner.service.model.TestCase
+import com.avito.test.model.TestCase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.runBlocking

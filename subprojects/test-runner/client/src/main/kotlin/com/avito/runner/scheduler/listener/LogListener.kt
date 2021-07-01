@@ -2,9 +2,9 @@ package com.avito.runner.scheduler.listener
 
 import com.avito.android.Result
 import com.avito.runner.service.listener.TestListener
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
+import com.avito.test.model.TestCase
 import com.avito.time.millisecondsToHumanReadableTime
 import java.io.File
 

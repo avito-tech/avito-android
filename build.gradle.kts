@@ -2,17 +2,21 @@
  * Tests run from IDE in subprojects module can't recognize root wrapper
  */
 val subprojectsWrapper by tasks.registering(Copy::class) {
-    from("$rootDir/gradle/wrapper")
     into("$rootDir/subprojects/gradle/wrapper")
+    from("$rootDir/gradle/wrapper")
+}
+
+val samplesWrapper by tasks.registering(Copy::class) {
     into("$rootDir/samples/gradle/wrapper")
+    from("$rootDir/gradle/wrapper")
 }
 
 tasks.withType<Wrapper> {
     // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.9"
+    gradleVersion = "7.1"
 
-    finalizedBy(subprojectsWrapper)
+    finalizedBy(subprojectsWrapper, samplesWrapper)
 }
 
 tasks.register<Exec>("installGitHooks") {

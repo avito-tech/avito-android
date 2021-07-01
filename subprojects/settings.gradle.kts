@@ -30,11 +30,6 @@ include(":gradle:git-test-fixtures")
 include(":gradle:impact-shared")
 include(":gradle:impact-shared-test-fixtures")
 include(":gradle:impact")
-include(":test-runner:client")
-include(":test-runner:device-provider")
-include(":test-runner:report")
-include(":test-runner:service")
-include(":test-runner:command-line-executor")
 include(":gradle:sentry-config")
 include(":gradle:graphite-config")
 include(":gradle:statsd-config")
@@ -116,6 +111,13 @@ include(":test-runner:file-storage")
 include(":test-runner:report-viewer")
 include(":test-runner:report-api")
 include(":test-runner:test-model")
+include(":test-runner:client")
+include(":test-runner:device-provider:model")
+include(":test-runner:device-provider:impl")
+include(":test-runner:device-provider:api")
+include(":test-runner:report")
+include(":test-runner:service")
+include(":test-runner:command-line-executor")
 
 include(":logger:gradle-logger")
 include(":logger:android-log")
@@ -167,26 +169,13 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("androidx.*")
+                includeGroup("com.google.testing.platform")
             }
         }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
-                }
-            }
-            filter {
-                includeGroup("com.slack.keeper")
-                includeGroup("com.gradle")
-                includeGroup("com.gradle.enterprise")
-                includeGroup("org.jetbrains.kotlin.jvm")
-                includeGroup("org.gradle.kotlin.kotlin-dsl")
-                includeGroupByRegex("nebula\\..*")
-                includeGroup("io.gitlab.arturbosch.detekt")
-                includeGroup("com.autonomousapps.dependency-analysis")
-                includeGroup("com.github.ben-manes.versions")
-            }
+        maven {
+            setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
         }
     }
 
@@ -286,7 +275,6 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
-                includeGroup("com.google.test.platform") // todo remove after upgrade to 4.2.x+
                 includeGroup("com.google.testing.platform")
             }
         }

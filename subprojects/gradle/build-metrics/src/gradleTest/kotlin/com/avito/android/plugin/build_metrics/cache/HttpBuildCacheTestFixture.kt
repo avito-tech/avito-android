@@ -43,6 +43,7 @@ internal abstract class HttpBuildCacheTestFixture {
                     isEnabled = true
                     isPush = true
                     isAllowUntrustedServer = true
+                    isAllowInsecureProtocol = true
                 }
             }
             """.trimIndent()

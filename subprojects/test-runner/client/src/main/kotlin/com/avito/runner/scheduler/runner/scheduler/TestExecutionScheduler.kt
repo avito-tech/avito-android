@@ -3,9 +3,9 @@ package com.avito.runner.scheduler.runner.scheduler
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.scheduler.retry.SchedulingBasedRetryManager
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
+import com.avito.test.model.TestCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
