@@ -25,7 +25,7 @@ dependencies {
     implementation(project(":test-runner:instrumentation-tests-dex-loader"))
     implementation(project(":test-runner:report"))
     implementation(project(":test-runner:test-annotations"))
-    implementation(project(":test-runner:device-provider"))
+    implementation(project(":test-runner:device-provider:model"))
     implementation(project(":test-runner:client"))
 
     testImplementation(project(":common:result"))
@@ -37,7 +37,7 @@ dependencies {
     testImplementation(testFixtures(project(":test-runner:report-api")))
     testImplementation(testFixtures(project(":test-runner:report-viewer")))
     testImplementation(testFixtures(project(":test-runner:client")))
-    testImplementation(testFixtures(project(":test-runner:device-provider")))
+    testImplementation(testFixtures(project(":test-runner:device-provider:impl")))
     testImplementation(testFixtures(project(":test-runner:instrumentation-tests-dex-loader")))
     testImplementation(testFixtures(project(":test-runner:report")))
 

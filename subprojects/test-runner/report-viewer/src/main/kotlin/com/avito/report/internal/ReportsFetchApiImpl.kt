@@ -234,7 +234,7 @@ internal class ReportsFetchApiImpl(
 
     private fun getDescription(listResult: ListResult): String? {
         return if (listResult.description.isNullOrBlank()) {
-            listResult.preparedData?.lastOrNull()?.testCase?.description
+            listResult.preparedData?.lastOrNull()?.ctulhuTestCase?.description
         } else {
             listResult.description
         }

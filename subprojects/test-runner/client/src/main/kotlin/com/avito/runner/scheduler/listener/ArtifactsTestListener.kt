@@ -5,13 +5,13 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.runner.service.listener.TestListener
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureError
 import com.avito.runner.service.model.TestCaseRun.Result.Ignored
 import com.avito.runner.service.model.TestCaseRun.Result.Passed
 import com.avito.runner.service.worker.device.Device
+import com.avito.test.model.TestCase
 import com.avito.utils.deleteRecursively
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi

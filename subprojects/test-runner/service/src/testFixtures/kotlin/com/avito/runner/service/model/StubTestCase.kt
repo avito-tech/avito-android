@@ -1,6 +1,7 @@
 package com.avito.runner.service.model
 
 import com.avito.test.model.DeviceName
+import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
 
 fun TestCase.Companion.createStubInstance(

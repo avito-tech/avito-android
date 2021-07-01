@@ -7,8 +7,8 @@ import com.avito.runner.scheduler.logcat.BufferLogcatAccessor
 import com.avito.runner.scheduler.logcat.LogcatBuffers
 import com.avito.runner.scheduler.logcat.ResultLogcatAccessor
 import com.avito.runner.scheduler.logcat.TailingLogcatBuffer
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
+import com.avito.test.model.TestCase
 import java.io.File
 
 internal class LogcatTestLifecycleListener(

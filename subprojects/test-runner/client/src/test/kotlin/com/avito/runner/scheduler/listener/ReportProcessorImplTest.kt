@@ -15,8 +15,8 @@ import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.scheduler.logcat.StubLogcatAccessor
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
-import com.avito.runner.service.model.TestCase
 import com.avito.test.model.DeviceName
+import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat

@@ -1,5 +1,7 @@
 package com.avito.runner.service.model
 
+import com.avito.test.model.TestCase
+
 data class TestCaseRun(
     val test: TestCase,
     val result: Result,

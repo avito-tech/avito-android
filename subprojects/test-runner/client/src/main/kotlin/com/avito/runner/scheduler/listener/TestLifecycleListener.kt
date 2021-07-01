@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.listener
 
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
+import com.avito.test.model.TestCase
 
 public interface TestLifecycleListener {
 

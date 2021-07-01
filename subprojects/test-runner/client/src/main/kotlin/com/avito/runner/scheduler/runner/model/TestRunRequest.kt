@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.runner.model
 
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
+import com.avito.test.model.TestCase
 
 internal data class TestRunRequest(
     val testCase: TestCase,
