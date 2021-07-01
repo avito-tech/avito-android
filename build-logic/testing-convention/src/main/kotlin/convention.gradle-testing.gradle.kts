@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.configurationcache.extensions.serviceOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -32,13 +30,16 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     testClassesDirs = gradleTest.output.classesDirs
     classpath = configurations[gradleTest.runtimeClasspathConfigurationName] + files(gradleTestJarTask)
 
-    useJUnitPlatform()
-
     /**
-     * timings provided only as relative to each other
-     * gradleTest:
-     *  1: 2m14s
-     *  16: 3m16s
+     * The only reason to have more forks is faster test suite because of parallel execution
+     * Additional forks requires more resources and should be faster
+     * Tests on powerful machine with a lot of resources to spare proves that actually 1 is the fastest value,
+     * at least for our project
+     *
+     * `make benchmark_gradle_test` used for tests (see gradle/performance.scenarios)
+     * forks median value:
+     *   1    4min 11sec
+     *   2    4min 39sec
      */
     maxParallelForks = 1
 
@@ -47,24 +48,15 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
      */
     setForkEvery(null)
 
-    jvmArgs = listOf("-XX:+UseGCOverheadLimit", "-XX:GCTimeLimit=10")
+    jvmArgs(
+        listOf(
+            "-XX:+UseGCOverheadLimit",
+            "-XX:GCTimeLimit=10"
+        )
+    )
 
     minHeapSize = "128m"
     maxHeapSize = "256m"
-
-    failFast = false
-
-    /**
-     * fix for multiple `WARNING: Illegal reflective access`
-     */
-    jvmArgs = listOf(
-        "--add-opens",
-        "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.lang.invoke=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.util=ALL-UNNAMED"
-    )
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("buildDir", "$buildDir")

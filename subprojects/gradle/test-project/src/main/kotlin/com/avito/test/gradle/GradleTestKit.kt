@@ -52,7 +52,7 @@ fun gradlew(
      * probably because test kit dir also used as gradle-user-home for test
      *
      * Sharing test kit dir between different processes, using maxParallelForks>1, inside single module - is ok
-     * unique test-kit-dir per every tempDir in test is not ok! (19min)
+     * unique test-kit-dir per test is not ok! (19min)
      * So we need unique test kit dir per module.
      * This setup improves gradleTest times to ~3min
      *
