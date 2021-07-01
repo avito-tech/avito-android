@@ -1,6 +1,5 @@
 plugins {
     id("convention.kotlin-jvm")
-    id("convention.libraries")
     id("convention.publish-kotlin-library")
 }
 

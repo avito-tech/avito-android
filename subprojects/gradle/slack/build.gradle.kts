@@ -4,7 +4,6 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     id("convention.integration-testing")
-    id("convention.libraries")
 }
 
 dependencies {

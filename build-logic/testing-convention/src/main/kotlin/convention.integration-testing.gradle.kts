@@ -3,7 +3,6 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
-    id("convention.libraries")
     id("nebula.integtest")
 }
 
