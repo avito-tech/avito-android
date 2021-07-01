@@ -1,17 +1,16 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":logger:gradle-logger"))
-    implementation(project(":gradle:statsd-config"))
-    implementation(project(":test-runner:report-viewer"))
-    implementation(project(":common:time"))
-    implementation(project(":common:problem"))
-    implementation(project(":common:http-client"))
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.logger.gradleLogger)
+    implementation(projects.gradle.statsdConfig)
+    implementation(projects.testRunner.reportViewer)
+    implementation(projects.common.time)
+    implementation(projects.common.problem)
+    implementation(projects.common.httpClient)
 
     implementation(libs.gson)
     implementation(libs.kotson)

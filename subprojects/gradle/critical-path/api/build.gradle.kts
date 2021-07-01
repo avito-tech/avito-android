@@ -1,6 +1,5 @@
 plugins {
     id("convention.kotlin-jvm")
-    id("convention.libraries")
     id("convention.publish-kotlin-library")
 }
 
@@ -9,15 +8,15 @@ publish {
 }
 
 dependencies {
-    api(project(":common:graph"))
-    api(project(":common:result"))
+    api(projects.common.graph)
+    api(projects.common.result)
 
     implementation(gradleApi())
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-profile"))
-    implementation(project(":common:composite-exception"))
-    implementation(project(":common:problem"))
-    implementation(project(":logger:gradle-logger"))
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.gradleProfile)
+    implementation(projects.common.compositeException)
+    implementation(projects.common.problem)
+    implementation(projects.logger.gradleLogger)
 }
 
 kotlin {

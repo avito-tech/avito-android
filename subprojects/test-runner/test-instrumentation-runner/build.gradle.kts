@@ -1,11 +1,10 @@
 plugins {
     id("convention.kotlin-android-library")
     id("convention.publish-android-library")
-    id("convention.libraries")
 }
 
 dependencies {
     api(libs.androidXTestRunner)
     implementation(libs.uiAutomator)
-    implementation(project(":logger:logger"))
+    implementation(projects.logger.logger)
 }

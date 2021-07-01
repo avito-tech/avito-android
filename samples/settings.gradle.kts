@@ -1,4 +1,6 @@
-includeBuild("../libraries")
+enableFeaturePreview("VERSION_CATALOGS")
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 includeBuild("../build-logic")
 includeBuild("../subprojects")
 
@@ -84,6 +86,13 @@ fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: 
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
+
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+
     repositories {
         maven {
             setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")

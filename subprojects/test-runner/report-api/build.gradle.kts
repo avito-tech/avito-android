@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
     id("convention.test-fixtures")
 }
 
@@ -15,13 +14,13 @@ dependencies {
         because("module provides TypeAdapterFactory for Entries; JsonElement in the IncidentElement")
     }
 
-    api(project(":test-runner:test-model"))
+    api(projects.testRunner.testModel)
 
-    implementation(project(":common:okhttp")) {
+    implementation(projects.common.okhttp) {
         because("Result extension used")
     }
 
-    testImplementation(project(":common:truth-extensions"))
+    testImplementation(projects.common.truthExtensions)
 }
 
 kotlin {

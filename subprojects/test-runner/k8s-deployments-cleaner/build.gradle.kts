@@ -1,11 +1,10 @@
 plugins {
     id("convention.kotlin-jvm")
-    id("convention.libraries")
 }
 
 dependencies {
     api(libs.kubernetesClient)
-    api(project(":common:teamcity-common"))
+    api(projects.common.teamcityCommon)
     api(libs.kotlinXCli)
 }
 

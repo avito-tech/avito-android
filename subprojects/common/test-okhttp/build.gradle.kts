@@ -1,24 +1,23 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
     api(libs.okhttpMockWebServer)
-    api(project(":logger:logger"))
-    api(project(":common:okhttp"))
+    api(projects.logger.logger)
+    api(projects.common.okhttp)
 
     implementation(libs.truth)
     implementation(libs.kotson)
     implementation(libs.commonsLang)
 
-    implementation(project(":common:junit-utils"))
-    implementation(project(":common:resources"))
-    implementation(project(":common:waiter"))
-    implementation(project(":common:result"))
+    implementation(projects.common.junitUtils)
+    implementation(projects.common.resources)
+    implementation(projects.common.waiter)
+    implementation(projects.common.result)
 
-    testImplementation(testFixtures(project(":logger:logger")))
+    testImplementation(testFixtures(projects.logger.logger))
 }
 
 kotlin {

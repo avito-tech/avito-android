@@ -1,19 +1,18 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
 dependencies {
-    implementation(project(":gradle:process"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":logger:gradle-logger"))
+    implementation(projects.gradle.process)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.logger.gradleLogger)
     implementation(libs.gson)
 
-    testImplementation(testFixtures(project(":logger:logger")))
+    testImplementation(testFixtures(projects.logger.logger))
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

@@ -2,18 +2,17 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
-    id("convention.libraries")
 }
 
 dependencies {
     compileOnly(gradleApi())
 
-    implementation(project(":logger:gradle-logger"))
-    implementation(project(":common:math"))
+    implementation(projects.logger.gradleLogger)
+    implementation(projects.common.math)
 
-    gradleTestImplementation(project(":common:truth-extensions"))
-    gradleTestImplementation(testFixtures(project(":logger:logger")))
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.common.truthExtensions)
+    gradleTestImplementation(testFixtures(projects.logger.logger))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 kotlin {

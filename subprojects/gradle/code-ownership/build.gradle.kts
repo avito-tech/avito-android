@@ -1,18 +1,17 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
 dependencies {
-    implementation(project(":gradle:cd"))
-    implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:module-types"))
-    implementation(project(":gradle:pre-build"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.gradle.cd)
+    implementation(projects.gradle.impactShared)
+    implementation(projects.gradle.moduleTypes)
+    implementation(projects.gradle.preBuild)
+    implementation(projects.gradle.gradleExtensions)
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

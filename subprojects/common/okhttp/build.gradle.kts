@@ -1,20 +1,19 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
     api(libs.okhttp)
-    api(project(":common:result"))
+    api(projects.common.result)
 
-    implementation(project(":logger:logger"))
+    implementation(projects.logger.logger)
     implementation(libs.okhttpLogging)
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(project(":common:result"))
-    testImplementation(testFixtures(project(":logger:logger")))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.common.testOkhttp)
+    testImplementation(projects.common.result)
+    testImplementation(testFixtures(projects.logger.logger))
     testImplementation(libs.retrofit)
     testImplementation(libs.retrofitConverterGson)
 }

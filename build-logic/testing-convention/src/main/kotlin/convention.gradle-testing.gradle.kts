@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
 plugins {
     id("kotlin")
-    id("convention.libraries")
     id("java-gradle-plugin")
     idea
 }
@@ -61,22 +60,25 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("buildDir", "$buildDir")
     systemProperty("kotlinVersion", kotlinVersion)
-    systemProperty("compileSdkVersion", libs.compileSdkVersion)
-    systemProperty("buildToolsVersion", libs.buildToolsVersion)
-    systemProperty("androidGradlePluginVersion", libs.androidGradlePluginVersion)
+    systemProperty("compileSdkVersion", 29)
+    systemProperty("buildToolsVersion", "30.0.3")
+    systemProperty("androidGradlePluginVersion", "4.2.2")
     systemProperty("artifactoryUrl", artifactoryUrl.getOrElse(""))
     systemProperty("isTest", true)
 
     systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
 }
 
+val junit5Version = "5.7.2"
+val junit5PlatformVersion = "1.7.2"
+
 dependencies {
     "gradleTestImplementation"(gradleTestKit())
-    "gradleTestImplementation"(libs.junitJupiterApi)
-    "gradleTestImplementation"(libs.truth)
-    "gradleTestRuntimeOnly"(libs.junitJupiterEngine)
-    "gradleTestRuntimeOnly"(libs.junitPlatformRunner)
-    "gradleTestRuntimeOnly"(libs.junitPlatformLauncher)
+    "gradleTestImplementation"("org.junit.jupiter:junit-jupiter-api:$junit5Version")
+    "gradleTestImplementation"("com.google.truth:truth:1.0")
+    "gradleTestRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
+    "gradleTestRuntimeOnly"("org.junit.platform:junit-platform-runner:$junit5PlatformVersion")
+    "gradleTestRuntimeOnly"("org.junit.platform:junit-platform-launcher:$junit5PlatformVersion")
 
     // workaround for https://github.com/gradle/gradle/issues/16774
     "gradleTestRuntimeOnly"(

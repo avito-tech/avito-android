@@ -1,16 +1,15 @@
 plugins {
     id("convention.kotlin-android-library")
-    id("convention.libraries")
 }
 
 dependencies {
     api(libs.appcompat)
     api(libs.androidAnnotations)
     implementation(libs.mockitoKotlin)
-    implementation(project(":test-runner:test-inhouse-runner"))
-    implementation(project(":android-test:ui-testing-core"))
-    implementation(project(":logger:logger"))
-    implementation(project(":test-runner:file-storage"))
-    implementation(project(":test-runner:report-viewer"))
-    implementation(project(":common:composite-exception"))
+    implementation(projects.testRunner.testInhouseRunner)
+    implementation(projects.androidTest.uiTestingCore)
+    implementation(projects.logger.logger)
+    implementation(projects.testRunner.fileStorage)
+    implementation(projects.testRunner.reportViewer)
+    implementation(projects.common.compositeException)
 }

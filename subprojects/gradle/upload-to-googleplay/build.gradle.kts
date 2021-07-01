@@ -1,13 +1,12 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
-    implementation(project(":common:math"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":logger:gradle-logger"))
+    implementation(projects.common.math)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.logger.gradleLogger)
     implementation(gradleApi())
     implementation(libs.googlePublish)
 }

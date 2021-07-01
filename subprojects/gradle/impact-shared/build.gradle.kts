@@ -1,28 +1,27 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
     id("convention.test-fixtures")
 }
 
 dependencies {
-    api(project(":gradle:module-dependencies-graph"))
+    api(projects.gradle.moduleDependenciesGraph)
 
     implementation(gradleApi())
 
-    implementation(project(":gradle:android"))
-    implementation(project(":logger:gradle-logger"))
-    implementation(project(":gradle:git"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:process"))
+    implementation(projects.gradle.android)
+    implementation(projects.logger.gradleLogger)
+    implementation(projects.gradle.git)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.process)
 
     implementation(libs.antPattern)
     implementation(libs.kotlinPlugin)
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":gradle:git-test-fixtures"))
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(testFixtures(project(":logger:logger")))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.gradle.gitTestFixtures)
+    testImplementation(projects.gradle.testProject)
+    testImplementation(testFixtures(projects.logger.logger))
 
     testImplementation(libs.mockitoKotlin)
 }

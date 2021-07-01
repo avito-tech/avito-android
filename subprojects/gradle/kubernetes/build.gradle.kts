@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
@@ -10,13 +9,13 @@ dependencies {
     api(libs.kotlinReflect) {
         because("kubernetes dsl uses old version")
     }
-    api(project(":gradle:gradle-extensions"))
-    api(project(":common:http-client"))
+    api(projects.gradle.gradleExtensions)
+    api(projects.common.httpClient)
 
     implementation(gradleApi())
     implementation(libs.officialKubernetesClient)
     implementation(libs.googleAuthLibrary)
-    implementation(project(":common:result"))
+    implementation(projects.common.result)
 
-    testImplementation(project(":common:truth-extensions"))
+    testImplementation(projects.common.truthExtensions)
 }

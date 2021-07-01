@@ -1,15 +1,14 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
 dependencies {
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.gradle.android)
+    implementation(projects.gradle.gradleExtensions)
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

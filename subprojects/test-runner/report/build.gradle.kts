@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
     id("convention.test-fixtures")
 }
 
@@ -10,17 +9,17 @@ publish {
 }
 
 dependencies {
-    api(project(":test-runner:report-viewer"))
-    api(project(":test-runner:report-api"))
+    api(projects.testRunner.reportViewer)
+    api(projects.testRunner.reportApi)
 
-    implementation(project(":common:time"))
-    implementation(project(":common:http-client"))
+    implementation(projects.common.time)
+    implementation(projects.common.httpClient)
 
-    testImplementation(testFixtures(project(":test-runner:report-api")))
+    testImplementation(testFixtures(projects.testRunner.reportApi))
 
-    testFixturesImplementation(testFixtures(project(":logger:logger")))
-    testFixturesImplementation(testFixtures(project(":common:time")))
-    testFixturesImplementation(testFixtures(project(":test-runner:report-viewer")))
+    testFixturesImplementation(testFixtures(projects.logger.logger))
+    testFixturesImplementation(testFixtures(projects.common.time))
+    testFixturesImplementation(testFixtures(projects.testRunner.reportViewer))
 }
 
 kotlin {

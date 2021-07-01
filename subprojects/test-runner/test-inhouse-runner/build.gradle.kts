@@ -1,40 +1,39 @@
 plugins {
     id("convention.kotlin-android-library")
     id("convention.publish-android-library")
-    id("convention.libraries")
 }
 
 dependencies {
-    api(project(":test-runner:test-instrumentation-runner"))
-    api(project(":common:junit-utils"))
-    api(project(":test-runner:test-report-dsl-api"))
+    api(projects.testRunner.testInstrumentationRunner)
+    api(projects.common.junitUtils)
+    api(projects.testRunner.testReportDslApi)
     api(libs.sentry) {
         because("InHouseInstrumentationTestRunner.sentry")
     }
 
-    implementation(project(":common:build-metadata"))
-    implementation(project(":common:sentry"))
-    implementation(project(":logger:elastic-logger"))
-    implementation(project(":common:http-client"))
-    implementation(project(":common:okhttp"))
-    implementation(project(":common:statsd"))
-    implementation(project(":test-runner:report-viewer")) {
+    implementation(projects.common.buildMetadata)
+    implementation(projects.common.sentry)
+    implementation(projects.logger.elasticLogger)
+    implementation(projects.common.httpClient)
+    implementation(projects.common.okhttp)
+    implementation(projects.common.statsd)
+    implementation(projects.testRunner.reportViewer) {
         because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
     }
-    implementation(project(":test-runner:test-report-artifacts")) {
+    implementation(projects.testRunner.testReportArtifacts) {
         because("uses factory to create TestArtifactsProvider")
     }
-    implementation(project(":logger:logger"))
-    implementation(project(":common:junit-utils"))
-    implementation(project(":common:test-okhttp"))
-    implementation(project(":test-runner:test-annotations"))
-    implementation(project(":test-runner:file-storage"))
-    implementation(project(":common:time"))
-    implementation(project(":logger:android-log"))
-    implementation(project(":android-test:ui-testing-core"))
-    implementation(project(":android-test:ui-testing-maps"))
-    implementation(project(":android-test:instrumentation"))
-    implementation(project(":test-runner:test-report"))
+    implementation(projects.logger.logger)
+    implementation(projects.common.junitUtils)
+    implementation(projects.common.testOkhttp)
+    implementation(projects.testRunner.testAnnotations)
+    implementation(projects.testRunner.fileStorage)
+    implementation(projects.common.time)
+    implementation(projects.logger.androidLog)
+    implementation(projects.androidTest.uiTestingCore)
+    implementation(projects.androidTest.uiTestingMaps)
+    implementation(projects.androidTest.instrumentation)
+    implementation(projects.testRunner.testReport)
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)
@@ -44,5 +43,5 @@ dependencies {
 
     testImplementation(libs.kotlinPoet)
     testImplementation(libs.kotlinCompileTesting)
-    testImplementation(project(":common:truth-extensions"))
+    testImplementation(projects.common.truthExtensions)
 }

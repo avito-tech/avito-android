@@ -1,21 +1,20 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
 dependencies {
-    api(project(":gradle:build-verdict-tasks-api"))
+    api(projects.gradle.buildVerdictTasksApi)
 
     implementation(gradleApi())
-    implementation(project(":common:throwable-utils"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":logger:gradle-logger"))
+    implementation(projects.common.throwableUtils)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.logger.gradleLogger)
     implementation(libs.gson)
     implementation(libs.kotlinHtml)
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

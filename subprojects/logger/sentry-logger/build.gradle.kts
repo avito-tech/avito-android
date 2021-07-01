@@ -1,10 +1,9 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
-    api(project(":common:sentry"))
-    api(project(":logger:logger"))
+    api(projects.common.sentry)
+    api(projects.logger.logger)
 }

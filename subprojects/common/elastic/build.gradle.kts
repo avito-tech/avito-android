@@ -1,23 +1,22 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
     api(libs.okhttp)
 
-    implementation(project(":common:time"))
-    implementation(project(":common:okhttp"))
-    implementation(project(":logger:slf4j-logger"))
+    implementation(projects.common.time)
+    implementation(projects.common.okhttp)
+    implementation(projects.logger.slf4jLogger)
 
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
 
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(testFixtures(project(":common:time")))
-    testImplementation(testFixtures(project(":logger:logger")))
+    testImplementation(projects.common.testOkhttp)
+    testImplementation(testFixtures(projects.common.time))
+    testImplementation(testFixtures(projects.logger.logger))
 }
 
 kotlin {

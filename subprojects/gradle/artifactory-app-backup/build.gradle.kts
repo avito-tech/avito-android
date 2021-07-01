@@ -1,23 +1,22 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":signer"))
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:upload-cd-build-result"))
-    implementation(project(":common:problem"))
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.signer)
+    implementation(projects.gradle.android)
+    implementation(projects.gradle.uploadCdBuildResult)
+    implementation(projects.common.problem)
 
-    testImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))
+    testImplementation(projects.gradle.artifactoryAppBackupTestFixtures)
 
-    gradleTestImplementation(project(":gradle:test-project"))
-    gradleTestImplementation(project(":common:test-okhttp"))
-    gradleTestImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))
-    gradleTestImplementation(testFixtures(project(":logger:logger")))
+    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.common.testOkhttp)
+    gradleTestImplementation(projects.gradle.artifactoryAppBackupTestFixtures)
+    gradleTestImplementation(testFixtures(projects.logger.logger))
 }
 
 gradlePlugin {
