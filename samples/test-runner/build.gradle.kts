@@ -32,8 +32,6 @@ dependencies {
 }
 
 instrumentation {
-    output = "$buildDir/reports/test-runner"
-
     sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
 
     filters.register("ci") {

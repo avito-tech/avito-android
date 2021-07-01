@@ -25,3 +25,5 @@ public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Pr
     }
 
 public const val instrumentationPluginId: String = "com.avito.android.instrumentation-tests"
+
+internal const val dumpDirName: String = "input-args-dump"
