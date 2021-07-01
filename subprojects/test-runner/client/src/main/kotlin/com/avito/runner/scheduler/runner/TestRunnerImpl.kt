@@ -16,8 +16,8 @@ import com.avito.runner.scheduler.runner.model.TestRunnerResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.test.model.DeviceName
-import com.avito.time.millisecondsToHumanReadableTime
 import com.avito.test.model.TestCase
+import com.avito.time.millisecondsToHumanReadableTime
 import kotlinx.coroutines.coroutineScope
 
 internal class TestRunnerImpl(
