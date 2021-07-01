@@ -11,6 +11,11 @@ public abstract class ExperimentalExtension {
      */
     public abstract val useService: Property<Boolean>
 
+    /**
+     * Deprecated, not used anymore
+     *
+     * todo check avito usages and remove
+     */
     public abstract val useInMemoryReport: Property<Boolean>
 
     /**

@@ -4,16 +4,13 @@ import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 
-const val testSummaryPluginId = "com.avito.android.test-summary"
+public const val testSummaryPluginId: String = "com.avito.android.test-summary"
 
-const val testSummaryExtensionName = "testSummary"
+public const val testSummaryExtensionName: String = "testSummary"
 
 internal const val testSummaryTaskName = "testSummary"
 
-fun TaskContainer.testSummaryTask(): TaskProvider<TestSummaryTask> =
-    typedNamed(testSummaryTaskName)
-
 internal const val flakyReportTaskName = "flakyReport"
 
-fun TaskContainer.flakyReportTask(): TaskProvider<FlakyReportTask> =
+public fun TaskContainer.flakyReportTask(): TaskProvider<FlakyReportTask> =
     typedNamed(flakyReportTaskName)

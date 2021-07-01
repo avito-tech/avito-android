@@ -23,3 +23,5 @@ public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Pr
             config.instrumentationParams.reportCoordinates()
         }
     }
+
+public const val instrumentationPluginId: String = "com.avito.android.instrumentation-tests"

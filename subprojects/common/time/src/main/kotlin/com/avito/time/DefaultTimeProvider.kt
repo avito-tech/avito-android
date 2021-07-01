@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
  * Used in android runtime < 26, so no java.time API yet
  * consider using https://developer.android.com/studio/write/java8-support#library-desugaring
  */
-class DefaultTimeProvider : TimeProvider {
+public class DefaultTimeProvider : TimeProvider {
 
     override fun nowInMillis(): Long = System.currentTimeMillis()
 

@@ -2,11 +2,11 @@ package com.avito.time
 
 import java.util.Date
 
-class StubTimeProvider : TimeProvider {
+public class StubTimeProvider : TimeProvider {
 
     private val timeProvider = DefaultTimeProvider()
 
-    lateinit var now: Date
+    public lateinit var now: Date
 
     override fun nowInMillis(): Long = timeProvider.nowInMillis()
 

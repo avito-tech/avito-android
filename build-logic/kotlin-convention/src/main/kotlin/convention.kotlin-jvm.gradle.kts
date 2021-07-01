@@ -5,7 +5,7 @@ plugins {
     id("convention.kotlin-base")
 }
 
-tasks.withType(Jar::class.java).configureEach {
+tasks.withType<Jar>().configureEach {
     manifest {
         attributes(
             mapOf(

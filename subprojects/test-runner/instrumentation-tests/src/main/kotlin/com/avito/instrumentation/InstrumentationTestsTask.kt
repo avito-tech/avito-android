@@ -181,7 +181,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 applicationProguardMapping,
                 testProguardMapping
             ).mapNotNull { it.orNull?.asFile },
-            useInMemoryReport = experiments.useInMemoryReport,
             uploadTestArtifacts = experiments.uploadArtifactsFromRunner,
             reportViewerConfig = reportViewerConfig,
             fetchLogcatForIncompleteTests = experiments.fetchLogcatForIncompleteTests,

@@ -8,6 +8,7 @@ import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.runTask
 import com.avito.git.Git
 import com.avito.http.HttpCodes
+import com.avito.instrumentation.instrumentationPluginId
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
@@ -73,7 +74,7 @@ class UploadCdBuildResultIntegrationTest {
             name = "app",
             plugins = plugins {
                 id("com.avito.android.signer")
-                id("com.avito.android.instrumentation-tests")
+                id(instrumentationPluginId)
                 id("com.avito.android.artifactory-app-backup")
                 id("com.avito.android.cd")
                 id("maven-publish")

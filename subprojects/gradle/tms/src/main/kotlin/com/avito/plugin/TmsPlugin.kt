@@ -1,21 +1,25 @@
 package com.avito.plugin
 
+import com.avito.android.Problem
+import com.avito.android.asPlainText
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.register
 
+// todo stub; remove after 2021.24
 class TmsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val extension = target.extensions.create<TmsExtension>("tms")
+        target.extensions.create<TmsExtension>("tms")
 
-        target.tasks.register<MarkReportAsSourceTask>(markReportAsSourceTaskName) {
-            reportsHost.set(extension.reportsHost)
-        }
+        val logger = GradleLoggerFactory.getLogger(this, target)
 
-        target.afterEvaluate {
-            requireNotNull(extension.reportsHost.orNull) { "tms.reportsHost should be set" }
-        }
+        val problem = Problem(
+            shortDescription = "TmsPlugin is deprecated, remove it",
+            context = "TmsPlugin applied to ${target.path}",
+            because = "TmsPlugin functionality now bundled into TestSummaryPlugin"
+        )
+        logger.warn(problem.asPlainText())
     }
 }

@@ -20,7 +20,7 @@ internal class InstrumentationTestsPluginTest {
             module = AndroidAppModule(
                 "app",
                 plugins = plugins {
-                    id("com.avito.android.instrumentation-tests")
+                    id(instrumentationPluginId)
                 },
                 buildGradleExtra = """
                     instrumentation {
@@ -41,7 +41,7 @@ internal class InstrumentationTestsPluginTest {
             module = AndroidAppModule(
                 moduleName,
                 plugins = plugins {
-                    id("com.avito.android.instrumentation-tests")
+                    id(instrumentationPluginId)
                 },
                 buildGradleExtra = instrumentationConfiguration()
             )
@@ -64,7 +64,7 @@ internal class InstrumentationTestsPluginTest {
             module = AndroidLibModule(
                 moduleName,
                 plugins = plugins {
-                    id("com.avito.android.instrumentation-tests")
+                    id(instrumentationPluginId)
                 },
                 buildGradleExtra = instrumentationConfiguration()
             )

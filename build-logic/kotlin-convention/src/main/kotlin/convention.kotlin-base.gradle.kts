@@ -10,6 +10,12 @@ dependencies {
 }
 
 /**
+ * 1.4 used because of kotlin dsl bundled version
+ * todo use 1.5
+ */
+val kotlinLanguageVersion = "1.4"
+
+/**
  * Exists because `compile` task ambiguous in projects with jvm and android modules combined
  */
 val compileAllTask: TaskProvider<Task> = tasks.register("compileAll") {
@@ -29,6 +35,9 @@ tasks.withType<KotlinCompile>().configureEach {
          * Gradle has 1.4.x bundled
          */
         allWarningsAsErrors = false
+
+        languageVersion = kotlinLanguageVersion
+        apiVersion = kotlinLanguageVersion
 
         freeCompilerArgs = freeCompilerArgs +
             "-Xopt-in=kotlin.RequiresOptIn" +

@@ -57,12 +57,11 @@ public class TestSchedulerFactoryProvider {
 
         return TestSchedulerFactoryImpl(
             finalizerFactory = FinalizerFactoryImpl(
-                metricsConfig = metricsConfig,
                 reportFactory = reportFactory,
+                metricsConfig = metricsConfig,
                 timeProvider = timeProvider,
                 loggerFactory = params.loggerFactory,
                 reportViewerConfig = params.reportViewerConfig,
-                useInMemoryReport = params.useInMemoryReport,
                 suppressFailure = params.suppressFailure,
                 suppressFlaky = params.suppressFlaky,
                 verdictFile = params.verdictFile,
@@ -144,7 +143,6 @@ public class TestSchedulerFactoryProvider {
     ): ReportFactory {
         return ReportFactoryImpl(
             timeProvider = timeProvider,
-            useInMemoryReport = params.useInMemoryReport,
             buildId = params.buildId,
             loggerFactory = params.loggerFactory,
             httpClientProvider = httpClientProvider,

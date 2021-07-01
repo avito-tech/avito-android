@@ -6,7 +6,6 @@ import com.avito.android.runner.devices.model.ReservationData
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.config.TargetConfigurationData
-import com.avito.runner.millisecondsToHumanReadableTime
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.metrics.TestMetricsListener
 import com.avito.runner.scheduler.report.Reporter
@@ -18,6 +17,7 @@ import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.model.TestCase
 import com.avito.test.model.DeviceName
+import com.avito.time.millisecondsToHumanReadableTime
 import kotlinx.coroutines.coroutineScope
 
 internal class TestRunnerImpl(
