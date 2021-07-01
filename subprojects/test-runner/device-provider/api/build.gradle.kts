@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":test-runner:device-provider:model"))
+    api(projects.testRunner.deviceProvider.model)
 }
 
 kotlin {

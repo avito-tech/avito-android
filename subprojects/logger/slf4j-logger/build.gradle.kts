@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":logger:logger"))
+    api(projects.logger.logger)
 
     implementation(libs.slf4jApi)
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":logger:logger"))
+    api(projects.logger.logger)
 }
 
 kotlin {

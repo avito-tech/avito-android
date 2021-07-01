@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":test-runner:report-api"))
-    api(project(":common:result"))
+    api(projects.testRunner.reportApi)
+    api(projects.common.result)
 }
 
 kotlin {

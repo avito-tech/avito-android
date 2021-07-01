@@ -4,12 +4,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:sentry"))
+    api(projects.common.sentry)
 
     implementation(gradleApi())
-    implementation(project(":common:build-metadata"))
-    implementation(project(":common:okhttp"))
-    implementation(project(":logger:logger"))
-    implementation(project(":gradle:build-environment"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.common.buildMetadata)
+    implementation(projects.common.okhttp)
+    implementation(projects.logger.logger)
+    implementation(projects.gradle.buildEnvironment)
+    implementation(projects.gradle.gradleExtensions)
 }
