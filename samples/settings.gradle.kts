@@ -25,15 +25,8 @@ pluginManagement {
 
     @Suppress("UnstableApiUsage")
     repositories {
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")
-                }
-            }
-            filter {
-                includeModuleByRegex("com\\.avito\\.android", ".*")
-            }
+        maven {
+            setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")
         }
         exclusiveContent {
             forRepository {
@@ -42,7 +35,9 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("androidx.*")
+                includeGroup("com.google.testing.platform")
             }
         }
         // not available in mavenCentral

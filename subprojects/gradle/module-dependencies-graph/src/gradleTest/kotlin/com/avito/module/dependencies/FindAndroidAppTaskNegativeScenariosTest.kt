@@ -20,7 +20,7 @@ internal class FindAndroidAppTaskNegativeScenariosTest {
     fun `no modules - fail`() {
         gradlew(projectDir, "findAndroidApp", expectFailure = true)
             .assertThat()
-            .outputContains("No value has been specified for property 'modules'")
+            .outputContains("property 'modules' doesn't have a configured value")
     }
 
     @Test

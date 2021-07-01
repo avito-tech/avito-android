@@ -169,26 +169,13 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("androidx.*")
+                includeGroup("com.google.testing.platform")
             }
         }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
-                }
-            }
-            filter {
-                includeGroup("com.slack.keeper")
-                includeGroup("com.gradle")
-                includeGroup("com.gradle.enterprise")
-                includeGroup("org.jetbrains.kotlin.jvm")
-                includeGroup("org.gradle.kotlin.kotlin-dsl")
-                includeGroupByRegex("nebula\\..*")
-                includeGroup("io.gitlab.arturbosch.detekt")
-                includeGroup("com.autonomousapps.dependency-analysis")
-                includeGroup("com.github.ben-manes.versions")
-            }
+        maven {
+            setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
         }
     }
 
@@ -288,7 +275,6 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
-                includeGroup("com.google.test.platform") // todo remove after upgrade to 4.2.x+
                 includeGroup("com.google.testing.platform")
             }
         }

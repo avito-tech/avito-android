@@ -28,10 +28,6 @@ class ProfileEventAdapter(
 
     private var buildProfile: BuildProfile? = null
 
-    @Deprecated(message = "https://github.com/gradle/gradle/issues/7613")
-    override fun buildStarted(gradle: Gradle) {
-    }
-
     fun buildStarted(startedTime: BuildStartedTime) {
         val now = clock.currentTime
 
