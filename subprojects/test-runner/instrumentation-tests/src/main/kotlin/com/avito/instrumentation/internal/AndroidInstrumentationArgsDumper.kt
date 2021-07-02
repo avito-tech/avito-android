@@ -12,6 +12,7 @@ internal class AndroidInstrumentationArgsDumper(private val dumpDir: File) {
         getDumpFile().writer().use { gson.toJson(args, it) }
     }
 
+    @Suppress("unchecked_cast")
     fun readDump(): Map<String, String> {
         return gson.fromJson(getDumpFile().reader(), Map::class.java) as Map<String, String>
     }

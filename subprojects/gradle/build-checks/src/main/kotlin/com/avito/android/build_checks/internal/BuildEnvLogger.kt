@@ -7,6 +7,7 @@ import com.avito.logger.Logger
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 internal class BuildEnvLogger(
     private val project: Project,
@@ -32,7 +33,7 @@ org.gradle.caching=$isBuildCachingEnabled
 android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
 android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}
 android.builder.sdkDownload=${project.getOptionalStringProperty("android.builder.sdkDownload")}
-kotlin.version=${envInfo.kotlinVersion}
+kotlin.version=${project.getKotlinPluginVersion()}
 kotlin.incremental=${project.getOptionalStringProperty("kotlin.incremental")}
 minSdk=$minSdk
 preDexLibrariesEnabled=${project.getOptionalStringProperty("preDexLibrariesEnabled")}

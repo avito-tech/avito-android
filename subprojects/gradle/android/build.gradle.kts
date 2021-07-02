@@ -3,9 +3,6 @@ plugins {
     id("convention.publish-kotlin-library")
 }
 
-@Suppress("UnstableApiUsage")
-val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
-
 dependencies {
     api(libs.androidGradlePlugin) {
         excludeTransitiveAgpDependencies()

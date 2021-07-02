@@ -1,7 +1,7 @@
 import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.configurationcache.extensions.serviceOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 plugins {
@@ -26,8 +26,6 @@ val gradleTestJarTask = tasks.register<Jar>(gradleTest.jarTaskName) {
     archiveClassifier.set("gradle-tests")
     from(gradleTest.output)
 }
-
-val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
 
 val testTimeoutSeconds = 600
 
@@ -70,14 +68,27 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("buildDir", "$buildDir")
-    systemProperty("kotlinVersion", kotlinVersion)
-    systemProperty("compileSdkVersion", 29)
-    systemProperty("buildToolsVersion", "30.0.3")
-    systemProperty("androidGradlePluginVersion", "4.2.2")
+    systemProperty("kotlinVersion", project.getKotlinPluginVersion())
+
     systemProperty("artifactoryUrl", artifactoryUrl.getOrElse(""))
     systemProperty("isTest", true)
 
     systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
+}
+
+var compileSdkVersion: Int? = null
+var buildToolsVersion: String? = null
+
+// workaround for https://github.com/gradle/gradle/issues/15383
+if (project.name != "gradle-kotlin-dsl-accessors") {
+    val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
+    compileSdkVersion = libs.versions.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.buildTools.get()
+}
+
+gradleTestTask.configure {
+    compileSdkVersion?.let { systemProperty("compileSdkVersion", it) }
+    buildToolsVersion?.let { systemProperty("buildToolsVersion", it) }
 }
 
 dependencies {
