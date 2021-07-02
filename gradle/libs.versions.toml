@@ -76,7 +76,7 @@ jsonPathAssert = "com.jayway.jsonpath:json-path-assert:2.4.0"
 kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.4.0"
 mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:3.3.3"
-freeReflection = "me.weishu:free_reflection:2.2.0"
+freeReflection = "me.weishu:free_reflection:3.0.1"
 antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
 okhttpMock = "com.github.gmazzo:okhttp-mock:1.4.0"
 kotlinTest = "io.kotlintest:kotlintest:2.0.7"
@@ -88,6 +88,7 @@ junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref 
 junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junitPlatformRunner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junit5Platform" }
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit5Platform" }
+licenseePlugin = "app.cash.licensee:licensee-gradle-plugin:1.1.0"
 
 sentry = "io.sentry:sentry:1.7.23"
 statsd = "com.timgroup:java-statsd-client:3.1.0"
