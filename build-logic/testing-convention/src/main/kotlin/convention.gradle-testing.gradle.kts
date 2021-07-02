@@ -2,6 +2,7 @@ import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.configurationcache.extensions.serviceOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
+import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 plugins {
     id("kotlin")
@@ -9,7 +10,17 @@ plugins {
     idea
 }
 
-val gradleTest: SourceSet by sourceSets.creating
+val gradleTest: SourceSet by sourceSets.creating {
+    addExtendsFromRelation(
+        extendingConfigurationName = "gradleTestImplementation",
+        extendsFromConfigurationName = "testImplementation"
+    )
+
+    addExtendsFromRelation(
+        extendingConfigurationName = "gradleTestRuntimeOnly",
+        extendsFromConfigurationName = "testRuntimeOnly"
+    )
+}
 
 val gradleTestJarTask = tasks.register<Jar>(gradleTest.jarTaskName) {
     archiveClassifier.set("gradle-tests")
@@ -69,17 +80,7 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
 }
 
-val junit5Version = "5.7.2"
-val junit5PlatformVersion = "1.7.2"
-
 dependencies {
-    "gradleTestImplementation"(gradleTestKit())
-    "gradleTestImplementation"("org.junit.jupiter:junit-jupiter-api:$junit5Version")
-    "gradleTestImplementation"("com.google.truth:truth:1.0")
-    "gradleTestRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
-    "gradleTestRuntimeOnly"("org.junit.platform:junit-platform-runner:$junit5PlatformVersion")
-    "gradleTestRuntimeOnly"("org.junit.platform:junit-platform-launcher:$junit5PlatformVersion")
-
     // workaround for https://github.com/gradle/gradle/issues/16774
     "gradleTestRuntimeOnly"(
         files(
