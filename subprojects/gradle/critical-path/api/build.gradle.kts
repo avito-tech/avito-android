@@ -18,7 +18,3 @@ dependencies {
     implementation(projects.common.problem)
     implementation(projects.logger.gradleLogger)
 }
-
-kotlin {
-    explicitApi()
-}

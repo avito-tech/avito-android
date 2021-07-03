@@ -1,8 +1,8 @@
 package com.avito.logger
 
-interface LoggerFactory {
+public interface LoggerFactory {
 
-    fun create(tag: String): Logger
+    public fun create(tag: String): Logger
 }
 
-inline fun <reified T> LoggerFactory.create(): Logger = create(tag = T::class.java.simpleName)
+public inline fun <reified T> LoggerFactory.create(): Logger = create(tag = T::class.java.simpleName)

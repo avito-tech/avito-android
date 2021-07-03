@@ -3,7 +3,7 @@ package com.avito.android.util
 import com.avito.android.waiter.repeatFor
 import com.avito.android.waiter.waitFor
 
-fun <T> waitForAssertion(
+public fun <T> waitForAssertion(
     timeoutMilliseconds: Long = DEFAULT_TIMEOUT_MS,
     frequencyMilliseconds: Long = DEFAULT_FREQUENCY_MS,
     action: () -> T
@@ -14,11 +14,11 @@ fun <T> waitForAssertion(
     action = action
 )
 
-fun continuousAssertion(
+public fun continuousAssertion(
     timeoutMilliseconds: Long = DEFAULT_TIMEOUT_MS,
     frequencyMilliseconds: Long = DEFAULT_FREQUENCY_MS,
     action: () -> Unit
-) = repeatFor(
+): Unit = repeatFor(
     timeoutMs = timeoutMilliseconds,
     frequencyMs = frequencyMilliseconds,
     action = action

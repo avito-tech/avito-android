@@ -13,7 +13,7 @@ import java.io.File
 /**
  * @param utilityAnnotations optimize by skip parsing annotations not usable in further logic
  */
-class TestSuiteLoaderImpl(
+internal class TestSuiteLoaderImpl(
     private val dexExtractor: DexFileExtractor = ApkDexFileExtractor(),
     private val utilityAnnotations: Array<String> = arrayOf(
         TEST_ANNOTATION,
@@ -88,7 +88,7 @@ class TestSuiteLoaderImpl(
         throw IllegalStateException("Invalid dex object type")
     }
 
-    companion object {
+    internal companion object {
         private const val DEX_OBJECT_TYPE_PREFIX = 'L'
         private const val TEST_ANNOTATION = "Lorg/junit/Test;"
         private const val KOTLIN_METADATA_ANNOTATION = "Lkotlin/Metadata;"

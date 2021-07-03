@@ -11,7 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
-val Project.graphiteConfig: Provider<GraphiteConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
+public val Project.graphiteConfig: Provider<GraphiteConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
     Providers.of(config(project))
 }
 

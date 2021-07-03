@@ -10,7 +10,7 @@ package com.avito.android.test
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
-annotation class KeepForTesting
+public annotation class KeepForTesting
 
 /**
  * An analog of [androidx.annotation.Keep]
@@ -20,4 +20,4 @@ annotation class KeepForTesting
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
-annotation class KeepSyntheticConstructorsForTesting
+public annotation class KeepSyntheticConstructorsForTesting

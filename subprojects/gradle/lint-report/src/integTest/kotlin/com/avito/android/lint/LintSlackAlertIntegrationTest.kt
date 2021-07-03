@@ -29,7 +29,7 @@ internal class LintSlackAlertIntegrationTest {
 
     private val workspace = requireNotNull(System.getProperty("avito.slack.test.workspace"))
 
-    private val slackClient: SlackClient = SlackClient.Impl(
+    private val slackClient: SlackClient = SlackClient.create(
         serviceName = "lint-report-slack-test",
         token = testToken,
         workspace = workspace,

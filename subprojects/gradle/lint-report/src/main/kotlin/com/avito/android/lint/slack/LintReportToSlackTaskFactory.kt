@@ -33,7 +33,7 @@ public class LintReportToSlackTaskFactory(
     @Suppress("UnstableApiUsage")
     private val slackClientProvider: Provider<SlackClient> by lazy {
         extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
-            SlackClient.Impl(
+            SlackClient.create(
                 serviceName = "lint-report-slack",
                 token = token,
                 workspace = workspace,

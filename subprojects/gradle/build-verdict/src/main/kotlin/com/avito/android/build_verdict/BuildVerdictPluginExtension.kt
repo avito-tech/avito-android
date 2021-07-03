@@ -8,17 +8,16 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.listProperty
 
-@Suppress("UnstableApiUsage")
-abstract class BuildVerdictPluginExtension(
+public abstract class BuildVerdictPluginExtension(
     objects: ObjectFactory,
     layout: ProjectLayout
 ) {
-    val outputDir: Property<Directory> =
-        objects.directoryProperty().convention(layout.projectDirectory.dir("outputs/build-verdict"))
-
     internal val taskVerdictProviders = objects.listProperty<UserDefinedTaskVerdictProducer>()
 
-    fun onTaskFailure(name: String, verdictProducer: TaskVerdictProducer) {
+    public val outputDir: Property<Directory> =
+        objects.directoryProperty().convention(layout.projectDirectory.dir("outputs/build-verdict"))
+
+    public fun onTaskFailure(name: String, verdictProducer: TaskVerdictProducer) {
         taskVerdictProviders.add(
             UserDefinedTaskVerdictProducer(
                 predicate = TaskPredicate.ByName(name),
@@ -27,7 +26,7 @@ abstract class BuildVerdictPluginExtension(
         )
     }
 
-    fun onTaskFailure(acceptedType: Class<in Task>, verdictProducer: TaskVerdictProducer) {
+    public fun onTaskFailure(acceptedType: Class<in Task>, verdictProducer: TaskVerdictProducer) {
         taskVerdictProviders.add(
             UserDefinedTaskVerdictProducer(
                 predicate = TaskPredicate.ByType(acceptedType),
@@ -36,11 +35,11 @@ abstract class BuildVerdictPluginExtension(
         )
     }
 
-    fun onTaskFailure(name: String, producer: (Task) -> SpannedString) {
+    public fun onTaskFailure(name: String, producer: (Task) -> SpannedString) {
         onTaskFailure(name, TaskVerdictProducer.create(producer))
     }
 
-    fun onTaskFailure(acceptedClass: Class<in Task>, producer: (Task) -> SpannedString) {
+    public fun onTaskFailure(acceptedClass: Class<in Task>, producer: (Task) -> SpannedString) {
         onTaskFailure(acceptedClass, TaskVerdictProducer.create(producer))
     }
 }

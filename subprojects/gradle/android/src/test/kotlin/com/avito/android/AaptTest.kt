@@ -1,7 +1,7 @@
 package com.avito.android
 
 import com.avito.truth.isInstanceOf
-import com.avito.utils.ExistingDirectory
+import com.avito.utils.StubExistingDirectory
 import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ internal class AaptTest {
         val expected = "ru.domofond.app.dev"
 
         val processRunner = StubProcessRunner()
-        val aapt = Aapt.Impl(ExistingDirectory.Stub, processRunner)
+        val aapt = AaptImpl(StubExistingDirectory, processRunner)
 
         processRunner.result = Result.Success(aaptOutput)
 
@@ -39,7 +39,7 @@ internal class AaptTest {
         """.trimIndent()
 
         val processRunner = StubProcessRunner()
-        val aapt = Aapt.Impl(ExistingDirectory.Stub, processRunner)
+        val aapt = AaptImpl(StubExistingDirectory, processRunner)
 
         processRunner.result = Result.Success(aaptOutput)
 

@@ -1,5 +1,6 @@
 package com.avito.instrumentation.impact
 
+import com.avito.instrumentation.impact.KotlinClassesFinder.Companion.KOTLIN_FILE_EXTENSION
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import java.io.File
 
-class KotlinClassesFinderImpl : KotlinClassesFinder {
+internal class KotlinClassesFinderImpl : KotlinClassesFinder {
 
     private val psiProject: Project = createKotlinCoreEnvironment()
 
@@ -58,8 +59,6 @@ class KotlinClassesFinderImpl : KotlinClassesFinder {
         FullClassName(parentOrNull()?.asString() ?: "", shortName().asString())
 
     companion object {
-
-        const val KOTLIN_FILE_EXTENSION = "kt"
 
         /**
          *  Based on detekt by Artur Bosch

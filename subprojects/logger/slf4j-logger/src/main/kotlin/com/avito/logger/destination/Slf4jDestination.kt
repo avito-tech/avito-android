@@ -5,7 +5,7 @@ import com.avito.logger.LoggingDestination
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Slf4jDestination(private val tag: String) : LoggingDestination {
+public class Slf4jDestination(private val tag: String) : LoggingDestination {
 
     @Transient
     private lateinit var _logger: Logger

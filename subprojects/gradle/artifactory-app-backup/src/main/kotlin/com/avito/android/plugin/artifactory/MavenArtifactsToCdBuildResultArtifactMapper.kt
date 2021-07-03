@@ -12,7 +12,7 @@ import java.net.URI
  * @param version e.g. "${defaultConfig.versionName}-${defaultConfig.versionCode}-${envArgs.buildNumber}"
  * @param buildVariantByClassifier e.g. "releaseApk": [BuildVariant.RELEASE];
  */
-class MavenArtifactsToCdBuildResultArtifactMapper(
+internal class MavenArtifactsToCdBuildResultArtifactMapper(
     artifactoryUri: URI,
     groupId: String,
     artifactId: String,

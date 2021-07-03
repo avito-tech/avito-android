@@ -10,16 +10,16 @@ import org.gradle.api.Project
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
-val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
+public val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
     Providers.of(
-        StatsDSender.Impl(
+        StatsDSender.create(
             config = config(project),
             loggerFactory = GradleLoggerFactory.fromProject(project)
         )
     )
 }
 
-val Project.statsdConfig: Provider<StatsDConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
+public val Project.statsdConfig: Provider<StatsDConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
     Providers.of(config(project))
 }
 

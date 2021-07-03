@@ -8,9 +8,9 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import javax.inject.Inject
 
-const val deployTaskName = "deployToGooglePlay"
+public const val deployTaskName: String = "deployToGooglePlay"
 
-fun TaskContainer.registerDeployToGooglePlayTask(
+public fun TaskContainer.registerDeployToGooglePlayTask(
     deploys: List<GooglePlayDeploy>,
     configuration: Task.() -> Unit
 ): TaskProvider<out DefaultTask> {
@@ -37,7 +37,7 @@ internal abstract class DeployToGooglePlayTask @Inject constructor(
             ?: throw IllegalStateException("google play key must present in ${project.name}").apply {
                 logger.critical("google play key was empty", this)
             }
-        val deployer = GooglePlayDeployer.Impl(googlePlayKey, logger)
+        val deployer = GooglePlayDeployerImpl(googlePlayKey, logger)
         deployer.deploy(deploys)
     }
 }

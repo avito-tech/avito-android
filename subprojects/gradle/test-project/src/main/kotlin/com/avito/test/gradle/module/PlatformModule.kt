@@ -8,7 +8,7 @@ import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
-class PlatformModule(
+public class PlatformModule(
     override val name: String,
     override val plugins: PluginsSpec = plugins(),
     override val buildGradleExtra: String = "",

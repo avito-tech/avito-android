@@ -17,7 +17,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 import java.io.File
 
-open class VerifyArtifactsStep(
+public open class VerifyArtifactsStep(
     context: String,
     private val artifactsConfig: ArtifactsConfiguration,
     name: String

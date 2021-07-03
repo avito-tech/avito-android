@@ -2,7 +2,7 @@ package com.avito.cd
 
 import com.google.gson.annotations.SerializedName
 
-enum class AndroidArtifactType {
+public enum class AndroidArtifactType {
     @SerializedName("bundle")
     BUNDLE,
 
@@ -10,7 +10,7 @@ enum class AndroidArtifactType {
     APK
 }
 
-enum class BuildVariant {
+public enum class BuildVariant {
     @SerializedName("release")
     RELEASE,
 
@@ -21,7 +21,7 @@ enum class BuildVariant {
     DEBUG
 }
 
-enum class NupokatiProject(val id: String) {
+public enum class NupokatiProject(public val id: String) {
     @SerializedName("avito")
     AVITO("avito"),
 
@@ -29,21 +29,22 @@ enum class NupokatiProject(val id: String) {
     AVITO_TEST("avito_test")
 }
 
-data class CdBuildConfig(
+public data class CdBuildConfig(
     val schemaVersion: Long,
     val project: NupokatiProject,
     val outputDescriptor: OutputDescriptor,
     val releaseVersion: String,
     val deployments: List<Deployment>
 ) {
-    data class OutputDescriptor(
+
+    public data class OutputDescriptor(
         val path: String,
         val skipUpload: Boolean
     )
 
-    sealed class Deployment {
+    public sealed class Deployment {
 
-        data class GooglePlay(
+        public data class GooglePlay(
             val artifactType: AndroidArtifactType,
             val buildVariant: BuildVariant,
             val track: Track
@@ -53,7 +54,7 @@ data class CdBuildConfig(
          * Deploy artifacts to QApps.
          * Uses UploadToQapps build step to find them.
          */
-        data class Qapps(
+        public data class Qapps(
             /**
              * Send artifacts as release versions.
              * Non-release artifacts stored limited time.
@@ -61,9 +62,9 @@ data class CdBuildConfig(
             val isRelease: Boolean
         ) : Deployment()
 
-        data class Unknown(val type: String) : Deployment()
+        public data class Unknown(val type: String) : Deployment()
 
-        enum class Track {
+        public enum class Track {
             @SerializedName("alpha")
             ALPHA,
 

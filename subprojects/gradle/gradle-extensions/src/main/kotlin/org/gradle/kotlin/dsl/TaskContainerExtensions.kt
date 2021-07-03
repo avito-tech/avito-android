@@ -10,7 +10,7 @@ import org.gradle.api.tasks.TaskProvider
  * @see [TaskContainer.register]
  */
 @Suppress("extension_shadowed_by_member")
-inline fun <reified T : Task> TaskContainer.register(name: String): TaskProvider<T> =
+public inline fun <reified T : Task> TaskContainer.register(name: String): TaskProvider<T> =
     register(name, T::class.java)
 
 /**
@@ -18,7 +18,7 @@ inline fun <reified T : Task> TaskContainer.register(name: String): TaskProvider
  *
  * @see [TaskContainer.register]
  */
-inline fun <reified T : Task> TaskContainer.register(
+public inline fun <reified T : Task> TaskContainer.register(
     name: String,
     noinline configuration: T.() -> Unit
 ): TaskProvider<T> =
@@ -29,7 +29,7 @@ inline fun <reified T : Task> TaskContainer.register(
  *
  * @see [TaskContainer.register]
  */
-inline fun <reified T : Task> TaskContainer.register(
+public inline fun <reified T : Task> TaskContainer.register(
     name: String,
     vararg constructorArgs: Any,
     noinline configuration: T.() -> Unit

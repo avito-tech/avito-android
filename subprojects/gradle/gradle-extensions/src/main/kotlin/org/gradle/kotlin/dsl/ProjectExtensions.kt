@@ -28,14 +28,14 @@ import kotlin.reflect.KClass
  * starting the build.
  */
 @Suppress("nothing_to_inline")
-inline fun Project.defaultTasks(vararg tasks: Task) {
+public inline fun Project.defaultTasks(vararg tasks: Task) {
     defaultTasks(*tasks.map { it.name }.toTypedArray())
 }
 
 /**
  * Returns the plugin convention or extension of the specified type.
  */
-inline fun <reified T : Any> Project.the(): T =
+public inline fun <reified T : Any> Project.the(): T =
     typeOf<T>().let { type ->
         convention.findByType(type)
             ?: convention.findPlugin(T::class.java)
@@ -45,7 +45,7 @@ inline fun <reified T : Any> Project.the(): T =
 /**
  * Returns the plugin convention or extension of the specified type.
  */
-fun <T : Any> Project.the(extensionType: KClass<T>): T =
+public fun <T : Any> Project.the(extensionType: KClass<T>): T =
     convention.findByType(extensionType.java)
         ?: convention.findPlugin(extensionType.java)
         ?: convention.getByType(extensionType.java)
@@ -58,13 +58,13 @@ fun <T : Any> Project.the(extensionType: KClass<T>): T =
  *
  * @param configuration the configuration block.
  */
-fun Project.repositories(configuration: RepositoryHandler.() -> Unit) =
+public fun Project.repositories(configuration: RepositoryHandler.() -> Unit): Unit =
     repositories.configuration()
 
 /**
  * Configures the repositories for the script dependencies.
  */
-fun ScriptHandler.repositories(configuration: RepositoryHandler.() -> Unit) =
+public fun ScriptHandler.repositories(configuration: RepositoryHandler.() -> Unit): Unit =
     repositories.configuration()
 
 /**
@@ -80,7 +80,7 @@ fun ScriptHandler.repositories(configuration: RepositoryHandler.() -> Unit) =
  *
  * @see [Project.container]
  */
-inline fun <reified T> Project.container(): NamedDomainObjectContainer<T> =
+public inline fun <reified T> Project.container(): NamedDomainObjectContainer<T> =
     container(T::class.java)
 
 /**
@@ -97,5 +97,5 @@ inline fun <reified T> Project.container(): NamedDomainObjectContainer<T> =
  *
  * @see [Project.container]
  */
-inline fun <reified T> Project.container(noinline factory: (String) -> T): NamedDomainObjectContainer<T> =
+public inline fun <reified T> Project.container(noinline factory: (String) -> T): NamedDomainObjectContainer<T> =
     container(T::class.java, factory)

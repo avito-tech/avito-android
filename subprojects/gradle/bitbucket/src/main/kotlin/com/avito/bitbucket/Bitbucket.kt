@@ -6,20 +6,20 @@ import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
 import java.io.File
 
-interface Bitbucket {
+public interface Bitbucket {
 
-    data class InsightIssue(
+    public data class InsightIssue(
         val message: String,
         val path: String,
         val line: Int,
         val severity: Severity
     )
 
-    fun addComment(comment: String)
+    public fun addComment(comment: String)
 
-    fun createCommentWithTask(comment: String, task: String)
+    public fun createCommentWithTask(comment: String, task: String)
 
-    fun addInsights(
+    public fun addInsights(
         rootDir: File,
         sourceCommitHash: String,
         targetCommitHash: String,
@@ -32,7 +32,7 @@ interface Bitbucket {
     /**
      * Вариант без issues
      */
-    fun addInsightReport(
+    public fun addInsightReport(
         sourceCommitHash: String,
         key: String,
         title: String,
@@ -41,9 +41,9 @@ interface Bitbucket {
         data: List<InsightData>
     ): Result<Unit>
 
-    companion object {
+    public companion object {
 
-        fun create(
+        public fun create(
             bitbucketConfig: BitbucketConfig,
             pullRequestId: Int?,
             loggerFactory: LoggerFactory,

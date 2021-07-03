@@ -1,40 +1,24 @@
 package com.avito.utils
 
 import com.avito.android.Problem
-import com.avito.android.asRuntimeException
 import org.gradle.api.Project
 
 @Suppress("unused")
-val Project.buildFailer: BuildFailer
-    get() = BuildFailer.RealFailer()
+public val Project.buildFailer: BuildFailer
+    get() = RealFailer()
 
-interface BuildFailer {
+public interface BuildFailer {
 
-    fun failBuild(
+    public fun failBuild(
         problem: Problem
     )
 
-    fun failBuild(
+    public fun failBuild(
         message: String
     )
 
-    fun failBuild(
+    public fun failBuild(
         message: String,
         cause: Throwable
     )
-
-    class RealFailer : BuildFailer {
-
-        override fun failBuild(problem: Problem) {
-            throw problem.asRuntimeException()
-        }
-
-        override fun failBuild(message: String) {
-            throw IllegalStateException(message)
-        }
-
-        override fun failBuild(message: String, cause: Throwable) {
-            throw IllegalStateException(message, cause)
-        }
-    }
 }

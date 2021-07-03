@@ -7,7 +7,8 @@ import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.test.model.TestName
 import rx.Observable
 
-interface InstrumentationTestCaseRunParser {
+internal interface InstrumentationTestCaseRunParser {
+
     fun parse(output: Observable<ProcessNotification.Output>): Observable<InstrumentationTestCaseRun>
 
     class Impl : InstrumentationTestCaseRunParser {

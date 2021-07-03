@@ -7,7 +7,7 @@ import java.io.File
 /**
  * Simplified android project model
  */
-class AndroidProject(project: Project) : Project by project {
+internal class AndroidProject(project: Project) : Project by project {
 
     init {
         require(project.isAndroid()) { "Trying to create AndroidProject from non-android ${project.path}" }
@@ -20,7 +20,7 @@ class AndroidProject(project: Project) : Project by project {
     }
 }
 
-class AndroidManifest(
+internal class AndroidManifest(
     private val projectDir: File,
     private val sourceSet: String = "main"
 ) {

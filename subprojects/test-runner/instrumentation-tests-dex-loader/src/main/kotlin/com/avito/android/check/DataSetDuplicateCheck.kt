@@ -2,7 +2,7 @@ package com.avito.android.check
 
 import com.avito.android.AnnotationData
 
-class DataSetDuplicateCheck(override val onViolation: (String) -> Unit) : TestSignatureCheck {
+public class DataSetDuplicateCheck(override val onViolation: (String) -> Unit) : TestSignatureCheck {
 
     private val dataSetNumberAnnotationValue = "value"
 

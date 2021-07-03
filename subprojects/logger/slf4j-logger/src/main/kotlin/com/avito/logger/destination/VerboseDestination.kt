@@ -4,7 +4,7 @@ import com.avito.logger.LogLevel
 import com.avito.logger.LoggingDestination
 import java.io.Serializable
 
-data class VerboseMode(
+public data class VerboseMode(
     val verbosity: LogLevel,
     val printStackTrace: Boolean
 ) : Serializable
@@ -12,7 +12,7 @@ data class VerboseMode(
 /**
  * See Logging.md#Verbose-mode
  */
-class VerboseDestination(private val verboseMode: VerboseMode) : LoggingDestination {
+public class VerboseDestination(private val verboseMode: VerboseMode) : LoggingDestination {
 
     private val verbosity = verboseMode.verbosity
 

@@ -11,7 +11,7 @@ internal class ProguardRetracerTest {
     @Test
     fun retrace(@TempDir mappingDir: File) {
         val mappingFile = writeMapping(mappingDir)
-        val result = ProguardRetracer.Impl(listOf(mappingFile)).retrace(STACKTRACE)
+        val result = ProguardRetracerImpl(listOf(mappingFile)).retrace(STACKTRACE)
 
         assertThat(result).doesNotContain("b.a.a.a.a.a(:5)")
         assertThat(result).contains("com.avito.android.ui.Crasher.crash")

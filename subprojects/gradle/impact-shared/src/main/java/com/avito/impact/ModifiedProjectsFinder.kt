@@ -5,17 +5,17 @@ import com.avito.impact.fallback.ImpactFallbackDetector
 import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
 
-interface ModifiedProjectsFinder {
+public interface ModifiedProjectsFinder {
 
-    fun allProjects(): Set<Project>
+    public fun allProjects(): Set<Project>
 
-    fun modifiedProjects(): Set<ModifiedProject>
+    public fun modifiedProjects(): Set<ModifiedProject>
 
-    fun modifiedProjects(configurationType: ConfigurationType): Set<ModifiedProject>
+    public fun modifiedProjects(configurationType: ConfigurationType): Set<ModifiedProject>
 
-    companion object {
+    public companion object {
 
-        fun from(project: Project): ModifiedProjectsFinder {
+        public fun from(project: Project): ModifiedProjectsFinder {
             return ModifiedProjectsFinderImpl(project, project.impactFallbackDetector)
         }
     }

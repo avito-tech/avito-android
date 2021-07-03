@@ -7,12 +7,12 @@ import com.google.common.truth.Subject
 import com.google.common.truth.Subject.Factory
 import com.google.common.truth.Truth.assertAbout
 
-class ExtendedIterableSubject<T>(
+public class ExtendedIterableSubject<T>(
     failureMetadata: FailureMetadata,
-    val actual: Iterable<T>
+    private val actual: Iterable<T>
 ) : Subject(failureMetadata, actual) {
 
-    fun <T> containsExactlyOne(clazz: Class<T>, condition: (T) -> Boolean) {
+    public fun <T> containsExactlyOne(clazz: Class<T>, condition: (T) -> Boolean) {
         val ts = FluentIterable.from(this.actual).filter(clazz)
         if (ts.size() != 1) {
             failWithActual("contains exactly one instance of", clazz.simpleName)
@@ -24,13 +24,14 @@ class ExtendedIterableSubject<T>(
         }
     }
 
-    companion object {
+    public companion object {
 
-        inline fun <reified T> iterable() = Factory { metadata, actual: Iterable<T> ->
-            ExtendedIterableSubject(metadata, actual)
-        }
+        public inline fun <reified T> iterable(): Factory<ExtendedIterableSubject<T>, Iterable<T>> =
+            Factory { metadata, actual: Iterable<T> ->
+                ExtendedIterableSubject(metadata, actual)
+            }
 
-        inline fun <reified T> assertIterable(iterable: Iterable<T>): ExtendedIterableSubject<T> =
+        public inline fun <reified T> assertIterable(iterable: Iterable<T>): ExtendedIterableSubject<T> =
             assertAbout(iterable<T>()).that(iterable)
     }
 }

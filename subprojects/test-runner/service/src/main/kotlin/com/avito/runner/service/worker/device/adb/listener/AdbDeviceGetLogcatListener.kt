@@ -2,19 +2,20 @@ package com.avito.runner.service.worker.device.adb.listener
 
 import com.avito.runner.service.worker.device.Device
 
-interface AdbDeviceGetLogcatListener {
-    fun onLogcatSuccess(
+public interface AdbDeviceGetLogcatListener {
+
+    public fun onLogcatSuccess(
         device: Device,
         durationMs: Long
     )
 
-    fun onLogcatError(
+    public fun onLogcatError(
         device: Device,
         durationMs: Long,
         throwable: Throwable
     )
 
-    fun onLogcatFailure(
+    public fun onLogcatFailure(
         device: Device,
         durationMs: Long,
         throwable: Throwable

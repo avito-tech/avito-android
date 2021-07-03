@@ -8,8 +8,7 @@ import org.gradle.api.Project
 /**
  * To share the same robolectric settings across modules
  */
-@Suppress("unused")
-class RobolectricPlugin : Plugin<Project> {
+public class RobolectricPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
 

@@ -1,8 +1,9 @@
 package com.avito.runner.service.worker.device.adb
 
 // TODO duplicate part of [com.avito.android.AndroidSdk.androidHome]
-class Adb {
-    val adbPath: String
+public class Adb {
+
+    public val adbPath: String
 
     init {
         val androidHome: String = requireNotNull(System.getenv("ANDROID_HOME")) {

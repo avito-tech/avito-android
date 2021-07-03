@@ -2,11 +2,11 @@ package com.avito.slack
 
 import okhttp3.HttpUrl
 
-object SlackStringFormat {
+public object SlackStringFormat {
 
-    const val mentionChannel = "<!channel>"
+    public const val mentionChannel: String = "<!channel>"
 
-    fun ellipsize(string: String, limit: Int): String {
+    public fun ellipsize(string: String, limit: Int): String {
         return if (string.length <= limit) {
             string
         } else {
@@ -14,7 +14,7 @@ object SlackStringFormat {
         }
     }
 
-    fun link(label: String, url: String): String = "<$url|$label>"
+    public fun link(label: String, url: String): String = "<$url|$label>"
 
-    fun link(label: String, url: HttpUrl): String = "<$url|$label>"
+    public fun link(label: String, url: HttpUrl): String = "<$url|$label>"
 }

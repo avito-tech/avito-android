@@ -5,7 +5,7 @@ package com.avito.kotlin.dsl
  *
  * see example in build.gradle.kts (Test task).systemProperty
  */
-fun getSystemProperty(name: String, defaultValue: String? = null): String {
+public fun getSystemProperty(name: String, defaultValue: String? = null): String {
     val rawValue = System.getProperty(name)
 
     return if (rawValue.isNullOrBlank()) {

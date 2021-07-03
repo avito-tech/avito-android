@@ -21,7 +21,3 @@ dependencies {
     testFixturesImplementation(testFixtures(projects.common.time))
     testFixturesImplementation(testFixtures(projects.testRunner.reportViewer))
 }
-
-kotlin {
-    explicitApi()
-}

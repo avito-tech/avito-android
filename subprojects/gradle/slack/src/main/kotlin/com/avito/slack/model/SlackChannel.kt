@@ -11,7 +11,7 @@ import java.io.Serializable
  *  - readability: it's easier to know what is the target channel just by looking at config file
  *  - consistency: channel id could be changed in some cases, it should point at the same name
  */
-data class SlackChannel(
+public data class SlackChannel(
     val id: String,
     val name: String
 ) : Serializable {
@@ -22,5 +22,5 @@ data class SlackChannel(
         }
     }
 
-    companion object
+    public companion object
 }

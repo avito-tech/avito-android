@@ -3,7 +3,7 @@ package com.avito.android.util.matcher
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 
-class MapContainsMapMatcher<K, V>(private val map: Map<K, V>) : TypeSafeMatcher<Map<K, V>>() {
+public class MapContainsMapMatcher<K, V>(private val map: Map<K, V>) : TypeSafeMatcher<Map<K, V>>() {
 
     override fun describeMismatchSafely(
         item: Map<K, V>,

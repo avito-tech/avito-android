@@ -1,6 +1,6 @@
 package ru.avito.reporter
 
-class StubWebSocketReporter : WebSocketReporter {
+public class StubWebSocketReporter : WebSocketReporter {
 
     override fun onConnect(host: String) {
     }

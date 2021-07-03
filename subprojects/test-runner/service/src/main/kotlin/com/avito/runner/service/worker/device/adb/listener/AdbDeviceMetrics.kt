@@ -6,7 +6,7 @@ import com.avito.android.stats.TimeMetric
 import com.avito.runner.service.worker.device.Device
 import java.nio.file.Path
 
-class AdbDeviceMetrics(
+internal class AdbDeviceMetrics(
     private val statsDSender: StatsDSender,
     runnerPrefix: SeriesName
 ) : AdbDeviceEventsListener {

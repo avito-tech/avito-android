@@ -18,9 +18,9 @@ import java.util.stream.Collectors.joining
  *
  * https://github.com/junit-team/junit5/issues/694
  */
-object ManualTempFolder {
+public object ManualTempFolder {
 
-    fun runIn(block: (File) -> Unit): File {
+    public fun runIn(block: (File) -> Unit): File {
         val tempFolder = Files.createTempDirectory("junit")
         val file = tempFolder.toFile()
         try {

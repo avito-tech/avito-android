@@ -8,10 +8,10 @@ import com.avito.impact.plugin.internal.ImpactMetricsSender
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-abstract class ImpactMetricsTask : DefaultTask() {
+public abstract class ImpactMetricsTask : DefaultTask() {
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val statsd = project.statsd.get()
         val environmentInfo = project.environmentInfo().get()
         val finder = ModifiedProjectsFinder.from(project)

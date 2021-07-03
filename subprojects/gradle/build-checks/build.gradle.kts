@@ -34,7 +34,3 @@ gradlePlugin {
         }
     }
 }
-
-kotlin {
-    explicitApi()
-}

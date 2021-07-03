@@ -1,22 +1,24 @@
 package com.avito.android.test.report
 
-class StepException(
-    val isPrecondition: Boolean,
-    val action: String,
-    val assertion: String?,
+import java.util.Locale
+
+public class StepException(
+    public val isPrecondition: Boolean,
+    public val action: String,
+    public val assertion: String?,
     cause: Throwable?
 ) : RuntimeException(
     title(isPrecondition) + "\n" + data(isPrecondition, action, assertion),
     cause
 ) {
 
-    companion object {
+    public companion object {
         private fun slug(isPrecondition: Boolean) = if (isPrecondition) "precondition" else "шаг"
 
-        fun title(isPrecondition: Boolean) = "Не удалось выполнить ${slug(isPrecondition)}"
+        public fun title(isPrecondition: Boolean): String = "Не удалось выполнить ${slug(isPrecondition)}"
 
-        fun data(isPrecondition: Boolean, action: String, assertion: String?): String {
-            return "${slug(isPrecondition).capitalize()}:\n${action.prependIndent()}"
+        public fun data(isPrecondition: Boolean, action: String, assertion: String?): String {
+            return "${slug(isPrecondition).capitalize(Locale.getDefault())}:\n${action.prependIndent()}"
                 .let {
                     if (assertion != null) {
                         "$it\nПроверка:\n${assertion.prependIndent()}"

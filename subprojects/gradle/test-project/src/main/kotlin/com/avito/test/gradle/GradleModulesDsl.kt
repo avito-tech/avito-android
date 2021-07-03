@@ -4,10 +4,10 @@ package com.avito.test.gradle
 
 import java.io.File
 
-fun File.kotlinClass(className: String, content: () -> String? = { "class $className" }) =
+public fun File.kotlinClass(className: String, content: () -> String? = { "class $className" }): File =
     file("$className.kt", content.invoke())
 
-fun File.kotlinClass(
+public fun File.kotlinClass(
     className: String,
     packageName: String,
     content: () -> String = {
@@ -16,18 +16,18 @@ fun File.kotlinClass(
             class $className
         """.trimIndent()
     }
-) = file("${packageName.replace(".", "/")}/$className.kt", content.invoke())
+): File = file("${packageName.replace(".", "/")}/$className.kt", content.invoke())
 
-fun File.module(
+public fun File.module(
     name: String,
     configuration: File.() -> Unit
-) = dir(name, configuration)
+): File = dir(name, configuration)
 
-fun File.mutate(content: String = "changes") = apply {
+public fun File.mutate(content: String = "changes"): File = apply {
     writeText(content)
 }
 
-fun File.dir(
+public fun File.dir(
     path: String,
     mutator: File.() -> Unit = {}
 ): File {
@@ -37,7 +37,7 @@ fun File.dir(
     return dir
 }
 
-fun File.file(name: String, content: String? = null): File {
+public fun File.file(name: String, content: String? = null): File {
     val file: File = if (name.contains('/')) {
         val directory = File(this, name.substringBeforeLast('/'))
         directory.mkdirs()
@@ -54,6 +54,6 @@ fun File.file(name: String, content: String? = null): File {
     return file
 }
 
-fun File.append(path: String, content: String): File {
+public fun File.append(path: String, content: String): File {
     return File(this, path).apply { appendText(content) }
 }

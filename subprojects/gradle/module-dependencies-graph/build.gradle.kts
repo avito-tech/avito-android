@@ -15,10 +15,6 @@ dependencies {
     gradleTestImplementation(projects.gradle.testProject)
 }
 
-kotlin {
-    explicitApi()
-}
-
 gradlePlugin {
     plugins {
         create("moduleDependenciesGraph") {

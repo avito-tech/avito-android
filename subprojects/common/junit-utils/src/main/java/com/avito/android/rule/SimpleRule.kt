@@ -4,7 +4,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-abstract class SimpleRule : TestRule {
+public abstract class SimpleRule : TestRule {
 
     final override fun apply(base: Statement, description: Description): Statement =
         object : Statement() {

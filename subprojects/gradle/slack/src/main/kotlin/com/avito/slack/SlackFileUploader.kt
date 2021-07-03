@@ -4,9 +4,9 @@ import com.avito.android.Result
 import com.avito.slack.model.SlackChannel
 import java.io.File
 
-interface SlackFileUploader {
+public interface SlackFileUploader {
 
-    fun uploadHtml(
+    public fun uploadHtml(
         channel: SlackChannel,
         message: String,
         file: File

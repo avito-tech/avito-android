@@ -6,7 +6,7 @@ import okhttp3.mockwebserver.MockResponse
  * В maven-publish стали проверять metadata, придется отдавать при попытках залить на mockwebserver
  * https://github.com/gradle/gradle/pull/9465
  */
-fun MockResponse.setStubMavenMetadataBody(): MockResponse {
+public fun MockResponse.setStubMavenMetadataBody(): MockResponse {
     setBody(
         """<?xml version="1.0" encoding="UTF-8"?>
 <metadata>

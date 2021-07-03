@@ -7,7 +7,7 @@ import org.gradle.api.tasks.WriteProperties
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-open class BuildPropertiesPlugin : Plugin<Project> {
+public open class BuildPropertiesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         registerPropertiesTask(project)

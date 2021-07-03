@@ -4,7 +4,7 @@ import com.avito.android.Result
 import com.avito.time.TimeProvider
 import java.util.concurrent.TimeUnit
 
-class RetryAction(private val timeProvider: TimeProvider) {
+internal class RetryAction(private val timeProvider: TimeProvider) {
 
     fun <T> retry(
         retriesCount: Int,

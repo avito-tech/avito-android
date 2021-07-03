@@ -12,7 +12,7 @@ import kotlin.reflect.KProperty
  * todo true by default, false to not break anything that rely on previous behavior
  */
 @JvmOverloads
-fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false): String? =
+public fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false): String? =
     if (hasProperty(name)) {
         val string = property(name)?.toString()
         if (nullIfBlank && string.isNullOrBlank()) null else string
@@ -21,14 +21,14 @@ fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false
     }
 
 @JvmOverloads
-fun Project.getOptionalStringProperty(name: String, default: String, defaultIfBlank: Boolean = true): String =
+public fun Project.getOptionalStringProperty(name: String, default: String, defaultIfBlank: Boolean = true): String =
     getOptionalStringProperty(name, nullIfBlank = defaultIfBlank) ?: default
 
 /**
  * @param allowBlank todo false by default
  */
 @JvmOverloads
-fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true): String {
+public fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true): String {
     return if (hasProperty(name)) {
         val string = property(name)?.toString()
         if (string.isNullOrBlank()) {
@@ -45,29 +45,29 @@ fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true)
     }
 }
 
-fun Project.getOptionalIntProperty(name: String): Int? =
+public fun Project.getOptionalIntProperty(name: String): Int? =
     try {
         getOptionalStringProperty(name, nullIfBlank = true)?.toInt()
     } catch (e: NumberFormatException) {
         null
     }
 
-fun Project.getOptionalIntProperty(name: String, default: Int): Int =
+public fun Project.getOptionalIntProperty(name: String, default: Int): Int =
     try {
         getOptionalStringProperty(name, nullIfBlank = true)?.toInt() ?: default
     } catch (e: NumberFormatException) {
         default
     }
 
-fun Project.getMandatoryIntProperty(name: String): Int =
+public fun Project.getMandatoryIntProperty(name: String): Int =
     getOptionalIntProperty(name) ?: throw RuntimeException("Parameter: $name is required (must be digit)")
 
 @JvmOverloads
-fun Project.getBooleanProperty(name: String, default: Boolean = false): Boolean =
+public fun Project.getBooleanProperty(name: String, default: Boolean = false): Boolean =
     getOptionalStringProperty(name, nullIfBlank = true)?.toBoolean() ?: default
 
 @JvmOverloads
-fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Float? =
+public fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Float? =
     try {
         getOptionalStringProperty(name, nullIfBlank = true)?.toFloat() ?: default
     } catch (e: NumberFormatException) {
@@ -75,38 +75,38 @@ fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Floa
     }
 
 @Suppress("UnstableApiUsage")
-fun Project.fileProperty(file: File): RegularFileProperty = objects.fileProperty().apply { set { file } }
+public fun Project.fileProperty(file: File): RegularFileProperty = objects.fileProperty().apply { set { file } }
 
-fun Project.isRoot() = project == project.rootProject
+public fun Project.isRoot(): Boolean = project == project.rootProject
 
-object ProjectProperty {
+public object ProjectProperty {
 
     /**
      * You can write a value only one time.
      * Before that, it's gonna return a fallback if any.
      */
-    fun <T : Any> lateinit(
+    public fun <T : Any> lateinit(
         key: String? = null,
         fallbackValue: T? = null
-    ) = PropertyInProjectExtras(key, fallbackValue)
+    ): PropertyInProjectExtras<T> = PropertyInProjectExtras(key, fallbackValue)
 
     // TODO: return lazy Provider<T>
-    fun <T : Any> lazy(
+    public fun <T : Any> lazy(
         key: String? = null,
         scope: PropertyScope = PropertyScope.PER_PROJECT,
         factory: (project: Project) -> T
-    ) = LazyPropertyInProjectExtras(key, scope, factory)
+    ): LazyPropertyInProjectExtras<T> = LazyPropertyInProjectExtras(key, scope, factory)
 }
 
 /**
  * Use [ProjectProperty.lazy] to gain instance
  */
-class PropertyInProjectExtras<T : Any>(
+public class PropertyInProjectExtras<T : Any>(
     private val key: String?,
     private val fallbackValue: T?
 ) {
 
-    operator fun getValue(thisRef: Project, property: KProperty<*>): T {
+    public operator fun getValue(thisRef: Project, property: KProperty<*>): T {
         val key = key ?: property.name
         if (!thisRef.extensions.extraProperties.has(key) && fallbackValue != null) {
             return fallbackValue
@@ -115,7 +115,7 @@ class PropertyInProjectExtras<T : Any>(
         return thisRef.extensions.extraProperties[key] as T
     }
 
-    operator fun setValue(thisRef: Project, property: KProperty<*>, value: T) {
+    public operator fun setValue(thisRef: Project, property: KProperty<*>, value: T) {
         val key = key ?: property.name
         if (thisRef.extensions.extraProperties.has(key)) {
             error("$key is already set for ${thisRef.path}.ext; This is not normal")
@@ -127,13 +127,13 @@ class PropertyInProjectExtras<T : Any>(
 /**
  * Use [ProjectProperty.lazy] to gain instance
  */
-class LazyPropertyInProjectExtras<T : Any>(
+public class LazyPropertyInProjectExtras<T : Any>(
     private val key: String?,
     private val scope: PropertyScope,
     private val factory: (project: Project) -> T
 ) {
 
-    operator fun getValue(thisRef: Project, property: KProperty<*>): T {
+    public operator fun getValue(thisRef: Project, property: KProperty<*>): T {
         val key = key ?: property.name + "_cached_prop"
         val project = when (scope) {
             PropertyScope.PER_PROJECT -> thisRef
@@ -154,7 +154,7 @@ class LazyPropertyInProjectExtras<T : Any>(
 }
 
 // TODO: merge with ProjectProperty
-fun <T : Any> Project.lazyProperty(
+public fun <T : Any> Project.lazyProperty(
     name: String,
     factory: (project: Project) -> T
 ): T {
@@ -169,4 +169,4 @@ fun <T : Any> Project.lazyProperty(
     }
 }
 
-enum class PropertyScope { PER_PROJECT, ROOT_PROJECT }
+public enum class PropertyScope { PER_PROJECT, ROOT_PROJECT }

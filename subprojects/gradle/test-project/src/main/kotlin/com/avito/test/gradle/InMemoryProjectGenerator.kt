@@ -6,12 +6,12 @@ import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.initialization.GradlePropertiesController
 import org.gradle.testfixtures.ProjectBuilder
 
-fun rootProject(): Project =
+public fun rootProject(): Project =
     ProjectBuilder.builder()
         .withName("root")
         .build()
 
-fun androidApp(name: String, parent: Project): Project {
+public fun androidApp(name: String, parent: Project): Project {
     val project = buildProject(name, parent)
     project.plugins.apply("com.android.application")
     project.repositories.run {
@@ -21,7 +21,7 @@ fun androidApp(name: String, parent: Project): Project {
     return project
 }
 
-fun androidLib(name: String, parent: Project): Project {
+public fun androidLib(name: String, parent: Project): Project {
     val project = buildProject(name, parent)
     project.plugins.apply("com.android.library")
     project.repositories.run {
@@ -31,17 +31,17 @@ fun androidLib(name: String, parent: Project): Project {
     return project
 }
 
-fun javaLib(name: String, parent: Project): Project {
+public fun javaLib(name: String, parent: Project): Project {
     val project = buildProject(name, parent)
     project.plugins.apply(JavaLibraryPlugin::class.java)
     return project
 }
 
-fun Project.apiDependency(dependency: Project) {
+public fun Project.apiDependency(dependency: Project) {
     dependency("api", dependency)
 }
 
-fun Project.implementationDependency(dependency: Project) {
+public fun Project.implementationDependency(dependency: Project) {
     dependency("implementation", dependency)
 }
 

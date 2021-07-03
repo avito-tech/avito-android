@@ -12,7 +12,7 @@ import org.gradle.kotlin.dsl.support.uncheckedCast
  * @param T the expected type of the delegate argument to the closure.
  * @param action the function to be adapted.
  */
-fun <T> noOwnerClosureOf(action: T.() -> Unit) =
+public fun <T> noOwnerClosureOf(action: T.() -> Unit): Closure<T> =
     object : Closure<T>(null, null) {
         @Suppress("unused") // to be called dynamically by Groovy
         fun doCall() = uncheckedCast<T>(delegate).action()
@@ -26,7 +26,7 @@ fun <T> noOwnerClosureOf(action: T.() -> Unit) =
  *
  * @see [KotlinClosure1]
  */
-fun <T> Any.closureOf(action: T.() -> Unit): Closure<Any?> =
+public fun <T> Any.closureOf(action: T.() -> Unit): Closure<Any?> =
     KotlinClosure1(action, this, this)
 
 /**
@@ -40,12 +40,12 @@ fun <T> Any.closureOf(action: T.() -> Unit): Closure<Any?> =
  *
  * @see [Closure]
  */
-class KotlinClosure1<in T : Any?, V : Any>(
-    val function: T.() -> V?,
+public class KotlinClosure1<in T : Any?, V : Any>(
+    public val function: T.() -> V?,
     owner: Any? = null,
     thisObject: Any? = null
 ) : Closure<V?>(owner, thisObject) {
 
     @Suppress("unused") // to be called dynamically by Groovy
-    fun doCall(it: T): V? = it.function()
+    public fun doCall(it: T): V? = it.function()
 }

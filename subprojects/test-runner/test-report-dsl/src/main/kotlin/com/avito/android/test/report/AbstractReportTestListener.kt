@@ -5,11 +5,11 @@ import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
-abstract class AbstractReportTestListener : RunListener() {
+public abstract class AbstractReportTestListener : RunListener() {
 
     protected abstract val report: ReportTestLifecycle<*>
 
-    abstract val logger: Logger
+    public abstract val logger: Logger
 
     override fun testStarted(description: Description) {
         processEvent("start", description.displayName) {

@@ -1,6 +1,6 @@
 package com.avito.cd
 
-class BuildOutput {
-    val testResults = mutableMapOf<String, CdBuildResult.TestResultsLink>()
-    var artifacts = emptyList<CdBuildResult.Artifact>()
+public class BuildOutput {
+    public val testResults: MutableMap<String, CdBuildResult.TestResultsLink> = mutableMapOf()
+    public var artifacts: List<CdBuildResult.Artifact> = emptyList()
 }

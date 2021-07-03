@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KaptExtension
  * To share the same room config across modules.
  */
 @Suppress("unused")
-class RoomConfigPlugin : Plugin<Project> {
+public class RoomConfigPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val archPersistence = target.getMandatoryStringProperty("archPersistenceVersion")

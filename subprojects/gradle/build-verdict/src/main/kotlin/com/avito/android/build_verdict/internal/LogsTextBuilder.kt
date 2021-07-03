@@ -1,6 +1,7 @@
 package com.avito.android.build_verdict.internal
 
-class LogsTextBuilder {
+internal class LogsTextBuilder {
+
     private val lines: MutableList<String>
 
     constructor() {

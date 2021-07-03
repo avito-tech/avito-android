@@ -9,7 +9,7 @@ import io.sentry.event.Event
 import io.sentry.event.EventBuilder
 import io.sentry.event.interfaces.ExceptionInterface
 
-class SentryDestination(
+public class SentryDestination(
     private val config: SentryConfig,
     private val metadata: Map<String, String>
 ) : LoggingDestination {

@@ -1,39 +1,39 @@
 package com.avito.android.stats
 
-sealed class StatsMetric {
-    abstract val name: SeriesName
-    abstract val value: Any
-    abstract val type: String
+public sealed class StatsMetric {
+    public abstract val name: SeriesName
+    public abstract val value: Any
+    public abstract val type: String
 }
 
-data class TimeMetric(
+public data class TimeMetric(
     override val name: SeriesName,
-    val timeInMs: Long
+    public val timeInMs: Long
 ) : StatsMetric() {
     override val value: Long = timeInMs
-    override val type = "time"
+    override val type: String = "time"
 }
 
-data class CountMetric(
+public data class CountMetric(
     override val name: SeriesName,
-    val delta: Long = 1
+    public val delta: Long = 1
 ) : StatsMetric() {
     override val value: Long = delta
-    override val type = "count"
+    override val type: String = "count"
 }
 
-data class GaugeLongMetric(
+public data class GaugeLongMetric(
     override val name: SeriesName,
-    val gauge: Long
+    public val gauge: Long
 ) : StatsMetric() {
     override val value: Long = gauge
-    override val type = "gauge"
+    override val type: String = "gauge"
 }
 
-data class GaugeDoubleMetric(
+public data class GaugeDoubleMetric(
     override val name: SeriesName,
-    val gauge: Double
+    public val gauge: Double
 ) : StatsMetric() {
     override val value: Double = gauge
-    override val type = "gauge"
+    override val type: String = "gauge"
 }

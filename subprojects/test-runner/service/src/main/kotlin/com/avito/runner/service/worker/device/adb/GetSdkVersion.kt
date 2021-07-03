@@ -6,7 +6,7 @@ import com.avito.runner.service.worker.device.adb.listener.AdbDeviceGetSdkListen
 import com.avito.utils.ProcessRunner
 import java.time.Duration
 
-class GetSdkVersion(
+internal class GetSdkVersion(
     private val processRunner: ProcessRunner,
     private val retryAction: RetryAction,
     private val adb: Adb,

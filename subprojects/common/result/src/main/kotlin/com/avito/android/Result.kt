@@ -11,19 +11,19 @@ import com.avito.composite_exception.CompositeException
  *
  * Could be replace with [kotlin.Result] as it's return type usage matures to stable
  */
-sealed class Result<T> {
+public sealed class Result<T> {
 
-    fun getOrThrow(): T = when (this) {
+    public fun getOrThrow(): T = when (this) {
         is Success -> value
         is Failure -> throw throwable
     }
 
-    fun getOrElse(func: (Throwable) -> T): T = when (this) {
+    public fun getOrElse(func: (Throwable) -> T): T = when (this) {
         is Success -> value
         is Failure -> func(throwable)
     }
 
-    inline fun <R> map(
+    public inline fun <R> map(
         mapSuccess: (value: T) -> R
     ): Result<R> = when (this) {
         is Success -> try {
@@ -34,7 +34,7 @@ sealed class Result<T> {
         is Failure -> Failure(throwable)
     }
 
-    inline fun <R> flatMap(
+    public inline fun <R> flatMap(
         mapSuccess: (value: T) -> Result<R>
     ): Result<R> = when (this) {
         is Success -> try {
@@ -45,12 +45,12 @@ sealed class Result<T> {
         is Failure -> Failure(throwable)
     }
 
-    inline fun <R> fold(onSuccess: (value: T) -> R, onFailure: (throwable: Throwable) -> R): R = when (this) {
+    public inline fun <R> fold(onSuccess: (value: T) -> R, onFailure: (throwable: Throwable) -> R): R = when (this) {
         is Success -> onSuccess(value)
         is Failure -> onFailure(throwable)
     }
 
-    inline fun recover(func: (Throwable) -> T): Result<T> = when (this) {
+    public inline fun recover(func: (Throwable) -> T): Result<T> = when (this) {
         is Success -> this
         is Failure -> try {
             Success(func(throwable))
@@ -59,7 +59,7 @@ sealed class Result<T> {
         }
     }
 
-    inline fun rescue(f: (Throwable) -> Result<T>): Result<T> = when (this) {
+    public inline fun rescue(f: (Throwable) -> Result<T>): Result<T> = when (this) {
         is Success -> this
         is Failure -> try {
             f(throwable)
@@ -68,7 +68,7 @@ sealed class Result<T> {
         }
     }
 
-    inline fun exists(predicate: (T) -> Boolean): Boolean = when (this) {
+    public inline fun exists(predicate: (T) -> Boolean): Boolean = when (this) {
         is Success -> try {
             predicate(getOrThrow())
         } catch (e: Throwable) {
@@ -77,7 +77,7 @@ sealed class Result<T> {
         is Failure -> false
     }
 
-    inline fun onSuccess(func: (T) -> Unit): Result<T> = when (this) {
+    public inline fun onSuccess(func: (T) -> Unit): Result<T> = when (this) {
         is Success -> {
             func(value)
             this
@@ -85,7 +85,7 @@ sealed class Result<T> {
         is Failure -> this
     }
 
-    inline fun onFailure(func: (Throwable) -> Unit): Result<T> = when (this) {
+    public inline fun onFailure(func: (Throwable) -> Unit): Result<T> = when (this) {
         is Success -> this
         is Failure -> {
             func(throwable)
@@ -93,7 +93,7 @@ sealed class Result<T> {
         }
     }
 
-    inline fun <R> combine(other: Result<T>, func: (T, T) -> R): Result<R> {
+    public inline fun <R> combine(other: Result<T>, func: (T, T) -> R): Result<R> {
         return when {
             this is Success && other is Success -> Success(func(this.value, other.value))
             this is Failure && other is Success -> Failure(this.throwable)
@@ -108,11 +108,11 @@ sealed class Result<T> {
         }
     }
 
-    fun isSuccess(): Boolean = this is Success
+    public fun isSuccess(): Boolean = this is Success
 
-    fun isFailure(): Boolean = this is Failure
+    public fun isFailure(): Boolean = this is Failure
 
-    class Success<T>(val value: T) : Result<T>() {
+    public class Success<T>(public val value: T) : Result<T>() {
 
         override fun equals(other: Any?): Boolean = when (other) {
             is Success<*> -> value == other.value
@@ -124,7 +124,7 @@ sealed class Result<T> {
         override fun toString(): String = "Success[$value]"
     }
 
-    class Failure<T>(val throwable: Throwable) : Result<T>() {
+    public class Failure<T>(public val throwable: Throwable) : Result<T>() {
 
         override fun equals(other: Any?): Boolean = when (other) {
             is Failure<*> -> throwable == other.throwable
@@ -136,9 +136,9 @@ sealed class Result<T> {
         override fun toString(): String = "Failure[${throwable.message}]"
     }
 
-    companion object {
+    public companion object {
 
-        inline fun <T> tryCatch(func: () -> T): Result<T> = try {
+        public inline fun <T> tryCatch(func: () -> T): Result<T> = try {
             Success(func.invoke())
         } catch (e: Throwable) {
             Failure(e)

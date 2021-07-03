@@ -3,7 +3,7 @@ package com.avito.runner.service.model.intention
 import com.avito.runner.service.model.createStubInstance
 import com.avito.test.model.TestCase
 
-fun InstrumentationTestRunAction.Companion.createStubInstance(
+internal fun InstrumentationTestRunAction.Companion.createStubInstance(
     testCase: TestCase = TestCase.createStubInstance(),
     testPackage: String = "",
     targetPackage: String = "",

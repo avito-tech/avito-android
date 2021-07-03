@@ -2,20 +2,21 @@ package com.avito.runner.service.worker.device.adb.listener
 
 import com.avito.runner.service.worker.device.Device
 
-interface AdbDeviceGetAliveListener {
-    fun onGetAliveDeviceSuccess(
+public interface AdbDeviceGetAliveListener {
+
+    public fun onGetAliveDeviceSuccess(
         device: Device,
         attempt: Int,
         durationMs: Long
     )
 
-    fun onGetAliveDeviceError(
+    public fun onGetAliveDeviceError(
         device: Device,
         attempt: Int,
         durationMs: Long
     )
 
-    fun onGetAliveDeviceFailed(
+    public fun onGetAliveDeviceFailed(
         device: Device,
         throwable: Throwable,
         durationMs: Long

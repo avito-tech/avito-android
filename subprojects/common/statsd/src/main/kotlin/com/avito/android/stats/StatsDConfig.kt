@@ -2,11 +2,11 @@ package com.avito.android.stats
 
 import java.io.Serializable
 
-sealed class StatsDConfig : Serializable {
+public sealed class StatsDConfig : Serializable {
 
-    object Disabled : StatsDConfig()
+    public object Disabled : StatsDConfig()
 
-    data class Enabled(
+    public data class Enabled(
         val host: String,
         val fallbackHost: String,
         val port: Int,

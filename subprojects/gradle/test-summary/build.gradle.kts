@@ -4,10 +4,6 @@ plugins {
     id("convention.gradle-testing")
 }
 
-kotlin {
-    explicitApi()
-}
-
 dependencies {
     implementation(projects.testRunner.reportViewer)
     implementation(projects.common.time)

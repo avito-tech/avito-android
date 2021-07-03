@@ -1,1 +1,1 @@
-data class ProsectorResponse(val result: String)
+internal data class ProsectorResponse(val result: String)

@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.coroutines.coroutineContext
 
-class DeviceWorkerPoolImpl(
+internal class DeviceWorkerPoolImpl(
     private val outputDirectory: File,
     private val testListener: TestListener,
     private val deviceListener: DeviceListener,

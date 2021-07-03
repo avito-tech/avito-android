@@ -10,7 +10,7 @@ import com.avito.impact.configuration.sets.isImplementation
 import com.avito.impact.fallback.ImpactFallbackDetector
 import com.avito.module.configurations.ConfigurationType.Main
 
-class MainConfiguration(module: InternalModule) : BaseConfiguration(
+public class MainConfiguration(module: InternalModule) : BaseConfiguration(
     module,
     Main::class.java
 ) {
@@ -42,7 +42,7 @@ class MainConfiguration(module: InternalModule) : BaseConfiguration(
         )
     }
 
-    override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isImplementation()
+    override fun containsSources(sourceSet: AndroidSourceSet): Boolean = sourceSet.isImplementation()
 
     override fun toString(): String {
         return "ImplementationConfiguration(${project.path})"

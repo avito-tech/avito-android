@@ -2,6 +2,6 @@ package com.avito.truth
 
 import com.google.common.truth.Subject
 
-inline fun <reified T : Any> Subject.isInstanceOf() = isInstanceOf(T::class.java)
+public inline fun <reified T : Any> Subject.isInstanceOf(): Unit = isInstanceOf(T::class.java)
 
-inline fun <reified T : Any> Subject.isNotInstanceOf() = isNotInstanceOf(T::class.java)
+public inline fun <reified T : Any> Subject.isNotInstanceOf(): Unit = isNotInstanceOf(T::class.java)

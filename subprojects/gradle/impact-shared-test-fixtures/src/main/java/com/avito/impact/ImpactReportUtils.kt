@@ -5,14 +5,14 @@ import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth.assertWithMessage
 import java.io.File
 
-fun detectChangedModules(
+public fun detectChangedModules(
     projectDir: File,
     vararg args: String
 ): TestResult {
     return gradlew(projectDir, "generateModulesReport", *args)
 }
 
-fun TestResult.assertMarkedModules(
+public fun TestResult.assertMarkedModules(
     projectDir: File,
     implementation: Set<String>,
     unitTests: Set<String>,
@@ -47,6 +47,6 @@ private fun File.readReport(): List<String> = readLines()
 
 private fun String.normalizeModuleName() = if (this.startsWith(':')) this else ":$this"
 
-const val IMPLEMENTATION_MODULES_REPORT_PATH = "build/reports/modules/implementation-modules.txt"
-const val UNIT_TEST_MODULES_REPORT_PATH = "build/reports/modules/unit-tests-modules.txt"
-const val ANDROID_TEST_MODULES_REPORT_PATH = "build/reports/modules/android-tests-modules.txt"
+private const val IMPLEMENTATION_MODULES_REPORT_PATH = "build/reports/modules/implementation-modules.txt"
+private const val UNIT_TEST_MODULES_REPORT_PATH = "build/reports/modules/unit-tests-modules.txt"
+private const val ANDROID_TEST_MODULES_REPORT_PATH = "build/reports/modules/android-tests-modules.txt"

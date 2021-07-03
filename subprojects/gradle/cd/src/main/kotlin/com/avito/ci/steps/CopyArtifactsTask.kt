@@ -12,19 +12,19 @@ import org.gradle.kotlin.dsl.property
 import java.io.File
 
 @Suppress("UnstableApiUsage")
-abstract class CopyArtifactsTask : DefaultTask() {
+public abstract class CopyArtifactsTask : DefaultTask() {
 
     @Input
-    val sourceDir: DirectoryProperty = project.objects.directoryProperty()
+    public val sourceDir: DirectoryProperty = project.objects.directoryProperty()
 
     @Input
-    val destinationDir: DirectoryProperty = project.objects.directoryProperty()
+    public val destinationDir: DirectoryProperty = project.objects.directoryProperty()
 
     @InputFiles
-    val entries: Property<FileCollection> = project.objects.property()
+    public val entries: Property<FileCollection> = project.objects.property()
 
     @TaskAction
-    fun doAction() {
+    public fun doAction() {
         val logger = GradleLoggerFactory.getLogger(this)
 
         entries.get().forEach { entry ->

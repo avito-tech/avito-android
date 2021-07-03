@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.runner.scheduler
 
-import com.avito.android.TestSuiteLoaderImpl
+import com.avito.android.TestSuiteLoader
 import com.avito.android.runner.devices.DeviceProviderFactoryProvider
 import com.avito.android.runner.devices.KubernetesApiProvider
 import com.avito.android.runner.devices.internal.AndroidDebugBridgeProvider
@@ -30,7 +30,7 @@ public class TestSchedulerFactoryProvider {
     public fun provide(params: RunnerInputParams): TestSchedulerFactory {
 
         val httpClientProvider = HttpClientProvider(
-            statsDSender = StatsDSender.Impl(
+            statsDSender = StatsDSender.create(
                 config = params.statsDConfig,
                 loggerFactory = params.loggerFactory
             ),
@@ -47,7 +47,7 @@ public class TestSchedulerFactoryProvider {
         )
 
         val report = reportFactory.createReport()
-        val processRunner = ProcessRunner.Real(null)
+        val processRunner = ProcessRunner.create(null)
         val androidDebugBridgeProvider = AndroidDebugBridgeProvider(params.loggerFactory, processRunner)
 
         val emulatorsLogsReporterProvider = EmulatorsLogsReporterProvider(
@@ -114,7 +114,7 @@ public class TestSchedulerFactoryProvider {
                 ).provide(),
                 metricsConfig = metricsConfig
             ),
-            testSuiteLoader = TestSuiteLoaderImpl(),
+            testSuiteLoader = TestSuiteLoader.create(),
             loggerFactory = params.loggerFactory,
             fileInfoWriter = FilterInfoWriter.Impl(
                 outputDir = params.outputDir,

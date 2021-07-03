@@ -5,7 +5,7 @@ import java.util.Properties
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-fun File.createOrClear() {
+public fun File.createOrClear() {
     if (exists()) {
         writer().use { it.write("") }
     } else {
@@ -14,24 +14,24 @@ fun File.createOrClear() {
     }
 }
 
-fun File.rewriteNewLineList(listOfData: Iterable<String>) {
+public fun File.rewriteNewLineList(listOfData: Iterable<String>) {
     rewriteIterable(listOfData) { it.joinToString("\n") }
 }
 
-fun <K, V> File.rewriteNewLineMap(data: Map<K, V>) {
+public fun <K, V> File.rewriteNewLineMap(data: Map<K, V>) {
     rewriteIterable(data) {
         it.map { (key, value) -> "$key -> $value" }
             .joinToString(separator = "\n")
     }
 }
 
-fun <T> File.rewriteIterable(data: T, transform: (T) -> String) {
+public fun <T> File.rewriteIterable(data: T, transform: (T) -> String) {
     createOrClear()
     writer(Charsets.UTF_8).use { it.write(transform.invoke(data)) }
 }
 
 @OptIn(ExperimentalContracts::class)
-fun File?.hasFileContent(): Boolean {
+public fun File?.hasFileContent(): Boolean {
     contract {
         returns(true) implies (this@hasFileContent != null)
     }
@@ -40,7 +40,7 @@ fun File?.hasFileContent(): Boolean {
     return this.exists() && this.isFile && this.length() > 0
 }
 
-fun File.loadProperties(): Properties {
+public fun File.loadProperties(): Properties {
     val properties = Properties()
     this.bufferedReader().use { reader ->
         properties.load(reader)
@@ -48,4 +48,4 @@ fun File.loadProperties(): Properties {
     return properties
 }
 
-fun loadProperties(path: String): Properties = File(path).loadProperties()
+public fun loadProperties(path: String): Properties = File(path).loadProperties()

@@ -2,11 +2,11 @@ package com.avito.impact.util
 
 import java.io.File
 
-object AndroidManifestPackageParser {
+public object AndroidManifestPackageParser {
 
     private val manifestPackagePattern = Regex(" package=\"(.*?)\"")
 
-    fun parse(manifestFile: File): String? {
+    public fun parse(manifestFile: File): String? {
         val packageLine = manifestFile.useLines { lines ->
             lines.find { manifestPackagePattern.containsMatchIn(it) }
         }

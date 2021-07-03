@@ -12,7 +12,7 @@ import org.gradle.api.provider.Property
  *
  * @see [ObjectFactory.property]
  */
-inline fun <reified T> ObjectFactory.property(): Property<T> =
+public inline fun <reified T> ObjectFactory.property(): Property<T> =
     property(T::class.java)
 
 /**
@@ -20,8 +20,8 @@ inline fun <reified T> ObjectFactory.property(): Property<T> =
  *
  * @see [ObjectFactory.mapProperty]
  */
-inline fun <reified K, reified V> ObjectFactory.mapProperty(): MapProperty<K, V> =
+public inline fun <reified K, reified V> ObjectFactory.mapProperty(): MapProperty<K, V> =
     mapProperty(K::class.java, V::class.java)
 
-inline fun <reified T> ObjectFactory.listProperty(): ListProperty<T> =
+public inline fun <reified T> ObjectFactory.listProperty(): ListProperty<T> =
     listProperty(T::class.java)

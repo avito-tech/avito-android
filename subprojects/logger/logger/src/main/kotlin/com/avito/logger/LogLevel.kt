@@ -1,5 +1,5 @@
 package com.avito.logger
 
-enum class LogLevel {
+public enum class LogLevel {
     DEBUG, INFO, WARNING, CRITICAL
 }

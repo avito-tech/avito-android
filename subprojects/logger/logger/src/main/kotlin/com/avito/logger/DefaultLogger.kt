@@ -3,7 +3,7 @@ package com.avito.logger
 import com.avito.logger.handler.LoggingHandler
 import java.io.Serializable
 
-class DefaultLogger(
+public class DefaultLogger(
     private val debugHandler: LoggingHandler,
     private val infoHandler: LoggingHandler,
     private val warningHandler: LoggingHandler,

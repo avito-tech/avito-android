@@ -2,80 +2,39 @@ package com.avito.git
 
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
-import com.avito.logger.create
-import com.avito.utils.ProcessRunner
 import java.io.File
-import java.time.Duration
 
-interface Git {
+public interface Git {
 
-    val defaultRemote: String
+    private val defaultRemote: String
         get() = "origin"
 
-    fun init(): Result<Unit>
+    public fun init(): Result<Unit>
 
-    fun addAll(): Result<Unit>
+    public fun addAll(): Result<Unit>
 
-    fun commit(message: String): Result<Unit>
+    public fun commit(message: String): Result<Unit>
 
-    fun checkout(branchName: String, create: Boolean): Result<Unit>
+    public fun checkout(branchName: String, create: Boolean): Result<Unit>
 
-    fun addRemote(url: String): Result<Unit>
+    public fun addRemote(url: String): Result<Unit>
 
-    fun fetch(remote: String = defaultRemote, commitHash: String?, depth: Int? = null): Result<Unit>
+    public fun fetch(remote: String = defaultRemote, commitHash: String?, depth: Int? = null): Result<Unit>
 
-    fun resetHard(revision: String): Result<Unit>
+    public fun resetHard(revision: String): Result<Unit>
 
     /**
      * @param abbrevRef Use a non-ambiguous short name of the objects name
      */
-    fun tryParseRev(branchName: String, abbrevRef: Boolean = false): Result<String>
+    public fun tryParseRev(branchName: String, abbrevRef: Boolean = false): Result<String>
 
-    fun config(option: String): Result<String>
+    public fun config(option: String): Result<String>
 
-    class Impl(
-        rootDir: File,
-        loggerFactory: LoggerFactory
-    ) : Git {
+    public companion object {
 
-        private val processRunner = ProcessRunner.Real(rootDir)
-
-        private val logger = loggerFactory.create<Git>()
-
-        override fun init(): Result<Unit> = git("init").map { Unit }
-
-        override fun addAll(): Result<Unit> = git("add --all").map { Unit }
-
-        override fun commit(message: String): Result<Unit> =
-            git("commit --author='test <>' --all --message='${escapeGitMessage(message)}'").map { Unit }
-
-        override fun checkout(branchName: String, create: Boolean): Result<Unit> =
-            git("checkout ${if (create) "-b" else ""} $branchName").map { Unit }
-
-        override fun addRemote(url: String): Result<Unit> = git("remote add origin $url").map { Unit }
-
-        override fun fetch(remote: String, commitHash: String?, depth: Int?): Result<Unit> =
-            git("fetch $remote ${if (depth != null) "--depth=$depth" else ""} $commitHash").map { Unit }
-
-        override fun resetHard(revision: String): Result<Unit> = git("reset --hard $revision").map { Unit }
-
-        override fun config(option: String): Result<String> = git("config $option")
-
-        override fun tryParseRev(branchName: String, abbrevRef: Boolean): Result<String> {
-            val abbrevRefOption = if (abbrevRef) " --abbrev-ref" else ""
-            return git("rev-parse$abbrevRefOption $branchName")
-                .recover { error ->
-                    throw IllegalStateException(
-                        "Can't get revision for $branchName",
-                        error
-                    )
-                }
-        }
-
-        private fun git(command: String): Result<String> =
-            processRunner.run(command = "git $command", timeout = Duration.ofSeconds(10))
-                .onFailure { error -> logger.warn("git error running: '$command'", error) }
-
-        private fun escapeGitMessage(message: String) = message.replace("\\s+".toRegex()) { "_" }
+        public fun create(
+            rootDir: File,
+            loggerFactory: LoggerFactory
+        ): Git = GitImpl(rootDir, loggerFactory)
     }
 }

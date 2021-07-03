@@ -1,10 +1,10 @@
-open class ProsectorConfig {
+public open class ProsectorConfig {
 
-    lateinit var host: String
+    public lateinit var host: String
 
-    var branchName = ""
+    public var branchName: String = ""
 
-    var commitHash = ""
+    public var commitHash: String = ""
 
-    var debug = false
+    public var debug: Boolean = false
 }

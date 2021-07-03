@@ -13,7 +13,7 @@ import com.avito.utils.gradle.Environment
 import org.gradle.api.Project
 import java.util.Locale
 
-class ImpactMetricsSender(
+internal class ImpactMetricsSender(
     private val projectsFinder: ModifiedProjectsFinder,
     environmentInfo: EnvironmentInfo,
     private val metricTracker: BuildMetricTracker

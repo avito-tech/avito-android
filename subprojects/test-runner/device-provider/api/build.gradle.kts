@@ -6,7 +6,3 @@ plugins {
 dependencies {
     api(projects.testRunner.deviceProvider.model)
 }
-
-kotlin {
-    explicitApi()
-}

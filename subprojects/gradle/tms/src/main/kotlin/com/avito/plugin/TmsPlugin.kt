@@ -8,7 +8,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 
 // todo stub; remove after 2021.24
-class TmsPlugin : Plugin<Project> {
+public class TmsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.extensions.create<TmsExtension>("tms")

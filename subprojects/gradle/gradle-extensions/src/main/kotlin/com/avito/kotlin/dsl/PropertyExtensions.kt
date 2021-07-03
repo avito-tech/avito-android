@@ -10,7 +10,7 @@ import org.gradle.api.provider.Provider
 /**
  * https://github.com/gradle/gradle/issues/2016#issuecomment-492598038
  */
-fun Property<RegularFile>.toOptional(): Provider<RegularFile?> =
+public fun Property<RegularFile>.toOptional(): Provider<RegularFile?> =
     flatMap {
         if (it.asFile.exists() && it.asFile.length() > 0) {
             Providers.of(it)

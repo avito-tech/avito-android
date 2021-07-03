@@ -29,7 +29,7 @@ public class TestRunnerFactoryProvider(
     private val tempLogcatDir = Files.createTempDirectory(null).toFile()
     private val testRunnerExecutionState = TestRunnerExecutionState()
 
-    private val statsDSender: StatsDSender = StatsDSender.Impl(
+    private val statsDSender: StatsDSender = StatsDSender.create(
         config = metricsConfig.statsDConfig,
         loggerFactory = loggerFactory
     )

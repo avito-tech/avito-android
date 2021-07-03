@@ -6,13 +6,12 @@ import com.avito.impact.configuration.isBranchProtected
 import com.avito.impact.plugin.ImpactAnalysisExtension
 import org.gradle.api.provider.Provider
 
-sealed class IsAnalysisNeededResult {
+internal sealed class IsAnalysisNeededResult {
     object Run : IsAnalysisNeededResult()
     class Skip(val reason: String) : IsAnalysisNeededResult()
 }
 
-@Suppress("UnstableApiUsage")
-fun isAnalysisNeeded(
+internal fun isAnalysisNeeded(
     config: ImpactAnalysisExtension,
     gitState: Provider<GitState>
 ): IsAnalysisNeededResult {

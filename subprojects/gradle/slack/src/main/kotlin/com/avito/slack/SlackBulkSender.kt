@@ -15,14 +15,14 @@ import kotlinx.coroutines.runBlocking
  * https://api.slack.com/docs/rate-limits
  * > Posting messages	1 per second	short bursts >1 allowed
  */
-interface SlackBulkSender {
+public interface SlackBulkSender {
 
-    fun sendBulk(body: Bulk.() -> Unit)
+    public fun sendBulk(body: Bulk.() -> Unit)
 }
 
 // todo use Flow API
 @OptIn(ObsoleteCoroutinesApi::class)
-class CoroutinesSlackBulkSender(
+public class CoroutinesSlackBulkSender(
     private val sender: SlackMessageSender,
     loggerFactory: LoggerFactory
 ) : SlackBulkSender {
@@ -68,11 +68,11 @@ class CoroutinesSlackBulkSender(
     }
 }
 
-class Bulk(private val requestQueue: Channel<SlackSendMessageRequest>) {
+public class Bulk(private val requestQueue: Channel<SlackSendMessageRequest>) {
 
-    var requestCount = 0
+    public var requestCount: Int = 0
 
-    fun sendMessage(message: SlackSendMessageRequest) {
+    public fun sendMessage(message: SlackSendMessageRequest) {
         requestCount++
         runBlocking {
             requestQueue.send(message)

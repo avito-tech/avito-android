@@ -5,10 +5,10 @@ import com.avito.impact.configuration.internalModule
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-abstract class CheckProjectDependenciesTypeTask : DefaultTask() {
+public abstract class CheckProjectDependenciesTypeTask : DefaultTask() {
 
     @TaskAction
-    fun checkProjectDependenciesType() {
+    public fun checkProjectDependenciesType() {
         val moduleType = project.extensions.moduleType?.type
 
         val testDependenciesInImplementation = implementationsByType(ModuleType.TEST_LIB)
@@ -74,19 +74,19 @@ abstract class CheckProjectDependenciesTypeTask : DefaultTask() {
         if (wrongDependenciesInImplementation.isNotEmpty()) {
             message.appendLine(
                 "'implementation' configuration contains the following non-implementation dependencies: " +
-                        wrongDependenciesInImplementation.joinToString { it.module.project.path }
+                    wrongDependenciesInImplementation.joinToString { it.module.project.path }
             )
         }
         if (wrongDependenciesInTest.isNotEmpty()) {
             message.appendLine(
                 "'testImplementation' configuration contains the following non-test dependencies: " +
-                        wrongDependenciesInTest.joinToString { it.module.project.path }
+                    wrongDependenciesInTest.joinToString { it.module.project.path }
             )
         }
         if (wrongDependenciesInAndroidTest.isNotEmpty()) {
             message.appendLine(
                 "'androidTestImplementation' configuration contains the following non-android-test dependencies: " +
-                        wrongDependenciesInAndroidTest.joinToString { it.module.project.path }
+                    wrongDependenciesInAndroidTest.joinToString { it.module.project.path }
             )
         }
         return message.toString()

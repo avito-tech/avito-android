@@ -1,6 +1,6 @@
 package com.avito.slack.model
 
-data class FoundMessage(
+public data class FoundMessage(
     val text: String,
     val botId: String?,
     val timestamp: String,
@@ -8,5 +8,5 @@ data class FoundMessage(
     val emoji: String?,
     val channel: SlackChannel
 ) {
-    companion object
+    public companion object
 }

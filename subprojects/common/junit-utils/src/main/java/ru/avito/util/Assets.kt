@@ -3,10 +3,11 @@ package ru.avito.util
 import java.io.FileNotFoundException
 import java.io.IOException
 
-object Assets {
+public object Assets {
 
+    // todo merge with :resources module
     @Throws(IOException::class)
-    fun readAsset(path: String): String {
+    public fun readAsset(path: String): String {
         val inputStream = Assets::class.java.classLoader.getResourceAsStream(path)
             ?: throw FileNotFoundException("File [$path] not found.")
         return inputStream.bufferedReader().readText()

@@ -6,7 +6,7 @@ import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.avito.utils.BuildFailer
+import com.avito.utils.buildFailer
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -21,38 +21,38 @@ import javax.inject.Inject
  * TODO specify outputs: write a file after success upload (with link for example)
  * TODO check caching
  */
-abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
 
     @Input
-    val comment = objects.property<String>()
+    public val comment: Property<String> = objects.property()
 
     @Input
-    val branch = objects.property<String>()
+    public val branch: Property<String> = objects.property()
 
     @Input
-    val host = objects.property<String>()
+    public val host: Property<String> = objects.property()
 
     @Input
-    val versionName = objects.property<String>()
+    public val versionName: Property<String> = objects.property()
 
     @Input
-    val versionCode = objects.property<String>()
+    public val versionCode: Property<String> = objects.property()
 
     @Input
-    val packageName = objects.property<String>()
+    public val packageName: Property<String> = objects.property()
 
     /**
      * modified by [com.avito.ci.steps.UploadToQapps] in release pipeline
      */
     @Suppress("UnstableApiUsage")
     @Input
-    val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
+    public val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @InputFile
-    abstract fun getApk(): RegularFileProperty // setup in ci build step
+    public abstract fun getApk(): RegularFileProperty // setup in ci build step
 
     @TaskAction
-    fun upload() {
+    public fun upload() {
         val apk = getApk().asFile.get()
 
         val loggerFactory = GradleLoggerFactory.fromTask(this)
@@ -77,13 +77,11 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
             loggerFactory = loggerFactory
         ).upload()
 
-        val buildFailer = BuildFailer.RealFailer()
-
         val logger = loggerFactory.create<QAppsUploadTask>()
 
         uploadResult.fold(
             { logger.info("Upload to qapps was successful: ${apk.path}") },
-            { buildFailer.failBuild("Can't upload to qapps: ${apk.path};", it) }
+            { project.buildFailer.failBuild("Can't upload to qapps: ${apk.path};", it) }
         )
     }
 }

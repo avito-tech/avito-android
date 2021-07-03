@@ -19,7 +19,3 @@ dependencies {
 
     testImplementation(testFixtures(projects.logger.logger))
 }
-
-kotlin {
-    explicitApi()
-}

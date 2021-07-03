@@ -22,7 +22,7 @@ public class TestSummaryFactory(
         get() = DefaultTimeProvider()
 
     public fun createSlackClient(extension: TestSummaryExtension): SlackClient {
-        return SlackClient.Impl(
+        return SlackClient.create(
             serviceName = serviceName,
             token = extension.slackToken.get(),
             workspace = extension.slackWorkspace.get(),
@@ -38,13 +38,9 @@ public class TestSummaryFactory(
         )
     }
 
-    private fun createStatsDSender(statsDConfig: Provider<StatsDConfig>): StatsDSender {
-        return StatsDSender.Impl(statsDConfig.get(), loggerFactory)
-    }
-
     private fun createHttpClientProvider(statsDConfig: Provider<StatsDConfig>): HttpClientProvider {
         return HttpClientProvider(
-            statsDSender = createStatsDSender(statsDConfig),
+            statsDSender = StatsDSender.create(statsDConfig.get(), loggerFactory),
             timeProvider = timeProvider,
             loggerFactory = loggerFactory
         )

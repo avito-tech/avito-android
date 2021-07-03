@@ -7,27 +7,27 @@ import com.avito.utils.ProcessRunner
 import java.io.File
 import java.time.Duration
 
-interface ChangesDetector {
+public interface ChangesDetector {
 
     /**
      * Determines changed files(relative paths) under provided [targetDirectory], minus [excludedDirectories]
      *
      * @return list of changed files; could fail on git problems
      */
-    fun computeChanges(
+    public fun computeChanges(
         targetDirectory: File,
         excludedDirectories: Iterable<File> = emptyList()
     ): Result<List<ChangedFile>>
 }
 
-class ChangesDetectorStub(private val reason: String) : ChangesDetector {
+internal class ChangesDetectorStub(private val reason: String) : ChangesDetector {
 
     override fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File>): Result<List<ChangedFile>> {
         return Result.Failure(IllegalStateException(reason))
     }
 }
 
-class GitChangesDetector(
+public class GitChangesDetector(
     private val gitRootDir: File,
     private val targetCommit: String,
     private val ignoreSettings: IgnoreSettings,
@@ -37,7 +37,7 @@ class GitChangesDetector(
     private val logger = loggerFactory.create<GitChangesDetector>()
     private val cache: MutableMap<Key, Result<List<ChangedFile>>> = mutableMapOf()
     private val gitDiffWithTargetBranch by lazy { gitDiffWith() }
-    private val processRunner = ProcessRunner.Real(gitRootDir)
+    private val processRunner = ProcessRunner.create(gitRootDir)
 
     init {
         require(gitRootDir.exists()) { "Directory ${gitRootDir.canonicalPath} doesn't exist" }
@@ -106,7 +106,11 @@ class GitChangesDetector(
     private data class Key(val targetDirectory: File, val excludedDirectories: Iterable<File>)
 }
 
-fun newChangesDetector(rootDir: File, targetCommit: String?, loggerFactory: LoggerFactory): ChangesDetector {
+public fun newChangesDetector(
+    rootDir: File,
+    targetCommit: String?,
+    loggerFactory: LoggerFactory
+): ChangesDetector {
     val ignoreFile = File(rootDir, ".tia_ignore")
     val settings = readIgnoreSettings(ignoreFile)
 

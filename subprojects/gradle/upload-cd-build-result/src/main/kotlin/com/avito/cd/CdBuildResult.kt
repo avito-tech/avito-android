@@ -1,6 +1,6 @@
 package com.avito.cd
 
-data class CdBuildResult(
+public data class CdBuildResult(
     val schemaVersion: Long,
     val teamcityBuildUrl: String,
     val buildNumber: String,
@@ -9,36 +9,37 @@ data class CdBuildResult(
     val testResults: TestResultsLink,
     val artifacts: List<Artifact>
 ) {
-    data class GitBranch(
+
+    public data class GitBranch(
         val name: String,
         val commitHash: String
     )
 
-    data class TestResultsLink(
+    public data class TestResultsLink(
         val reportUrl: String,
         val reportCoordinates: ReportCoordinates
     ) {
         // TODO дублирование модели из report-viewer
-        data class ReportCoordinates(
+        public data class ReportCoordinates(
             val planSlug: String,
             val jobSlug: String,
             val runId: String
         )
     }
 
-    sealed class Artifact {
-        abstract val type: String
-        abstract val name: String
-        abstract val uri: String
+    public sealed class Artifact {
+        public abstract val type: String
+        public abstract val name: String
+        public abstract val uri: String
 
-        data class AndroidBinary(
+        public data class AndroidBinary(
             override val type: String,
             override val name: String,
             override val uri: String,
             val buildVariant: BuildVariant
         ) : Artifact()
 
-        data class FileArtifact(
+        public data class FileArtifact(
             override val type: String,
             override val name: String,
             override val uri: String

@@ -6,7 +6,7 @@ import io.sentry.connection.NoopConnection
 import io.sentry.context.ThreadLocalContextManager
 import java.io.Serializable
 
-fun sentryClient(config: SentryConfig): SentryClient {
+public fun sentryClient(config: SentryConfig): SentryClient {
     return when (config) {
         is SentryConfig.Disabled ->
             SentryClient(NoopConnection(), ThreadLocalContextManager())
@@ -36,11 +36,11 @@ private const val DEFAULT_SENTRY_MAX_STRING: Int = 50_000
 /**
  * Default config for SentryClient
  */
-sealed class SentryConfig : Serializable {
+public sealed class SentryConfig : Serializable {
 
-    object Disabled : SentryConfig()
+    public object Disabled : SentryConfig()
 
-    data class Enabled(
+    public data class Enabled(
         val dsn: String,
         val environment: String,
         val serverName: String,

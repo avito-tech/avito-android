@@ -1,11 +1,6 @@
 package com.avito.ci.steps
 
-interface ArtifactAware {
+public interface ArtifactAware {
 
-    var artifacts: Set<String>
-
-    class Impl : ArtifactAware {
-
-        override var artifacts: Set<String> = mutableSetOf()
-    }
+    public var artifacts: Set<String>
 }

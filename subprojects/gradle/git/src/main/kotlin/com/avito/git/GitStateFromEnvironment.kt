@@ -6,7 +6,7 @@ import com.avito.logger.LoggerFactory
 import org.gradle.api.Project
 import java.io.File
 
-class GitStateFromEnvironment(
+internal class GitStateFromEnvironment(
     rootDir: File,
     loggerFactory: LoggerFactory,
     gitBranch: String,
@@ -29,7 +29,7 @@ class GitStateFromEnvironment(
         @Suppress("NAME_SHADOWING")
         val targetBranch: String? = targetBranch?.asBranchWithoutOrigin()
 
-        val git = Git.Impl(
+        val git = GitImpl(
             rootDir = rootDir,
             loggerFactory = loggerFactory
         )

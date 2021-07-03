@@ -1,6 +1,6 @@
 package com.avito.runner.service.worker.device.adb.instrumentation
 
-sealed class InstrumentationEntry {
+internal sealed class InstrumentationEntry {
 
     data class InstrumentationTestEntry(
         val numTests: Int,

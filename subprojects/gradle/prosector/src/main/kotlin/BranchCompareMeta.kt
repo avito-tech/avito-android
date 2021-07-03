@@ -1,4 +1,4 @@
-data class BranchCompareMeta(
+internal data class BranchCompareMeta(
     val appPackage: String,
     val developer: String,
     val pullRequest: String,

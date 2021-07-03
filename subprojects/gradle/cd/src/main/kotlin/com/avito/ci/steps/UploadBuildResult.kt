@@ -14,9 +14,9 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-class UploadBuildResult(context: String, name: String) : SuppressibleBuildStep(context, name) {
+public class UploadBuildResult(context: String, name: String) : SuppressibleBuildStep(context, name) {
 
-    var uiTestConfiguration: String? = null
+    public var uiTestConfiguration: String? = null
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         if (project.isCdBuildConfigPresent) {

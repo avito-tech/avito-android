@@ -1,14 +1,14 @@
 package com.avito.math
 
-fun <N : Number> Iterable<N>.median() = asSequence().median()
+public fun <N : Number> Iterable<N>.median(): Double = asSequence().median()
 
-fun <N : Number> Array<out N>.median() = asSequence().median()
+public fun <N : Number> Array<out N>.median(): Double = asSequence().median()
 
 /**
  * The algorithm is quite ineffective
  * see https://stackoverflow.com/a/28822243/981330
  */
-fun <N : Number> Sequence<N>.median(): Double {
+public fun <N : Number> Sequence<N>.median(): Double {
 
     val sorted = map { it.toDouble() }.sorted().toList()
 

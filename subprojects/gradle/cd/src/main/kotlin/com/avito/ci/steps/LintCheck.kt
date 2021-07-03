@@ -13,12 +13,12 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
+public class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
     // public api
     @Suppress("MemberVisibilityCanBePrivate")
-    var slackChannelForAlerts: SlackChannel? = null
+    public var slackChannelForAlerts: SlackChannel? = null
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         require(project.isAndroidApp()) {

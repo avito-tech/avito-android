@@ -2,9 +2,9 @@ package com.avito.android.test.step
 
 import com.avito.android.test.report.TestCaseAssertion
 
-interface Step : TestCaseAssertion {
-    fun stepStart()
-    fun stepPassed()
-    fun stepFailed(exception: Throwable)
-    fun stepFinished()
+public interface Step : TestCaseAssertion {
+    public fun stepStart()
+    public fun stepPassed()
+    public fun stepFailed(exception: Throwable)
+    public fun stepFinished()
 }

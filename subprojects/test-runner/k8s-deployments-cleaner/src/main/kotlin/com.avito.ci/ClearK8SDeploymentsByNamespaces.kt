@@ -24,7 +24,7 @@ private typealias Deployments = MixedOperation<Deployment,
     DoneableDeployment,
     RollableScalableResource<Deployment, DoneableDeployment>>
 
-class ClearK8SDeploymentsByNamespaces(
+internal class ClearK8SDeploymentsByNamespaces(
     private val teamcity: TeamcityApi,
     private val kubernetesClient: DefaultKubernetesClient
 ) {

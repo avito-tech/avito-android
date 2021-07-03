@@ -8,25 +8,27 @@ import com.avito.android.Result
 import com.avito.android.androidBaseExtension
 import com.avito.android.isAndroid
 import com.avito.impact.changes.ChangedFile
+import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.util.Equality
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.dependencies.dependenciesOnProjects
+import org.gradle.api.Project
 import java.io.File
 
 /**
  * Wrapper above [org.gradle.api.artifacts.Configuration] to reduce an amount of configurations
  */
-abstract class BaseConfiguration(
-    val module: InternalModule,
-    val type: Class<out ConfigurationType>
+public abstract class BaseConfiguration(
+    public val module: InternalModule,
+    public val type: Class<out ConfigurationType>
 ) : Equality {
 
-    abstract val isModified: Boolean
-    protected val project = module.project
-    protected val changesDetector = module.changesDetector
-    val path: String = project.path
+    public abstract val isModified: Boolean
+    protected val project: Project = module.project
+    protected val changesDetector: ChangesDetector = module.changesDetector
+    public val path: String = project.path
 
-    val hasChangedFiles: Boolean by lazy {
+    public val hasChangedFiles: Boolean by lazy {
         changedFiles()
             .map { it.isNotEmpty() }
             .onFailure {
@@ -35,7 +37,7 @@ abstract class BaseConfiguration(
             .getOrElse { true }
     }
 
-    open val dependencies: Set<MainConfiguration> by lazy {
+    public open val dependencies: Set<MainConfiguration> by lazy {
         module.project.dependenciesOnProjects(setOf(type))
             .map {
                 it.dependencyProject
@@ -45,7 +47,7 @@ abstract class BaseConfiguration(
             .toSet()
     }
 
-    fun allDependencies(includeSelf: Boolean = true): Set<BaseConfiguration> {
+    public fun allDependencies(includeSelf: Boolean = true): Set<BaseConfiguration> {
         val dependencies = mutableSetOf<BaseConfiguration>()
         val visited = mutableSetOf<BaseConfiguration>()
         this.traverseDependencies(visited) { conf: BaseConfiguration ->
@@ -73,7 +75,7 @@ abstract class BaseConfiguration(
             }
     }
 
-    fun sourceSets(): Set<File> {
+    public fun sourceSets(): Set<File> {
         return if (project.isAndroid()) {
             project.androidBaseExtension.sourceSets
                 .filter { containsSources(it) }
@@ -86,7 +88,7 @@ abstract class BaseConfiguration(
         }
     }
 
-    open fun changedFiles(): Result<List<ChangedFile>> {
+    public open fun changedFiles(): Result<List<ChangedFile>> {
         return sourceSets()
             .map { sourceDir -> changesDetector.computeChanges(sourceDir) }
             .fold(Result.tryCatch { listOf() }) { accumulator, element ->

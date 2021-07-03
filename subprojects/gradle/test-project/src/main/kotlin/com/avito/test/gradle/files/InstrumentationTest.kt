@@ -4,7 +4,8 @@ import com.avito.test.gradle.Generator
 import com.avito.test.gradle.kotlinClass
 import java.io.File
 
-class InstrumentationTest(val className: String) : Generator {
+public class InstrumentationTest(public val className: String) : Generator {
+
     override fun generateIn(file: File) {
         file.kotlinClass(className, content = {
             """

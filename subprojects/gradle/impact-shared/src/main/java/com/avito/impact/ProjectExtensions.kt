@@ -6,7 +6,7 @@ import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope
 import org.gradle.api.Project
 
-val Project.impactFallbackDetector: ImpactFallbackDetector
+public val Project.impactFallbackDetector: ImpactFallbackDetector
     by ProjectProperty.lazy(scope = PropertyScope.ROOT_PROJECT) { project ->
         ImpactFallbackDetectorImplementation.from(project)
     }

@@ -3,9 +3,9 @@ package com.avito.runner.service.worker.device.adb
 import com.avito.runner.service.worker.device.Serial
 import com.google.common.net.InetAddresses
 
-class AdbDeviceParser {
+public class AdbDeviceParser {
 
-    fun findDeviceInOrNull(
+    public fun findDeviceInOrNull(
         serial: Serial,
         output: String
     ): AdbDeviceParams? {
@@ -16,7 +16,7 @@ class AdbDeviceParser {
             }
     }
 
-    fun parse(output: String): Set<AdbDeviceParams> {
+    public fun parse(output: String): Set<AdbDeviceParams> {
         return adbDevicesLines(output)
             .filter { it.contains("online") || it.contains("device") }
             .map(this::createDeviceParams)

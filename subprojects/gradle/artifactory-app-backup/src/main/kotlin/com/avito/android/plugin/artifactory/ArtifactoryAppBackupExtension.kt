@@ -4,7 +4,7 @@ import groovy.lang.Closure
 import org.gradle.api.model.ObjectFactory
 import javax.inject.Inject
 
-data class Backup(
+internal data class Backup(
     val name: String,
     val type: String,
     val version: String,
@@ -16,16 +16,16 @@ data class Backup(
     )
 }
 
-class ArtifactBuilder {
-    var id: String = ""
-    var path: String = ""
+public class ArtifactBuilder {
+    public var id: String = ""
+    public var path: String = ""
 }
 
-interface BackupBuilder {
-    var name: String
-    var type: String
-    var version: String
-    fun artifact(action: Closure<in ArtifactBuilder>)
+public interface BackupBuilder {
+    public var name: String
+    public var type: String
+    public var version: String
+    public fun artifact(action: Closure<in ArtifactBuilder>)
 }
 
 private class DefaultBackupBuilder(
@@ -63,8 +63,9 @@ private class DefaultBackupBuilder(
     }
 }
 
-interface ArtifactoryBackupExtension {
-    fun backup(action: Closure<in BackupBuilder>)
+public interface ArtifactoryBackupExtension {
+
+    public fun backup(action: Closure<in BackupBuilder>)
 }
 
 internal abstract class DefaultArtifactoryAppBackupExtension @Inject constructor(

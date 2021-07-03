@@ -9,7 +9,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 
-fun WorkerExecutor.inMemoryWork(work: () -> Unit) {
+public fun WorkerExecutor.inMemoryWork(work: () -> Unit) {
     noIsolation().submit(NonSerializableWork::class.java) { params ->
         params.state = NonSerializationWorkerParams.StateHolder(work)
     }

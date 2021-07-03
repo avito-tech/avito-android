@@ -6,7 +6,7 @@ import com.avito.android.elastic.ElasticConfig
 import com.avito.logger.LogLevel
 import com.avito.logger.LoggingDestination
 
-class ElasticDestination(
+public class ElasticDestination(
     private val config: ElasticConfig,
     private val metadata: Map<String, String>
 ) : LoggingDestination {

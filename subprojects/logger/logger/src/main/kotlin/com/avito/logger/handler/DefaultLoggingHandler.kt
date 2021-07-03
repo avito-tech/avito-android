@@ -4,7 +4,7 @@ import com.avito.logger.LogLevel
 import com.avito.logger.LoggingDestination
 import com.avito.logger.LoggingFormatter
 
-class DefaultLoggingHandler(
+public class DefaultLoggingHandler(
     private val formatter: LoggingFormatter? = null,
     private val destination: LoggingDestination
 ) : LoggingHandler {

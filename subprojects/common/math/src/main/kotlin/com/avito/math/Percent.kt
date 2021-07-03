@@ -3,16 +3,16 @@ package com.avito.math
 import java.text.DecimalFormat
 
 @Suppress("MagicNumber")
-fun Int.percentOf(sum: Int): Percent = NumberPercent(toFloat() / sum * 100)
+public fun Int.percentOf(sum: Int): Percent = NumberPercent(toFloat() / sum * 100)
 
 @Suppress("MagicNumber")
-fun Long.percentOf(sum: Long): Percent = NumberPercent(toFloat() / sum * 100)
+public fun Long.percentOf(sum: Long): Percent = NumberPercent(toFloat() / sum * 100)
 
 /**
  * convert 0.0 - 1.0 representation to [Percent]
  */
 @Suppress("MagicNumber")
-fun Double.percent(): Percent {
+public fun Double.percent(): Percent {
     require(this in 0.0..1.0) { "Trying to convert $this to percents; should be in [0.0..1.0] range" }
     return NumberPercent(this * 100)
 }
@@ -21,18 +21,18 @@ fun Double.percent(): Percent {
  * convert 0.0 - 1.0 representation to [Percent]
  */
 @Suppress("MagicNumber")
-fun Float.percent(): Percent {
+public fun Float.percent(): Percent {
     require(this in 0.0..1.0) { "Trying to convert $this to percents; should be in [0.0..1.0] range" }
     return NumberPercent(this * 100)
 }
 
-interface Percent {
+public interface Percent {
 
-    fun twoDigitsString(): String
+    public fun twoDigitsString(): String
 
-    fun toInt(): Int
+    public fun toInt(): Int
 
-    fun toLong(): Long
+    public fun toLong(): Long
 }
 
 internal class NumberPercent(val value: Number) : Percent {

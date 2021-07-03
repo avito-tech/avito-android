@@ -15,25 +15,25 @@ internal const val artifactoryBackupExtensionName = "artifactoryBackups"
 
 internal const val artifactoryRepositoryName = "appsBackup"
 
-const val artifactoryAppBackupTaskName = "appBackup"
+public const val artifactoryAppBackupTaskName: String = "appBackup"
 
-val Project.appBackupExtension: ArtifactoryBackupExtension
+public val Project.appBackupExtension: ArtifactoryBackupExtension
     get() = extensions.getByType(ArtifactoryBackupExtension::class.java)
 
-fun TaskContainer.artifactoryAppBackupTask(): TaskProvider<Task> =
+public fun TaskContainer.artifactoryAppBackupTask(): TaskProvider<Task> =
     named(artifactoryAppBackupTaskName)
 
-val Project.artifactoryAndroidArtifactsBuildVariants: MapProperty<String, BuildVariant>
+public val Project.artifactoryAndroidArtifactsBuildVariants: MapProperty<String, BuildVariant>
     by ProjectProperty.lazy { project ->
         project.objects.mapProperty(String::class.java, BuildVariant::class.java)
     }
 
-const val artifactoryUserParameterName = "artifactory_deployer"
+public const val artifactoryUserParameterName: String = "artifactory_deployer"
 
-const val artifactoryPasswordParameterName = "artifactory_deployer_password"
+public const val artifactoryPasswordParameterName: String = "artifactory_deployer_password"
 
-val Project.artifactoryUser
+public val Project.artifactoryUser: String
     get() = getMandatoryStringProperty(artifactoryUserParameterName)
 
-val Project.artifactoryPassword
+public val Project.artifactoryPassword: String
     get() = getMandatoryStringProperty(artifactoryPasswordParameterName)

@@ -4,19 +4,19 @@ import com.avito.cd.BuildVariant
 import groovy.lang.Closure
 import org.gradle.api.Action
 
-open class ArtifactsConfiguration {
+public open class ArtifactsConfiguration {
 
     internal var outputs = mutableMapOf<String, Output>()
 
-    var failOnSignatureError: Boolean = true
+    public var failOnSignatureError: Boolean = true
 
-    var publicationId: String = "local"
+    public var publicationId: String = "local"
 
-    fun file(id: String, path: String) {
+    public fun file(id: String, path: String) {
         registerOutput(id, Output.FileOutput(path))
     }
 
-    fun mapping(
+    public fun mapping(
         id: String,
         variant: BuildVariant,
         path: String
@@ -24,7 +24,7 @@ open class ArtifactsConfiguration {
         registerOutput(id, Output.ProguardMapping(variant, path))
     }
 
-    fun apk(
+    public fun apk(
         id: String,
         variant: BuildVariant,
         packageName: String,
@@ -41,7 +41,7 @@ open class ArtifactsConfiguration {
         closure.call()
     }
 
-    fun apk(
+    public fun apk(
         id: String,
         variant: BuildVariant,
         packageName: String,
@@ -57,7 +57,7 @@ open class ArtifactsConfiguration {
         action.execute(apk)
     }
 
-    fun bundle(
+    public fun bundle(
         id: String,
         variant: BuildVariant,
         packageName: String,
@@ -74,7 +74,7 @@ open class ArtifactsConfiguration {
         closure.call()
     }
 
-    fun bundle(
+    public fun bundle(
         id: String,
         variant: BuildVariant,
         packageName: String,
@@ -90,7 +90,7 @@ open class ArtifactsConfiguration {
         action.execute(bundle)
     }
 
-    fun copy(): ArtifactsConfiguration {
+    public fun copy(): ArtifactsConfiguration {
         return ArtifactsConfiguration().also { copy ->
             copy.outputs = this.outputs
         }

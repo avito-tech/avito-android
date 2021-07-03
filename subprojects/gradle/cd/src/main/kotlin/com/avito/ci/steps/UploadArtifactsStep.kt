@@ -6,13 +6,13 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
 @Suppress("UnstableApiUsage")
-abstract class UploadArtifactsStep(
+public abstract class UploadArtifactsStep(
     context: String,
     private val artifactsConfiguration: ArtifactsConfiguration,
     name: String
 ) : BuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
-    ArtifactAware by ArtifactAware.Impl() {
+    ArtifactAware by ArtifactAwareImpl() {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         if (useImpactAnalysis && !project.internalModule.isModified()) return

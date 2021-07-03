@@ -4,7 +4,7 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import java.io.Serializable
 
-data class RunnerMetricsConfig(
-    val statsDConfig: StatsDConfig,
-    val runnerPrefix: SeriesName
+public data class RunnerMetricsConfig(
+    public val statsDConfig: StatsDConfig,
+    public val runnerPrefix: SeriesName
 ) : Serializable

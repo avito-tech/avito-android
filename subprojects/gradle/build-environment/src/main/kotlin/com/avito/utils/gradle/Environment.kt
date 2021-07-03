@@ -1,8 +1,8 @@
 package com.avito.utils.gradle
 
-sealed class Environment {
-    object Local : Environment()
-    object Mirakle : Environment()
-    object CI : Environment()
-    object Unknown : Environment()
+public sealed class Environment {
+    public object Local : Environment()
+    public object Mirakle : Environment()
+    public object CI : Environment()
+    public object Unknown : Environment()
 }

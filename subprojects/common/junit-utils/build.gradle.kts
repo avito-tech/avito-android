@@ -10,3 +10,7 @@ dependencies {
 
     testImplementation(libs.kotlinReflect)
 }
+
+kotlin {
+    explicitApiWarning()
+}

@@ -9,7 +9,7 @@ import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.avito.utils.BuildFailer
+import com.avito.utils.buildFailer
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.DefaultTask
@@ -71,8 +71,6 @@ public abstract class SignArtifactTask constructor(
             )
             .build()
 
-        val buildFailer = BuildFailer.RealFailer()
-
         val logger = loggerFactory.create<SignArtifactTask>()
 
         workerExecutor.inMemoryWork {
@@ -91,7 +89,7 @@ public abstract class SignArtifactTask constructor(
                 .fold(
                     { file -> logger.info("signed successfully: ${file.file.path}") },
                     { throwable ->
-                        buildFailer.failBuild(
+                        project.buildFailer.failBuild(
                             problem = describeSingingError(
                                 signedFile = signedFile(),
                                 throwable = throwable

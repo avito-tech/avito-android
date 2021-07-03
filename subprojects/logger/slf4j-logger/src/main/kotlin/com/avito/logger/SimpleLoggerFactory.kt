@@ -4,7 +4,7 @@ import com.avito.logger.destination.Slf4jDestination
 import com.avito.logger.formatter.AppendClassNameFormatter
 import com.avito.logger.handler.DefaultLoggingHandler
 
-class SimpleLoggerFactory : LoggerFactory {
+public class SimpleLoggerFactory : LoggerFactory {
 
     override fun create(tag: String): Logger {
 

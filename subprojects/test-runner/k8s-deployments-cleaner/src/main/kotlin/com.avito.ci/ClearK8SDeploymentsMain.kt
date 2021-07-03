@@ -1,6 +1,7 @@
 package com.avito.ci
 
 import com.avito.teamcity.TeamcityApi
+import com.avito.teamcity.TeamcityCredentials
 import io.fabric8.kubernetes.client.ConfigBuilder
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
 import kotlinx.cli.ArgParser
@@ -10,10 +11,10 @@ import kotlinx.cli.Subcommand
 import kotlinx.cli.delimiter
 import kotlinx.cli.required
 
-object ClearK8SDeploymentsMain {
+public object ClearK8SDeploymentsMain {
 
     @OptIn(ExperimentalCli::class)
-    abstract class ClearDeployments(
+    public abstract class ClearDeployments(
         name: String,
         description: String
     ) : Subcommand(name, description) {
@@ -27,13 +28,13 @@ object ClearK8SDeploymentsMain {
         protected val teamcityApiPassword: String by option(type = ArgType.String)
             .required()
 
-        protected val kubernetesToken by option(ArgType.String)
+        protected val kubernetesToken: String by option(ArgType.String)
             .required()
 
-        protected val kubernetesUrl by option(ArgType.String)
+        protected val kubernetesUrl: String by option(ArgType.String)
             .required()
 
-        protected val kubernetesCaCert by option(ArgType.String)
+        protected val kubernetesCaCert: String by option(ArgType.String)
             .required()
     }
 
@@ -41,7 +42,7 @@ object ClearK8SDeploymentsMain {
 
     @ExperimentalCli
     @JvmStatic
-    fun main(args: Array<String>) {
+    public fun main(args: Array<String>) {
 
         class ByNamespaces : ClearDeployments(
             name = "clearByNamespaces",
@@ -55,10 +56,12 @@ object ClearK8SDeploymentsMain {
 
             override fun execute() {
                 ClearK8SDeploymentsByNamespaces(
-                    teamcity = TeamcityApi.Impl(
-                        url = teamcityUrl,
-                        user = teamcityApiUser,
-                        password = teamcityApiPassword
+                    teamcity = TeamcityApi.create(
+                        TeamcityCredentials(
+                            url = teamcityUrl,
+                            user = teamcityApiUser,
+                            password = teamcityApiPassword
+                        )
                     ),
                     kubernetesClient = DefaultKubernetesClient(
                         ConfigBuilder()

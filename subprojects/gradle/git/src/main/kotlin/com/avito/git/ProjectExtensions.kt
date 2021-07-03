@@ -12,7 +12,7 @@ import org.gradle.kotlin.dsl.property
 /**
  * Warning! used in build.gradle files
  */
-fun Project.gitState(): Property<GitState> =
+public fun Project.gitState(): Property<GitState> =
     lazyProperty("GIT_STATE_PROVIDER") { project ->
         project.objects.property<GitState>().apply {
             val strategy = project.getOptionalStringProperty("avito.git.state", default = "local")

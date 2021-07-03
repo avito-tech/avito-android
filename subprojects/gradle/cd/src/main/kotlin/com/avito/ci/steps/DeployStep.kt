@@ -15,7 +15,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import java.io.File
 
-class DeployStep(
+public class DeployStep(
     context: String,
     private val artifacts: ArtifactsConfiguration,
     name: String

@@ -7,14 +7,14 @@ import com.avito.runner.service.model.intention.State
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 
-class IntentionsRouter(
+public class IntentionsRouter(
     private val intentionRoutings: MutableMap<String, Channel<Intention>> = mutableMapOf(),
     loggerFactory: LoggerFactory
 ) {
 
     private val logger = loggerFactory.create<IntentionsRouter>()
 
-    fun observeIntentions(state: State): ReceiveChannel<Intention> {
+    public fun observeIntentions(state: State): ReceiveChannel<Intention> {
 
         val id = state.routingIdentifier()
 
@@ -26,7 +26,7 @@ class IntentionsRouter(
         )
     }
 
-    suspend fun sendIntention(intention: Intention) {
+    public suspend fun sendIntention(intention: Intention) {
 
         val intentionId = intention.state.routingIdentifier()
 
@@ -40,7 +40,7 @@ class IntentionsRouter(
         )
     }
 
-    fun cancel() {
+    public fun cancel() {
         intentionRoutings.forEach { (_, channel) -> channel.cancel() }
         intentionRoutings.clear()
     }

@@ -6,7 +6,7 @@ import com.avito.test.gradle.dependencies.GradleScriptCompatible
  * Analogue of [org.gradle.plugin.use.PluginDependenciesSpec]
  * Use [plugins] to create an instance
  */
-class PluginsSpec(
+public class PluginsSpec(
     private val plugins: MutableList<PluginSpec> = mutableListOf()
 ) : GradleScriptCompatible {
 
@@ -18,18 +18,18 @@ class PluginsSpec(
 
     override fun toString(): String = getScriptRepresentation()
 
-    fun id(id: String): PluginSpec {
+    public fun id(id: String): PluginSpec {
         val spec = PluginSpec(id)
         plugins.add(spec)
         return spec
     }
 
-    fun plus(other: PluginsSpec): PluginsSpec {
+    public fun plus(other: PluginsSpec): PluginsSpec {
         return PluginsSpec((this.plugins + other.plugins).toMutableList())
     }
 }
 
-fun plugins(init: PluginsSpec.() -> Unit = {}): PluginsSpec {
+public fun plugins(init: PluginsSpec.() -> Unit = {}): PluginsSpec {
     val plugins = PluginsSpec()
     plugins.init()
     return plugins

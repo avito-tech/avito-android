@@ -3,7 +3,7 @@ package com.avito.composite_exception
 import java.io.PrintStream
 import java.io.PrintWriter
 
-class CompositeException(
+public class CompositeException(
     message: String,
     private val throwables: Array<Throwable>
 ) : RuntimeException(message) {

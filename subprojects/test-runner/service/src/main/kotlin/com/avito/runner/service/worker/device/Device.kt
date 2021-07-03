@@ -9,61 +9,61 @@ import com.avito.runner.service.worker.model.DeviceInstallation
 import java.io.File
 import java.nio.file.Path
 
-interface Device {
+public interface Device {
 
-    sealed class Signal {
-        data class Died(val coordinate: DeviceCoordinate) : Signal()
+    public sealed class Signal {
+        public data class Died(val coordinate: DeviceCoordinate) : Signal()
     }
 
-    val coordinate: DeviceCoordinate
+    public val coordinate: DeviceCoordinate
 
-    val online: Boolean
+    public val online: Boolean
 
-    val model: String
+    public val model: String
 
-    val api: Int
+    public val api: Int
 
-    val logger: Logger
+    public val logger: Logger
 
-    fun installApplication(applicationPackage: String): Result<DeviceInstallation>
+    public fun installApplication(applicationPackage: String): Result<DeviceInstallation>
 
-    fun runIsolatedTest(
+    public fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun
 
-    fun clearPackage(name: String): Result<Unit>
+    public fun clearPackage(name: String): Result<Unit>
 
     /**
      * @return `to` path
      *
      * todo deprecate in favor of [pullDir]
      */
-    fun pull(from: Path, to: Path): Result<File>
+    public fun pull(from: Path, to: Path): Result<File>
 
     /**
      * @return `hostDir` path
      */
-    fun pullDir(deviceDir: Path, hostDir: Path, validator: PullValidator): Result<File>
+    public fun pullDir(deviceDir: Path, hostDir: Path, validator: PullValidator): Result<File>
 
-    fun clearDirectory(remotePath: Path): Result<Unit>
+    public fun clearDirectory(remotePath: Path): Result<Unit>
 
-    fun list(remotePath: String): Result<List<String>>
+    public fun list(remotePath: String): Result<List<String>>
 
-    fun deviceStatus(): DeviceStatus
+    public fun deviceStatus(): DeviceStatus
 
     /**
      * Fetch logcat [lines] deep, or whole buffer if null
      */
-    fun logcat(lines: Int?): Result<String>
+    public fun logcat(lines: Int?): Result<String>
 
-    sealed class DeviceStatus {
+    public sealed class DeviceStatus {
 
-        object Alive : DeviceStatus() {
+        public object Alive : DeviceStatus() {
             override fun toString(): String = "alive"
         }
 
-        class Freeze(val reason: Throwable) :
+        public class Freeze(public val reason: Throwable) :
             DeviceStatus() {
             override fun toString(): String = "Freeze. Reason: ${reason.message}"
         }

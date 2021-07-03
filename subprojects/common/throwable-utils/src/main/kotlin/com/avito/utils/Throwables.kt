@@ -3,7 +3,7 @@ package com.avito.utils
 import org.apache.commons.text.TextStringBuilder
 import java.io.PrintWriter
 
-fun Throwable.getCausesRecursively(): List<Throwable> {
+public fun Throwable.getCausesRecursively(): List<Throwable> {
     val causes = mutableListOf<Throwable>()
     var current = this
     while (current.cause != null) {
@@ -14,7 +14,7 @@ fun Throwable.getCausesRecursively(): List<Throwable> {
     return causes
 }
 
-fun Throwable.stackTraceToList(): List<String> {
+public fun Throwable.stackTraceToList(): List<String> {
     val stringBuilder = TextStringBuilder()
     printStackTrace(PrintWriter(stringBuilder.asWriter()))
     return stringBuilder.lines()

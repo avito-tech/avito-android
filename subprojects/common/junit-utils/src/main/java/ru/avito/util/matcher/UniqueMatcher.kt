@@ -4,7 +4,7 @@ import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 import java.util.HashSet
 
-class UniqueMatcher<T> : TypeSafeMatcher<Iterable<T>>() {
+public class UniqueMatcher<T> : TypeSafeMatcher<Iterable<T>>() {
 
     private var duplicate: T? = null
 
@@ -33,4 +33,4 @@ class UniqueMatcher<T> : TypeSafeMatcher<Iterable<T>>() {
     }
 }
 
-fun <T> containsOnlyUniqueElements() = UniqueMatcher<T>()
+public fun <T> containsOnlyUniqueElements(): UniqueMatcher<T> = UniqueMatcher<T>()

@@ -2,7 +2,7 @@ package com.avito.android.graphite
 
 import java.io.Serializable
 
-data class GraphiteConfig(
+public data class GraphiteConfig(
     /**
      * Set false if you want to disable transport and use dummy implementation.
      */

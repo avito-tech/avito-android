@@ -10,19 +10,20 @@ import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.time.DefaultTimeProvider
 import com.avito.utils.ProcessRunner
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.nio.file.Paths
 
-abstract class PullScreenshotsTask : DefaultTask() {
+public abstract class PullScreenshotsTask : DefaultTask() {
 
     @Input
-    val variant = project.objects.property<ApplicationVariant>()
+    public val variant: Property<ApplicationVariant> = project.objects.property()
 
     @TaskAction
-    fun pullScreenshots() {
+    public fun pullScreenshots() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val logger = loggerFactory.create<PullScreenshotsTask>()
 
@@ -36,7 +37,7 @@ abstract class PullScreenshotsTask : DefaultTask() {
                 adb = adb,
                 timeProvider = DefaultTimeProvider(),
                 metricsConfig = null,
-                processRunner = ProcessRunner.Real(null)
+                processRunner = ProcessRunner.create(null)
             )
         ).getDevice()
 

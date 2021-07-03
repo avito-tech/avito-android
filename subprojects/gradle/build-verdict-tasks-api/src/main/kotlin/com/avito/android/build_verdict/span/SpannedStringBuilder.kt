@@ -1,27 +1,28 @@
 package com.avito.android.build_verdict.span
 
-class SpannedStringBuilder {
+public class SpannedStringBuilder {
+
     private val lines: MutableList<SpannedString>
 
-    constructor() {
+    public constructor() {
         lines = mutableListOf()
     }
 
-    constructor(initialLine: SpannedString) {
+    public constructor(initialLine: SpannedString) {
         lines = mutableListOf(initialLine)
     }
 
-    fun addLine(line: SpannedString): SpannedStringBuilder {
+    public fun addLine(line: SpannedString): SpannedStringBuilder {
         lines.add(line)
         return this
     }
 
-    fun addLines(newLines: Collection<SpannedString>): SpannedStringBuilder {
+    public fun addLines(newLines: Collection<SpannedString>): SpannedStringBuilder {
         lines.addAll(newLines)
         return this
     }
 
-    fun build(): SpannedString {
+    public fun build(): SpannedString {
         val plain = lines.joinToString(
             separator = "\n"
         ) { line -> line.plain.removeSuffix("\n") }

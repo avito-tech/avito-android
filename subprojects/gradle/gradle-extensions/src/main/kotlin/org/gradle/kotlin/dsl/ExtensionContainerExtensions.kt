@@ -30,8 +30,7 @@ import kotlin.reflect.KProperty
  *
  * @see [ExtensionContainer.getByName]
  */
-operator fun ExtensionContainer.get(name: String): Any =
-    getByName(name)
+public operator fun ExtensionContainer.get(name: String): Any = getByName(name)
 
 /**
  * Looks for the extension of a given name and casts it to the expected type [T].
@@ -45,7 +44,7 @@ operator fun ExtensionContainer.get(name: String): Any =
  * @throws [IllegalStateException] When the given extension cannot be cast to the expected type.
  */
 @Suppress("extension_shadowed_by_member")
-inline fun <reified T : Any> ExtensionContainer.getByName(name: String) =
+public inline fun <reified T : Any> ExtensionContainer.getByName(name: String): T =
     getByName(name).let {
         it as? T ?: throw IllegalStateException(
             "Element '$name' of type '${it::class.java.name}' from container " +
@@ -56,7 +55,7 @@ inline fun <reified T : Any> ExtensionContainer.getByName(name: String) =
 /**
  * Delegated property getter that locates extensions.
  */
-inline operator fun <reified T : Any> ExtensionContainer.getValue(thisRef: Any?, property: KProperty<*>): T =
+public inline operator fun <reified T : Any> ExtensionContainer.getValue(thisRef: Any?, property: KProperty<*>): T =
     getByName<T>(property.name)
 
 /**
@@ -72,7 +71,7 @@ inline operator fun <reified T : Any> ExtensionContainer.getValue(thisRef: Any?,
  */
 @Incubating
 @Suppress("extension_shadowed_by_member")
-inline fun <reified T : Any> ExtensionContainer.add(name: String, extension: T) {
+public inline fun <reified T : Any> ExtensionContainer.add(name: String, extension: T) {
     add(typeOf<T>(), name, extension)
 }
 
@@ -87,7 +86,7 @@ inline fun <reified T : Any> ExtensionContainer.add(name: String, extension: T) 
  * @see [ExtensionContainer.create]
  */
 @Incubating
-inline fun <reified T : Any> ExtensionContainer.create(name: String, vararg constructionArguments: Any): T =
+public inline fun <reified T : Any> ExtensionContainer.create(name: String, vararg constructionArguments: Any): T =
     create(name, T::class.java, *constructionArguments)
 
 /**
@@ -100,7 +99,7 @@ inline fun <reified T : Any> ExtensionContainer.create(name: String, vararg cons
  * @see [ExtensionContainer.getByType]
  */
 @Incubating
-inline fun <reified T : Any> ExtensionContainer.getByType(): T =
+public inline fun <reified T : Any> ExtensionContainer.getByType(): T =
     getByType(typeOf<T>())
 
 /**
@@ -112,7 +111,7 @@ inline fun <reified T : Any> ExtensionContainer.getByType(): T =
  * @see [ExtensionContainer.findByType]
  */
 @Incubating
-inline fun <reified T : Any> ExtensionContainer.findByType(): T? =
+public inline fun <reified T : Any> ExtensionContainer.findByType(): T? =
     findByType(typeOf<T>())
 
 /**
@@ -124,6 +123,6 @@ inline fun <reified T : Any> ExtensionContainer.findByType(): T? =
  * @see [ExtensionContainer.configure]
  */
 @Incubating
-inline fun <reified T : Any> ExtensionContainer.configure(noinline action: T.() -> Unit) {
+public inline fun <reified T : Any> ExtensionContainer.configure(noinline action: T.() -> Unit) {
     configure(typeOf<T>(), action)
 }

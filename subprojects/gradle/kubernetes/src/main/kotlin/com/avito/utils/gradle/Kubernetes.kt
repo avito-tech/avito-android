@@ -15,7 +15,7 @@ import io.kubernetes.client.util.KubeConfig
 import org.gradle.api.Project
 import java.io.File
 
-fun createKubernetesClient(
+public fun createKubernetesClient(
     httpClientProvider: HttpClientProvider,
     kubernetesCredentials: KubernetesCredentials,
     namespace: String
@@ -95,7 +95,7 @@ private fun oauthTokenProvider(config: File): OAuthTokenProvider {
     return OAuthTokenProvider { kubeConfig.accessToken }
 }
 
-val Project.kubernetesCredentials: KubernetesCredentials
+public val Project.kubernetesCredentials: KubernetesCredentials
     get() {
         val context = getOptionalStringProperty("kubernetesContext", nullIfBlank = true)
         return if (context.isNullOrBlank()) {

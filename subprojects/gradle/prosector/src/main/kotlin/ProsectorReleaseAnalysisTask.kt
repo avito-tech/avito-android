@@ -21,23 +21,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 @CacheableTask
-abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
+public abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
 
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
-    lateinit var apk: File
+    public lateinit var apk: File
 
     @Input
-    lateinit var meta: ReleaseAnalysisMeta
+    public lateinit var meta: ReleaseAnalysisMeta
 
     @Input
-    lateinit var host: String
+    public lateinit var host: String
 
     @Internal
-    var debug: Boolean = false
+    public var debug: Boolean = false
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val logger = loggerFactory.create<ProsectorReleaseAnalysisTask>()
         val timeProvider: TimeProvider = DefaultTimeProvider()

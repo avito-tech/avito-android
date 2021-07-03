@@ -20,29 +20,29 @@ import java.util.LinkedHashMap
  *  - setProjectsEvaluated
  *  - setBuildFinished
  */
-class BuildProfile {
+public class BuildProfile {
 
     private val projects = LinkedHashMap<String, ProjectProfile>()
 
     /**
      * Should be set with a time as soon as possible after startup.
      */
-    var profilingStarted: Long = 0
+    public var profilingStarted: Long = 0
 
     /**
      * Should be set with a timestamp from a [org.gradle.BuildListener.buildStarted]
      * callback.
      */
-    var buildStarted: Long = 0
+    public var buildStarted: Long = 0
 
     private var settingsEvaluated: Long = 0
     private var projectsLoaded: Long = 0
     private var projectsEvaluated: Long = 0
     private var buildFinished: Long = 0
 
-    var isSuccessful: Boolean = false
+    public var isSuccessful: Boolean = false
 
-    val projectConfiguration: CompositeOperation<Operation>
+    public val projectConfiguration: CompositeOperation<Operation>
         get() {
             var operations: MutableList<Operation> = ArrayList()
             for (projectProfile in projects.values) {
@@ -56,13 +56,13 @@ class BuildProfile {
      * Get the elapsed time (in mSec) between the start of profiling and the buildStarted event.
      */
     @Deprecated("Inaccurate value because of manual buildStarted invocation")
-    val elapsedStartup: Long
+    public val elapsedStartup: Long
         get() = buildStarted - profilingStarted
 
     /**
      * Get the total elapsed time (in mSec) between the start of profiling and the buildFinished event.
      */
-    val elapsedTotal: Long
+    public val elapsedTotal: Long
         get() = buildFinished - profilingStarted
 
     /**
@@ -70,27 +70,27 @@ class BuildProfile {
      * Note that this will include processing of buildSrc as well as the settings file.
      */
     @Deprecated("Can't intercept setting evaluated event")
-    val elapsedSettings: Long
+    public val elapsedSettings: Long
         get() = settingsEvaluated - buildStarted
 
     /**
      * Get the elapsed time (in mSec) between the settingsEvaluated event and the projectsLoaded event.
      */
     @Deprecated("Can't intercept projects loaded event")
-    val elapsedProjectsLoading: Long
+    public val elapsedProjectsLoading: Long
         get() = projectsLoaded - settingsEvaluated
 
     /**
      * Get the elapsed time (in mSec) between the projectsLoaded event and the projectsEvaluated event.
      */
     @Deprecated("Can't intercept projects loaded event")
-    val elapsedProjectsConfiguration: Long
+    public val elapsedProjectsConfiguration: Long
         get() = projectsEvaluated - projectsLoaded
 
     /**
      * Get the total task execution time from all projects.
      */
-    val elapsedTotalExecutionTime: Long
+    public val elapsedTotalExecutionTime: Long
         get() {
             var result: Long = 0
             for (projectProfile in projects.values) {
@@ -103,7 +103,7 @@ class BuildProfile {
      * Total time to initialize and configure the project to run tasks.
      * An analog of **Build scan > Performance > Build > Initialization & configuration**
      */
-    val initWithConfigurationTimeMs: Long
+    public val initWithConfigurationTimeMs: Long
         get() {
             val firstTask = getProjects()
                 .flatMap { it.getTasks() }
@@ -117,7 +117,7 @@ class BuildProfile {
      *
      * @param projectPath to look up
      */
-    fun getProjectProfile(projectPath: String): ProjectProfile {
+    public fun getProjectProfile(projectPath: String): ProjectProfile {
         var result: ProjectProfile? = projects[projectPath]
         if (result == null) {
             result = ProjectProfile(projectPath)
@@ -131,7 +131,7 @@ class BuildProfile {
      *
      * @return list
      */
-    fun getProjects(): List<ProjectProfile> {
+    public fun getProjects(): List<ProjectProfile> {
         return CollectionUtils.sort(projects.values, Operation.slowestFirst())
     }
 
@@ -139,7 +139,7 @@ class BuildProfile {
      * Should be set with a timestamp from a [org.gradle.BuildListener.settingsEvaluated]
      * callback.
      */
-    fun setSettingsEvaluated(settingsEvaluated: Long) {
+    public fun setSettingsEvaluated(settingsEvaluated: Long) {
         this.settingsEvaluated = settingsEvaluated
     }
 
@@ -147,7 +147,7 @@ class BuildProfile {
      * Should be set with a timestamp from a [org.gradle.BuildListener.projectsLoaded]
      * callback.
      */
-    fun setProjectsLoaded(projectsLoaded: Long) {
+    public fun setProjectsLoaded(projectsLoaded: Long) {
         this.projectsLoaded = projectsLoaded
     }
 
@@ -155,7 +155,7 @@ class BuildProfile {
      * Should be set with a timestamp from a [org.gradle.BuildListener.projectsEvaluated]
      * callback.
      */
-    fun setProjectsEvaluated(projectsEvaluated: Long) {
+    public fun setProjectsEvaluated(projectsEvaluated: Long) {
         this.projectsEvaluated = projectsEvaluated
     }
 
@@ -163,7 +163,7 @@ class BuildProfile {
      * Should be set with a timestamp from a [org.gradle.BuildListener.buildFinished]
      * callback.
      */
-    fun setBuildFinished(buildFinished: Long) {
+    public fun setBuildFinished(buildFinished: Long) {
         this.buildFinished = buildFinished
     }
 }

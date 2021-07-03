@@ -2,15 +2,15 @@ package com.avito.android.gradle.profile
 
 import java.util.Comparator
 
-abstract class Operation {
+public abstract class Operation {
 
-    abstract val elapsedTime: Long
+    public abstract val elapsedTime: Long
 
-    abstract val description: String
+    public abstract val description: String
 
-    companion object {
+    public companion object {
 
-        fun slowestFirst(): Comparator<in Operation> {
+        public fun slowestFirst(): Comparator<in Operation> {
             return Comparator { o1, o2 ->
                 val byElapsedTime = o2.elapsedTime - o1.elapsedTime
                 if (byElapsedTime > 0L) {

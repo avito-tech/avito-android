@@ -22,7 +22,7 @@ import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
-import com.avito.utils.BuildFailer
+import com.avito.utils.buildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -207,14 +207,10 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                     TestSchedulerResult.Ok -> {
                         // do nothing
                     }
-                    is TestSchedulerResult.Failure -> createBuildFailer().failBuild(result.message)
+                    is TestSchedulerResult.Failure -> project.buildFailer.failBuild(result.message)
                 }
             }
         }
-    }
-
-    private fun createBuildFailer(): BuildFailer {
-        return BuildFailer.RealFailer()
     }
 
     /**

@@ -12,7 +12,7 @@ import java.io.File
  *  proguardFiles(*proguardFromDir("proguard/common")) // path relative to projectDir
  * }
  */
-fun Project.proguardFromDir(dir: String): Array<File> =
+public fun Project.proguardFromDir(dir: String): Array<File> =
     fileTree(dir)
         .apply { include("*.pro") }
         .toList()

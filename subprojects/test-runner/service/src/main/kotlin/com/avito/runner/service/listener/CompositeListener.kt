@@ -6,8 +6,8 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.test.model.TestCase
 import java.io.File
 
-class CompositeListener(
-    val listeners: List<TestListener>
+public class CompositeListener(
+    private val listeners: List<TestListener>
 ) : TestListener {
 
     override fun started(

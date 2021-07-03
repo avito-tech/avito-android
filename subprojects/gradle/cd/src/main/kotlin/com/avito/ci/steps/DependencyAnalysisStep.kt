@@ -20,7 +20,7 @@ import org.gradle.api.tasks.TaskProvider
  *  `projectHealth` task depends on tree of tasks from dependency-analysis plugins that depend on AGP and Kotlin tasks.
  *   It's not clear how to break this chain correctly in execution phase.
  */
-class DependencyAnalysisStep(context: String, name: String) : BuildStep(context, name) {
+public class DependencyAnalysisStep(context: String, name: String) : BuildStep(context, name) {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         require(project.isRoot()) {

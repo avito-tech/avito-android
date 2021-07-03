@@ -6,9 +6,9 @@ import org.gradle.api.file.DirectoryProperty
 import java.io.File
 
 // TODO: Use Artifacts API
-fun PackageAndroidArtifact.apkDirectory(): DirectoryProperty = outputDirectory
+public fun PackageAndroidArtifact.apkDirectory(): DirectoryProperty = outputDirectory
 
-fun Directory.getApk(): File? {
+public fun Directory.getApk(): File? {
     val dir = asFile
     val apks = dir.listFiles().orEmpty()
         .filter {
@@ -21,7 +21,7 @@ fun Directory.getApk(): File? {
     return apks.firstOrNull()
 }
 
-fun Directory.getApkOrThrow(): File {
+public fun Directory.getApkOrThrow(): File {
     return requireNotNull(getApk()) {
         "APK not found in $asFile. Files in dir: ${asFile.dumpFiles()}"
     }

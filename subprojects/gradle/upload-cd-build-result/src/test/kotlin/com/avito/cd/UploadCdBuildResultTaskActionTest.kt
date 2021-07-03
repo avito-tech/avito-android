@@ -14,12 +14,12 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class UploadCdBuildResultTaskActionTest {
+internal class UploadCdBuildResultTaskActionTest {
 
     private val mockWebServer = MockWebServerFactory.create()
     private val loggerFactory = StubLoggerFactory
     private val dispatcher = MockDispatcher(loggerFactory = loggerFactory)
-    private val gson = Providers.gson
+    private val gson = uploadCdGson
     private val user = "user"
     private val password = "password"
     private val outputPath = "file_path"
@@ -170,7 +170,7 @@ class UploadCdBuildResultTaskActionTest {
     }
 
     private fun action(suppressErrors: Boolean) = UploadCdBuildResultTaskAction(
-        gson = Providers.gson,
+        gson = gson,
         client = Providers.client(
             user = user,
             password = password

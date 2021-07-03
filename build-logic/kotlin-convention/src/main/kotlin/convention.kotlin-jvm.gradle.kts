@@ -5,6 +5,10 @@ plugins {
     id("convention.kotlin-base")
 }
 
+kotlin {
+    explicitApi()
+}
+
 tasks.withType<Jar>().configureEach {
     manifest {
         attributes(

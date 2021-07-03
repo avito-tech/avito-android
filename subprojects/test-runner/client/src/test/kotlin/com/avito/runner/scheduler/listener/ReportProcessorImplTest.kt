@@ -12,7 +12,7 @@ import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.report.serialize.ReportSerializer
-import com.avito.retrace.ProguardRetracer
+import com.avito.retrace.Stub
 import com.avito.runner.scheduler.logcat.StubLogcatAccessor
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
 import com.avito.test.model.DeviceName
@@ -32,7 +32,7 @@ internal class ReportProcessorImplTest {
     private val loggerFactory = StubLoggerFactory
     private val statsdSender = StubStatsdSender()
     private val artifactsUploader = StubTestArtifactsUploader()
-    private val logcatProcessor = LogcatProcessor.Impl(artifactsUploader, ProguardRetracer.Stub)
+    private val logcatProcessor = LogcatProcessor.Impl(artifactsUploader, Stub)
     private val timeProvider = StubTimeProvider()
     private val reportSerializer = ReportSerializer()
 

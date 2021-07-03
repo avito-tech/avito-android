@@ -6,6 +6,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
@@ -19,26 +20,26 @@ import javax.inject.Inject
  * todo @CacheableTask + test for it
  */
 @Suppress("UnstableApiUsage")
-abstract class FindChangedTestsTask @Inject constructor(
+public abstract class FindChangedTestsTask @Inject constructor(
     objects: ObjectFactory,
     layout: ProjectLayout,
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
     @Input
-    val targetCommit = objects.property<String>()
+    public val targetCommit: Property<String> = objects.property()
 
     @InputDirectory
-    val androidTestDir: DirectoryProperty = objects.directoryProperty()
+    public val androidTestDir: DirectoryProperty = objects.directoryProperty()
         .convention(layout.projectDirectory.dir("src/androidTest"))
 
     @OutputFile
-    val changedTestsFile: Provider<RegularFile> = objects.directoryProperty()
+    public val changedTestsFile: Provider<RegularFile> = objects.directoryProperty()
         .convention(layout.buildDirectory)
         .file("changed-test-classes.txt")
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
 
         workerExecutor.noIsolation().submit(FindChangedTestsAction::class.java) { params ->

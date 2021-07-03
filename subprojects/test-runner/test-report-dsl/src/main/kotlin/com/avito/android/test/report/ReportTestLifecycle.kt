@@ -3,9 +3,9 @@ package com.avito.android.test.report
 import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepModel
 
-interface ReportTestLifecycle<T : StepModel> : ReportStepLifecycle<T> {
-    fun startTestCase()
-    fun finishTestCase()
-    fun failedTestCase(exception: Throwable)
-    fun setDataSet(value: DataSet)
+public interface ReportTestLifecycle<T : StepModel> : ReportStepLifecycle<T> {
+    public fun startTestCase()
+    public fun finishTestCase()
+    public fun failedTestCase(exception: Throwable)
+    public fun setDataSet(value: DataSet)
 }

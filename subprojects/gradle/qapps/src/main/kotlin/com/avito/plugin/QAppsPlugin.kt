@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-class QAppsPlugin : Plugin<Project> {
+public class QAppsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 

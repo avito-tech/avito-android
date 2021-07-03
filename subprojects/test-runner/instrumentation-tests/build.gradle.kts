@@ -44,10 +44,6 @@ dependencies {
     gradleTestImplementation(projects.common.truthExtensions)
 }
 
-kotlin {
-    explicitApi()
-}
-
 gradlePlugin {
     plugins {
         create("functionalTests") {

@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-class ImpactMetrics(context: String, name: String) : BuildStep(context, name) {
+public class ImpactMetrics(context: String, name: String) : BuildStep(context, name) {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         require(project.isRoot()) { failMessage("should be configured for root project") }

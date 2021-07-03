@@ -16,11 +16,11 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.getByType
 
-abstract class TestSummaryPluginBuildStep(context: String, name: String) :
+public abstract class TestSummaryPluginBuildStep(context: String, name: String) :
     BuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
-    var configuration: String = ""
+    public var configuration: String = ""
 
     protected abstract val stepName: String
 

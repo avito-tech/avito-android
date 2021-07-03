@@ -12,8 +12,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dslx.noOwnerClosureOf
 
-@Suppress("UnstableApiUsage")
-class UploadToArtifactory(
+public class UploadToArtifactory(
     context: String,
     artifactsConfiguration: ArtifactsConfiguration,
     name: String

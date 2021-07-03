@@ -5,7 +5,7 @@ import com.avito.android.AnnotationData
 internal typealias ExternalId = String
 internal typealias TestLocation = String
 
-class ExternalIdDuplicateCheck(override val onViolation: (String) -> Unit) : TestSignatureCheck {
+public class ExternalIdDuplicateCheck(override val onViolation: (String) -> Unit) : TestSignatureCheck {
 
     private val externalIdAnnotationValue = "value"
     private val dataSetNumberAnnotationValue = "value"
@@ -47,5 +47,5 @@ class ExternalIdDuplicateCheck(override val onViolation: (String) -> Unit) : Tes
 }
 
 // visible in test
-const val EXTERNAL_ID_ANNOTATION_TYPE = "com.avito.android.test.annotations.ExternalId"
-const val DATA_SET_ANNOTATION_TYPE = "com.avito.android.test.annotations.DataSetNumber"
+internal const val EXTERNAL_ID_ANNOTATION_TYPE = "com.avito.android.test.annotations.ExternalId"
+internal const val DATA_SET_ANNOTATION_TYPE = "com.avito.android.test.annotations.DataSetNumber"

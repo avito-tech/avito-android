@@ -2,7 +2,7 @@ package com.avito.bitbucket
 
 import java.io.Serializable
 
-data class BitbucketConfig(
+public data class BitbucketConfig(
     val baseUrl: String,
     val credentials: AtlassianCredentials,
     val projectKey: String,

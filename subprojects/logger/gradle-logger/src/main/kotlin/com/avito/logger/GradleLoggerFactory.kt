@@ -18,7 +18,7 @@ import org.gradle.api.logging.configuration.ShowStacktrace
 import java.io.Serializable
 import java.util.Locale
 
-class GradleLoggerFactory(
+public class GradleLoggerFactory(
     private val isCiRun: Boolean,
     private val sentryConfig: SentryConfig,
     private val elasticConfig: ElasticConfig,
@@ -120,19 +120,19 @@ class GradleLoggerFactory(
         )
     }
 
-    companion object {
+    public companion object {
 
-        inline fun <reified T : Task> getLogger(task: T): Logger = fromTask(task).create<T>()
+        public inline fun <reified T : Task> getLogger(task: T): Logger = fromTask(task).create<T>()
 
-        inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
+        public inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
             fromPlugin(plugin, project).create<T>()
 
-        fun fromTask(task: Task): GradleLoggerFactory = fromProject(
+        public fun fromTask(task: Task): GradleLoggerFactory = fromProject(
             project = task.project,
             taskName = task.name
         )
 
-        fun fromPlugin(
+        public fun fromPlugin(
             plugin: Plugin<*>,
             project: Project
         ): GradleLoggerFactory = fromProject(
@@ -140,7 +140,7 @@ class GradleLoggerFactory(
             pluginName = plugin.javaClass.simpleName
         )
 
-        fun fromProject(
+        public fun fromProject(
             project: Project,
             pluginName: String? = null,
             taskName: String? = null

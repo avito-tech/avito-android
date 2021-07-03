@@ -8,9 +8,10 @@ import com.avito.test.model.TestName
  *
  * @param annotations при совпадении аннотаций на классе и методе будет выброшен exception
  */
-data class TestInApk(
+public data class TestInApk(
     val testName: TestName,
     val annotations: List<AnnotationData>
 ) {
-    companion object
+
+    public companion object
 }

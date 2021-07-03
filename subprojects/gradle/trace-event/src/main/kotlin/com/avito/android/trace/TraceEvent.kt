@@ -2,59 +2,60 @@ package com.avito.android.trace
 
 import com.google.gson.annotations.SerializedName
 
-interface TraceEvent {
+public interface TraceEvent {
+
     /**
      * The name of the event, as displayed in Trace Viewer
      */
-    val eventName: String
+    public val eventName: String
 
     /**
      * The event categories.
      * This is a comma separated list of categories for the event.
      * The categories can be used to hide events in the Trace Viewer UI.
      */
-    val categories: String?
+    public val categories: String?
 
     /**
      * The event type.
      * This is a single character which changes depending on the type of event being output
      */
-    val phase: Char
-    val processId: String
-    val threadId: String?
+    public val phase: Char
+    public val processId: String
+    public val threadId: String?
 
     /**
      * The tracing clock timestamp of the event.
      * Somehow `displayTimeUnit` doesn't affect this time unit.
      */
-    val timestampMicroseconds: Long
+    public val timestampMicroseconds: Long
 
     /**
      * A fixed color name:
      * https://github.com/catapult-project/catapult/blob/master/tracing/tracing/base/color_scheme.html
      */
-    val color: String?
+    public val color: String?
 
     /**
      * Any arguments provided for the event.
      * Some of the event types have required argument fields, otherwise, you can put any information you wish in here.
      * The arguments are displayed in Trace Viewer when you view an event in the analysis section.
      */
-    val args: Map<String, Any>?
+    public val args: Map<String, Any>?
 
-    companion object {
-        const val COLOR_GOOD = "good"
-        const val COLOR_BAD = "bad"
-        const val COLOR_TERRIBLE = "terrible"
+    public companion object {
+        public const val COLOR_GOOD: String = "good"
+        public const val COLOR_BAD: String = "bad"
+        public const val COLOR_TERRIBLE: String = "terrible"
 
-        const val COLOR_BLACK = "black"
-        const val COLOR_GREY = "grey"
-        const val COLOR_WHITE = "white"
-        const val COLOR_YELLOW = "yellow"
+        public const val COLOR_BLACK: String = "black"
+        public const val COLOR_GREY: String = "grey"
+        public const val COLOR_WHITE: String = "white"
+        public const val COLOR_YELLOW: String = "yellow"
     }
 }
 
-data class DurationEvent(
+public data class DurationEvent(
     @SerializedName("ph") override val phase: Char,
     @SerializedName("ts") override val timestampMicroseconds: Long,
     @SerializedName("pid") override val processId: String,
@@ -67,7 +68,8 @@ data class DurationEvent(
     // and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
 ) : TraceEvent {
-    companion object {
+
+    internal companion object {
         const val PHASE_BEGIN = 'B'
         const val PHASE_END = 'E'
     }
@@ -77,7 +79,7 @@ data class DurationEvent(
  * Each complete event logically combines a pair of duration events.
  * Unlike duration events, the timestamps of complete events can be in any order.
  */
-data class CompleteEvent(
+public data class CompleteEvent(
     @SerializedName("ph") override val phase: Char = PHASE,
     /**
      * The time of the start of the complete event
@@ -97,7 +99,8 @@ data class CompleteEvent(
     // and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
 ) : TraceEvent {
-    companion object {
+
+    internal companion object {
         const val PHASE = 'X'
     }
 }
@@ -105,7 +108,7 @@ data class CompleteEvent(
 /**
  * Something that happens but has no duration associated with it
  */
-data class InstantEvent(
+public data class InstantEvent(
     @SerializedName("ph") override val phase: Char = PHASE,
     /**
      * The time of the start of the complete event
@@ -128,10 +131,11 @@ data class InstantEvent(
     // and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
 ) : TraceEvent {
-    companion object {
-        const val PHASE = 'i'
-        const val SCOPE_THREAD = "t"
-        const val SCOPE_PROCESS = "p"
-        const val SCOPE_GLOBAL = "g"
+
+    public companion object {
+        public const val PHASE: Char = 'i'
+        public const val SCOPE_THREAD: String = "t"
+        public const val SCOPE_PROCESS: String = "p"
+        public const val SCOPE_GLOBAL: String = "g"
     }
 }

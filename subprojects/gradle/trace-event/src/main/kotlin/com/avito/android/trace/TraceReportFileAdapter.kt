@@ -10,7 +10,7 @@ import com.google.gson.JsonSerializer
 import java.io.File
 import java.lang.reflect.Type
 
-class TraceReportFileAdapter(
+public class TraceReportFileAdapter(
     private val file: File
 ) {
 
@@ -21,11 +21,11 @@ class TraceReportFileAdapter(
             .create()
     }
 
-    fun write(report: TraceReport) {
+    public fun write(report: TraceReport) {
         file.writeText(gson.toJson(report))
     }
 
-    fun read(): TraceReport {
+    public fun read(): TraceReport {
         return gson.fromJson(file.bufferedReader(), TraceReport::class.java)
     }
 

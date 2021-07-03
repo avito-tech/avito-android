@@ -5,7 +5,7 @@ import org.gradle.BuildResult
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 
-abstract class BaseBuildListener : BuildListener {
+internal abstract class BaseBuildListener : BuildListener {
 
     override fun settingsEvaluated(settings: Settings) {}
 

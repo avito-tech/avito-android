@@ -3,15 +3,15 @@ package com.avito.runner.service.worker.device.model
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Serial
 
-data class DeviceData(
-    val serial: Serial,
-    val configuration: DeviceConfiguration
+public data class DeviceData(
+    public val serial: Serial,
+    public val configuration: DeviceConfiguration
 ) {
 
-    companion object
+    internal companion object
 }
 
-fun Device.getData(): DeviceData = DeviceData(
+public fun Device.getData(): DeviceData = DeviceData(
     serial = coordinate.serial,
     configuration = DeviceConfiguration(
         api = api,

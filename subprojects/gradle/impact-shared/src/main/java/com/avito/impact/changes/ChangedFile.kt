@@ -2,7 +2,7 @@ package com.avito.impact.changes
 
 import java.io.File
 
-data class ChangedFile(
+public data class ChangedFile(
     val rootDir: File,
     val file: File,
     val changeType: ChangeType
@@ -12,5 +12,5 @@ data class ChangedFile(
         require(file.startsWith(rootDir)) { "File $file must be within $rootDir" }
     }
 
-    val relativePath: String = file.toRelativeString(rootDir)
+    public val relativePath: String = file.toRelativeString(rootDir)
 }

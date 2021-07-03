@@ -1,8 +1,8 @@
 package com.avito.android.gradle.profile
 
-class CompositeOperation<T : Operation>(children: Iterable<T>) : Operation(), Iterable<T> {
+public class CompositeOperation<T : Operation>(children: Iterable<T>) : Operation(), Iterable<T> {
 
-    val operations: List<T>
+    public val operations: List<T>
 
     override val elapsedTime: Long
         get() {

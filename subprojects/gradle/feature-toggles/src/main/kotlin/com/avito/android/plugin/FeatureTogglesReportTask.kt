@@ -6,6 +6,8 @@ import com.avito.utils.ProcessRunner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
@@ -18,30 +20,32 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-abstract class FeatureTogglesReportTask : DefaultTask() {
+public abstract class FeatureTogglesReportTask : DefaultTask() {
 
     private val monthAgo = LocalDate.now().minusMonths(1L)
     private val quarterAgo = LocalDate.now().minusMonths(3L)
     private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @InputFile
-    val jsonReportFile = File(project.buildDir, "reports/feature_toggles.json")
+    public val jsonReportFile: File = File(project.buildDir, "reports/feature_toggles.json")
 
     @InputFile
-    val featureTogglesFile = File(project.rootDir, "common/features/src/main/java/com/avito/android/Features.kt")
+    public val featureTogglesFile: File =
+        File(project.rootDir, "common/features/src/main/java/com/avito/android/Features.kt")
 
     @Input
-    val slackHook = project.objects.property<String>()
+    public val slackHook: Property<String> = project.objects.property()
 
     @Input
-    val developersToTeam = project.objects.mapProperty<DeveloperEmail, Team>()
+    public val developersToTeam: MapProperty<DeveloperEmail /* = kotlin.String */, Team /* = kotlin.String */> =
+        project.objects.mapProperty()
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val jsonToggles = readJsonReport()
         val loggerFactory = GradleLoggerFactory.fromTask(this)
 
-        val processRunner = ProcessRunner.Real(
+        val processRunner = ProcessRunner.create(
             workingDirectory = project.projectDir
         )
         val blameCodeLines = readBlameCodeLines(processRunner)
