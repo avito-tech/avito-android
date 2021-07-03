@@ -8,24 +8,24 @@ import org.gradle.api.provider.ProviderFactory
 /**
  * @param reason Причина почему было выбрано то или иное окружение
  */
-sealed class BuildEnvironment(
+public sealed class BuildEnvironment(
     providers: ProviderFactory,
     private val reason: String,
-    val inGradleTestKit: Boolean = isRunInGradleTestKit(providers)
+    public val inGradleTestKit: Boolean = isRunInGradleTestKit(providers)
 ) {
-    class Local(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
-    class GradleTestKit(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
-    class Mirkale(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
-    class IDE(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
-    class CI(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
+    public class Local(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
+    public class GradleTestKit(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
+    public class Mirkale(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
+    public class IDE(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
+    public class CI(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
 
     override fun toString(): String = "${javaClass.simpleName}, because: $reason"
 }
 
 // используется в groovy скриптах
-fun buildEnvironment(project: Project): BuildEnvironment = project.buildEnvironment
+public fun buildEnvironment(project: Project): BuildEnvironment = project.buildEnvironment
 
-val Project.buildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
+public val Project.buildEnvironment: BuildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
     val result = when {
         isRunInCI(project) -> BuildEnvironment.CI(
             project.providers,

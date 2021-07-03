@@ -1,6 +1,6 @@
 package com.avito.runner.service.worker.device.model
 
-fun DeviceConfiguration.Companion.createStubInstance(
+public fun DeviceConfiguration.Companion.createStubInstance(
     api: Int = 29,
     model: String = "model"
 ): DeviceConfiguration = DeviceConfiguration(

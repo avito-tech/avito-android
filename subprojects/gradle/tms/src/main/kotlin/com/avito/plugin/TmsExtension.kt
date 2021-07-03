@@ -2,7 +2,7 @@ package com.avito.plugin
 
 import org.gradle.api.provider.Property
 
-abstract class TmsExtension {
+public abstract class TmsExtension {
 
-    abstract val reportsHost: Property<String>
+    public abstract val reportsHost: Property<String>
 }

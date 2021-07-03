@@ -1,5 +1,6 @@
 package com.avito.test.gradle.dependencies
 
-interface GradleScriptCompatible {
-    fun getScriptRepresentation(): String
+public interface GradleScriptCompatible {
+
+    public fun getScriptRepresentation(): String
 }

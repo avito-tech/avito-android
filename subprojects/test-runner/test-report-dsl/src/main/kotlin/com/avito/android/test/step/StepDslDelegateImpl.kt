@@ -5,7 +5,7 @@ import com.avito.android.test.report.ReportTestLifecycle
 import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepModel
 
-class StepDslDelegateImpl<T : StepModel>(
+public class StepDslDelegateImpl<T : StepModel>(
     private val reportLifecycle: ReportTestLifecycle<in T>,
     private val stepModelFactory: ReportStepModelFactory<out T>
 ) : StepDslDelegate {

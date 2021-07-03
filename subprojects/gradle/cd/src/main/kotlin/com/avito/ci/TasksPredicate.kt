@@ -7,9 +7,9 @@ import org.gradle.api.tasks.TaskProvider
 
 public sealed class TasksPredicate<T> {
 
-    abstract fun find(tasks: TaskContainer): T
+    public abstract fun find(tasks: TaskContainer): T
 
-    class ByName(
+    public class ByName(
         private val name: String
     ) : TasksPredicate<TaskProvider<Task>>() {
 
@@ -18,7 +18,7 @@ public sealed class TasksPredicate<T> {
         }
     }
 
-    class ByType<T : Task>(
+    public class ByType<T : Task>(
         private val type: Class<T>
     ) : TasksPredicate<TaskCollection<T>>() {
 
@@ -27,15 +27,15 @@ public sealed class TasksPredicate<T> {
         }
     }
 
-    companion object {
+    public companion object {
 
         @JvmStatic
-        fun byName(name: String): TasksPredicate<TaskProvider<Task>> = ByName(name)
+        public fun byName(name: String): TasksPredicate<TaskProvider<Task>> = ByName(name)
 
         @JvmStatic
-        inline fun <reified T : Task> byType(): TasksPredicate<TaskCollection<T>> = ByType(T::class.java)
+        public inline fun <reified T : Task> byType(): TasksPredicate<TaskCollection<T>> = ByType(T::class.java)
 
         @JvmStatic
-        fun <T : Task> byType(type: Class<T>): TasksPredicate<TaskCollection<T>> = ByType(type)
+        public fun <T : Task> byType(type: Class<T>): TasksPredicate<TaskCollection<T>> = ByType(type)
     }
 }

@@ -77,7 +77,7 @@ internal class TestRunnerFactoryImpl(
                 intentionResults = executionState.intentionResults
             ),
             devicesProvider = devicesProvider,
-            reservationWatcher = DeviceReservationWatcher.Impl(
+            reservationWatcher = DeviceReservationWatcher.create(
                 reservation = devicesProvider
             ),
             loggerFactory = loggerFactory,
@@ -157,7 +157,7 @@ internal class TestRunnerFactoryImpl(
 
         val dispatcher = Dispatchers.IO
 
-        val reTracer: ProguardRetracer = ProguardRetracer.Impl(params.proguardMappings)
+        val reTracer: ProguardRetracer = ProguardRetracer.create(params.proguardMappings)
 
         val artifactsUploader: TestArtifactsUploader = AvitoFileStorageUploader(
             RemoteStorageFactory.create(

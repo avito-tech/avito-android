@@ -25,7 +25,7 @@ internal abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Paramete
         require(!buildId.isNullOrBlank()) { "teamcity buildId property must be set" }
 
         val graphite = graphiteSender()
-        val teamcity = TeamcityApi.Impl(parameters.getTeamcityCredentials().get())
+        val teamcity = TeamcityApi.create(parameters.getTeamcityCredentials().get())
         val action = CollectTeamcityMetricsAction(
             buildId = buildId,
             teamcityApi = teamcity,
@@ -35,7 +35,7 @@ internal abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Paramete
     }
 
     private fun graphiteSender(): GraphiteSender {
-        return GraphiteSender.Impl(
+        return GraphiteSender.create(
             config = parameters.getGraphiteConfig().get(),
             loggerFactory = parameters.getLoggerFactory().get()
         )

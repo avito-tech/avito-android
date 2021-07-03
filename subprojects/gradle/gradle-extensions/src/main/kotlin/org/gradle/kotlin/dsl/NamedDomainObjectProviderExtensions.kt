@@ -12,5 +12,4 @@ import org.gradle.api.NamedDomainObjectProvider
  * }
  * ```
  */
-operator fun <T> NamedDomainObjectProvider<T>.invoke(action: T.() -> Unit) =
-    configure(action)
+public operator fun <T> NamedDomainObjectProvider<T>.invoke(action: T.() -> Unit): Unit = configure(action)

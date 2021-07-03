@@ -5,37 +5,37 @@ import com.avito.test.gradle.dependencies.GradleDependency.Safe.Coordinate.Platf
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Coordinate.Project
 import org.gradle.util.Path
 
-sealed class GradleDependency : GradleScriptCompatible {
+public sealed class GradleDependency : GradleScriptCompatible {
 
-    data class Raw(val rawDependency: String) : GradleDependency() {
-        override fun getScriptRepresentation() = rawDependency
+    public data class Raw(val rawDependency: String) : GradleDependency() {
+        override fun getScriptRepresentation(): String = rawDependency
     }
 
-    data class Safe(
+    public data class Safe(
         private val configuration: CONFIGURATION,
         private val dep: Coordinate
     ) : GradleDependency() {
 
-        enum class CONFIGURATION(private val representation: String) : GradleScriptCompatible {
+        public enum class CONFIGURATION(private val representation: String) : GradleScriptCompatible {
             IMPLEMENTATION("implementation"),
             TEST_IMPLEMENTATION("testImplementation"),
             ANDROID_TEST_IMPLEMENTATION("androidTestImplementation"),
             API("api");
 
-            override fun getScriptRepresentation() = representation
+            override fun getScriptRepresentation(): String = representation
         }
 
-        sealed class Coordinate : GradleScriptCompatible {
+        public sealed class Coordinate : GradleScriptCompatible {
 
-            data class External(val coordinates: String) : Coordinate() {
-                override fun getScriptRepresentation() = "\"$coordinates\""
+            public data class External(val coordinates: String) : Coordinate() {
+                override fun getScriptRepresentation(): String = "\"$coordinates\""
             }
 
-            data class Project(val path: Path) : Coordinate() {
-                override fun getScriptRepresentation() = "project(\"${path.path}\")"
+            public data class Project(val path: Path) : Coordinate() {
+                override fun getScriptRepresentation(): String = "project(\"${path.path}\")"
             }
 
-            data class Platform(val coordinate: Coordinate) : Coordinate() {
+            public data class Platform(val coordinate: Coordinate) : Coordinate() {
                 override fun getScriptRepresentation(): String {
                     return "platform(${
                         when (coordinate) {
@@ -54,19 +54,19 @@ sealed class GradleDependency : GradleScriptCompatible {
             return "${configuration.getScriptRepresentation()}(${dep.getScriptRepresentation()})"
         }
 
-        companion object {
+        public companion object {
 
-            fun external(
+            public fun external(
                 coordinate: String,
                 configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
             ): Safe = Safe(configuration, External(coordinate))
 
-            fun project(
+            public fun project(
                 path: String,
                 configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
             ): Safe = Safe(configuration, Project(Path.path(path)))
 
-            fun platformProject(
+            public fun platformProject(
                 path: String,
                 configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
             ): Safe = Safe(
@@ -74,7 +74,7 @@ sealed class GradleDependency : GradleScriptCompatible {
                 Platform(Project(Path.path(path)))
             )
 
-            fun platformExternal(
+            public fun platformExternal(
                 coordinate: String,
                 configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
             ): Safe = Safe(configuration, External(coordinate))

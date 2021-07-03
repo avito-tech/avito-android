@@ -3,26 +3,26 @@ package com.avito.utils.gradle
 import java.io.File
 import java.io.Serializable
 
-sealed class KubernetesCredentials : Serializable {
+public sealed class KubernetesCredentials : Serializable {
 
-    object Empty : KubernetesCredentials() {
+    public object Empty : KubernetesCredentials() {
 
         override fun toString(): String = "KubernetesCredentials.Empty"
     }
 
-    class Service(
-        val token: String,
-        val caCertData: String,
-        val url: String
+    public class Service(
+        public val token: String,
+        public val caCertData: String,
+        public val url: String
     ) : KubernetesCredentials() {
 
         override fun toString(): String = "KubernetesCredentials.Service"
     }
 
-    class Config(
-        val context: String,
-        val caCertFile: File? = kubeDefaultCaCertFile,
-        val configFile: File = kubeConfigDefaultPath
+    public class Config(
+        public val context: String,
+        public val caCertFile: File? = kubeDefaultCaCertFile,
+        public val configFile: File = kubeConfigDefaultPath
     ) : KubernetesCredentials() {
 
         override fun toString(): String = "KubernetesCredentials.Config"

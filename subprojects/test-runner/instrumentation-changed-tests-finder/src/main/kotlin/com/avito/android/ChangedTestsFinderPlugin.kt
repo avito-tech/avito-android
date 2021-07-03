@@ -7,7 +7,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-class ChangedTestsFinderPlugin : Plugin<Project> {
+public class ChangedTestsFinderPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val extension = target.extensions.create<ChangedTestsFinderExtension>(changedTestsFinderExtensionName)

@@ -1,8 +1,8 @@
 package com.avito.runner.service.worker.device.model
 
-data class DeviceConfiguration(
-    val api: Int,
-    val model: String
+public data class DeviceConfiguration(
+    public val api: Int,
+    public val model: String
 ) {
-    companion object
+    public companion object
 }

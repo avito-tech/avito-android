@@ -29,7 +29,3 @@ dependencies {
     testFixturesImplementation(testFixtures(projects.logger.logger))
     testFixturesImplementation(testFixtures(projects.common.httpClient))
 }
-
-kotlin {
-    explicitApi()
-}

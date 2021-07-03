@@ -21,7 +21,7 @@ public class KubernetesApiProvider(
         return KubernetesApi.Impl(
             kubernetesClient = createKubernetesClient(
                 httpClientProvider = HttpClientProvider(
-                    statsDSender = StatsDSender.Impl(statsDConfig, loggerFactory),
+                    statsDSender = StatsDSender.create(statsDConfig, loggerFactory),
                     timeProvider = timeProvider,
                     loggerFactory = loggerFactory,
                 ),

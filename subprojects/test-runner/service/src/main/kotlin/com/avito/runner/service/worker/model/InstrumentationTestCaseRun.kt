@@ -3,7 +3,8 @@ package com.avito.runner.service.worker.model
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.test.model.TestName
 
-sealed class InstrumentationTestCaseRun {
+internal sealed class InstrumentationTestCaseRun {
+
     data class CompletedTestCaseRun(
         val name: TestName,
         val result: TestCaseRun.Result,

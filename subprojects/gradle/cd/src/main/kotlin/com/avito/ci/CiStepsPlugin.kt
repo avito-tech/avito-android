@@ -8,7 +8,7 @@ import org.gradle.api.Task
 import org.gradle.kotlin.dsl.container
 import org.gradle.kotlin.dsl.register
 
-class CiStepsPlugin : Plugin<Project> {
+public class CiStepsPlugin : Plugin<Project> {
 
     private val taskGroup = "ci"
 

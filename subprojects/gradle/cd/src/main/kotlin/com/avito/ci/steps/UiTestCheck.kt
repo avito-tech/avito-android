@@ -8,15 +8,16 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-open class UiTestCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
+public open class UiTestCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
     FlakyAwareBuildStep by FlakyAwareBuildStep.Impl() {
 
     // public, used in build scripts
-    var configurations = mutableListOf<String>()
+    public var configurations: MutableList<String> = mutableListOf()
 
-    @Suppress("unused") // used in build scripts
-    fun configurations(vararg configs: String) {
+    // used in build scripts
+    @Suppress("unused")
+    public fun configurations(vararg configs: String) {
         configurations.addAll(configs)
     }
 

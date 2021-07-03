@@ -2,7 +2,7 @@ package com.avito.slack
 
 import com.avito.slack.model.FoundMessage
 
-class ConjunctionMessagePredicate(
+public class ConjunctionMessagePredicate(
     private val conditions: List<SlackMessagePredicate>
 ) : SlackMessagePredicate {
 

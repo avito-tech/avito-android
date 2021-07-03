@@ -2,7 +2,7 @@ package com.avito.android.check
 
 import com.avito.android.AnnotationData
 
-class ClassAndMethodDuplicateAnnotationCheck(override val onViolation: (String) -> Unit) : TestSignatureCheck {
+public class ClassAndMethodDuplicateAnnotationCheck(override val onViolation: (String) -> Unit) : TestSignatureCheck {
 
     override fun onNewMethodFound(
         className: String,

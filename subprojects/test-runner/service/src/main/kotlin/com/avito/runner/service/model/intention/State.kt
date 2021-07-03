@@ -1,23 +1,23 @@
 package com.avito.runner.service.model.intention
 
-data class State(
+public data class State(
     val layers: List<Layer>,
     val digest: String = layers.hashCode().toString() // layers order matter
 ) {
 
-    sealed class Layer {
+    public sealed class Layer {
 
-        data class ApiLevel(val api: Int) : Layer() {
+        public data class ApiLevel(val api: Int) : Layer() {
 
             override fun toString(): String = "Api level = $api"
         }
 
-        data class Model(val model: String) : Layer() {
+        public data class Model(val model: String) : Layer() {
 
             override fun toString(): String = "Model = $model"
         }
 
-        data class InstalledApplication(
+        public data class InstalledApplication(
             val applicationPath: String,
             val applicationPackage: String
         ) : Layer() {
@@ -25,7 +25,7 @@ data class State(
             override fun toString(): String =
                 "Application: $applicationPath, package: $applicationPackage"
 
-            companion object
+            internal companion object
         }
     }
 

@@ -17,9 +17,9 @@ import java.net.URL
  *              }
  *          }
  */
-inline fun <reified C> fileFromJarResources(path: String): File = File(resourceFrom<C>(path).file)
+public inline fun <reified C> fileFromJarResources(path: String): File = File(resourceFrom<C>(path).file)
 
-inline fun <reified C> resourceFrom(path: String): URL {
+public inline fun <reified C> resourceFrom(path: String): URL {
     val url = C::class.java.classLoader.getResource(path)
     requireNotNull(url) { "Asset from $path not found" }
     return url

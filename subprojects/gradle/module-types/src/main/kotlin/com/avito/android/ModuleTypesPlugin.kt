@@ -4,7 +4,7 @@ import com.avito.kotlin.dsl.getBooleanProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class ModuleTypesPlugin : Plugin<Project> {
+public class ModuleTypesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create(

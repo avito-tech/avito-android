@@ -12,7 +12,7 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-class TestSummaryStep(context: String, name: String) : TestSummaryPluginBuildStep(context, name) {
+public class TestSummaryStep(context: String, name: String) : TestSummaryPluginBuildStep(context, name) {
 
     override val stepName: String = "TestSummary"
 

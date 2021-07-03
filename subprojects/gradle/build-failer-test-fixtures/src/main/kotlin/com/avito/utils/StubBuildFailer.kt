@@ -2,11 +2,11 @@ package com.avito.utils
 
 import com.avito.android.Problem
 
-class StubBuildFailer : BuildFailer {
+public class StubBuildFailer : BuildFailer {
 
-    var lastProblem: Problem? = null
-    var lastReason: String? = null
-    var lastCause: Throwable? = null
+    public var lastProblem: Problem? = null
+    public var lastReason: String? = null
+    public var lastCause: Throwable? = null
 
     override fun failBuild(problem: Problem) {
         lastProblem = problem

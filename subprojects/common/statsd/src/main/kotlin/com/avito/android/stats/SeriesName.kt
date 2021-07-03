@@ -16,15 +16,15 @@ import java.io.Serializable
  *
  *  same rules applies for append
  */
-class SeriesName private constructor(
+public class SeriesName private constructor(
     private val parts: List<String>
 ) : Serializable {
 
-    fun prefix(seriesName: SeriesName): SeriesName {
+    public fun prefix(seriesName: SeriesName): SeriesName {
         return SeriesName(seriesName.parts + parts)
     }
 
-    fun append(part: String, multipart: Boolean = false): SeriesName {
+    public fun append(part: String, multipart: Boolean = false): SeriesName {
         return if (multipart) {
             val multiparts = part.split('.').map { graphiteSeriesPart(it) }
             SeriesName(parts + multiparts)
@@ -33,11 +33,11 @@ class SeriesName private constructor(
         }
     }
 
-    fun append(vararg part: String): SeriesName {
+    public fun append(vararg part: String): SeriesName {
         return SeriesName(parts + part.map { graphiteSeriesPart(it) })
     }
 
-    fun append(part: SeriesName): SeriesName {
+    public fun append(part: SeriesName): SeriesName {
         return part.prefix(this)
     }
 
@@ -60,15 +60,15 @@ class SeriesName private constructor(
         return parts.hashCode()
     }
 
-    companion object {
+    public companion object {
 
         private val invalidSymbols by lazy { "[^a-zA-Z0-9_-]+".toRegex() }
 
-        fun create(vararg part: String): SeriesName {
+        public fun create(vararg part: String): SeriesName {
             return SeriesName(mutableListOf()).append(*part)
         }
 
-        fun create(seriesName: String, multipart: Boolean): SeriesName {
+        public fun create(seriesName: String, multipart: Boolean): SeriesName {
             return SeriesName(mutableListOf()).append(seriesName, multipart)
         }
 

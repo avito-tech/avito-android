@@ -3,6 +3,7 @@ package com.avito.ci
 import com.avito.android.AndroidSdk
 import com.avito.ci.internal.signer.SignVerifier
 import com.avito.utils.ExistingFile
+import com.avito.utils.ExistingFileImpl
 import java.io.File
 
 internal class OutputsVerifier(
@@ -25,7 +26,7 @@ internal class OutputsVerifier(
         } else if (shouldNotBeEmpty && file.length() == 0L) {
             errors += "Artifact: ${file.relativeToOutputsPath} size == 0"
         } else {
-            action.invoke(ExistingFile.Impl(file))
+            action.invoke(ExistingFileImpl(file))
         }
     }
 

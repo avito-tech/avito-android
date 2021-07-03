@@ -3,7 +3,7 @@ package com.avito.android
 import org.jf.dexlib2.iface.DexFile
 import java.io.File
 
-interface DexFileExtractor {
+public interface DexFileExtractor {
 
-    fun getDexFiles(file: File): List<DexFile>
+    public fun getDexFiles(file: File): List<DexFile>
 }

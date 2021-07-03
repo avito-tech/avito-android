@@ -8,23 +8,23 @@ import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.slack.model.createStubInstance
 import java.io.File
 
-class StubSlackClient : SlackClient {
+public class StubSlackClient : SlackClient {
 
-    var requestCount: Int = 0
+    public var requestCount: Int = 0
 
-    var sentMessage: String? = null
+    public var sentMessage: String? = null
 
-    var answeredMessageTimestamp: String? = null
+    public var answeredMessageTimestamp: String? = null
 
-    var answeredMessageText: String? = null
+    public var answeredMessageText: String? = null
 
-    lateinit var previousMessageTimestamp: String
+    public lateinit var previousMessageTimestamp: String
 
-    var previousMessageFailsWithException: Boolean = false
+    public var previousMessageFailsWithException: Boolean = false
 
-    var updatedMessageTimestamp: String? = null
+    public var updatedMessageTimestamp: String? = null
 
-    var updatedMessageText: String? = null
+    public var updatedMessageText: String? = null
 
     override fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage> {
         return if (message.threadId == null) {

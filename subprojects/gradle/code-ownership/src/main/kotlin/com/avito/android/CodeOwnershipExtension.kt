@@ -4,13 +4,13 @@ import Visibility
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.kotlin.dsl.findByType
 
-open class CodeOwnershipExtension(
-    var team: String? = null,
-    var visibility: Visibility = Visibility.PUBLIC,
-    var allowedDependencies: Set<String> = emptySet()
+public open class CodeOwnershipExtension(
+    public var team: String? = null,
+    public var visibility: Visibility = Visibility.PUBLIC,
+    public var allowedDependencies: Set<String> = emptySet()
 ) {
 
-    fun checkProjectOwnershipSettings(projectPath: String) {
+    public fun checkProjectOwnershipSettings(projectPath: String) {
         if (team == null && visibility == Visibility.PRIVATE ||
             team == null && visibility == Visibility.TEAM
         ) {
@@ -31,5 +31,5 @@ open class CodeOwnershipExtension(
     }
 }
 
-val ExtensionContainer.ownership: CodeOwnershipExtension
+internal val ExtensionContainer.ownership: CodeOwnershipExtension
     get() = findByType() ?: CodeOwnershipExtension()

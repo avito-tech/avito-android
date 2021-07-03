@@ -3,12 +3,12 @@ package com.avito.utils
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class ProcessKtTest {
+internal class ProcessKtTest {
 
     @Test
     fun `command split - works with spaces in argument`() {
         val s = "git commit --author='test <>' --all --message='xxx xxx'"
-        assertThat(ProcessRunner.Real(null).splitCommand(s))
+        assertThat(RealProcessRunner(null).splitCommand(s))
             .asList()
             .containsExactly(
                 "git",

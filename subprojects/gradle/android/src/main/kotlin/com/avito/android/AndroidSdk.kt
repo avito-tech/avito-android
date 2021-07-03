@@ -3,42 +3,42 @@ package com.avito.android
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
 import com.avito.logger.create
-import com.avito.utils.ExistingDirectory
+import com.avito.utils.ExistingDirectoryImpl
 import com.avito.utils.ProcessRunner
 import org.gradle.api.Project
 import java.io.File
 import java.util.Properties
 
-val Project.androidSdk: AndroidSdk
+public val Project.androidSdk: AndroidSdk
     get() = AndroidSdk.fromAndroidProject(this)
 
-open class BaseAndroidSdk(
-    val androidHome: File,
+public open class BaseAndroidSdk(
+    public val androidHome: File,
     protected val processRunner: ProcessRunner
 ) {
     /**
      * It's not a part of android sdk, provided here for convenience
      */
-    val keytool = KeyTool(processRunner)
+    public val keytool: KeyTool = KeyTool(processRunner)
 
-    fun buildTools(buildToolsVersion: String) = File(androidHome, "/build-tools/$buildToolsVersion")
+    public fun buildTools(buildToolsVersion: String): File = File(androidHome, "/build-tools/$buildToolsVersion")
 
-    fun platform(compileSdkVersion: Int) = File(androidHome, "platforms/android-$compileSdkVersion")
+    public fun platform(compileSdkVersion: Int): File = File(androidHome, "platforms/android-$compileSdkVersion")
 }
 
-class AndroidSdk(
+public class AndroidSdk(
     androidHome: File,
     processRunner: ProcessRunner,
     private val buildToolsVersion: String
 ) : BaseAndroidSdk(androidHome, processRunner) {
 
-    val aapt: Aapt
-        get() = Aapt.Impl(ExistingDirectory.Impl(buildTools(buildToolsVersion)), processRunner)
+    public val aapt: Aapt
+        get() = AaptImpl(ExistingDirectoryImpl(buildTools(buildToolsVersion)), processRunner)
 
-    companion object {
+    public companion object {
 
         @JvmStatic
-        fun fromAndroidProject(project: Project): AndroidSdk {
+        internal fun fromAndroidProject(project: Project): AndroidSdk {
             require(project.isAndroid()) {
                 "Trying to get Android SDK on non-android project: ${project.path}"
             }
@@ -48,7 +48,7 @@ class AndroidSdk(
 
             return AndroidSdk(
                 androidHome = androidHome(project.rootDir, loggerFactory.create<AndroidSdk>()),
-                processRunner = ProcessRunner.Real(
+                processRunner = ProcessRunner.create(
                     workingDirectory = null
                 ),
                 buildToolsVersion = buildToolsVersion
@@ -56,13 +56,13 @@ class AndroidSdk(
         }
 
         @JvmStatic
-        fun fromProject(project: Project): BaseAndroidSdk {
+        public fun fromProject(project: Project): BaseAndroidSdk {
 
             val loggerFactory = GradleLoggerFactory.fromProject(project)
 
             return BaseAndroidSdk(
                 androidHome = androidHome(project.rootDir, loggerFactory.create<AndroidSdk>()),
-                processRunner = ProcessRunner.Real(
+                processRunner = ProcessRunner.create(
                     workingDirectory = null,
                 )
             )
@@ -93,7 +93,7 @@ class AndroidSdk(
  * Used in tests, when for any reason ANDROID_HOME environment variable was not resolved
  * Required in places where is no access to Project, mostly on Gradle Test Kit project creation
  */
-fun androidHomeFromLocalPropertiesFallback(logger: Logger): String {
+public fun androidHomeFromLocalPropertiesFallback(logger: Logger): String {
     val env: String? = System.getenv("ANDROID_HOME")
     if (!env.isNullOrBlank()) {
         return env

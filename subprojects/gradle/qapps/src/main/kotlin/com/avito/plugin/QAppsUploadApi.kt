@@ -8,7 +8,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Tag
 
-interface QAppsUploadApi {
+internal interface QAppsUploadApi {
 
     @Multipart
     @POST("/qapps/api/os/android/upload")

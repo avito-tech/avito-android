@@ -16,10 +16,6 @@ dependencies {
     gradleTestImplementation(testFixtures(projects.logger.logger))
 }
 
-kotlin {
-    explicitApi()
-}
-
 gradlePlugin {
     plugins {
         create("criticalPath") {

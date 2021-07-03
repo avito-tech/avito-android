@@ -3,12 +3,12 @@ package com.avito.utils
 import java.util.Properties
 import java.util.jar.Attributes
 
-object BuildMetadata {
+public object BuildMetadata {
 
     /**
      * Build version of a Kotlin library that contains the class
      */
-    fun <T : Any> kotlinLibraryVersion(clazz: Class<T>): String {
+    public fun <T : Any> kotlinLibraryVersion(clazz: Class<T>): String {
         val version: String? = clazz.`package`.implementationVersion
         val isEmpty = version.isNullOrBlank() || version == "0.0"
         check(!isEmpty) {
@@ -22,7 +22,7 @@ object BuildMetadata {
      *
      * @moduleName - Gradle project name with the class
      */
-    fun androidLibVersion(moduleName: String): String {
+    public fun androidLibVersion(moduleName: String): String {
         val fileName = "META-INF/com.avito.android.$moduleName.properties"
         val propertiesStream = requireNotNull(BuildMetadata::class.java.classLoader!!.getResourceAsStream(fileName)) {
             "Can't find $fileName for $moduleName module. Check generated resources in the library"

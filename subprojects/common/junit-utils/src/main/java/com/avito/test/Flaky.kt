@@ -5,6 +5,6 @@ package com.avito.test
  * It's used for retry logic.
  */
 @Retention(AnnotationRetention.BINARY)
-annotation class Flaky(
+public annotation class Flaky(
     val reason: String
 )

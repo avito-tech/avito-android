@@ -11,19 +11,19 @@ import org.gradle.api.Project
  * injection to any module in project to carry dependencies info relevant to in-house plugins, such as:
  * Impact analysis / Code ownership etc.
  */
-class InternalModule(
-    val project: Project,
-    val changesDetector: ChangesDetector,
-    val fallbackDetector: ImpactFallbackDetector
+public class InternalModule(
+    public val project: Project,
+    internal val changesDetector: ChangesDetector,
+    internal val fallbackDetector: ImpactFallbackDetector
 ) : Equality by InternalModuleEquality(project) {
 
-    val path: String = project.path
+    private val lintConfiguration = LintConfiguration(this)
 
-    val mainConfiguration = MainConfiguration(this)
-    val testConfiguration = TestConfiguration(this)
-    val androidTestConfiguration = AndroidTestConfiguration(this)
-    val lintConfiguration = LintConfiguration(this)
-    val configurations = listOf(
+    internal val path: String = project.path
+    public val mainConfiguration: MainConfiguration = MainConfiguration(this)
+    public val testConfiguration: TestConfiguration = TestConfiguration(this)
+    public val androidTestConfiguration: AndroidTestConfiguration = AndroidTestConfiguration(this)
+    internal val configurations = listOf(
         mainConfiguration,
         testConfiguration,
         androidTestConfiguration,
@@ -33,11 +33,12 @@ class InternalModule(
     /**
      * Module has been changed itself or transitively via project dependencies
      */
-    fun isModified(configurationType: ConfigurationType): Boolean = getConfiguration(configurationType).isModified
+    internal fun isModified(configurationType: ConfigurationType): Boolean =
+        getConfiguration(configurationType).isModified
 
-    fun isModified(): Boolean = configurations.any { it.isModified }
+    public fun isModified(): Boolean = configurations.any { it.isModified }
 
-    fun getConfiguration(configurationType: ConfigurationType): BaseConfiguration = when (configurationType) {
+    internal fun getConfiguration(configurationType: ConfigurationType): BaseConfiguration = when (configurationType) {
         ConfigurationType.Main -> mainConfiguration
         ConfigurationType.UnitTests -> testConfiguration
         ConfigurationType.AndroidTests -> androidTestConfiguration
@@ -47,7 +48,7 @@ class InternalModule(
     override fun toString(): String = "InternalModule[${project.path}]"
 }
 
-var Project.internalModule: InternalModule by ProjectProperty.lateinit()
+public var Project.internalModule: InternalModule by ProjectProperty.lateinit()
 
 /**
  * Equality delegated to project

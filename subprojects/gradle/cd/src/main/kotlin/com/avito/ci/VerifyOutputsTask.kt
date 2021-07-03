@@ -8,6 +8,7 @@ import com.avito.ci.steps.Output
 import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -19,7 +20,7 @@ import javax.inject.Inject
  * Verifies that all declared release artifacts are built and copied to outputs folder
  * e.g. checks that all artifacts produces and placed correctly
  */
-abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+public abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
 
     /**
      * hardcoded here, because it's a contract check
@@ -30,13 +31,13 @@ abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFactory) : D
     private val outputsDir = File("${project.rootProject.rootDir.canonicalPath}/outputs")
 
     @Input
-    val config = objects.property<ArtifactsConfiguration>()
+    public val config: Property<ArtifactsConfiguration> = objects.property()
 
     @Input
-    val checkSignatures = objects.property<Boolean>()
+    public val checkSignatures: Property<Boolean> = objects.property()
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val signVerifier: SignVerifier = SignVerifierImpl(project.androidSdk)
         val outputsVerifier = OutputsVerifier(
             androidSdk = project.androidSdk,

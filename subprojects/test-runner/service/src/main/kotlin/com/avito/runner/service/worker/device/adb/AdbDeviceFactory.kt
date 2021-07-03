@@ -13,7 +13,7 @@ import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import com.avito.utils.ProcessRunner
 
-class AdbDeviceFactory(
+public class AdbDeviceFactory(
     private val loggerFactory: LoggerFactory,
     private val adb: Adb,
     private val timeProvider: TimeProvider,
@@ -21,7 +21,7 @@ class AdbDeviceFactory(
     private val processRunner: ProcessRunner
 ) {
 
-    fun create(
+    public fun create(
         coordinate: DeviceCoordinate,
         adbDeviceParams: AdbDeviceParams
     ): Result<AdbDevice> {
@@ -61,7 +61,7 @@ class AdbDeviceFactory(
                 listOf(
                     AdbDeviceEventsLogger(logger),
                     AdbDeviceMetrics(
-                        statsDSender = StatsDSender.Impl(
+                        statsDSender = StatsDSender.create(
                             config = metricsConfig.statsDConfig,
                             loggerFactory = loggerFactory
                         ),

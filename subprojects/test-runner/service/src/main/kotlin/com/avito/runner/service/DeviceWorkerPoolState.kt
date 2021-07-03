@@ -6,9 +6,9 @@ import com.avito.runner.service.worker.device.Device
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 
-class DeviceWorkerPoolState(
-    val intentions: ReceiveChannel<Intention>,
-    val intentionResults: SendChannel<IntentionResult>,
-    val deviceSignals: SendChannel<Device.Signal>,
-    val devices: ReceiveChannel<Device>,
+public class DeviceWorkerPoolState(
+    public val intentions: ReceiveChannel<Intention>,
+    public val intentionResults: SendChannel<IntentionResult>,
+    public val deviceSignals: SendChannel<Device.Signal>,
+    public val devices: ReceiveChannel<Device>,
 )

@@ -17,7 +17,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import java.net.URI
 
-class ArtifactoryAppBackupPlugin : Plugin<Project> {
+public class ArtifactoryAppBackupPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create(

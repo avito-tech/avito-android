@@ -15,7 +15,7 @@ import com.avito.test.gradle.plugin.plugins
 import com.avito.test.gradle.sdkVersion
 import java.io.File
 
-class AndroidLibModule(
+public class AndroidLibModule(
     override val name: String,
     override val packageName: String = "com.$name",
     override val plugins: PluginsSpec = PluginsSpec(),

@@ -2,19 +2,19 @@ package com.avito.android.test.report
 
 import com.avito.android.test.report.model.StepModel
 
-interface ReportStepLifecycle<T : StepModel> : ReportStepModelFactory<T>, Report {
+public interface ReportStepLifecycle<T : StepModel> : ReportStepModelFactory<T>, Report {
 
-    val isFirstStep: Boolean
+    public val isFirstStep: Boolean
 
-    fun startPrecondition(step: T)
+    public fun startPrecondition(step: T)
 
-    fun stopPrecondition()
+    public fun stopPrecondition()
 
-    fun startStep(step: T)
+    public fun startStep(step: T)
 
-    fun stopStep()
+    public fun stopStep()
 
-    fun stepFailed(exception: StepException)
+    public fun stepFailed(exception: StepException)
 
-    fun preconditionFailed(exception: StepException)
+    public fun preconditionFailed(exception: StepException)
 }

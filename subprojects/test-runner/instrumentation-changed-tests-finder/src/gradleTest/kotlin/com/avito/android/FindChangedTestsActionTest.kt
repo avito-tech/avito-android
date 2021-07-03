@@ -31,7 +31,7 @@ internal class FindChangedTestsActionTest {
     @BeforeEach
     fun setup(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        git = Git.Impl(projectDir, loggerFactory)
+        git = Git.create(projectDir, loggerFactory)
 
         TestProjectGenerator(
             modules = listOf(

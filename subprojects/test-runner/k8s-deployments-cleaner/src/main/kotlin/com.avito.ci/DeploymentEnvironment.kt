@@ -7,7 +7,7 @@ import com.avito.ci.DeploymentEnvironment.Teamcity
 import com.avito.ci.DeploymentEnvironment.Unknown
 import io.fabric8.kubernetes.api.model.apps.Deployment
 
-sealed class DeploymentEnvironment {
+internal sealed class DeploymentEnvironment {
 
     data class Teamcity(val buildId: String) : DeploymentEnvironment()
 
@@ -26,7 +26,7 @@ sealed class DeploymentEnvironment {
     object Unknown : DeploymentEnvironment()
 }
 
-val Deployment.environment: DeploymentEnvironment
+internal val Deployment.environment: DeploymentEnvironment
     get() {
         val type = metadata.labels["type"]
         return when {

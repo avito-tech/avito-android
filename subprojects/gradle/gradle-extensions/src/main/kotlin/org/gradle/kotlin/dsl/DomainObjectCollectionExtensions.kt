@@ -12,5 +12,6 @@ import org.gradle.api.DomainObjectCollection
  * in this collection.
  * @see [DomainObjectCollection.withType]
  */
-inline fun <reified S : Any> DomainObjectCollection<in S>.withType(noinline configuration: S.() -> Unit) =
-    withType(S::class.java, configuration)
+public inline fun <reified S : Any> DomainObjectCollection<in S>.withType(
+    noinline configuration: S.() -> Unit
+): DomainObjectCollection<S> = withType(S::class.java, configuration)

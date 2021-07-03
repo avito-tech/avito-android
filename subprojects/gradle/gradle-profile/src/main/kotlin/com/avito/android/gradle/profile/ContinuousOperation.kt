@@ -1,11 +1,11 @@
 package com.avito.android.gradle.profile
 
-open class ContinuousOperation(override val description: String) : Operation() {
+public open class ContinuousOperation(override val description: String) : Operation() {
 
-    var startTime: Long = 0
+    public var startTime: Long = 0
         private set
 
-    var finish: Long = 0
+    public var finish: Long = 0
         private set
 
     override val elapsedTime: Long
@@ -15,12 +15,12 @@ open class ContinuousOperation(override val description: String) : Operation() {
         return this.description
     }
 
-    fun setStart(start: Long): ContinuousOperation {
+    public fun setStart(start: Long): ContinuousOperation {
         this.startTime = start
         return this
     }
 
-    fun setFinish(finish: Long): ContinuousOperation {
+    public fun setFinish(finish: Long): ContinuousOperation {
         this.finish = finish
         return this
     }

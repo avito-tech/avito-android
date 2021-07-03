@@ -3,9 +3,9 @@ package com.avito.impact.changes
 import com.avito.android.Result
 import java.io.File
 
-class StubChangesDetector : ChangesDetector {
+public class StubChangesDetector : ChangesDetector {
 
-    lateinit var result: Result<List<ChangedFile>>
+    public lateinit var result: Result<List<ChangedFile>>
 
     override fun computeChanges(
         targetDirectory: File,

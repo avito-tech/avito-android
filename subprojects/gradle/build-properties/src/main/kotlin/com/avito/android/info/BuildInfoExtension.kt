@@ -1,8 +1,7 @@
 package com.avito.android.info
 
-open class BuildInfoExtension {
-
-    var gitCommit: String? = null
-    var gitBranch: String? = null
-    var buildNumber: String? = null
+public open class BuildInfoExtension {
+    public var gitCommit: String? = null
+    public var gitBranch: String? = null
+    public var buildNumber: String? = null
 }

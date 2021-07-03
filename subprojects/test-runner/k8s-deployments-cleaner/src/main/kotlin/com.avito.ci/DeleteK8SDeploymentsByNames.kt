@@ -2,7 +2,7 @@ package com.avito.ci
 
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
 
-class DeleteK8SDeploymentsByNames(
+internal class DeleteK8SDeploymentsByNames(
     private val kubernetesClient: DefaultKubernetesClient
 ) {
 

@@ -7,7 +7,3 @@ dependencies {
     api(projects.testRunner.reportApi)
     api(projects.common.result)
 }
-
-kotlin {
-    explicitApi()
-}

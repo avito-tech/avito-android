@@ -2,7 +2,11 @@ package com.avito.logger
 
 import java.io.Serializable
 
-interface LoggingDestination : Serializable {
+public interface LoggingDestination : Serializable {
 
-    fun write(level: LogLevel, message: String, throwable: Throwable?)
+    public fun write(
+        level: LogLevel,
+        message: String,
+        throwable: Throwable?
+    )
 }

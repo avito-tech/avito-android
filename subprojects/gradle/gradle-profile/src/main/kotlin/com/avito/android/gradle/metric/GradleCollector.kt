@@ -16,7 +16,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 /**
  * Use [initialize] to consume events
  */
-class GradleCollector(
+public class GradleCollector(
     // collection is used to avoid cyclic dependencies
     private val consumers: List<BuildEventsListener>,
 ) : BuildListener {
@@ -40,9 +40,9 @@ class GradleCollector(
         gradle.removeListener(this)
     }
 
-    companion object {
+    public companion object {
 
-        fun initialize(project: Project, consumers: List<BuildEventsListener>) {
+        public fun initialize(project: Project, consumers: List<BuildEventsListener>) {
             if (consumers.isEmpty()) return
 
             val collector = GradleCollector(consumers)

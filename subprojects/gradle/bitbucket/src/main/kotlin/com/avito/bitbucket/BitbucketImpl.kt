@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
-class BitbucketImpl(
+internal class BitbucketImpl(
     private val config: BitbucketConfig,
     private val pullRequestId: Int?,
     private val loggerFactory: LoggerFactory,

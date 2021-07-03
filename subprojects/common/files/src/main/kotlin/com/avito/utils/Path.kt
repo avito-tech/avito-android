@@ -5,7 +5,7 @@ import com.avito.android.Result
 import java.nio.file.Path
 
 @RequiresApi(api = 26)
-fun Path.deleteRecursively(): Result<Unit> {
+public fun Path.deleteRecursively(): Result<Unit> {
     return Result.tryCatch {
         val isDeleted = toFile().deleteRecursively()
         if (!isDeleted) {

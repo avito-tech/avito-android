@@ -1,15 +1,15 @@
 package com.avito.graph
 
-class OperationsPath<T : Operation>(
-    val operations: List<T>
+public class OperationsPath<T : Operation>(
+    public val operations: List<T>
 ) {
 
-    val start: T
+    public val start: T
         get() = operations.first()
 
-    val end: T
+    public val end: T
         get() = operations.last()
 
-    val duration: Double =
+    public val duration: Double =
         operations.sumByDouble { it.duration }
 }

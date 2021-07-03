@@ -17,24 +17,21 @@ import java.nio.file.Paths
  * Prints impact analysis to files
  * FOR TESTING PURPOSES ONLY (assertion on Gradle outputs)
  */
-abstract class GenerateModulesReport : DefaultTask() {
+public abstract class GenerateModulesReport : DefaultTask() {
 
     private val reportsDirectory = Paths.get(project.rootProject.buildDir.toString(), "reports", "modules").toFile()
 
     @OutputFile
-    @Suppress("MemberVisibilityCanBePrivate")
-    val implementationModulesReportFile = File(reportsDirectory, "implementation-modules.txt")
+    public val implementationModulesReportFile: File = File(reportsDirectory, "implementation-modules.txt")
 
     @OutputFile
-    @Suppress("MemberVisibilityCanBePrivate")
-    val unitTestsModulesReportFile = File(reportsDirectory, "unit-tests-modules.txt")
+    public val unitTestsModulesReportFile: File = File(reportsDirectory, "unit-tests-modules.txt")
 
     @OutputFile
-    @Suppress("MemberVisibilityCanBePrivate")
-    val androidTestsModulesReportFile = File(reportsDirectory, "android-tests-modules.txt")
+    public val androidTestsModulesReportFile: File = File(reportsDirectory, "android-tests-modules.txt")
 
     @TaskAction
-    fun printReport() {
+    public fun printReport() {
         val modifiedProjectsFinder = ModifiedProjectsFinder.from(project)
 
         printReport(

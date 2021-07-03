@@ -5,10 +5,10 @@ import com.avito.impact.configuration.internalModule
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
+public abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
 
     @TaskAction
-    fun checkProjectRelations() {
+    public fun checkProjectRelations() {
         val moduleType = project.internalModule.project.extensions.moduleType?.type
 
         if (moduleType == ModuleType.COMPONENT_TEST) {

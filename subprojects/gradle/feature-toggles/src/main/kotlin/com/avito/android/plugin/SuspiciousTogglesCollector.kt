@@ -4,8 +4,8 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import java.time.LocalDate
 
-typealias Team = String
-typealias DeveloperEmail = String
+internal typealias Team = String
+internal typealias DeveloperEmail = String
 
 internal class SuspiciousTogglesCollector(
     loggerFactory: LoggerFactory,

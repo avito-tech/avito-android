@@ -9,13 +9,13 @@ import java.io.File
  * The folder for modules
  * :test:utils <- for example
  */
-class FolderModule(
+public class FolderModule(
     override val name: String,
     override val modules: List<Module>
 ) : Module {
     override val dependencies: Set<GradleDependency> = emptySet()
     override val plugins: PluginsSpec = PluginsSpec()
-    override val buildGradleExtra = ""
+    override val buildGradleExtra: String = ""
     override val useKts: Boolean = false
 
     override fun generateIn(file: File) {

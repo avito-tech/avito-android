@@ -10,29 +10,29 @@ import org.gradle.api.Project
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
-val Project.atlassianCredentials: Provider<AtlassianCredentials> by ProjectProperty.lazy { project ->
+public val Project.atlassianCredentials: Provider<AtlassianCredentials> by ProjectProperty.lazy { project ->
     if (project.buildEnvironment is BuildEnvironment.CI) {
         Providers.of(atlassianCredentials(project))
     } else {
-        Providers.notDefined<AtlassianCredentials>()
+        Providers.notDefined()
     }
 }
 
-val Project.pullRequestId: Provider<Int> by ProjectProperty.lazy { project ->
+public val Project.pullRequestId: Provider<Int> by ProjectProperty.lazy { project ->
     if (project.buildEnvironment is BuildEnvironment.CI) {
         val pullRequestId = project.getOptionalIntProperty("pullRequestId")
         if (pullRequestId != null) {
             Providers.of(pullRequestId)
         } else {
-            Providers.notDefined<Int>()
+            Providers.notDefined()
         }
     } else {
-        Providers.notDefined<Int>()
+        Providers.notDefined()
     }
 }
 
 // todo return notdefine
-val Project.bitbucketConfig: Provider<BitbucketConfig>
+public val Project.bitbucketConfig: Provider<BitbucketConfig>
     get() {
         return providers.provider {
             val isEnabled = project.getBooleanProperty("avito.bitbucket.enabled", false)

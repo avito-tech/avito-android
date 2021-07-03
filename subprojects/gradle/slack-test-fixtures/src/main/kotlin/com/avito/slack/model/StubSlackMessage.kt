@@ -1,12 +1,12 @@
 package com.avito.slack.model
 
-fun SlackMessage.Companion.createStubInstance(
+public fun SlackMessage.Companion.createStubInstance(
     workspace: String = "",
     timestamp: String = "",
     message: String = "",
     channelId: String = "",
     author: String = ""
-) = SlackMessage(
+): SlackMessage = SlackMessage(
     workspace = workspace,
     id = timestamp,
     text = message,

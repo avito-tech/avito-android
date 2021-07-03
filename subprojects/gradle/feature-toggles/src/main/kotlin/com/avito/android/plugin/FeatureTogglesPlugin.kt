@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-open class FeatureTogglesPlugin : Plugin<Project> {
+public open class FeatureTogglesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val extension = project.extensions.create<FeatureTogglesReportExtension>("featureTogglesReport")

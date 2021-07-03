@@ -16,18 +16,18 @@ import org.gradle.api.provider.Provider
 /**
  * Use [Project.environmentInfo] to gain instance
  */
-interface EnvironmentInfo { // TODO: merge with BuildEnvironment and EnvArgs
-    val node: String?
-    val environment: Environment
-    fun teamcityBuildId(): String?
+public interface EnvironmentInfo { // TODO: merge with BuildEnvironment and EnvArgs
+    public val node: String?
+    public val environment: Environment
+    public fun teamcityBuildId(): String?
 }
 
-fun Project.environmentInfo(): Provider<EnvironmentInfo> = lazyProperty("ENVIRONMENT_INFO_PROVIDER") { project ->
+public fun Project.environmentInfo(): Provider<EnvironmentInfo> = lazyProperty("ENVIRONMENT_INFO_PROVIDER") { project ->
     project.providers.provider {
 
         val loggerFactory = SimpleLoggerFactory()
 
-        val git = Git.Impl(
+        val git = Git.create(
             rootDir = project.rootDir,
             loggerFactory = loggerFactory
         )

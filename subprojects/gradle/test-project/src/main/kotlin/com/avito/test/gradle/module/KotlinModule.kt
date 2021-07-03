@@ -11,9 +11,9 @@ import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
-class KotlinModule(
+public class KotlinModule(
     override val name: String,
-    val packageName: String = "com.$name",
+    public val packageName: String = "com.$name",
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),

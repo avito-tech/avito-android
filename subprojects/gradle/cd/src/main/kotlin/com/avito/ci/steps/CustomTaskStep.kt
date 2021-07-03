@@ -5,9 +5,9 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-class CustomTaskStep(context: String, name: String) : BuildStep(context, name) {
+public class CustomTaskStep(context: String, name: String) : BuildStep(context, name) {
 
-    var tasksPredicate: TasksPredicate<*>? = null
+    public var tasksPredicate: TasksPredicate<*>? = null
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         val predicate = requireNotNull(tasksPredicate) {

@@ -26,10 +26,11 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
 
 @Suppress("UnstableApiUsage", "unused", "MemberVisibilityCanBePrivate")
-open class BuildStepListExtension(
+public open class BuildStepListExtension(
     internal val buildStepListName: String,
     objects: ObjectFactory
 ) : Named {
@@ -91,164 +92,164 @@ open class BuildStepListExtension(
     }
 
     // todo property
-    var useImpactAnalysis: Boolean = true
+    public var useImpactAnalysis: Boolean = true
 
-    val taskDescription = objects.property<String>()
+    public val taskDescription: Property<String> = objects.property()
 
-    override fun getName() = buildStepListName
+    override fun getName(): String = buildStepListName
 
-    fun configuration(closure: Closure<ConfigurationCheck>) {
+    public fun configuration(closure: Closure<ConfigurationCheck>) {
         configureAndAdd("configuration", closure)
     }
 
-    fun configuration(action: Action<ConfigurationCheck>) {
+    public fun configuration(action: Action<ConfigurationCheck>) {
         configureAndAdd("configuration", action)
     }
 
-    fun uiTests(closure: Closure<UiTestCheck>) {
+    public fun uiTests(closure: Closure<UiTestCheck>) {
         configureAndAdd("uiTests", closure)
     }
 
-    fun uiTests(action: Action<UiTestCheck>) {
+    public fun uiTests(action: Action<UiTestCheck>) {
         configureAndAdd("uiTests", action)
     }
 
-    fun compileUiTests(closure: Closure<CompileUiTests>) {
+    public fun compileUiTests(closure: Closure<CompileUiTests>) {
         configureAndAdd("compileUiTests", closure)
     }
 
-    fun compileUiTests(action: Action<CompileUiTests>) {
+    public fun compileUiTests(action: Action<CompileUiTests>) {
         configureAndAdd("compileUiTests", action)
     }
 
-    fun impactMetrics(closure: Closure<ImpactMetrics>) {
+    public fun impactMetrics(closure: Closure<ImpactMetrics>) {
         configureAndAdd("impactMetrics", closure)
     }
 
-    fun impactMetrics(action: Action<ImpactMetrics>) {
+    public fun impactMetrics(action: Action<ImpactMetrics>) {
         configureAndAdd("impactMetrics", action)
     }
 
-    fun unitTests(closure: Closure<UnitTestCheck>) {
+    public fun unitTests(closure: Closure<UnitTestCheck>) {
         configureAndAdd("unitTests", closure)
     }
 
-    fun unitTests(action: Action<UnitTestCheck>) {
+    public fun unitTests(action: Action<UnitTestCheck>) {
         configureAndAdd("unitTests", action)
     }
 
-    fun dependencyAnalysis(closure: Closure<DependencyAnalysisStep>) {
+    public fun dependencyAnalysis(closure: Closure<DependencyAnalysisStep>) {
         configureAndAdd("dependencyAnalysis", closure)
     }
 
-    fun dependencyAnalysis(action: Action<DependencyAnalysisStep>) {
+    public fun dependencyAnalysis(action: Action<DependencyAnalysisStep>) {
         configureAndAdd("dependencyAnalysis", action)
     }
 
-    fun lint(closure: Closure<LintCheck>) {
+    public fun lint(closure: Closure<LintCheck>) {
         configureAndAdd("lint", closure)
     }
 
-    fun lint(action: Action<LintCheck>) {
+    public fun lint(action: Action<LintCheck>) {
         configureAndAdd("lint", action)
     }
 
-    fun markReportAsSourceForTMS(closure: Closure<MarkReportAsSourceForTMSStep>) {
+    public fun markReportAsSourceForTMS(closure: Closure<MarkReportAsSourceForTMSStep>) {
         configureAndAdd("markReportAsSourceForTMS", closure)
     }
 
-    fun markReportAsSourceForTMS(action: Action<MarkReportAsSourceForTMSStep>) {
+    public fun markReportAsSourceForTMS(action: Action<MarkReportAsSourceForTMSStep>) {
         configureAndAdd("markReportAsSourceForTMS", action)
     }
 
-    fun testSummary(closure: Closure<TestSummaryStep>) {
+    public fun testSummary(closure: Closure<TestSummaryStep>) {
         configureAndAdd("testSummary", closure)
     }
 
-    fun testSummary(action: Action<TestSummaryStep>) {
+    public fun testSummary(action: Action<TestSummaryStep>) {
         configureAndAdd("testSummary", action)
     }
 
-    fun flakyReport(closure: Closure<FlakyReportStep>) {
+    public fun flakyReport(closure: Closure<FlakyReportStep>) {
         configureAndAdd("flakyReport", closure)
     }
 
-    fun flakyReport(action: Action<FlakyReportStep>) {
+    public fun flakyReport(action: Action<FlakyReportStep>) {
         configureAndAdd("flakyReport", action)
     }
 
-    fun uploadToQapps(closure: Closure<UploadToQapps>) {
+    public fun uploadToQapps(closure: Closure<UploadToQapps>) {
         configureAndAdd("uploadToQapps", closure)
     }
 
-    fun uploadToQapps(action: Action<UploadToQapps>) {
+    public fun uploadToQapps(action: Action<UploadToQapps>) {
         configureAndAdd("uploadToQapps", action)
     }
 
-    fun uploadToArtifactory(closure: Closure<UploadToArtifactory>) {
+    public fun uploadToArtifactory(closure: Closure<UploadToArtifactory>) {
         configureAndAdd("uploadToArtifactory", closure)
     }
 
-    fun uploadToArtifactory(action: Action<UploadToArtifactory>) {
+    public fun uploadToArtifactory(action: Action<UploadToArtifactory>) {
         configureAndAdd("uploadToArtifactory", action)
     }
 
-    fun uploadToProsector(closure: Closure<UploadToProsector>) {
+    public fun uploadToProsector(closure: Closure<UploadToProsector>) {
         configureAndAdd("uploadToProsector", closure)
     }
 
-    fun uploadToProsector(action: Action<UploadToProsector>) {
+    public fun uploadToProsector(action: Action<UploadToProsector>) {
         configureAndAdd("uploadToProsector", action)
     }
 
-    fun uploadBuildResult(closure: Closure<UploadBuildResult>) {
+    public fun uploadBuildResult(closure: Closure<UploadBuildResult>) {
         configureAndAdd("uploadBuildResult", closure)
     }
 
-    fun uploadBuildResult(action: Action<UploadBuildResult>) {
+    public fun uploadBuildResult(action: Action<UploadBuildResult>) {
         configureAndAdd("uploadBuildResult", action)
     }
 
-    fun deploy(closure: Closure<DeployStep>) {
+    public fun deploy(closure: Closure<DeployStep>) {
         configureAndAdd("deploy", closure)
     }
 
-    fun deploy(action: Action<DeployStep>) {
+    public fun deploy(action: Action<DeployStep>) {
         configureAndAdd("deploy", action)
     }
 
     /**
      * @name any unique name of a step
      */
-    fun customTask(name: String, configuration: Action<CustomTaskStep>) {
+    public fun customTask(name: String, configuration: Action<CustomTaskStep>) {
         configureAndAdd(name, configuration)
     }
 
     /**
      * @name any unique name of a step
      */
-    fun customTask(name: String, configuration: Closure<CustomTaskStep>) {
+    public fun customTask(name: String, configuration: Closure<CustomTaskStep>) {
         configureAndAdd(name, configuration)
     }
 
-    fun artifacts(closure: Closure<ArtifactsConfiguration>) =
+    public fun artifacts(closure: Closure<ArtifactsConfiguration>): Unit =
         artifacts(
             closure.toAction(delegate = artifactsConfig)
         )
 
-    fun artifacts(action: Action<ArtifactsConfiguration>) {
+    public fun artifacts(action: Action<ArtifactsConfiguration>) {
         action.execute(artifactsConfig)
         val step = steps.maybeCreate("artifacts", VerifyArtifactsStep::class.java)
         step.useImpactAnalysis = this.useImpactAnalysis
     }
 
-    fun <T : BuildStep> overrideStep(type: Class<T>, configuration: Closure<T>) =
+    public fun <T : BuildStep> overrideStep(type: Class<T>, configuration: Closure<T>): Unit =
         overrideStep(type, configuration.toAction())
 
-    inline fun <reified T : BuildStep> overrideStep(configuration: Action<T>) =
+    public inline fun <reified T : BuildStep> overrideStep(configuration: Action<T>): Unit =
         overrideStep(T::class.java, configuration)
 
-    fun <T : BuildStep> overrideStep(type: Class<T>, configuration: Action<T>) {
+    public fun <T : BuildStep> overrideStep(type: Class<T>, configuration: Action<T>) {
         val steps = steps.withType(type).toList()
         require(steps.isNotEmpty()) {
             "Build step ${type.simpleName} is not registered in $buildStepListName"
@@ -260,10 +261,10 @@ open class BuildStepListExtension(
         configuration.execute(step)
     }
 
-    fun <T : BuildStep> overrideStep(name: String, type: Class<T>, configuration: Closure<T>) =
+    public fun <T : BuildStep> overrideStep(name: String, type: Class<T>, configuration: Closure<T>): Unit =
         overrideStep(name, type, configuration.toAction())
 
-    fun <T : BuildStep> overrideStep(name: String, type: Class<T>, configuration: Action<T>) {
+    public fun <T : BuildStep> overrideStep(name: String, type: Class<T>, configuration: Action<T>) {
         val step = requireNotNull(steps.findByName(name)) {
             "Build step '$name' is not registered in $buildStepListName"
         }

@@ -11,7 +11,7 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-class MarkReportAsSourceForTMSStep(context: String, name: String) : TestSummaryPluginBuildStep(context, name) {
+public class MarkReportAsSourceForTMSStep(context: String, name: String) : TestSummaryPluginBuildStep(context, name) {
 
     override val stepName: String = "MarkReportAsSourceForTMSStep"
 

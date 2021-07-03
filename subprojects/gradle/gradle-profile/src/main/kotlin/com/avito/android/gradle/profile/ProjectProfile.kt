@@ -4,8 +4,8 @@ import org.gradle.util.CollectionUtils
 import org.gradle.util.Path
 import java.util.HashMap
 
-class ProjectProfile(
-    val path: String
+public class ProjectProfile(
+    public val path: String
 ) : Operation() {
 
     private val tasks = HashMap<String, TaskExecution>()
@@ -13,7 +13,7 @@ class ProjectProfile(
     /**
      * Returns the configuration time of this project.
      */
-    val configurationOperation: ContinuousOperation = ContinuousOperation(path)
+    public val configurationOperation: ContinuousOperation = ContinuousOperation(path)
 
     override val description: String
         get() = path
@@ -24,7 +24,7 @@ class ProjectProfile(
     /**
      * Gets the task profiling container for the specified task.
      */
-    fun getTaskProfile(taskPath: String): TaskExecution {
+    public fun getTaskProfile(taskPath: String): TaskExecution {
         var result: TaskExecution? = tasks[taskPath]
         if (result == null) {
             result = TaskExecution(Path.path(taskPath))
@@ -36,7 +36,7 @@ class ProjectProfile(
     /**
      * Returns the task executions for this project.
      */
-    fun getTasks(): CompositeOperation<TaskExecution> {
+    public fun getTasks(): CompositeOperation<TaskExecution> {
         val taskExecutions = CollectionUtils.sort(tasks.values, Operation.slowestFirst())
         return CompositeOperation(taskExecutions)
     }

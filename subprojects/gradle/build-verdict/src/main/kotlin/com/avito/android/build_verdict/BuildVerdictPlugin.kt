@@ -12,10 +12,9 @@ import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.support.serviceOf
 
-@Suppress("UnstableApiUsage")
-class BuildVerdictPlugin : Plugin<ProjectInternal> {
+public class BuildVerdictPlugin : Plugin<ProjectInternal> {
 
-    internal val Project.pluginIsEnabled: Boolean
+    private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty(enabledProp)
             .forUseAtConfigurationTime()

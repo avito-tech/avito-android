@@ -11,7 +11,3 @@ dependencies {
     testImplementation(testFixtures(projects.common.statsd))
     testImplementation(testFixtures(projects.gradle.buildEnvironment))
 }
-
-kotlin {
-    explicitApi()
-}

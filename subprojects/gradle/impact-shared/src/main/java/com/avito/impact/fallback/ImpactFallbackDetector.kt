@@ -1,11 +1,11 @@
 package com.avito.impact.fallback
 
-interface ImpactFallbackDetector {
+public interface ImpactFallbackDetector {
 
-    val isFallback: Result
+    public val isFallback: Result
 
-    sealed class Result {
-        object Run : Result()
-        class Skip(val reason: String) : Result()
+    public sealed class Result {
+        public object Run : Result()
+        public class Skip(public val reason: String) : Result()
     }
 }

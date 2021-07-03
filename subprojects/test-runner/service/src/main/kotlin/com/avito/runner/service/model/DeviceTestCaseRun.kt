@@ -2,10 +2,10 @@ package com.avito.runner.service.model
 
 import com.avito.runner.service.worker.device.model.DeviceData
 
-data class DeviceTestCaseRun(
+public data class DeviceTestCaseRun(
     val testCaseRun: TestCaseRun,
     val device: DeviceData
 ) {
 
-    companion object
+    public companion object
 }

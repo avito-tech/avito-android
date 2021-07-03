@@ -2,7 +2,7 @@ package com.avito.android
 
 import org.gradle.api.provider.Property
 
-abstract class ChangedTestsFinderExtension {
+public abstract class ChangedTestsFinderExtension {
 
-    abstract val targetCommit: Property<String>
+    public abstract val targetCommit: Property<String>
 }

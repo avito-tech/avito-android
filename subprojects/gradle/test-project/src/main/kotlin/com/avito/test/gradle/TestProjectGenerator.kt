@@ -35,8 +35,9 @@ internal val artifactoryUrl: String? by lazy {
     }
 }
 
-interface Generator {
-    fun generateIn(file: File)
+public interface Generator {
+
+    public fun generateIn(file: File)
 }
 
 /**
@@ -51,7 +52,7 @@ interface Generator {
  * Все наши внутренние плагины рассчитаны на наличие subprojects и не работают корректно если единственный
  * android модуль это root. Поэтому минимальный проект это один subproject модуль android application
  */
-class TestProjectGenerator(
+public class TestProjectGenerator(
     override val name: String = "test-project",
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
@@ -63,8 +64,8 @@ class TestProjectGenerator(
         AndroidLibModule(independentModule)
     ),
     override val useKts: Boolean = false,
-    val localBuildCache: File? = null,
-    val androidHome: String? = null
+    public val localBuildCache: File? = null,
+    public val androidHome: String? = null
 ) : Module {
 
     private val logger: Logger = StubLoggerFactory.create<TestProjectGenerator>()
@@ -194,10 +195,10 @@ buildCache {
         """.trimMargin()
     }
 
-    companion object {
-        const val appA = "appA"
-        const val appB = "appB"
-        const val sharedModule = "shared"
-        const val independentModule = "independent"
+    public companion object {
+        public const val appA: String = "appA"
+        public const val appB: String = "appB"
+        public const val sharedModule: String = "shared"
+        public const val independentModule: String = "independent"
     }
 }

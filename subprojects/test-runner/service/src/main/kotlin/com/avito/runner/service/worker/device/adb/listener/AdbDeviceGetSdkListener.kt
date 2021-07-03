@@ -1,19 +1,19 @@
 package com.avito.runner.service.worker.device.adb.listener
 
-interface AdbDeviceGetSdkListener {
+public interface AdbDeviceGetSdkListener {
 
-    fun onGetSdkPropertySuccess(
+    public fun onGetSdkPropertySuccess(
         attempt: Int,
         api: Int,
         durationMs: Long
     )
 
-    fun onGetSdkPropertyError(
+    public fun onGetSdkPropertyError(
         attempt: Int,
         durationMs: Long
     )
 
-    fun onGetSdkPropertyFailure(
+    public fun onGetSdkPropertyFailure(
         throwable: Throwable,
         durationMs: Long
     )

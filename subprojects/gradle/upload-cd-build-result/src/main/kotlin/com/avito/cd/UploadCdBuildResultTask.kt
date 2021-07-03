@@ -15,11 +15,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
 
-// TODO internal?
+public const val uploadCdBuildResultTaskName: String = "uploadCdBuildResult"
 
-const val uploadCdBuildResultTaskName = "uploadCdBuildResult"
-
-abstract class UploadCdBuildResultTask @Inject constructor(
+public abstract class UploadCdBuildResultTask @Inject constructor(
     private val uiTestConfiguration: String,
     private val user: String,
     private val password: String,
@@ -37,7 +35,7 @@ abstract class UploadCdBuildResultTask @Inject constructor(
         val logger = GradleLoggerFactory.getLogger(this)
 
         UploadCdBuildResultTaskAction(
-            gson = Providers.gson,
+            gson = uploadCdGson,
             client = Providers.client(
                 user = user,
                 password = password,
@@ -48,7 +46,7 @@ abstract class UploadCdBuildResultTask @Inject constructor(
     }
 
     @TaskAction
-    fun sendCdBuildResult() {
+    public fun sendCdBuildResult() {
         val gitState = project.gitState()
         uploadAction.send(
             buildOutput = project.buildOutput.get(),

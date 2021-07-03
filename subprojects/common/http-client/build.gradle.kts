@@ -19,7 +19,3 @@ dependencies {
     testFixturesApi(testFixtures(projects.logger.logger))
     testFixturesApi(testFixtures(projects.common.time))
 }
-
-kotlin {
-    explicitApi()
-}

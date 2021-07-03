@@ -2,14 +2,15 @@ package com.avito.runner.service.worker.device.adb.listener
 
 import com.avito.runner.service.worker.device.Device
 
-interface AdbDeviceListListener {
-    fun onListSuccess(
+public interface AdbDeviceListListener {
+
+    public fun onListSuccess(
         device: Device,
         remotePath: String,
         durationMs: Long
     )
 
-    fun onListError(
+    public fun onListError(
         device: Device,
         attempt: Int,
         remotePath: String,
@@ -17,7 +18,7 @@ interface AdbDeviceListListener {
         durationMs: Long
     )
 
-    fun onListFailure(
+    public fun onListFailure(
         device: Device,
         remotePath: String,
         throwable: Throwable,

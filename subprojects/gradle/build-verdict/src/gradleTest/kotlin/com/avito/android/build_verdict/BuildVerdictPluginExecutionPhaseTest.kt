@@ -10,7 +10,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
+internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
 
     private val htmlVerdicts by lazy {
         HtmlVerdictCases.Execution(temp)

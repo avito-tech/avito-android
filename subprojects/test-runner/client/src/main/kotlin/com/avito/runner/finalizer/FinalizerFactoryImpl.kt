@@ -33,7 +33,7 @@ internal class FinalizerFactoryImpl(
     override fun create(): Finalizer {
 
         val metricsSender = InstrumentationMetricsSender(
-            statsDSender = StatsDSender.Impl(metricsConfig.statsDConfig, loggerFactory),
+            statsDSender = StatsDSender.create(metricsConfig.statsDConfig, loggerFactory),
             runnerPrefix = metricsConfig.runnerPrefix
         )
 

@@ -1,5 +1,5 @@
 package com.avito.kotlin.dsl
 
 @Suppress("UNCHECKED_CAST")
-fun filterNotBlankValues(map: Map<String, Any?>) =
+public fun filterNotBlankValues(map: Map<String, Any?>): Map<String, String> =
     map.filterValues { value: Any? -> value?.toString().isNullOrBlank().not() } as Map<String, String>

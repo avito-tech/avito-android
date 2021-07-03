@@ -1,6 +1,6 @@
 package com.avito.runner.service.worker.device.adb.listener
 
-interface AdbDeviceEventsListener :
+public interface AdbDeviceEventsListener :
     AdbDeviceGetSdkListener,
     AdbDeviceInstallApplicationListener,
     AdbDeviceGetAliveListener,

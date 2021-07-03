@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-class ProsectorPlugin : Plugin<Project> {
+public class ProsectorPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val config = target.extensions.create<ProsectorConfig>("prosector")

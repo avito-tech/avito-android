@@ -2,15 +2,16 @@ package com.avito.runner.service.worker.device.adb.listener
 
 import com.avito.runner.service.worker.device.Device
 
-interface AdbDeviceInstallApplicationListener {
-    fun onInstallApplicationSuccess(
+public interface AdbDeviceInstallApplicationListener {
+
+    public fun onInstallApplicationSuccess(
         device: Device,
         attempt: Int,
         applicationPackage: String,
         durationMs: Long
     )
 
-    fun onInstallApplicationError(
+    public fun onInstallApplicationError(
         device: Device,
         attempt: Int,
         applicationPackage: String,
@@ -18,7 +19,7 @@ interface AdbDeviceInstallApplicationListener {
         durationMs: Long
     )
 
-    fun onInstallApplicationFailure(
+    public fun onInstallApplicationFailure(
         device: Device,
         applicationPackage: String,
         throwable: Throwable,

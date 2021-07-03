@@ -3,10 +3,15 @@ package com.avito.android
 import com.avito.android.check.TestSignatureCheck
 import java.io.File
 
-interface TestSuiteLoader {
+public interface TestSuiteLoader {
 
-    fun loadTestSuite(
+    public fun loadTestSuite(
         file: File,
         testSignatureCheck: TestSignatureCheck? = null
     ): Result<List<TestInApk>>
+
+    public companion object {
+
+        public fun create(): TestSuiteLoader = TestSuiteLoaderImpl()
+    }
 }

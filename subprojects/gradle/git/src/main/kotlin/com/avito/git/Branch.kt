@@ -1,11 +1,12 @@
 package com.avito.git
 
-class Branch(
-    val name: String,
-    val commit: String,
+public class Branch(
+    public val name: String,
+    public val commit: String,
     remoteName: String = defaultRemote
 ) {
-    val fullName = if (remoteName.isNotBlank()) {
+
+    public val fullName: String = if (remoteName.isNotBlank()) {
         "$remoteName/$name"
     } else {
         name

@@ -1,6 +1,6 @@
 package com.avito.instrumentation.impact
 
-data class FullClassName(
+public data class FullClassName(
     val packageName: String,
     val className: String
 ) {

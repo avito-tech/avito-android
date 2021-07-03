@@ -7,14 +7,15 @@ import com.timgroup.statsd.NonBlockingStatsDClient
 import com.timgroup.statsd.StatsDClient
 import com.timgroup.statsd.StatsDClientErrorHandler
 
-interface StatsDSender {
+public interface StatsDSender {
 
-    fun send(metric: StatsMetric)
+    public fun send(metric: StatsMetric)
 
     @Deprecated("Use send() without prefix. This will be deleted")
-    fun send(prefix: SeriesName, metric: StatsMetric)
+    public fun send(prefix: SeriesName, metric: StatsMetric)
 
-    class Impl(
+    // todo extract and make internal after next release (used in avito directly)
+    public class Impl(
         private val config: StatsDConfig,
         loggerFactory: LoggerFactory
     ) : StatsDSender {
@@ -86,6 +87,16 @@ interface StatsDSender {
             } else {
                 logger.debug("Skip sending event: ${metric.type}:<namespace>.$aspect:${metric.value}")
             }
+        }
+    }
+
+    public companion object {
+
+        public fun create(
+            config: StatsDConfig,
+            loggerFactory: LoggerFactory
+        ): StatsDSender {
+            return Impl(config, loggerFactory)
         }
     }
 }

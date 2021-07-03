@@ -7,7 +7,7 @@ import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 
-class SlackMessageUpdaterDirectlyToThread(
+public class SlackMessageUpdaterDirectlyToThread(
     private val slackClient: SlackClient,
     loggerFactory: LoggerFactory
 ) : SlackMessageUpdater {

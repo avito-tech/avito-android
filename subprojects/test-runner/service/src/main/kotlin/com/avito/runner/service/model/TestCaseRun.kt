@@ -2,7 +2,7 @@ package com.avito.runner.service.model
 
 import com.avito.test.model.TestCase
 
-data class TestCaseRun(
+public data class TestCaseRun(
     val test: TestCase,
     val result: Result,
     val timestampStartedMilliseconds: Long,
@@ -11,31 +11,31 @@ data class TestCaseRun(
     val durationMilliseconds: Long
         get() = timestampCompletedMilliseconds - timestampStartedMilliseconds
 
-    sealed class Result {
-        object Passed : Result()
-        object Ignored : Result()
-        sealed class Failed : Result() {
-            data class InRun(val errorMessage: String) : Failed()
+    public sealed class Result {
+        public object Passed : Result()
+        public object Ignored : Result()
+        public sealed class Failed : Result() {
+            public data class InRun(val errorMessage: String) : Failed()
 
-            sealed class InfrastructureError : Failed() {
+            public sealed class InfrastructureError : Failed() {
 
-                abstract val error: Throwable
+                public abstract val error: Throwable
 
-                class Unexpected(override val error: Throwable) : InfrastructureError()
+                public class Unexpected(override val error: Throwable) : InfrastructureError()
 
-                class FailedOnStart(override val error: Throwable) : InfrastructureError()
+                public class FailedOnStart(override val error: Throwable) : InfrastructureError()
 
-                class FailedOnParsing(override val error: Throwable) : InfrastructureError()
+                public class FailedOnParsing(override val error: Throwable) : InfrastructureError()
 
-                class FailOnPullingArtifacts(override val error: Throwable) : InfrastructureError()
+                public class FailOnPullingArtifacts(override val error: Throwable) : InfrastructureError()
 
-                class Timeout(
-                    val timeoutMin: Long,
+                public class Timeout(
+                    public val timeoutMin: Long,
                     override val error: Throwable
                 ) : InfrastructureError()
             }
         }
     }
 
-    companion object
+    public companion object
 }

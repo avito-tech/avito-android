@@ -5,7 +5,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import java.lang.Character.isWhitespace
 
-class IsEqualIgnoringAllWhiteSpace(private val expectedString: String) : TypeSafeMatcher<String>() {
+public class IsEqualIgnoringAllWhiteSpace(private val expectedString: String) : TypeSafeMatcher<String>() {
 
     override fun matchesSafely(item: String): Boolean {
         return expectedString.stripSpace() == item.stripSpace()
@@ -19,10 +19,10 @@ class IsEqualIgnoringAllWhiteSpace(private val expectedString: String) : TypeSaf
         description.appendText("a string equal to \"$expectedString\" ignoring all white spaces")
     }
 
-    fun String.stripSpace() = this.filter { !isWhitespace(it) }
+    public fun String.stripSpace(): String = this.filter { !isWhitespace(it) }
 
-    companion object {
-        fun equalToIgnoringAllWhiteSpace(expectedString: String): Matcher<String> {
+    public companion object {
+        public fun equalToIgnoringAllWhiteSpace(expectedString: String): Matcher<String> {
             return IsEqualIgnoringAllWhiteSpace(expectedString)
         }
     }

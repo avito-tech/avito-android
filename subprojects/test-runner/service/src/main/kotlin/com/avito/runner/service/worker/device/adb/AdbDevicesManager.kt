@@ -9,9 +9,9 @@ import com.avito.runner.service.worker.device.Serial
 import rx.Single
 import java.util.Optional
 
-class AdbDevicesManager(
+public class AdbDevicesManager(
     loggerFactory: LoggerFactory,
-    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
+    private val commandLine: CommandLineExecutor = CommandLineExecutor.create(),
     private val adbParser: AdbDeviceParser = AdbDeviceParser(),
     private val adb: Adb
 ) : DevicesManager {

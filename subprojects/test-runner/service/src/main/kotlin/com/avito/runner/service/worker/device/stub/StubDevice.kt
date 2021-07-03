@@ -1,6 +1,7 @@
 package com.avito.runner.service.worker.device.stub
 
 import com.avito.android.Result
+import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
@@ -23,7 +24,7 @@ import java.util.ArrayDeque
 import java.util.Date
 import java.util.Queue
 
-open class StubDevice(
+public open class StubDevice(
     tag: String = "StubDevice",
     override val coordinate: DeviceCoordinate = DeviceCoordinate.Local(Serial.Local("stub")),
     loggerFactory: LoggerFactory,
@@ -47,7 +48,7 @@ open class StubDevice(
     private val clearPackageResultsQueue: Queue<StubActionResult<Result<Unit>>> =
         ArrayDeque(clearPackageResults)
 
-    override val logger = loggerFactory.create(tag)
+    override val logger: Logger = loggerFactory.create(tag)
 
     override val api: Int
         get() = apiResult.get()
@@ -163,14 +164,14 @@ open class StubDevice(
         TODO("Not yet implemented")
     }
 
-    fun isDone(): Boolean {
+    public fun isDone(): Boolean {
         return installApplicationResultsQueue.isEmpty()
             && gettingDeviceStatusResultsQueue.isEmpty()
             && runTestsResultsQueue.isEmpty()
             && clearPackageResultsQueue.isEmpty()
     }
 
-    fun verify() {
+    public fun verify() {
         verifyQueueHasNoExcessiveElements(installApplicationResultsQueue, "installApplication")
         verifyQueueHasNoExcessiveElements(gettingDeviceStatusResultsQueue, "deviceStatus")
         verifyQueueHasNoExcessiveElements(runTestsResultsQueue, "runIsolatedTest")
@@ -195,9 +196,9 @@ open class StubDevice(
         }
     }
 
-    companion object {
+    public companion object {
 
-        fun installApplicationSuccess(applicationPackage: String = "doesntmatter"): Result<DeviceInstallation> {
+        public fun installApplicationSuccess(applicationPackage: String = "doesntmatter"): Result<DeviceInstallation> {
             return Result.Success(
                 DeviceInstallation(
                     installation = Installation(
@@ -213,7 +214,7 @@ open class StubDevice(
             )
         }
 
-        fun installApplicationFailure(): Result<DeviceInstallation> {
+        public fun installApplicationFailure(): Result<DeviceInstallation> {
             return Result.Failure(Exception())
         }
     }

@@ -7,7 +7,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.impact.configuration.sets.isTest
 import com.avito.module.configurations.ConfigurationType.UnitTests
 
-class TestConfiguration(module: InternalModule) : BaseConfiguration(module, UnitTests::class.java) {
+public class TestConfiguration(module: InternalModule) : BaseConfiguration(module, UnitTests::class.java) {
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }
@@ -15,7 +15,7 @@ class TestConfiguration(module: InternalModule) : BaseConfiguration(module, Unit
             || hasChangedFiles
     }
 
-    override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isTest()
+    override fun containsSources(sourceSet: AndroidSourceSet): Boolean = sourceSet.isTest()
 
     override fun toString(): String {
         return "TestConfiguration(${project.path})"

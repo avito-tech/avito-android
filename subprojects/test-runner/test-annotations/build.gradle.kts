@@ -6,7 +6,3 @@ plugins {
 dependencies {
     implementation(projects.testRunner.reportViewer)
 }
-
-kotlin {
-    explicitApi()
-}

@@ -22,7 +22,3 @@ dependencies {
 
     testImplementation(projects.common.truthExtensions)
 }
-
-kotlin {
-    explicitApi()
-}

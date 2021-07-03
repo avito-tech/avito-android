@@ -4,7 +4,7 @@ import com.avito.android.Result
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 
-interface SlackMessageSender {
+public interface SlackMessageSender {
 
-    fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage>
+    public fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage>
 }

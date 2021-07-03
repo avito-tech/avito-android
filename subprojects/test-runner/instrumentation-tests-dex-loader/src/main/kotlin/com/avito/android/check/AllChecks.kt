@@ -2,7 +2,7 @@ package com.avito.android.check
 
 import com.avito.android.AnnotationData
 
-class AllChecks(
+public class AllChecks(
     override val onViolation: (String) -> Unit = { message ->
         throw IllegalStateException(message)
     }

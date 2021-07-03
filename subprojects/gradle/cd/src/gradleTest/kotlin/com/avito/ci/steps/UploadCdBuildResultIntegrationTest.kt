@@ -3,8 +3,8 @@ package com.avito.ci.steps
 import com.avito.android.plugin.artifactory.setStubMavenMetadataBody
 import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
-import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
+import com.avito.cd.uploadCdGson
 import com.avito.ci.runTask
 import com.avito.git.Git
 import com.avito.http.HttpCodes
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class UploadCdBuildResultIntegrationTest {
+internal class UploadCdBuildResultIntegrationTest {
 
     private val loggerFactory = StubLoggerFactory
     private lateinit var projectDir: File
@@ -161,7 +161,7 @@ class RealTest {
         """
         val gitBranch = CdBuildResult.GitBranch(
             name = "branchName",
-            commitHash = Git.Impl(
+            commitHash = Git.create(
                 rootDir = projectDir,
                 loggerFactory = loggerFactory
             ).tryParseRev("HEAD").getOrThrow()
@@ -232,7 +232,7 @@ class RealTest {
         cdBuildResultRequest
             .checks
             .singleRequestCaptured()
-            .bodyContains(Providers.gson.toJson(expected))
+            .bodyContains(uploadCdGson.toJson(expected))
             .containsHeader("Authorization", Credentials.basic(artifactoryUser, artifactoryPassword))
     }
 
@@ -244,7 +244,7 @@ class RealTest {
         val releaseVersion = "249.0"
         val gitBranch = CdBuildResult.GitBranch(
             name = "branchName",
-            commitHash = Git.Impl(
+            commitHash = Git.create(
                 rootDir = projectDir,
                 loggerFactory = loggerFactory
             ).tryParseRev("HEAD").getOrThrow()

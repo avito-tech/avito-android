@@ -17,11 +17,11 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.withType
 
-fun Project.withAndroidApp(block: (appExtension: AppExtension) -> Unit) {
+public fun Project.withAndroidApp(block: (appExtension: AppExtension) -> Unit) {
     plugins.withType<AppPlugin> { block(androidAppExtension) }
 }
 
-fun Project.withAndroidLib(block: (appExtension: LibraryExtension) -> Unit) {
+public fun Project.withAndroidLib(block: (appExtension: LibraryExtension) -> Unit) {
     plugins.withType<LibraryPlugin> { block(androidLibraryExtension) }
 }
 
@@ -29,43 +29,43 @@ fun Project.withAndroidLib(block: (appExtension: LibraryExtension) -> Unit) {
  * TODO somehow withType on deprecated BasePlugin works,
  *  and construction: `plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded { }` not
  */
-fun Project.withAndroidModule(block: (testedExtension: TestedExtension) -> Unit) {
+public fun Project.withAndroidModule(block: (testedExtension: TestedExtension) -> Unit) {
     plugins.withType<BasePlugin> { block(testedExtension) }
 }
 
 @Suppress("UnstableApiUsage")
-val Project.androidCommonExtension: CommonExtension<*, *, *, *, *, *, *, *>
+public val Project.androidCommonExtension: CommonExtension<*, *, *, *, *, *, *, *>
     get() = extensions.getByType(CommonExtension::class.java)
 
-val Project.androidBaseExtension: BaseExtension
+public val Project.androidBaseExtension: BaseExtension
     get() = extensions.getByName<BaseExtension>("android")
 
-val Project.testedExtension: TestedExtension
+public val Project.testedExtension: TestedExtension
     get() = extensions.getByName<TestedExtension>("android")
 
-val Project.androidAppExtension: AppExtension
+public val Project.androidAppExtension: AppExtension
     get() = androidBaseExtension as AppExtension
 
-val Project.androidLibraryExtension: LibraryExtension
+public val Project.androidLibraryExtension: LibraryExtension
     get() = androidBaseExtension as LibraryExtension
 
-fun Project.isAndroid(): Boolean =
+public fun Project.isAndroid(): Boolean =
     isAndroidLibrary() || isAndroidApp()
 
-fun Project.isAndroidApp(): Boolean =
+public fun Project.isAndroidApp(): Boolean =
     plugins.hasPlugin("com.android.application")
 
-fun Project.isAndroidLibrary(): Boolean =
+public fun Project.isAndroidLibrary(): Boolean =
     plugins.hasPlugin("com.android.library")
 
 @Suppress("DefaultLocale")
-fun TaskContainer.packageTaskProvider(variantName: String): TaskProvider<*> =
+public fun TaskContainer.packageTaskProvider(variantName: String): TaskProvider<*> =
     named("package${variantName.capitalize()}")
 
 @Suppress("DefaultLocale")
-fun TaskContainer.bundleTaskProvider(variantName: String): TaskProvider<*> =
+public fun TaskContainer.bundleTaskProvider(variantName: String): TaskProvider<*> =
     named("bundle${variantName.capitalize()}")
 
 @Suppress("DefaultLocale", "UnstableApiUsage")
-fun taskName(prefix: String, component: ComponentIdentity) =
+public fun taskName(prefix: String, component: ComponentIdentity): String =
     prefix + component.flavorName.capitalize() + component.buildType.orEmpty().capitalize()

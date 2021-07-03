@@ -2,7 +2,7 @@ package com.avito.logger.handler
 
 import com.avito.logger.LogLevel
 
-class CombinedHandler(
+public class CombinedHandler(
     private val handlers: Collection<LoggingHandler>
 ) : LoggingHandler {
 

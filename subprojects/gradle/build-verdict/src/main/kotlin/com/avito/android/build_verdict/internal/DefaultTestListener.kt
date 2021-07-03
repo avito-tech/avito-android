@@ -4,7 +4,8 @@ import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestListener
 import org.gradle.api.tasks.testing.TestResult
 
-abstract class DefaultTestListener : TestListener {
+internal abstract class DefaultTestListener : TestListener {
+
     override fun beforeSuite(suite: TestDescriptor) {
         // empty
     }

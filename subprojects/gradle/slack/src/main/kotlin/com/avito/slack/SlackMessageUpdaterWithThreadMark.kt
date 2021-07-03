@@ -11,7 +11,7 @@ import com.avito.slack.model.SlackSendMessageRequest
  * Чтобы не упустить из-за чего обновлено сообщение в канале,
  * дополнительно пишем в тред к этому сообщению информацию об обновлении[threadMessage]
  */
-class SlackMessageUpdaterWithThreadMark(
+public class SlackMessageUpdaterWithThreadMark(
     private val slackClient: SlackClient,
     loggerFactory: LoggerFactory,
     private val threadMessage: String

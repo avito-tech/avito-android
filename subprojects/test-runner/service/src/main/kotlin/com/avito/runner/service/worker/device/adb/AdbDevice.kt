@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.div
 
-data class AdbDevice(
+public data class AdbDevice(
     override val coordinate: DeviceCoordinate,
     override val model: String,
     override val online: Boolean,
@@ -41,10 +41,12 @@ data class AdbDevice(
     // MBS-8531: don't use "ADB" here to avoid possible recursion
     override val logger: Logger,
     private val eventsListener: AdbDeviceEventsListener,
-    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
-    private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl(),
-    private val retryAction: RetryAction = RetryAction(timeProvider)
+    private val commandLine: CommandLineExecutor = CommandLineExecutor.create(),
 ) : Device {
+
+    private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
+
+    private val retryAction: RetryAction = RetryAction(timeProvider)
 
     override fun installApplication(applicationPackage: String): Result<DeviceInstallation> {
         var installStartedTimestamp: Long

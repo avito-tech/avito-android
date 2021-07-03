@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
-interface ReportProvider {
-    val report: Report
+public interface ReportProvider {
+
+    public val report: Report
 }

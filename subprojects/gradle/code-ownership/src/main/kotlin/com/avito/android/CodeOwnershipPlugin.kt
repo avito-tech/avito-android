@@ -7,7 +7,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-class CodeOwnershipPlugin : Plugin<Project> {
+public class CodeOwnershipPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         check(target.isRoot()) { "Code ownership plugin must be applied to the root project" }

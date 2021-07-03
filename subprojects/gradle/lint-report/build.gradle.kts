@@ -46,10 +46,6 @@ gradlePlugin {
     }
 }
 
-kotlin {
-    explicitApi()
-}
-
 tasks.named<Test>("integrationTest").configure {
     applyOptionalSystemProperty("avito.slack.test.channelId")
     applyOptionalSystemProperty("avito.slack.test.channel")

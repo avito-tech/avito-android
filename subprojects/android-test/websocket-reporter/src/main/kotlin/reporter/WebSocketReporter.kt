@@ -1,14 +1,14 @@
 package ru.avito.reporter
 
-interface WebSocketReporter {
+public interface WebSocketReporter {
 
-    fun onConnect(host: String)
+    public fun onConnect(host: String)
 
-    fun onSend(message: String, enqueued: Boolean)
+    public fun onSend(message: String, enqueued: Boolean)
 
-    fun onReceive(message: String)
+    public fun onReceive(message: String)
 
-    fun onError(message: String)
+    public fun onError(message: String)
 
-    fun onClose()
+    public fun onClose()
 }

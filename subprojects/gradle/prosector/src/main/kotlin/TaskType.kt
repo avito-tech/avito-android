@@ -1,6 +1,7 @@
 import com.google.gson.annotations.SerializedName
 
-enum class TaskType {
+public enum class TaskType {
+
     /**
      * сравнение ветки с develop (например. технически - сравнение любой ветки с любой),
      * требуется информация о beforeBuild и afterBuild, а также обе сборки.

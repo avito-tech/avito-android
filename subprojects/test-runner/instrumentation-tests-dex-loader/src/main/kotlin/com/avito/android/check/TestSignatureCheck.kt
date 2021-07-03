@@ -2,11 +2,11 @@ package com.avito.android.check
 
 import com.avito.android.AnnotationData
 
-interface TestSignatureCheck {
+public interface TestSignatureCheck {
 
-    val onViolation: (String) -> Unit
+    public val onViolation: (String) -> Unit
 
-    fun onNewMethodFound(
+    public fun onNewMethodFound(
         className: String,
         methodName: String,
         classAnnotations: List<AnnotationData>,

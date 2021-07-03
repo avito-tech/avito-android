@@ -5,7 +5,7 @@ import com.avito.android.Result
 /**
  * @param code code of --diff-filter in git diff
  */
-enum class ChangeType(val code: Char) {
+public enum class ChangeType(public val code: Char) {
 
     ADDED('A'),
     COPIED('C'),
@@ -13,7 +13,7 @@ enum class ChangeType(val code: Char) {
     MODIFIED('M'),
     RENAMED('R');
 
-    companion object {
+    internal companion object {
 
         fun getTypeByCode(code: Char): Result<ChangeType> {
             return values()

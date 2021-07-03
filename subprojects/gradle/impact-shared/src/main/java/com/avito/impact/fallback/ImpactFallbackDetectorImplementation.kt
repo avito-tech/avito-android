@@ -16,7 +16,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.findByType
 import java.io.File
 
-class ImpactFallbackDetectorImplementation(
+internal class ImpactFallbackDetectorImplementation(
     private val configuration: ImpactAnalysisExtension,
     private val project: Project,
     private val gitState: Provider<GitState>,

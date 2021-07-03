@@ -1,12 +1,14 @@
 package com.avito.android.plugin
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 
-open class FeatureTogglesReportExtension(objects: ObjectFactory) {
+public open class FeatureTogglesReportExtension(objects: ObjectFactory) {
 
-    val slackHook = objects.property<String>()
+    public val slackHook: Property<String> = objects.property()
 
-    val developersToTeam = objects.mapProperty<String, String>()
+    public val developersToTeam: MapProperty<String, String> = objects.mapProperty()
 }

@@ -5,7 +5,7 @@ import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.changes.GitChangesDetector
 import com.avito.impact.changes.IgnoreSettings
 import com.avito.instrumentation.impact.KotlinClassesFinder
-import com.avito.instrumentation.impact.KotlinClassesFinderImpl
+import com.avito.instrumentation.impact.KotlinClassesFinder.Companion.KOTLIN_FILE_EXTENSION
 import com.avito.logger.LoggerFactory
 import com.avito.utils.rewriteNewLineList
 import org.gradle.api.file.DirectoryProperty
@@ -15,9 +15,9 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 
 @Suppress("UnstableApiUsage")
-abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params> {
+public abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params> {
 
-    private val kotlinClassesFinder: KotlinClassesFinder = KotlinClassesFinderImpl()
+    private val kotlinClassesFinder: KotlinClassesFinder = KotlinClassesFinder.create()
 
     /**
      * Change types considered as "Changed" in context of test execution strategies
@@ -45,7 +45,7 @@ abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params
         ).map { changedFiles ->
             changedFiles.asSequence()
                 .filter { it.changeType in changeTypes }
-                .filter { it.file.extension == KotlinClassesFinderImpl.KOTLIN_FILE_EXTENSION }
+                .filter { it.file.extension == KOTLIN_FILE_EXTENSION }
                 .flatMap { kotlinClassesFinder.findClasses(it.file) }
                 .map { it.toString() }
                 .toList()
@@ -60,11 +60,11 @@ abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params
         )
     }
 
-    interface Params : WorkParameters {
-        val rootDir: RegularFileProperty
-        val targetCommit: Property<String>
-        val loggerFactory: Property<LoggerFactory>
-        val androidTestDir: DirectoryProperty
-        val changedTestsFile: RegularFileProperty
+    public interface Params : WorkParameters {
+        public val rootDir: RegularFileProperty
+        public val targetCommit: Property<String>
+        public val loggerFactory: Property<LoggerFactory>
+        public val androidTestDir: DirectoryProperty
+        public val changedTestsFile: RegularFileProperty
     }
 }

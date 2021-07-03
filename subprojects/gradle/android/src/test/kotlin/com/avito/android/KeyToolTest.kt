@@ -1,14 +1,14 @@
 package com.avito.android
 
 import com.avito.truth.isInstanceOf
-import com.avito.utils.ExistingFile
+import com.avito.utils.StubExistingFile
 import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class KeyToolTest {
 
-    private val irrelevant = ExistingFile.Stub
+    private val irrelevant = StubExistingFile
 
     @Suppress("MaxLineLength")
     @Test

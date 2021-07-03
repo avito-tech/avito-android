@@ -4,16 +4,16 @@ import org.gradle.api.publish.maven.MavenArtifact
 import org.gradle.api.tasks.TaskDependency
 import java.io.File
 
-class StubMavenArtifact(
+public class StubMavenArtifact(
     private val file: File,
     private val classifier: String
 ) : MavenArtifact {
 
-    override fun getExtension() = file.extension
+    override fun getExtension(): String = file.extension
 
-    override fun getFile() = file
+    override fun getFile(): File = file
 
-    override fun getClassifier() = classifier
+    override fun getClassifier(): String = classifier
 
     override fun setExtension(extension: String?) {
         throw UnsupportedOperationException()

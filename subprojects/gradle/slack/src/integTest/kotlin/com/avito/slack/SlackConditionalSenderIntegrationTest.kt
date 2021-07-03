@@ -24,7 +24,7 @@ internal class SlackConditionalSenderIntegrationTest {
 
     private val testToken = getSystemProperty("avito.slack.test.token")
 
-    private val slackClient: SlackClient = SlackClient.Impl(
+    private val slackClient: SlackClient = SlackClientImpl(
         serviceName = "slack-integration-tests",
         token = testToken,
         workspace = getSystemProperty("avito.slack.test.workspace"),

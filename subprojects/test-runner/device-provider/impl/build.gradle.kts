@@ -24,10 +24,6 @@ dependencies {
     testFixturesApi(testFixtures(projects.common.httpClient))
 }
 
-kotlin {
-    explicitApi()
-}
-
 tasks.named<Test>("integrationTest").configure {
     applyOptionalSystemProperty("kubernetesUrl")
     applyOptionalSystemProperty("kubernetesToken")

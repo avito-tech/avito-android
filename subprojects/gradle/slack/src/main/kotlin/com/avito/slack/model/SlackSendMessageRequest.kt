@@ -1,6 +1,6 @@
 package com.avito.slack.model
 
-data class SlackSendMessageRequest(
+public data class SlackSendMessageRequest(
     val channel: SlackChannel,
     val text: String,
     val author: String?,

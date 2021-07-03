@@ -5,9 +5,9 @@ import com.avito.logger.LoggerFactory
 import org.gradle.api.Project
 import java.io.File
 
-interface GitLocalState : GitState
+public interface GitLocalState : GitState
 
-class GitLocalStateImpl(
+internal class GitLocalStateImpl(
     rootDir: File,
     targetBranch: String?,
     loggerFactory: LoggerFactory
@@ -25,7 +25,7 @@ class GitLocalStateImpl(
         @Suppress("NAME_SHADOWING")
         val targetBranch = targetBranch?.asBranchWithoutOrigin()
 
-        val git = Git.Impl(
+        val git = GitImpl(
             rootDir = rootDir,
             loggerFactory = loggerFactory
         )

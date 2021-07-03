@@ -10,7 +10,7 @@ import com.avito.slack.model.SlackSendMessageRequest
  * Сокращаем количество сообщений в канале путем обновления имеющегося сообщения
  * Обновлять или писать новое решает[condition]
  */
-class SlackConditionalSender(
+public class SlackConditionalSender(
     private val slackClient: SlackClient,
     private val updater: SlackMessageUpdater,
     private val condition: SlackMessagePredicate,

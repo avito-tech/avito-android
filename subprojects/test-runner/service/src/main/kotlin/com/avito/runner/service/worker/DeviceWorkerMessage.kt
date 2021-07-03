@@ -5,7 +5,7 @@ import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.model.DeviceInstallation
 
-sealed class DeviceWorkerMessage {
+internal sealed class DeviceWorkerMessage {
 
     data class Result(
         val intentionResult: IntentionResult

@@ -12,7 +12,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import java.io.File
 
-class DeviceWorkerPoolProvider(
+public class DeviceWorkerPoolProvider(
     private val testRunnerOutputDir: File,
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
@@ -24,7 +24,7 @@ class DeviceWorkerPoolProvider(
     private val dispatchers: Dispatchers = Dispatchers.SingleThread
 ) {
 
-    fun provide(
+    public fun provide(
         devices: ReceiveChannel<Device>
     ): DeviceWorkerPool {
         return DeviceWorkerPoolImpl(

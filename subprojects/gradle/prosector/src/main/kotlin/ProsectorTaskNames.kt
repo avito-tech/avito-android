@@ -1,7 +1,8 @@
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
 
 internal fun prosectorTaskName(variantName: String): String = "prosectorUpload${variantName.capitalize()}"
 
-fun TaskContainer.prosectorTaskProvider(variantName: String) =
-    typedNamed<ProsectorReleaseAnalysisTask>(prosectorTaskName(variantName))
+public fun TaskContainer.prosectorTaskProvider(variantName: String): TaskProvider<ProsectorReleaseAnalysisTask> =
+    typedNamed(prosectorTaskName(variantName))

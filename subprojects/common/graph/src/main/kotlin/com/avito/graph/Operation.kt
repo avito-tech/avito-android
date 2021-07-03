@@ -1,11 +1,11 @@
 package com.avito.graph
 
-interface Operation {
-    val id: String
-    val duration: Double
+public interface Operation {
+    public val id: String
+    public val duration: Double
 
     /**
      * ids of predecessor operations
      */
-    val predecessors: Set<String>
+    public val predecessors: Set<String>
 }

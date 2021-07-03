@@ -7,10 +7,10 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 
-object SerializeUtils {
+public object SerializeUtils {
 
     @Throws(Exception::class)
-    fun <T : Serializable?> serializeDeserialize(value: T?): T? {
+    public fun <T : Serializable?> serializeDeserialize(value: T?): T? {
         val storage = ByteArrayOutputStream()
         val out = ObjectOutputStream(storage)
 

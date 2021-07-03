@@ -14,7 +14,7 @@ import java.io.File
  *   это порождает проблемы в случае если gradlew используется без assert в ожидании сайд-эффектов,
  *   но кажется это меньшее из зол. gradle за что?
  */
-fun gradlew(
+public fun gradlew(
     projectDir: File,
     vararg args: String,
     dryRun: Boolean = false,
@@ -89,7 +89,7 @@ fun gradlew(
     }
 }
 
-fun ciRun(
+public fun ciRun(
     projectDir: File,
     vararg args: String,
     branch: String = "develop",
@@ -119,20 +119,21 @@ fun ciRun(
         expectFailure = expectFailure
     )
 
-sealed class TestResult : BuildResult {
+public sealed class TestResult : BuildResult {
+
     protected abstract val dryRun: Boolean
 
-    data class Success(
+    public data class Success(
         val result: BuildResult,
         override val dryRun: Boolean
     ) : TestResult(), BuildResult by result
 
-    data class ExpectedFailure(
+    public data class ExpectedFailure(
         val result: BuildResult,
         override val dryRun: Boolean
     ) : TestResult(), BuildResult by result
 
-    val allTaskPaths: List<String>
+    public val allTaskPaths: List<String>
         get() {
             return if (!dryRun) {
                 TaskOutcome
@@ -147,11 +148,11 @@ sealed class TestResult : BuildResult {
             }
         }
 
-    val triggeredModules
+    public val triggeredModules: Set<String>
         get() = allTaskPaths
             .map { taskPath ->
                 taskPath.substring(0 until taskPath.lastIndexOf(":"))
             }.toSet()
 
-    fun assertThat() = TestResultSubject.assertThat(this)
+    public fun assertThat(): TestResultSubject = TestResultSubject.assertThat(this)
 }

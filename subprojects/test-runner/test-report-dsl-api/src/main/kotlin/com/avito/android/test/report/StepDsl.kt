@@ -6,12 +6,12 @@ import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.step.Step
 import com.avito.android.test.step.StepDslDelegate
 
-object StepDslProvider {
+public object StepDslProvider {
 
     private var stepDslDelegate: StepDslDelegate? = null
 
     @Synchronized
-    fun initialize(executor: StepDslDelegate) {
+    public fun initialize(executor: StepDslDelegate) {
         require(stepDslDelegate == null) {
             "Step executor already initialized"
         }
@@ -33,7 +33,7 @@ object StepDslProvider {
  *
  * If you want to delete inline you must check impact on APK and build time
  */
-inline fun step(
+public inline fun step(
     description: String,
     action: TestCaseAssertion.() -> Unit = {}
 ) {
@@ -43,7 +43,7 @@ inline fun step(
     )
 }
 
-inline fun precondition(
+public inline fun precondition(
     description: String,
     action: TestCaseAssertion.() -> Unit = {}
 ) {
@@ -53,7 +53,7 @@ inline fun precondition(
     )
 }
 
-inline fun <T : DataSet> dataSet(
+public inline fun <T : DataSet> dataSet(
     value: T,
     action: (T) -> Unit
 ) {

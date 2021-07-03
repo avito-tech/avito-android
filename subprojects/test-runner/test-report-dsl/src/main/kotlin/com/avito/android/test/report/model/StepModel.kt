@@ -1,5 +1,5 @@
 package com.avito.android.test.report.model
 
-interface StepModel {
-    val title: String
+public interface StepModel {
+    public val title: String
 }

@@ -15,7 +15,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher
  * @param maxDepth depth=1 is root exception's cause and so on.
  *                 maxDepth needed to stop recursion at some point for failure cases
  */
-class DeepCauseMatcher<T>(
+public class DeepCauseMatcher<T>(
     private val typeMatcher: Matcher<T>,
     private val expectedMessage: Matcher<String>,
     private val maxDepth: Int
@@ -25,7 +25,7 @@ class DeepCauseMatcher<T>(
         return check(item, mismatchDescription.appendText("\n"), 1)
     }
 
-    fun check(item: Throwable?, mismatch: Description, depth: Int): Boolean {
+    public fun check(item: Throwable?, mismatch: Description, depth: Int): Boolean {
         return when (item) {
             null -> {
                 mismatch.appendText("Throwable cause at level: $depth is null")
@@ -64,14 +64,14 @@ class DeepCauseMatcher<T>(
         appendValue(maxDepth)
     }
 
-    companion object {
+    public companion object {
 
         /**
          * matches cause of any deep up to [maxDepth]
          * that is instanceOf [T]
          * and has message containing [partOfExpectedMessage]
          */
-        inline fun <reified T : Throwable> deepCauseMatcher(
+        public inline fun <reified T : Throwable> deepCauseMatcher(
             partOfExpectedMessage: String,
             maxDepth: Int = 5
         ): DeepCauseMatcher<T> {

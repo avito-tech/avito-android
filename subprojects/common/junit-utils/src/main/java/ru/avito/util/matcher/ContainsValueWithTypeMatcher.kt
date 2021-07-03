@@ -4,7 +4,7 @@ import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 import kotlin.reflect.KClass
 
-class ContainsValueWithTypeMatcher<T : Any>(private val klass: KClass<T>) : TypeSafeMatcher<Iterable<Any>>() {
+public class ContainsValueWithTypeMatcher<T : Any>(private val klass: KClass<T>) : TypeSafeMatcher<Iterable<Any>>() {
 
     override fun matchesSafely(item: Iterable<Any>): Boolean {
         return item.any { klass.java.isInstance(it) }
@@ -16,4 +16,5 @@ class ContainsValueWithTypeMatcher<T : Any>(private val klass: KClass<T>) : Type
     }
 }
 
-inline fun <reified T : Any> containsValueWithType() = ContainsValueWithTypeMatcher(T::class)
+public inline fun <reified T : Any> containsValueWithType(): ContainsValueWithTypeMatcher<T> =
+    ContainsValueWithTypeMatcher(T::class)

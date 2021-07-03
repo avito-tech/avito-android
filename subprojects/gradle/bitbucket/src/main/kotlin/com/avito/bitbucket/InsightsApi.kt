@@ -77,6 +77,6 @@ internal data class AnnotationCreateRequest(
 
 internal data class AnnotationsBulkCreateRequest(val annotations: List<AnnotationCreateRequest>)
 
-enum class Severity { LOW, MEDIUM, HIGH }
+public enum class Severity { LOW, MEDIUM, HIGH }
 
 private const val SERVICE_NAME = "bitbucket"

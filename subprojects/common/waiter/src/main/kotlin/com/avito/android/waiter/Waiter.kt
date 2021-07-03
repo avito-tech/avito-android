@@ -2,7 +2,7 @@ package com.avito.android.waiter
 
 import java.util.concurrent.TimeUnit
 
-fun <T> waitFor(
+public fun <T> waitFor(
     frequencyMs: Long = 50L,
     timeoutMs: Long = TimeUnit.SECONDS.toMillis(2),
     allowedExceptions: Set<Class<out Any>> = setOf(AssertionError::class.java),
@@ -35,7 +35,7 @@ fun <T> waitFor(
     throw caughtAllowedException
 }
 
-fun repeatFor(
+public fun repeatFor(
     frequencyMs: Long = 50L,
     timeoutMs: Long = TimeUnit.SECONDS.toMillis(2),
     sleepAction: (frequencyMs: Long) -> Unit = { Thread.sleep(it) },

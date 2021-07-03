@@ -9,19 +9,19 @@ package com.avito.bitbucket
  *             One of: BOOLEAN, DATE, DURATION, LINK, NUMBER, PERCENTAGE, TEXT
  * @param value A value based on the type provided. Either a raw value (string, number or boolean) or a map.
  */
-sealed class InsightData(val type: String) {
+public sealed class InsightData(public val type: String) {
 
     /**
      * A string describing what this data field represents
      */
-    abstract val title: String
+    public abstract val title: String
 
-    data class Text(override val title: String, val value: String) : InsightData(type = "TEXT")
+    public data class Text(override val title: String, val value: String) : InsightData(type = "TEXT")
 
-    data class Number(override val title: String, val value: kotlin.Number) : InsightData(type = "NUMBER")
+    public data class Number(override val title: String, val value: kotlin.Number) : InsightData(type = "NUMBER")
 
     /**
      * @param value time in millis
      */
-    data class Duration(override val title: String, val value: Long) : InsightData(type = "DURATION")
+    public data class Duration(override val title: String, val value: Long) : InsightData(type = "DURATION")
 }

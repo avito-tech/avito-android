@@ -6,7 +6,7 @@ package com.avito.impact.configuration
 import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.module.configurations.ConfigurationType.Lint
 
-class LintConfiguration(module: InternalModule) : BaseConfiguration(module, Lint::class.java) {
+internal class LintConfiguration(module: InternalModule) : BaseConfiguration(module, Lint::class.java) {
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }

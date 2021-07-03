@@ -10,7 +10,7 @@ import java.io.File
 /**
  * Empty module. It setups build.gradle for all child modules
  */
-class ParentGradleModule(
+public class ParentGradleModule(
     override val name: String,
     override val modules: List<Module>,
     override val plugins: PluginsSpec = PluginsSpec(),

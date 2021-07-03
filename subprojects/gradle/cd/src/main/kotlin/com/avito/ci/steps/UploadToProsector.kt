@@ -7,7 +7,7 @@ import prosectorTaskProvider
 import java.io.File
 
 @Suppress("UnstableApiUsage")
-class UploadToProsector(
+public class UploadToProsector(
     context: String,
     artifactsConfiguration: ArtifactsConfiguration,
     name: String

@@ -1,14 +1,18 @@
 package com.avito.coroutines.extensions
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 
-interface Dispatchers {
+public interface Dispatchers {
 
-    fun dispatcher(): CoroutineDispatcher
+    public fun dispatcher(): CoroutineDispatcher
 
-    object SingleThread : Dispatchers {
-        override fun dispatcher() = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+    public object SingleThread : Dispatchers {
+
+        override fun dispatcher(): ExecutorCoroutineDispatcher {
+            return Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+        }
     }
 }

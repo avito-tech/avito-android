@@ -12,7 +12,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-class ImpactAnalysisPlugin : Plugin<Project> {
+public class ImpactAnalysisPlugin : Plugin<Project> {
 
     override fun apply(rootProject: Project) {
         check(rootProject.isRoot()) { "Plugin $pluginName should be applied to the root project" }

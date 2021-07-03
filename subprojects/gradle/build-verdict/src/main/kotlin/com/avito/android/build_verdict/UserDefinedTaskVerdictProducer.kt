@@ -3,12 +3,13 @@ package com.avito.android.build_verdict
 import com.avito.android.build_verdict.span.SpannedString
 import org.gradle.api.Task
 
-class UserDefinedTaskVerdictProducer(
+internal class UserDefinedTaskVerdictProducer(
     predicate: TaskPredicate,
     producer: TaskVerdictProducer
 ) : TaskPredicate by predicate, TaskVerdictProducer by producer
 
-interface TaskPredicate {
+internal interface TaskPredicate {
+
     fun accept(task: Task): Boolean
 
     class ByName(private val name: String) : TaskPredicate {
@@ -20,11 +21,13 @@ interface TaskPredicate {
     }
 }
 
-interface TaskVerdictProducer {
-    fun produce(task: Task): SpannedString
+public interface TaskVerdictProducer {
 
-    companion object {
-        internal inline fun create(crossinline producer: (Task) -> SpannedString): TaskVerdictProducer {
+    public fun produce(task: Task): SpannedString
+
+    public companion object {
+
+        public inline fun create(crossinline producer: (Task) -> SpannedString): TaskVerdictProducer {
             return object : TaskVerdictProducer {
                 override fun produce(task: Task) = producer(task)
             }

@@ -17,7 +17,3 @@ dependencies {
     testImplementation(libs.retrofit)
     testImplementation(libs.retrofitConverterGson)
 }
-
-kotlin {
-    explicitApi()
-}

@@ -21,7 +21,7 @@ import org.gradle.internal.time.Clock
  * https://discuss.gradle.org/t/plugin-service-registration/29342
  *
  */
-class ProfileEventAdapter(
+internal class ProfileEventAdapter(
     private val clock: Clock,
     private val listener: com.avito.android.gradle.profile.BuildListener
 ) : BuildListener, ProjectEvaluationListener, TaskExecutionListener {
