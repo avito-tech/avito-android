@@ -1,7 +1,7 @@
 package com.avito.test.summary
 
 import com.avito.android.Result
-import com.avito.reportviewer.ReportViewer
+import com.avito.reportviewer.ReportViewerLinksGenerator
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.Team
 import com.avito.slack.SlackMessageSender
@@ -13,7 +13,7 @@ internal class FlakyTestReporterImpl(
     private val slackClient: SlackMessageSender,
     private val summaryChannel: SlackChannel,
     private val messageAuthor: String,
-    private val reportViewer: ReportViewer,
+    private val reportViewerLinksGenerator: ReportViewerLinksGenerator,
     private val buildUrl: String,
     private val currentBranch: String,
     private val reportCoordinates: ReportCoordinates
@@ -36,7 +36,7 @@ internal class FlakyTestReporterImpl(
                 channel = summaryChannel,
                 buildUrl = buildUrl,
                 currentBranch = currentBranch,
-                reportUrl = reportViewer.generateReportUrl(
+                reportUrl = reportViewerLinksGenerator.generateReportUrl(
                     reportCoordinates = reportCoordinates,
                     onlyFailures = true,
                     team = Team.UNDEFINED

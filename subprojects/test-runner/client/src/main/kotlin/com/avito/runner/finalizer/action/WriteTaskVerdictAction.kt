@@ -1,6 +1,6 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.model.TestStaticData
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
 import com.avito.runner.finalizer.verdict.Verdict
@@ -10,7 +10,7 @@ import java.io.File
 
 internal class WriteTaskVerdictAction(
     private val verdictDestination: File,
-    private val reportLinkGenerator: ReportLinkGenerator,
+    private val reportLinksGenerator: ReportLinksGenerator,
 ) : FinalizeAction {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
@@ -20,7 +20,7 @@ internal class WriteTaskVerdictAction(
             gson.toJson(
                 InstrumentationTestsTaskVerdict(
                     title = verdict.message(),
-                    reportUrl = reportLinkGenerator.generateReportLink(
+                    reportUrl = reportLinksGenerator.generateReportLink(
                         filterOnlyFailures = verdict is Verdict.Failure
                     ),
                     problemTests = verdict.getProblemTests()
@@ -65,7 +65,7 @@ internal class WriteTaskVerdictAction(
 
     private fun TestStaticData.toTaskVerdictTest(prefix: String): InstrumentationTestsTaskVerdict.Test =
         InstrumentationTestsTaskVerdict.Test(
-            testUrl = reportLinkGenerator.generateTestLink(name),
+            testUrl = reportLinksGenerator.generateTestLink(name),
             title = "$name $device $prefix"
         )
 

@@ -2,16 +2,17 @@ package com.avito.reportviewer
 
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.Team
+import com.avito.test.model.TestName
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-public class StubReportViewer(
+public class StubReportViewerLinksGenerator(
     private val reportViewerUrl: String = "http://localhost/",
     public var byReportCoordinatesUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
     public var byReportIdUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
     public var byTestIdUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
     public var byTestName: HttpUrl = reportViewerUrl.toHttpUrl()
-) : ReportViewer {
+) : ReportViewerLinksGenerator {
 
     override fun generateReportUrl(
         reportCoordinates: ReportCoordinates,
@@ -28,4 +29,12 @@ public class StubReportViewer(
         testClass: String,
         testMethod: String
     ): HttpUrl = byTestName
+
+    override fun generateReportLink(filterOnlyFailures: Boolean, team: String?): String {
+        return byReportCoordinatesUrl.toString()
+    }
+
+    override fun generateTestLink(testName: TestName): String {
+        return byTestName.toString()
+    }
 }

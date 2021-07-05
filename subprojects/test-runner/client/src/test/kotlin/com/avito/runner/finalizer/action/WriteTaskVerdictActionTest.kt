@@ -1,7 +1,7 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.report.NoOpReportLinkGenerator
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.NoOpReportLinksGenerator
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
 import com.avito.report.model.TestRuntimeDataPackage
@@ -149,11 +149,11 @@ internal class WriteTaskVerdictActionTest {
 
     private fun createWriteTaskVerdictAction(
         tempDir: File,
-        reportLinkGenerator: ReportLinkGenerator = NoOpReportLinkGenerator()
+        reportLinksGenerator: ReportLinksGenerator = NoOpReportLinksGenerator()
     ): WriteTaskVerdictAction {
         return WriteTaskVerdictAction(
             verdictDestination = verdictFile(tempDir),
-            reportLinkGenerator = reportLinkGenerator,
+            reportLinksGenerator = reportLinksGenerator,
         )
     }
 

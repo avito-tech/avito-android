@@ -15,6 +15,7 @@ import com.avito.instrumentation.configuration.ReportViewer
 import com.avito.instrumentation.internal.GetTestResultsAction
 import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.logger.GradleLoggerFactory
+import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
@@ -229,8 +230,11 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         val reportViewerConfig = reportViewerProperty.orNull
         if (reportViewerConfig != null) {
             val getTestResultsAction = GetTestResultsAction(
-                reportViewerUrl = reportViewerConfig.reportViewerUrl,
-                reportCoordinates = reportCoordinates
+                reportCoordinates = reportCoordinates,
+                reportLinksGenerator = ReportViewerLinksGeneratorImpl(
+                    host = reportViewerConfig.reportViewerUrl,
+                    reportCoordinates = reportCoordinates,
+                )
             )
             // todo move that logic to task output. Instrumentation task mustn't know about Upload CD models
             // todo Extract Instrumentation contract to module.

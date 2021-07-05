@@ -1,6 +1,6 @@
 package com.avito.runner.finalizer
 
-import com.avito.report.NoOpReportLinkGenerator
+import com.avito.report.NoOpReportLinksGenerator
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
 import com.avito.report.model.TestRuntimeDataPackage
@@ -81,7 +81,7 @@ internal class FinalizerImplTest {
     private fun createFinalizer(verdictFile: File): FinalizerImpl {
         val writeTaskVerdictAction = WriteTaskVerdictAction(
             verdictDestination = verdictFile,
-            reportLinkGenerator = NoOpReportLinkGenerator()
+            reportLinksGenerator = NoOpReportLinksGenerator()
         )
 
         return FinalizerImpl.createStubInstance(

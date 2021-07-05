@@ -2,7 +2,7 @@ package com.avito.report
 
 import com.avito.test.model.TestName
 
-public interface ReportLinkGenerator {
+public interface ReportLinksGenerator {
 
     public fun generateReportLink(
         filterOnlyFailures: Boolean = false,

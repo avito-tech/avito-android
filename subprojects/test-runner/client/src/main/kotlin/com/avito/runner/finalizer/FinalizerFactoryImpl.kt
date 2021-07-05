@@ -4,7 +4,7 @@ import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.LoggerFactory
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.ReportLinksGenerator
 import com.avito.runner.finalizer.action.AvitoReportViewerFinishAction
 import com.avito.runner.finalizer.action.FinalizeAction
 import com.avito.runner.finalizer.action.SendMetricsAction
@@ -40,13 +40,13 @@ internal class FinalizerFactoryImpl(
         val reportLinkGenerator = reportFactory.createReportLinkGenerator()
 
         return createFinalizer(
-            reportLinkGenerator = reportLinkGenerator,
+            reportLinksGenerator = reportLinkGenerator,
             metricsSender = metricsSender
         )
     }
 
     private fun createFinalizer(
-        reportLinkGenerator: ReportLinkGenerator,
+        reportLinksGenerator: ReportLinksGenerator,
         metricsSender: InstrumentationMetricsSender,
     ): FinalizerImpl {
 
@@ -62,12 +62,12 @@ internal class FinalizerFactoryImpl(
 
         actions += WriteTaskVerdictAction(
             verdictDestination = verdictFile,
-            reportLinkGenerator = reportLinkGenerator
+            reportLinksGenerator = reportLinksGenerator
         )
 
         actions += WriteJUnitReportAction(
             destination = File(outputDir, "junit-report.xml"),
-            reportLinkGenerator = reportLinkGenerator,
+            reportLinksGenerator = reportLinksGenerator,
             testSuiteNameProvider = reportFactory.createTestSuiteNameGenerator()
         )
 
@@ -77,7 +77,7 @@ internal class FinalizerFactoryImpl(
 
             actions += WriteReportViewerLinkFile(
                 outputDir = outputDir,
-                reportLinkGenerator = reportLinkGenerator
+                reportLinksGenerator = reportLinksGenerator
             )
         }
 

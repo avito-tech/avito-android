@@ -1,8 +1,8 @@
 package com.avito.instrumentation.internal
 
 import com.avito.cd.CdBuildResult
-import com.avito.reportviewer.ReportViewer
-import com.avito.reportviewer.StubReportViewer
+import com.avito.reportviewer.ReportViewerLinksGenerator
+import com.avito.reportviewer.StubReportViewerLinksGenerator
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
@@ -13,10 +13,10 @@ internal class GetTestResultsActionTest {
     @Test
     fun `action - getTestResultAction success`() {
         val reportCoordinates = ReportCoordinates.createStubInstance()
-        val reportViewer = StubReportViewer()
+        val reportViewer = StubReportViewerLinksGenerator()
         val results = createGetTestResultsAction(
             reportCoordinates = reportCoordinates,
-            reportViewer = reportViewer
+            reportViewerLinksGenerator = reportViewer
         ).getTestResults()
 
         assertThat(results)
@@ -34,12 +34,11 @@ internal class GetTestResultsActionTest {
 
     private fun createGetTestResultsAction(
         reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
-        reportViewer: ReportViewer = StubReportViewer()
+        reportViewerLinksGenerator: ReportViewerLinksGenerator = StubReportViewerLinksGenerator()
     ): GetTestResultsAction {
         return GetTestResultsAction(
-            reportViewerUrl = "xxx",
             reportCoordinates = reportCoordinates,
-            reportViewer = reportViewer
+            reportLinksGenerator = reportViewerLinksGenerator
         )
     }
 }

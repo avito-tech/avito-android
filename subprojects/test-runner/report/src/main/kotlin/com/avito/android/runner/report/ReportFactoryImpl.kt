@@ -7,10 +7,11 @@ import com.avito.android.runner.report.internal.ReportImpl
 import com.avito.android.runner.report.internal.TestAttemptsAggregateStrategy
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
-import com.avito.report.NoOpReportLinkGenerator
+import com.avito.report.NoOpReportLinksGenerator
 import com.avito.report.NoOpTestSuiteNameProvider
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.TestSuiteNameProvider
+import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportsApiFactory
 import com.avito.time.TimeProvider
 
@@ -55,20 +56,20 @@ public class ReportFactoryImpl(
         )
     }
 
-    override fun createReportLinkGenerator(): ReportLinkGenerator {
+    override fun createReportLinkGenerator(): ReportLinksGenerator {
         return if (reportViewerConfig != null) {
-            com.avito.reportviewer.ReportViewer.Impl(
+            ReportViewerLinksGeneratorImpl(
                 host = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
-            NoOpReportLinkGenerator()
+            NoOpReportLinksGenerator()
         }
     }
 
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
         return if (reportViewerConfig != null) {
-            com.avito.reportviewer.ReportViewer.Impl(
+            ReportViewerLinksGeneratorImpl(
                 host = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )

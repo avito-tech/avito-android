@@ -12,7 +12,8 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.Entry
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
-import com.avito.reportviewer.ReportViewer
+import com.avito.reportviewer.ReportViewerLinksGenerator
+import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.model.DeviceName
@@ -31,7 +32,10 @@ internal class LocalRunTransport(
 
     private val localBuildId: String? = null
 
-    private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl, reportCoordinates)
+    private val reportViewerLinksGenerator: ReportViewerLinksGenerator = ReportViewerLinksGeneratorImpl(
+        host = reportViewerUrl,
+        reportCoordinates = reportCoordinates
+    )
 
     override fun sendReport(state: Started) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -82,7 +86,7 @@ internal class LocalRunTransport(
 
             logger.info(
                 "Report link for test ${testStaticData.name}: " +
-                    "${reportViewer.generateSingleTestRunUrl(result.getOrThrow())}"
+                    "${reportViewerLinksGenerator.generateSingleTestRunUrl(result.getOrThrow())}"
             )
 
             @Suppress("ControlFlowWithEmptyBody")

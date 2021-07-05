@@ -1,13 +1,13 @@
 package com.avito.android.runner.report
 
-import com.avito.report.NoOpReportLinkGenerator
+import com.avito.report.NoOpReportLinksGenerator
 import com.avito.report.NoOpTestSuiteNameProvider
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.TestSuiteNameProvider
 
 public class StubReportFactory(
     private val report: StubReport = StubReport(),
-    private val linkGenerator: ReportLinkGenerator = NoOpReportLinkGenerator(),
+    private val linksGenerator: ReportLinksGenerator = NoOpReportLinksGenerator(),
     private val nameProvider: TestSuiteNameProvider = NoOpTestSuiteNameProvider()
 ) : ReportFactory {
 
@@ -19,8 +19,8 @@ public class StubReportFactory(
         return report
     }
 
-    override fun createReportLinkGenerator(): ReportLinkGenerator {
-        return linkGenerator
+    override fun createReportLinkGenerator(): ReportLinksGenerator {
+        return linksGenerator
     }
 
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
