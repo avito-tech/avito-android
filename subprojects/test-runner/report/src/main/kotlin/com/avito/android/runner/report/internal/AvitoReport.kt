@@ -6,11 +6,14 @@ import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.TestAttempt
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
+import com.avito.reportviewer.ReportsApi
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.SimpleRunTest
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestCase
+import com.avito.test.model.TestStatus
 import com.avito.time.TimeProvider
 
 /**
@@ -116,8 +119,14 @@ internal class AvitoReport(
         }
     }
 
-    override fun getTests(): Result<List<SimpleRunTest>> {
-        return reportsApi.getTestsForRunId(reportCoordinates)
+    override fun getTests(): Result<Map<TestCase, TestStatus>> {
+        return reportsApi.getTestsForRunId(reportCoordinates).map { results ->
+            results
+                .map { simpleRunTest ->
+                    TestCase(simpleRunTest.name, DeviceName(simpleRunTest.deviceName)) to simpleRunTest.status
+                }
+                .toMap()
+        }
     }
 
     private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) {

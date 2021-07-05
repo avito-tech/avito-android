@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal
 
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
-import com.avito.report.model.RunId
+import com.avito.reportviewer.model.RunId
 import com.avito.time.TimeProvider
 import org.gradle.api.Project
 import java.util.concurrent.TimeUnit

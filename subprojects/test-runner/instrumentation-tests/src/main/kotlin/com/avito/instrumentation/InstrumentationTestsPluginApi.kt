@@ -1,7 +1,7 @@
 package com.avito.instrumentation
 
 import com.avito.kotlin.dsl.typedNamed
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.model.ReportCoordinates
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider

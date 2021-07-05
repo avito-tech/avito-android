@@ -1,6 +1,6 @@
 package com.avito.runner.config
 
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.model.ReportCoordinates
 import java.io.Serializable
 
 /**

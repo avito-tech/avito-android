@@ -1,10 +1,10 @@
 package com.avito.instrumentation.internal
 
 import com.avito.cd.CdBuildResult
-import com.avito.report.ReportViewer
-import com.avito.report.StubReportViewer
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.createStubInstance
+import com.avito.reportviewer.ReportViewer
+import com.avito.reportviewer.StubReportViewer
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

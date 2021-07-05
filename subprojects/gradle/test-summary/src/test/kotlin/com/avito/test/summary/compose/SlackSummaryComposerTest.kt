@@ -1,18 +1,13 @@
 package com.avito.test.summary.compose
 
 import com.avito.android.Result
-import com.avito.report.model.CrossDeviceRunTest
-import com.avito.report.model.CrossDeviceStatus.FailedOnAllDevices
-import com.avito.report.model.CrossDeviceStatus.FailedOnSomeDevices
-import com.avito.report.model.CrossDeviceStatus.LostOnSomeDevices
-import com.avito.report.model.CrossDeviceStatus.Manual
-import com.avito.report.model.CrossDeviceStatus.SkippedOnAllDevices
-import com.avito.report.model.CrossDeviceStatus.Success
-import com.avito.report.model.CrossDeviceSuite
-import com.avito.report.model.FailureOnDevice
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
-import com.avito.report.model.createStubInstance
+import com.avito.reportviewer.model.CrossDeviceRunTest
+import com.avito.reportviewer.model.CrossDeviceStatus
+import com.avito.reportviewer.model.CrossDeviceSuite
+import com.avito.reportviewer.model.FailureOnDevice
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.Team
+import com.avito.reportviewer.model.createStubInstance
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -25,8 +20,8 @@ internal class SlackSummaryComposerTest {
     fun `slack message - contains manual tests count`() {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = Manual),
-                CrossDeviceRunTest.createStubInstance(status = Manual)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Manual),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Manual)
             )
         )
 
@@ -40,10 +35,10 @@ internal class SlackSummaryComposerTest {
     fun `slack message - contains automated tests count`() {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = Success),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnAllDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnSomeDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = Manual)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnAllDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnSomeDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Manual)
             )
         )
 
@@ -57,12 +52,12 @@ internal class SlackSummaryComposerTest {
     fun `slack message - contains success tests count and percentage`() {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = Success),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnAllDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = Success),
-                CrossDeviceRunTest.createStubInstance(status = Success),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnSomeDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = Manual)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnAllDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnSomeDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Manual)
             )
         )
 
@@ -80,9 +75,9 @@ internal class SlackSummaryComposerTest {
     fun `slack message - contains skipped tests count and percentage`() {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = SkippedOnAllDevices),
-                CrossDeviceRunTest.createStubInstance(status = SkippedOnAllDevices),
-                CrossDeviceRunTest.createStubInstance(status = SkippedOnAllDevices)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.SkippedOnAllDevices),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.SkippedOnAllDevices),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.SkippedOnAllDevices)
             )
         )
 
@@ -98,10 +93,10 @@ internal class SlackSummaryComposerTest {
     fun `slack message - contains lost tests count and percentage`() {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = LostOnSomeDevices),
-                CrossDeviceRunTest.createStubInstance(status = LostOnSomeDevices),
-                CrossDeviceRunTest.createStubInstance(status = SkippedOnAllDevices),
-                CrossDeviceRunTest.createStubInstance(status = SkippedOnAllDevices)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.LostOnSomeDevices),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.LostOnSomeDevices),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.SkippedOnAllDevices),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.SkippedOnAllDevices)
             )
         )
 
@@ -117,11 +112,11 @@ internal class SlackSummaryComposerTest {
     fun `slack message - contains all failed tests count and percentage`() {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = Success),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnAllDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnAllDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnSomeDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = Manual)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnAllDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnAllDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnSomeDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Manual)
             )
         )
 
@@ -135,11 +130,11 @@ internal class SlackSummaryComposerTest {
     fun `slack message - contains failed tests on some devices count and percentage`() {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = Success),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnAllDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnSomeDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = FailedOnSomeDevices(emptyList())),
-                CrossDeviceRunTest.createStubInstance(status = Manual)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnAllDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnSomeDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.FailedOnSomeDevices(emptyList())),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Manual)
             )
         )
 
@@ -154,7 +149,7 @@ internal class SlackSummaryComposerTest {
         val crossDeviceSuite = CrossDeviceSuite(
             listOf(
                 CrossDeviceRunTest.createStubInstance(
-                    status = FailedOnSomeDevices(
+                    status = CrossDeviceStatus.FailedOnSomeDevices(
                         listOf(
                             FailureOnDevice("device1", "failure1"),
                             FailureOnDevice("device2", "failure2"),
@@ -166,7 +161,7 @@ internal class SlackSummaryComposerTest {
                     )
                 ),
                 CrossDeviceRunTest.createStubInstance(
-                    status = FailedOnSomeDevices(
+                    status = CrossDeviceStatus.FailedOnSomeDevices(
                         listOf(
                             FailureOnDevice("device1", "failure1"),
                             FailureOnDevice("device2", "failure2"),
@@ -174,7 +169,7 @@ internal class SlackSummaryComposerTest {
                         )
                     )
                 ),
-                CrossDeviceRunTest.createStubInstance(status = Manual)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Manual)
             )
         )
 
@@ -194,10 +189,17 @@ internal class SlackSummaryComposerTest {
         val suiteWithFailure = CrossDeviceSuite(
             listOf(
                 CrossDeviceRunTest.createStubInstance(
-                    status = FailedOnSomeDevices(listOf(FailureOnDevice("device1", "failure1")))
+                    status = CrossDeviceStatus.FailedOnSomeDevices(
+                        listOf(
+                            FailureOnDevice(
+                                "device1",
+                                "failure1"
+                            )
+                        )
+                    )
                 ),
                 CrossDeviceRunTest.createStubInstance(
-                    status = Success
+                    status = CrossDeviceStatus.Success
                 )
             )
         )
@@ -212,8 +214,8 @@ internal class SlackSummaryComposerTest {
     fun `slack message - does not contain @channel - if mention enabled and there are no failed tests`() {
         val greenSuite = CrossDeviceSuite(
             listOf(
-                CrossDeviceRunTest.createStubInstance(status = Success),
-                CrossDeviceRunTest.createStubInstance(status = Success)
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success),
+                CrossDeviceRunTest.createStubInstance(status = CrossDeviceStatus.Success)
             )
         )
 
@@ -228,10 +230,17 @@ internal class SlackSummaryComposerTest {
         val suiteWithFailure = CrossDeviceSuite(
             listOf(
                 CrossDeviceRunTest.createStubInstance(
-                    status = FailedOnSomeDevices(listOf(FailureOnDevice("device1", "failure1")))
+                    status = CrossDeviceStatus.FailedOnSomeDevices(
+                        listOf(
+                            FailureOnDevice(
+                                "device1",
+                                "failure1"
+                            )
+                        )
+                    )
                 ),
                 CrossDeviceRunTest.createStubInstance(
-                    status = Success
+                    status = CrossDeviceStatus.Success
                 )
             )
         )

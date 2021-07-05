@@ -1,9 +1,9 @@
 package com.avito.test.summary
 
 import com.avito.android.Result
-import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
-import com.avito.report.model.createStubInstance
+import com.avito.reportviewer.model.SimpleRunTest
+import com.avito.reportviewer.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

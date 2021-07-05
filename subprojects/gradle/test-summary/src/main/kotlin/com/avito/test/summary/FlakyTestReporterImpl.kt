@@ -1,9 +1,9 @@
 package com.avito.test.summary
 
 import com.avito.android.Result
-import com.avito.report.ReportViewer
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
+import com.avito.reportviewer.ReportViewer
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.Team
 import com.avito.slack.SlackMessageSender
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage

@@ -3,11 +3,12 @@ package com.avito.runner.scheduler.suite.filter
 import com.avito.android.runner.report.ReportFactory
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.SimpleRunTest
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignature
+import com.avito.test.model.TestCase
+import com.avito.test.model.TestStatus
 
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilterData,
@@ -152,13 +153,13 @@ internal class FilterFactoryImpl(
         }
     }
 
-    private fun List<SimpleRunTest>.filterBy(statuses: Set<RunStatus>): Set<TestSignature> {
+    private fun Map<TestCase, TestStatus>.filterBy(statuses: Set<RunStatus>): Set<TestSignature> {
         return asSequence()
-            .filter { testRun -> statuses.any { it.statusClass.isInstance(testRun.status) } }
-            .map { testRun ->
+            .filter { (_, status) -> statuses.any { it.statusClass.isInstance(status) } }
+            .map { (testCase, _) ->
                 TestSignature(
-                    name = testRun.name.name,
-                    deviceName = testRun.deviceName
+                    name = testCase.name.name,
+                    deviceName = testCase.deviceName.name
                 )
             }.toSet()
     }

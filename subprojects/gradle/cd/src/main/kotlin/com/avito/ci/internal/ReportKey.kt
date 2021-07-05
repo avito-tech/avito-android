@@ -1,6 +1,6 @@
 package com.avito.ci.internal
 
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.model.ReportCoordinates
 import java.util.Locale
 
 /**

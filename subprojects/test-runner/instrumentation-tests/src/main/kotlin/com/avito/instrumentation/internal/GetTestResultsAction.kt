@@ -1,8 +1,8 @@
 package com.avito.instrumentation.internal
 
 import com.avito.cd.CdBuildResult
-import com.avito.report.ReportViewer
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.ReportViewer
+import com.avito.reportviewer.model.ReportCoordinates
 
 /**
  * Used for CD contract

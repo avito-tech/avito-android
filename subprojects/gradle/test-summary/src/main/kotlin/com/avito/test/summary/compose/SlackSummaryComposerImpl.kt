@@ -2,11 +2,11 @@ package com.avito.test.summary.compose
 
 import com.avito.android.Result
 import com.avito.report.ReportLinkGenerator
-import com.avito.report.ReportViewer
-import com.avito.report.model.CrossDeviceSuite
-import com.avito.report.model.FailureOnDevice
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
+import com.avito.reportviewer.ReportViewer
+import com.avito.reportviewer.model.CrossDeviceSuite
+import com.avito.reportviewer.model.FailureOnDevice
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.Team
 import com.avito.slack.SlackStringFormat
 import com.avito.test.summary.analysis.analyzeFailures
 

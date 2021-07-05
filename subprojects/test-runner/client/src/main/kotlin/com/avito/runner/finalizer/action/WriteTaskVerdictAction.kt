@@ -21,7 +21,7 @@ internal class WriteTaskVerdictAction(
                 InstrumentationTestsTaskVerdict(
                     title = verdict.message(),
                     reportUrl = reportLinkGenerator.generateReportLink(
-                        filterOnlyFailtures = verdict is Verdict.Failure
+                        filterOnlyFailures = verdict is Verdict.Failure
                     ),
                     problemTests = verdict.getProblemTests()
                 )

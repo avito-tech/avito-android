@@ -3,7 +3,7 @@ package com.avito.android.runner.report
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Kind
 import com.avito.report.model.Stability
-import com.avito.report.model.Status
+import com.avito.test.model.TestStatus
 
 /**
  * It duplicates logic from
@@ -12,8 +12,8 @@ import com.avito.report.model.Status
  */
 public interface TestStatusFinalizer {
 
-    public data class TestStatus(
-        val status: Status,
+    public data class Status(
+        val status: TestStatus,
         val stability: Stability,
         val startTime: Long,
         val endTime: Long,
@@ -22,7 +22,7 @@ public interface TestStatusFinalizer {
         val lastAttemptDurationInSeconds: Int
     )
 
-    public fun getTestFinalStatus(testAttempts: List<AndroidTest>): TestStatus
+    public fun getTestFinalStatus(testAttempts: List<AndroidTest>): Status
 
     public companion object {
 
@@ -33,11 +33,11 @@ public interface TestStatusFinalizer {
 
         override fun getTestFinalStatus(
             testAttempts: List<AndroidTest>
-        ): TestStatus {
+        ): Status {
 
             val startTime = getStartTime(testAttempts)
             val endTime = getEndTime(testAttempts)
-            return TestStatus(
+            return Status(
                 status = getStatus(testAttempts),
                 stability = getStability(testAttempts),
                 startTime = startTime,
@@ -91,21 +91,21 @@ public interface TestStatusFinalizer {
             }
         }
 
-        private fun getStatus(testAttempts: List<AndroidTest>): Status {
+        private fun getStatus(testAttempts: List<AndroidTest>): TestStatus {
             return when (val attempt = testAttempts.last()) {
-                is AndroidTest.Lost -> Status.Lost
-                is AndroidTest.Skipped -> Status.Skipped(attempt.skipReason)
+                is AndroidTest.Lost -> TestStatus.Lost
+                is AndroidTest.Skipped -> TestStatus.Skipped(attempt.skipReason)
                 is AndroidTest.Completed -> {
                     val incident = attempt.incident
                     if (incident == null) {
                         if (attempt.kind == Kind.MANUAL) {
-                            Status.Manual
+                            TestStatus.Manual
                         } else {
-                            Status.Success
+                            TestStatus.Success
                         }
                     } else {
                         // TODO remove stubs
-                        Status.Failure("Stub", incident.chain.lastOrNull()?.message ?: "Stub")
+                        TestStatus.Failure("Stub")
                     }
                 }
             }

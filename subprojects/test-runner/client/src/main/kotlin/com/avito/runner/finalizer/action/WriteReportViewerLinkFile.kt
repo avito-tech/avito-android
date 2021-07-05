@@ -12,7 +12,7 @@ internal class WriteReportViewerLinkFile(
 
     override fun action(verdict: Verdict) {
         val reportUrl = reportLinkGenerator.generateReportLink(
-            filterOnlyFailtures = verdict is Verdict.Failure
+            filterOnlyFailures = verdict is Verdict.Failure
         )
         writeReportViewerLinkFile(
             reportUrl,

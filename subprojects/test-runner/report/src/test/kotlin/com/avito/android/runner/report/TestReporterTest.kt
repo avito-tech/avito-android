@@ -1,9 +1,10 @@
 package com.avito.android.runner.report
 
-import com.avito.report.StubReportsApi
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
+import com.avito.reportviewer.StubReportsApi
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

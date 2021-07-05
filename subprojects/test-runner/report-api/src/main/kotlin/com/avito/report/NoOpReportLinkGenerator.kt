@@ -8,7 +8,7 @@ public class NoOpReportLinkGenerator(
 ) : ReportLinkGenerator {
 
     override fun generateReportLink(
-        filterOnlyFailtures: Boolean,
+        filterOnlyFailures: Boolean,
         team: String?
     ): String = reportLink
 

@@ -6,7 +6,7 @@ import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.extractReportCoordinates
 import com.avito.instrumentation.instrumentationTask
 import com.avito.logger.GradleLoggerFactory
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.TestSummaryExtension
 import com.avito.test.summary.TestSummaryFactory
 import com.avito.test.summary.testSummaryPluginId

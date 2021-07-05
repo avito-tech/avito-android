@@ -10,9 +10,8 @@ import com.avito.logger.LoggerFactory
 import com.avito.report.NoOpReportLinkGenerator
 import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.ReportLinkGenerator
-import com.avito.report.ReportViewer
-import com.avito.report.ReportsApiFactory
 import com.avito.report.TestSuiteNameProvider
+import com.avito.reportviewer.ReportsApiFactory
 import com.avito.time.TimeProvider
 
 public class ReportFactoryImpl(
@@ -58,7 +57,7 @@ public class ReportFactoryImpl(
 
     override fun createReportLinkGenerator(): ReportLinkGenerator {
         return if (reportViewerConfig != null) {
-            ReportViewer.Impl(
+            com.avito.reportviewer.ReportViewer.Impl(
                 host = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
@@ -69,7 +68,7 @@ public class ReportFactoryImpl(
 
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
         return if (reportViewerConfig != null) {
-            ReportViewer.Impl(
+            com.avito.reportviewer.ReportViewer.Impl(
                 host = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )

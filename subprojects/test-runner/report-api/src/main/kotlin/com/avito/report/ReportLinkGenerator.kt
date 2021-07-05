@@ -5,7 +5,7 @@ import com.avito.test.model.TestName
 public interface ReportLinkGenerator {
 
     public fun generateReportLink(
-        filterOnlyFailtures: Boolean = false,
+        filterOnlyFailures: Boolean = false,
         team: String? = null
     ): String
 

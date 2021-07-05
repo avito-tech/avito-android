@@ -11,6 +11,7 @@ publish {
 dependencies {
     api(projects.testRunner.reportViewer)
     api(projects.testRunner.reportApi)
+    api(projects.common.result)
 
     implementation(projects.common.time)
     implementation(projects.common.httpClient)

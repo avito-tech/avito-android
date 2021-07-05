@@ -19,7 +19,7 @@ import java.io.File
 import java.io.FileReader
 import java.util.concurrent.TimeUnit
 
-class InstrumentationTest {
+internal class InstrumentationTest {
 
     private val instrumentationParser = InstrumentationTestCaseRunParser.Impl()
 

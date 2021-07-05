@@ -2,8 +2,8 @@ package com.avito.ci.steps
 
 import com.avito.ci.internal.ReportKey
 import com.avito.kotlin.dsl.typedNamedOrNull
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.Team
 import com.avito.test.summary.TestSummaryExtension
 import com.avito.test.summary.TestSummaryFactory
 import com.avito.test.summary.TestSummaryTask

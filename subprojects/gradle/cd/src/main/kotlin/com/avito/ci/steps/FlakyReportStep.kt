@@ -2,7 +2,7 @@ package com.avito.ci.steps
 
 import com.avito.ci.internal.ReportKey
 import com.avito.kotlin.dsl.typedNamedOrNull
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.FlakyReportTask
 import com.avito.test.summary.TestSummaryExtension
 import com.avito.test.summary.TestSummaryFactory

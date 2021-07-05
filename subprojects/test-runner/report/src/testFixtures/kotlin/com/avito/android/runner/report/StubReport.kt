@@ -4,12 +4,13 @@ import com.avito.android.Result
 import com.avito.android.runner.report.internal.AvitoReport
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
-import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
-import com.avito.report.model.createStubInstance
+import com.avito.reportviewer.ReportsApi
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.createStubInstance
+import com.avito.test.model.TestCase
+import com.avito.test.model.TestStatus
 import com.avito.time.StubTimeProvider
 import com.avito.time.TimeProvider
 
@@ -53,7 +54,7 @@ public class StubReport : Report, LegacyReport {
 
     public var reportId: String? = null
 
-    public var getTestsResult: Result<List<SimpleRunTest>> = Result.Success(emptyList())
+    public var getTestsResult: Result<Map<TestCase, TestStatus>> = Result.Success(emptyMap())
 
     public var getTests: List<AndroidTest> = emptyList()
 
@@ -72,7 +73,7 @@ public class StubReport : Report, LegacyReport {
     override fun finish() {
     }
 
-    override fun getTests(): Result<List<SimpleRunTest>> {
+    override fun getTests(): Result<Map<TestCase, TestStatus>> {
         return getTestsResult
     }
 

@@ -2,16 +2,16 @@ package com.avito.runner.scheduler.suite.filter
 
 import com.avito.android.Result
 import com.avito.android.runner.report.StubReport
-import com.avito.report.model.SimpleRunTest
-import com.avito.report.model.Status
-import com.avito.report.model.createStubInstance
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.InstrumentationFilterData.FromRunHistory.ReportFilter
 import com.avito.runner.config.RunStatus
 import com.avito.runner.config.createStub
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.Source
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignature
+import com.avito.test.model.DeviceName
+import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
+import com.avito.test.model.TestStatus
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -179,17 +179,9 @@ internal class FilterFactoryImplTest {
     fun `when filterData report is present and statuses empty then filters don't contain Report filter`() {
         val report = StubReport()
         report.getTestsResult = Result.Success(
-            listOf(
-                SimpleRunTest.createStubInstance(
-                    name = TestName("", "test1"),
-                    deviceName = "25",
-                    status = Status.Success
-                ),
-                SimpleRunTest.createStubInstance(
-                    name = TestName("", "test2"),
-                    deviceName = "25",
-                    status = Status.Lost
-                )
+            mapOf(
+                TestCase(TestName("", "test1"), DeviceName("25")) to TestStatus.Success,
+                TestCase(TestName("", "test2"), DeviceName("25")) to TestStatus.Lost
             )
         )
 

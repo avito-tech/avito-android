@@ -2,10 +2,10 @@ package com.avito.test.summary
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.ReportsApi
-import com.avito.report.model.CrossDeviceSuite
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
+import com.avito.reportviewer.ReportsApi
+import com.avito.reportviewer.model.CrossDeviceSuite
+import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.Team
 import com.avito.slack.ConjunctionMessagePredicate
 import com.avito.slack.CoroutinesSlackBulkSender
 import com.avito.slack.SameAuthorPredicate
