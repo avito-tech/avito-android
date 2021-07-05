@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import android.view.View
+import androidx.test.espresso.matcher.ViewMatchers
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.R
 import com.avito.android.ui.VisibilityActivity
@@ -22,6 +23,13 @@ class VisibilityTest {
         rule.launchActivity(null)
 
         Screen.visibility.label.checks.isVisible()
+    }
+
+    @Test
+    fun hasVisibility_visible_forVisibleElement() {
+        rule.launchActivity(null)
+
+        Screen.visibility.label.checks.hasVisibility(ViewMatchers.Visibility.VISIBLE)
     }
 
     @Test

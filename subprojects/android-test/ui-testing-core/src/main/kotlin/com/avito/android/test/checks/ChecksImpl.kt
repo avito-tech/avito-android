@@ -6,7 +6,6 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
-import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import com.avito.android.test.espresso.assertion.ViewExistsAssertion
 import com.avito.android.test.matcher.AvitoPositionAssertions
 import com.avito.android.test.matcher.DrawableBackgroundMatcher
@@ -44,11 +43,15 @@ class ChecksImpl(private val driver: ChecksDriver) : Checks,
     }
 
     override fun isVisible() {
-        driver.check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        hasVisibility(Visibility.VISIBLE)
     }
 
     override fun isNotVisible() {
-        driver.check(matches(not(withEffectiveVisibility(Visibility.VISIBLE))))
+        driver.check(matches(not(ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE))))
+    }
+
+    override fun hasVisibility(visibility: Visibility) {
+        driver.check(matches(ViewMatchers.withEffectiveVisibility(visibility)))
     }
 
     override fun isEnabled() {

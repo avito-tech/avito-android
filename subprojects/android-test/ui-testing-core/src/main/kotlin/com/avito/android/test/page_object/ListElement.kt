@@ -3,6 +3,7 @@ package com.avito.android.test.page_object
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.action.CoordinatesProvider
 import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.PrecisionDescriber
@@ -248,6 +249,29 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
                 ViewAssertions.matches(
                     RecyclerViewMatcher().firstVisibleItemPosition(
                         positionMatcher
+                    )
+                )
+            )
+        }
+
+        fun hasViewTypeAtPosition(position: Int, viewType: Int) {
+            driver.check(
+                ViewAssertions.matches(
+                    RecyclerViewMatcher().
+                    hasViewTypeAtPosition(
+                        position,
+                        viewType
+                    )
+                )
+            )
+        }
+
+        fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int) {
+            driver.check(
+                ViewAssertions.matches(
+                    RecyclerViewMatcher().doesNotHaveViewTypeAtPosition(
+                        position,
+                        viewType
                     )
                 )
             )
