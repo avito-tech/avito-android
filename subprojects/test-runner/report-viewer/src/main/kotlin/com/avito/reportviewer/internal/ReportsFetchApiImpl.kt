@@ -16,10 +16,6 @@ import com.avito.reportviewer.internal.model.ConclusionStatus
 import com.avito.reportviewer.internal.model.GetReportResult
 import com.avito.reportviewer.internal.model.ListResult
 import com.avito.reportviewer.internal.model.ReportViewerStatus
-import com.avito.reportviewer.model.CrossDeviceRunTest
-import com.avito.reportviewer.model.CrossDeviceStatus
-import com.avito.reportviewer.model.CrossDeviceSuite
-import com.avito.reportviewer.model.FailureOnDevice
 import com.avito.reportviewer.model.Report
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.SimpleRunTest
@@ -53,19 +49,6 @@ internal class ReportsFetchApiImpl(
         }
     }
 
-    override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> {
-        return when (val result = getReportInternal(reportCoordinates)) {
-            is GetReportResult.Found -> getTestData(result.report.id)
-                .map { testData ->
-                    toCrossDeviceTestData(testData)
-                }
-            is GetReportResult.NotFound -> Result.Failure(
-                Exception("Report not found $reportCoordinates", result.exception)
-            )
-            is GetReportResult.Error -> Result.Failure(result.exception)
-        }
-    }
-
     private fun getReportInternal(reportCoordinates: ReportCoordinates): GetReportResult {
         return Result.tryCatch {
             client.jsonRpcRequest<RpcResult<Report>>(
@@ -89,44 +72,6 @@ internal class ReportsFetchApiImpl(
                 }
             }
         )
-    }
-
-    private fun toCrossDeviceTestData(testData: List<SimpleRunTest>): CrossDeviceSuite {
-        return testData
-            .groupBy { it.name }
-            .map { (testName, runs) ->
-                val status: CrossDeviceStatus = when {
-                    runs.any { it.status is TestStatus.Lost } ->
-                        CrossDeviceStatus.LostOnSomeDevices
-
-                    runs.all { it.status is TestStatus.Skipped } ->
-                        CrossDeviceStatus.SkippedOnAllDevices
-
-                    runs.all { it.status is TestStatus.Manual } ->
-                        CrossDeviceStatus.Manual
-
-                    /**
-                     * Успешным прогоном является при соблюдении 2 условий:
-                     *  - Все тесты прошли (имеют Success статус)
-                     *  - Есть пропущенные тесты (скипнули на каком-то SDK например),
-                     *    но все остальные являются успешными (как минимум 1)
-                     */
-                    runs.any { it.status is TestStatus.Success } &&
-                        runs.all { it.status is TestStatus.Success || it.status is TestStatus.Skipped } ->
-                        CrossDeviceStatus.Success
-
-                    runs.all { it.status is TestStatus.Failure } ->
-                        CrossDeviceStatus.FailedOnAllDevices(runs.deviceFailures())
-
-                    runs.any { it.status is TestStatus.Failure } ->
-                        CrossDeviceStatus.FailedOnSomeDevices(runs.deviceFailures())
-
-                    else ->
-                        CrossDeviceStatus.Inconsistent
-                }
-                CrossDeviceRunTest(testName, status)
-            }
-            .let { CrossDeviceSuite(it) }
     }
 
     private fun getTestData(reportId: String): Result<List<SimpleRunTest>> {
@@ -277,11 +222,4 @@ internal class ReportsFetchApiImpl(
             Flakiness.Stable
         }
     } ?: Flakiness.Stable
-
-    private fun List<SimpleRunTest>.deviceFailures(): List<FailureOnDevice> {
-        return this.filter { it.status is TestStatus.Failure }
-            .map {
-                FailureOnDevice(it.deviceName, (it.status as TestStatus.Failure).verdict)
-            }
-    }
 }

@@ -13,8 +13,6 @@ import com.avito.test.model.TestStatus
  * Упрощенная версия, доступная при запросе RunTest.List
  * Аналог неразвернутой инфы по тестам в ReportViewer
  *
- * TODO internal
- *
  * @see RunTest подробная версия
  *
  * @param id идентификатор теста, по нему можно составить url до report viewer конкретно с этим тестом

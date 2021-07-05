@@ -1,4 +1,4 @@
-package com.avito.reportviewer.model
+package com.avito.test.summary.model
 
 import com.avito.test.model.TestName
 

@@ -1,13 +1,13 @@
 package com.avito.test.summary.compose
 
 import com.avito.android.Result
-import com.avito.reportviewer.model.CrossDeviceRunTest
-import com.avito.reportviewer.model.CrossDeviceStatus
-import com.avito.reportviewer.model.CrossDeviceSuite
-import com.avito.reportviewer.model.FailureOnDevice
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.Team
-import com.avito.reportviewer.model.createStubInstance
+import com.avito.test.summary.model.CrossDeviceRunTest
+import com.avito.test.summary.model.CrossDeviceStatus
+import com.avito.test.summary.model.CrossDeviceSuite
+import com.avito.test.summary.model.FailureOnDevice
+import com.avito.test.summary.model.createStubInstance
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

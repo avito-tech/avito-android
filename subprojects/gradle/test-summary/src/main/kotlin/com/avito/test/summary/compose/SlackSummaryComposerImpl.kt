@@ -3,12 +3,12 @@ package com.avito.test.summary.compose
 import com.avito.android.Result
 import com.avito.report.ReportLinkGenerator
 import com.avito.reportviewer.ReportViewer
-import com.avito.reportviewer.model.CrossDeviceSuite
-import com.avito.reportviewer.model.FailureOnDevice
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.Team
 import com.avito.slack.SlackStringFormat
 import com.avito.test.summary.analysis.analyzeFailures
+import com.avito.test.summary.model.CrossDeviceSuite
+import com.avito.test.summary.model.FailureOnDevice
 
 internal class SlackSummaryComposerImpl(private val reportViewerUrl: String) : SlackSummaryComposer {
 

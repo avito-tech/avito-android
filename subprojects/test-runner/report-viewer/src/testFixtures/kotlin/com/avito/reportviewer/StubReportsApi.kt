@@ -2,7 +2,6 @@ package com.avito.reportviewer
 
 import com.avito.android.Result
 import com.avito.report.model.AndroidTest
-import com.avito.reportviewer.model.CrossDeviceSuite
 import com.avito.reportviewer.model.Report
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.SimpleRunTest
@@ -20,8 +19,6 @@ public class StubReportsApi : ReportsApi {
 
     public lateinit var finished: Result<Unit>
 
-    public lateinit var crossDeviceTestData: Result<CrossDeviceSuite>
-
     public val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
 
     override fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): Result<String> {
@@ -36,10 +33,6 @@ public class StubReportsApi : ReportsApi {
         addTestsRequests.add(AddTestsRequest(reportCoordinates, buildId, tests))
         return Result.Success(emptyList())
     }
-
-    @Synchronized
-    override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> =
-        crossDeviceTestData
 
     @Synchronized
     override fun getReport(reportCoordinates: ReportCoordinates): Result<Report> = getReportResult

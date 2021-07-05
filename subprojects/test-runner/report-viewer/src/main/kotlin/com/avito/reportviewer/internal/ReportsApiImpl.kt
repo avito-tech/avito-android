@@ -13,7 +13,7 @@ import com.google.gson.JsonElement
 
 internal class ReportsApiImpl(
     private val loggerFactory: LoggerFactory,
-    private val client: JsonRpcClient
+    private val client: JsonRpcClient,
 ) : ReportsApi,
     ReportsAddApi by ReportsAddApiImpl(client),
     ReportsFetchApi by ReportsFetchApiImpl(client, loggerFactory) {
