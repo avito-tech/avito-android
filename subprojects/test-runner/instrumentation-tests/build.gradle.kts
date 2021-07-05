@@ -22,7 +22,9 @@ dependencies {
     implementation(projects.logger.logger)
     implementation(projects.testRunner.instrumentationChangedTestsFinder)
     implementation(projects.testRunner.instrumentationTestsDexLoader)
-    implementation(projects.testRunner.report)
+    implementation(projects.testRunner.report) {
+        because("ReportViewerConfig")
+    }
     implementation(projects.testRunner.testAnnotations)
     implementation(projects.testRunner.deviceProvider.model)
     implementation(projects.testRunner.client)

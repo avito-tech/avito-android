@@ -32,5 +32,5 @@ internal data class ListResult(
         get() = testName.substringAfter(testNameDelimiter)
 }
 
-// gson не переварит private поле
+// open as internal for gson
 internal const val testNameDelimiter = "::"

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(StubReportsExtension::class)
-internal class CtulhuTestCaseIdTest {
+internal class CthulhuTestCaseIdTest {
 
     @Test
     fun `testCaseId doesnt sent if null`(reports: StubReportApi) {

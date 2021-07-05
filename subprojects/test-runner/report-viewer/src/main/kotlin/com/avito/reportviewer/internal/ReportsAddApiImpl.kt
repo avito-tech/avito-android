@@ -3,6 +3,9 @@ package com.avito.reportviewer.internal
 import com.avito.android.Result
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
+import com.avito.jsonrpc.JsonRpcClient
+import com.avito.jsonrpc.RfcRpcRequest
+import com.avito.jsonrpc.RpcResult
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.FileAddress
 import com.avito.report.model.Flakiness
@@ -10,8 +13,6 @@ import com.avito.reportviewer.ReportsAddApi
 import com.avito.reportviewer.internal.model.Incident
 import com.avito.reportviewer.internal.model.IncidentElement
 import com.avito.reportviewer.internal.model.ReportViewerStatus
-import com.avito.reportviewer.internal.model.RfcRpcRequest
-import com.avito.reportviewer.internal.model.RpcResult
 import com.avito.reportviewer.internal.model.Step
 import com.avito.reportviewer.internal.model.Video
 import com.avito.reportviewer.model.ReportCoordinates

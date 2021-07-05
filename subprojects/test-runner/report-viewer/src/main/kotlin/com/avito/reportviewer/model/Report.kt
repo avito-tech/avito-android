@@ -2,6 +2,8 @@ package com.avito.reportviewer.model
 
 /**
  * Один прогон тестов по координатам
+ *
+ * todo internal
  */
 public data class Report(
     val id: String,

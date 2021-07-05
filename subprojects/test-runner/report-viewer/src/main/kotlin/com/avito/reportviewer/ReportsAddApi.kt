@@ -12,6 +12,8 @@ public interface ReportsAddApi {
      * addFull - особый метод, он умеет под капотом создавать отчет (метод create) если он еще не создан
      *
      * @return set id
+     *
+     * todo remove ReportCoordinates from public api
      */
     public fun addTests(
         reportCoordinates: ReportCoordinates,
@@ -25,6 +27,8 @@ public interface ReportsAddApi {
      * Применяется для отправки тестов по-одному с девайса
      *
      * @return set id
+     *
+     * todo remove ReportCoordinates from public api
      */
     public fun addTest(
         reportCoordinates: ReportCoordinates,

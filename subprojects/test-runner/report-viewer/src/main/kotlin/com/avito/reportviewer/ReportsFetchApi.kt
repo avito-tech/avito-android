@@ -10,12 +10,17 @@ public interface ReportsFetchApi {
 
     /**
      * Run.GetByParams
+     *
+     * todo remove Report from public api
+     * todo remove ReportCoordinates from public api
      */
     public fun getReport(reportCoordinates: ReportCoordinates): Result<Report>
 
     /**
      * RunTest.List
      * получение краткого списка результатов тестов по запуску
+     *
+     * todo remove SimpleRunTest from public api
      */
     public fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>>
 

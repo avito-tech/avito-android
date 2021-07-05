@@ -1,8 +1,8 @@
 package com.avito.reportviewer
 
 import com.avito.http.HttpCodes
+import com.avito.jsonrpc.RpcResult
 import com.avito.report.model.AndroidTest
-import com.avito.reportviewer.internal.model.RpcResult
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher

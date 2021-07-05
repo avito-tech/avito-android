@@ -1,12 +1,13 @@
 package com.avito.reportviewer.internal
 
 import com.avito.android.Result
+import com.avito.jsonrpc.JsonRpcClient
+import com.avito.jsonrpc.RfcRpcRequest
 import com.avito.logger.LoggerFactory
 import com.avito.reportviewer.ReportsAddApi
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.ReportsFetchApi
 import com.avito.reportviewer.internal.model.ConclusionStatus
-import com.avito.reportviewer.internal.model.RfcRpcRequest
 import com.avito.reportviewer.model.ReportCoordinates
 import com.google.gson.JsonElement
 

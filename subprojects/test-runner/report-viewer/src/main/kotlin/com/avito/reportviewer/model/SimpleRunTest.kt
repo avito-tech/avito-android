@@ -13,7 +13,7 @@ import com.avito.test.model.TestStatus
  * Упрощенная версия, доступная при запросе RunTest.List
  * Аналог неразвернутой инфы по тестам в ReportViewer
  *
- * TODO убрать в пользу AndroidTest
+ * TODO internal
  *
  * @see RunTest подробная версия
  *

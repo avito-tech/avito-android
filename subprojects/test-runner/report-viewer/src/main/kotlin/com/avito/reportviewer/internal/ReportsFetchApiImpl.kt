@@ -3,6 +3,9 @@ package com.avito.reportviewer.internal
 import com.avito.android.Result
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
+import com.avito.jsonrpc.JsonRpcClient
+import com.avito.jsonrpc.RfcRpcRequest
+import com.avito.jsonrpc.RpcResult
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Flakiness
@@ -13,8 +16,6 @@ import com.avito.reportviewer.internal.model.ConclusionStatus
 import com.avito.reportviewer.internal.model.GetReportResult
 import com.avito.reportviewer.internal.model.ListResult
 import com.avito.reportviewer.internal.model.ReportViewerStatus
-import com.avito.reportviewer.internal.model.RfcRpcRequest
-import com.avito.reportviewer.internal.model.RpcResult
 import com.avito.reportviewer.model.CrossDeviceRunTest
 import com.avito.reportviewer.model.CrossDeviceStatus
 import com.avito.reportviewer.model.CrossDeviceSuite
@@ -231,7 +232,7 @@ internal class ReportsFetchApiImpl(
 
     private fun getDescription(listResult: ListResult): String? {
         return if (listResult.description.isNullOrBlank()) {
-            listResult.preparedData?.lastOrNull()?.ctulhuTestCase?.description
+            listResult.preparedData?.lastOrNull()?.cthulhuTestCase?.description
         } else {
             listResult.description
         }

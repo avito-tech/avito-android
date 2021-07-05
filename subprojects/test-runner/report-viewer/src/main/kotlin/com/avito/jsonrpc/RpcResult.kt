@@ -1,4 +1,4 @@
-package com.avito.reportviewer.internal.model
+package com.avito.jsonrpc
 
 /**
  * jsonrpc and id params omitted

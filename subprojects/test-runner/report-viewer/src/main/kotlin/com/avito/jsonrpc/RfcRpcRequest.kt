@@ -1,4 +1,4 @@
-package com.avito.reportviewer.internal.model
+package com.avito.jsonrpc
 
 /**
  * @param id we use jsonrpc over http, so no need to match ids, its for async calls (e.g.websocket)
