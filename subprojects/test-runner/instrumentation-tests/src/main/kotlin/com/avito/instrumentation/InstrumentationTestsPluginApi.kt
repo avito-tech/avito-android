@@ -17,10 +17,16 @@ public fun TaskContainer.instrumentationTask(configuration: String): TaskProvide
     typedNamed(instrumentationTaskName(configuration))
 
 public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
-    @Suppress("UnstableApiUsage")
     flatMap { task ->
         task.instrumentationConfiguration.map { config ->
             config.instrumentationParams.reportCoordinates()
+        }
+    }
+
+public fun TaskProvider<InstrumentationTestsTask>.extractReportViewerUrl(): Provider<String> =
+    flatMap { task ->
+        task.reportViewerProperty.map { reportViewer ->
+            reportViewer.reportViewerUrl
         }
     }
 

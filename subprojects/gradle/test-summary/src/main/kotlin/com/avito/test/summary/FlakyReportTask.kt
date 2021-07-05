@@ -95,10 +95,9 @@ public abstract class FlakyReportTask : DefaultTask() {
             ),
             summaryChannel = summaryChannel,
             messageAuthor = slackUsername,
-            reportViewerLinksGenerator = reportViewerLinksGenerator,
+            reportLinksGenerator = reportViewerLinksGenerator,
             buildUrl = buildUrl,
-            currentBranch = currentBranch,
-            reportCoordinates = reportCoordinates
+            currentBranch = currentBranch
         )
     }
 }

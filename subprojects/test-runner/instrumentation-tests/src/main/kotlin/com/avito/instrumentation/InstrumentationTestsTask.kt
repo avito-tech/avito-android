@@ -8,14 +8,11 @@ import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
 import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.statsdConfig
-import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
 import com.avito.instrumentation.configuration.ReportViewer
-import com.avito.instrumentation.internal.GetTestResultsAction
 import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.logger.GradleLoggerFactory
-import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
@@ -141,8 +138,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val loggerFactory = GradleLoggerFactory.fromTask(this)
 
-        saveTestResultsToBuildOutput()
-
         val statsDConfig = project.statsdConfig.get()
 
         val reportViewerData = reportViewerProperty.orNull
@@ -219,29 +214,5 @@ public abstract class InstrumentationTestsTask @Inject constructor(
      */
     private fun getFileStorageUrl(): String {
         return reportViewerProperty.orNull?.fileStorageUrl ?: "http://stub"
-    }
-
-    /**
-     * todo Move into Report.Impl
-     */
-    private fun saveTestResultsToBuildOutput() {
-        val configuration = instrumentationConfiguration.get()
-        val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
-        val reportViewerConfig = reportViewerProperty.orNull
-        if (reportViewerConfig != null) {
-            val getTestResultsAction = GetTestResultsAction(
-                reportCoordinates = reportCoordinates,
-                reportLinksGenerator = ReportViewerLinksGeneratorImpl(
-                    host = reportViewerConfig.reportViewerUrl,
-                    reportCoordinates = reportCoordinates,
-                )
-            )
-            // todo move that logic to task output. Instrumentation task mustn't know about Upload CD models
-            // todo Extract Instrumentation contract to module.
-            //  Upload cd task will depend on it and consume Instrumentation result
-            val buildOutput = project.buildOutput.get()
-            val testResults = getTestResultsAction.getTestResults()
-            buildOutput.testResults[configuration.name] = testResults
-        }
     }
 }

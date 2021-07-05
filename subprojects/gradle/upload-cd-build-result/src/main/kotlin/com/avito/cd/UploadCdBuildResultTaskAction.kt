@@ -13,17 +13,13 @@ internal class UploadCdBuildResultTaskAction(
     private val suppressErrors: Boolean
 ) {
     fun send(
+        testResults: CdBuildResult.TestResultsLink,
         buildOutput: BuildOutput,
         cdBuildConfig: CdBuildConfig,
         versionCode: String,
         teamcityUrl: String,
-        gitState: GitState,
-        uiTestConfiguration: String
+        gitState: GitState
     ) {
-        val testResults = buildOutput.testResults[uiTestConfiguration]
-        requireNotNull(testResults) {
-            "Need $uiTestConfiguration testResults on buildOutput"
-        }
         val result = CdBuildResult(
             schemaVersion = cdBuildConfig.schemaVersion,
             buildNumber = versionCode,

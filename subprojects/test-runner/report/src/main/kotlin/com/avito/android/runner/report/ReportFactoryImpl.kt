@@ -59,7 +59,7 @@ public class ReportFactoryImpl(
     override fun createReportLinkGenerator(): ReportLinksGenerator {
         return if (reportViewerConfig != null) {
             ReportViewerLinksGeneratorImpl(
-                host = reportViewerConfig.viewerUrl,
+                reportViewerUrl = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
@@ -70,7 +70,7 @@ public class ReportFactoryImpl(
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
         return if (reportViewerConfig != null) {
             ReportViewerLinksGeneratorImpl(
-                host = reportViewerConfig.viewerUrl,
+                reportViewerUrl = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {

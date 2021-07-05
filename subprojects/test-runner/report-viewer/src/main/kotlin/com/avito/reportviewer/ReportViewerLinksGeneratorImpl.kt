@@ -1,5 +1,6 @@
 package com.avito.reportviewer
 
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.TestSuiteNameProvider
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.Team
@@ -8,12 +9,12 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 public class ReportViewerLinksGeneratorImpl(
-    host: String,
+    reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val reportViewerQuery: ReportViewerQuery = ReportViewerQuery()
-) : ReportViewerLinksGenerator, TestSuiteNameProvider {
+) : ReportLinksGenerator, TestSuiteNameProvider {
 
-    private val host = host.removeSuffix("/")
+    private val host = reportViewerUrl.removeSuffix("/")
 
     override fun getName(): String = "${reportCoordinates.planSlug}_${reportCoordinates.jobSlug}"
 
@@ -33,7 +34,7 @@ public class ReportViewerLinksGeneratorImpl(
         ).toString()
     }
 
-    override fun generateReportUrl(
+    private fun generateReportUrl(
         reportCoordinates: ReportCoordinates,
         onlyFailures: Boolean,
         team: Team
@@ -45,19 +46,7 @@ public class ReportViewerLinksGeneratorImpl(
         return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
     }
 
-    override fun generateReportUrl(
-        reportId: String,
-        onlyFailures: Boolean,
-        team: Team
-    ): HttpUrl {
-        val url =
-            "$host/run/$reportId" +
-                reportViewerQuery.createQuery(onlyFailures, team)
-
-        return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
-    }
-
-    override fun generateSingleTestRunUrl(
+    private fun generateSingleTestRunUrl(
         reportCoordinates: ReportCoordinates,
         testClass: String,
         testMethod: String
@@ -66,11 +55,6 @@ public class ReportViewerLinksGeneratorImpl(
             "$host/report/${reportCoordinates.planSlug}/${reportCoordinates.jobSlug}/${reportCoordinates.runId}" +
                 reportViewerQuery.createQuery(testClass, testMethod)
 
-        return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
-    }
-
-    override fun generateSingleTestRunUrl(testRunId: String): HttpUrl {
-        val url = "$host/test/$testRunId"
         return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
     }
 }

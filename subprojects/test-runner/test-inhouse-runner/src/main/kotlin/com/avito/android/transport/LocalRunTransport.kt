@@ -1,6 +1,7 @@
 package com.avito.android.transport
 
 import android.os.Looper
+import com.avito.android.Result
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.transport.Transport
@@ -8,11 +9,11 @@ import com.avito.android.test.report.transport.TransportMappers
 import com.avito.filestorage.FutureValue
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Entry
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
-import com.avito.reportviewer.ReportViewerLinksGenerator
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
@@ -32,8 +33,8 @@ internal class LocalRunTransport(
 
     private val localBuildId: String? = null
 
-    private val reportViewerLinksGenerator: ReportViewerLinksGenerator = ReportViewerLinksGeneratorImpl(
-        host = reportViewerUrl,
+    private val reportLinksGenerator: ReportLinksGenerator = ReportViewerLinksGeneratorImpl(
+        reportViewerUrl = reportViewerUrl,
         reportCoordinates = reportCoordinates
     )
 
@@ -49,7 +50,7 @@ internal class LocalRunTransport(
     }
 
     private fun sendInternal(state: Started) {
-        try {
+        Result.tryCatch {
             val testStaticData = TestStaticDataPackage(
                 name = state.testMetadata.name,
                 device = deviceName,
@@ -65,37 +66,37 @@ internal class LocalRunTransport(
                 flakiness = state.testMetadata.flakiness
             )
 
-            val result = reportsApi.addTest(
+            AndroidTest.Completed.create(
+                testStaticData = testStaticData,
+                testRuntimeData = TestRuntimeDataPackage(
+                    incident = state.incident,
+                    dataSetData = state.dataSet?.serialize() ?: emptyMap(),
+                    video = state.video,
+                    preconditions = transformStepList(state.preconditionStepList),
+                    steps = transformStepList(state.testCaseStepList),
+                    startTime = state.startTime,
+                    endTime = state.endTime
+                ),
+                // local runs already has logcat in place
+                logcat = ""
+            )
+        }.map { test ->
+            reportsApi.addTest(
                 reportCoordinates = reportCoordinates,
                 buildId = localBuildId,
-                test = AndroidTest.Completed.create(
-                    testStaticData = testStaticData,
-                    testRuntimeData = TestRuntimeDataPackage(
-                        incident = state.incident,
-                        dataSetData = state.dataSet?.serialize() ?: emptyMap(),
-                        video = state.video,
-                        preconditions = transformStepList(state.preconditionStepList),
-                        steps = transformStepList(state.testCaseStepList),
-                        startTime = state.startTime,
-                        endTime = state.endTime
-                    ),
-                    // local runs already has logcat in place
-                    logcat = ""
+                test = test
+            )
+            test
+        }.fold(
+            onSuccess = { test ->
+                logger.info(
+                    "Report link for test ${test.name}: ${reportLinksGenerator.generateTestLink(test.name)}"
                 )
-            )
-
-            logger.info(
-                "Report link for test ${testStaticData.name}: " +
-                    "${reportViewerLinksGenerator.generateSingleTestRunUrl(result.getOrThrow())}"
-            )
-
-            @Suppress("ControlFlowWithEmptyBody")
-            if (reportCoordinates.runId.contains("local", ignoreCase = true)) {
-                // todo find a way to display info in user context, it's a secret knowledge about logcat line
+            },
+            onFailure = { throwable ->
+                logger.warn("Report send failed", throwable)
             }
-        } catch (e: Exception) {
-            logger.warn("Report send failed", e)
-        }
+        )
     }
 
     override fun sendContent(

@@ -23,7 +23,7 @@ internal class SlackSummaryComposerImpl(private val reportViewerUrl: String) : S
         buildUrl: String
     ): Result<String> {
         val reportLinksGenerator: ReportLinksGenerator = ReportViewerLinksGeneratorImpl(
-            host = reportViewerUrl,
+            reportViewerUrl = reportViewerUrl,
             reportCoordinates = reportCoordinates
         )
         val reportViewerUrl = Result.tryCatch { reportLinksGenerator.generateReportLink(team = team.name) }
