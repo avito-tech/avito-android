@@ -5,8 +5,8 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.Stability
+import com.avito.report.model.TestStatus
 import com.avito.test.model.TestName
-import com.avito.test.model.TestStatus
 
 public fun SimpleRunTest.Companion.createStubInstance(
     id: String = "1234",

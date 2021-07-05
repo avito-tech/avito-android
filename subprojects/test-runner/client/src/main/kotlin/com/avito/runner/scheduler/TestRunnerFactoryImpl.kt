@@ -1,10 +1,10 @@
 package com.avito.runner.scheduler
 
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.Report
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
+import com.avito.report.Report
 import com.avito.report.model.TestStaticData
 import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer

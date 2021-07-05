@@ -9,6 +9,7 @@ import com.avito.jsonrpc.RpcResult
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.FileAddress
 import com.avito.report.model.Flakiness
+import com.avito.report.model.TestStatus
 import com.avito.reportviewer.ReportsAddApi
 import com.avito.reportviewer.internal.model.Incident
 import com.avito.reportviewer.internal.model.IncidentElement
@@ -17,7 +18,6 @@ import com.avito.reportviewer.internal.model.Step
 import com.avito.reportviewer.internal.model.Video
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.team
-import com.avito.test.model.TestStatus
 
 internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAddApi {
 

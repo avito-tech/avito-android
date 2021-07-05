@@ -1,14 +1,14 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.Report
+import com.avito.report.model.TestStatus
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.test.model.TestCase
-import com.avito.test.model.TestStatus
 
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilterData,

@@ -1,7 +1,7 @@
 package com.avito.instrumentation.configuration
 
+import com.avito.report.model.TestStatus
 import com.avito.runner.scheduler.suite.filter.Filter
-import com.avito.test.model.TestStatus
 import org.gradle.api.Action
 
 public abstract class InstrumentationFilter(public val name: String) {

@@ -1,8 +1,5 @@
 package com.avito.cd
 
-import com.avito.cd.model.AndroidArtifactType
-import com.avito.cd.model.BuildVariant
-import com.avito.cd.model.NupokatiProject
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

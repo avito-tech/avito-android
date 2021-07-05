@@ -2,10 +2,11 @@ package com.avito.test.summary
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.model.Team
+import com.avito.report.model.TestStatus
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.SimpleRunTest
-import com.avito.reportviewer.model.Team
 import com.avito.slack.ConjunctionMessagePredicate
 import com.avito.slack.CoroutinesSlackBulkSender
 import com.avito.slack.SameAuthorPredicate
@@ -17,7 +18,6 @@ import com.avito.slack.SlackMessageUpdaterWithThreadMark
 import com.avito.slack.TextContainsStringCondition
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackSendMessageRequest
-import com.avito.test.model.TestStatus
 import com.avito.test.summary.compose.SlackSummaryComposer
 import com.avito.test.summary.compose.SlackSummaryComposerImpl
 import com.avito.test.summary.model.CrossDeviceRunTest

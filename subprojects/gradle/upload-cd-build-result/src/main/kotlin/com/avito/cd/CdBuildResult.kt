@@ -1,7 +1,5 @@
 package com.avito.cd
 
-import com.avito.cd.model.BuildVariant
-
 public data class CdBuildResult(
     val schemaVersion: Long,
     val teamcityBuildUrl: String,

@@ -1,6 +1,6 @@
 package com.avito.reportviewer
 
-import com.avito.reportviewer.model.Team
+import com.avito.report.model.Team
 import com.github.salomonbrys.kotson.isNotEmpty
 import com.github.salomonbrys.kotson.jsonArray
 import com.github.salomonbrys.kotson.jsonObject

@@ -1,6 +1,6 @@
 package com.avito.reportviewer
 
-import com.avito.reportviewer.model.Team
+import com.avito.report.model.Team
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

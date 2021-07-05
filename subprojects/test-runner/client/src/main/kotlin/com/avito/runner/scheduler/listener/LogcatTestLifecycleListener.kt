@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.listener
 
-import com.avito.android.runner.report.Report
-import com.avito.android.runner.report.TestAttempt
+import com.avito.report.Report
 import com.avito.report.model.AndroidTest
+import com.avito.report.model.TestAttempt
 import com.avito.runner.scheduler.logcat.BufferLogcatAccessor
 import com.avito.runner.scheduler.logcat.LogcatBuffers
 import com.avito.runner.scheduler.logcat.ResultLogcatAccessor

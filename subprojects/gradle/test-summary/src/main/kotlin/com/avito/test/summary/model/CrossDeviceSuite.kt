@@ -2,7 +2,7 @@ package com.avito.test.summary.model
 
 import com.avito.math.Percent
 import com.avito.math.percentOf
-import com.avito.reportviewer.model.Team
+import com.avito.report.model.Team
 import com.avito.reportviewer.model.team
 
 public data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>) {

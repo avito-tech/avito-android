@@ -1,6 +1,6 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.android.runner.report.Report
+import com.avito.report.Report
 import com.avito.runner.finalizer.verdict.Verdict
 
 internal class ReportLostTestsAction(

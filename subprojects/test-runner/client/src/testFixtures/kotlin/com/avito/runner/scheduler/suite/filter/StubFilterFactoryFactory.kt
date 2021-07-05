@@ -1,9 +1,9 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.android.runner.report.Report
-import com.avito.android.runner.report.StubReport
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
+import com.avito.report.Report
+import com.avito.report.StubReport
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.createStub
 

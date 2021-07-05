@@ -29,7 +29,6 @@ public interface ReportsApi : ReportsAddApi, ReportsFetchApi {
      * @param preparedData произвольные данные анализатора
      *
      * todo remove JsonElement from public api
-     * todo rewrite Russian
      */
     public fun pushPreparedData(reportId: String, analyzerKey: String, preparedData: JsonElement): Result<Unit>
 }

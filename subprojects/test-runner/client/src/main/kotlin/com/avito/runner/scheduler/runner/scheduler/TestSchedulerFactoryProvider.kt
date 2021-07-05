@@ -7,14 +7,14 @@ import com.avito.android.runner.devices.internal.AndroidDebugBridgeProvider
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClientProvider
 import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactoryProvider
-import com.avito.android.runner.report.ReportFactory
-import com.avito.android.runner.report.ReportFactoryImpl
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
+import com.avito.report.ReportFactory
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.FinalizerFactoryImpl
 import com.avito.runner.scheduler.TestRunnerFactoryProvider
+import com.avito.runner.scheduler.report.ReportFactoryImpl
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
@@ -58,7 +58,6 @@ public class TestSchedulerFactoryProvider {
         return TestSchedulerFactoryImpl(
             finalizerFactory = FinalizerFactoryImpl(
                 report = report,
-                reportFactory = reportFactory,
                 metricsConfig = metricsConfig,
                 timeProvider = timeProvider,
                 loggerFactory = params.loggerFactory,

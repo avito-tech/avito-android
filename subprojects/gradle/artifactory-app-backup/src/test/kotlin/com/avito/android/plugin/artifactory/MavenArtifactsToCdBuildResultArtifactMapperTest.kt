@@ -1,7 +1,7 @@
 package com.avito.android.plugin.artifactory
 
+import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
-import com.avito.cd.model.BuildVariant
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir

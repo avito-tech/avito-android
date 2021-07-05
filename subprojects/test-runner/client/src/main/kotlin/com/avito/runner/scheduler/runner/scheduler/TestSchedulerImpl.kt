@@ -4,9 +4,9 @@ import com.avito.android.Result
 import com.avito.android.TestInApk
 import com.avito.android.TestSuiteLoader
 import com.avito.android.check.AllChecks
-import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.Report
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.finalizer.Finalizer
 import com.avito.runner.scheduler.TestRunnerFactory

@@ -6,7 +6,6 @@ import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.build_verdict.span.SpannedString.Companion.multiline
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
-import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.statsdConfig
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
@@ -16,6 +15,7 @@ import com.avito.logger.GradleLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
+import com.avito.runner.scheduler.report.ReportViewerConfig
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult

@@ -1,6 +1,6 @@
 package com.avito.ci.steps
 
-import com.avito.cd.model.BuildVariant
+import com.avito.cd.BuildVariant
 import groovy.lang.Closure
 import org.gradle.api.Action
 

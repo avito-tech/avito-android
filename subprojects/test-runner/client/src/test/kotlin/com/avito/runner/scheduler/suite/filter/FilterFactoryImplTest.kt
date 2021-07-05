@@ -1,7 +1,8 @@
 package com.avito.runner.scheduler.suite.filter
 
 import com.avito.android.Result
-import com.avito.android.runner.report.StubReport
+import com.avito.report.StubReport
+import com.avito.report.model.TestStatus
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.InstrumentationFilterData.FromRunHistory.ReportFilter
 import com.avito.runner.config.RunStatus
@@ -11,7 +12,6 @@ import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignat
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
-import com.avito.test.model.TestStatus
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

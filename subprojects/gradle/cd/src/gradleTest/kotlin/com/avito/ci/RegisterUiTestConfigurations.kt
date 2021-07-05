@@ -31,6 +31,15 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
         }
         instrumentation {
             sentryDsn = "stub"
+            
+            testReport {
+                reportViewer {
+                    reportApiUrl = "http://stub"
+                    reportViewerUrl = "http://stub"
+                    fileStorageUrl = "http://stub"
+                }
+            }
+            
             instrumentationParams = [
                 "deviceName"    : "regress",
                 "jobSlug"       : "regress"

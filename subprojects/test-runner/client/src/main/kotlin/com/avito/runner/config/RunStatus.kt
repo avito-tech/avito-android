@@ -1,6 +1,6 @@
 package com.avito.runner.config
 
-import com.avito.test.model.TestStatus
+import com.avito.report.model.TestStatus
 
 public enum class RunStatus(public val statusClass: Class<out TestStatus>) {
     Failed(TestStatus.Failure::class.java),

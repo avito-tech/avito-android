@@ -9,7 +9,7 @@ dependencies {
 
     api(projects.common.okhttp)
     api(projects.common.result)
-    api(projects.testRunner.reportApi)
+    api(projects.testRunner.report)
 
     implementation(libs.kotson)
     implementation(projects.common.httpClient)
@@ -24,7 +24,7 @@ dependencies {
     testImplementation(projects.common.testOkhttp)
     testImplementation(projects.common.truthExtensions)
     testImplementation(testFixtures(projects.logger.logger))
-    testImplementation(testFixtures(projects.testRunner.reportApi))
+    testImplementation(testFixtures(projects.testRunner.report))
     testImplementation(testFixtures(projects.testRunner.reportViewer))
 
     testFixturesImplementation(testFixtures(projects.common.httpClient))

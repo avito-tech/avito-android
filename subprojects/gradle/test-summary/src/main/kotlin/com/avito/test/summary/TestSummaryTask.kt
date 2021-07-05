@@ -1,9 +1,9 @@
 package com.avito.test.summary
 
 import com.avito.logger.GradleLoggerFactory
+import com.avito.report.model.Team
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
-import com.avito.reportviewer.model.Team
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import org.gradle.api.DefaultTask

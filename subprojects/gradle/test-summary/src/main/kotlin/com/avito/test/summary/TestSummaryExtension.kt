@@ -1,6 +1,6 @@
 package com.avito.test.summary
 
-import com.avito.reportviewer.model.Team
+import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property

@@ -1,6 +1,5 @@
 package com.avito.cd
 
-import com.avito.cd.model.BuildVariant
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder

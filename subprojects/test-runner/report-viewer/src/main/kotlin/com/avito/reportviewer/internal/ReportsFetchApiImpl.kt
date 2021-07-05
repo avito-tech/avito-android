@@ -11,6 +11,7 @@ import com.avito.logger.create
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.Stability
+import com.avito.report.model.TestStatus
 import com.avito.reportviewer.ReportsFetchApi
 import com.avito.reportviewer.internal.model.ConclusionStatus
 import com.avito.reportviewer.internal.model.GetReportResult
@@ -20,7 +21,6 @@ import com.avito.reportviewer.model.Report
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.SimpleRunTest
 import com.avito.test.model.TestName
-import com.avito.test.model.TestStatus
 
 internal class ReportsFetchApiImpl(
     private val client: JsonRpcClient,

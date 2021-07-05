@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
+import com.avito.report.Report
 import com.avito.runner.config.InstrumentationFilterData
 
 internal interface FilterFactory {

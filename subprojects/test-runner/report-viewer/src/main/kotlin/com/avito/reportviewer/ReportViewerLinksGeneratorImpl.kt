@@ -2,8 +2,8 @@ package com.avito.reportviewer
 
 import com.avito.report.ReportLinksGenerator
 import com.avito.report.TestSuiteNameProvider
+import com.avito.report.model.Team
 import com.avito.reportviewer.model.ReportCoordinates
-import com.avito.reportviewer.model.Team
 import com.avito.test.model.TestName
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl

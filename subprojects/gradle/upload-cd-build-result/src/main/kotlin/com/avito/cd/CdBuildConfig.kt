@@ -1,8 +1,5 @@
 package com.avito.cd
 
-import com.avito.cd.model.AndroidArtifactType
-import com.avito.cd.model.BuildVariant
-import com.avito.cd.model.NupokatiProject
 import com.google.gson.annotations.SerializedName
 
 public data class CdBuildConfig(

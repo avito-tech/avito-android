@@ -4,9 +4,6 @@ import com.avito.cd.CdBuildConfig.Deployment.GooglePlay
 import com.avito.cd.CdBuildConfig.Deployment.Qapps
 import com.avito.cd.CdBuildConfig.Deployment.Track
 import com.avito.cd.CdBuildConfig.Deployment.Unknown
-import com.avito.cd.model.AndroidArtifactType
-import com.avito.cd.model.BuildVariant
-import com.avito.cd.model.NupokatiProject
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
