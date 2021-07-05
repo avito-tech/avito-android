@@ -1,5 +1,6 @@
 package com.avito.android.runner.report.internal
 
+import com.avito.android.Result
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.TestAttempt
 import com.avito.logger.LoggerFactory
@@ -7,7 +8,9 @@ import com.avito.logger.create
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
 import com.avito.test.model.DeviceName
+import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
+import com.avito.test.model.TestStatus
 import com.avito.time.TimeProvider
 
 internal class InMemoryReport(
@@ -43,9 +46,11 @@ internal class InMemoryReport(
         )
     }
 
+    /**
+     * lost tests determined via [getTestResults] and can be found in [com.avito.runner.finalizer.verdict.Verdict]
+     */
     override fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>) {
         // no action needed for inMemory report here
-        // lost tests determined via [getTestResults] and can be found in [com.avito.runner.finalizer.verdict.Verdict]
     }
 
     @Synchronized
@@ -63,6 +68,13 @@ internal class InMemoryReport(
         return grouped.mapValues { (_, executions) ->
             testAttemptsAggregateStrategy.getTestResult(executions)
         }.values
+    }
+
+    /**
+     * not available for InMemoryReport
+     */
+    override fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>> {
+        return Result.Success(emptyMap())
     }
 
     private data class TestKey(val testName: TestName, val deviceName: DeviceName)

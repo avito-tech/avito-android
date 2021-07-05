@@ -1,9 +1,12 @@
 package com.avito.android.runner.report.internal
 
+import com.avito.android.Result
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.TestAttempt
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
+import com.avito.test.model.TestCase
+import com.avito.test.model.TestStatus
 
 internal class ReportImpl(
     private val inMemoryReport: InMemoryReport,
@@ -30,5 +33,9 @@ internal class ReportImpl(
 
     override fun getTestResults(): Collection<AndroidTest> {
         return inMemoryReport.getTestResults()
+    }
+
+    override fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>> {
+        return avitoReport?.getPreviousRunsResults() ?: inMemoryReport.getPreviousRunsResults()
     }
 }

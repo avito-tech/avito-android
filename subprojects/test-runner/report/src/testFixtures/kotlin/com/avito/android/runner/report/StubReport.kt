@@ -30,23 +30,7 @@ public fun Report.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-internal fun LegacyReport.Companion.createStubInstance(
-    reportsApi: ReportsApi,
-    loggerFactory: LoggerFactory = StubLoggerFactory,
-    batchSize: Int = 1,
-    buildId: String = "1",
-    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
-    timeProvider: TimeProvider = StubTimeProvider()
-): AvitoReport = AvitoReport(
-    reportsApi = reportsApi,
-    loggerFactory = loggerFactory,
-    batchSize = batchSize,
-    buildId = buildId,
-    reportCoordinates = reportCoordinates,
-    timeProvider = timeProvider
-)
-
-public class StubReport : Report, LegacyReport {
+public class StubReport : Report {
 
     public var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
 
@@ -70,11 +54,11 @@ public class StubReport : Report, LegacyReport {
         reportedMissingTests = notReportedTests
     }
 
-    override fun getTests(): Result<Map<TestCase, TestStatus>> {
-        return getTestsResult
-    }
-
     override fun getTestResults(): Collection<AndroidTest> {
         return getTests
+    }
+
+    override fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>> {
+        return getTestsResult
     }
 }

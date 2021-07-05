@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.android.runner.report.ReportFactory
+import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.config.InstrumentationFilterData
@@ -13,7 +13,7 @@ import com.avito.test.model.TestStatus
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilterData,
     private val impactAnalysisResult: ImpactAnalysisResult,
-    private val reportFactory: ReportFactory,
+    private val report: Report,
     loggerFactory: LoggerFactory
 ) : FilterFactory {
 
@@ -86,9 +86,7 @@ internal class FilterFactoryImpl(
         val previousStatuses = filterData.fromRunHistory.previousStatuses
         if (previousStatuses.included.isNotEmpty() || previousStatuses.excluded.isNotEmpty()) {
 
-            reportFactory
-                .createAvitoReport()
-                .getTests()
+            report.getPreviousRunsResults()
                 .fold(
                     onSuccess = { previousRunTests ->
                         if (previousStatuses.included.isNotEmpty()) {
@@ -123,8 +121,7 @@ internal class FilterFactoryImpl(
         ) {
             val statuses = reportFilter.statuses
 
-            reportFactory.createAvitoReport()
-                .getTests()
+            report.getPreviousRunsResults()
                 .fold(
                     onSuccess = { previousRunTests ->
                         if (statuses.included.isNotEmpty()) {
@@ -133,7 +130,6 @@ internal class FilterFactoryImpl(
                                     source = TestsFilter.Signatures.Source.Report,
                                     signatures = previousRunTests.filterBy(statuses.included)
                                 )
-
                             )
                         }
                         if (statuses.excluded.isNotEmpty()) {
@@ -142,7 +138,6 @@ internal class FilterFactoryImpl(
                                     source = TestsFilter.Signatures.Source.Report,
                                     signatures = previousRunTests.filterBy(statuses.excluded)
                                 )
-
                             )
                         }
                     },

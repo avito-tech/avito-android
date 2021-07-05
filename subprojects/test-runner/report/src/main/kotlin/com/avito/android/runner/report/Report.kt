@@ -1,7 +1,10 @@
 package com.avito.android.runner.report
 
+import com.avito.android.Result
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
+import com.avito.test.model.TestCase
+import com.avito.test.model.TestStatus
 
 public interface Report {
 
@@ -22,6 +25,8 @@ public interface Report {
      * [com.avito.android.runner.report.internal.TestAttemptsAggregateStrategy]
      */
     public fun getTestResults(): Collection<AndroidTest>
+
+    public fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>>
 
     public companion object
 }

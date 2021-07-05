@@ -8,8 +8,6 @@ public interface ReportFactory : Serializable {
 
     public fun createReport(): Report
 
-    public fun createAvitoReport(): LegacyReport
-
     public fun createReportLinkGenerator(): ReportLinksGenerator
 
     public fun createTestSuiteNameGenerator(): TestSuiteNameProvider

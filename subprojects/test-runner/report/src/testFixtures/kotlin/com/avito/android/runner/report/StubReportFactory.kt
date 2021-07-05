@@ -15,10 +15,6 @@ public class StubReportFactory(
         return report
     }
 
-    override fun createAvitoReport(): LegacyReport {
-        return report
-    }
-
     override fun createReportLinkGenerator(): ReportLinksGenerator {
         return linksGenerator
     }

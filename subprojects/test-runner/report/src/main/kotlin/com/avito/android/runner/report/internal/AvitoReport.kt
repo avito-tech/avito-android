@@ -1,7 +1,6 @@
 package com.avito.android.runner.report.internal
 
 import com.avito.android.Result
-import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.TestAttempt
 import com.avito.logger.LoggerFactory
@@ -29,7 +28,7 @@ internal class AvitoReport(
     private val buildId: String,
     private val timeProvider: TimeProvider,
     private val batchSize: Int = 400
-) : LegacyReport, Report {
+) : Report {
 
     private val logger = loggerFactory.create<AvitoReport>()
 
@@ -112,7 +111,7 @@ internal class AvitoReport(
         TODO("Not yet implemented")
     }
 
-    override fun getTests(): Result<Map<TestCase, TestStatus>> {
+    override fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>> {
         return reportsApi.getTestsForRunId(reportCoordinates).map { results ->
             results
                 .map { simpleRunTest ->

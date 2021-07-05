@@ -76,7 +76,7 @@ public class TestSchedulerFactoryProvider {
                 filterFactory = FilterFactory.create(
                     filterData = params.instrumentationConfiguration.filter,
                     impactAnalysisResult = params.impactAnalysisResult,
-                    reportFactory = reportFactory,
+                    report = report,
                     loggerFactory = params.loggerFactory
                 )
             ),

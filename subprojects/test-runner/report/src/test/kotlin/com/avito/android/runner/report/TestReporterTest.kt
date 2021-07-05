@@ -18,7 +18,7 @@ internal class TestReporterTest {
     fun `every lost tests reported by separate request when batch size is 1`() {
         val reportsApi = StubReportsApi()
 
-        val reporter = LegacyReport.createStubInstance(
+        val reporter = Report.createStubInstance(
             reportsApi = reportsApi,
             batchSize = 1,
             buildId = buildId,

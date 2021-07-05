@@ -27,10 +27,6 @@ public class ReportFactoryImpl(
         return createReportInternal()
     }
 
-    override fun createAvitoReport(): LegacyReport {
-        return createAvitoReport(reportViewerConfig!!)
-    }
-
     private fun createReportInternal(): Report {
         return ReportImpl(
             inMemoryReport = InMemoryReport(
