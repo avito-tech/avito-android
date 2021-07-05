@@ -1,5 +1,7 @@
 package com.avito.cd
 
+import com.avito.cd.model.BuildVariant
+
 public data class CdBuildResult(
     val schemaVersion: Long,
     val teamcityBuildUrl: String,
@@ -19,7 +21,6 @@ public data class CdBuildResult(
         val reportUrl: String,
         val reportCoordinates: ReportCoordinates
     ) {
-        // TODO дублирование модели из report-viewer
         public data class ReportCoordinates(
             val planSlug: String,
             val jobSlug: String,

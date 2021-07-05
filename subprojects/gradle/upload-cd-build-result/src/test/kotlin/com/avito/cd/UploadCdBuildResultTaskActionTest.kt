@@ -1,5 +1,7 @@
 package com.avito.cd
 
+import com.avito.cd.model.BuildVariant
+import com.avito.cd.model.NupokatiProject
 import com.avito.git.Branch
 import com.avito.git.GitStateStub
 import com.avito.logger.StubLoggerFactory

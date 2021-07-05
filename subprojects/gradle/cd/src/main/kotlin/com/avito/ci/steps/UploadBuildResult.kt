@@ -16,6 +16,7 @@ import org.gradle.kotlin.dsl.register
 
 public class UploadBuildResult(context: String, name: String) : SuppressibleBuildStep(context, name) {
 
+    @Suppress("MemberVisibilityCanBePrivate")
     public var uiTestConfiguration: String? = null
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
@@ -26,23 +27,26 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
                 "uploadBuildResult.uiTestConfiguration parameter must be set"
             }
 
-            // todo should be inputs?
-            @Suppress("CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS")
             val uploadCdBuildResult = project.tasks.register<UploadCdBuildResultTask>(
-                name = uploadCdBuildResultTaskName,
-                constructorArgs = arrayOf(
-                    uiTestConfiguration,
-                    project.artifactoryUser,
-                    project.artifactoryPassword,
-                    project.cdBuildConfig.get().outputDescriptor,
-                    suppressFailures
-                )
+                name = uploadCdBuildResultTaskName
             ) {
                 group = cdTaskGroup
                 description = "Task for send CD build result"
+
+                this.uiTestConfiguration.set(uiTestConfiguration)
+                this.user.set(project.artifactoryUser)
+                this.password.set(project.artifactoryPassword)
+                this.suppressErrors.set(suppressFailures)
+
                 project.tasks.namedOrNull(deployTaskName)?.also { deployTask -> dependsOn(deployTask) }
+
                 mustRunAfter(project.tasks.artifactoryAppBackupTask())
+
+                onlyIf {
+                    !project.cdBuildConfig.map { it.outputDescriptor.skipUpload }.get()
+                }
             }
+
             rootTask.configure { it.finalizedBy(uploadCdBuildResult) }
         }
     }

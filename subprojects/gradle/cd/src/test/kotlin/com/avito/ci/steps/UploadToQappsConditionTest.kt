@@ -1,14 +1,14 @@
 package com.avito.ci.steps
 
-import com.avito.cd.AndroidArtifactType
-import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildConfig
 import com.avito.cd.CdBuildConfig.Deployment
-import com.avito.cd.NupokatiProject
+import com.avito.cd.model.AndroidArtifactType
+import com.avito.cd.model.BuildVariant
+import com.avito.cd.model.NupokatiProject
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class UploadToQappsConditionTest {
+internal class UploadToQappsConditionTest {
 
     @Test
     fun `can upload - has no cd config`() {

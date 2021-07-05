@@ -1,6 +1,6 @@
 package com.avito.ci.steps
 
-import com.avito.cd.BuildVariant
+import com.avito.cd.model.BuildVariant
 
 public sealed class Output(public val path: String) {
 

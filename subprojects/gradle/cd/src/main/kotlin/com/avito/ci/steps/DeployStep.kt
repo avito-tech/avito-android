@@ -1,11 +1,11 @@
 package com.avito.ci.steps
 
 import com.avito.android.plugin.artifactory.artifactoryAppBackupTask
-import com.avito.cd.AndroidArtifactType.APK
-import com.avito.cd.AndroidArtifactType.BUNDLE
 import com.avito.cd.CdBuildConfig
 import com.avito.cd.cdBuildConfig
 import com.avito.cd.isCdBuildConfigPresent
+import com.avito.cd.model.AndroidArtifactType.APK
+import com.avito.cd.model.AndroidArtifactType.BUNDLE
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import com.avito.upload_to_googleplay.GooglePlayDeploy

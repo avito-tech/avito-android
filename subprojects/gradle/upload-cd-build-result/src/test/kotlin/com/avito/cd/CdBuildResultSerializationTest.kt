@@ -1,5 +1,6 @@
 package com.avito.cd
 
+import com.avito.cd.model.BuildVariant
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
@@ -39,7 +40,7 @@ private val expected = """
       ]
     }""".trimIndent()
 
-class CdBuildResultSerializationTest {
+internal class CdBuildResultSerializationTest {
 
     private val gson = GsonBuilder().run {
         setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
