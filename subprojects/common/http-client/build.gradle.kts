@@ -12,6 +12,7 @@ dependencies {
 
     testImplementation(projects.common.testOkhttp)
     testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.common.junitUtils)
     testImplementation(testFixtures(projects.common.statsd))
     testImplementation(testFixtures(projects.logger.logger))
 

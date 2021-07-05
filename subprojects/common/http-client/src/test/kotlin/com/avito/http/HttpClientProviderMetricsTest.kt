@@ -6,6 +6,7 @@ import com.avito.android.stats.StubStatsdSender
 import com.avito.android.stats.TimeMetric
 import com.avito.http.internal.RequestMetadata
 import com.avito.logger.StubLoggerFactory
+import com.avito.test.Flaky
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
@@ -64,6 +65,7 @@ internal class HttpClientProviderMetricsTest {
         )
     }
 
+    @Flaky(reason = "MBS-11302")
     @Test
     fun `all metrics send - multiple parallel requests`() {
         val provider = createClientProvider()

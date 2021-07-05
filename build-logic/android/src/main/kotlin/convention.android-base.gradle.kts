@@ -7,17 +7,22 @@ configure<BaseExtension> {
         named("test").configure { java.srcDir("src/test/kotlin") }
     }
 
-    buildToolsVersion("30.0.3")
-    compileSdkVersion(29)
+    // workaround for https://github.com/gradle/gradle/issues/15383
+    if (project.name != "gradle-kotlin-dsl-accessors") {
+        val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
+
+        buildToolsVersion(libs.versions.buildTools.get())
+        compileSdkVersion(libs.versions.compileSdk.get().toInt())
+
+        defaultConfig {
+            minSdkVersion(libs.versions.minSdk.get().toInt())
+            targetSdkVersion(libs.versions.targetSdk.get().toInt())
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(28)
     }
 
     lintOptions {

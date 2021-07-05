@@ -3,10 +3,10 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "build-logic"
 
-include("kotlin-convention")
-include("android-convention")
-include("testing-convention")
-include("dependencies-convention")
+include("kotlin")
+include("android")
+include("testing")
+include("checks")
 include("publication")
 
 pluginManagement {
@@ -67,7 +67,6 @@ dependencyResolutionManagement {
         maven {
             setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
         }
-
         exclusiveContent {
             forRepository {
                 maven {
@@ -90,19 +89,6 @@ dependencyResolutionManagement {
             }
             filter {
                 includeGroup("org.jetbrains.trove4j")
-            }
-        }
-
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
-                }
-            }
-            filter {
-                includeGroup("com.gradle")
-                includeGroup("org.gradle")
-                includeModule("com.github.ben-manes", "gradle-versions-plugin")
             }
         }
     }

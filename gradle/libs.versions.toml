@@ -6,6 +6,13 @@ androidX = "1.0.0"
 espresso = "3.4.0"
 coroutines = "1.3.8"
 androidXTest = "1.4.0"
+detekt = "1.16.0"
+buildTools = "30.0.3"
+compileSdk = "29"
+targetSdk = "28"
+minSdk = "21"
+junit5 = "5.7.2"
+junit5Platform = "1.7.2"
 
 [libraries]
 kotlinPlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -76,6 +83,11 @@ kotlinTest = "io.kotlintest:kotlintest:2.0.7"
 coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 nebulaIntegTest = "com.netflix.nebula:nebula-project-plugin:8.0.0"
 gradleTestRetryPlugin = "org.gradle:test-retry-gradle-plugin:1.3.1"
+gradleVersionsPlugin = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
+junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
+junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
+junitPlatformRunner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junit5Platform" }
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit5Platform" }
 
 sentry = "io.sentry:sentry:1.7.23"
 statsd = "com.timgroup:java-statsd-client:3.1.0"
@@ -86,4 +98,5 @@ googlePublish = "com.google.apis:google-api-services-androidpublisher:v3-rev86-1
 googleAuthLibrary = "com.google.auth:google-auth-library-oauth2-http:0.10.0"
 jdgraphtCore = "org.jgrapht:jgrapht-core:1.5.1"
 
-detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:1.16.0"
+detektPlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }

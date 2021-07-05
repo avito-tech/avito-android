@@ -1,58 +1,32 @@
-import io.gitlab.arturbosch.detekt.Detekt
-
 plugins {
-    /**
-     * https://docs.gradle.org/current/userguide/base_plugin.html
-     * base plugin added to add wiring on check->build tasks for detekt
-     */
-    base
-    id("io.gitlab.arturbosch.detekt")
     id("com.autonomousapps.dependency-analysis") version "0.74.0"
     id("convention.dependency-updates")
-
-    // workaround to load plugin classes once:
-    // https://youtrack.jetbrains.com/issue/KT-31643#focus=Comments-27-3510019.0-0
-    id("org.jetbrains.kotlin.jvm") apply false
-    id("com.android.application") apply false
+    id("convention.detekt")
 }
 
 buildscript {
-    configurations.classpath {
-        resolutionStrategy {
-            // com.autonomousapps.dependency-analysis depends on older version of okio, and it's resolved for
-            // our instrumentation-tests plugin in subprojects in runtime
-            force("com.squareup.okio:okio:2.7.0")
-        }
-    }
-}
-
-dependencies {
-    add("detektPlugins", libs.detektFormatting)
-}
-
-val detektAll = tasks.register<Detekt>("detektAll") {
-    description = "Runs over whole code base without the starting overhead for each module."
-    parallel = true
-    setSource(files(projectDir))
 
     /**
-     * About config:
-     * yaml is a copy of https://github.com/detekt/detekt/blob/master/detekt-core/src/main/resources/default-detekt-config.yml
-     * all rules are disabled by default, enabled one by one
+     *  workaround to load plugin classes once:
+     *  ttps://youtrack.jetbrains.com/issue/KT-31643#focus=Comments-27-3510019.0-0
      */
-    config.setFrom(files(project.rootDir.resolve("detekt.yml")))
-    buildUponDefaultConfig = false
+    @Suppress("UnstableApiUsage")
+    dependencies {
 
-    include("**/*.kt")
-    include("**/*.kts")
-    exclude("**/resources/**")
-    exclude("**/build/**")
-    reports {
-        xml.enabled = false
-        html.enabled = false
+        /**
+         * workaround till https://github.com/gradle/gradle/issues/16958 is resolved
+         * most likely gradle 7.2
+         */
+        val libs = project.extensions.getByType<VersionCatalogsExtension>()
+            .named("libs") as org.gradle.accessors.dm.LibrariesForLibs
+
+        classpath(libs.androidGradlePlugin)
+        classpath(libs.kotlinPlugin)
+
+        /**
+         * com.autonomousapps.dependency-analysis depends on older version of okio, and it's resolved for
+         * our instrumentation-tests plugin in subprojects in runtime
+         */
+        classpath(libs.okio)
     }
-}
-
-tasks.named("check").configure {
-    dependsOn(detektAll)
 }

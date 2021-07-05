@@ -4,13 +4,8 @@ plugins {
     id("convention.unit-testing")
 }
 
-dependencies {
-    add("implementation", "org.jetbrains.kotlin:kotlin-stdlib:1.5.20")
-}
-
 /**
- * 1.4 used because of kotlin dsl bundled version
- * todo use 1.5
+ * overrides 1.4, that comes from kotlin dsl bundled version
  */
 val kotlinLanguageVersion = "1.4"
 
@@ -41,21 +36,5 @@ tasks.withType<KotlinCompile>().configureEach {
         freeCompilerArgs = freeCompilerArgs +
             "-Xopt-in=kotlin.RequiresOptIn" +
             "-progressive"
-    }
-}
-
-@Suppress("UnstableApiUsage")
-val kotlinVersion: String = providers.systemProperty("kotlinVersion")
-    .forUseAtConfigurationTime()
-    .get()
-
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlin"
-            && requested.name != "kotlin-stdlib-jre8" // deprecated and not updated anymore. It's replaced by jdk
-            && requested.name != "kotlin-stdlib-jre7"
-        ) {
-            useVersion(kotlinVersion)
-        }
     }
 }

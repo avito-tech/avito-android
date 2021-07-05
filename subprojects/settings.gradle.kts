@@ -186,33 +186,14 @@ pluginManagement {
         return providers.systemProperty(name).forUseAtConfigurationTime()
     }
 
-    val kotlinVersion = systemProperty("kotlinVersion")
-    val detektVersion = systemProperty("detektVersion")
-    val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion")
     val infraVersion = systemProperty("infraVersion")
-    val nebulaIntegTestVersion = systemProperty("nebulaIntegTestVersion")
 
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
             when {
-                pluginId.startsWith("com.android.") ->
-                    useModule("com.android.tools.build:gradle:${androidGradlePluginVersion.get()}")
-
-                pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion(kotlinVersion.get())
-
                 pluginId.startsWith("com.avito.android") ->
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:${infraVersion.get()}")
-
-                pluginId == "com.slack.keeper" ->
-                    useModule("com.slack.keeper:keeper:0.7.0")
-
-                pluginId == "nebula.integtest" ->
-                    useVersion(nebulaIntegTestVersion.get())
-
-                pluginId == "io.gitlab.arturbosch.detekt" ->
-                    useVersion(detektVersion.get())
             }
         }
     }

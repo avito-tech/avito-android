@@ -18,10 +18,6 @@ internal class BuildEnvironmentInfo(private val providers: ProviderFactory) {
     val javaHome: String?
         get() = getEnvironmentVariable("JAVA_HOME")
 
-    // todo it's avito-specific, how to get version generic way?
-    val kotlinVersion: String?
-        get() = getSystemProperty("kotlinVersion")
-
     val javaInfo: String
         get() = "$javaVersion ($javaVendor)"
 

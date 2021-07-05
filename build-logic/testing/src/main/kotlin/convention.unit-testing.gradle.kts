@@ -1,3 +1,5 @@
+import gradle.kotlin.dsl.accessors._aefff6f539276b188c30d8843d1e61e9.testImplementation
+import gradle.kotlin.dsl.accessors._aefff6f539276b188c30d8843d1e61e9.testRuntimeOnly
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
@@ -50,17 +52,20 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-val junit5Version = "5.7.2"
-val junit5PlatformVersion = "1.7.2"
+// workaround for https://github.com/gradle/gradle/issues/15383
+if (project.name != "gradle-kotlin-dsl-accessors") {
 
-plugins.withType<KotlinBasePluginWrapper> {
-    dependencies {
-        add("testImplementation", "org.junit.jupiter:junit-jupiter-api:$junit5Version")
-        add("testImplementation", "com.google.truth:truth:1.0")
+    val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
 
-        add("testRuntimeOnly", "org.junit.jupiter:junit-jupiter-engine:$junit5Version")
-        add("testRuntimeOnly", "org.junit.platform:junit-platform-runner:$junit5PlatformVersion")
-        add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher:$junit5PlatformVersion")
+    plugins.withType<KotlinBasePluginWrapper> {
+        dependencies {
+            testImplementation(libs.junitJupiterApi)
+            testImplementation(libs.truth)
+
+            testRuntimeOnly(libs.junitJupiterEngine)
+            testRuntimeOnly(libs.junitPlatformRunner)
+            testRuntimeOnly(libs.junitPlatformLauncher)
+        }
     }
 }
 
