@@ -57,6 +57,7 @@ public class TestSchedulerFactoryProvider {
 
         return TestSchedulerFactoryImpl(
             finalizerFactory = FinalizerFactoryImpl(
+                report = report,
                 reportFactory = reportFactory,
                 metricsConfig = metricsConfig,
                 timeProvider = timeProvider,

@@ -22,6 +22,12 @@ internal class ReportImpl(
         avitoReport?.addSkippedTests(skippedTests)
     }
 
+    override fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>) {
+        inMemoryReport.reportLostTests(notReportedTests)
+
+        avitoReport?.reportLostTests(notReportedTests)
+    }
+
     override fun getTestResults(): Collection<AndroidTest> {
         return inMemoryReport.getTestResults()
     }

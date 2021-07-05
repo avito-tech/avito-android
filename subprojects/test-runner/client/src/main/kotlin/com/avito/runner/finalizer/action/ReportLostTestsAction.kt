@@ -1,18 +1,17 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.android.runner.report.LegacyReport
+import com.avito.android.runner.report.Report
 import com.avito.runner.finalizer.verdict.Verdict
 
-internal class AvitoReportViewerFinishAction(
-    private val legacyReport: LegacyReport
+internal class ReportLostTestsAction(
+    private val report: Report
 ) : FinalizeAction {
 
     override fun action(verdict: Verdict) {
         if (verdict is Verdict.Failure) {
             if (verdict.notReportedTests.isNotEmpty()) {
-                legacyReport.sendLostTests(verdict.notReportedTests)
+                report.reportLostTests(verdict.notReportedTests)
             }
         }
-        legacyReport.finish()
     }
 }

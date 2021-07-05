@@ -66,11 +66,8 @@ public class StubReport : Report, LegacyReport {
         reportedSkippedTests = skippedTests
     }
 
-    override fun sendLostTests(lostTests: Collection<AndroidTest.Lost>) {
-        reportedMissingTests = lostTests
-    }
-
-    override fun finish() {
+    override fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>) {
+        reportedMissingTests = notReportedTests
     }
 
     override fun getTests(): Result<Map<TestCase, TestStatus>> {

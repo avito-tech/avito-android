@@ -1,7 +1,6 @@
 package com.avito.android.runner.report
 
 import com.avito.android.Result
-import com.avito.report.model.AndroidTest
 import com.avito.test.model.TestCase
 import com.avito.test.model.TestStatus
 
@@ -10,10 +9,6 @@ import com.avito.test.model.TestStatus
  * TODO remove from core report module
  */
 public interface LegacyReport {
-
-    public fun finish()
-
-    public fun sendLostTests(lostTests: Collection<AndroidTest.Lost>)
 
     /**
      * getTestsForRunId will fetch all tests, even not relatable to current run

@@ -1,12 +1,13 @@
 package com.avito.runner.finalizer
 
+import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportLinksGenerator
-import com.avito.runner.finalizer.action.AvitoReportViewerFinishAction
 import com.avito.runner.finalizer.action.FinalizeAction
+import com.avito.runner.finalizer.action.ReportLostTestsAction
 import com.avito.runner.finalizer.action.SendMetricsAction
 import com.avito.runner.finalizer.action.WriteJUnitReportAction
 import com.avito.runner.finalizer.action.WriteReportViewerLinkFile
@@ -19,6 +20,7 @@ import com.avito.time.TimeProvider
 import java.io.File
 
 internal class FinalizerFactoryImpl(
+    private val report: Report,
     private val reportFactory: ReportFactory,
     private val metricsConfig: RunnerMetricsConfig,
     private val timeProvider: TimeProvider,
@@ -73,7 +75,7 @@ internal class FinalizerFactoryImpl(
 
         if (reportViewerConfig != null) {
 
-            actions += AvitoReportViewerFinishAction(legacyReport = reportFactory.createAvitoReport())
+            actions += ReportLostTestsAction(report = report)
 
             actions += WriteReportViewerLinkFile(
                 outputDir = outputDir,

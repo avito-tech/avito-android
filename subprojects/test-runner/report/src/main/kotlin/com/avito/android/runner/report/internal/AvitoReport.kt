@@ -10,7 +10,6 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
-import com.avito.reportviewer.model.SimpleRunTest
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.test.model.TestStatus
@@ -34,7 +33,14 @@ internal class AvitoReport(
 
     private val logger = loggerFactory.create<AvitoReport>()
 
+    /**
+     * not sure what, but something bad happens if empty report marked as finished
+     */
+    private var hasAtLeastOneTestReported = false
+
     override fun addTest(testAttempt: TestAttempt) {
+        hasAtLeastOneTestReported = true
+
         reportsApi.addTest(
             reportCoordinates = reportCoordinates,
             buildId = buildId,
@@ -76,17 +82,13 @@ internal class AvitoReport(
         }
     }
 
-    override fun getTestResults(): Collection<AndroidTest> {
-        TODO("Not yet implemented")
-    }
-
-    override fun sendLostTests(lostTests: Collection<AndroidTest.Lost>) {
-        if (lostTests.isEmpty()) {
+    override fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>) {
+        if (notReportedTests.isEmpty()) {
             logger.debug("No lost tests to report")
             return
         }
 
-        lostTests.actionOnBatches { index, lostTestsBatch ->
+        notReportedTests.actionOnBatches { index, lostTestsBatch ->
             logger.debug("Reporting ${lostTestsBatch.size} lost tests for batch: $index")
 
             reportsApi.addTests(
@@ -100,23 +102,14 @@ internal class AvitoReport(
 
             logger.debug("Reporting lost tests for batch: $index completed")
         }
+
+        // this is not obvious side-effect, yet very important for correct logic on report-viewer side
+        // only finishing report triggers event that leads to parsing suite for TMS
+        finish()
     }
 
-    override fun finish() {
-        val resultsInReport: List<SimpleRunTest> =
-            reportsApi.getTestsForRunId(reportCoordinates = reportCoordinates).fold(
-                { logger.info("Getting test count in report before closing: ${it.size}"); it },
-                { error -> logger.warn("Failed to get tests from report before closing", error); emptyList() }
-            )
-
-        if (resultsInReport.isNotEmpty()) {
-            reportsApi.setFinished(reportCoordinates = reportCoordinates).fold(
-                { logger.debug("Test run finished $reportCoordinates") },
-                { error -> logger.warn("Can't finish test run $reportCoordinates", error) }
-            )
-        } else {
-            logger.info("Skipping finishing report. It is empty.")
-        }
+    override fun getTestResults(): Collection<AndroidTest> {
+        TODO("Not yet implemented")
     }
 
     override fun getTests(): Result<Map<TestCase, TestStatus>> {
@@ -126,6 +119,17 @@ internal class AvitoReport(
                     TestCase(simpleRunTest.name, DeviceName(simpleRunTest.deviceName)) to simpleRunTest.status
                 }
                 .toMap()
+        }
+    }
+
+    private fun finish() {
+        if (hasAtLeastOneTestReported) {
+            reportsApi.setFinished(reportCoordinates = reportCoordinates).fold(
+                { logger.debug("Test run finished $reportCoordinates") },
+                { error -> logger.warn("Can't finish test run $reportCoordinates", error) }
+            )
+        } else {
+            logger.info("Skipping finishing report. It is empty.")
         }
     }
 

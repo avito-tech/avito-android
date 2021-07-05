@@ -43,6 +43,11 @@ internal class InMemoryReport(
         )
     }
 
+    override fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>) {
+        // no action needed for inMemory report here
+        // lost tests determined via [getTestResults] and can be found in [com.avito.runner.finalizer.verdict.Verdict]
+    }
+
     @Synchronized
     override fun getTestResults(): Collection<AndroidTest> {
         val grouped: Map<TestKey, List<TestAttempt>> =

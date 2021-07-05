@@ -9,10 +9,13 @@ public interface Report {
 
     /**
      * Skipped tests available right after initial filtering, so it's added even before test runner started
-     *
-     * Pair<TestStaticData, String> instead of AndroidTest.Skipped in interface because client don't know
      */
     public fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)
+
+    /**
+     * Optionally report about tests, lost during run
+     */
+    public fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>)
 
     /**
      * single result for each test, where attempts aggregated by
