@@ -2,6 +2,7 @@ package com.avito.android.test.matcher
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
@@ -47,6 +48,15 @@ class RecyclerViewMatcher {
             }
         }
     }
+
+    fun hasViewTypeAtPosition(position: Int, viewType: Int): Matcher<View> = object : RecyclerViewMatcher() {
+        override fun performMatching(recyclerView: RecyclerView): Boolean {
+            val adapter = recyclerView.adapter ?: error("Adapter is not attached to RecyclerView")
+            return adapter.getItemViewType(position) == viewType
+        }
+    }
+
+    fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int) = not(hasViewTypeAtPosition(position, viewType))
 
     private abstract class RecyclerViewMatcher : TypeSafeMatcher<View>() {
 

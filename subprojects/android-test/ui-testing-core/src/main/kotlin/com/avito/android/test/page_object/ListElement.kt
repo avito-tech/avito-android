@@ -253,6 +253,28 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
+        fun hasViewTypeAtPosition(position: Int, viewType: Int) {
+            driver.check(
+                ViewAssertions.matches(
+                    RecyclerViewMatcher().hasViewTypeAtPosition(
+                        position,
+                        viewType
+                    )
+                )
+            )
+        }
+
+        fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int) {
+            driver.check(
+                ViewAssertions.matches(
+                    RecyclerViewMatcher().doesNotHaveViewTypeAtPosition(
+                        position,
+                        viewType
+                    )
+                )
+            )
+        }
+
         fun isNotEmpty() = withItemsCount(greaterThan(0))
     }
 }

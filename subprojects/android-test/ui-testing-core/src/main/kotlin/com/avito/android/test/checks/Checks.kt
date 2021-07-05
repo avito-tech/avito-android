@@ -3,6 +3,7 @@ package com.avito.android.test.checks
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Matcher
 
 interface Checks : LabelChecks {
@@ -57,6 +58,8 @@ interface Checks : LabelChecks {
     fun isVisible()
 
     fun isNotVisible()
+
+    fun hasVisibility(visibility: ViewMatchers.Visibility)
 
     fun isEnabled()
 

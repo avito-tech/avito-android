@@ -70,6 +70,8 @@ class StatefulRecyclerViewAdapterActivity : AppCompatActivity() {
         @Suppress("MagicNumber")
         private fun RecyclerView.ViewHolder.isFakeHolderForTests(): Boolean =
             itemView.getTag(Integer.MAX_VALUE - 228) != null
+
+        override fun getItemViewType(position: Int): Int = position
     }
 
     private class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
