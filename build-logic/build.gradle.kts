@@ -1,25 +1,11 @@
-import io.gitlab.arturbosch.detekt.Detekt
-import org.gradle.accessors.dm.LibrariesForLibs
-
 plugins {
-    /**
-     * https://docs.gradle.org/current/userguide/base_plugin.html
-     * base plugin added to add wiring on check->build tasks for detekt
-     */
     base
-    id("io.gitlab.arturbosch.detekt")
+    // accessing version catalog here will be supported in grale 7.2
+    // https://github.com/gradle/gradle/pull/17394
+    id("io.gitlab.arturbosch.detekt") version "1.16.0"
 }
 
-// workaround for https://github.com/gradle/gradle/issues/15383
-if (project.name != "gradle-kotlin-dsl-accessors") {
-    val libs = the<LibrariesForLibs>()
-
-    dependencies {
-        detektPlugins(libs.detektFormatting)
-    }
-}
-
-val detektAll = tasks.register<Detekt>("detektAll") {
+val detektAll = tasks.register<io.gitlab.arturbosch.detekt.Detekt>("detektAll") {
     description = "Runs over whole code base without the starting overhead for each module."
     parallel = true
     setSource(files(projectDir))
@@ -30,7 +16,7 @@ val detektAll = tasks.register<Detekt>("detektAll") {
      * all rules are disabled by default, enabled one by one
      */
     config.setFrom(files(project.rootDir.resolve("../conf/detekt.yml")))
-    buildUponDefaultConfig = false
+    buildUponDefaultConfig = true
 
     include("**/*.kt")
     include("**/*.kts")
