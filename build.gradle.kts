@@ -1,3 +1,7 @@
+plugins {
+    base
+}
+
 /**
  * Tests run from IDE in subprojects module can't recognize root wrapper
  */
@@ -29,3 +33,9 @@ tasks.register<Exec>("installGitHooks") {
 
 val initialTaskNames: List<String> = project.gradle.startParameter.taskNames
 project.gradle.startParameter.setTaskNames(initialTaskNames + listOf("installGitHooks"))
+
+tasks.register("detektAll").configure {
+    gradle.includedBuilds.forEach { includedBuild ->
+        dependsOn(includedBuild.task(":detektAll"))
+    }
+}

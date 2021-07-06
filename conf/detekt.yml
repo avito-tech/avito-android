@@ -572,9 +572,9 @@ style:
     # https://detekt.github.io/detekt/style.html#forbiddenimport
     # todo maybe use it to ban junit 4 in test code
     ForbiddenImport:
-        active: false
+        active: true
         imports: [ ]
-        forbiddenPatterns: ''
+        forbiddenPatterns: 'gradle.kotlin.dsl.accessors.*'
     # https://detekt.github.io/detekt/style.html#forbiddenmethodcall
     # needs type resolution config https://github.com/detekt/detekt/issues/2259
     ForbiddenMethodCall:

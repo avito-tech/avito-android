@@ -185,7 +185,7 @@ clean_fast_check:
 	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) compileAll detektAll test --rerun-tasks --no-build-cache
 
 detekt:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) detektAll
+	$(docker_command) ./gradlew $(log_level) $(params) detektAll
 
 # Analyze modules dependencies issues
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/wiki/Tasks#build-health

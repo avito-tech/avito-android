@@ -42,27 +42,11 @@ pluginManagement {
                 includeGroup("com.google.testing.platform")
             }
         }
-        // not available in mavenCentral
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
-                }
-            }
-            filter {
-                includeModule("com.fkorotkov", "kubernetes-dsl")
-            }
+        maven {
+            setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
         }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
-                }
-            }
-            filter {
-                includeGroup("com.gradle")
-                includeGroup("org.gradle")
-            }
+        maven {
+            setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
         }
     }
 }
@@ -108,6 +92,16 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
                 includeGroup("com.google.test.platform")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy("KotlinX", "https://kotlin.bintray.com/kotlinx")
+                }
+            }
+            filter {
+                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
             }
         }
         // not available in mavenCentral

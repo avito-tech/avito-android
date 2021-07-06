@@ -1,5 +1,3 @@
-import gradle.kotlin.dsl.accessors._aefff6f539276b188c30d8843d1e61e9.testImplementation
-import gradle.kotlin.dsl.accessors._aefff6f539276b188c30d8843d1e61e9.testRuntimeOnly
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
@@ -59,12 +57,12 @@ if (project.name != "gradle-kotlin-dsl-accessors") {
 
     plugins.withType<KotlinBasePluginWrapper> {
         dependencies {
-            testImplementation(libs.junitJupiterApi)
-            testImplementation(libs.truth)
+            add("testImplementation", libs.junitJupiterApi)
+            add("testImplementation", libs.truth)
 
-            testRuntimeOnly(libs.junitJupiterEngine)
-            testRuntimeOnly(libs.junitPlatformRunner)
-            testRuntimeOnly(libs.junitPlatformLauncher)
+            add("testRuntimeOnly", libs.junitJupiterEngine)
+            add("testRuntimeOnly", libs.junitPlatformRunner)
+            add("testRuntimeOnly", libs.junitPlatformLauncher)
         }
     }
 }
