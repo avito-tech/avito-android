@@ -9,23 +9,24 @@ dependencies {
 
     api(projects.common.okhttp)
     api(projects.common.result)
-    api(projects.testRunner.reportApi)
+    api(projects.testRunner.report)
 
+    implementation(libs.kotson)
+    implementation(projects.common.httpClient)
     implementation(projects.common.math)
     implementation(projects.logger.logger)
-    implementation(projects.common.httpClient)
-    implementation(libs.kotson)
+    implementation(projects.testRunner.testModel)
 
-    testImplementation(projects.common.truthExtensions)
+    testImplementation(libs.jsonPathAssert)
+    testImplementation(libs.okhttpMockWebServer)
     testImplementation(projects.common.files)
     testImplementation(projects.common.resources)
     testImplementation(projects.common.testOkhttp)
+    testImplementation(projects.common.truthExtensions)
     testImplementation(testFixtures(projects.logger.logger))
+    testImplementation(testFixtures(projects.testRunner.report))
     testImplementation(testFixtures(projects.testRunner.reportViewer))
-    testImplementation(testFixtures(projects.testRunner.reportApi))
-    testImplementation(libs.okhttpMockWebServer)
-    testImplementation(libs.jsonPathAssert)
 
-    testFixturesImplementation(testFixtures(projects.logger.logger))
     testFixturesImplementation(testFixtures(projects.common.httpClient))
+    testFixturesImplementation(testFixtures(projects.logger.logger))
 }

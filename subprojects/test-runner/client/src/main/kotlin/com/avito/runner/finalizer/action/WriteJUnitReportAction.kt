@@ -1,6 +1,6 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.TestSuiteNameProvider
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestRuntimeData
@@ -12,7 +12,7 @@ import java.io.File
 
 internal class WriteJUnitReportAction(
     private val testSuiteNameProvider: TestSuiteNameProvider,
-    private val reportLinkGenerator: ReportLinkGenerator,
+    private val reportLinksGenerator: ReportLinksGenerator,
     private val destination: File
 ) : FinalizeAction {
 
@@ -75,14 +75,14 @@ internal class WriteJUnitReportAction(
                 if (incident != null) {
                     appendLine("<failure>")
                     appendEscapedLine(incident.errorMessage)
-                    appendLine(reportLinkGenerator.generateTestLink(test.name))
+                    appendLine(reportLinksGenerator.generateTestLink(test.name))
                     appendLine("</failure>")
                 }
             }
             is AndroidTest.Lost -> {
                 appendLine("<error>")
                 appendLine("LOST (no info in report)")
-                appendLine(reportLinkGenerator.generateTestLink(test.name))
+                appendLine(reportLinksGenerator.generateTestLink(test.name))
                 appendLine("</error>")
             }
         }

@@ -8,7 +8,7 @@ import com.avito.cd.NupokatiProject
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class UploadToQappsConditionTest {
+internal class UploadToQappsConditionTest {
 
     @Test
     fun `can upload - has no cd config`() {

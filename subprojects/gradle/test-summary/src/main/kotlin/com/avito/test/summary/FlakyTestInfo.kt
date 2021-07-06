@@ -1,7 +1,7 @@
 package com.avito.test.summary
 
 import com.avito.android.Result
-import com.avito.report.model.SimpleRunTest
+import com.avito.reportviewer.model.SimpleRunTest
 
 internal class FlakyTestInfo {
 

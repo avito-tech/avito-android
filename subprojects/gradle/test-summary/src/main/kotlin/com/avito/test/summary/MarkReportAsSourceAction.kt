@@ -2,8 +2,8 @@ package com.avito.test.summary
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.ReportsApi
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.ReportsApi
+import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive

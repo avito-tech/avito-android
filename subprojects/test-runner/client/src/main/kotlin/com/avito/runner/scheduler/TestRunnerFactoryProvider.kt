@@ -1,9 +1,9 @@
 package com.avito.runner.scheduler
 
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.Report
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
+import com.avito.report.Report
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
 import com.avito.runner.scheduler.metrics.TestMetricsListenerImpl

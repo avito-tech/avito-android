@@ -1,11 +1,11 @@
 package com.avito.runner.config
 
-import com.avito.report.model.Status
+import com.avito.report.model.TestStatus
 
-public enum class RunStatus(public val statusClass: Class<out Status>) {
-    Failed(Status.Failure::class.java),
-    Success(Status.Success::class.java),
-    Lost(Status.Lost::class.java),
-    Skipped(Status.Skipped::class.java),
-    Manual(Status.Manual::class.java)
+public enum class RunStatus(public val statusClass: Class<out TestStatus>) {
+    Failed(TestStatus.Failure::class.java),
+    Success(TestStatus.Success::class.java),
+    Lost(TestStatus.Lost::class.java),
+    Skipped(TestStatus.Skipped::class.java),
+    Manual(TestStatus.Manual::class.java)
 }

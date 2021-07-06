@@ -8,7 +8,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.URI
 
-class MavenArtifactsToCdBuildResultArtifactMapperTest {
+internal class MavenArtifactsToCdBuildResultArtifactMapperTest {
 
     @Test
     fun `maven artifacts to cd build result mapper - success apk mapping`(@TempDir dir: File) {

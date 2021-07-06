@@ -1,18 +1,18 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.ReportLinksGenerator
 import com.avito.runner.finalizer.verdict.Verdict
 import com.avito.utils.createOrClear
 import java.io.File
 
 internal class WriteReportViewerLinkFile(
     private val outputDir: File,
-    private val reportLinkGenerator: ReportLinkGenerator
+    private val reportLinksGenerator: ReportLinksGenerator
 ) : FinalizeAction {
 
     override fun action(verdict: Verdict) {
-        val reportUrl = reportLinkGenerator.generateReportLink(
-            filterOnlyFailtures = verdict is Verdict.Failure
+        val reportUrl = reportLinksGenerator.generateReportLink(
+            filterOnlyFailures = verdict is Verdict.Failure
         )
         writeReportViewerLinkFile(
             reportUrl,

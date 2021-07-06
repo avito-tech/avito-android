@@ -1,12 +1,10 @@
 package com.avito.runner.finalizer
 
-import com.avito.android.runner.report.ReportFactory
-import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.LoggerFactory
-import com.avito.report.ReportLinkGenerator
-import com.avito.runner.finalizer.action.AvitoReportViewerFinishAction
+import com.avito.report.Report
 import com.avito.runner.finalizer.action.FinalizeAction
+import com.avito.runner.finalizer.action.ReportLostTestsAction
 import com.avito.runner.finalizer.action.SendMetricsAction
 import com.avito.runner.finalizer.action.WriteJUnitReportAction
 import com.avito.runner.finalizer.action.WriteReportViewerLinkFile
@@ -14,12 +12,13 @@ import com.avito.runner.finalizer.action.WriteTaskVerdictAction
 import com.avito.runner.finalizer.verdict.VerdictDeterminer
 import com.avito.runner.finalizer.verdict.VerdictDeterminerImpl
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
+import com.avito.runner.scheduler.report.ReportViewerConfig
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import java.io.File
 
 internal class FinalizerFactoryImpl(
-    private val reportFactory: ReportFactory,
+    private val report: Report,
     private val metricsConfig: RunnerMetricsConfig,
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
@@ -37,16 +36,12 @@ internal class FinalizerFactoryImpl(
             runnerPrefix = metricsConfig.runnerPrefix
         )
 
-        val reportLinkGenerator = reportFactory.createReportLinkGenerator()
-
         return createFinalizer(
-            reportLinkGenerator = reportLinkGenerator,
             metricsSender = metricsSender
         )
     }
 
     private fun createFinalizer(
-        reportLinkGenerator: ReportLinkGenerator,
         metricsSender: InstrumentationMetricsSender,
     ): FinalizerImpl {
 
@@ -62,22 +57,22 @@ internal class FinalizerFactoryImpl(
 
         actions += WriteTaskVerdictAction(
             verdictDestination = verdictFile,
-            reportLinkGenerator = reportLinkGenerator
+            reportLinksGenerator = report.reportLinksGenerator
         )
 
         actions += WriteJUnitReportAction(
             destination = File(outputDir, "junit-report.xml"),
-            reportLinkGenerator = reportLinkGenerator,
-            testSuiteNameProvider = reportFactory.createTestSuiteNameGenerator()
+            reportLinksGenerator = report.reportLinksGenerator,
+            testSuiteNameProvider = report.testSuiteNameProvider
         )
 
         if (reportViewerConfig != null) {
 
-            actions += AvitoReportViewerFinishAction(legacyReport = reportFactory.createAvitoReport())
+            actions += ReportLostTestsAction(report = report)
 
             actions += WriteReportViewerLinkFile(
                 outputDir = outputDir,
-                reportLinkGenerator = reportLinkGenerator
+                reportLinksGenerator = report.reportLinksGenerator
             )
         }
 

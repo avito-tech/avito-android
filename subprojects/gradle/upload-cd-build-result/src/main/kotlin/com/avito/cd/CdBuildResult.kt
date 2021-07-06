@@ -19,7 +19,6 @@ public data class CdBuildResult(
         val reportUrl: String,
         val reportCoordinates: ReportCoordinates
     ) {
-        // TODO дублирование модели из report-viewer
         public data class ReportCoordinates(
             val planSlug: String,
             val jobSlug: String,

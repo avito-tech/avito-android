@@ -12,10 +12,10 @@ dependencies {
     api(projects.common.coroutinesExtension)
     api(projects.common.statsd)
     api(projects.common.time)
-    api(projects.testRunner.commandLineExecutor)
     api(projects.gradle.process)
-    api(projects.testRunner.testModel)
+    api(projects.testRunner.commandLineExecutor)
     api(projects.testRunner.deviceProvider.api)
+    api(projects.testRunner.testModel)
 
     implementation(projects.common.result)
     implementation(projects.common.problem)

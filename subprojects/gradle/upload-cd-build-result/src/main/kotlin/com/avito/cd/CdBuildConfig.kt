@@ -2,33 +2,6 @@ package com.avito.cd
 
 import com.google.gson.annotations.SerializedName
 
-public enum class AndroidArtifactType {
-    @SerializedName("bundle")
-    BUNDLE,
-
-    @SerializedName("apk")
-    APK
-}
-
-public enum class BuildVariant {
-    @SerializedName("release")
-    RELEASE,
-
-    @SerializedName("staging")
-    STAGING,
-
-    @SerializedName("debug")
-    DEBUG
-}
-
-public enum class NupokatiProject(public val id: String) {
-    @SerializedName("avito")
-    AVITO("avito"),
-
-    @SerializedName("avito_test")
-    AVITO_TEST("avito_test")
-}
-
 public data class CdBuildConfig(
     val schemaVersion: Long,
     val project: NupokatiProject,

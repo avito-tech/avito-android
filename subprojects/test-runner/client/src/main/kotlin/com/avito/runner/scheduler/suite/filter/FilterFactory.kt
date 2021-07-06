@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.android.runner.report.ReportFactory
 import com.avito.logger.LoggerFactory
+import com.avito.report.Report
 import com.avito.runner.config.InstrumentationFilterData
 
 internal interface FilterFactory {
@@ -16,13 +16,13 @@ internal interface FilterFactory {
             filterData: InstrumentationFilterData,
             impactAnalysisResult: ImpactAnalysisResult,
             loggerFactory: LoggerFactory,
-            reportFactory: ReportFactory
+            report: Report
         ): FilterFactory {
             return FilterFactoryImpl(
                 filterData = filterData,
                 impactAnalysisResult = impactAnalysisResult,
                 loggerFactory = loggerFactory,
-                reportFactory = reportFactory
+                report = report
             )
         }
     }

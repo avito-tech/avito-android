@@ -1,7 +1,7 @@
 package com.avito.instrumentation
 
 import com.avito.kotlin.dsl.typedNamed
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.model.ReportCoordinates
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
@@ -17,10 +17,16 @@ public fun TaskContainer.instrumentationTask(configuration: String): TaskProvide
     typedNamed(instrumentationTaskName(configuration))
 
 public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
-    @Suppress("UnstableApiUsage")
     flatMap { task ->
         task.instrumentationConfiguration.map { config ->
             config.instrumentationParams.reportCoordinates()
+        }
+    }
+
+public fun TaskProvider<InstrumentationTestsTask>.extractReportViewerUrl(): Provider<String> =
+    flatMap { task ->
+        task.reportViewerProperty.map { reportViewer ->
+            reportViewer.reportViewerUrl
         }
     }
 

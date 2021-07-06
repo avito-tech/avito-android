@@ -1,6 +1,6 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.report.NoOpReportLinkGenerator
+import com.avito.report.NoOpReportLinksGenerator
 import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
@@ -107,7 +107,7 @@ internal class WriteJUnitReportActionTest {
         WriteJUnitReportAction(
             destination = file,
             testSuiteNameProvider = NoOpTestSuiteNameProvider(),
-            reportLinkGenerator = NoOpReportLinkGenerator(testLink = reportViewerUrl)
+            reportLinksGenerator = NoOpReportLinksGenerator(testLink = reportViewerUrl)
         ).action(
             verdict = verdict
         )

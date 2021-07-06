@@ -4,8 +4,8 @@ import com.avito.android.stats.StatsDConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
-import com.avito.report.ReportsApi
-import com.avito.report.ReportsApiFactory
+import com.avito.reportviewer.ReportsApi
+import com.avito.reportviewer.ReportsApiFactory
 import com.avito.slack.SlackClient
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider

@@ -1,15 +1,15 @@
 package com.avito.runner.finalizer.action
 
-import com.avito.report.NoOpReportLinkGenerator
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.NoOpReportLinksGenerator
+import com.avito.report.ReportLinksGenerator
 import java.io.File
 
 internal fun WriteTaskVerdictAction.Companion.createStubInstance(
     verdictDestination: File,
-    reportLinkGenerator: ReportLinkGenerator = NoOpReportLinkGenerator()
+    reportLinksGenerator: ReportLinksGenerator = NoOpReportLinksGenerator()
 ): WriteTaskVerdictAction {
     return WriteTaskVerdictAction(
         verdictDestination = verdictDestination,
-        reportLinkGenerator = reportLinkGenerator
+        reportLinksGenerator = reportLinksGenerator
     )
 }

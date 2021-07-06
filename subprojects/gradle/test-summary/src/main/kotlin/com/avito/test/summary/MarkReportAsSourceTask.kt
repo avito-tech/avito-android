@@ -1,8 +1,8 @@
 package com.avito.test.summary
 
 import com.avito.logger.GradleLoggerFactory
-import com.avito.report.ReportsApi
-import com.avito.report.model.ReportCoordinates
+import com.avito.reportviewer.ReportsApi
+import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property

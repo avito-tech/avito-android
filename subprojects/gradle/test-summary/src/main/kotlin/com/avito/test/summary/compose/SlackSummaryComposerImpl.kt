@@ -1,14 +1,14 @@
 package com.avito.test.summary.compose
 
 import com.avito.android.Result
-import com.avito.report.ReportLinkGenerator
-import com.avito.report.ReportViewer
-import com.avito.report.model.CrossDeviceSuite
-import com.avito.report.model.FailureOnDevice
-import com.avito.report.model.ReportCoordinates
+import com.avito.report.ReportLinksGenerator
 import com.avito.report.model.Team
+import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
+import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.slack.SlackStringFormat
 import com.avito.test.summary.analysis.analyzeFailures
+import com.avito.test.summary.model.CrossDeviceSuite
+import com.avito.test.summary.model.FailureOnDevice
 
 internal class SlackSummaryComposerImpl(private val reportViewerUrl: String) : SlackSummaryComposer {
 
@@ -22,8 +22,11 @@ internal class SlackSummaryComposerImpl(private val reportViewerUrl: String) : S
         reportId: String,
         buildUrl: String
     ): Result<String> {
-        val reportLinkGenerator: ReportLinkGenerator = ReportViewer.Impl(reportViewerUrl, reportCoordinates)
-        val reportViewerUrl = Result.tryCatch { reportLinkGenerator.generateReportLink(team = team.name) }
+        val reportLinksGenerator: ReportLinksGenerator = ReportViewerLinksGeneratorImpl(
+            reportViewerUrl = reportViewerUrl,
+            reportCoordinates = reportCoordinates
+        )
+        val reportViewerUrl = Result.tryCatch { reportLinksGenerator.generateReportLink(team = team.name) }
         val reportIdentifier = reportCoordinates.runId
 
         val failures = testData.analyzeFailures()

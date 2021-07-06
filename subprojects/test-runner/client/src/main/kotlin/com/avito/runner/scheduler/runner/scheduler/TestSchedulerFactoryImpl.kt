@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.runner.scheduler
 
 import com.avito.android.TestSuiteLoader
-import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
+import com.avito.report.Report
 import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.finalizer.FinalizerFactory
 import com.avito.runner.scheduler.TestRunnerFactoryProvider

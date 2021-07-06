@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class CdBuildConfigValidatorTest {
+internal class CdBuildConfigValidatorTest {
 
     @Test
     fun `success - valid contract last supported version`() {

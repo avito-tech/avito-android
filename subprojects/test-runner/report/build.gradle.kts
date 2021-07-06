@@ -5,19 +5,29 @@ plugins {
 }
 
 publish {
-    artifactId.set("runner-report")
+    artifactId.set("report-api")
 }
 
 dependencies {
-    api(projects.testRunner.reportViewer)
-    api(projects.testRunner.reportApi)
+    api(libs.okhttp) {
+        because("HttpUrl used to type urls more strict")
+    }
+    api(libs.gson) {
+        // todo hide parsing
+        // todo replace JsonElement with something more generic if possible
+        because("module provides TypeAdapterFactory for Entries; JsonElement in the IncidentElement")
+    }
+
+    api(projects.testRunner.testModel)
+
+    implementation(projects.common.okhttp) {
+        because("Result extension used")
+    }
 
     implementation(projects.common.time)
-    implementation(projects.common.httpClient)
+    implementation(projects.logger.logger)
 
-    testImplementation(testFixtures(projects.testRunner.reportApi))
-
-    testFixturesImplementation(testFixtures(projects.logger.logger))
-    testFixturesImplementation(testFixtures(projects.common.time))
-    testFixturesImplementation(testFixtures(projects.testRunner.reportViewer))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(testFixtures(projects.logger.logger))
+    testImplementation(testFixtures(projects.common.time))
 }

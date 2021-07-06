@@ -3,7 +3,7 @@ package com.avito.report.model
 import java.io.Serializable
 
 /**
- * Команда, которой принадлежит тест (юнит в Авито, но назван иначе, чтобы не было конфликтов с kotlin.Unit)
+ * todo extract to public api module (used in avito build scripts)
  */
 public data class Team(val name: String) : Serializable {
 

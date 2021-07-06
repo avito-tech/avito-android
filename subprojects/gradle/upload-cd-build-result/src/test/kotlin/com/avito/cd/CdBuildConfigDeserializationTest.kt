@@ -9,7 +9,7 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 
-class CdBuildConfigDeserializationTest {
+internal class CdBuildConfigDeserializationTest {
 
     private val gson = GsonBuilder().run {
         setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -51,7 +51,7 @@ class CdBuildConfigDeserializationTest {
             ]
         }
         """
-        val deserialized = gson.fromJson<CdBuildConfig>(config, CdBuildConfig::class.java)
+        val deserialized = gson.fromJson(config, CdBuildConfig::class.java)
         assertThat(deserialized).isEqualTo(
             CdBuildConfig(
                 schemaVersion = 1,

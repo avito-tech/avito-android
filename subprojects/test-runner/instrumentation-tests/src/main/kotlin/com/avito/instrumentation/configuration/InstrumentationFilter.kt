@@ -1,6 +1,6 @@
 package com.avito.instrumentation.configuration
 
-import com.avito.report.model.Status
+import com.avito.report.model.TestStatus
 import com.avito.runner.scheduler.suite.filter.Filter
 import org.gradle.api.Action
 
@@ -67,12 +67,12 @@ public abstract class InstrumentationFilter(public val name: String) {
             ).also { reportFilter -> filter.execute(reportFilter.statuses) }
         }
 
-        public enum class RunStatus(public val statusClass: Class<out Status>) {
-            Failed(Status.Failure::class.java),
-            Success(Status.Success::class.java),
-            Lost(Status.Lost::class.java),
-            Skipped(Status.Skipped::class.java),
-            Manual(Status.Manual::class.java)
+        public enum class RunStatus(public val statusClass: Class<out TestStatus>) {
+            Failed(TestStatus.Failure::class.java),
+            Success(TestStatus.Success::class.java),
+            Lost(TestStatus.Lost::class.java),
+            Skipped(TestStatus.Skipped::class.java),
+            Manual(TestStatus.Manual::class.java)
         }
     }
 }

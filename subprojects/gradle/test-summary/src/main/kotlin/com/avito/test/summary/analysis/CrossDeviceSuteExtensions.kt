@@ -1,8 +1,8 @@
 package com.avito.test.summary.analysis
 
-import com.avito.report.model.CrossDeviceSuite
-import com.avito.report.model.FailureOnDevice
-import com.avito.report.model.HasFailures
+import com.avito.test.summary.model.CrossDeviceSuite
+import com.avito.test.summary.model.FailureOnDevice
+import com.avito.test.summary.model.HasFailures
 
 internal fun CrossDeviceSuite.analyzeFailures(): Map<String, List<FailureOnDevice>> {
     return this.crossDeviceRuns

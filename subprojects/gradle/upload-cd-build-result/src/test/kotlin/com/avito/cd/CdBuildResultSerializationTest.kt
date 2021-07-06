@@ -39,7 +39,7 @@ private val expected = """
       ]
     }""".trimIndent()
 
-class CdBuildResultSerializationTest {
+internal class CdBuildResultSerializationTest {
 
     private val gson = GsonBuilder().run {
         setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

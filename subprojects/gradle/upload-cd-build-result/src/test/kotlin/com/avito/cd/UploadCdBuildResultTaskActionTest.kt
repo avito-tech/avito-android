@@ -38,16 +38,18 @@ internal class UploadCdBuildResultTaskActionTest {
         )
     )
     private val uiTestConfiguration = "regression"
-    private val stubTestResults = mapOf(
-        uiTestConfiguration to CdBuildResult.TestResultsLink(
-            reportUrl = "no matter url",
-            reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
-                planSlug = "2",
-                jobSlug = "3",
-                runId = "4"
-            )
+
+    private val testResults = CdBuildResult.TestResultsLink(
+        reportUrl = "no matter url",
+        reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
+            planSlug = "2",
+            jobSlug = "3",
+            runId = "4"
         )
     )
+
+    private val stubTestResults = mapOf(uiTestConfiguration to testResults)
+
     private val stubArtifacts = listOf(
         CdBuildResult.Artifact.AndroidBinary(
             "apk",
@@ -106,13 +108,12 @@ internal class UploadCdBuildResultTaskActionTest {
         action(suppressErrors = false).send(
             buildOutput = BuildOutput().apply {
                 this.artifacts = stubArtifacts
-                this.testResults.putAll(stubTestResults)
             },
             cdBuildConfig = cdBuildConfig,
             versionCode = versionCode,
             teamcityUrl = teamcityUrl,
             gitState = gitState,
-            uiTestConfiguration = uiTestConfiguration
+            testResults = testResults
         )
 
         sendOutputRequest
@@ -135,13 +136,12 @@ internal class UploadCdBuildResultTaskActionTest {
             action(suppressErrors = false).send(
                 buildOutput = BuildOutput().apply {
                     this.artifacts = stubArtifacts
-                    this.testResults.putAll(stubTestResults)
                 },
                 cdBuildConfig = cdBuildConfig,
                 versionCode = versionCode,
                 teamcityUrl = teamcityUrl,
                 gitState = gitState,
-                uiTestConfiguration = uiTestConfiguration
+                testResults = testResults
             )
         }
         assertThat(error).hasMessageThat().contains("Upload build result")
@@ -159,13 +159,12 @@ internal class UploadCdBuildResultTaskActionTest {
         action(suppressErrors = true).send(
             buildOutput = BuildOutput().apply {
                 this.artifacts = stubArtifacts
-                this.testResults.putAll(stubTestResults)
             },
             cdBuildConfig = cdBuildConfig,
             versionCode = versionCode,
             teamcityUrl = teamcityUrl,
             gitState = gitState,
-            uiTestConfiguration = uiTestConfiguration
+            testResults = testResults
         )
     }
 

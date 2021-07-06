@@ -1,9 +1,7 @@
 package com.avito.test.summary
 
 import com.avito.android.Result
-import com.avito.report.ReportViewer
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
+import com.avito.report.ReportLinksGenerator
 import com.avito.slack.SlackMessageSender
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
@@ -13,10 +11,9 @@ internal class FlakyTestReporterImpl(
     private val slackClient: SlackMessageSender,
     private val summaryChannel: SlackChannel,
     private val messageAuthor: String,
-    private val reportViewer: ReportViewer,
+    private val reportLinksGenerator: ReportLinksGenerator,
     private val buildUrl: String,
-    private val currentBranch: String,
-    private val reportCoordinates: ReportCoordinates
+    private val currentBranch: String
 ) : FlakyTestReporter {
 
     private val emoji = ":open-eye-laugh-crying:"
@@ -36,11 +33,7 @@ internal class FlakyTestReporterImpl(
                 channel = summaryChannel,
                 buildUrl = buildUrl,
                 currentBranch = currentBranch,
-                reportUrl = reportViewer.generateReportUrl(
-                    reportCoordinates = reportCoordinates,
-                    onlyFailures = true,
-                    team = Team.UNDEFINED
-                ).toString()
+                reportUrl = reportLinksGenerator.generateReportLink(filterOnlyFailures = true)
             )
         }
     }

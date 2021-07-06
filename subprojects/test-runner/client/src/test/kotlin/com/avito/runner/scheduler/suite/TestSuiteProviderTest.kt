@@ -2,8 +2,8 @@ package com.avito.runner.scheduler.suite
 
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
-import com.avito.android.runner.report.Report
-import com.avito.android.runner.report.StubReport
+import com.avito.report.Report
+import com.avito.report.StubReport
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
 import com.avito.runner.scheduler.suite.filter.FilterFactory
