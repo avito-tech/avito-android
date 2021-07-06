@@ -104,22 +104,27 @@ internal class RunnerInputParamsTest {
 
         buildResult.assertThat().buildSuccessful()
 
-        val dumpDir = projectDir.toPath() / appModuleName / "build" / "test-runner" / dumpDirName
+        val runId = RunId(
+            prefix = "stub",
+            identifier = commit,
+            buildTypeId = "teamcity-$buildType"
+        ).toReportViewerFormat()
 
-        val runnerInput: RunnerInputParams = RunnerInputDumper(dumpDir.toFile()).readInput()
+        val configurationName = "functional"
+
+        val expectedOutputDir = "${projectDir.canonicalPath}/$appModuleName/" +
+            "outputs/stub.$commit.teamcity-buildType/functional"
+
+        val runnerInput: RunnerInputParams = RunnerInputDumper(File(expectedOutputDir)).readInput()
 
         val expectedPluginInstrumentationParams = mapOf(
-            "configuration" to "functional",
+            "configuration" to configurationName,
             "planSlug" to "AppAndroid",
             "jobSlug" to "FunctionalTests",
             "override" to "overrideInConfiguration",
             "deviceName" to "local",
             "teamcityBuildId" to "0",
-            "runId" to RunId(
-                prefix = "stub",
-                identifier = commit,
-                buildTypeId = "teamcity-$buildType"
-            ).toReportViewerFormat(),
+            "runId" to runId,
             "reportApiUrl" to "http://stub", // from InstrumentationPluginConfiguration
             "reportViewerUrl" to "http://stub",
             "fileStorageUrl" to "http://stub",
@@ -292,10 +297,7 @@ internal class RunnerInputParamsTest {
             },
             Case("output dir") {
                 assertThat(it.outputDir.canonicalPath)
-                    .isEqualTo(
-                        "${projectDir.canonicalPath}/$appModuleName/" +
-                            "outputs/stub.$commit.teamcity-buildType/functional"
-                    )
+                    .isEqualTo(expectedOutputDir)
             },
             Case("verdict file") {
                 assertThat(it.verdictFile.canonicalPath)

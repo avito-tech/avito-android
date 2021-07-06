@@ -160,7 +160,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                         this.gitBranch.set(GitResolver.getGitBranch(project))
                         this.gitCommit.set(GitResolver.getGitCommit(project))
                         this.output.set(outputFolder)
-                        this.dumpDir.set(dumpDir)
 
                         if (reportViewer != null) {
                             this.reportViewerProperty.set(reportViewer)

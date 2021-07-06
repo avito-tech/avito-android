@@ -106,9 +106,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val gradleTestKitRun: Property<Boolean>
 
     @get:Internal
-    public abstract val dumpDir: RegularFileProperty
-
-    @get:Internal
     public abstract val kubernetesCredentials: Property<KubernetesCredentials>
 
     @get:OutputDirectory
@@ -153,6 +150,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
         val experiments = experiments.get()
 
+        val output = output.get().asFile
+
         val testRunParams = RunnerInputParams(
             mainApk = application.orNull?.getApk(),
             testApk = testApplication.get().getApkOrThrow(),
@@ -171,7 +170,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 changedTestsFile = changedTests.asFile.orNull
             ),
             loggerFactory = loggerFactory,
-            outputDir = output.get().asFile,
+            outputDir = output,
             verdictFile = verdictFile.get().asFile,
             fileStorageUrl = getFileStorageUrl(),
             statsDConfig = statsDConfig,
@@ -187,7 +186,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
         val isGradleTestKitRun = gradleTestKitRun.get()
 
-        RunnerInputDumper(dumpDir = dumpDir.get().asFile).dumpInput(
+        RunnerInputDumper(output).dumpInput(
             input = testRunParams,
             isGradleTestKitRun = isGradleTestKitRun
         )
