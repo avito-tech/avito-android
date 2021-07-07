@@ -46,6 +46,7 @@ internal class WriteTaskVerdictActionTest {
                 ),
                 failedTest
             ),
+            notReportedTests = emptyList(),
             failedTests = setOf(failedTest)
         )
         val action = createWriteTaskVerdictAction(tempDir)

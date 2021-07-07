@@ -3,6 +3,7 @@ package com.avito.runner.finalizer.verdict
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Flakiness
 import com.avito.report.model.TestStaticData
+import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
 
 internal class VerdictDeterminerImpl(
@@ -18,61 +19,50 @@ internal class VerdictDeterminerImpl(
 
         val failedTests = getFailedTests(testResults)
 
-        val notReportedTests = getLostTests(
+        val notReportedTests = getNotReportedTests(
             initialTestSuite = initialTestSuite,
             testResults = testResults
         )
 
-        val unsuppressedFailedTests = mutableListOf<TestStaticData>()
-
-        val intermediateResult = when {
-
-            failedTests.isNotEmpty() -> when {
-                suppressFailure -> Verdict.Success.Suppressed(
-                    testResults = testResults,
-                    failedTests = failedTests
-                )
-
-                suppressFlaky -> {
-                    val (flaky, notFlaky) = failedTests.partition { it.flakiness is Flakiness.Flaky }
-
-                    val hasFailedTestsNotMarkedAsFlaky = notFlaky.isNotEmpty()
-
-                    unsuppressedFailedTests.addAll(notFlaky)
-
-                    when {
-                        hasFailedTestsNotMarkedAsFlaky -> Verdict.Failure(
-                            testResults = testResults,
-                            unsuppressedFailedTests = notFlaky.toSet(),
-                            notReportedTests = notReportedTests
-                        )
-
-                        else -> Verdict.Success.Suppressed(
-                            testResults = testResults,
-                            failedTests = flaky.toSet()
-                        )
-                    }
+        return when {
+            suppressFailure ->
+                if (failedTests.isNotEmpty() || notReportedTests.isNotEmpty()) {
+                    Verdict.Success.Suppressed(
+                        testResults = testResults,
+                        notReportedTests = notReportedTests,
+                        failedTests = failedTests
+                    )
+                } else {
+                    Verdict.Success.OK(testResults)
                 }
-                else -> {
-                    unsuppressedFailedTests.addAll(failedTests)
+            suppressFlaky -> {
+                val (flaky, notFlaky) = failedTests.partition { it.flakiness is Flakiness.Flaky }
+
+                val hasFailedTestsNotMarkedAsFlaky = notFlaky.isNotEmpty()
+
+                if (hasFailedTestsNotMarkedAsFlaky || notReportedTests.isNotEmpty()) {
                     Verdict.Failure(
                         testResults = testResults,
-                        unsuppressedFailedTests = failedTests,
-                        notReportedTests = notReportedTests
+                        notReportedTests = notReportedTests,
+                        unsuppressedFailedTests = notFlaky.toSet()
+                    )
+                } else {
+                    Verdict.Success.Suppressed(
+                        testResults = testResults,
+                        notReportedTests = notReportedTests,
+                        failedTests = flaky.toSet()
                     )
                 }
             }
-            else -> Verdict.Success.OK(testResults = testResults)
-        }
-
-        return if (notReportedTests.isNotEmpty()) {
-            Verdict.Failure(
-                testResults = testResults,
-                notReportedTests = notReportedTests,
-                unsuppressedFailedTests = unsuppressedFailedTests
-            )
-        } else {
-            intermediateResult
+            else -> if (failedTests.isNotEmpty() || notReportedTests.isNotEmpty()) {
+                Verdict.Failure(
+                    testResults = testResults,
+                    notReportedTests = notReportedTests,
+                    unsuppressedFailedTests = failedTests
+                )
+            } else {
+                Verdict.Success.OK(testResults)
+            }
         }
     }
 
@@ -84,17 +74,23 @@ internal class VerdictDeterminerImpl(
         return (completedWithIncident + infrastructureError).toSet()
     }
 
-    private fun getLostTests(
+    private fun getNotReportedTests(
         initialTestSuite: Set<TestStaticData>,
         testResults: Collection<AndroidTest>
     ): Set<AndroidTest.Lost> {
-        return initialTestSuite.subtract(testResults).map {
-            AndroidTest.Lost.createWithoutInfo(
-                testStaticData = it,
-                currentTimeSec = timeProvider.nowInSeconds()
-            )
-        }.toSet()
+        return initialTestSuite
+            .minus(testResults) { TestCase(it.name, it.device) }
+            .map {
+                AndroidTest.Lost.createWithoutInfo(
+                    testStaticData = it,
+                    currentTimeSec = timeProvider.nowInSeconds()
+                )
+            }
+            .toSet()
     }
+
+    private fun <T, R> Collection<T>.minus(elements: Collection<T>, selector: (T) -> R?) =
+        filter { t -> elements.none { selector(it) == selector(t) } }
 
     companion object
 }
