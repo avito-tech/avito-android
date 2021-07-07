@@ -13,6 +13,7 @@ internal sealed class Verdict {
 
         data class Suppressed(
             override val testResults: Collection<AndroidTest>,
+            val notReportedTests: Collection<AndroidTest.Lost>,
             val failedTests: Collection<TestStaticData>,
         ) : Success()
     }
