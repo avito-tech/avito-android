@@ -9,6 +9,9 @@ publish {
 }
 
 dependencies {
+    api(projects.common.result)
+    api(projects.common.time)
+    api(projects.logger.logger)
     api(libs.okhttp) {
         because("HttpUrl used to type urls more strict")
     }
@@ -17,15 +20,11 @@ dependencies {
         // todo replace JsonElement with something more generic if possible
         because("module provides TypeAdapterFactory for Entries; JsonElement in the IncidentElement")
     }
-
     api(projects.testRunner.testModel)
 
     implementation(projects.common.okhttp) {
         because("Result extension used")
     }
-
-    implementation(projects.common.time)
-    implementation(projects.logger.logger)
 
     testImplementation(projects.common.truthExtensions)
     testImplementation(testFixtures(projects.logger.logger))

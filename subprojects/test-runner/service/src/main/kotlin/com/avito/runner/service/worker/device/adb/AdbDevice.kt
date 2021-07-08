@@ -8,9 +8,9 @@ import com.avito.android.asRuntimeException
 import com.avito.logger.Logger
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
+import com.avito.runner.model.TestCaseRun
+import com.avito.runner.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate

@@ -10,12 +10,8 @@ dependencies {
         because("Need to know all classes in files")
     }
     implementation(projects.common.files)
-    implementation(projects.gradle.process)
     implementation(projects.logger.gradleLogger)
     implementation(projects.gradle.gradleExtensions)
-    implementation(projects.testRunner.instrumentationTestsDexLoader) {
-        because("TestInApkModel")
-    }
     implementation(projects.gradle.impactShared) {
         because("ChangesDetector reuse")
     }

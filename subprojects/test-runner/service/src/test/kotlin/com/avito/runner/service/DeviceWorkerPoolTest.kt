@@ -2,8 +2,8 @@ package com.avito.runner.service
 
 import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.listener.NoOpTestListener
-import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 @ExperimentalCoroutinesApi
-class DeviceWorkerPoolTest {
+internal class DeviceWorkerPoolTest {
 
     private val loggerFactory = StubLoggerFactory
 

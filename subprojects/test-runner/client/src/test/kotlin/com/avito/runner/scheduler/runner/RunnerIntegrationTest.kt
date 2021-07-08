@@ -7,6 +7,7 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.metrics.StubTestMetricsListener
 import com.avito.runner.scheduler.report.CompositeReporter
@@ -18,7 +19,6 @@ import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.listener.NoOpTestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.device.Device.Signal
@@ -681,7 +681,7 @@ internal class RunnerIntegrationTest {
             },
             summaryReportMaker = SummaryReportMakerImpl(),
             reporter = CompositeReporter(emptyList()),
-            testMetricsListener = StubTestMetricsListener,
+            testSuiteListener = StubTestMetricsListener,
             devicesProvider = StubDevicesProvider(
                 provider = DeviceWorkerPoolProvider(
                     timeProvider = StubTimeProvider(),

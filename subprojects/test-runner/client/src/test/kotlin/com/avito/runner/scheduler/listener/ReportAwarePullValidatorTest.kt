@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler.listener
 
 import com.avito.report.TestArtifactsProviderFactory
+import com.avito.runner.listener.ReportAwarePullValidator
 import com.avito.runner.service.worker.device.adb.PullValidator
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat

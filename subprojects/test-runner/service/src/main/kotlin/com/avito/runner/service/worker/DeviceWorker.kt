@@ -3,11 +3,11 @@ package com.avito.runner.service.worker
 import com.avito.android.Result
 import com.avito.coroutines.extensions.Dispatchers
 import com.avito.report.TestArtifactsProviderFactory
+import com.avito.runner.model.TestCaseRun
+import com.avito.runner.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State

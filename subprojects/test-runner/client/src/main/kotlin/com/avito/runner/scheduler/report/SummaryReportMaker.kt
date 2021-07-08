@@ -1,9 +1,9 @@
 package com.avito.runner.scheduler.report
 
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
 import com.avito.runner.scheduler.runner.model.TestRunResult
-import com.avito.runner.service.model.TestCaseRun
 
 internal interface SummaryReportMaker {
 

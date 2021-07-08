@@ -4,9 +4,9 @@ import com.avito.android.Result
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.logger.LoggerFactory
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolProvider
-import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.stub.StubActionResult

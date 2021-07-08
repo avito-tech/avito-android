@@ -4,9 +4,9 @@ import com.avito.android.trace.CompleteEvent
 import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
 import com.avito.android.trace.TraceReportFileAdapter
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.scheduler.report.Reporter
 import com.avito.runner.scheduler.report.model.SummaryReport
-import com.avito.runner.service.model.TestCaseRun
 import java.io.File
 import java.util.concurrent.TimeUnit
 

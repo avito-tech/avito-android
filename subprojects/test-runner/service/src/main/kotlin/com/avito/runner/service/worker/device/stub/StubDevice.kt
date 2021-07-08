@@ -5,8 +5,8 @@ import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate

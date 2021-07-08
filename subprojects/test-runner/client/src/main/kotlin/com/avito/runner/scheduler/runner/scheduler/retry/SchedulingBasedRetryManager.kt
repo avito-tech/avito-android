@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.runner.scheduler.retry
 
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCaseRun
 import kotlin.math.max
 import kotlin.math.min
 

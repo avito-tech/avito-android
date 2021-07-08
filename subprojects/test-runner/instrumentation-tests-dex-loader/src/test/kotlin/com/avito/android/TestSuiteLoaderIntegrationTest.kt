@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class TestSuiteLoaderIntegrationTest {
+internal class TestSuiteLoaderIntegrationTest {
 
     private lateinit var testSuiteLoader: TestSuiteLoader
 

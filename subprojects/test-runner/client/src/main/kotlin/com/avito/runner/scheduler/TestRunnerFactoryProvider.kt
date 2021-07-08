@@ -5,6 +5,7 @@ import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
 import com.avito.report.Report
 import com.avito.runner.config.RunnerInputParams
+import com.avito.runner.listener.TestListenerFactory
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
 import com.avito.runner.scheduler.metrics.TestMetricsListenerImpl
 import com.avito.runner.scheduler.metrics.TestMetricsSender
@@ -61,19 +62,23 @@ public class TestRunnerFactoryProvider(
     internal fun provide(): TestRunnerFactory {
         return TestRunnerFactoryImpl(
             testRunnerOutputDir = testRunnerOutputDir,
+            timeProvider = timeProvider,
             loggerFactory = loggerFactory,
-            testMetricsListener = testMetricsSender,
+            testSuiteListener = testMetricsSender,
             deviceListener = testMetricsSender,
             devicesProviderFactory = devicesProviderFactory,
             testRunnerRequestFactory = testRunRequestFactory(),
             executionState = testRunnerExecutionState,
-            httpClientProvider = httpClientProvider,
-            timeProvider = timeProvider,
             params = params,
             tempLogcatDir = tempLogcatDir,
-            metricsSender = metricsSender,
+            testListenerFactory = TestListenerFactory(
+                loggerFactory = loggerFactory,
+                timeProvider = timeProvider,
+                httpClientProvider = httpClientProvider
+            ),
             report = report,
-            targets = params.instrumentationConfiguration.targets
+            targets = params.instrumentationConfiguration.targets,
+            metricsSender = metricsSender,
         )
     }
 

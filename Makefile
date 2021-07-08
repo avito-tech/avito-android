@@ -17,7 +17,7 @@ USER_ID=$(shell id -u $(USER))
 docker=false
 infra?=
 ci?=false
-log_level?=
+log_level?=--quiet
 kubernetesContext?=
 testFilter?=
 includePrefix?=
@@ -192,6 +192,8 @@ detekt:
 build_health:
 	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) buildHealth
 
+# Precondition: installed graphviz: https://graphviz.org/download/
+#
 # Builds dependencies graph
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin
 # Example: make project_graph_report id=:test-runner:client

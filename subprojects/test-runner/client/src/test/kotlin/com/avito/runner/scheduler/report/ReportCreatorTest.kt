@@ -1,12 +1,12 @@
 package com.avito.runner.scheduler.report
 
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.model.createStubInstance
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.createStubInstance
 import com.avito.test.model.TestCase
 import com.avito.truth.isInstanceOf

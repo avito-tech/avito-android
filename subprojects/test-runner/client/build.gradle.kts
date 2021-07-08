@@ -11,36 +11,35 @@ publish {
 dependencies {
     compileOnly(gradleApi())
     api(projects.testRunner.service)
-    api(projects.common.result)
+    api(projects.testRunner.reportViewer) {
+        because("ReportViewerConfig exposes ReportCoordinates; also RunId")
+    }
 
-    implementation(projects.testRunner.testAnnotations)
-    implementation(projects.testRunner.instrumentationTestsDexLoader)
-    implementation(projects.testRunner.testReportArtifacts)
-    implementation(projects.testRunner.deviceProvider.impl)
-    implementation(projects.gradle.traceEvent)
-    implementation(projects.common.throwableUtils)
-    implementation(projects.common.math)
     implementation(projects.common.compositeException)
-    implementation(projects.common.result)
-    implementation(projects.common.problem)
+    implementation(projects.common.coroutinesExtension)
     implementation(projects.common.files)
-    implementation(projects.common.retrace)
-    implementation(projects.testRunner.fileStorage)
+    implementation(projects.common.math)
+    implementation(projects.common.problem)
+    implementation(projects.common.result)
+    implementation(projects.gradle.process)
+    implementation(projects.gradle.traceEvent)
+    implementation(projects.testRunner.deviceProvider.api)
+    implementation(projects.testRunner.deviceProvider.impl)
+    implementation(projects.testRunner.instrumentationTestsDexLoader)
+    implementation(projects.testRunner.reportProcessor)
+    implementation(projects.testRunner.runnerApi)
+    implementation(projects.testRunner.testAnnotations)
+    implementation(projects.testRunner.testReportArtifacts)
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
     implementation(libs.commonsText) {
         because("for StringEscapeUtils.escapeXml10() only")
     }
-    implementation(libs.commonsIo) {
-        because("LogcatBuffer.Impl.tailer needs to consider Charset (https://issues.apache.org/jira/browse/IO-354)")
-    }
 
     testImplementation(libs.coroutinesTest)
     testImplementation(libs.kotlinReflect)
     testImplementation(libs.mockitoJUnitJupiter)
-    testImplementation(libs.mockitoKotlin)
     testImplementation(projects.common.truthExtensions)
-    testImplementation(projects.gradle.testProject)
     testImplementation(testFixtures(projects.common.time))
     testImplementation(testFixtures(projects.logger.logger))
     testImplementation(testFixtures(projects.testRunner.instrumentationTestsDexLoader))

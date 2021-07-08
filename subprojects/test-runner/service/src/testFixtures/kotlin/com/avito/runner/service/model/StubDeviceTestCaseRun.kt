@@ -1,5 +1,6 @@
 package com.avito.runner.service.model
 
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.worker.device.model.DeviceData
 import com.avito.runner.service.worker.device.model.createStubInstance
 

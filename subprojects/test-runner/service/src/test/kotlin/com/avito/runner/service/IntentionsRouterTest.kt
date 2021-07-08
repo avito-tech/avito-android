@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class IntentionsRouterTest {
+internal class IntentionsRouterTest {
 
     private lateinit var router: IntentionsRouter
 

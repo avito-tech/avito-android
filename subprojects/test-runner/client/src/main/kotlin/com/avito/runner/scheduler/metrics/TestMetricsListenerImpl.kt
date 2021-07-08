@@ -21,9 +21,9 @@ internal class TestMetricsListenerImpl(
     private val testMetricsSender: TestMetricsSender,
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
-) : TestMetricsListener, DeviceListener {
+) : TestSuiteListener, DeviceListener {
 
-    private val logger = loggerFactory.create<TestMetricsListener>()
+    private val logger = loggerFactory.create<TestSuiteListener>()
 
     private val deviceTimestamps = ConcurrentHashMap<DeviceKey, DeviceTimestamps>()
 

@@ -7,7 +7,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.reservation.DeviceReservationWatcher
-import com.avito.runner.scheduler.metrics.TestMetricsListener
+import com.avito.runner.scheduler.metrics.TestSuiteListener
 import com.avito.runner.scheduler.report.Reporter
 import com.avito.runner.scheduler.report.SummaryReportMaker
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
@@ -26,7 +26,7 @@ internal class TestRunnerImpl(
     private val state: TestRunnerExecutionState,
     private val summaryReportMaker: SummaryReportMaker,
     private val reporter: Reporter,
-    private val testMetricsListener: TestMetricsListener,
+    private val testSuiteListener: TestSuiteListener,
     private val devicesProvider: DevicesProvider,
     private val testRunRequestFactory: TestRunRequestFactory,
     private val targets: List<TargetConfigurationData>,
@@ -38,7 +38,7 @@ internal class TestRunnerImpl(
     override suspend fun runTests(tests: List<TestCase>): Result<TestRunnerResult> {
         return coroutineScope {
             val startTime = System.currentTimeMillis()
-            testMetricsListener.onTestSuiteStarted()
+            testSuiteListener.onTestSuiteStarted()
             logger.info("Test run started")
             val deviceWorkerPool: DeviceWorkerPool = devicesProvider.provideFor(
                 reservations = getReservations(tests),
@@ -91,7 +91,7 @@ internal class TestRunnerImpl(
                         "ignored = ${summaryReport.ignoredCount}."
                 )
 
-                testMetricsListener.onTestSuiteFinished()
+                testSuiteListener.onTestSuiteFinished()
                 logger.info("Test run end successfully")
                 Result.Success(result)
             } catch (e: Throwable) {
