@@ -42,7 +42,7 @@ object Intents {
      * Test will freeze in the end if instrumentation intents are stubbed.
      * {@link androidx.test.core.app.InstrumentationActivityInvoker#finishActivity finishActivity}
      */
-    class NotInstrumentationIntentMatcher : TypeSafeMatcher<Intent>() {
+    private class NotInstrumentationIntentMatcher : TypeSafeMatcher<Intent>() {
         override fun describeTo(description: Description) {
             description.appendText("not instrumentation intent")
         }
