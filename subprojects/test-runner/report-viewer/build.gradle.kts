@@ -13,7 +13,6 @@ dependencies {
 
     implementation(libs.kotson)
     implementation(projects.common.httpClient)
-    implementation(projects.common.math)
     implementation(projects.logger.logger)
     implementation(projects.testRunner.testModel)
 

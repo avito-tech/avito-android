@@ -34,9 +34,5 @@ dependencies {
     testImplementation(projects.common.files)
     testImplementation(projects.common.truthExtensions)
     testImplementation(projects.common.resources)
-    testImplementation(projects.gradle.testProject)
-    testImplementation(libs.kotlinReflect)
-    testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(libs.coroutinesTest)
 }
