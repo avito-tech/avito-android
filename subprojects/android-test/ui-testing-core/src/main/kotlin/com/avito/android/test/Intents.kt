@@ -43,12 +43,12 @@ object Intents {
      * {@link androidx.test.core.app.InstrumentationActivityInvoker#finishActivity finishActivity}
      */
     class NotInstrumentationIntentMatcher : TypeSafeMatcher<Intent>() {
-        override fun describeTo(description: Description?) {
-            description?.appendText("not instrumentation intent")
+        override fun describeTo(description: Description) {
+            description.appendText("not instrumentation intent")
         }
 
-        override fun matchesSafely(item: Intent?): Boolean {
-            return item?.hasInstrumentationActivityComponent()?.not() ?: true
+        override fun matchesSafely(item: Intent): Boolean {
+            return !item.hasInstrumentationActivityComponent()
         }
     }
 

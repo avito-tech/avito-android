@@ -7,10 +7,10 @@ import android.content.Intent
  */
 fun Intent.hasInstrumentationActivityComponent(): Boolean {
     val instrumentationComponents: List<String> = listOf(
-        InstrumentationActivityInvoker.EmptyActivity::class.java,
-        InstrumentationActivityInvoker.EmptyFloatingActivity::class.java,
-        InstrumentationActivityInvoker.BootstrapActivity::class.java
-    ).map { it.name }
+        InstrumentationActivityInvoker.EmptyActivity::class.java.name,
+        InstrumentationActivityInvoker.EmptyFloatingActivity::class.java.name,
+        InstrumentationActivityInvoker.BootstrapActivity::class.java.name
+    )
 
     return instrumentationComponents.contains(component?.className)
 }
