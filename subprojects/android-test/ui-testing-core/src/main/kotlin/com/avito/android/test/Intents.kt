@@ -4,12 +4,15 @@ import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
 import android.util.Log
+import androidx.test.core.app.hasInstrumentationActivityComponent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.OngoingStubbing
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.matcher.UriMatchers
+import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import org.hamcrest.TypeSafeMatcher
 
 object Intents {
 
@@ -25,7 +28,7 @@ object Intents {
         Intents.intending(IntentMatchers.hasComponent(T::class.qualifiedName))
 
     fun stubEverything() =
-        Intents.intending(IntentMatchers.anyIntent()).respondWithFunction { intent: Intent ->
+        Intents.intending(NotInstrumentationIntentMatcher()).respondWithFunction { intent: Intent ->
             val result = resultCanceled()
             Log.d("Intents", "Responding to $intent with ${result.toReadableString()}")
             result
@@ -33,6 +36,16 @@ object Intents {
 
     private fun Instrumentation.ActivityResult.toReadableString() =
         "ActivityResult { resultCode=${this.resultCode} resultData=${this.resultData} }"
+
+    class NotInstrumentationIntentMatcher : TypeSafeMatcher<Intent>() {
+        override fun describeTo(description: Description?) {
+            description?.appendText("any application intent")
+        }
+
+        override fun matchesSafely(item: Intent?): Boolean {
+            return item?.hasInstrumentationActivityComponent()?.not() ?: true
+        }
+    }
 
     class Checks {
 
