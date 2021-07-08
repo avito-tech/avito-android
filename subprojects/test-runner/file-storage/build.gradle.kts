@@ -5,13 +5,8 @@ plugins {
 
 dependencies {
     api(projects.common.result)
-
-    implementation(projects.common.time)
-    implementation(projects.logger.logger)
-    implementation(projects.common.okhttp)
-    implementation(projects.common.httpClient)
+    api(projects.common.httpClient)
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
-    implementation(libs.okhttpLogging)
 }

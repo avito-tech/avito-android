@@ -2,7 +2,7 @@ package com.avito.runner.service.worker.device.adb.instrumentation
 
 import com.android.annotations.VisibleForTesting
 import com.avito.runner.ProcessNotification
-import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.test.model.TestName
 import rx.Observable

@@ -1,5 +1,6 @@
 package com.avito.runner.service.model
 
+import com.avito.runner.model.TestCaseRun
 import com.avito.test.model.TestCase
 
 public fun TestCaseRun.Companion.createStubInstance(

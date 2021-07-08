@@ -1,7 +1,7 @@
 package com.avito.runner.service.device.adb.instrumentation
 
 import com.avito.runner.ProcessNotification
-import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser

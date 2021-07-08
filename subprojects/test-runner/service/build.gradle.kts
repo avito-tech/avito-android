@@ -16,6 +16,7 @@ dependencies {
     api(projects.testRunner.commandLineExecutor)
     api(projects.testRunner.deviceProvider.api)
     api(projects.testRunner.testModel)
+    api(projects.testRunner.runnerApi)
 
     implementation(projects.common.result)
     implementation(projects.common.problem)
@@ -33,9 +34,5 @@ dependencies {
     testImplementation(projects.common.files)
     testImplementation(projects.common.truthExtensions)
     testImplementation(projects.common.resources)
-    testImplementation(projects.gradle.testProject)
-    testImplementation(libs.kotlinReflect)
-    testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(libs.coroutinesTest)
 }

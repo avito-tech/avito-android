@@ -7,7 +7,7 @@ import com.avito.runner.service.model.intention.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class IntentionComparisonTest {
+internal class IntentionComparisonTest {
 
     @Test
     fun `intentions are equal when have the same state and action`() {

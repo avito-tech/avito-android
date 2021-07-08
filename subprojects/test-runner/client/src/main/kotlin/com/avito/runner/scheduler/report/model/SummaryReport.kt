@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.report.model
 
-import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.model.TestCaseRun
 
 internal class SummaryReport(
     val reports: List<TestCaseRequestMatchingReport>,
