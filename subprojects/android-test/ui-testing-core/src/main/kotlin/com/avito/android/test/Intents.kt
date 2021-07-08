@@ -44,7 +44,7 @@ object Intents {
      */
     class NotInstrumentationIntentMatcher : TypeSafeMatcher<Intent>() {
         override fun describeTo(description: Description?) {
-            description?.appendText("any application intent")
+            description?.appendText("not instrumentation intent")
         }
 
         override fun matchesSafely(item: Intent?): Boolean {
