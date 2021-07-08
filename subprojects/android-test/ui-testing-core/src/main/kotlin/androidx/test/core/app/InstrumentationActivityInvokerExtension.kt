@@ -2,6 +2,9 @@ package androidx.test.core.app
 
 import android.content.Intent
 
+/**
+ * TODO: Remove after MBS-11523
+ */
 fun Intent.hasInstrumentationActivityComponent(): Boolean {
     val instrumentationComponents: List<String> = listOf(
         InstrumentationActivityInvoker.EmptyActivity::class.java,

@@ -37,6 +37,11 @@ object Intents {
     private fun Instrumentation.ActivityResult.toReadableString() =
         "ActivityResult { resultCode=${this.resultCode} resultData=${this.resultData} }"
 
+    /**
+     * TODO: Remove after MBS-11523
+     * Test will freeze in the end if instrumentation intents are stubbed.
+     * {@link androidx.test.core.app.InstrumentationActivityInvoker#finishActivity finishActivity}
+     */
     class NotInstrumentationIntentMatcher : TypeSafeMatcher<Intent>() {
         override fun describeTo(description: Description?) {
             description?.appendText("any application intent")
