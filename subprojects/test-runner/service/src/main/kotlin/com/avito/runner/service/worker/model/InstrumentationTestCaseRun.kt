@@ -1,6 +1,6 @@
 package com.avito.runner.service.worker.model
 
-import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.model.TestCaseRun
 import com.avito.test.model.TestName
 
 internal sealed class InstrumentationTestCaseRun {

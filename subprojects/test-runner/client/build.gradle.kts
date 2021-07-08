@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.testRunner.instrumentationTestsDexLoader)
     implementation(projects.testRunner.testReportArtifacts)
     implementation(projects.testRunner.deviceProvider.impl)
+    implementation(projects.testRunner.reportProcessor)
     implementation(projects.gradle.traceEvent)
     implementation(projects.common.throwableUtils)
     implementation(projects.common.math)
@@ -24,15 +25,11 @@ dependencies {
     implementation(projects.common.result)
     implementation(projects.common.problem)
     implementation(projects.common.files)
-    implementation(projects.common.retrace)
     implementation(projects.testRunner.fileStorage)
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
     implementation(libs.commonsText) {
         because("for StringEscapeUtils.escapeXml10() only")
-    }
-    implementation(libs.commonsIo) {
-        because("LogcatBuffer.Impl.tailer needs to consider Charset (https://issues.apache.org/jira/browse/IO-354)")
     }
 
     testImplementation(libs.coroutinesTest)

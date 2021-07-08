@@ -1,30 +1,20 @@
 package com.avito.runner.scheduler
 
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.filestorage.RemoteStorageFactory
-import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.report.Report
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.TestStaticData
-import com.avito.report.serialize.ReportSerializer
-import com.avito.retrace.ProguardRetracer
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.config.TargetConfigurationData
+import com.avito.runner.listener.ArtifactsTestListener
+import com.avito.runner.listener.LogListener
+import com.avito.runner.listener.ReportAwarePullValidator
+import com.avito.runner.listener.TestListenerFactory
+import com.avito.runner.listener.TestMetricsListener
 import com.avito.runner.reservation.DeviceReservationWatcher
-import com.avito.runner.scheduler.listener.ArtifactsTestListener
-import com.avito.runner.scheduler.listener.AvitoFileStorageUploader
-import com.avito.runner.scheduler.listener.LegacyTestArtifactsProcessor
-import com.avito.runner.scheduler.listener.LogListener
-import com.avito.runner.scheduler.listener.LogcatProcessor
-import com.avito.runner.scheduler.listener.LogcatTestLifecycleListener
-import com.avito.runner.scheduler.listener.ReportProcessor
-import com.avito.runner.scheduler.listener.ReportProcessorImpl
-import com.avito.runner.scheduler.listener.TestArtifactsProcessor
-import com.avito.runner.scheduler.listener.TestArtifactsProcessorImpl
-import com.avito.runner.scheduler.listener.TestArtifactsUploader
-import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
-import com.avito.runner.scheduler.metrics.TestMetricsListener
+import com.avito.runner.scheduler.metrics.TestSuiteListener
 import com.avito.runner.scheduler.report.CompositeReporter
 import com.avito.runner.scheduler.report.SummaryReportMakerImpl
 import com.avito.runner.scheduler.report.trace.TraceReporter
@@ -39,23 +29,20 @@ import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 
 internal class TestRunnerFactoryImpl(
     private val testRunnerOutputDir: File,
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
-    private val testMetricsListener: TestMetricsListener,
+    private val testSuiteListener: TestSuiteListener,
     private val deviceListener: DeviceListener,
     private val devicesProviderFactory: DevicesProviderFactory,
     private val testRunnerRequestFactory: TestRunRequestFactory,
     private val executionState: TestRunnerExecutionState,
-    private val httpClientProvider: HttpClientProvider,
     private val params: RunnerInputParams,
     private val tempLogcatDir: File,
+    private val testListenerFactory: TestListenerFactory,
     private val metricsSender: InstrumentationMetricsSender,
     private val report: Report,
     private val targets: List<TargetConfigurationData>
@@ -91,7 +78,7 @@ internal class TestRunnerFactoryImpl(
                     )
                 )
             ),
-            testMetricsListener = testMetricsListener,
+            testSuiteListener = testSuiteListener,
             testRunRequestFactory = testRunnerRequestFactory,
             targets = targets
         )
@@ -102,15 +89,24 @@ internal class TestRunnerFactoryImpl(
             add(LogListener())
             add(
                 ArtifactsTestListener(
-                    lifecycleListener = createTestReporter(
+                    lifecycleListener = testListenerFactory.createReportTestListener(
                         testStaticDataByTestCase = testStaticDataByTestCase(tests),
+                        tempLogcatDir = tempLogcatDir,
+                        report = report,
+                        proguardMappings = params.proguardMappings,
+                        fileStorageUrl = params.fileStorageUrl,
+                        uploadTestArtifacts = params.uploadTestArtifacts,
                     ),
                     outputDirectory = testRunnerOutputDir,
                     loggerFactory = loggerFactory,
                     saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
                     fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
+                    reportArtifactsPullValidator = ReportAwarePullValidator(
+                        testArtifactsProviderFactory = TestArtifactsProviderFactory
+                    )
                 )
             )
+            add(TestMetricsListener(metricsSender))
         }
     )
 
@@ -136,79 +132,6 @@ internal class TestRunnerFactoryImpl(
             TestCase(
                 name = test.name,
                 deviceName = test.device
-            )
-        }
-    }
-
-    private fun createTestReporter(
-        testStaticDataByTestCase: Map<TestCase, TestStaticData>,
-    ): TestLifecycleListener {
-        return LogcatTestLifecycleListener(
-            logcatDir = tempLogcatDir,
-            reportProcessor = createReportProcessor(testStaticDataByTestCase, metricsSender),
-            report = report,
-        )
-    }
-
-    private fun createReportProcessor(
-        testSuite: Map<TestCase, TestStaticData>,
-        metricsSender: InstrumentationMetricsSender
-    ): ReportProcessor {
-
-        val dispatcher = Dispatchers.IO
-
-        val reTracer: ProguardRetracer = ProguardRetracer.create(params.proguardMappings)
-
-        val artifactsUploader: TestArtifactsUploader = AvitoFileStorageUploader(
-            RemoteStorageFactory.create(
-                endpoint = params.fileStorageUrl.toHttpUrl(),
-                httpClientProvider = httpClientProvider,
-                isAndroidRuntime = false
-            )
-        )
-
-        val logcatUploader = LogcatProcessor.Impl(
-            testArtifactsUploader = artifactsUploader,
-            retracer = reTracer
-        )
-
-        return ReportProcessorImpl(
-            loggerFactory = params.loggerFactory,
-            testSuite = testSuite,
-            metricsSender = metricsSender,
-            testArtifactsProcessor = createTestArtifactsProcessor(
-                uploadTestArtifacts = params.uploadTestArtifacts,
-                reportSerializer = ReportSerializer(),
-                dispatcher = dispatcher,
-                logcatProcessor = logcatUploader,
-                testArtifactsUploader = artifactsUploader
-            ),
-            logcatProcessor = logcatUploader,
-            timeProvider = timeProvider,
-            dispatcher = dispatcher
-        )
-    }
-
-    private fun createTestArtifactsProcessor(
-        uploadTestArtifacts: Boolean,
-        reportSerializer: ReportSerializer,
-        dispatcher: CoroutineDispatcher,
-        logcatProcessor: LogcatProcessor,
-        testArtifactsUploader: TestArtifactsUploader
-    ): TestArtifactsProcessor {
-
-        return if (uploadTestArtifacts) {
-            TestArtifactsProcessorImpl(
-                reportSerializer = reportSerializer,
-                testArtifactsUploader = testArtifactsUploader,
-                dispatcher = dispatcher,
-                logcatProcessor = logcatProcessor
-            )
-        } else {
-            LegacyTestArtifactsProcessor(
-                reportSerializer = reportSerializer,
-                logcatProcessor = logcatProcessor,
-                dispatcher = dispatcher
             )
         }
     }

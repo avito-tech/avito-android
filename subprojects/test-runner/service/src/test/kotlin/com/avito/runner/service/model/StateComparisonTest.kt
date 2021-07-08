@@ -5,7 +5,7 @@ import com.avito.runner.service.model.intention.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class StateComparisonTest {
+internal class StateComparisonTest {
 
     @Test
     fun `states with same layers have same digests`() {

@@ -3,8 +3,8 @@ package com.avito.runner.service
 import com.avito.android.Result
 import com.avito.logger.StubLogger
 import com.avito.logger.StubLoggerFactory
+import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.listener.NoOpTestListener
-import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
@@ -38,7 +38,7 @@ import kotlin.io.path.ExperimentalPathApi
 
 @ExperimentalCoroutinesApi
 @ExperimentalPathApi
-class DeviceWorkerTest {
+internal class DeviceWorkerTest {
 
     private val loggerFactory = StubLoggerFactory
 

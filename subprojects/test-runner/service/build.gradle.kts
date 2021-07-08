@@ -16,6 +16,7 @@ dependencies {
     api(projects.testRunner.commandLineExecutor)
     api(projects.testRunner.deviceProvider.api)
     api(projects.testRunner.testModel)
+    api(projects.testRunner.runnerApi)
 
     implementation(projects.common.result)
     implementation(projects.common.problem)
