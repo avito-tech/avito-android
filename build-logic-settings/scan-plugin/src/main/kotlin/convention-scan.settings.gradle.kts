@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.version
-
 plugins {
     id("com.gradle.enterprise")
 }
