@@ -1,5 +1,6 @@
 plugins {
     `maven-publish`
+    id("convention.licensee")
 }
 
 group = "com.avito.android"
