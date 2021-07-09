@@ -21,10 +21,11 @@ public class KubeContainer(private val containerStatus: ContainerStatus?) {
         }
 
     private fun ContainerStateWaiting.describe(): String {
-        return if (!message.isNullOrBlank()) {
-            message
-        } else {
-            "Waiting"
+        return when {
+            !message.isNullOrBlank() && !reason.isNullOrBlank() -> "$message; reason=$reason"
+            !message.isNullOrBlank() -> message
+            !reason.isNullOrBlank() -> reason
+            else -> "Waiting"
         }
     }
 
@@ -43,15 +44,13 @@ public class KubeContainer(private val containerStatus: ContainerStatus?) {
         public data class Waiting(val message: String) : ContainerPhase() {
 
             public fun hasProblemsGettingImage(): Boolean {
-                return hasInvalidImageRef() || cantAccessImage()
-            }
-
-            private fun hasInvalidImageRef(): Boolean {
-                return message.contains("couldn't parse image reference")
-            }
-
-            private fun cantAccessImage(): Boolean {
-                return message.contains("pull access denied for")
+                return listOf(
+                    "couldn't parse image reference",
+                    "pull access denied for",
+                    "Failed to pull image"
+                ).any { phrase ->
+                    message.contains(phrase, ignoreCase = true)
+                }
             }
         }
 

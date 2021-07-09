@@ -91,6 +91,10 @@ ifeq ($(CONFIG_CACHE),true)
 params +=--configuration-cache
 endif
 
+ifdef AVITO_REGISTRY
+params +=-Pavito.registry=$(AVITO_REGISTRY)
+endif
+
 ifeq ($(dry_run),true)
 params +=--dry-run
 endif
@@ -138,59 +142,59 @@ clear_docker_containers:
 	fi
 
 help:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) help
+	$(docker_command) ./gradlew --project-dir $(project) $(params) help
 
 publish_to_maven_local:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) publishToMavenLocal -PprojectVersion=local
+	$(docker_command) ./gradlew --project-dir $(project) $(params) publishToMavenLocal -PprojectVersion=local
 
 stage_ui_tests:
 	make publish_to_maven_local
-	./gradlew --project-dir $(project) $(log_level) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
+	./gradlew --project-dir $(project) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
 
 # todo remove --no-daemon MBS-11385
 # see https://avito-tech.github.io/avito-android/test_runner/SampleApp/
 test_runner_instrumentation:
-	$(docker_command) ./gradlew --project-dir samples $(log_level) $(params) :test-runner:instrumentationUi --no-daemon
+	$(docker_command) ./gradlew --project-dir samples $(params) :test-runner:instrumentationUi --no-daemon
 
 unit_tests:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) test
+	$(docker_command) ./gradlew --project-dir $(project) $(params) test
 
 gradle_test:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) gradleTest
+	$(docker_command) ./gradlew --project-dir $(project) $(params) gradleTest
 
 integration_tests:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) integrationTest
+	$(docker_command) ./gradlew --project-dir $(project) $(params) integrationTest
 
 compile_tests:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) compileTestKotlin
+	$(docker_command) ./gradlew --project-dir $(project) $(params) compileTestKotlin
 
 compile:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) compileAll
+	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll
 
 check:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) check
+	$(docker_command) ./gradlew --project-dir $(project) $(params) check
 
 .PHONY: build
 build:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) build
+	$(docker_command) ./gradlew --project-dir $(project) $(params) build
 
 fast_check:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) compileAll detektAll test
+	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test
 
 full_check:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) compileAll detektAll test gradleTest
+	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test gradleTest
 
 clean_fast_check:
 	make clean
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) compileAll detektAll test --rerun-tasks --no-build-cache
+	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test --rerun-tasks --no-build-cache
 
 detekt:
-	$(docker_command) ./gradlew $(log_level) $(params) detektAll
+	$(docker_command) ./gradlew $(params) detektAll
 
 # Analyze modules dependencies issues
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/wiki/Tasks#build-health
 build_health:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) buildHealth
+	$(docker_command) ./gradlew --project-dir $(project) $(params) buildHealth
 
 # Precondition: installed graphviz: https://graphviz.org/download/
 #
@@ -199,7 +203,7 @@ build_health:
 # Example: make project_graph_report id=:test-runner:client
 project_graph_report:
 	$(call check_defined, id)
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) projectGraphReport --id $(id)
+	$(docker_command) ./gradlew --project-dir $(project) $(params) projectGraphReport --id $(id)
 	cd $(project)/build/reports/dependency-analysis && \
 		dot -Tsvg merged-graph.gv -o merged-graph.svg && \
 		dot -Tsvg merged-graph-rev.gv -o merged-graph-rev.svg && \
@@ -273,7 +277,7 @@ check_avito_configuration:
 	cd ../avito-android && ./gradlew tasks -DinfraVersion=local
 
 dependency_updates:
-	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) dependencyUpdates -Drevision=release
+	$(docker_command) ./gradlew --project-dir $(project) $(params) dependencyUpdates -Drevision=release
 
 benchmark_fast_check:
 	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios fastCheck

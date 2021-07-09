@@ -52,7 +52,7 @@ internal class KubernetesApiImpl(
     }
 
     override suspend fun createDeployment(deployment: Deployment) {
-        logger.debug("Deployment.create(): start $this")
+        logger.debug("Deployment.create(): start $deployment")
         kubernetesClient.apps().deployments().create(deployment)
         logger.debug("Deployment.create(): client returned")
 
@@ -104,10 +104,17 @@ internal class KubernetesApiImpl(
                     val phase = pod.container.phase
                     if (phase is KubeContainer.ContainerPhase.Waiting) {
                         if (phase.hasProblemsGettingImage()) {
-                            error("Can't create pods for deployment, check image reference: ${phase.message}")
+                            error("Problems getting container image: ${phase.message}")
                         }
                     }
                 }
+        }.onSuccess { pods ->
+            logger.debug(
+                "Getting pods for deployment $deploymentName:\n" +
+                    pods.joinToString(separator = "\n")
+            )
+        }.onFailure {
+            logger.warn("Can't get pods for deployment $deploymentName", it)
         }
     }
 }
