@@ -1,5 +1,4 @@
 import com.avito.android.artifactory.setUrlOrProxy
-import org.gradle.kotlin.dsl.provideDelegate
 
 pluginManagement {
 
