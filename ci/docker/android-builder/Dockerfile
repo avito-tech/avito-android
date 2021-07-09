@@ -1,4 +1,3 @@
-# TODO: use lighter base image
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
