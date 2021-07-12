@@ -8,6 +8,7 @@ import com.avito.ci.DeploymentEnvironment.Unknown
 import com.avito.teamcity.TeamcityApi
 import io.fabric8.kubernetes.api.model.apps.Deployment
 import io.fabric8.kubernetes.api.model.apps.DeploymentList
+import io.fabric8.kubernetes.api.model.apps.DoneableDeployment
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
 import io.fabric8.kubernetes.client.dsl.MixedOperation
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource
@@ -18,7 +19,10 @@ import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
-private typealias Deployments = MixedOperation<Deployment, DeploymentList, RollableScalableResource<Deployment>>
+private typealias Deployments = MixedOperation<Deployment,
+    DeploymentList,
+    DoneableDeployment,
+    RollableScalableResource<Deployment, DoneableDeployment>>
 
 internal class ClearK8SDeploymentsByNamespaces(
     private val teamcity: TeamcityApi,
