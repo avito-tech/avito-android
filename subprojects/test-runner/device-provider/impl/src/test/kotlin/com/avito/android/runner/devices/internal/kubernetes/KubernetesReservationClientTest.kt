@@ -86,7 +86,7 @@ internal class KubernetesReservationClientTest {
             ),
         )
         kubernetesApi.createDeployment = { results.poll().invoke() }
-        kubernetesApi.getPods = { Result.Success(listOf(StubPod())) }
+        kubernetesApi.getPods = { Result.Success(listOf(KubePod.createStubInstance())) }
         val exception = assertThrows<RuntimeException>(message = message) {
             runBlocking {
                 client.claim(
@@ -121,7 +121,7 @@ internal class KubernetesReservationClientTest {
         val client = client()
         val results = LinkedList(
             listOf(
-                Result.Success(listOf(StubPod())),
+                Result.Success(listOf(KubePod.createStubInstance())),
                 Result.Failure(RuntimeException())
             ),
         )
@@ -139,7 +139,7 @@ internal class KubernetesReservationClientTest {
     fun `devices channel cancel - success`() {
         val client = client(dispatcher = Dispatchers.Default)
         kubernetesApi.getPods = {
-            Result.Success(listOf(StubPod()))
+            Result.Success(listOf(KubePod.createStubInstance()))
         }
         runBlocking {
             val result = client.claim(listOf(ReservationData.stub()))
@@ -153,7 +153,7 @@ internal class KubernetesReservationClientTest {
     fun `claim then release - success`() {
         val client = client(dispatcher = Dispatchers.Default)
         kubernetesApi.getPods = {
-            Result.Success(listOf(StubPod()))
+            Result.Success(listOf(KubePod.createStubInstance()))
         }
         runBlocking {
             client.claim(listOf(ReservationData.stub()))
@@ -169,7 +169,7 @@ internal class KubernetesReservationClientTest {
                 it.waitForBoot = { Result.Failure(RuntimeException("Wait for boot failed")) }
             }
         }
-        kubernetesApi.getPods = { Result.Success(listOf(StubPod())) }
+        kubernetesApi.getPods = { Result.Success(listOf(KubePod.createStubInstance())) }
         val expectedMessage = "Can't delete pod"
         kubernetesApi.deletePod = {
             throw RuntimeException(expectedMessage)
@@ -189,8 +189,8 @@ internal class KubernetesReservationClientTest {
         val client = client()
         val results = LinkedList(
             listOf(
-                Result.Success(listOf(StubPod(name = "stub-1", ip = null))),
-                Result.Success(listOf(StubPod(name = "stub-2"))),
+                Result.Success(listOf(KubePod.createStubInstance(name = "stub-1", ip = null))),
+                Result.Success(listOf(KubePod.createStubInstance(name = "stub-2"))),
             ),
         )
 

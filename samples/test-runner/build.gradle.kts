@@ -31,6 +31,8 @@ dependencies {
     androidTestUtil(libs.testOrchestrator)
 }
 
+val avitoRegistry = getOptionalStringProperty("avito.registry")
+
 instrumentation {
     sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
 
@@ -87,8 +89,6 @@ instrumentation {
         }
     }
 }
-
-val avitoRegistry = getOptionalStringProperty("avito.registry")
 
 fun emulatorImage(api: Int, label: String): String {
     return if (avitoRegistry != null) {

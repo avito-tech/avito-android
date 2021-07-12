@@ -10,10 +10,9 @@ internal class EmulatorsLogsReporterImpl(
 ) : EmulatorsLogsReporter {
 
     override fun reportEmulatorLogs(emulatorName: Serial, log: String) {
-        getFile(
-            dir = File(outputFolder, DEVICES_LOGS),
-            emulatorName = emulatorName.value
-        ).writeText(log)
+        getLogFile(emulatorName.value)
+            .apply { parentFile?.mkdirs() }
+            .writeText(log)
     }
 
     override fun redirectLogcat(emulatorName: Serial, device: Device) {
@@ -26,6 +25,10 @@ internal class EmulatorsLogsReporterImpl(
             file = logcatFile,
             tags = logcatTags
         )
+    }
+
+    override fun getLogFile(podIp: String): File {
+        return File(File(outputFolder, DEVICES_LOGS), "$podIp.txt")
     }
 
     private fun getFile(
