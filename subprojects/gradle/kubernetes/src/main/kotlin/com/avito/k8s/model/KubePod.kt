@@ -1,4 +1,4 @@
-package com.avito.android.runner.devices.internal.kubernetes
+package com.avito.k8s.model
 
 import io.fabric8.kubernetes.api.model.ContainerStatus
 import io.fabric8.kubernetes.api.model.Pod
@@ -7,7 +7,7 @@ import io.fabric8.kubernetes.api.model.PodStatus
 /**
  * Wrapper to deal with nullability and abstract from fabric8io API changes
  */
-internal class KubePod(private val pod: Pod) {
+public class KubePod(private val pod: Pod) {
 
     private val podStatus: PodStatus?
         get() = pod.status
@@ -18,13 +18,13 @@ internal class KubePod(private val pod: Pod) {
     private val node: String?
         get() = pod.spec?.nodeName
 
-    val name: String
+    public val name: String
         get() = pod.metadata.name
 
-    val ip: String?
+    public val ip: String?
         get() = podStatus?.podIP
 
-    val phase: PodPhase
+    public val phase: PodPhase
         get() {
             val status = podStatus
             return if (status == null) {
@@ -43,7 +43,7 @@ internal class KubePod(private val pod: Pod) {
     /**
      * We have one emulator container per pod
      */
-    val container: KubeContainer
+    public val container: KubeContainer
         get() = KubeContainer(containerStatus)
 
     override fun toString(): String {
@@ -69,13 +69,13 @@ internal class KubePod(private val pod: Pod) {
     /**
      * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
      */
-    sealed class PodPhase {
+    public sealed class PodPhase {
 
         /**
          * The Pod has been bound to a node, and all of the containers have been created.
          * At least one container is still running, or is in the process of starting or restarting.
          */
-        object Running : PodPhase() {
+        public object Running : PodPhase() {
             override fun toString(): String = "Running"
         }
 
@@ -85,18 +85,18 @@ internal class KubePod(private val pod: Pod) {
          * This includes time a Pod spends waiting to be scheduled
          * as well as the time spent downloading container images over the network.
          */
-        data class Pending(val message: String) : PodPhase()
+        public data class Pending(val message: String) : PodPhase()
 
         /**
          * All containers in the Pod have terminated, and at least one container has terminated in failure.
          * That is, the container either exited with non-zero status or was terminated by the system.
          */
-        data class Failed(val message: String) : PodPhase()
+        public data class Failed(val message: String) : PodPhase()
 
         /**
          * All containers in the Pod have terminated in success, and will not be restarted.
          */
-        object Succeeded : PodPhase() {
+        public object Succeeded : PodPhase() {
             override fun toString(): String = "Succeeded"
         }
 
@@ -104,10 +104,10 @@ internal class KubePod(private val pod: Pod) {
          * For some reason the state of the Pod could not be obtained.
          * This phase typically occurs due to an error in communicating with the node where the Pod should be running.
          */
-        object Unknown : PodPhase() {
+        public object Unknown : PodPhase() {
             override fun toString(): String = "Unknown"
         }
     }
 
-    companion object
+    public companion object
 }

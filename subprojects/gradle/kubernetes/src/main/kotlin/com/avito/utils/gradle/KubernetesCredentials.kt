@@ -3,6 +3,7 @@ package com.avito.utils.gradle
 import java.io.File
 import java.io.Serializable
 
+// todo used in gradle scripts; remove it from there
 public sealed class KubernetesCredentials : Serializable {
 
     public object Empty : KubernetesCredentials() {

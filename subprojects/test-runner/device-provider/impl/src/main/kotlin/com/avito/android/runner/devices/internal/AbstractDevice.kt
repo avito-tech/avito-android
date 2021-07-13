@@ -1,11 +1,12 @@
 package com.avito.android.runner.devices.internal
 
 import com.avito.android.Result
-import com.avito.instrumentation.internal.reservation.adb.waitForCondition
+import com.avito.android.waiter.waitForCondition
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.utils.ProcessRunner
+import kotlinx.coroutines.delay
 import java.io.File
 import java.time.Duration
 
@@ -51,9 +52,12 @@ internal abstract class AbstractDevice(
         frequencySec: Long = 5,
         timeoutSec: Long = 60
     ) = waitForCondition(
-        logger = logger,
         conditionName = "Wait device with serial: $serial",
         maxAttempts = attempts,
+        onSuccess = { conditionName: String, durationMs: Long, attempt: Int ->
+            logger.debug("$conditionName succeed in $durationMs at attempt=$attempt")
+        },
+        sleepAction = { frequencyMs: Long -> delay(frequencyMs) },
         frequencySeconds = frequencySec,
         timeoutSec = timeoutSec,
         condition = command

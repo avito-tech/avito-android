@@ -1,16 +1,18 @@
-package com.avito.android.runner.devices.internal.kubernetes
+package com.avito.k8s
 
 import com.avito.android.Result
-import io.fabric8.kubernetes.api.model.Pod
+import com.avito.k8s.model.KubePod
 import io.fabric8.kubernetes.api.model.apps.Deployment
 
-internal class FakeKubernetesApi(
-    override val namespace: String = "fake-namespace"
+public class StubKubernetesApi(
+    override val namespace: String = "stub-namespace"
 ) : KubernetesApi {
 
-    var createDeployment: (Deployment) -> Unit = {}
-    var getPods: (String) -> Result<List<KubePod>> = { Result.Success(emptyList()) }
-    var deletePod: (String) -> Boolean = { true }
+    public var createDeployment: (Deployment) -> Unit = {}
+
+    public var getPods: (String) -> Result<List<KubePod>> = { Result.Success(emptyList()) }
+
+    public var deletePod: (String) -> Boolean = { true }
 
     override suspend fun deletePod(podName: String): Boolean {
         return deletePod.invoke(podName)
@@ -18,10 +20,6 @@ internal class FakeKubernetesApi(
 
     override suspend fun getPodLogs(podName: String): String {
         return "stub-pod-logs"
-    }
-
-    override suspend fun getPod(podName: String): Pod? {
-        return null
     }
 
     override suspend fun getPodDescription(podName: String): String {

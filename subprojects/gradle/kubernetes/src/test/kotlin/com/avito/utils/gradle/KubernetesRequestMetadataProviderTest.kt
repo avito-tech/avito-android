@@ -1,6 +1,7 @@
 package com.avito.utils.gradle
 
 import com.avito.http.internal.RequestMetadataProvider
+import com.avito.k8s.KubernetesRequestMetadataProvider
 import com.avito.truth.ResultSubject
 import com.google.common.truth.Truth.assertThat
 import okhttp3.MediaType

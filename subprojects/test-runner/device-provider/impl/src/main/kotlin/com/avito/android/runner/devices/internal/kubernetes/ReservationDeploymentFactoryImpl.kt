@@ -2,9 +2,9 @@ package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.k8s.toValidKubernetesName
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.utils.gradle.toValidKubernetesName
 import com.fkorotkov.kubernetes.apps.metadata
 import com.fkorotkov.kubernetes.apps.newDeployment
 import com.fkorotkov.kubernetes.apps.selector

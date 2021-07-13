@@ -6,6 +6,9 @@ import com.avito.android.runner.devices.internal.FakeRemoteDevice
 import com.avito.android.runner.devices.internal.StubEmulatorsLogsReporter
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.android.runner.devices.model.stub
+import com.avito.k8s.StubKubernetesApi
+import com.avito.k8s.model.KubePod
+import com.avito.k8s.model.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,7 +29,7 @@ import java.util.concurrent.TimeUnit
 @ExperimentalCoroutinesApi
 internal class KubernetesReservationClientTest {
 
-    private val kubernetesApi = FakeKubernetesApi()
+    private val kubernetesApi = StubKubernetesApi()
     private val androidDebugBridge = FakeAndroidDebugBridge()
     private val dispatcher = TestCoroutineDispatcher()
     private val podsQueryInterval = 1L

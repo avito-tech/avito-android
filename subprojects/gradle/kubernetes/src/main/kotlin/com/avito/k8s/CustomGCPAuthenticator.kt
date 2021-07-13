@@ -1,4 +1,4 @@
-package com.avito.utils.gradle
+package com.avito.k8s
 
 import com.google.auth.oauth2.GoogleCredentials
 import io.kubernetes.client.util.authenticators.GCPAuthenticator

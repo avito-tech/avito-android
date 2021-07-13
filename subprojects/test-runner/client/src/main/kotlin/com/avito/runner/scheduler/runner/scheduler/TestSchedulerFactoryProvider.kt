@@ -2,7 +2,6 @@ package com.avito.runner.scheduler.runner.scheduler
 
 import com.avito.android.TestSuiteLoader
 import com.avito.android.runner.devices.DeviceProviderFactoryProvider
-import com.avito.android.runner.devices.KubernetesApiProvider
 import com.avito.android.runner.devices.internal.AndroidDebugBridgeProvider
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClientProvider
@@ -10,6 +9,8 @@ import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymen
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
+import com.avito.k8s.KubernetesApiFactory
+import com.avito.k8s.KubernetesClientFactory
 import com.avito.report.ReportFactory
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.FinalizerFactoryImpl
@@ -91,12 +92,13 @@ public class TestSchedulerFactoryProvider {
                     processRunner = processRunner,
                     kubernetesReservationClientProvider = KubernetesReservationClientProvider(
                         loggerFactory = params.loggerFactory,
-                        kubernetesApiProvider = KubernetesApiProvider(
-                            timeProvider = timeProvider,
-                            kubernetesNamespace = params.executionParameters.namespace,
-                            kubernetesCredentials = params.kubernetesCredentials,
+                        kubernetesApiFactory = KubernetesApiFactory(
+                            kubernetesClientFactory = KubernetesClientFactory(
+                                httpClientProvider = httpClientProvider,
+                                kubernetesCredentials = params.kubernetesCredentials,
+                                namespace = params.executionParameters.namespace
+                            ),
                             loggerFactory = params.loggerFactory,
-                            statsDConfig = params.statsDConfig
                         ),
                         androidDebugBridgeProvider = androidDebugBridgeProvider,
                         reservationDeploymentFactoryProvider = ReservationDeploymentFactoryProvider(

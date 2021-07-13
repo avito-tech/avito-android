@@ -1,6 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
+    id("convention.test-fixtures")
 }
 
 dependencies {
@@ -15,7 +16,10 @@ dependencies {
     implementation(gradleApi())
     implementation(libs.officialKubernetesClient)
     implementation(libs.googleAuthLibrary)
+    implementation(libs.coroutinesCore)
     implementation(projects.common.result)
+    implementation(projects.common.waiter)
+    implementation(projects.logger.logger)
 
     testImplementation(projects.common.truthExtensions)
 }

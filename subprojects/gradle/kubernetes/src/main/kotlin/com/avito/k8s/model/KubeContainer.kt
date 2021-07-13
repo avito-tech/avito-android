@@ -1,11 +1,11 @@
-package com.avito.android.runner.devices.internal.kubernetes
+package com.avito.k8s.model
 
 import io.fabric8.kubernetes.api.model.ContainerStateWaiting
 import io.fabric8.kubernetes.api.model.ContainerStatus
 
-internal class KubeContainer(private val containerStatus: ContainerStatus?) {
+public class KubeContainer(private val containerStatus: ContainerStatus?) {
 
-    val phase: ContainerPhase
+    public val phase: ContainerPhase
         get() {
             val state = containerStatus?.state
             val running = state?.running
@@ -31,7 +31,7 @@ internal class KubeContainer(private val containerStatus: ContainerStatus?) {
     /**
      * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-states
      */
-    sealed class ContainerPhase {
+    public sealed class ContainerPhase {
 
         /**
          * If a container is not in either the Running or Terminated state, it is Waiting.
@@ -40,9 +40,9 @@ internal class KubeContainer(private val containerStatus: ContainerStatus?) {
          * When you use kubectl to query a Pod with a container that is Waiting,
          * you also see a Reason field to summarize why the container is in that state
          */
-        data class Waiting(val message: String) : ContainerPhase() {
+        public data class Waiting(val message: String) : ContainerPhase() {
 
-            fun hasProblemsGettingImage(): Boolean {
+            public fun hasProblemsGettingImage(): Boolean {
                 return hasInvalidImageRef() || cantAccessImage()
             }
 
@@ -61,7 +61,7 @@ internal class KubeContainer(private val containerStatus: ContainerStatus?) {
          * When you use kubectl to query a Pod with a container that is Running,
          * you also see information about when the container entered the Running state
          */
-        object Running : ContainerPhase() {
+        public object Running : ContainerPhase() {
             override fun toString(): String = "Running"
         }
 
@@ -70,14 +70,14 @@ internal class KubeContainer(private val containerStatus: ContainerStatus?) {
          * When you use kubectl to query a Pod with a container that is Terminated,
          * you see a reason, an exit code, and the start and finish time for that container's period of execution.
          */
-        object Terminated : ContainerPhase() {
+        public object Terminated : ContainerPhase() {
             override fun toString(): String = "Terminated"
         }
 
         /**
          * Our synthetic status to handle errors
          */
-        object Unknown : ContainerPhase() {
+        public object Unknown : ContainerPhase() {
             override fun toString(): String = "Unknown"
         }
     }

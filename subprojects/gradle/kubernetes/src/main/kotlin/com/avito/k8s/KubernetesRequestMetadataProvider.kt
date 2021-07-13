@@ -1,4 +1,4 @@
-package com.avito.utils.gradle
+package com.avito.k8s
 
 import com.avito.android.Result
 import com.avito.http.internal.RequestMetadata

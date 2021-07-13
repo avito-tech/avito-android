@@ -1,19 +1,17 @@
-package com.avito.instrumentation.internal.reservation.adb
+package com.avito.android.waiter
 
 import com.avito.android.Result
 import com.avito.android.Result.Failure
 import com.avito.android.Result.Success
-import com.avito.logger.Logger
-import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
-internal suspend fun <T> waitForCondition(
-    logger: Logger,
+public suspend fun <T> waitForCondition(
     conditionName: String,
-    successMessage: String? = null,
     maxAttempts: Int = WAIT_FOR_COMMAND_MAX_ATTEMPTS,
     frequencySeconds: Long = WAIT_FOR_COMMAND_FREQUENCY_SECONDS,
     timeoutSec: Long = WAIT_FOR_COMMAND_TIMEOUT,
+    onSuccess: (conditionName: String, durationMs: Long, attempt: Int) -> Unit,
+    sleepAction: suspend (frequencyMs: Long) -> Unit,
     condition: suspend () -> Result<T>
 ): Result<T> {
     val timeoutMs = TimeUnit.SECONDS.toMillis(timeoutSec)
@@ -24,7 +22,7 @@ internal suspend fun <T> waitForCondition(
         when (val result = condition()) {
             is Success -> {
                 val durationMs = System.currentTimeMillis() - startTime
-                logger.debug("${successMessage ?: "$conditionName succeed"} in $durationMs at attempt=$attempt")
+                onSuccess(conditionName, durationMs, attempt)
                 return result
             }
             is Failure -> {
@@ -34,7 +32,7 @@ internal suspend fun <T> waitForCondition(
                 } else {
                     attempt++
                     lastAttemptTime = System.currentTimeMillis()
-                    delay(TimeUnit.SECONDS.toMillis(frequencySeconds))
+                    sleepAction(TimeUnit.SECONDS.toMillis(frequencySeconds))
                 }
             }
         }
