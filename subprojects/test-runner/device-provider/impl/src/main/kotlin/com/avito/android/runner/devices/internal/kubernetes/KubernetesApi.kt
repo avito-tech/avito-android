@@ -16,7 +16,7 @@ internal interface KubernetesApi {
     suspend fun getPodDescription(podName: String): String
     suspend fun deleteDeployment(deploymentName: String)
     suspend fun createDeployment(deployment: Deployment)
-    suspend fun getPods(deploymentName: String): Result<List<Pod>>
+    suspend fun getPods(deploymentName: String): Result<List<KubePod>>
 
     class Impl(
         private val kubernetesClient: KubernetesClient,
@@ -94,63 +94,48 @@ internal interface KubernetesApi {
             }
         }
 
-        override suspend fun getPods(deploymentName: String): Result<List<Pod>> = Result.tryCatch {
+        private fun failFastOnBadImage(pods: List<KubePod>) {
+            pods.forEach { pod ->
+                val phase = pod.container.phase
+                if (phase is KubeContainer.ContainerPhase.Waiting) {
+                    if (phase.hasProblemsGettingImage()) {
+                        error("Can't create pods for deployment, check image reference: ${phase.message}")
+                    }
+                }
+            }
+        }
 
-            logger.debug("Getting pods for deployment: $deploymentName")
+        override suspend fun getPods(deploymentName: String): Result<List<KubePod>> = Result.tryCatch {
 
-            val pods = kubernetesClient.pods()
+            val message = StringBuilder()
+
+            message.appendLine("Getting pods for deployment: $deploymentName:")
+            message.appendLine("----------------")
+
+            val pods: List<KubePod> = kubernetesClient.pods()
                 .withLabel("deploymentName", deploymentName)
                 .list()
                 .items
+                .map { KubePod(it) }
 
-            val runningPods = pods.filter { it.status.phase == POD_STATUS_RUNNING }
+            pods.forEach { pod -> message.appendLine(pod.toString()) }
 
-            val pendingPods = pods.filter { it.status.phase == POD_STATUS_PENDING }
+            failFastOnBadImage(pods)
 
-            if (pendingPods.isNotEmpty()) {
+            val runningCount = pods.count { it.phase == KubePod.PodPhase.Running }
+            val pendingCount = pods.count { it.phase is KubePod.PodPhase.Pending }
+            val otherCount = pods.size - runningCount - pendingCount
 
-                val containerState = pendingPods.firstOrNull()
-                    ?.status
-                    ?.containerStatuses
-                    ?.firstOrNull()
-                    ?.state
-
-                val waitingMessage = containerState
-                    ?.waiting
-                    ?.message
-
-                // waiting means pod can't start on this node
-                // https://kubernetes.io/docs/tasks/debug-application-cluster/debug-application/#my-pod-stays-waiting
-                if (!waitingMessage.isNullOrBlank()) {
-                    logger.warn("Can't start pod: $waitingMessage")
-
-                    // handle special cases
-                    if (waitingMessage.contains("couldn't parse image reference")
-                        || waitingMessage.contains("pull access denied for")
-                    ) {
-                        error("Can't create pods for deployment, check image reference: $waitingMessage")
-                    }
-                }
-
-                val terminatedMessage = containerState
-                    ?.terminated
-                    ?.message
-
-                if (!terminatedMessage.isNullOrBlank()) {
-                    logger.warn("Pod terminated with message: $terminatedMessage")
-                }
-            }
-
-            logger.debug(
-                "Getting pods for deployment: $deploymentName completed. " +
-                    "Received ${pods.size} pods (running: ${runningPods.size})."
+            message.append(
+                "------- Summary: " +
+                    "running: $runningCount; " +
+                    "pending: $pendingCount; " +
+                    "other $otherCount  ---------"
             )
+
+            logger.debug(message.toString())
+
             pods
         }
-    }
-
-    companion object {
-        const val POD_STATUS_RUNNING = "Running"
-        const val POD_STATUS_PENDING = "Pending"
     }
 }
