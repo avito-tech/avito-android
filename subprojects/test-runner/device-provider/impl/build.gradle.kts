@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api(projects.testRunner.service)
     api(projects.testRunner.deviceProvider.api)
-    api(projects.gradle.kubernetes)
+    api(projects.testRunner.kubernetes)
 
     implementation(projects.gradle.process)
     implementation(projects.logger.logger)
@@ -18,5 +18,5 @@ dependencies {
     testImplementation(libs.coroutinesTest)
 
     testFixturesApi(testFixtures(projects.common.httpClient))
-    testFixturesApi(testFixtures(projects.gradle.kubernetes))
+    testFixturesApi(testFixtures(projects.testRunner.kubernetes))
 }
