@@ -15,7 +15,7 @@ public class KubePod(private val pod: Pod) {
     private val containerStatus: ContainerStatus?
         get() = podStatus?.containerStatuses?.firstOrNull()
 
-    private val node: String?
+    public val node: String?
         get() = pod.spec?.nodeName
 
     public val name: String
@@ -47,7 +47,7 @@ public class KubePod(private val pod: Pod) {
         get() = KubeContainer(containerStatus)
 
     override fun toString(): String {
-        return "Pod $name [node=$node; pod=$phase; container=${container.phase}]"
+        return "Pod $name [ip=$ip; node=$node; pod=$phase; container=${container.phase}]"
     }
 
     private fun PodStatus.describe(): String {

@@ -173,17 +173,19 @@ internal class KubernetesReservationClient(
         val podName = name
         logger.debug("Found new pod: $podName")
         return bootDevice().onFailure { error ->
-            val message = buildString {
-                append("Pod $podName can't load device. Disconnect and delete.")
-                val podIp = ip
-                if (!podIp.isNullOrBlank()) {
-                    appendLine()
-                    append("Check device logs in artifacts: ${emulatorsLogsReporter.getLogFile(podIp)}")
-                }
-            }
-            logger.warn(message, error)
+            logger.warn(initializeFailureMessage(podName, ip), error)
             val isDeleted = kubernetesApi.deletePod(podName)
             logger.debug("Pod $podName is deleted: $isDeleted")
+        }
+    }
+
+    private fun initializeFailureMessage(podName: String, podIp: String?): String {
+        return buildString {
+            append("Pod $podName can't load device. Disconnect and delete.")
+            if (!podIp.isNullOrBlank()) {
+                appendLine()
+                append("Check device logs in artifacts: ${emulatorsLogsReporter.getLogFile(podIp)}")
+            }
         }
     }
 
@@ -217,6 +219,7 @@ internal class KubernetesReservationClient(
                                                 val serial = device.serial
                                                 try {
                                                     emulatorsLogsReporter.reportEmulatorLogs(
+                                                        pod = pod,
                                                         emulatorName = serial,
                                                         log = kubernetesApi.getPodLogs(podName)
                                                     )
