@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(projects.gradle.buildVerdictTasksApi)
-    api(projects.gradle.kubernetes)
+    api(projects.testRunner.kubernetes)
 
     implementation(libs.gson)
     implementation(projects.common.time)

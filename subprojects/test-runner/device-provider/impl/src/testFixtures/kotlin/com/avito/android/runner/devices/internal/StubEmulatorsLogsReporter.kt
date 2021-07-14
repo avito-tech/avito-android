@@ -1,11 +1,12 @@
 package com.avito.android.runner.devices.internal
 
+import com.avito.k8s.model.KubePod
 import com.avito.runner.service.worker.device.Serial
 import java.io.File
 
 internal object StubEmulatorsLogsReporter : EmulatorsLogsReporter {
 
-    override fun reportEmulatorLogs(emulatorName: Serial, log: String) {
+    override fun reportEmulatorLogs(pod: KubePod, emulatorName: Serial, log: String) {
         // empty
     }
 

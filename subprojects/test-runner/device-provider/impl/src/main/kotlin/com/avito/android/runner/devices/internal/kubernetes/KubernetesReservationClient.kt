@@ -6,6 +6,8 @@ import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
 import com.avito.android.runner.devices.internal.RemoteDevice
 import com.avito.android.runner.devices.internal.ReservationClient
 import com.avito.android.runner.devices.model.ReservationData
+import com.avito.k8s.KubernetesApi
+import com.avito.k8s.model.KubePod
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.DeviceCoordinate
@@ -171,17 +173,19 @@ internal class KubernetesReservationClient(
         val podName = name
         logger.debug("Found new pod: $podName")
         return bootDevice().onFailure { error ->
-            val message = buildString {
-                append("Pod $podName can't load device. Disconnect and delete.")
-                val podIp = ip
-                if (!podIp.isNullOrBlank()) {
-                    appendLine()
-                    append("Check device logs in artifacts: ${emulatorsLogsReporter.getLogFile(podIp)}")
-                }
-            }
-            logger.warn(message, error)
+            logger.warn(initializeFailureMessage(podName, ip), error)
             val isDeleted = kubernetesApi.deletePod(podName)
             logger.debug("Pod $podName is deleted: $isDeleted")
+        }
+    }
+
+    private fun initializeFailureMessage(podName: String, podIp: String?): String {
+        return buildString {
+            append("Pod $podName can't load device. Disconnect and delete.")
+            if (!podIp.isNullOrBlank()) {
+                appendLine()
+                append("Check device logs in artifacts: ${emulatorsLogsReporter.getLogFile(podIp)}")
+            }
         }
     }
 
@@ -203,9 +207,7 @@ internal class KubernetesReservationClient(
                 state.deployments.close()
                 for (deploymentName in state.deployments.toList()) {
                     launch(CoroutineName("delete-deployment-$deploymentName")) {
-                        kubernetesApi.getPods(
-                            deploymentName = deploymentName
-                        ).fold(
+                        kubernetesApi.getPods(deploymentName).fold(
                             { pods ->
                                 val runningPods = pods.filter { it.phase is KubePod.PodPhase.Running }
                                 if (runningPods.isNotEmpty()) {
@@ -217,6 +219,7 @@ internal class KubernetesReservationClient(
                                                 val serial = device.serial
                                                 try {
                                                     emulatorsLogsReporter.reportEmulatorLogs(
+                                                        pod = pod,
                                                         emulatorName = serial,
                                                         log = kubernetesApi.getPodLogs(podName)
                                                     )
@@ -245,7 +248,6 @@ internal class KubernetesReservationClient(
                                 logger.warn("Can't get pods when release", error)
                             }
                         )
-
                         kubernetesApi.deleteDeployment(deploymentName)
                     }
                 }
