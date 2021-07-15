@@ -1,23 +1,18 @@
-FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu18.04
+FROM ubuntu:20.04
 
 ARG SDK_VERSION
 ARG EMULATOR_ARCH
-
-ENV VERSION=${SDK_VERSION}
 
 # -------------------- Common -------------------
 # socat         For redirecting adb and VNC from emulator to host
 # libglu1       For emulators software rendering
 # lib32stdc++6  For mksdcard android sdk tool
 # net-tools     For basic network primitives
-#
-# libglvnd0     For initialization OpenGl with gpu rendering
 RUN apt-get update && \
 	apt-get install -y \
-	        wget \
+	        curl \
     	    unzip \
-    	    openjdk-8-jdk \
-    	    git && \
+    	    openjdk-11-jdk && \
     apt-get install -y \
             net-tools \
             socat \
@@ -25,73 +20,62 @@ RUN apt-get update && \
             lib32stdc++6 && \
     apt-get clean && apt-get purge
 
-ENV SHELL /bin/bash
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-# -----------------------------------------------
+ARG ANDROID_HOME=/opt/android-sdk
 
-# ------------------ Nvidia GPU -----------------
-ENV NVIDIA_VISIBLE_DEVICES \
-    ${NVIDIA_VISIBLE_DEVICES:-all}
-ENV NVIDIA_DRIVER_CAPABILITIES \
-    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+# DEBIAN_FRONTEND - to prevent timezone questions
+ENV LANG=C.UTF-8 \
+    SHELL=/bin/bash \
+    JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 \
+    DEBIAN_FRONTEND=noninteractive \
+    VERSION=${SDK_VERSION} \
+    ANDROID_SDK_ROOT=$ANDROID_HOME \
+    PATH=$PATH:$ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${ANDROID_HOME}/emulator/lib64/qt/lib:${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/gles_swiftshader
 # -----------------------------------------------
 
 # ----------------- Android SDK -----------------
-ARG ANDROID_SDK_VERSION=6858069
+# https://developer.android.com/studio/index.html#command-tools
+# Additional info about directory structure: https://stackoverflow.com/a/61176718/981330
+ARG COMMANDLINE_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+ARG ANDROID_SDK_FILE_NAME=commandlinetools.zip
 
-# TODO: reuse android-sdk image MBS-7071
-ENV ANDROID_HOME /opt/android-sdk
-
-ENV PATH ${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/cmdline-tools/tools/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:${ANDROID_HOME}/emulator/lib64/qt/lib:${ANDROID_HOME}/emulator/lib64/libstdc++:${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/gles_swiftshader
-
-RUN mkdir -p ${ANDROID_HOME}/cmdline-tools && \
-    wget -q https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_VERSION}_latest.zip && \
-    unzip *tools*linux*.zip -d ${ANDROID_HOME}/cmdline-tools && \
-    mv ${ANDROID_HOME}/cmdline-tools/cmdline-tools ${ANDROID_HOME}/cmdline-tools/tools && \
-    rm *tools*linux*.zip
+RUN curl $COMMANDLINE_TOOLS_URL --progress-bar --location --output $ANDROID_SDK_FILE_NAME && \
+  unzip $ANDROID_SDK_FILE_NAME -d $ANDROID_SDK_ROOT && \
+  mv $ANDROID_SDK_ROOT/cmdline-tools $ANDROID_SDK_ROOT/tools && \
+  mkdir $ANDROID_SDK_ROOT/cmdline-tools && \
+  mv $ANDROID_SDK_ROOT/tools $ANDROID_SDK_ROOT/cmdline-tools/tools && \
+  rm -f $ANDROID_SDK_FILE_NAME
 
 # platform-tools For adb and libc
-# tools          For mksdcard and avdmanager
-# emulator       For emulator command and libraries
+# emulator       For emulator command and libraries, mksdcard and avdmanager
+# Channels: 0 (stable), 1 (beta), 2 (dev), or 3 (canary)
 RUN mkdir $HOME/.android && touch $HOME/.android/repositories.cfg && \
-    yes | sdkmanager --verbose --channel=3 \
+    yes | sdkmanager --verbose --channel=0 \
     "platforms;android-${SDK_VERSION}" \
-    "tools" \
+    "emulator" \
+    "platform-tools" \
     "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" && \
-    chmod -R o+rwX ${ANDROID_HOME}
-
-RUN mkdir --parents $ANDROID_HOME/tools/keymaps && \
-    touch $ANDROID_HOME/tools/keymaps/en-us && \
-    mkdir --parents $ANDROID_HOME/tools/lib/pc-bios/keymaps && \
-    touch $ANDROID_HOME/tools/lib/pc-bios/keymaps/en-us
-# -----------------------------------------------
+    chmod -R o+rwX ${ANDROID_SDK_ROOT}
 
 # ------------------ Emulators ------------------
 # Create emulator and increase internal storage
-RUN echo "no" | avdmanager create avd --name emulator_${SDK_VERSION} --package "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" --abi google_apis/${EMULATOR_ARCH}
-
-RUN mksdcard -l e 512M /sdcard.img
+RUN echo "no" | avdmanager create avd \
+    --name emulator_${SDK_VERSION} \
+    --package "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" \
+    --abi google_apis/${EMULATOR_ARCH} && \
+    mksdcard -l e 512M /sdcard.img
 
 COPY hardware/config_${SDK_VERSION}.ini /root/.android/avd/emulator_${SDK_VERSION}.avd/config.ini
 # -----------------------------------------------
 
 # ----------------- Entrypoint ------------------
-COPY prepare_snapshot.sh /
-
-COPY adb_redirect.sh /
-COPY run_emulator.sh /
-COPY entrypoint.sh /
+COPY prepare_snapshot.sh adb_redirect.sh run_emulator.sh entrypoint.sh /
 
 # https://developer.android.com/studio/command-line/adb#howadbworks
-# ADB server port
-EXPOSE 5037
-# Console port
-EXPOSE 5554
-# ADB
-EXPOSE 5555
-# VNC
-EXPOSE 5900
+# 5037 - ADB server port
+# 5554 - Console port
+# 5555 - ADB
+# 5900 - VNC
+EXPOSE 5037 5554 5555 5900
 
 CMD ["/entrypoint.sh"]
-# -----------------------------------------------

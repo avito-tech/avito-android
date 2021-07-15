@@ -51,17 +51,20 @@ public class KubePod(private val pod: Pod) {
     }
 
     private fun PodStatus.describe(): String {
-        return if (!message.isNullOrBlank()) {
-            message
-        } else {
-            val lastConditionMessage = conditions.sortedByDescending { it.lastTransitionTime }
-                .mapNotNull { it.message }
-                .firstOrNull()
+        return when {
+            !message.isNullOrBlank() && !reason.isNullOrBlank() -> "$message; reason=$reason"
+            !message.isNullOrBlank() -> message
+            !reason.isNullOrBlank() -> reason
+            else -> {
+                val lastConditionMessage = conditions.sortedByDescending { it.lastTransitionTime }
+                    .mapNotNull { it.message }
+                    .firstOrNull()
 
-            if (!lastConditionMessage.isNullOrBlank()) {
-                lastConditionMessage
-            } else {
-                "Unknown"
+                if (!lastConditionMessage.isNullOrBlank()) {
+                    lastConditionMessage
+                } else {
+                    "Unknown"
+                }
             }
         }
     }

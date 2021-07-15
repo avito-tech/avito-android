@@ -128,7 +128,7 @@ This is the image for building and testing Android applications. It contains And
     docker run -d \
         -p 5555:5555 \
         -p 5554:5554 \
-        -e "SNAPSHOT_DISABLED"="true" -e "WINDOW"="true" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+        -e "SNAPSHOT_ENABLED"="false" -e "WINDOW"="true" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
         --privileged \
         <registry>/android/emulator-27:<TAG>
     ```
