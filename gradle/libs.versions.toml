@@ -79,6 +79,8 @@ dexlib = "org.smali:dexlib2:2.3"
 junit = "junit:junit:4.13"
 truth = "com.google.truth:truth:1.0"
 hamcrest = "org.hamcrest:hamcrest:2.2"
+hamcrestLibrary = "org.hamcrest:hamcrest-library:2.2"
+hamcrestCore = "org.hamcrest:hamcrest-core:2.2"
 jsonPathAssert = "com.jayway.jsonpath:json-path-assert:2.4.0"
 kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.4.0"
 mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
@@ -107,3 +109,6 @@ jdgraphtCore = "org.jgrapht:jgrapht-core:1.5.1"
 
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
+[bundles]
+hamcrest = ["hamcrest", "hamcrestLibrary", "hamcrestCore"]
