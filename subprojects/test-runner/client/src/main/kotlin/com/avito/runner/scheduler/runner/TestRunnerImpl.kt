@@ -46,7 +46,7 @@ internal class TestRunnerImpl(
                 reservations = getReservations(tests),
             )
             try {
-                withTimeout(TimeUnit.MINUTES.toMillis(5)) {
+                withTimeout(TimeUnit.MINUTES.toMillis(1)) {
                     deviceWorkerPool.start()
                     reservationWatcher.watch(state.deviceSignals)
                     scheduler.start(
