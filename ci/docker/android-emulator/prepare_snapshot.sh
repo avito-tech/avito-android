@@ -34,7 +34,7 @@ if [[ -z "${VERSION}" ]]; then
 fi
 
 echo "Starting emulator..."
-SNAPSHOT_DISABLED="true" ./run_emulator.sh &
+SNAPSHOT_ENABLED="false" ./run_emulator.sh &
 
 echo "Waiting for emulator booting..."
 sleep 30
@@ -71,7 +71,7 @@ adb emu kill
 
 sleep 5
 
-SNAPSHOT_DISABLED="true" ./run_emulator.sh &
+SNAPSHOT_ENABLED="false" ./run_emulator.sh &
 
 echo "Waiting for emulator booting..."
 sleep 30

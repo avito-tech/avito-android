@@ -60,6 +60,7 @@ public sealed class Device : Serializable {
         override val api: Int,
         override val model: String,
         public val image: String,
+        // todo remove, not used anymore
         public val gpu: Boolean = false,
         public val cpuCoresLimit: String? = null,
         public val cpuCoresRequest: String? = null,

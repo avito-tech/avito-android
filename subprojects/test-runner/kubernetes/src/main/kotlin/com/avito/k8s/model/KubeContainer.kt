@@ -21,10 +21,11 @@ public class KubeContainer(private val containerStatus: ContainerStatus?) {
         }
 
     private fun ContainerStateWaiting.describe(): String {
-        return if (!message.isNullOrBlank()) {
-            message
-        } else {
-            "Waiting"
+        return when {
+            !message.isNullOrBlank() && !reason.isNullOrBlank() -> "$message; reason=$reason"
+            !message.isNullOrBlank() -> message
+            !reason.isNullOrBlank() -> reason
+            else -> "Waiting"
         }
     }
 

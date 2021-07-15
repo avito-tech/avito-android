@@ -53,7 +53,7 @@ instrumentation {
             name = "api29",
             api = 29,
             model = "Android_SDK_built_for_x86_64",
-            image = emulatorImage(29, "915c1f20be"),
+            image = emulatorImage(29, "1927fb7cda"),
             cpuCoresRequest = "1",
             cpuCoresLimit = "1.3",
             memoryLimit = "4Gi"
