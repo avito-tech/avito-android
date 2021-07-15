@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(libs.junit)
     implementation(libs.truth)
-    implementation(libs.hamcrest)
+    implementation(libs.bundles.hamcrest)
 
     testImplementation(libs.kotlinReflect)
 }
