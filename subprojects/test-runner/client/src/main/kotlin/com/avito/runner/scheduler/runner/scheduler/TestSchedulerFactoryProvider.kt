@@ -106,7 +106,8 @@ public class TestSchedulerFactoryProvider {
                             projectName = params.projectName,
                             buildId = params.buildId,
                             buildType = params.buildType,
-                            loggerFactory = params.loggerFactory
+                            loggerFactory = params.loggerFactory,
+                            useLegacyExtensionsV1Beta = params.useLegacyExtensionsV1Beta,
                         ),
                         emulatorsLogsReporterProvider = emulatorsLogsReporterProvider
                     ),
