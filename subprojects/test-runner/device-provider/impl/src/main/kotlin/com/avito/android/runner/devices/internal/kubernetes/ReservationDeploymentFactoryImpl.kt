@@ -27,6 +27,7 @@ internal class ReservationDeploymentFactoryImpl(
     private val buildId: String,
     private val buildType: String,
     private val deploymentNameGenerator: DeploymentNameGenerator,
+    private val useLegacyExtensionsV1Beta: Boolean,
     loggerFactory: LoggerFactory
 ) : ReservationDeploymentFactory {
 
@@ -136,7 +137,7 @@ internal class ReservationDeploymentFactoryImpl(
             .plus("deploymentName" to deploymentName)
 
         return newDeployment {
-            apiVersion = "extensions/v1beta1"
+            apiVersion = if (useLegacyExtensionsV1Beta) "extensions/v1beta1" else "apps/v1"
             metadata {
                 name = deploymentName
                 labels = deploymentMatchLabels
