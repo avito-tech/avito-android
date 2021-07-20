@@ -34,20 +34,24 @@ public object TestArtifactsProviderFactory {
     private fun create(provider: ReportDirProvider) =
         DirectTestArtifactsProvider(provider)
 
-    // android API's are unavailable here
+    // Android API's are unavailable here
     @Suppress("SdCardPath")
     public fun createForAdbAccess(
+        api: Int,
         appUnderTestPackage: String,
         name: TestName,
     ): TestArtifactsProvider {
-        val dataPath = "/sdcard/Android/data/$appUnderTestPackage/files"
+        val dataPath = if (api >= 30) {
+            "/storage/emulated/0/Android/media/$appUnderTestPackage"
+        } else {
+            "/sdcard/Android/data/$appUnderTestPackage/files"
+        }
         return create(
             ReportDirProviderForAdb(
                 rootDir = lazy { File(dataPath) },
                 testDirGenerator = TestDirGenerator.Impl(
                     name = name
                 )
-
             )
         )
     }

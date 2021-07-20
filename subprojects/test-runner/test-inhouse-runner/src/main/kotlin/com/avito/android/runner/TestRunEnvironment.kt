@@ -85,12 +85,7 @@ fun provideEnvironment(
             videoRecordingFeature = provideVideoRecordingFeature(
                 argumentsProvider = argumentsProvider
             ),
-            outputDirectory = lazy {
-                ContextCompat.getExternalFilesDirs(
-                    InstrumentationRegistry.getInstrumentation().targetContext,
-                    null
-                )[0]
-            },
+            outputDirectory = lazy { outputDir() },
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),
@@ -117,12 +112,7 @@ fun parseEnvironment(
             videoRecordingFeature = provideVideoRecordingFeature(
                 argumentsProvider = argumentsProvider
             ),
-            outputDirectory = lazy {
-                ContextCompat.getExternalFilesDirs(
-                    InstrumentationRegistry.getInstrumentation().targetContext,
-                    null
-                )[0]
-            },
+            outputDirectory = lazy { outputDir() },
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),
@@ -157,6 +147,18 @@ internal fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDest
         } else {
             ReportDestination.Legacy
         }
+    }
+}
+
+private fun outputDir(): File {
+    return if (Build.VERSION.SDK_INT >= 30) {
+        // public dir which is accessible by adb
+        InstrumentationRegistry.getInstrumentation().targetContext.externalMediaDirs[0]
+    } else {
+        ContextCompat.getExternalFilesDirs(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            null
+        )[0]
     }
 }
 

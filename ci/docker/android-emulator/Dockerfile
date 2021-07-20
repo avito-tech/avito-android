@@ -4,12 +4,13 @@ ARG SDK_VERSION
 ARG EMULATOR_ARCH
 
 # -------------------- Common -------------------
-# socat         For redirecting adb and VNC from emulator to host
-# libglu1       For emulators software rendering
-# lib32stdc++6  For mksdcard android sdk tool
-# net-tools     For basic network primitives
+# net-tools             basic network primitives
+# socat                 redirecting adb and VNC from emulator to host
+# libglu1               emulators software rendering
+# libpulse0, libx...    qemu x64 startup (API 30)
+# lib32stdc++6          mksdcard android sdk tool
 RUN apt-get update && \
-	apt-get install -y \
+	apt-get install --no-install-recommends -y \
 	        curl \
     	    unzip \
     	    openjdk-11-jdk && \
@@ -17,6 +18,8 @@ RUN apt-get update && \
             net-tools \
             socat \
             libglu1 \
+            libpulse0 \
+            libx11-6 libxcb1 libxdamage1 libnss3 libxcomposite1 libxcursor1 libxi6 libxext6 libxfixes3 \
             lib32stdc++6 && \
     apt-get clean && apt-get purge
 
