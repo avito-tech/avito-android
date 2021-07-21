@@ -161,6 +161,7 @@ internal class DeviceWorker(
         }.flatMap { deviceTestCaseRun ->
 
             val reportFileProvider = TestArtifactsProviderFactory.createForAdbAccess(
+                api = device.api,
                 appUnderTestPackage = action.targetPackage,
                 name = action.test.name
             )
