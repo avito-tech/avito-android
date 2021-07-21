@@ -33,6 +33,7 @@ import com.avito.runner.service.worker.device.stub.StubDevice
 import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationFailure
 import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.listener.StubDeviceListener
+import com.avito.runner.trace.StubTraceReporter
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
@@ -754,7 +755,8 @@ internal class RunnerIntegrationTest {
                 override fun dispatcher() = dispatcher
             },
             testRunnerOutputDir = outputDirectory,
-            testListener = NoOpTestListener
+            testListener = NoOpTestListener,
+            newDeviceListener = com.avito.runner.listener.StubDeviceListener(),
         ),
         devices = devices
     )
@@ -789,6 +791,7 @@ internal class RunnerIntegrationTest {
             },
             summaryReportMaker = SummaryReportMakerImpl(),
             reporter = CompositeReporter(emptyList()),
+            traceReporter = StubTraceReporter(),
             testSuiteListener = StubTestMetricsListener,
             devicesProvider = devicesProvider,
             testRunRequestFactory = testRunRequestFactory,
