@@ -111,10 +111,10 @@ internal class ArtifactsTestListener(
     ): TestResult {
         return artifactsDir
             .flatMap { dir ->
-                pullResults(
-                    device = device,
-                    remotePath = dir.toPath(),
-                    destination = tempDirectory
+                device.pullDir(
+                    deviceDir = dir.toPath(),
+                    hostDir = tempDirectory,
+                    validator = reportArtifactsPullValidator
                 )
             }
             .fold(
@@ -129,24 +129,6 @@ internal class ArtifactsTestListener(
                     )
                 }
             )
-    }
-
-    private fun pullResults(device: Device, remotePath: Path, destination: Path): Result<File> {
-        val pullResult = device.pullDir(
-            deviceDir = remotePath,
-            hostDir = destination,
-            validator = reportArtifactsPullValidator
-        )
-        return if (device.api >= 30) {
-            val cleaningResult = device.clearDirectory(remotePath)
-                .map { remotePath.toFile() }
-
-            pullResult.combine(cleaningResult) { pullDir, _ ->
-                pullDir
-            }
-        } else {
-            pullResult
-        }
     }
 
     private fun handleIncompleteTest(

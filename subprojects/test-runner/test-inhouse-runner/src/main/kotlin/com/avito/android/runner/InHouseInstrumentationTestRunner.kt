@@ -7,6 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.instrumentation.ActivityProvider
 import com.avito.android.instrumentation.ActivityProviderFactory
+import com.avito.android.internal.RuntimeApplicationDirProvider
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
@@ -80,9 +81,10 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val testArtifactsProvider: TestArtifactsProvider by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+        val appDirProvider = RuntimeApplicationDirProvider(targetContext)
 
-        TestArtifactsProviderFactory.create(
-            testReportRootDir = runEnvironment.outputDirectory,
+        TestArtifactsProviderFactory.createForAndroidRuntime(
+            appDirProvider = appDirProvider,
             name = runEnvironment.testMetadata.name
         )
     }

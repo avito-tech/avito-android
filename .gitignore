@@ -4,6 +4,7 @@ local.properties
 .pytest_cache
 # output of HeapDumpOnOutOfMemoryError
 *.hprof
+*.log
 # hugo generated files
 public/
 .DS_Store
