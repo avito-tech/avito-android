@@ -5,6 +5,7 @@ import com.avito.android.test.report.createStubInstance
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
 import com.avito.logger.StubLoggerFactory
+import com.avito.report.ApplicationDirProvider
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Entry
@@ -83,8 +84,10 @@ internal class ExternalStorageTransportTest {
         rootDir: File,
         testMetadata: TestMetadata
     ): TestArtifactsProvider {
-        return TestArtifactsProviderFactory.create(
-            testReportRootDir = lazy { rootDir },
+        return TestArtifactsProviderFactory.createForAndroidRuntime(
+            appDirProvider = object : ApplicationDirProvider {
+                override val dir: File = rootDir
+            },
             name = testMetadata.name
         )
     }

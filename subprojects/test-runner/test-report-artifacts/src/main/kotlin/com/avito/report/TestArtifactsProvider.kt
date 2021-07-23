@@ -21,6 +21,9 @@ public interface TestArtifactsProvider {
 
     public fun provideReportFile(): Result<File>
 
+    /**
+     * @param relativePath path relative to report directory
+     */
     public fun getFile(relativePath: String): Result<File>
 
     public fun generateFile(name: String, extension: String, create: Boolean = false): Result<File>
