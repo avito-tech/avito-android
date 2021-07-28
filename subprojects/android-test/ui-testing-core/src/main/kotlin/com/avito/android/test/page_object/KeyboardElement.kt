@@ -57,6 +57,7 @@ class KeyboardElement : PageObject() {
                 val activityHeight = content.rootView.height
                 val minimalKeyboardHeight = activityHeight * KEYBOARD_MINIMUM_HEIGHT_PERCENTAGE
 
+                // TODO: don't use hidden API or unseal it by me.weishu.reflection.Reflection
                 // If mAttachInfo is null we can't check keyboard position.
                 // https://issuetracker.google.com/u/1/issues/68137674
                 View::class.java.getDeclaredField("mAttachInfo").apply {
