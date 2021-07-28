@@ -35,7 +35,9 @@ val initialTaskNames: List<String> = project.gradle.startParameter.taskNames
 project.gradle.startParameter.setTaskNames(initialTaskNames + listOf("installGitHooks"))
 
 tasks.register("detektAll").configure {
-    gradle.includedBuilds.forEach { includedBuild ->
-        dependsOn(includedBuild.task(":detektAll"))
-    }
+    gradle.includedBuilds
+        .filterNot { it.name == "build-logic-settings" }
+        .forEach { includedBuild ->
+            dependsOn(includedBuild.task(":detektAll"))
+        }
 }
