@@ -145,7 +145,7 @@ help:
 	$(docker_command) ./gradlew --project-dir $(project) $(params) help
 
 publish_to_maven_local:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) publishToMavenLocal -PprojectVersion=local
+	$(docker_command) ./gradlew --project-dir $(project) $(params) publishToMavenLocal -PprojectVersion=local --no-configuration-cache
 
 stage_ui_tests:
 	make publish_to_maven_local
@@ -189,7 +189,7 @@ clean_fast_check:
 	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test --rerun-tasks --no-build-cache
 
 detekt:
-	$(docker_command) ./gradlew $(params) detektAll
+	$(docker_command) ./gradlew $(params) detektAll --no-configuration-cache
 
 # Analyze modules dependencies issues
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/wiki/Tasks#build-health
