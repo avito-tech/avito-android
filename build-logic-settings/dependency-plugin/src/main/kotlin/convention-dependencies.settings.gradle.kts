@@ -72,6 +72,20 @@ dependencyResolutionManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
+                        repositoryName = "jitpack.io",
+                        originalRepo = "https://jitpack.io"
+                    )
+                }
+            }
+            filter {
+                includeModule("com.github.tiann", "FreeReflection")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy(
+                        artifactoryUrl = artifactoryUrl,
                         repositoryName = "jcenter",
                         originalRepo = "https://jcenter.bintray.com"
                     )
@@ -81,7 +95,6 @@ dependencyResolutionManagement {
                 includeGroup("com.forkingcode.espresso.contrib")
                 includeGroup("org.jetbrains.trove4j")
                 includeModule("com.fkorotkov", "kubernetes-dsl")
-                includeModule("me.weishu", "free_reflection")
                 includeModule("org.jetbrains.teamcity", "teamcity-rest-client")
             }
         }
