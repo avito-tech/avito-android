@@ -5,8 +5,6 @@ local.properties
 # output of HeapDumpOnOutOfMemoryError
 *.hprof
 *.log
-# hugo generated files
-public/
 .DS_Store
 outputs/
 gh-pages-generated/
@@ -14,6 +12,8 @@ gh-pages-generated/
 *.iml
 .idea/*
 !.idea/dictionaries/
+# Layout inspector captures
+captures/
 # gradle-profiler
 gradle-user-home
 profile-out*

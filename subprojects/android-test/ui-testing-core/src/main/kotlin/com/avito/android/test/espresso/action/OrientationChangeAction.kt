@@ -36,7 +36,7 @@ class OrientationChangeAction(private val orientation: Int? = null) : ViewAction
         when (val currentOrientation = activity.resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             Configuration.ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            else -> throw IllegalStateException("illegal orientation: $currentOrientation")
+            else -> throw IllegalStateException("Unsupported orientation: $currentOrientation")
         }
 
     companion object {
