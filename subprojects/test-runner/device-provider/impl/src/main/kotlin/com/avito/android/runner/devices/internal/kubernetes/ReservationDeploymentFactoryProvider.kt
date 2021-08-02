@@ -7,7 +7,8 @@ public class ReservationDeploymentFactoryProvider(
     private val projectName: String,
     private val buildId: String,
     private val buildType: String,
-    private val loggerFactory: LoggerFactory
+    private val loggerFactory: LoggerFactory,
+    private val useLegacyExtensionsV1Beta: Boolean
 ) {
     internal fun provide(): ReservationDeploymentFactory {
         return ReservationDeploymentFactoryImpl(
@@ -16,7 +17,8 @@ public class ReservationDeploymentFactoryProvider(
             buildId = buildId,
             buildType = buildType,
             deploymentNameGenerator = UUIDDeploymentNameGenerator(),
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            useLegacyExtensionsV1Beta = useLegacyExtensionsV1Beta,
         )
     }
 }

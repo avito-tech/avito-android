@@ -13,10 +13,7 @@ import com.fkorotkov.kubernetes.apps.template
 import com.fkorotkov.kubernetes.metadata
 import com.fkorotkov.kubernetes.newContainer
 import com.fkorotkov.kubernetes.newEnvVar
-import com.fkorotkov.kubernetes.newHostPathVolumeSource
 import com.fkorotkov.kubernetes.newToleration
-import com.fkorotkov.kubernetes.newVolume
-import com.fkorotkov.kubernetes.newVolumeMount
 import com.fkorotkov.kubernetes.resources
 import com.fkorotkov.kubernetes.securityContext
 import com.fkorotkov.kubernetes.spec
@@ -30,6 +27,7 @@ internal class ReservationDeploymentFactoryImpl(
     private val buildId: String,
     private val buildType: String,
     private val deploymentNameGenerator: DeploymentNameGenerator,
+    private val useLegacyExtensionsV1Beta: Boolean,
     loggerFactory: LoggerFactory
 ) : ReservationDeploymentFactory {
 
@@ -103,41 +101,20 @@ internal class ReservationDeploymentFactoryImpl(
                         }
                     }
 
-                    if (emulator.gpu) {
-                        volumeMounts = listOf(
-                            newVolumeMount {
-                                name = "x-11"
-                                mountPath = "/tmp/.X11-unix"
-                                readOnly = true
-                            }
-                        )
-
-                        env = listOf(
-                            newEnvVar {
-                                name = "GPU_ENABLED"
-                                value = "true"
-                            },
-                            newEnvVar {
-                                name = "SNAPSHOT_DISABLED"
-                                value = "true"
-                            }
-                        )
-                    }
+                    env = listOf(
+                        // used to start from prepared snapshot, see `prepare_snapshot.sh`
+                        newEnvVar {
+                            name = "SNAPSHOT_ENABLED"
+                            value = "true"
+                        },
+                        // run headless
+                        newEnvVar {
+                            name = "WINDOW"
+                            value = "false"
+                        }
+                    )
                 }
             )
-
-            if (emulator.gpu) {
-                volumes = listOf(
-                    newVolume {
-                        name = "x-11"
-
-                        hostPath = newHostPathVolumeSource {
-                            path = "/tmp/.X11-unix"
-                            type = "Directory"
-                        }
-                    }
-                )
-            }
 
             tolerations = listOf(
                 newToleration {
@@ -160,7 +137,7 @@ internal class ReservationDeploymentFactoryImpl(
             .plus("deploymentName" to deploymentName)
 
         return newDeployment {
-            apiVersion = "extensions/v1beta1"
+            apiVersion = if (useLegacyExtensionsV1Beta) "extensions/v1beta1" else "apps/v1"
             metadata {
                 name = deploymentName
                 labels = deploymentMatchLabels

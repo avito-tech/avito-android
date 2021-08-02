@@ -1,28 +1,21 @@
 package com.avito.report
 
-import com.avito.report.model.TestStaticData
+import com.avito.report.internal.DirectTestArtifactsProvider
+import com.avito.report.internal.ReportDirProviderForAdb
+import com.avito.report.internal.ReportDirProviderWithCreation
+import com.avito.report.internal.SimpleDirProvider
 import com.avito.test.model.TestName
 import java.io.File
 
 public object TestArtifactsProviderFactory {
 
-    public fun create(
-        testReportRootDir: Lazy<File>,
-        testStaticData: TestStaticData
-    ): TestArtifactsProvider {
-        return create(
-            testReportRootDir,
-            testStaticData.name
-        )
-    }
-
-    public fun create(
-        testReportRootDir: Lazy<File>,
+    public fun createForAndroidRuntime(
+        appDirProvider: ApplicationDirProvider,
         name: TestName
     ): TestArtifactsProvider {
         return DirectTestArtifactsProvider(
             provider = ReportDirProviderWithCreation(
-                rootDir = testReportRootDir,
+                rootDir = appDirProvider,
                 testDirGenerator = TestDirGenerator.Impl(name)
             )
         )
@@ -34,20 +27,18 @@ public object TestArtifactsProviderFactory {
     private fun create(provider: ReportDirProvider) =
         DirectTestArtifactsProvider(provider)
 
-    // android API's are unavailable here
+    // Android API's are unavailable here
     @Suppress("SdCardPath")
-    public fun createForAdbAccess(
-        appUnderTestPackage: String,
+    public fun createForAdb(
+        appDirProvider: ApplicationDirProvider,
         name: TestName,
     ): TestArtifactsProvider {
-        val dataPath = "/sdcard/Android/data/$appUnderTestPackage/files"
         return create(
             ReportDirProviderForAdb(
-                rootDir = lazy { File(dataPath) },
+                rootDir = appDirProvider,
                 testDirGenerator = TestDirGenerator.Impl(
                     name = name
                 )
-
             )
         )
     }

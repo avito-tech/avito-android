@@ -1,8 +1,6 @@
 package com.avito.android.runner
 
 import android.os.Build
-import androidx.core.content.ContextCompat
-import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.ElasticConfigFactory
 import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
@@ -17,7 +15,6 @@ import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.utils.BuildMetadata
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import java.io.File
 
 sealed class TestRunEnvironment {
 
@@ -52,7 +49,6 @@ sealed class TestRunEnvironment {
 
     data class RunEnvironment internal constructor(
         val testMetadata: TestMetadata,
-        val outputDirectory: Lazy<File>,
         val testRunCoordinates: ReportCoordinates,
         internal val reportDestination: ReportDestination,
         internal val videoRecordingFeature: VideoFeatureValue,
@@ -85,12 +81,6 @@ fun provideEnvironment(
             videoRecordingFeature = provideVideoRecordingFeature(
                 argumentsProvider = argumentsProvider
             ),
-            outputDirectory = lazy {
-                ContextCompat.getExternalFilesDirs(
-                    InstrumentationRegistry.getInstrumentation().targetContext,
-                    null
-                )[0]
-            },
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),
@@ -117,12 +107,6 @@ fun parseEnvironment(
             videoRecordingFeature = provideVideoRecordingFeature(
                 argumentsProvider = argumentsProvider
             ),
-            outputDirectory = lazy {
-                ContextCompat.getExternalFilesDirs(
-                    InstrumentationRegistry.getInstrumentation().targetContext,
-                    null
-                )[0]
-            },
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),

@@ -182,6 +182,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportViewerConfig = reportViewerConfig,
             fetchLogcatForIncompleteTests = experiments.fetchLogcatForIncompleteTests,
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
+            useLegacyExtensionsV1Beta = experiments.useLegacyExtensionsV1Beta,
         )
 
         val isGradleTestKitRun = gradleTestKitRun.get()

@@ -17,12 +17,16 @@ android {
         versionCode = 1
         testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
 
-        // TODO: describe in docs that they are updated in IDE configuration only after sync!
-        testInstrumentationRunnerArguments(
-            mapOf(
-                "planSlug" to "AndroidTestApp"
-            )
+        val instrumentationArgs = mapOf<String, String>(
+            "planSlug" to "AndroidTestApp",
+            "jobSlug" to "FunctionalTests",
+            "runId" to "local",
+            "fileStorageUrl" to (getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"),
+            "teamcityBuildId" to (getOptionalStringProperty("teamcityBuildId") ?: "0"),
         )
+
+        // These arguments are updated in IDE configuration only after sync!
+        testInstrumentationRunnerArguments(instrumentationArgs)
     }
 
     testOptions {
@@ -104,7 +108,7 @@ instrumentation {
             name = "api22",
             api = 22,
             model = "Android_SDK_built_for_x86",
-            image = emulatorImage(22, "740eb9a948"),
+            image = emulatorImage(22, "7bb4b0b720"),
             cpuCoresRequest = "1",
             cpuCoresLimit = "1.3",
             memoryLimit = "4Gi"
@@ -114,7 +118,7 @@ instrumentation {
             name = "api29",
             api = 29,
             model = "Android_SDK_built_for_x86_64",
-            image = emulatorImage(29, "915c1f20be"),
+            image = emulatorImage(29, "1927fb7cda"),
             cpuCoresRequest = "1",
             cpuCoresLimit = "1.3",
             memoryLimit = "4Gi"

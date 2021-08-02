@@ -4,8 +4,7 @@ local.properties
 .pytest_cache
 # output of HeapDumpOnOutOfMemoryError
 *.hprof
-# hugo generated files
-public/
+*.log
 .DS_Store
 outputs/
 gh-pages-generated/
@@ -13,6 +12,8 @@ gh-pages-generated/
 *.iml
 .idea/*
 !.idea/dictionaries/
+# Layout inspector captures
+captures/
 # gradle-profiler
 gradle-user-home
 profile-out*
