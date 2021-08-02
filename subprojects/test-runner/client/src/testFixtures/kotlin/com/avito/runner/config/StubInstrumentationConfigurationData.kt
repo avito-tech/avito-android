@@ -2,6 +2,7 @@ package com.avito.runner.config
 
 import com.avito.runner.scheduler.suite.filter.Filter
 import java.io.File
+import java.time.Duration
 
 public fun InstrumentationConfigurationData.Companion.createStubInstance(
     name: String = "name",
@@ -10,7 +11,8 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
     kubernetesNamespace: String = "kubernetesNamespace",
     targets: List<TargetConfigurationData> = emptyList(),
     enableDeviceDebug: Boolean = false,
-    timeoutInSecond: Long = 100,
+    testRunnerExecutionTimeout: Duration = Duration.ofSeconds(100),
+    gradleTaskTimeout: Duration = Duration.ofSeconds(120),
     previousRunExcluded: Set<RunStatus> = emptySet(),
     outputFolder: File = File("")
 ): InstrumentationConfigurationData = InstrumentationConfigurationData(
@@ -20,7 +22,8 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
     enableDeviceDebug = enableDeviceDebug,
-    timeoutInSeconds = timeoutInSecond,
+    testRunnerExecutionTimeout = testRunnerExecutionTimeout,
+    gradleTaskTimeout = gradleTaskTimeout,
     filter = InstrumentationFilterData(
         name = "stub",
         fromSource = InstrumentationFilterData.FromSource(

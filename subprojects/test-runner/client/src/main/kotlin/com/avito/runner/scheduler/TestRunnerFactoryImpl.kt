@@ -80,7 +80,8 @@ internal class TestRunnerFactoryImpl(
             ),
             testSuiteListener = testSuiteListener,
             testRunRequestFactory = testRunnerRequestFactory,
-            targets = targets
+            targets = targets,
+            executionTimeout = params.instrumentationConfiguration.testRunnerExecutionTimeout
         )
     }
 

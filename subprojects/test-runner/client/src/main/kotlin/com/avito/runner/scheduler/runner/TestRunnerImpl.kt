@@ -20,7 +20,7 @@ import com.avito.test.model.TestCase
 import com.avito.time.millisecondsToHumanReadableTime
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withTimeout
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 internal class TestRunnerImpl(
     private val scheduler: TestExecutionScheduler,
@@ -32,6 +32,7 @@ internal class TestRunnerImpl(
     private val devicesProvider: DevicesProvider,
     private val testRunRequestFactory: TestRunRequestFactory,
     private val targets: List<TargetConfigurationData>,
+    private val executionTimeout: Duration,
     loggerFactory: LoggerFactory
 ) : TestRunner {
 
@@ -46,7 +47,7 @@ internal class TestRunnerImpl(
                 reservations = getReservations(tests),
             )
             try {
-                withTimeout(TimeUnit.MINUTES.toMillis(1)) {
+                withTimeout(executionTimeout.toMillis()) {
                     deviceWorkerPool.start()
                     reservationWatcher.watch(state.deviceSignals)
                     scheduler.start(

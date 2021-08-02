@@ -4,6 +4,7 @@ import com.avito.android.Result
 import com.avito.android.runner.devices.StubDevicesProvider
 import com.avito.coroutines.extensions.Dispatchers
 import com.avito.logger.StubLoggerFactory
+import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
@@ -35,11 +36,13 @@ import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -699,7 +702,8 @@ internal class RunnerIntegrationTest {
                 devices = devices
             ),
             testRunRequestFactory = testRunRequestFactory,
-            targets = targets
+            targets = targets,
+            executionTimeout = InstrumentationConfigurationData.createStubInstance().testRunnerExecutionTimeout
         )
     }
 

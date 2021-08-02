@@ -284,7 +284,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             kubernetesNamespace = configuration.kubernetesNamespace,
             targets = getTargets(configuration, mergedInstrumentationParameters),
             enableDeviceDebug = configuration.enableDeviceDebug,
-            timeoutInSeconds = configuration.timeoutInSeconds,
+            testRunnerExecutionTimeout = configuration.testRunnerExecutionTimeout,
+            gradleTaskTimeout = configuration.gradleTaskTimeout,
             filter = filters.singleOrNull { it.name == configuration.filter }
                 ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
             outputFolder = outputFolder
