@@ -53,13 +53,14 @@ dependencyResolutionManagement {
                 includeGroup("com.google.testing.platform")
             }
         }
+        // TODO: Remove this block after MBS-11267
         exclusiveContent {
             forRepository {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
                         repositoryName = "KotlinX",
-                        originalRepo = "https://kotlin.bintray.com/kotlinx"
+                        originalRepo = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
                     )
                 }
             }
