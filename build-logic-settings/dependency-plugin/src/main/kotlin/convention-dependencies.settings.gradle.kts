@@ -59,7 +59,7 @@ dependencyResolutionManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "KotlinX",
+                        repositoryName = "jetbrains-kotlinx-html",
                         originalRepo = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
                     )
                 }
