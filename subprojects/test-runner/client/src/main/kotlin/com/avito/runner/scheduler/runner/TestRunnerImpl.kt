@@ -39,15 +39,15 @@ internal class TestRunnerImpl(
     private val logger = loggerFactory.create<TestRunner>()
 
     override suspend fun runTests(tests: List<TestCase>): Result<TestRunnerResult> {
-        return coroutineScope {
-            val startTime = System.currentTimeMillis()
-            testSuiteListener.onTestSuiteStarted()
-            logger.info("Test run started")
-            val deviceWorkerPool: DeviceWorkerPool = devicesProvider.provideFor(
-                reservations = getReservations(tests),
-            )
-            try {
-                withTimeout(executionTimeout.toMillis()) {
+        return withTimeout(executionTimeout.toMillis()) {
+            coroutineScope {
+                val startTime = System.currentTimeMillis()
+                testSuiteListener.onTestSuiteStarted()
+                logger.info("Test run started")
+                val deviceWorkerPool: DeviceWorkerPool = devicesProvider.provideFor(
+                    reservations = getReservations(tests),
+                )
+                try {
                     deviceWorkerPool.start()
                     reservationWatcher.watch(state.deviceSignals)
                     scheduler.start(
@@ -98,14 +98,16 @@ internal class TestRunnerImpl(
                     testSuiteListener.onTestSuiteFinished()
                     logger.info("Test run end successfully")
                     Result.Success(result)
+
+                } catch (e: Throwable) {
+                    logger.critical("Test run end with error", e)
+                    Result.Failure(e)
+                } finally {
+                    logger.debug("Test run finally block called")
+                    deviceWorkerPool.stop()
+                    state.cancel()
+                    devicesProvider.releaseDevices()
                 }
-            } catch (e: Throwable) {
-                logger.critical("Test run end with error", e)
-                Result.Failure(e)
-            } finally {
-                deviceWorkerPool.stop()
-                state.cancel()
-                devicesProvider.releaseDevices()
             }
         }
     }
