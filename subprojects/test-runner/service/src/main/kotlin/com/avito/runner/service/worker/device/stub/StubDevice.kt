@@ -20,9 +20,11 @@ import com.avito.runner.service.worker.model.Installation
 import com.google.gson.Gson
 import java.io.File
 import java.nio.file.Path
+import java.time.Duration
 import java.util.ArrayDeque
 import java.util.Date
 import java.util.Queue
+import kotlinx.coroutines.delay
 
 public open class StubDevice(
     tag: String = "StubDevice",
@@ -34,7 +36,8 @@ public open class StubDevice(
     clearPackageResults: List<StubActionResult<Result<Unit>>> = emptyList(),
     private val apiResult: StubActionResult<Int> = StubActionResult.Success(22),
     override val online: Boolean = true,
-    override val model: String = "model"
+    override val model: String = "model",
+    private val testExecutionTime: Duration = Duration.ZERO
 ) : Device {
 
     private val gson = Gson()
@@ -56,7 +59,7 @@ public open class StubDevice(
     override fun installApplication(applicationPackage: String): Result<DeviceInstallation> {
         resultQueuePrecondition(
             queue = installApplicationResultsQueue,
-            functionName = "installApplication",
+            functionName = FUNCTION_INSTALL_APPLICATION,
             values = applicationPackage
         )
 
@@ -67,13 +70,16 @@ public open class StubDevice(
         return result
     }
 
-    override fun runIsolatedTest(
+    override suspend fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun {
+        // simulating test execution
+        delay(testExecutionTime.toMillis())
+
         resultQueuePrecondition(
             queue = runTestsResultsQueue,
-            functionName = "runIsolatedTest",
+            functionName = FUNCTION_RUN_ISOLATED_TEST,
             values = action.toString()
         )
 
@@ -95,7 +101,7 @@ public open class StubDevice(
     override fun clearPackage(name: String): Result<Unit> {
         resultQueuePrecondition(
             queue = clearPackageResultsQueue,
-            functionName = "clearPackage",
+            functionName = FUNCTION_CLEAR_PACKAGE,
             values = name
         )
 
@@ -149,7 +155,7 @@ public open class StubDevice(
     override fun deviceStatus(): Device.DeviceStatus {
         resultQueuePrecondition(
             queue = gettingDeviceStatusResultsQueue,
-            functionName = "deviceStatus",
+            functionName = FUNCTION_DEVICE_STATUS,
             values = ""
         )
 
@@ -172,10 +178,10 @@ public open class StubDevice(
     }
 
     public fun verify() {
-        verifyQueueHasNoExcessiveElements(installApplicationResultsQueue, "installApplication")
-        verifyQueueHasNoExcessiveElements(gettingDeviceStatusResultsQueue, "deviceStatus")
-        verifyQueueHasNoExcessiveElements(runTestsResultsQueue, "runIsolatedTest")
-        verifyQueueHasNoExcessiveElements(clearPackageResultsQueue, "clearPackage")
+        verifyQueueHasNoExcessiveElements(installApplicationResultsQueue, FUNCTION_INSTALL_APPLICATION)
+        verifyQueueHasNoExcessiveElements(gettingDeviceStatusResultsQueue, FUNCTION_DEVICE_STATUS)
+        verifyQueueHasNoExcessiveElements(runTestsResultsQueue, FUNCTION_RUN_ISOLATED_TEST)
+        verifyQueueHasNoExcessiveElements(clearPackageResultsQueue, FUNCTION_CLEAR_PACKAGE)
     }
 
     private fun resultQueuePrecondition(queue: Queue<*>, functionName: String, values: String) {
@@ -197,6 +203,10 @@ public open class StubDevice(
     }
 
     public companion object {
+        private const val FUNCTION_INSTALL_APPLICATION = "installApplication"
+        private const val FUNCTION_DEVICE_STATUS = "deviceStatus"
+        private const val FUNCTION_RUN_ISOLATED_TEST = "runIsolatedTest"
+        private const val FUNCTION_CLEAR_PACKAGE = "clearPackage"
 
         public fun installApplicationSuccess(applicationPackage: String = "doesntmatter"): Result<DeviceInstallation> {
             return Result.Success(

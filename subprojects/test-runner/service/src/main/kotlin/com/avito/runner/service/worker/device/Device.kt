@@ -27,7 +27,7 @@ public interface Device {
 
     public fun installApplication(applicationPackage: String): Result<DeviceInstallation>
 
-    public fun runIsolatedTest(
+    public suspend fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun

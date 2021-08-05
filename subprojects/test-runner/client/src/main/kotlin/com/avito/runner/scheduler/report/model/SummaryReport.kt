@@ -11,7 +11,7 @@ internal class SummaryReport(
         reports.count { it.result is TestCaseRequestMatchingReport.Result.Matched }
     }
 
-    val mismatched: Int by lazy {
+    val mismatchedCount: Int by lazy {
         reports.count { it.result is TestCaseRequestMatchingReport.Result.Mismatched }
     }
 

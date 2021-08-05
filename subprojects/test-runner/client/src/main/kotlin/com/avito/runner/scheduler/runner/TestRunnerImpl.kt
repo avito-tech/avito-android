@@ -91,14 +91,13 @@ internal class TestRunnerImpl(
                     logger.debug(
                         "Matching results: " +
                             "matched = ${summaryReport.matchedCount}, " +
-                            "mismatched = ${summaryReport.mismatched}, " +
+                            "mismatched = ${summaryReport.mismatchedCount}, " +
                             "ignored = ${summaryReport.ignoredCount}."
                     )
 
                     testSuiteListener.onTestSuiteFinished()
                     logger.info("Test run end successfully")
                     Result.Success(result)
-
                 } catch (e: Throwable) {
                     logger.critical("Test run end with error", e)
                     Result.Failure(e)
