@@ -18,13 +18,13 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
 import java.io.File
 import java.nio.file.Path
 import java.time.Duration
 import java.util.ArrayDeque
 import java.util.Date
 import java.util.Queue
-import kotlinx.coroutines.delay
 
 public open class StubDevice(
     tag: String = "StubDevice",

@@ -38,6 +38,7 @@ import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
@@ -51,9 +52,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.time.Duration
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.TimeoutCancellationException
-import org.mockito.Mockito.spy
-import org.mockito.Mockito.verify
 
 @ExperimentalCoroutinesApi
 internal class RunnerIntegrationTest {
@@ -71,6 +69,8 @@ internal class RunnerIntegrationTest {
         minimumFailedCount = 0
     )
     private val loggerFactory = StubLoggerFactory
+    private val <E> Channel<E>.isClosedForSendAndReceive: Boolean
+        get() = this.isClosedForSend && this.isClosedForReceive
 
     @TempDir
     lateinit var outputDirectory: File
@@ -766,9 +766,6 @@ internal class RunnerIntegrationTest {
         assertThat(intentionResults.isClosedForSendAndReceive).isTrue()
         assertThat(deviceSignals.isClosedForSendAndReceive).isTrue()
     }
-
-    private val <E> Channel<E>.isClosedForSendAndReceive: Boolean
-        get() = this.isClosedForSend && this.isClosedForReceive
 
     private fun runBlockingTest(block: suspend TestCoroutineScope.() -> Unit) {
         testCoroutineDispatcher.runBlockingTest(block)
