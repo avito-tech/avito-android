@@ -64,7 +64,7 @@ dependencyResolutionManagement {
             forRepository {
                 maven {
                     setUrlOrProxy(
-                        artifactoryUrl = null, // TODO: Add mirroring for this repo
+                        artifactoryUrl = artifactoryUrl,
                         repositoryName = "jetbrains-kotlinx-html",
                         originalRepo = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
                     )
