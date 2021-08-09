@@ -17,7 +17,7 @@ public abstract class InstrumentationConfiguration(public val name: String) {
 
     public var kubernetesNamespace: String = "default"
 
-    public var timeoutInSeconds: Long = -1 // todo remove
+    public var timeoutInSeconds: Long = 120L // TODO: remove after MBS-11465
 
     public var testRunnerExecutionTimeout: Duration = Duration.ofMinutes(100)
 
