@@ -18,6 +18,7 @@ import com.avito.runner.service.DeviceWorkerPool
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.time.millisecondsToHumanReadableTime
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withTimeout
 import java.time.Duration
@@ -99,7 +100,10 @@ internal class TestRunnerImpl(
                     logger.info("Test run end successfully")
                     Result.Success(result)
                 } catch (e: Throwable) {
-                    logger.critical("Test run end with error", e)
+                    when (e) {
+                        is TimeoutCancellationException -> logger.critical("Test run end with timeout", e)
+                        else -> logger.critical("Test run end with error", e)
+                    }
                     Result.Failure(e)
                 } finally {
                     deviceWorkerPool.stop()
