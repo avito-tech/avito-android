@@ -12,7 +12,7 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
     targets: List<TargetConfigurationData> = emptyList(),
     enableDeviceDebug: Boolean = false,
     testRunnerExecutionTimeout: Duration = Duration.ofSeconds(100),
-    gradleTaskTimeout: Duration = Duration.ofSeconds(120),
+    instrumentationTaskTimeout: Duration = Duration.ofSeconds(120),
     previousRunExcluded: Set<RunStatus> = emptySet(),
     outputFolder: File = File("")
 ): InstrumentationConfigurationData = InstrumentationConfigurationData(
@@ -23,7 +23,7 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
     targets = targets,
     enableDeviceDebug = enableDeviceDebug,
     testRunnerExecutionTimeout = testRunnerExecutionTimeout,
-    gradleTaskTimeout = gradleTaskTimeout,
+    instrumentationTaskTimeout = instrumentationTaskTimeout,
     filter = InstrumentationFilterData(
         name = "stub",
         fromSource = InstrumentationFilterData.FromSource(

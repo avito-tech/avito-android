@@ -74,7 +74,6 @@ public open class StubDevice(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun {
-        // simulating test execution
         delay(testExecutionTime.toMillis())
 
         resultQueuePrecondition(

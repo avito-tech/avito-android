@@ -14,7 +14,7 @@ public data class InstrumentationConfigurationData(
     val targets: List<TargetConfigurationData>,
     val enableDeviceDebug: Boolean,
     val testRunnerExecutionTimeout: Duration,
-    val gradleTaskTimeout: Duration,
+    val instrumentationTaskTimeout: Duration,
     val filter: InstrumentationFilterData,
     val outputFolder: File,
 ) : Serializable {

@@ -102,7 +102,6 @@ internal class TestRunnerImpl(
                     logger.critical("Test run end with error", e)
                     Result.Failure(e)
                 } finally {
-                    logger.debug("Test run finally block called")
                     deviceWorkerPool.stop()
                     state.cancel()
                     devicesProvider.releaseDevices()

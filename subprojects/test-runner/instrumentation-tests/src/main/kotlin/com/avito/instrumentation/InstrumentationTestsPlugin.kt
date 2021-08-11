@@ -285,7 +285,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             targets = getTargets(configuration, mergedInstrumentationParameters),
             enableDeviceDebug = configuration.enableDeviceDebug,
             testRunnerExecutionTimeout = configuration.testRunnerExecutionTimeout,
-            gradleTaskTimeout = configuration.gradleTaskTimeout,
+            instrumentationTaskTimeout = configuration.instrumentationTaskTimeout,
             filter = filters.singleOrNull { it.name == configuration.filter }
                 ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
             outputFolder = outputFolder

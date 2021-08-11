@@ -4,6 +4,7 @@ import com.avito.android.Result
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.StubDevicesProvider
 import com.avito.coroutines.extensions.Dispatchers
+import com.avito.coroutines.extensions.isClosedForSendAndReceive
 import com.avito.logger.StubLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.QuotaConfigurationData
@@ -69,8 +70,6 @@ internal class RunnerIntegrationTest {
         minimumFailedCount = 0
     )
     private val loggerFactory = StubLoggerFactory
-    private val <E> Channel<E>.isClosedForSendAndReceive: Boolean
-        get() = this.isClosedForSend && this.isClosedForReceive
 
     @TempDir
     lateinit var outputDirectory: File
