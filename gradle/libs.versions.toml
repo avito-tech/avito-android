@@ -22,7 +22,7 @@ kotlinStdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "k
 kotlinStdlibJdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinCompilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
-kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2"
+kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3"
 coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinPoet = "com.squareup:kotlinpoet:1.7.2"
 
