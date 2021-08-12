@@ -129,7 +129,7 @@ internal class DeviceWorker(
         stateWorker.clearPackages(currentState)
     }.map { intendedState }
 
-    private fun executeAction(action: InstrumentationTestRunAction): Result<DeviceTestCaseRun> {
+    private suspend fun executeAction(action: InstrumentationTestRunAction): Result<DeviceTestCaseRun> {
         return Result.tryCatch {
             try {
 

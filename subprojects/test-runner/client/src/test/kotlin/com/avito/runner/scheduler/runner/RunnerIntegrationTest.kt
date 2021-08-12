@@ -1,9 +1,12 @@
 package com.avito.runner.scheduler.runner
 
 import com.avito.android.Result
+import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.StubDevicesProvider
 import com.avito.coroutines.extensions.Dispatchers
+import com.avito.coroutines.extensions.isClosedForSendAndReceive
 import com.avito.logger.StubLoggerFactory
+import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
@@ -36,6 +39,7 @@ import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
@@ -47,6 +51,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @ExperimentalCoroutinesApi
@@ -546,6 +551,37 @@ internal class RunnerIntegrationTest {
             .isEqualTo("devices channel was closed")
     }
 
+    @Test
+    fun `tests execution timeout - run failed`() = runBlockingTest {
+        val targets = listOf(createTarget())
+        val devicesProvider = createDevicesProvider()
+        val tests = createTests(2)
+        val runner = provideRunner(
+            targets = targets,
+            devicesProvider = devicesProvider,
+            executionTimeout = Duration.ofMinutes(15)
+        )
+        val device = StubDevice(
+            loggerFactory = loggerFactory,
+            model = deviceModel,
+            apiResult = StubActionResult.Success(deviceApi),
+            coordinate = DeviceCoordinate.Local.createStubInstance(),
+            installApplicationResults = List(2) { installApplicationSuccess() }, // main and test apps
+            gettingDeviceStatusResults = List(3) { DeviceStatus.Alive }, // initial and a try for each device
+            clearPackageResults = List(4) { succeedClearPackage() }, // main and test apps for each test
+            runTestsResults = List(2) { testPassed() },
+            testExecutionTime = Duration.ofMinutes(10)
+        )
+
+        devices.send(device)
+        assertThrows<TimeoutCancellationException> {
+            runner.runTests(tests)
+        }
+
+        assertThat(devicesProvider.isReleased).isTrue()
+        state.assertIsCancelled()
+    }
+
     private fun createTarget(quota: QuotaConfigurationData = defaultQuota) =
         TargetConfigurationData.createStubInstance(
             api = deviceApi,
@@ -622,7 +658,7 @@ internal class RunnerIntegrationTest {
         )
     }
 
-    private fun createSuccessfulDevice(testsCount: Int): StubDevice {
+    private fun createSuccessfulDevice(testsCount: Int, testExecutionTime: Duration = Duration.ZERO): StubDevice {
         return StubDevice(
             tag = "StubDevice:normal",
             model = deviceModel,
@@ -642,7 +678,8 @@ internal class RunnerIntegrationTest {
             gettingDeviceStatusResults = List(testsCount + 1) { DeviceStatus.Alive },
             runTestsResults = (0 until testsCount).map {
                 testPassed()
-            }
+            },
+            testExecutionTime = testExecutionTime
         )
     }
 
@@ -654,8 +691,27 @@ internal class RunnerIntegrationTest {
 
     private fun succeedClearPackage() = StubActionResult.Success<Result<Unit>>(Result.Success(Unit))
 
+    private fun createDevicesProvider() = StubDevicesProvider(
+        provider = DeviceWorkerPoolProvider(
+            timeProvider = StubTimeProvider(),
+            loggerFactory = loggerFactory,
+            deviceListener = StubDeviceListener(),
+            intentions = state.intentions,
+            intentionResults = state.intentionResults,
+            deviceSignals = state.deviceSignals,
+            dispatchers = object : Dispatchers {
+                override fun dispatcher() = testCoroutineDispatcher
+            },
+            testRunnerOutputDir = outputDirectory,
+            testListener = NoOpTestListener
+        ),
+        devices = devices
+    )
+
     private fun provideRunner(
-        targets: List<TargetConfigurationData>
+        targets: List<TargetConfigurationData>,
+        devicesProvider: DevicesProvider = createDevicesProvider(),
+        executionTimeout: Duration = InstrumentationConfigurationData.createStubInstance().testRunnerExecutionTimeout
     ): TestRunner {
         val testRunRequestFactory = TestRunRequestFactory(
             application = File("stub"),
@@ -682,24 +738,10 @@ internal class RunnerIntegrationTest {
             summaryReportMaker = SummaryReportMakerImpl(),
             reporter = CompositeReporter(emptyList()),
             testSuiteListener = StubTestMetricsListener,
-            devicesProvider = StubDevicesProvider(
-                provider = DeviceWorkerPoolProvider(
-                    timeProvider = StubTimeProvider(),
-                    loggerFactory = loggerFactory,
-                    deviceListener = StubDeviceListener(),
-                    intentions = state.intentions,
-                    intentionResults = state.intentionResults,
-                    deviceSignals = state.deviceSignals,
-                    dispatchers = object : Dispatchers {
-                        override fun dispatcher() = testCoroutineDispatcher
-                    },
-                    testRunnerOutputDir = outputDirectory,
-                    testListener = NoOpTestListener
-                ),
-                devices = devices
-            ),
+            devicesProvider = devicesProvider,
             testRunRequestFactory = testRunRequestFactory,
-            targets = targets
+            targets = targets,
+            executionTimeout = executionTimeout
         )
     }
 
@@ -716,6 +758,13 @@ internal class RunnerIntegrationTest {
         ),
         device = device.getData()
     )
+
+    private fun TestRunnerExecutionState.assertIsCancelled() {
+        assertThat(results.isClosedForSendAndReceive).isTrue()
+        assertThat(intentions.isClosedForSendAndReceive).isTrue()
+        assertThat(intentionResults.isClosedForSendAndReceive).isTrue()
+        assertThat(deviceSignals.isClosedForSendAndReceive).isTrue()
+    }
 
     private fun runBlockingTest(block: suspend TestCoroutineScope.() -> Unit) {
         testCoroutineDispatcher.runBlockingTest(block)
