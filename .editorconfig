@@ -1,5 +1,7 @@
 root = true
 
+# See conf/detekt.yml, values should be the same
+
 [*]
 charset = utf-8
 end_of_line = lf
@@ -7,3 +9,5 @@ indent_size = 4
 indent_style = space
 insert_final_newline = true
 max_line_length = 120
+
+ij_kotlin_imports_layout = *, java.**, javax.**, kotlin.**, ^

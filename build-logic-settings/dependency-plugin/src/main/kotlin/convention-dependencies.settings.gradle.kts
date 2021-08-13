@@ -53,27 +53,6 @@ dependencyResolutionManagement {
                 includeGroup("com.google.testing.platform")
             }
         }
-        /**
-         * This repo is used for kotlinx-html:0.7.2 (transitive dependency of current Detekt version)
-         * The new version of Detekt uses kotlinx-html:0.7.3, which is available in mavenCentral repo,
-         * so this block would become unnecessary. For more information about maven.pkg.jetbrains.space, see
-         * https://github.com/kotlin/kotlinx.html/wiki/Getting-started
-         * TODO: Remove this block after MBS-11267
-         */
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy(
-                        artifactoryUrl = artifactoryUrl,
-                        repositoryName = "jetbrains-kotlinx-html",
-                        originalRepo = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
-                    )
-                }
-            }
-            filter {
-                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
-            }
-        }
         exclusiveContent {
             forRepository {
                 maven {

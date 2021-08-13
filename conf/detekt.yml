@@ -262,8 +262,9 @@ formatting:
         active: false
     AnnotationSpacing:
         active: true
+    # todo fix and enable
     ArgumentListWrapping:
-        active: true
+        active: false
     # questionable rule; && and || goes to the end of line, instead of beginning a new line as we do right now
     ChainWrapping:
         active: false
@@ -281,7 +282,7 @@ formatting:
         insertFinalNewLine: false
     ImportOrdering:
         active: true
-        layout: 'idea'
+        layout: '*,java.**,javax.**,kotlin.**,^'
     # blocked by bugs: https://github.com/pinterest/ktlint/issues?q=is%3Aissue+is%3Aopen+Indentation
     Indentation:
         active: false
