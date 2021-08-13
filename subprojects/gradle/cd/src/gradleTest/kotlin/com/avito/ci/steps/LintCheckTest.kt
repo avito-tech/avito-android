@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class LintCheckTest {
+internal class LintCheckTest {
 
     private lateinit var projectDir: File
 
