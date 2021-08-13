@@ -1,5 +1,6 @@
 plugins {
     base
+    id("convention.gradle-properties")
 }
 
 /**
