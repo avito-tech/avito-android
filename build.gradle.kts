@@ -1,27 +1,13 @@
 plugins {
     base
     id("convention.gradle-properties")
-}
-
-/**
- * Tests run from IDE in subprojects module can't recognize root wrapper
- */
-val subprojectsWrapper by tasks.registering(Copy::class) {
-    into("$rootDir/subprojects/gradle/wrapper")
-    from("$rootDir/gradle/wrapper")
-}
-
-val samplesWrapper by tasks.registering(Copy::class) {
-    into("$rootDir/samples/gradle/wrapper")
-    from("$rootDir/gradle/wrapper")
+    id("convention.gradle-wrapper")
 }
 
 tasks.withType<Wrapper> {
     // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = "7.2-rc-3"
-
-    finalizedBy(subprojectsWrapper, samplesWrapper)
 }
 
 tasks.register<Exec>("installGitHooks") {
