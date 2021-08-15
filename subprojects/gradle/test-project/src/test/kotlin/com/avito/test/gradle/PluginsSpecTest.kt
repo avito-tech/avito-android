@@ -85,7 +85,7 @@ internal class PluginsSpecTest {
     @Test
     fun `one classpath plugin - buildscript classpath with apply`() {
         val spec = plugins {
-            classpathPlugin("artifact:4.1.2", "plugin.id")
+            applyWithBuildscript("artifact:4.1.2", "plugin.id")
         }
         assertThat(spec.getScriptRepresentation()).isEqualTo("""
             |buildscript {
@@ -103,7 +103,7 @@ internal class PluginsSpecTest {
     fun `all plugin types`() {
         val spec = plugins {
             id("one")
-            classpathPlugin("artifact:4.1.2", "plugin.id")
+            applyWithBuildscript("artifact:4.1.2", "plugin.id")
         }
         assertThat(spec.getScriptRepresentation()).isEqualTo("""
             |buildscript {

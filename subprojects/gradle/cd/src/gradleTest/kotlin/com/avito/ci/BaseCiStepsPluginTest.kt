@@ -26,12 +26,12 @@ internal abstract class BaseCiStepsPluginTest {
                     name = "appA",
                     dependencies = setOf(GradleDependency.Safe.project(":shared")),
                     plugins = plugins {
-                        classpathPlugin(
-                            pluginClasspath = "com.google.gms:google-services:4.3.3",
+                        applyWithBuildscript(
+                            buildscriptClasspath = "com.google.gms:google-services:4.3.3",
                             pluginId = "com.google.gms.google-services"
                         )
-                        classpathPlugin(
-                            pluginClasspath = "com.google.firebase:firebase-crashlytics-gradle:2.7.1",
+                        applyWithBuildscript(
+                            buildscriptClasspath = "com.google.firebase:firebase-crashlytics-gradle:2.7.1",
                             pluginId = "com.google.firebase.crashlytics"
                         )
 

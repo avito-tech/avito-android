@@ -2,7 +2,7 @@ package com.avito.test.gradle.plugin
 
 import com.avito.test.gradle.dependencies.GradleScriptCompatible
 
-internal class ClasspathPluginSpec(
+internal class BuildscriptClasspathPluginSpec(
     internal val classpathArtifact: ClasspathArtifact,
     internal val pluginArtifact: PluginArtifact
 ) {

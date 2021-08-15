@@ -8,17 +8,17 @@ import com.avito.test.gradle.dependencies.GradleScriptCompatible
  */
 public class PluginsSpec internal constructor(
     private val plugins: MutableList<PluginSpec> = mutableListOf(),
-    private val classpathPlugins: MutableList<ClasspathPluginSpec> = mutableListOf()
-) : GradleScriptCompatible, ClasspathPluginsSpecDsl, PluginsSpecDsl {
+    private val classpathPlugins: MutableList<BuildscriptClasspathPluginSpec> = mutableListOf()
+) : GradleScriptCompatible, BuildscriptClasspathPluginsSpecDsl, PluginsSpecDsl {
 
-    public override fun classpathPlugin(
-        pluginClasspath: String,
+    public override fun applyWithBuildscript(
+        buildscriptClasspath: String,
         pluginId: String
     ) {
         classpathPlugins.add(
-            ClasspathPluginSpec(
-                ClasspathPluginSpec.ClasspathArtifact(pluginClasspath),
-                ClasspathPluginSpec.PluginArtifact(pluginId)
+            BuildscriptClasspathPluginSpec(
+                BuildscriptClasspathPluginSpec.ClasspathArtifact(buildscriptClasspath),
+                BuildscriptClasspathPluginSpec.PluginArtifact(pluginId)
             )
         )
     }
