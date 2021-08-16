@@ -20,34 +20,28 @@ abstract class GenerateCommonProperties : DefaultTask() {
 
     @TaskAction
     fun doWork() {
-        val commonProperties = loadProperties(commonPropertiesFile.get().asFile)
+        val commonProperties = PropertiesConfiguration(commonPropertiesFile.get().asFile)
 
         projectDirs.get().forEach { projectDir ->
 
             val gradlePropertiesFile = File(projectDir.asFile, "gradle.properties")
 
             val properties = if (gradlePropertiesFile.exists()) {
-                loadProperties(gradlePropertiesFile)
+                PropertiesConfiguration(gradlePropertiesFile)
             } else {
                 PropertiesConfiguration(gradlePropertiesFile)
             }
 
             commonProperties.keys.forEach { key ->
                 properties.setProperty(key, commonProperties.getProperty(key))
-                val commentFromCommon = commonProperties.layout.getComment(key)
-                val comment = buildString {
-                    append("from common properties")
-                    if (!commentFromCommon.isNullOrBlank()) {
-                        appendln()
-                        append(commentFromCommon)
-                    }
-                }
+                val commonComment: String? = commonProperties.getRawComment(key)
+                val comment = generateComment(commonComment)
                 properties.layout.setComment(key, comment)
             }
 
             properties.header = buildString {
-                appendln("Has common auto generated part!")
-                appendln("Modify it at: `conf/common.gradle.properties`")
+                appendLine("Has common auto generated part!")
+                appendLine("Modify it at: `conf/common.gradle.properties`")
                 append("then use :generateCommonProperties task")
             }
 
@@ -56,9 +50,4 @@ abstract class GenerateCommonProperties : DefaultTask() {
             properties.save()
         }
     }
-
-    private fun loadProperties(file: File): PropertiesConfiguration {
-        return PropertiesConfiguration(file)
-    }
 }
-

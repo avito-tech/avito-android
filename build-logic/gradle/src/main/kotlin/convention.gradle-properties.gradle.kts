@@ -1,18 +1,30 @@
+import com.avito.android.CheckCommonProperties
 import com.avito.android.GenerateCommonProperties
+
+val commonPropertiesFileProvider = provider { layout.projectDirectory.file("conf/common-gradle.properties") }
+
+val includedProjectDirs = provider {
+    gradle.includedBuilds
+        .map { it.projectDir }
+        .map { layout.resolveDir(it) }
+}
+
+val allProjectDirsProvider: Provider<List<Directory>> = includedProjectDirs.map { it + layout.projectDirectory }
 
 tasks.register<GenerateCommonProperties>("generateCommonProperties") {
     group = "Build setup"
     description = "Generated common gradle.properties for all included builds"
 
-    commonPropertiesFile.set(layout.projectDirectory.file("conf/common-gradle.properties"))
-
-    projectDirs.set(getIncludedProjectDirs() + layout.projectDirectory)
+    commonPropertiesFile.set(commonPropertiesFileProvider)
+    projectDirs.set(allProjectDirsProvider)
 }
 
-fun getIncludedProjectDirs(): List<Directory> {
-    return gradle.includedBuilds
-        .map { it.projectDir }
-        .map { layout.resolveDir(it) }
+tasks.register<CheckCommonProperties>("checkCommonProperties") {
+    group = "Build setup"
+    description = "Checks consistency for common gradle.properties for all included builds"
+
+    commonPropertiesFile.set(commonPropertiesFileProvider)
+    projectDirs.set(allProjectDirsProvider)
 }
 
 /**
