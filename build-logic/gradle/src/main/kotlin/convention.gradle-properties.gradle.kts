@@ -6,10 +6,19 @@ tasks.register<GenerateCommonProperties>("generateCommonProperties") {
 
     commonPropertiesFile.set(layout.projectDirectory.file("conf/common-gradle.properties"))
 
-    projectDirs.set(
-        gradle.includedBuilds
-            .map { it.projectDir }
-            .map { layout.projectDirectory.dir(it.relativeTo(projectDir).path) }
-            + layout.projectDirectory
-    )
+    projectDirs.set(getIncludedProjectDirs() + layout.projectDirectory)
+}
+
+fun getIncludedProjectDirs(): List<Directory> {
+    return gradle.includedBuilds
+        .map { it.projectDir }
+        .map { layout.resolveDir(it) }
+}
+
+/**
+ * projectDir of includedBuild available only in java.io.File form
+ * Using ProjectLayout getting org.gradle.api.file.Directory from it
+ */
+fun ProjectLayout.resolveDir(dir: File): Directory {
+    return projectDirectory.dir(dir.relativeTo(projectDir).path)
 }
