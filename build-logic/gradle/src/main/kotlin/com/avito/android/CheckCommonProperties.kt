@@ -26,7 +26,7 @@ abstract class CheckCommonProperties : DefaultTask() {
 
         projectDirs.get().forEach { projectDir ->
 
-            val projectPath = relativePath(projectDir.asFile)
+            val projectPath = project.projectDir.toRelativeString(projectDir.asFile)
 
             val gradlePropertiesFile = File(projectDir.asFile, "gradle.properties")
 
@@ -87,11 +87,6 @@ abstract class CheckCommonProperties : DefaultTask() {
         }
     }
 
-    private data class Inconsistency(
-        val projectPath: String,
-        val reason: String
-    )
-
     private fun errorMessage(inconsistencies: List<Inconsistency>): String {
         return buildString {
             appendLine("Common gradle properties inconsistency found")
@@ -106,9 +101,5 @@ abstract class CheckCommonProperties : DefaultTask() {
                 }
             }
         }
-    }
-
-    private fun relativePath(projectDir: File): String {
-        return projectDir.toRelativeString(project.projectDir)
     }
 }

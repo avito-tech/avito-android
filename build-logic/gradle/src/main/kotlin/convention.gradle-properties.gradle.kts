@@ -1,5 +1,6 @@
 import com.avito.android.CheckCommonProperties
 import com.avito.android.GenerateCommonProperties
+import com.avito.android.resolveDir
 
 plugins {
     /**
@@ -14,7 +15,7 @@ val commonPropertiesFileProvider = provider { layout.projectDirectory.file("conf
 val includedProjectDirs = provider {
     gradle.includedBuilds
         .map { it.projectDir }
-        .map { layout.resolveDir(it) }
+        .map { project.resolveDir(it) }
 }
 
 val allProjectDirsProvider: Provider<List<Directory>> = includedProjectDirs.map { it + layout.projectDirectory }
@@ -39,10 +40,3 @@ tasks.named("check").configure {
     dependsOn(checkCommonPropertiesTaskProvider)
 }
 
-/**
- * projectDir of includedBuild available only in java.io.File form
- * Using ProjectLayout getting org.gradle.api.file.Directory from it
- */
-fun ProjectLayout.resolveDir(dir: File): Directory {
-    return projectDirectory.dir(dir.relativeTo(projectDir).path)
-}

@@ -4,12 +4,6 @@ plugins {
     id("convention.gradle-wrapper")
 }
 
-tasks.withType<Wrapper> {
-    // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
-    distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "7.2-rc-3"
-}
-
 tasks.register<Exec>("installGitHooks") {
     group = "Build Setup"
     description = "Install local repository git hooks"

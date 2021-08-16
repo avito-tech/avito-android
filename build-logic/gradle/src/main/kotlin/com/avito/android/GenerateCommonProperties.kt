@@ -25,12 +25,7 @@ abstract class GenerateCommonProperties : DefaultTask() {
         projectDirs.get().forEach { projectDir ->
 
             val gradlePropertiesFile = File(projectDir.asFile, "gradle.properties")
-
-            val properties = if (gradlePropertiesFile.exists()) {
-                PropertiesConfiguration(gradlePropertiesFile)
-            } else {
-                PropertiesConfiguration(gradlePropertiesFile)
-            }
+            val properties = PropertiesConfiguration(gradlePropertiesFile)
 
             commonProperties.keys.forEach { key ->
                 properties.setProperty(key, commonProperties.getProperty(key))
