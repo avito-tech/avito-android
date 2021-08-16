@@ -18,7 +18,7 @@ val samplesWrapper by tasks.registering(Copy::class) {
 tasks.withType<Wrapper> {
     // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "7.1"
+    gradleVersion = "7.2-rc-3"
 
     finalizedBy(subprojectsWrapper, samplesWrapper)
 }

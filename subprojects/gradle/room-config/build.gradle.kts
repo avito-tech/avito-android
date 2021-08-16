@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(projects.gradle.android)
     implementation(projects.gradle.gradleExtensions)
-    implementation(libs.kotlinPlugin)
+    implementation(libs.kotlinGradle)
 
     testImplementation(projects.gradle.testProject)
 

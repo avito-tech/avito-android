@@ -106,7 +106,8 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Public for *TestApp to skip on orchestrator runs
+    // Public for *TestApp to skip on orchestrator runs
+    @Suppress("MemberVisibilityCanBePrivate")
     val testRunEnvironment: TestRunEnvironment by lazy {
         if (isRealRun(instrumentationArguments)) {
             createRunnerEnvironment(instrumentationArguments)
@@ -115,7 +116,8 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Public for synth monitoring
+    // Public for synth monitoring
+    @Suppress("MemberVisibilityCanBePrivate")
     val screenshotCapturer: ScreenshotCapturer by lazy {
         ScreenshotCapturerFactory.create(testArtifactsProvider, activityProvider)
     }
@@ -147,7 +149,8 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    @Suppress("unused") // used in avito
+    // used in avito
+    @Suppress("unused")
     val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
@@ -156,7 +159,8 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    @Suppress("unused") // used in avito
+    // used in avito
+    @Suppress("unused")
     val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
         ReportViewerWebsocketReporter(report)
     }

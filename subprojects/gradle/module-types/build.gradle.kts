@@ -9,7 +9,7 @@ dependencies {
     implementation(projects.gradle.preBuild)
     implementation(projects.gradle.gradleExtensions)
     implementation(projects.gradle.impact)
-    implementation(libs.kotlinPlugin)
+    implementation(libs.kotlinGradle)
 
     gradleTestImplementation(projects.gradle.testProject)
 }

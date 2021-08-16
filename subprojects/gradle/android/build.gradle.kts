@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(libs.androidGradlePlugin) {
+    api(libs.androidGradle) {
         excludeTransitiveAgpDependencies()
     }
 

@@ -14,7 +14,8 @@ import org.gradle.kotlin.dsl.support.uncheckedCast
  */
 public fun <T> noOwnerClosureOf(action: T.() -> Unit): Closure<T> =
     object : Closure<T>(null, null) {
-        @Suppress("unused") // to be called dynamically by Groovy
+        // to be called dynamically by Groovy
+        @Suppress("unused")
         fun doCall() = uncheckedCast<T>(delegate).action()
     }
 
