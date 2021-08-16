@@ -34,7 +34,15 @@ abstract class GenerateCommonProperties : DefaultTask() {
 
             commonProperties.keys.forEach { key ->
                 properties.setProperty(key, commonProperties.getProperty(key))
-                properties.layout.setComment(key, commonProperties.layout.getComment(key))
+                val commentFromCommon = commonProperties.layout.getComment(key)
+                val comment = buildString {
+                    append("from common properties")
+                    if (!commentFromCommon.isNullOrBlank()) {
+                        appendln()
+                        append(commentFromCommon)
+                    }
+                }
+                properties.layout.setComment(key, comment)
             }
 
             properties.header = buildString {
@@ -53,3 +61,4 @@ abstract class GenerateCommonProperties : DefaultTask() {
         return PropertiesConfiguration(file)
     }
 }
+
