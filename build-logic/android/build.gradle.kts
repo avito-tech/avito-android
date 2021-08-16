@@ -5,7 +5,7 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
-    implementation("com.avito.android.buildlogic:kotlin")
+    implementation(projects.kotlin)
     implementation(libs.kotlinGradle)
     implementation(libs.androidGradle)
     // workaround for https://github.com/gradle/gradle/issues/15383

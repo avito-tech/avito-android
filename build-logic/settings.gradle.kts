@@ -4,6 +4,7 @@ include("kotlin")
 include("android")
 include("testing")
 include("checks")
+include("gradle")
 include("publication")
 
 pluginManagement {
