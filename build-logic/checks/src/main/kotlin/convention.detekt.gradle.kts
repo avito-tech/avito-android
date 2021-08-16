@@ -4,7 +4,7 @@ import org.gradle.accessors.dm.LibrariesForLibs
 plugins {
     /**
      * https://docs.gradle.org/current/userguide/base_plugin.html
-     * base plugin added to add wiring on check->build tasks for detekt
+     * base plugin added to add wiring on check->build tasks
      */
     base
     id("io.gitlab.arturbosch.detekt")

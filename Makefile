@@ -103,6 +103,10 @@ ifdef stacktrace
 params +=--stacktrace
 endif
 
+ifdef ARTIFACTORY_URL
+params +=-PartifactoryUrl=$(ARTIFACTORY_URL)
+endif
+
 # from: https://stackoverflow.com/questions/10858261/abort-makefile-if-variable-not-set
 #
 # Check that given variables are set and all have non-empty values,
