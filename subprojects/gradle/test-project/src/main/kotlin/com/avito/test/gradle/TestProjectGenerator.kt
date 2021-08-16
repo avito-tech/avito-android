@@ -65,7 +65,7 @@ public class TestProjectGenerator(
     ),
     override val useKts: Boolean = false,
     public val localBuildCache: File? = null,
-    public val androidHome: String? = null
+    public val androidHome: String? = null,
 ) : Module {
 
     private val logger: Logger = StubLoggerFactory.create<TestProjectGenerator>()
