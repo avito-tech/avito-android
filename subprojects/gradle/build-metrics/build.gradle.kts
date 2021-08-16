@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.gradle.gradleExtensions)
     implementation(projects.gradle.statsdConfig)
     implementation(projects.gradle.teamcity)
-    implementation(libs.kotlinPlugin)
+    implementation(libs.kotlinGradle)
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)

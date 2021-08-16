@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.common.result)
     implementation(projects.gradle.statsdConfig)
     implementation(projects.gradle.gradleExtensions)
-    implementation(libs.kotlinPlugin)
+    implementation(libs.kotlinGradle)
 
     // for test
     implementation(projects.gradle.moduleTypes)

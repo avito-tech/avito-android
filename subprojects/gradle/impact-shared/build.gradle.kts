@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.gradle.process)
 
     implementation(libs.antPattern)
-    implementation(libs.kotlinPlugin)
+    implementation(libs.kotlinGradle)
 
     testImplementation(projects.common.truthExtensions)
     testImplementation(projects.gradle.gitTestFixtures)

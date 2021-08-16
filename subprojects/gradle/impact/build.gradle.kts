@@ -20,7 +20,7 @@ dependencies {
     implementation(projects.gradle.statsdConfig)
 
     implementation(libs.antPattern)
-    implementation(libs.kotlinPlugin)
+    implementation(libs.kotlinGradle)
 
     gradleTestImplementation(testFixtures(projects.gradle.buildEnvironment))
     gradleTestImplementation(testFixtures(projects.gradle.impactShared))
