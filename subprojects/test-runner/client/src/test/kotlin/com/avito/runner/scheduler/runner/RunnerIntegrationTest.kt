@@ -38,12 +38,14 @@ import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -552,14 +554,17 @@ internal class RunnerIntegrationTest {
     }
 
     @Test
-    fun `tests execution timeout - run failed`() = runBlockingTest {
+    fun `tests execution timeout - run failed -  when timeout is exceeded`() = runBlocking {
         val targets = listOf(createTarget())
-        val devicesProvider = createDevicesProvider()
+        val devicesProvider = createDevicesProvider(
+            dispatcher = kotlinx.coroutines.Dispatchers.Default,
+        )
         val tests = createTests(2)
         val runner = provideRunner(
             targets = targets,
             devicesProvider = devicesProvider,
-            executionTimeout = Duration.ofMinutes(15)
+            executionTimeout = Duration.ofMillis(1),
+            dispatcher = kotlinx.coroutines.Dispatchers.Default,
         )
         val device = StubDevice(
             loggerFactory = loggerFactory,
@@ -570,13 +575,54 @@ internal class RunnerIntegrationTest {
             gettingDeviceStatusResults = List(3) { DeviceStatus.Alive }, // initial and a try for each device
             clearPackageResults = List(4) { succeedClearPackage() }, // main and test apps for each test
             runTestsResults = List(2) { testPassed() },
-            testExecutionTime = Duration.ofMinutes(10)
+            testExecutionTime = Duration.ofMillis(2),
         )
 
         devices.send(device)
         assertThrows<TimeoutCancellationException> {
             runner.runTests(tests)
         }
+
+        assertThat(devicesProvider.isReleased).isTrue()
+        state.assertIsCancelled()
+    }
+
+    @Test
+    fun `tests execution timeout - run succeed - when timeout is not exceeded`() = runBlocking {
+        val targets = listOf(createTarget())
+        val devicesProvider = createDevicesProvider(
+            dispatcher = kotlinx.coroutines.Dispatchers.Default,
+        )
+        val tests = createTests(2)
+        val runner = provideRunner(
+            targets = targets,
+            devicesProvider = devicesProvider,
+            executionTimeout = Duration.ofHours(3),
+            dispatcher = kotlinx.coroutines.Dispatchers.Default,
+        )
+        val device = StubDevice(
+            loggerFactory = loggerFactory,
+            model = deviceModel,
+            apiResult = StubActionResult.Success(deviceApi),
+            coordinate = DeviceCoordinate.Local.createStubInstance(),
+            installApplicationResults = List(2) { installApplicationSuccess() }, // main and test apps
+            gettingDeviceStatusResults = List(3) { DeviceStatus.Alive }, // initial and a try for each device
+            clearPackageResults = List(4) { succeedClearPackage() }, // main and test apps for each test
+            runTestsResults = List(2) { testPassed() },
+            testExecutionTime = Duration.ofMillis(2),
+        )
+
+        devices.send(device)
+        val result = runner.runTests(tests)
+        assertRunTestResult(
+            runnerResult = result.getOrThrow(),
+            expected = tests.map { test ->
+                ExpectedTestResult(
+                    testCase = test,
+                    deviceTestCaseRuns = listOf(test.toPassedRun(device))
+                )
+            }
+        )
 
         assertThat(devicesProvider.isReleased).isTrue()
         state.assertIsCancelled()
@@ -691,7 +737,9 @@ internal class RunnerIntegrationTest {
 
     private fun succeedClearPackage() = StubActionResult.Success<Result<Unit>>(Result.Success(Unit))
 
-    private fun createDevicesProvider() = StubDevicesProvider(
+    private fun createDevicesProvider(
+        dispatcher: CoroutineDispatcher = testCoroutineDispatcher
+    ) = StubDevicesProvider(
         provider = DeviceWorkerPoolProvider(
             timeProvider = StubTimeProvider(),
             loggerFactory = loggerFactory,
@@ -700,7 +748,7 @@ internal class RunnerIntegrationTest {
             intentionResults = state.intentionResults,
             deviceSignals = state.deviceSignals,
             dispatchers = object : Dispatchers {
-                override fun dispatcher() = testCoroutineDispatcher
+                override fun dispatcher() = dispatcher
             },
             testRunnerOutputDir = outputDirectory,
             testListener = NoOpTestListener
@@ -711,7 +759,8 @@ internal class RunnerIntegrationTest {
     private fun provideRunner(
         targets: List<TargetConfigurationData>,
         devicesProvider: DevicesProvider = createDevicesProvider(),
-        executionTimeout: Duration = InstrumentationConfigurationData.createStubInstance().testRunnerExecutionTimeout
+        executionTimeout: Duration = InstrumentationConfigurationData.createStubInstance().testRunnerExecutionTimeout,
+        dispatcher: CoroutineDispatcher = testCoroutineDispatcher,
     ): TestRunner {
         val testRunRequestFactory = TestRunRequestFactory(
             application = File("stub"),
@@ -720,7 +769,7 @@ internal class RunnerIntegrationTest {
             targets = targets.associateBy { it.deviceName }
         )
         val scheduler = TestExecutionScheduler(
-            dispatcher = testCoroutineDispatcher,
+            dispatcher = dispatcher,
             results = state.results,
             intentions = state.intentions,
             intentionResults = state.intentionResults

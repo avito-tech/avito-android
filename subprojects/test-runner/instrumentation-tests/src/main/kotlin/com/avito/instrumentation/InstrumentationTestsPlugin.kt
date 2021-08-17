@@ -118,7 +118,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     }
 
                     project.tasks.register<InstrumentationTestsTask>(instrumentationTaskName(configuration.name)) {
-                        timeout.set(Duration.ofSeconds(configuration.timeoutInSeconds))
+                        timeout.set(configuration.instrumentationTaskTimeout)
                         group = CI_TASK_GROUP
 
                         this.parameters.set(
