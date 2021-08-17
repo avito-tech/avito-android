@@ -51,7 +51,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
-import java.time.Duration
 
 @Suppress("UnstableApiUsage")
 public class InstrumentationTestsPlugin : Plugin<Project> {
