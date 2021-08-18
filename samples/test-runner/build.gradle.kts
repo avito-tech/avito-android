@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.utils.gradle.KubernetesCredentials
@@ -48,6 +49,10 @@ instrumentation {
 
     val credentials = project.kubernetesCredentials
     if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
+
+        afterEvaluate {
+            tasks.named("check").dependsOn(tasks.named("instrumentationUi"))
+        }
 
         val emulator29 = CloudEmulator(
             name = "api29",
