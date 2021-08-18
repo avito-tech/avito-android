@@ -1,14 +1,14 @@
 package com.avito.android.test.report.troubleshooting.dump
 
 import radiography.Radiography
-import radiography.ScanScopes.FocusedWindowScope
+import radiography.ScanScopes.AllWindowsScope
 import radiography.ViewStateRenderers
 
 object ViewHierarchyDumper {
 
     fun getDump(): String {
         return Radiography.scan(
-            scanScope = FocusedWindowScope,
+            scanScope = AllWindowsScope,
             viewStateRenderers = ViewStateRenderers.DefaultsIncludingPii
         )
     }
