@@ -29,7 +29,7 @@ val includedProjectDirs = provider {
 
 val allProjectDirsProvider: Provider<List<Directory>> = includedProjectDirs.map { it + layout.projectDirectory }
 
-val gradleVer = "7.2-rc-3"
+val gradleVer = "7.2"
 val distribution = Wrapper.DistributionType.BIN
 
 /**
