@@ -5,7 +5,6 @@ import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -28,7 +27,7 @@ internal class LintCheckTest {
         val buildResult = runBuild()
         buildResult.assertThat()
             .buildSuccessful()
-            .taskWithOutcome(":app:lintRelease", TaskOutcome.SUCCESS)
+            .tasksShouldBeTriggered(":app:lintRelease")
     }
 
     private fun runBuild(): TestResult {
@@ -36,6 +35,7 @@ internal class LintCheckTest {
             projectDir,
             "app:release",
             "-Pci=true",
+            dryRun = true,
         )
     }
 
