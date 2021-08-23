@@ -1,6 +1,6 @@
 package com.avito.time
 
-import java.time.Duration
+import java.time.Instant
 import java.util.Date
 
 public class StubTimeProvider : TimeProvider {
@@ -11,7 +11,7 @@ public class StubTimeProvider : TimeProvider {
 
     override fun nowInMillis(): Long = timeProvider.nowInMillis()
 
-    override fun nowInDuration(): Duration = timeProvider.nowInDuration()
+    override fun nowInstant(): Instant = timeProvider.nowInstant()
 
     override fun nowInSeconds(): Long = timeProvider.nowInSeconds()
 

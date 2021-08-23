@@ -1,7 +1,7 @@
 package com.avito.time
 
 import androidx.annotation.RequiresApi
-import java.time.Duration
+import java.time.Instant
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -16,7 +16,7 @@ public class DefaultTimeProvider : TimeProvider {
     override fun nowInSeconds(): Long = TimeUnit.MILLISECONDS.toSeconds(nowInMillis())
 
     @RequiresApi(26)
-    override fun nowInDuration(): Duration = Duration.ofMillis(System.currentTimeMillis())
+    override fun nowInstant(): Instant = Instant.now()
 
     override fun now(): Date = toDate(nowInSeconds())
 

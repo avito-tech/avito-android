@@ -5,24 +5,25 @@ import com.avito.math.Percent
 import com.avito.math.fromZeroToHundredPercent
 import com.avito.math.median
 import com.avito.runner.scheduler.metrics.model.DeviceKey
-import com.avito.runner.scheduler.metrics.model.DeviceWorkerEvents
+import com.avito.runner.scheduler.metrics.model.DeviceWorkerEvent
 import com.avito.runner.scheduler.metrics.model.TestExecutionEvent
 import java.time.Duration
+import java.time.Instant
 
 internal data class TestRunnerMetricsProviderImpl(
-    private val testSuiteStartedTime: Duration,
-    private val testSuiteEndedTime: Duration,
-    private val deviceWorkerEvents: Map<DeviceKey, DeviceWorkerEvents>
+    private val testSuiteStartedTime: Instant,
+    private val testSuiteEndedTime: Instant,
+    private val deviceWorkerEvents: Map<DeviceKey, DeviceWorkerEvent>
 ) : TestRunnerMetricsProvider {
 
     private val testTimestamps = deviceWorkerEvents.flatMap { it.value.testExecutionEvents.values }
 
-    private val firstTestStarted: Result<Duration> = testTimestamps.filterIsInstance<TestExecutionEvent.Finished>()
+    private val firstTestStarted: Result<Instant> = testTimestamps.filterIsInstance<TestExecutionEvent.Finished>()
         .map { it.testStarted }
         .minOrNull()
         .toResult { "Cannot calculate first started test time" }
 
-    private val lastTestEnded: Result<Duration> = testTimestamps.filterIsInstance<TestExecutionEvent.Finished>()
+    private val lastTestEnded: Result<Instant> = testTimestamps.filterIsInstance<TestExecutionEvent.Finished>()
         .map { it.finished }
         .maxOrNull()
         .toResult { "Cannot calculate last ended test time" }
@@ -30,16 +31,16 @@ internal data class TestRunnerMetricsProviderImpl(
     private val queueTimes: List<Duration> =
         testTimestamps
             .filterIsInstance<TestExecutionEvent.Finished>()
-            .map { it.intentionReceived - testSuiteStartedTime }
+            .map { Duration.between(testSuiteStartedTime, it.intentionReceived) }
 
     private val installationTimes: List<Duration> =
         testTimestamps
             .filterIsInstance<TestExecutionEvent.Finished>()
             .map { it.installationTime }
 
-    override fun initialDelay(): Result<Duration> = firstTestStarted.map { it - testSuiteStartedTime }
+    override fun initialDelay(): Result<Duration> = firstTestStarted.map { Duration.between(testSuiteStartedTime, it) }
 
-    override fun endDelay(): Result<Duration> = lastTestEnded.map { testSuiteEndedTime - it }
+    override fun endDelay(): Result<Duration> = lastTestEnded.map { Duration.between(it, testSuiteEndedTime) }
 
     override fun medianQueueTime(): Result<Duration> =
         countMetric("Cannot calculate median queue time") {
@@ -62,13 +63,13 @@ internal data class TestRunnerMetricsProviderImpl(
         }
 
     override fun suiteTime(): Result<Duration> =
-        lastTestEnded.combine(firstTestStarted) { last, first -> last - first }
+        firstTestStarted.combine(lastTestEnded) { started, ended -> Duration.between(started, ended) }
 
-    override fun totalTime(): Duration = testSuiteEndedTime - testSuiteStartedTime
+    override fun totalTime(): Duration = Duration.between(testSuiteStartedTime, testSuiteEndedTime)
 
     override fun medianDeviceUtilization(): Result<Percent> =
         countMetric("Cannot calculate median device utilization") {
-            deviceWorkerEvents.values.filterIsInstance<DeviceWorkerEvents.Finished>()
+            deviceWorkerEvents.values.filterIsInstance<DeviceWorkerEvent.Finished>()
                 .map { it.utilizationPercent.toInt() }
                 .median()
                 .toInt()

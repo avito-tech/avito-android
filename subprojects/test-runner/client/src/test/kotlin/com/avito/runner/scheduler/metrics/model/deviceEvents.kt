@@ -1,9 +1,9 @@
 package com.avito.runner.scheduler.metrics.model
 
-import java.time.Duration
+import java.time.Instant
 
-internal fun DeviceWorkerEvents.Companion.createStubInstance(
-    created: Duration = Duration.ofMillis(0),
+internal fun DeviceWorkerEvent.Companion.createStubInstance(
+    created: Instant = Instant.ofEpochMilli(0),
     testExecutionEvents: MutableMap<TestKey, TestExecutionEvent> = mutableMapOf(),
-    finished: Duration = Duration.ofMillis(0)
-) = DeviceWorkerEvents.Finished(created = created, testExecutionEvents = testExecutionEvents, finished = finished)
+    finished: Instant = Instant.ofEpochMilli(0)
+) = DeviceWorkerEvent.Finished(created = created, testExecutionEvents = testExecutionEvents, finished = finished)
