@@ -40,7 +40,6 @@ import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
@@ -51,6 +50,7 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.time.Duration
@@ -579,9 +579,13 @@ internal class RunnerIntegrationTest {
         )
 
         devices.send(device)
-        assertThrows<TimeoutCancellationException> {
-            runner.runTests(tests)
-        }
+        val result = runner.runTests(tests)
+        result.fold({
+            fail("Test run finished successfully, but failure was expected")
+        }, {
+            assertThat(it).isInstanceOf(IllegalStateException::class.java)
+            assertThat(it).hasMessageThat().startsWith("Test run finished with timeout")
+        })
 
         assertThat(devicesProvider.isReleased).isTrue()
         state.assertIsCancelled()

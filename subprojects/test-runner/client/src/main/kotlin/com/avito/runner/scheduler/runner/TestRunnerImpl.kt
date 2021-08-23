@@ -3,6 +3,7 @@ package com.avito.runner.scheduler.runner
 import com.avito.android.Result
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
+import com.avito.coroutines.extensions.withTimeoutOrDefault
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.config.TargetConfigurationData
@@ -20,7 +21,6 @@ import com.avito.test.model.TestCase
 import com.avito.time.millisecondsToHumanReadableTime
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withTimeout
 import java.time.Duration
 
 internal class TestRunnerImpl(
@@ -40,7 +40,16 @@ internal class TestRunnerImpl(
     private val logger = loggerFactory.create<TestRunner>()
 
     override suspend fun runTests(tests: List<TestCase>): Result<TestRunnerResult> {
-        return withTimeout(executionTimeout.toMillis()) {
+        return withTimeoutOrDefault(
+            timeMillis = executionTimeout.toMillis(),
+            default = Result.Failure(
+                IllegalStateException(
+                    "Test run finished with timeout after ${
+                        executionTimeout.toMillis().millisecondsToHumanReadableTime()
+                    }"
+                )
+            )
+        ) {
             coroutineScope {
                 val startTime = System.currentTimeMillis()
                 testSuiteListener.onTestSuiteStarted()
@@ -97,13 +106,13 @@ internal class TestRunnerImpl(
                     )
 
                     testSuiteListener.onTestSuiteFinished()
-                    logger.info("Test run end successfully")
+                    logger.info("Test run finished successfully")
                     Result.Success(result)
                 } catch (e: TimeoutCancellationException) {
-                    logger.critical("Test run end with timeout", e)
+                    logger.critical("Test run finished with timeout", e)
                     Result.Failure(e)
                 } catch (e: Throwable) {
-                    logger.critical("Test run end with error", e)
+                    logger.critical("Test run finished with error", e)
                     Result.Failure(e)
                 } finally {
                     deviceWorkerPool.stop()
