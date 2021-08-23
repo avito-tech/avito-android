@@ -108,11 +108,10 @@ internal class TestRunnerImpl(
                     testSuiteListener.onTestSuiteFinished()
                     logger.info("Test run finished successfully")
                     Result.Success(result)
-                } catch (e: TimeoutCancellationException) {
-                    logger.critical("Test run finished with timeout", e)
-                    Result.Failure(e)
                 } catch (e: Throwable) {
-                    logger.critical("Test run finished with error", e)
+                    logger.critical("Test run finished with ${
+                        if (e is TimeoutCancellationException) "timeout" else "error"
+                    }", e)
                     Result.Failure(e)
                 } finally {
                     deviceWorkerPool.stop()

@@ -50,7 +50,6 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.time.Duration
@@ -581,7 +580,7 @@ internal class RunnerIntegrationTest {
         devices.send(device)
         val result = runner.runTests(tests)
         result.fold({
-            fail("Test run finished successfully, but failure was expected")
+            throw AssertionError("Test run finished successfully, but failure was expected")
         }, {
             assertThat(it).isInstanceOf(IllegalStateException::class.java)
             assertThat(it).hasMessageThat().startsWith("Test run finished with timeout")
