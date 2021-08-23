@@ -5,7 +5,6 @@ import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -28,8 +27,10 @@ internal class LintReportTest {
         val buildResult = runBuild()
         buildResult.assertThat()
             .buildSuccessful()
-            .taskWithOutcome(":app:lintRelease", TaskOutcome.SUCCESS)
-            .taskWithOutcome(":app:lintReportToChannel", TaskOutcome.SUCCESS)
+            .tasksShouldBeTriggered(
+                ":app:lintRelease",
+                ":app:lintReportToChannel"
+            )
     }
 
     private fun runBuild(): TestResult {
@@ -40,7 +41,8 @@ internal class LintReportTest {
             "-PbuildNumber=0",
             "-PteamcityBuildType=stubBuildType",
             "-PteamcityUrl=http://stub",
-            "-PteamcityBuildId=0"
+            "-PteamcityBuildId=0",
+            dryRun = true
         )
     }
 
