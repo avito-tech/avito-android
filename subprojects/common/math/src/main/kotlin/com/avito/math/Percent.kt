@@ -12,7 +12,7 @@ public fun Long.percentOf(sum: Long): Percent = NumberPercent(toFloat() / sum * 
  * convert 0.0 - 1.0 representation to [Percent]
  */
 @Suppress("MagicNumber")
-public fun Double.percent(): Percent {
+public fun Double.fromZeroToOnePercent(): Percent {
     require(this in 0.0..1.0) { "Trying to convert $this to percents; should be in [0.0..1.0] range" }
     return NumberPercent(this * 100)
 }
@@ -21,9 +21,14 @@ public fun Double.percent(): Percent {
  * convert 0.0 - 1.0 representation to [Percent]
  */
 @Suppress("MagicNumber")
-public fun Float.percent(): Percent {
+public fun Float.fromZeroToOnePercent(): Percent {
     require(this in 0.0..1.0) { "Trying to convert $this to percents; should be in [0.0..1.0] range" }
     return NumberPercent(this * 100)
+}
+
+public fun Int.fromZeroToHundredPercent(): Percent {
+    require(this in 0..100) { "Trying to convert $this to percents; should be in [0..100] range" }
+    return NumberPercent(this)
 }
 
 public interface Percent {
@@ -35,7 +40,7 @@ public interface Percent {
     public fun toLong(): Long
 }
 
-internal class NumberPercent(val value: Number) : Percent {
+internal data class NumberPercent(val value: Number) : Percent {
 
     private val decimalFormat = DecimalFormat("0.##'%'")
 

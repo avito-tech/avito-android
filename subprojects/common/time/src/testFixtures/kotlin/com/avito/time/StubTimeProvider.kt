@@ -1,5 +1,6 @@
 package com.avito.time
 
+import java.time.Instant
 import java.util.Date
 
 public class StubTimeProvider : TimeProvider {
@@ -9,6 +10,8 @@ public class StubTimeProvider : TimeProvider {
     public lateinit var now: Date
 
     override fun nowInMillis(): Long = timeProvider.nowInMillis()
+
+    override fun nowInstant(): Instant = timeProvider.nowInstant()
 
     override fun nowInSeconds(): Long = timeProvider.nowInSeconds()
 

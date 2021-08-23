@@ -3,11 +3,10 @@ package com.avito.runner.scheduler.metrics
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.scheduler.metrics.model.DeviceKey
-import com.avito.runner.scheduler.metrics.model.DeviceTimestamps
+import com.avito.runner.scheduler.metrics.model.DeviceWorkerEvent
+import com.avito.runner.scheduler.metrics.model.TestExecutionEvent
 import com.avito.runner.scheduler.metrics.model.TestKey
-import com.avito.runner.scheduler.metrics.model.TestTimestamps
 import com.avito.runner.scheduler.metrics.model.finish
-import com.avito.runner.scheduler.metrics.model.start
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
@@ -15,38 +14,41 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.time.TimeProvider
+import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
-internal class TestMetricsListenerImpl(
-    private val testMetricsSender: TestMetricsSender,
+internal class TestRunnerMetricsListener(
+    private val testMetricsSender: TestRunnerMetricsSender,
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
 ) : TestSuiteListener, DeviceListener {
 
-    private val logger = loggerFactory.create<TestSuiteListener>()
+    private val logger = loggerFactory.create<TestRunnerMetricsListener>()
 
-    private val deviceTimestamps = ConcurrentHashMap<DeviceKey, DeviceTimestamps>()
+    private val deviceWorkerEvents = ConcurrentHashMap<DeviceKey, DeviceWorkerEvent>()
 
-    private var testSuiteStartedTime: Long = 0
+    private var testSuiteStartedTime: Instant = Instant.now()
 
     override fun onTestSuiteStarted() {
-        testSuiteStartedTime = timeProvider.nowInMillis()
+        testSuiteStartedTime = timeProvider.nowInstant()
     }
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
-        deviceTimestamps[device.key()] = DeviceTimestamps.Started(
-            created = timeProvider.nowInMillis(),
-            testTimestamps = mutableMapOf(),
+        deviceWorkerEvents[device.key()] = DeviceWorkerEvent.Created(
+            created = timeProvider.nowInstant(),
+            testExecutionEvents = mutableMapOf(),
         )
     }
 
     override suspend fun onIntentionReceived(device: Device, intention: Intention) {
-        deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
+        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
                 null
             } else {
-                oldValue.testTimestamps[intention.testKey()] = TestTimestamps.NotStarted(timeProvider.nowInMillis())
+                oldValue.testExecutionEvents[intention.testKey()] = TestExecutionEvent.IntentionReceived(
+                    timeProvider.nowInstant()
+                )
                 oldValue
             }
         }
@@ -61,20 +63,20 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
-        deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
+        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
                 null
             } else {
-                oldValue.testTimestamps.compute(intention.testKey()) { _: TestKey, testTimestamps: TestTimestamps? ->
-                    if (testTimestamps == null) {
+                oldValue.testExecutionEvents.compute(intention.testKey()) { _: TestKey, events: TestExecutionEvent? ->
+                    if (events == null) {
                         logger.warn(
                             "Fail to set timestamp value, previous required values not found, " +
                                 "this shouldn't happen"
                         )
                         null
                     } else {
-                        testTimestamps.start(timeProvider.nowInMillis())
+                        events.start(timeProvider.nowInstant())
                     }
                 }
                 oldValue
@@ -83,20 +85,20 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
-        deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
+        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
                 null
             } else {
-                oldValue.testTimestamps.compute(intention.testKey()) { _: TestKey, testTimestamps: TestTimestamps? ->
-                    if (testTimestamps == null) {
+                oldValue.testExecutionEvents.compute(intention.testKey()) { _: TestKey, events: TestExecutionEvent? ->
+                    if (events == null) {
                         logger.warn(
                             "Fail to set timestamp value, previous required values not found, " +
                                 "this shouldn't happen"
                         )
                         null
                     } else {
-                        testTimestamps.finish(timeProvider.nowInMillis())
+                        events.finish(timeProvider.nowInstant())
                     }
                 }
                 oldValue
@@ -105,7 +107,7 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
-        // empty
+        // TODO Should we handle this as a test complete?
     }
 
     override suspend fun onDeviceDied(device: Device, message: String, reason: Throwable) {
@@ -113,48 +115,48 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onFinished(device: Device) {
-        deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
+        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
                 null
             } else {
-                oldValue.finish(finished = timeProvider.nowInMillis())
+                oldValue.finish(finished = timeProvider.nowInstant())
             }
         }
     }
 
     override fun onTestSuiteFinished() {
-        val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
+        val provider = createMetricsProvider()
 
         with(testMetricsSender) {
-            aggregator.initialDelay().fold(
+            provider.initialDelay().fold(
                 { sendInitialDelay(it) },
                 { logger.warn("Not sending initial delay, no data") }
             )
 
-            aggregator.medianQueueTime().fold(
+            provider.medianQueueTime().fold(
                 { sendMedianQueueTime(it) },
                 { logger.warn("Not sending median test queue time, no data") }
             )
-            aggregator.medianInstallationTime().fold(
+            provider.medianInstallationTime().fold(
                 { sendMedianInstallationTime(it) },
                 { logger.warn("Not sending median test start time, no data") }
             )
 
-            aggregator.endDelay().fold(
+            provider.endDelay().fold(
                 { sendEndDelay(it) },
                 { logger.warn("Not sending end delay, no data") }
             )
 
-            aggregator.suiteTime().fold(
+            provider.suiteTime().fold(
                 { sendSuiteTime(it) },
                 { logger.warn("Not sending suite time, no data") }
             )
 
-            sendTotalTime(aggregator.totalTime())
+            sendTotalTime(provider.totalTime())
 
-            aggregator.medianDeviceUtilization().fold(
-                { sendMedianDeviceUtilization(it.toInt()) },
+            provider.medianDeviceUtilization().fold(
+                { sendMedianDeviceUtilization(it) },
                 { logger.warn("Not sending median device relative wasted time, no data") }
             )
         }
@@ -164,11 +166,11 @@ internal class TestMetricsListenerImpl(
 
     private fun Intention.testKey() = TestKey(action.test, action.executionNumber)
 
-    private fun createTestMetricsAggregator(): TestMetricsAggregator {
-        return TestMetricsAggregatorImpl(
+    private fun createMetricsProvider(): TestRunnerMetricsProvider {
+        return TestRunnerMetricsProviderImpl(
             testSuiteStartedTime = testSuiteStartedTime,
-            testSuiteEndedTime = timeProvider.nowInMillis(),
-            deviceTimestamps = deviceTimestamps
+            testSuiteEndedTime = timeProvider.nowInstant(),
+            deviceWorkerEvents = deviceWorkerEvents
         )
     }
 }

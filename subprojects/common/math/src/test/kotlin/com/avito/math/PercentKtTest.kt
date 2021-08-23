@@ -28,18 +28,18 @@ internal class PercentKtTest {
 
     @Test
     fun `double percent - two decimal string is correct - decimal`() {
-        assertThat(0.2345.percent().twoDigitsString()).isEqualTo("23.45%")
+        assertThat(0.2345.fromZeroToOnePercent().twoDigitsString()).isEqualTo("23.45%")
     }
 
     @Test
     fun `float percent - two decimal string is correct - decimal`() {
-        assertThat(0.2345F.percent().twoDigitsString()).isEqualTo("23.45%")
+        assertThat(0.2345F.fromZeroToOnePercent().twoDigitsString()).isEqualTo("23.45%")
     }
 
     @Test
     fun `percent - throws exception - not in range`() {
         assertThrows<IllegalArgumentException> {
-            23.45.percent()
+            23.45.fromZeroToOnePercent()
         }
     }
 }
