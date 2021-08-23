@@ -50,7 +50,8 @@ abstract class CheckWrapper : DefaultTask() {
                         Inconsistency(
                             projectPath = projectPath,
                             reason = "project gradle version is '$expectedGradleVersion', " +
-                                "but ${project.relativePath(wrapperPropertiesFile)} points to another version: $distributionUrl"
+                                "but ${project.relativePath(wrapperPropertiesFile)} " +
+                                "points to another version: $distributionUrl"
                         )
                     )
                 }
@@ -62,7 +63,8 @@ abstract class CheckWrapper : DefaultTask() {
                         Inconsistency(
                             projectPath = projectPath,
                             reason = "gradle distribution type is '$expectedDistributionType', " +
-                                "but ${project.relativePath(wrapperPropertiesFile)} specifies another type: $distributionUrl"
+                                "but ${project.relativePath(wrapperPropertiesFile)} " +
+                                "specifies another type: $distributionUrl"
                         )
                     )
                 }
@@ -74,7 +76,8 @@ abstract class CheckWrapper : DefaultTask() {
                         Inconsistency(
                             projectPath = projectPath,
                             reason = "Expected gradle distribution url is '$expectedDistributionUrl', " +
-                                "but ${project.relativePath(wrapperPropertiesFile)} specifies different one: $distributionUrl"
+                                "but ${project.relativePath(wrapperPropertiesFile)} " +
+                                "specifies different one: $distributionUrl"
                         )
                     )
                 }
