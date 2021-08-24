@@ -15,7 +15,7 @@ import org.gradle.kotlin.dsl.property
 public fun Project.gitState(): Property<GitState> =
     lazyProperty("GIT_STATE_PROVIDER") { project ->
         project.objects.property<GitState>().apply {
-            val strategy = project.getOptionalStringProperty("avito.git.state", default = "local")
+            val strategy = project.getOptionalStringProperty("avito.git.state", default = "env")
 
             val loggerFactory = SimpleLoggerFactory()
 
