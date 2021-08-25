@@ -9,7 +9,7 @@
     tools:ignore="HardcodedText">
 
     <TextView
-        android:id="@+id/orientation_label"
+        android:id="@+id/label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

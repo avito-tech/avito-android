@@ -16,20 +16,43 @@ interface ScreenChecks {
     fun isScreenOpened()
 }
 
-open class StrictScreenChecks<out T : Screen>(
+abstract class BaseScreenChecks<out T : Screen>(
     protected val screen: T,
-    final override val checkOnEachScreenInteraction: Boolean = true
 ) : ScreenChecks {
 
+    /**
+     * To avoid recursion when client invokes [isScreenOpened] directly with enabled [checkOnEachScreenInteraction].
+     * [isScreenOpened] will be invoked on each view element interaction.
+     */
+    private var inChecking = false
+
+    // TODO: make final after removing StrictScreenChecks (MBS-11808)
     @CallSuper
     override fun isScreenOpened() {
+        if (!inChecking) {
+            inChecking = true
+            screenOpenedCheck()
+            inChecking = false
+        }
+    }
+
+    protected abstract fun screenOpenedCheck()
+}
+
+// TODO: Remove after migrating clients from bare PageObject to screens (MBS-11808)
+open class StrictScreenChecks<out T : Screen>(
+    screen: T,
+    override val checkOnEachScreenInteraction: Boolean = true
+) : BaseScreenChecks<T>(screen) {
+
+    override fun screenOpenedCheck() {
         screen.checkRootId()
     }
 }
 
 /**
- * Known limitations: don't work in Android 11 in case of multiple windows (dialogs, popups, ...)
- * Will be fixed in MBS-11808
+ * Known limitations: doesn't work in Android 11 in case of multiple windows (dialogs, popups, ...)
+ * Use other implementations of [ScreenChecks]
  */
 private fun Screen.checkRootId() {
     if (this.rootId != UNKNOWN_ROOT_ID) {
