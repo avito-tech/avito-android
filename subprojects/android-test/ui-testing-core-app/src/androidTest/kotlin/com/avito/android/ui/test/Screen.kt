@@ -1,5 +1,7 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.page_object.Alert
+import com.avito.android.ui.test.dialog.DialogsScreen
 import com.avito.android.ui.test.retry.RetryScreen
 
 object Screen {
@@ -72,4 +74,10 @@ object Screen {
 
     val overlapScreen: OverlapScreen
         get() = OverlapScreen()
+
+    val dialogsScreen: DialogsScreen
+        get() = DialogsScreen()
+
+    val alert: Alert
+        get() = Alert()
 }

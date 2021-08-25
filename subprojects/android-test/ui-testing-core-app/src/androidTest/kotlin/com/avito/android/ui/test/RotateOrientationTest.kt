@@ -3,7 +3,7 @@ package com.avito.android.ui.test
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.Device
 import com.avito.android.test.app.core.screenRule
-import com.avito.android.ui.RotateOrientationActivity
+import com.avito.android.ui.DialogsActivity
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -11,7 +11,7 @@ import org.junit.Test
 class RotateOrientationTest {
 
     @get:Rule
-    val rule = screenRule<RotateOrientationActivity>()
+    val rule = screenRule<DialogsActivity>()
 
     @Test
     fun rotate__changes_orientation() {
@@ -23,7 +23,7 @@ class RotateOrientationTest {
     @Test
     fun rotate__changes_orientation__with_dialog() {
         rule.launchActivity(
-            RotateOrientationActivity.intent(openDialog = true)
+            DialogsActivity.intent(openDialog = true)
         )
         verifyRotationBehaviour()
     }
@@ -31,7 +31,7 @@ class RotateOrientationTest {
     @Test
     fun rotate__changes_orientation__with_popup_window() {
         rule.launchActivity(
-            RotateOrientationActivity.intent(openPopup = true)
+            DialogsActivity.intent(openPopup = true)
         )
         verifyRotationBehaviour()
     }

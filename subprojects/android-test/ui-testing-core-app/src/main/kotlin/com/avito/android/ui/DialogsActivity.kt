@@ -1,9 +1,9 @@
 package com.avito.android.ui
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -16,32 +16,27 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-class RotateOrientationActivity : AppCompatActivity() {
+class DialogsActivity : AppCompatActivity() {
+
+    private var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_rotate)
+        setContentView(R.layout.activity_dialogs)
 
-        setupOrientationLabel()
         setupDialog()
         setupPopup()
     }
 
-    private fun setupOrientationLabel() {
-        val orientation = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_UNDEFINED -> "UNDEFINED"
-            Configuration.ORIENTATION_LANDSCAPE -> "LANDSCAPE"
-            Configuration.ORIENTATION_PORTRAIT -> "PORTRAIT"
-            Configuration.ORIENTATION_SQUARE -> "SQUARE"
-            else -> "UNKNOWN"
-        }
-        findViewById<TextView>(R.id.orientation_label).text = orientation
+    override fun onStop() {
+        dialog?.dismiss()
+        super.onStop()
     }
 
     @SuppressLint("SetTextI18n")
     private fun setupDialog() {
         if (intent.getBooleanExtra(EXTRA_OPEN_DIALOG, false)) {
-            AlertDialog.Builder(this)
+            dialog = AlertDialog.Builder(this)
                 .setMessage("Alert dialog")
                 .setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
                     dialog?.cancel()

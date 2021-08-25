@@ -27,6 +27,10 @@ open class StrictScreenChecks<out T : Screen>(
     }
 }
 
+/**
+ * Known limitations: don't work in Android 11 in case of multiple windows (dialogs, popups, ...)
+ * Will be fixed in MBS-11808
+ */
 private fun Screen.checkRootId() {
     if (this.rootId != UNKNOWN_ROOT_ID) {
         val rootElement = ViewElement(ViewMatchers.withId(this.rootId))
