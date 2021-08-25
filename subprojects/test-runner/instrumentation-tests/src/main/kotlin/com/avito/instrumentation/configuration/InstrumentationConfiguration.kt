@@ -20,7 +20,7 @@ public abstract class InstrumentationConfiguration(public val name: String) {
     @Deprecated("Use testRunnerExecutionTimeout and instrumentationTaskTimeout properties instead")
     public var timeoutInSeconds: Long = 120L // TODO: remove after MBS-11465
 
-    public var testRunnerExecutionTimeout: Duration = Duration.ofMinutes(100)
+    public var testRunnerExecutionTimeout: Duration = Duration.ofMinutes(1)
 
     public var instrumentationTaskTimeout: Duration = Duration.ofMinutes(120)
 
