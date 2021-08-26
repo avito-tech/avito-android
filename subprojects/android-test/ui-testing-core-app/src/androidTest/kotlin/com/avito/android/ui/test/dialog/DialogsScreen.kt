@@ -2,6 +2,7 @@ package com.avito.android.ui.test.dialog
 
 import androidx.test.espresso.matcher.ViewMatchers
 import com.avito.android.screen.ScreenChecks
+import com.avito.android.test.page_object.DialogScreen
 import com.avito.android.test.page_object.PopupScreen
 import com.avito.android.test.page_object.SimpleScreen
 import com.avito.android.test.page_object.ViewElement
@@ -24,4 +25,16 @@ class DialogsScreen : SimpleScreen() {
 
         val label: ViewElement = element(ViewMatchers.withId(R.id.label))
     }
+}
+
+class DialogScreenWithDialogRoot : DialogScreen(
+    ViewMatchers.withId(R.id.content)
+) {
+    val label: ViewElement = element(ViewMatchers.withId(R.id.label))
+}
+
+class DialogScreenWithPopupRoot : PopupScreen(
+    ViewMatchers.withId(R.id.content)
+) {
+    val label: ViewElement = element(ViewMatchers.withId(R.id.label))
 }

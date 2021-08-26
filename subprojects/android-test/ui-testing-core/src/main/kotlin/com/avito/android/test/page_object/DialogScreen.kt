@@ -13,7 +13,7 @@ abstract class DialogScreen(
     matcher: Matcher<View>
 ) : PageObject(), Screen {
 
-    override val rootId: Int = Screen.UNKNOWN_ROOT_ID
+    final override val rootId: Int = Screen.UNKNOWN_ROOT_ID
 
     override val interactionContext: InteractionContext by lazy {
         DialogInteractionContext(matcher) {
