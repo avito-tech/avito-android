@@ -36,4 +36,12 @@ class DialogsTest {
             Screen.dialogsScreen.label.checks.isDisplayed()
         }
     }
+
+    @Test
+    fun matcher_with_popup_window__success__popup_is_open() {
+        rule.launchActivity(
+            DialogsActivity.intent(openPopup = true)
+        )
+        Screen.dialogsScreen.popup.label.checks.isDisplayed()
+    }
 }
