@@ -1,6 +1,5 @@
 package com.avito.android.ui.test.dialog
 
-import androidx.test.espresso.NoMatchingViewException
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.DialogsActivity
 import com.avito.android.ui.test.Screen
@@ -17,7 +16,7 @@ class DialogsTest {
     fun matcher_with_default_root__success__no_dialog() {
         rule.launchActivity(null)
 
-        Screen.dialogsScreen.content.checks.isDisplayed()
+        Screen.dialogsScreen.label.checks.isDisplayed()
     }
 
     @Test
@@ -29,12 +28,12 @@ class DialogsTest {
     }
 
     @Test
-    fun matcher_with_default_root__no_matching_view_exception__dialog_is_open() {
+    fun matcher_with_default_root__assertion_error__dialog_is_open() {
         rule.launchActivity(
             DialogsActivity.intent(openDialog = true)
         )
-        assertThrows<NoMatchingViewException> {
-            Screen.dialogsScreen.content.checks.isDisplayed()
+        assertThrows<AssertionError> {
+            Screen.dialogsScreen.label.checks.isDisplayed()
         }
     }
 }

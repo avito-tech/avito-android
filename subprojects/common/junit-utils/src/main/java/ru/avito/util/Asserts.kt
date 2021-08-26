@@ -13,7 +13,7 @@ public inline fun <T : Throwable> assertThrows(expectedType: Class<T>, executabl
         } else {
             throw AssertionFailedError(
                 "Unexpected exception type thrown. " +
-                    "Expected: $expectedType , but was ${actualException.javaClass}"
+                    "Expected: $expectedType , but was ${actualException.javaClass}: $actualException"
             )
         }
     }
