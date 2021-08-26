@@ -6,5 +6,5 @@ import androidx.test.internal.runner.RunnerArgsAccessor
 interface OrchestratorDelegate {
 
     fun isRealRun(arguments: Bundle): Boolean =
-        !arguments.containsKey(RunnerArgsAccessor.ARGUMENT_LIST_TESTS_FOR_ORCHESTRATOR)
+        !arguments.containsKey(RunnerArgsAccessor.ARGUMENT_ORCHESTRATOR_SERVICE)
 }
