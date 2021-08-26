@@ -6,5 +6,5 @@ public data class Intention(
 ) {
     override fun toString(): String = "Intention: $action, state: $state"
 
-    internal companion object
+    public companion object
 }
