@@ -40,7 +40,6 @@ import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
@@ -579,9 +578,13 @@ internal class RunnerIntegrationTest {
         )
 
         devices.send(device)
-        assertThrows<TimeoutCancellationException> {
-            runner.runTests(tests)
-        }
+        val result = runner.runTests(tests)
+        result.fold({
+            throw AssertionError("Test run finished successfully, but failure was expected")
+        }, {
+            assertThat(it).isInstanceOf(IllegalStateException::class.java)
+            assertThat(it).hasMessageThat().startsWith("Test run finished with timeout")
+        })
 
         assertThat(devicesProvider.isReleased).isTrue()
         state.assertIsCancelled()

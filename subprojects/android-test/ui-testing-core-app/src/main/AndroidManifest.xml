@@ -42,6 +42,6 @@
         <activity android:name=".RecyclerDescendantLevelsActivity" />
         <activity android:name=".ToastActivity" />
         <activity android:name=".OverlapActivity" />
-        <activity android:name=".RotateOrientationActivity" />
+        <activity android:name=".DialogsActivity" />
     </application>
 </manifest>

@@ -9,6 +9,7 @@ import org.hamcrest.Matcher
 
 abstract class PageObject {
 
+    // TODO: remove default implementation after migrating clients to specific implementations in MBS-11808
     open val interactionContext: InteractionContext by lazy {
         if (this is Screen) {
             SimpleInteractionContext(ViewMatchers.isRoot()) {

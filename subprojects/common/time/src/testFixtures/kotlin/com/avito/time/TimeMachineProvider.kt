@@ -1,5 +1,7 @@
 package com.avito.time
 
+import java.time.Duration
+import java.time.Instant
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -21,6 +23,8 @@ public class TimeMachineProvider : TimeProvider {
     }
 
     override fun nowInMillis(): Long = defaultTimeProvider.nowInMillis() + timeShift
+
+    override fun nowInstant(): Instant = defaultTimeProvider.nowInstant().plus(Duration.ofMillis(timeShift))
 
     override fun nowInSeconds(): Long = defaultTimeProvider.nowInMillis() + TimeUnit.MILLISECONDS.toSeconds(timeShift)
 

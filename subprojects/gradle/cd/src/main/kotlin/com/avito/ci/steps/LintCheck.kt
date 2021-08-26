@@ -6,6 +6,7 @@ import com.avito.android.lint.AndroidLintAccessor
 import com.avito.android.lint.slack.LintReportToSlackTaskFactory
 import com.avito.impact.configuration.internalModule
 import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.create
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
@@ -20,14 +21,26 @@ public class LintCheck(context: String, name: String) : SuppressibleBuildStep(co
     @Suppress("MemberVisibilityCanBePrivate")
     public var slackChannelForAlerts: SlackChannel? = null
 
-    override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
+    override fun registerTask(
+        project: Project,
+        rootTask: TaskProvider<out Task>
+    ) {
         require(project.isAndroidApp()) {
             "Lint check can be applied only to android application modules"
         }
 
-        if (project.buildEnvironment !is BuildEnvironment.CI) return
+        val loggerFactory = GradleLoggerFactory.fromProject(project)
+        val logger = loggerFactory.create<LintCheck>()
 
-        if (useImpactAnalysis && !project.internalModule.isModified()) return
+        if (project.buildEnvironment !is BuildEnvironment.CI) {
+            logger.warn("LintCheck is disabled. Add -Pci=true to enable")
+            return
+        }
+
+        if (useImpactAnalysis && !project.internalModule.isModified()) {
+            logger.info("LintCheck is SKIPPED because of impact analysis")
+            return
+        }
 
         rootTask.dependsOn(
             AndroidLintAccessor(project).taskProvider()
@@ -35,8 +48,7 @@ public class LintCheck(context: String, name: String) : SuppressibleBuildStep(co
 
         project.pluginManager.withPlugin("com.avito.android.lint-report") {
 
-            val logger = GradleLoggerFactory.fromProject(project)
-            val factory = LintReportToSlackTaskFactory(project, logger)
+            val factory = LintReportToSlackTaskFactory(project, loggerFactory)
 
             val slackChannel = slackChannelForAlerts
             if (slackChannel == null) {

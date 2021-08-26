@@ -7,8 +7,8 @@ import com.avito.report.Report
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.listener.TestListenerFactory
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
-import com.avito.runner.scheduler.metrics.TestMetricsListenerImpl
-import com.avito.runner.scheduler.metrics.TestMetricsSender
+import com.avito.runner.scheduler.metrics.TestRunnerMetricsListener
+import com.avito.runner.scheduler.metrics.TestRunnerMetricsSender
 import com.avito.runner.scheduler.runner.TestRunnerExecutionState
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
@@ -40,8 +40,8 @@ public class TestRunnerFactoryProvider(
         runnerPrefix = metricsConfig.runnerPrefix
     )
 
-    private val testMetricsSender = TestMetricsListenerImpl(
-        testMetricsSender = TestMetricsSender(
+    private val testMetricsSender = TestRunnerMetricsListener(
+        testMetricsSender = TestRunnerMetricsSender(
             statsDSender = statsDSender,
             prefix = metricsConfig.runnerPrefix
         ),
