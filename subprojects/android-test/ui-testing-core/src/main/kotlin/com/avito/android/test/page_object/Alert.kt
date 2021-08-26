@@ -5,7 +5,7 @@ import androidx.appcompat.widget.DialogTitle
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.withId
 
-class Alert : DialogScreen(
+open class Alert : DialogScreen(
     matcher = isAssignableFrom(AlertDialogLayout::class.java)
 ) {
     val messageElement: ViewElement = element(withId(android.R.id.message))

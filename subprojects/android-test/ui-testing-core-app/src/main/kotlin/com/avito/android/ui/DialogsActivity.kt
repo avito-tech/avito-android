@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 class DialogsActivity : AppCompatActivity() {
 
     private var dialog: Dialog? = null
+    private var popup: PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +31,7 @@ class DialogsActivity : AppCompatActivity() {
 
     override fun onStop() {
         dialog?.dismiss()
+        popup?.dismiss()
         super.onStop()
     }
 
@@ -55,16 +57,19 @@ class DialogsActivity : AppCompatActivity() {
 
             val view = LayoutInflater.from(this).inflate(R.layout.popup_window, null)
 
+            this.popup?.dismiss()
+
             val popup = PopupWindow(
                 view,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             popup.setBackgroundDrawable(ColorDrawable(Color.GREEN))
-            view.findViewById<TextView>(R.id.title).text = "Popup Window content"
+            view.findViewById<TextView>(R.id.label).text = "Popup Window content"
 
             content.post {
                 popup.showAtLocation(content, Gravity.CENTER, 0, 0)
+                this.popup = popup
             }
         }
     }
