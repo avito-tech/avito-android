@@ -3,10 +3,8 @@ package com.avito.runner.scheduler.metrics
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.scheduler.metrics.model.DeviceKey
-import com.avito.runner.scheduler.metrics.model.DeviceWorkerEvent
-import com.avito.runner.scheduler.metrics.model.TestExecutionEvent
+import com.avito.runner.scheduler.metrics.model.DeviceWorkerState
 import com.avito.runner.scheduler.metrics.model.TestKey
-import com.avito.runner.scheduler.metrics.model.finish
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
@@ -17,6 +15,8 @@ import com.avito.time.TimeProvider
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
+private typealias DeviceWorkerStates = ConcurrentHashMap.KeySetView<DeviceWorkerState, Boolean>
+
 internal class TestRunnerMetricsListener(
     private val testMetricsSender: TestRunnerMetricsSender,
     private val timeProvider: TimeProvider,
@@ -25,7 +25,7 @@ internal class TestRunnerMetricsListener(
 
     private val logger = loggerFactory.create<TestRunnerMetricsListener>()
 
-    private val deviceWorkerEvents = ConcurrentHashMap<DeviceKey, DeviceWorkerEvent>()
+    private val deviceWorkerStates: DeviceWorkerStates = ConcurrentHashMap.newKeySet()
 
     private var testSuiteStartedTime: Instant = Instant.now()
 
@@ -34,24 +34,25 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
-        deviceWorkerEvents[device.key()] = DeviceWorkerEvent.Created(
-            created = timeProvider.nowInstant(),
-            testExecutionEvents = mutableMapOf(),
-        )
+        check(
+            deviceWorkerStates.add(
+                DeviceWorkerState.Created(
+                    created = timeProvider.nowInstant(),
+                    testExecutionStates = ConcurrentHashMap.newKeySet(),
+                    key = device.key()
+                )
+            )
+        ) {
+            "Device ${device.key()} already called onDeviceCreated"
+        }
     }
 
     override suspend fun onIntentionReceived(device: Device, intention: Intention) {
-        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
-            if (oldValue == null) {
-                logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
-                null
-            } else {
-                oldValue.testExecutionEvents[intention.testKey()] = TestExecutionEvent.IntentionReceived(
-                    timeProvider.nowInstant()
-                )
-                oldValue
-            }
+        val key = device.key()
+        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
+            "Can't find DeviceWorkerState for $key"
         }
+        state.testIntentionReceived(intention.testKey(), timeProvider.nowInstant())
     }
 
     override suspend fun onStatePrepared(device: Device, state: State) {
@@ -63,47 +64,19 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
-        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
-            if (oldValue == null) {
-                logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
-                null
-            } else {
-                oldValue.testExecutionEvents.compute(intention.testKey()) { _: TestKey, events: TestExecutionEvent? ->
-                    if (events == null) {
-                        logger.warn(
-                            "Fail to set timestamp value, previous required values not found, " +
-                                "this shouldn't happen"
-                        )
-                        null
-                    } else {
-                        events.start(timeProvider.nowInstant())
-                    }
-                }
-                oldValue
-            }
+        val key = device.key()
+        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
+            "Can't find DeviceWorkerState for $key"
         }
+        state.testStarted(intention.testKey(), timeProvider.nowInstant())
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
-        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
-            if (oldValue == null) {
-                logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
-                null
-            } else {
-                oldValue.testExecutionEvents.compute(intention.testKey()) { _: TestKey, events: TestExecutionEvent? ->
-                    if (events == null) {
-                        logger.warn(
-                            "Fail to set timestamp value, previous required values not found, " +
-                                "this shouldn't happen"
-                        )
-                        null
-                    } else {
-                        events.finish(timeProvider.nowInstant())
-                    }
-                }
-                oldValue
-            }
+        val key = device.key()
+        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
+            "Can't find DeviceWorkerState for $key"
         }
+        state.testCompleted(intention.testKey(), timeProvider.nowInstant())
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
@@ -115,14 +88,20 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onFinished(device: Device) {
-        deviceWorkerEvents.compute(device.key()) { _: DeviceKey, oldValue: DeviceWorkerEvent? ->
-            if (oldValue == null) {
-                logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
-                null
-            } else {
-                oldValue.finish(finished = timeProvider.nowInstant())
-            }
+        val key = device.key()
+        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
+            "Can't find DeviceWorkerState for $key"
         }
+        val newState = state.finish(timeProvider.nowInstant())
+        deviceWorkerStates.replace(state, newState)
+    }
+
+    private fun DeviceWorkerStates.replace(
+        old: DeviceWorkerState,
+        new: DeviceWorkerState
+    ) {
+        remove(old)
+        add(new)
     }
 
     override fun onTestSuiteFinished() {
@@ -170,7 +149,7 @@ internal class TestRunnerMetricsListener(
         return TestRunnerMetricsProviderImpl(
             testSuiteStartedTime = testSuiteStartedTime,
             testSuiteEndedTime = timeProvider.nowInstant(),
-            deviceWorkerEvents = deviceWorkerEvents
+            deviceWorkerStates = deviceWorkerStates
         )
     }
 }
