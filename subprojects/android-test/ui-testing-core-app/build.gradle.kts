@@ -20,7 +20,6 @@ android {
         val instrumentationArgs = mapOf<String, String>(
             "planSlug" to "AndroidTestApp",
             "jobSlug" to "FunctionalTests",
-            "runId" to "local",
             "fileStorageUrl" to (getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"),
             "teamcityBuildId" to (getOptionalStringProperty("teamcityBuildId") ?: "0"),
         )
