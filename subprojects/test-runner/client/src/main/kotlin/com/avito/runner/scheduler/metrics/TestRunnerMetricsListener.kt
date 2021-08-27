@@ -15,6 +15,8 @@ import com.avito.time.TimeProvider
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
+private typealias DeviceWorkerStates = ConcurrentHashMap.KeySetView<DeviceWorkerState, Boolean>
+
 internal class TestRunnerMetricsListener(
     private val testMetricsSender: TestRunnerMetricsSender,
     private val timeProvider: TimeProvider,
@@ -23,7 +25,7 @@ internal class TestRunnerMetricsListener(
 
     private val logger = loggerFactory.create<TestRunnerMetricsListener>()
 
-    private val deviceWorkerStates = ConcurrentHashMap.newKeySet<DeviceWorkerState>()
+    private val deviceWorkerStates: DeviceWorkerStates = ConcurrentHashMap.newKeySet()
 
     private var testSuiteStartedTime: Instant = Instant.now()
 
@@ -34,7 +36,11 @@ internal class TestRunnerMetricsListener(
     override suspend fun onDeviceCreated(device: Device, state: State) {
         check(
             deviceWorkerStates.add(
-                DeviceWorkerState.Created(timeProvider.nowInstant(), ConcurrentHashMap.newKeySet(), device.key())
+                DeviceWorkerState.Created(
+                    created = timeProvider.nowInstant(),
+                    testExecutionStates = ConcurrentHashMap.newKeySet(),
+                    key = device.key()
+                )
             )
         ) {
             "Device ${device.key()} already called onDeviceCreated"
@@ -87,8 +93,15 @@ internal class TestRunnerMetricsListener(
             "Can't find DeviceWorkerState for $key"
         }
         val newState = state.finish(timeProvider.nowInstant())
-        deviceWorkerStates.remove(state)
-        deviceWorkerStates.add(newState)
+        deviceWorkerStates.replace(state, newState)
+    }
+
+    private fun DeviceWorkerStates.replace(
+        old: DeviceWorkerState,
+        new: DeviceWorkerState
+    ) {
+        remove(old)
+        add(new)
     }
 
     override fun onTestSuiteFinished() {
