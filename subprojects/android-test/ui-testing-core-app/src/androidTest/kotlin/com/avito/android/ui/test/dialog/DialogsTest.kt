@@ -1,5 +1,6 @@
 package com.avito.android.ui.test.dialog
 
+import androidx.test.espresso.NoMatchingRootException
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.DialogsActivity
 import com.avito.android.ui.test.Screen
@@ -13,14 +14,43 @@ class DialogsTest {
     val rule = screenRule<DialogsActivity>()
 
     @Test
-    fun matcher_with_default_root__success__no_dialog() {
+    fun check_regular_window__success__matcher_with_default_root() {
         rule.launchActivity(null)
 
         Screen.dialogsScreen.label.checks.isDisplayed()
     }
 
     @Test
-    fun matcher_with_dialog_root__success__dialog_is_open() {
+    fun check_regular_window__fail__matcher_with_dialog_root() {
+        rule.launchActivity(null)
+
+        assertThrows<NoMatchingRootException> {
+            DialogScreenWithDialogRoot().label.checks.isDisplayed()
+        }
+    }
+
+    @Test
+    fun check_regular_window__fail__matcher_with_popup_window() {
+        rule.launchActivity(null)
+
+        assertThrows<NoMatchingRootException> {
+            DialogScreenWithPopupRoot().label.checks.isDisplayed()
+        }
+    }
+
+    @Test
+    fun check_regular_window__fail__matcher_with_default_root_and_dialog_is_open() {
+        rule.launchActivity(
+            DialogsActivity.intent(openDialog = true)
+        )
+        // Espresso pick's wrongly dialog window
+        assertThrows<AssertionError> {
+            Screen.dialogsScreen.label.checks.isDisplayed()
+        }
+    }
+
+    @Test
+    fun check_dialog_window__success__matcher_with_dialog_root() {
         rule.launchActivity(
             DialogsActivity.intent(openDialog = true)
         )
@@ -28,12 +58,10 @@ class DialogsTest {
     }
 
     @Test
-    fun matcher_with_default_root__assertion_error__dialog_is_open() {
+    fun check_popup_window__success__matcher_with_popup_window() {
         rule.launchActivity(
-            DialogsActivity.intent(openDialog = true)
+            DialogsActivity.intent(openPopup = true)
         )
-        assertThrows<AssertionError> {
-            Screen.dialogsScreen.label.checks.isDisplayed()
-        }
+        Screen.dialogsScreen.popup.label.checks.isDisplayed()
     }
 }

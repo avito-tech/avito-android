@@ -7,7 +7,9 @@ import org.hamcrest.Matcher
 
 class PopupInteractionContext(
     matcher: Matcher<View>,
+    precondition: () -> Unit = {}
 ) : SimpleInteractionContext(
     matcher = matcher,
-    rootMatcher = RootMatchers.isPlatformPopup()
+    rootMatcher = RootMatchers.isPlatformPopup(),
+    precondition = precondition
 )

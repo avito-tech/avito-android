@@ -6,17 +6,17 @@ import com.avito.android.screen.BaseScreenChecks
 import com.avito.android.screen.Screen
 import com.avito.android.screen.ScreenChecks
 import com.avito.android.test.InteractionContext
-import com.avito.android.test.context.DialogInteractionContext
+import com.avito.android.test.context.PopupInteractionContext
 import org.hamcrest.Matcher
 
-abstract class DialogScreen(
+abstract class PopupScreen(
     matcher: Matcher<View>
 ) : PageObject(), Screen {
 
     final override val rootId: Int = Screen.UNKNOWN_ROOT_ID
 
     override val interactionContext: InteractionContext by lazy {
-        DialogInteractionContext(matcher) {
+        PopupInteractionContext(matcher) {
             if (checks.checkOnEachScreenInteraction) {
                 checks.isScreenOpened()
             }
@@ -24,14 +24,14 @@ abstract class DialogScreen(
     }
 
     override val checks: ScreenChecks =
-        DialogScreenChecks(screen = this, checkOnEachScreenInteraction = true)
+        PopupScreenChecks(screen = this, checkOnEachScreenInteraction = true)
 
     val rootElement = element<ViewElement>()
 
-    open class DialogScreenChecks(
-        screen: DialogScreen,
+    open class PopupScreenChecks(
+        screen: PopupScreen,
         override val checkOnEachScreenInteraction: Boolean = true
-    ) : BaseScreenChecks<DialogScreen>(screen) {
+    ) : BaseScreenChecks<PopupScreen>(screen) {
 
         @CallSuper
         override fun screenOpenedCheck() {

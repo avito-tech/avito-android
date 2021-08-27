@@ -1,0 +1,144 @@
+package com.avito.android.test.matcher
+
+import android.content.res.Resources
+import android.view.View
+import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.test.espresso.matcher.BoundedDiagnosingMatcher
+import org.hamcrest.Description
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
+import org.hamcrest.StringDescription
+
+internal object TextMatchers {
+
+    internal fun withText(@StringRes resourceId: Int) =
+        WithCharSequenceMatcher(
+            resourceId,
+            WithCharSequenceMatcher.TextViewMethod.GET_TEXT,
+        )
+
+    internal fun withText(text: String) =
+        withText(Matchers.`is`(text))
+
+    internal fun withText(stringMatcher: Matcher<String>) =
+        WithTextMatcher(stringMatcher)
+}
+
+/**
+ * Copy of [androidx.test.espresso.matcher.ViewMatchers.WithTextMatcher]
+ * with nbsp logging
+ */
+internal class WithTextMatcher(
+    private val stringMatcher: Matcher<String>,
+) : BoundedDiagnosingMatcher<View, TextView>(TextView::class.java) {
+
+    override fun describeMoreTo(description: Description) {
+        description.appendText("view.getText() with or without transformation to match: ")
+        StringDescription().also {
+            stringMatcher.describeTo(it)
+            description.appendText(it.toString().highlightNbsp())
+        }
+    }
+
+    override fun matchesSafely(textView: TextView, mismatchDescription: Description): Boolean {
+        val text = textView.text.toString()
+        // The reason we try to match both original text and the transformed one is because some UI
+        // elements may inherit a default theme which behave differently for SDK below 19 and above.
+        // So it is implemented in a backwards compatible way.
+        if (stringMatcher.matches(text)) {
+            return true
+        }
+        mismatchDescription.appendText("view.getText() was ").appendValue(text.highlightNbsp())
+        if (textView.transformationMethod != null) {
+            val transformedText = textView.transformationMethod.getTransformation(text, textView)?.toString()
+            mismatchDescription.appendText(" transformed text was ")
+                .appendValue(transformedText?.highlightNbsp())
+            if (transformedText != null) {
+                return stringMatcher.matches(transformedText)
+            }
+        }
+        return false
+    }
+}
+
+/**
+ * Copy of [androidx.test.espresso.matcher.ViewMatchers.WithCharSequenceMatcher]
+ * with nbsp logging
+ */
+internal class WithCharSequenceMatcher(
+    @StringRes private val resourceId: Int,
+    private val method: TextViewMethod,
+) : BoundedDiagnosingMatcher<View, TextView>(TextView::class.java) {
+    private var resourceName: String? = null
+    private var expectedText: String? = null
+
+    internal enum class TextViewMethod {
+        GET_TEXT, GET_HINT
+    }
+
+    override fun describeMoreTo(description: Description) {
+        when (method) {
+            TextViewMethod.GET_TEXT -> description.appendText("view.getText()")
+            TextViewMethod.GET_HINT -> description.appendText("view.getHint()")
+        }
+        description.appendText(" equals string from resource id: ").appendValue(resourceId)
+        if (null != resourceName) {
+            description.appendText(" [").appendText(resourceName).appendText("]")
+        }
+        if (null != expectedText) {
+            description.appendText(" value: ").appendText(expectedText!!.highlightNbsp())
+        }
+    }
+
+    override fun matchesSafely(textView: TextView, mismatchDescription: Description): Boolean {
+        if (null == expectedText) {
+            try {
+                expectedText = textView.resources.getString(resourceId)
+            } catch (ignored: Resources.NotFoundException) {
+                /* view could be from a context unaware of the resource id. */
+            }
+            resourceName = safeGetResourceEntryName(
+                textView.resources,
+                resourceId
+            )
+        }
+        val expectedText: String? = expectedText
+        val actualText: String = when (method) {
+            TextViewMethod.GET_TEXT -> {
+                mismatchDescription.appendText("view.getText() was ")
+                textView.text.toString()
+            }
+            TextViewMethod.GET_HINT -> {
+                mismatchDescription.appendText("view.getHint() was ")
+                textView.hint.toString()
+            }
+        }
+        mismatchDescription.appendValue(actualText.highlightNbsp())
+        // FYI: actualText may not be string ... its just a char sequence convert to string.
+        expectedText ?: return false
+        return expectedText == actualText
+    }
+
+    private fun safeGetResourceEntryName(res: Resources, id: Int): String? {
+        return try {
+            if (isViewIdGenerated(id)) null else res.getResourceEntryName(id)
+        } catch (e: Resources.NotFoundException) {
+            null
+        }
+    }
+
+    /**
+     * IDs generated by [View.generateViewId] will fail if used as a resource ID in attempted
+     * resources lookups. This now logs an error in API 28, causing test failures. This method is
+     * taken from [View.isViewIdGenerated] to prevent resource lookup to check if a view id was
+     * generated.
+     */
+    private fun isViewIdGenerated(id: Int): Boolean {
+        return id and -0x1000000 == 0 && id and 0x00FFFFFF != 0
+    }
+}
+
+internal fun String.highlightNbsp() = replace(NBSP_SYMBOL, "[NBSP]")
+
+private const val NBSP_SYMBOL = "\u00A0"
