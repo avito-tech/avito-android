@@ -48,7 +48,7 @@ dependencyResolutionManagement {
             }
             filter {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
-                includeModuleByRegex("com\\.google\\.android.*", ".*")
+                includeModuleByRegex("com\\.google\\.android.*", "(?!annotations).*")
                 includeGroupByRegex("androidx\\..*")
                 includeGroup("com.google.testing.platform")
             }

@@ -11,10 +11,8 @@ plugins {
 val generatedJavaResDir: Provider<RegularFile> = project.layout.buildDirectory.file("generated/avito/java_res")
 
 androidComponents {
-
-    @Suppress("UnstableApiUsage")
-    beforeAndroidTests {
-        it.enabled = false
+    beforeVariants {
+        it.enableAndroidTest = false
     }
 }
 

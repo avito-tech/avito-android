@@ -1,7 +1,7 @@
 package com.avito.plugin
 
-import com.android.build.api.artifact.ArtifactType
-import com.android.build.api.extension.ApplicationAndroidComponentsExtension
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.ApplicationVariant
 import com.android.build.api.variant.Variant
 import com.avito.android.Problem
@@ -63,7 +63,7 @@ public class SignServicePlugin : Plugin<Project> {
                             taskInput = SignApkTask::unsignedDirProperty,
                             taskOutput = SignApkTask::signedDirProperty
                         )
-                        .toTransform(ArtifactType.APK)
+                        .toTransform(SingleArtifact.APK)
                 }
 
                 registerTask<SignBundleTask>(
@@ -87,7 +87,7 @@ public class SignServicePlugin : Plugin<Project> {
                             taskInput = SignBundleTask::unsignedFileProperty,
                             taskOutput = SignBundleTask::signedFileProperty
                         )
-                        .toTransform(ArtifactType.BUNDLE)
+                        .toTransform(SingleArtifact.BUNDLE)
                 }
             }
         }

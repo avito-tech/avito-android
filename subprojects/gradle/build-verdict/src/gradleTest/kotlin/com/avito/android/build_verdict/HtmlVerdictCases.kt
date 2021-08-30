@@ -4,7 +4,7 @@ package com.avito.android.build_verdict
 
 import java.io.File
 
-object HtmlVerdictCases {
+internal object HtmlVerdictCases {
 
     class Execution(private val tempDir: File) : VerdictCases.Execution {
 
@@ -145,12 +145,6 @@ A problem occurred evaluating project ':app'.
 A problem occurred evaluating project ':app'.
 	&gt; A problem occurred evaluating project ':app'.
 		&gt; Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.</pre>
-    <h3>2: Task failed with an exception</h3>
-    <pre>A problem occurred configuring project ':app'.
-	&gt; A problem occurred configuring project ':app'.
-		&gt; com.android.builder.errors.EvalIssueException: compileSdkVersion is not specified. Please add it to build.gradle
-			&gt; compileSdkVersion is not specified. Please add it to build.gradle</pre>
-  </body>
-</html>""".trimIndent()
+""".trimIndent()
     }
 }

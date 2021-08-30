@@ -17,6 +17,12 @@ dependencies {
     implementation(projects.gradle.statsdConfig)
     implementation(projects.gradle.gradleExtensions)
     implementation(libs.kotlinGradle)
+    implementation(libs.layoutLibApi) {
+        because("com.android.resources.ResourceType")
+    }
+    implementation(libs.androidSdkCommon) {
+        because("com.android.ide.common.symbols.SymbolTable")
+    }
 
     // for test
     implementation(projects.gradle.moduleTypes)
