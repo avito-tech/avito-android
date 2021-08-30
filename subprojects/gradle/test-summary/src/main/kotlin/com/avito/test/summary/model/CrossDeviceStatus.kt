@@ -7,11 +7,11 @@ public sealed class CrossDeviceStatus {
         override val failures: List<FailureOnDevice>
     ) : CrossDeviceStatus(), HasFailures
 
-    public data class FailedOnAnyDevice(
+    public data class FailedOnSomeDevices(
         override val failures: List<FailureOnDevice>
     ) : CrossDeviceStatus(), HasFailures
 
-    public object LostOnAnyDevice : CrossDeviceStatus()
+    public object LostOnSomeDevices : CrossDeviceStatus()
     public object Manual : CrossDeviceStatus()
 
     /**

@@ -97,7 +97,7 @@ internal class TestSummarySenderImpl(
                                 channel = channel,
                                 text = message,
                                 author = slackUserName,
-                                emoji = slackEmojiProvider.emojiName(unitSuite.successOfAutomated.roundToInt())
+                                emoji = slackEmojiProvider.emojiName(unitSuite.percentSuccessOfAutomated.roundToInt())
                             )
                         )
                     }.onFailure { throwable ->
@@ -122,7 +122,7 @@ internal class TestSummarySenderImpl(
                         channel = globalSummaryChannel,
                         text = it,
                         author = slackUserName,
-                        emoji = slackEmojiProvider.emojiName(suite.successOfAutomated.roundToInt())
+                        emoji = slackEmojiProvider.emojiName(suite.percentSuccessOfAutomated.roundToInt())
                     )
                 )
             }.onFailure { throwable ->
@@ -149,7 +149,7 @@ internal class TestSummarySenderImpl(
             .map { (testName, runs) ->
                 val status: CrossDeviceStatus = when {
                     runs.any { it.status is TestStatus.Lost } ->
-                        CrossDeviceStatus.LostOnAnyDevice
+                        CrossDeviceStatus.LostOnSomeDevices
 
                     runs.all { it.status is TestStatus.Skipped } ->
                         CrossDeviceStatus.SkippedOnAllDevices
@@ -171,7 +171,7 @@ internal class TestSummarySenderImpl(
                         CrossDeviceStatus.FailedOnAllDevices(runs.deviceFailures())
 
                     runs.any { it.status is TestStatus.Failure } ->
-                        CrossDeviceStatus.FailedOnAnyDevice(runs.deviceFailures())
+                        CrossDeviceStatus.FailedOnSomeDevices(runs.deviceFailures())
 
                     else ->
                         CrossDeviceStatus.Inconsistent
