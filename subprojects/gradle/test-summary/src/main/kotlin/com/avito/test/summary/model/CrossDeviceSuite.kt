@@ -23,35 +23,35 @@ public data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>
     val skippedOnAllDevicesCount: Int
         get() = consistentData.count { it.status is CrossDeviceStatus.SkippedOnAllDevices }
 
-    val lostOnSomeDevicesCount: Int
-        get() = consistentData.count { it.status is CrossDeviceStatus.LostOnSomeDevices }
+    val lostOnAnyDeviceCount: Int
+        get() = consistentData.count { it.status is CrossDeviceStatus.LostOnAnyDevice }
 
     val failedOnAllDevicesCount: Int
         get() = consistentData.count { it.status is CrossDeviceStatus.FailedOnAllDevices }
 
-    val failedOnSomeDevicesCount: Int
-        get() = consistentData.count { it.status is CrossDeviceStatus.FailedOnSomeDevices }
+    val failedOnAnyDeviceCount: Int
+        get() = consistentData.count { it.status is CrossDeviceStatus.FailedOnAnyDevice }
 
-    val percentLostOnSomeDevicesOfAutomated: Percent
-    val percentSuccessOfAutomated: Percent
-    val percentSkippedOnAllDevicesOfAutomated: Percent
-    val percentFailedOnAllDevicesOfAutomated: Percent
-    val percentFailedOnSomeDevicesOfAutomated: Percent
+    val lostOnAnyDeviceOfAutomated: Percent
+    val successOfAutomated: Percent
+    val skippedOnAllDevicesOfAutomated: Percent
+    val failedOnAllDevicesOfAutomated: Percent
+    val failedOnAnyDeviceOfAutomated: Percent
 
     init {
         if (automatedCount == 0) {
             val zeroPercents = 0F.fromZeroToOnePercent()
-            percentSuccessOfAutomated = zeroPercents
-            percentSkippedOnAllDevicesOfAutomated = zeroPercents
-            percentFailedOnAllDevicesOfAutomated = zeroPercents
-            percentFailedOnSomeDevicesOfAutomated = zeroPercents
-            percentLostOnSomeDevicesOfAutomated = zeroPercents
+            successOfAutomated = zeroPercents
+            skippedOnAllDevicesOfAutomated = zeroPercents
+            failedOnAllDevicesOfAutomated = zeroPercents
+            failedOnAnyDeviceOfAutomated = zeroPercents
+            lostOnAnyDeviceOfAutomated = zeroPercents
         } else {
-            percentSuccessOfAutomated = success.percentOf(automatedCount)
-            percentSkippedOnAllDevicesOfAutomated = skippedOnAllDevicesCount.percentOf(automatedCount)
-            percentFailedOnAllDevicesOfAutomated = failedOnAllDevicesCount.percentOf(automatedCount)
-            percentFailedOnSomeDevicesOfAutomated = failedOnSomeDevicesCount.percentOf(automatedCount)
-            percentLostOnSomeDevicesOfAutomated = lostOnSomeDevicesCount.percentOf(automatedCount)
+            successOfAutomated = success.percentOf(automatedCount)
+            skippedOnAllDevicesOfAutomated = skippedOnAllDevicesCount.percentOf(automatedCount)
+            failedOnAllDevicesOfAutomated = failedOnAllDevicesCount.percentOf(automatedCount)
+            failedOnAnyDeviceOfAutomated = failedOnAnyDeviceCount.percentOf(automatedCount)
+            lostOnAnyDeviceOfAutomated = lostOnAnyDeviceCount.percentOf(automatedCount)
         }
     }
 

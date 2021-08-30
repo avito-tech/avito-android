@@ -18,22 +18,22 @@ internal class PercentKtTest {
 
     @Test
     fun `percent of int - two decimal string is correct - no decimal`() {
-        assertThat(4.percentOf(8).roundToTwoDigitsPrecision()).isEqualTo("50%")
+        assertThat(4.percentOf(8).formatAsFourDigitsPrecision()).isEqualTo("50%")
     }
 
     @Test
     fun `percent of int - two decimal string is correct - decimal`() {
-        assertThat(5.percentOf(8).roundToTwoDigitsPrecision()).isEqualTo("62.5%")
+        assertThat(5.percentOf(8).formatAsFourDigitsPrecision()).isEqualTo("62.5%")
     }
 
     @Test
     fun `double percent - two decimal string is correct - decimal`() {
-        assertThat(0.2345.fromZeroToOnePercent().roundToTwoDigitsPrecision()).isEqualTo("23.45%")
+        assertThat(0.2345.fromZeroToOnePercent().formatAsFourDigitsPrecision()).isEqualTo("23.45%")
     }
 
     @Test
     fun `float percent - two decimal string is correct - decimal`() {
-        assertThat(0.2345F.fromZeroToOnePercent().roundToTwoDigitsPrecision()).isEqualTo("23.45%")
+        assertThat(0.2345F.fromZeroToOnePercent().formatAsFourDigitsPrecision()).isEqualTo("23.45%")
     }
 
     @Test

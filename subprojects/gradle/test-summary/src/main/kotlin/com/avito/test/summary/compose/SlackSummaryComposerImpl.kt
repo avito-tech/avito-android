@@ -50,30 +50,30 @@ internal class SlackSummaryComposerImpl(private val reportViewerUrl: String) : S
                 appendLine(
                     ":green_heart: " +
                         "*Зеленые тесты*: " +
-                        "${testData.success} (${testData.percentSuccessOfAutomated})"
+                        "${testData.success} (${testData.successOfAutomated})"
                 )
                 appendLine(
                     ":warning: " +
                         "*Тесты упали только на некоторых девайсах*: " +
-                        "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated})"
+                        "${testData.failedOnAnyDeviceCount} (${testData.failedOnAnyDeviceOfAutomated})"
                 )
                 appendLine(
                     ":red_circle: " +
                         "*Тесты упали на всех девайсах*: " +
-                        "${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated})"
+                        "${testData.failedOnAllDevicesCount} (${testData.failedOnAllDevicesOfAutomated})"
                 )
                 appendLine(
                     ":white_circle: " +
                         "*Пропущенные тесты (например, заигнорен) на всех девайсах*: " +
-                        "${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated})"
+                        "${testData.skippedOnAllDevicesCount} (${testData.skippedOnAllDevicesOfAutomated})"
                 )
                 appendLine(
                     ":black_circle: " +
                         "*Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: " +
-                        "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated})"
+                        "${testData.lostOnAnyDeviceCount} (${testData.lostOnAnyDeviceOfAutomated})"
                 )
 
-                val hasFailures = testData.failedOnSomeDevicesCount + testData.failedOnAllDevicesCount > 0
+                val hasFailures = testData.failedOnAnyDeviceCount + testData.failedOnAllDevicesCount > 0
 
                 if (mentionOnFailures && hasFailures) {
                     appendLine("${SlackStringFormat.mentionChannel}, т.к. есть упавшие тесты")
