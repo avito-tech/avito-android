@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal fun DeviceWorkerState.Companion.createFinishedStubInstance(
     deviceKey: DeviceKey,
     created: Instant = Instant.ofEpochMilli(0),
-    finished: Instant = Instant.ofEpochMilli(0),
+    finished: Instant = Instant.ofEpochMilli(1),
     builder: DeviceWorkerState.() -> Unit = {}
 ): DeviceWorkerState.Finished {
     val createdState = DeviceWorkerState.Created(created, ConcurrentHashMap.newKeySet(), deviceKey)

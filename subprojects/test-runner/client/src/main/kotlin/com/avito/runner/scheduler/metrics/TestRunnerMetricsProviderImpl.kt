@@ -69,7 +69,7 @@ internal data class TestRunnerMetricsProviderImpl(
     override fun medianDeviceUtilization(): Result<Percent> =
         countMetric("Cannot calculate median device utilization") {
             deviceWorkerStates.filterIsInstance<DeviceWorkerState.Finished>()
-                .map { it.utilizationPercent.toInt() }
+                .map { it.utilizationPercent.roundToInt() }
                 .median()
                 .toInt()
                 .fromZeroToHundredPercent()

@@ -36,6 +36,6 @@ internal class TestRunnerMetricsSenderImpl(
     }
 
     override fun sendMedianDeviceUtilization(percent: Percent) {
-        statsDSender.send(GaugeLongMetric(prefix.append("device-utilization", "median"), percent.toLong()))
+        statsDSender.send(GaugeLongMetric(prefix.append("device-utilization", "median"), percent.roundToLong()))
     }
 }
