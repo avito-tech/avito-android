@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -xe
 
 ANDROID_BUILDER_TAG=36883f8ae0
 

@@ -3,7 +3,6 @@ package com.avito.runner.scheduler.metrics
 import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
-import com.avito.math.Percent
 import java.time.Duration
 
 internal class TestRunnerMetricsSenderImpl(
@@ -35,7 +34,15 @@ internal class TestRunnerMetricsSenderImpl(
         statsDSender.send(GaugeLongMetric(prefix.append("total"), value.toMillis()))
     }
 
-    override fun sendMedianDeviceUtilization(percent: Percent) {
-        statsDSender.send(GaugeLongMetric(prefix.append("device-utilization", "median"), percent.roundToLong()))
+    override fun sendDevicesLiving(value: Duration) {
+        statsDSender.send(GaugeLongMetric(prefix.append("devices", "living"), value.toMillis()))
+    }
+
+    override fun sendDevicesWorking(value: Duration) {
+        statsDSender.send(GaugeLongMetric(prefix.append("devices", "working"), value.toMillis()))
+    }
+
+    override fun sendDevicesIdle(value: Duration) {
+        statsDSender.send(GaugeLongMetric(prefix.append("devices", "idle"), value.toMillis()))
     }
 }

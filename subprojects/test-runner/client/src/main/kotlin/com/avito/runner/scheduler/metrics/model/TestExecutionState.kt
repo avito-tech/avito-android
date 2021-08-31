@@ -51,7 +51,7 @@ internal sealed class TestExecutionState {
         val completed: Instant,
         override val test: TestKey
     ) : TestExecutionState() {
-        val effectiveWorkTime: Duration = Duration.between(intentionReceived, completed)
+        val processingTime: Duration = Duration.between(intentionReceived, completed)
         val installationTime: Duration = Duration.between(intentionReceived, testStarted)
 
         override fun start(currentTime: Instant): Started {

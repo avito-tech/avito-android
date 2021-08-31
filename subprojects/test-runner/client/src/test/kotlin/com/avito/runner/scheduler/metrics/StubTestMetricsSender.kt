@@ -1,6 +1,5 @@
 package com.avito.runner.scheduler.metrics
 
-import com.avito.math.Percent
 import java.time.Duration
 
 internal class StubTestMetricsSender : TestRunnerMetricsSender {
@@ -29,7 +28,15 @@ internal class StubTestMetricsSender : TestRunnerMetricsSender {
         // no op
     }
 
-    override fun sendMedianDeviceUtilization(percent: Percent) {
+    override fun sendDevicesLiving(value: Duration) {
+        // no op
+    }
+
+    override fun sendDevicesWorking(value: Duration) {
+        // no op
+    }
+
+    override fun sendDevicesIdle(value: Duration) {
         // no op
     }
 }

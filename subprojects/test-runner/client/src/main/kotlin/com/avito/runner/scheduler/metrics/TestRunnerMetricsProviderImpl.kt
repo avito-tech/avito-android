@@ -1,8 +1,6 @@
 package com.avito.runner.scheduler.metrics
 
 import com.avito.android.Result
-import com.avito.math.Percent
-import com.avito.math.fromZeroToHundredPercent
 import com.avito.math.median
 import com.avito.runner.scheduler.metrics.model.DeviceWorkerState
 import com.avito.runner.scheduler.metrics.model.TestExecutionState
@@ -16,6 +14,9 @@ internal data class TestRunnerMetricsProviderImpl(
 ) : TestRunnerMetricsProvider {
 
     private val testTimestamps = deviceWorkerStates.flatMap { it.testExecutionStates() }
+
+    // TODO lost failed, died devices
+    private val finishedDevices = deviceWorkerStates.filterIsInstance<DeviceWorkerState.Finished>()
 
     private val firstTestStarted: Result<Instant> = testTimestamps.filterIsInstance<TestExecutionState.Completed>()
         .map { it.testStarted }
@@ -36,6 +37,21 @@ internal data class TestRunnerMetricsProviderImpl(
         testTimestamps
             .filterIsInstance<TestExecutionState.Completed>()
             .map { it.installationTime }
+
+    private val devicesLivingTime: Duration =
+        Duration.ofMillis(
+            finishedDevices.sumOf { it.livingTime.toMillis() }
+        )
+
+    private val devicesWorkingTime: Duration =
+        Duration.ofMillis(
+            finishedDevices.sumOf { it.workingTime.toMillis() }
+        )
+
+    private val devicesIdleTime: Duration =
+        Duration.ofMillis(
+            finishedDevices.sumOf { it.idleTime.toMillis() }
+        )
 
     override fun initialDelay(): Result<Duration> = firstTestStarted.map { Duration.between(testSuiteStartedTime, it) }
 
@@ -66,14 +82,11 @@ internal data class TestRunnerMetricsProviderImpl(
 
     override fun totalTime(): Duration = Duration.between(testSuiteStartedTime, testSuiteEndedTime)
 
-    override fun medianDeviceUtilization(): Result<Percent> =
-        countMetric("Cannot calculate median device utilization") {
-            deviceWorkerStates.filterIsInstance<DeviceWorkerState.Finished>()
-                .map { it.utilizationPercent.roundToInt() }
-                .median()
-                .toInt()
-                .fromZeroToHundredPercent()
-        }
+    override fun devicesLiving(): Duration = devicesLivingTime
+
+    override fun devicesWorking(): Duration = devicesWorkingTime
+
+    override fun devicesIdle(): Duration = devicesIdleTime
 
     private fun <T> countMetric(errorMsg: String, counter: () -> T): Result<T> =
         Result.tryCatch(counter)

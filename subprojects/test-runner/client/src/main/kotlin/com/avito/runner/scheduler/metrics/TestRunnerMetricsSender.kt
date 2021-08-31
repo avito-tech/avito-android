@@ -1,6 +1,5 @@
 package com.avito.runner.scheduler.metrics
 
-import com.avito.math.Percent
 import java.time.Duration
 
 internal interface TestRunnerMetricsSender {
@@ -10,5 +9,7 @@ internal interface TestRunnerMetricsSender {
     fun sendMedianInstallationTime(value: Duration)
     fun sendSuiteTime(value: Duration)
     fun sendTotalTime(value: Duration)
-    fun sendMedianDeviceUtilization(percent: Percent)
+    fun sendDevicesLiving(value: Duration)
+    fun sendDevicesWorking(value: Duration)
+    fun sendDevicesIdle(value: Duration)
 }
