@@ -106,4 +106,4 @@ internal class LintResultsParser(loggerFactory: LoggerFactory) {
 
 internal class UnsupportedFormatVersion(message: String) : RuntimeException(message)
 
-private const val supportedFormatVersion = "5"
+private const val supportedFormatVersion = "6"
