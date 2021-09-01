@@ -30,6 +30,8 @@ internal sealed class DeviceWorkerState {
         return key.hashCode()
     }
 
+    abstract fun testIntentionFailed(testKey: TestKey)
+
     class Created(
         override val created: Instant,
         override val testExecutionStates: ConcurrentHashMap.KeySetView<TestExecutionState, Boolean>,
@@ -41,6 +43,11 @@ internal sealed class DeviceWorkerState {
                 "Intention $testKey already have been received"
             }
             testExecutionStates.add(TestExecutionState.IntentionReceived(time, testKey))
+        }
+
+        override fun testIntentionFailed(testKey: TestKey) {
+            val state = getTestState<TestExecutionState.IntentionReceived>(testKey)
+            testExecutionStates.remove(state)
         }
 
         override fun testStarted(testKey: TestKey, time: Instant) {
@@ -88,6 +95,10 @@ internal sealed class DeviceWorkerState {
         val idleTime: Duration = livingTime - workingTime
 
         override fun testIntentionReceived(testKey: TestKey, time: Instant) {
+            throw UnsupportedOperationException("Can't modify DeviceWorkerState.Finished")
+        }
+
+        override fun testIntentionFailed(testKey: TestKey) {
             throw UnsupportedOperationException("Can't modify DeviceWorkerState.Finished")
         }
 

@@ -80,7 +80,11 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
-        // TODO Should we handle this as a test complete?
+        val key = device.key()
+        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
+            "Can't find DeviceWorkerState for $key"
+        }
+        state.testIntentionFailed(intention.testKey())
     }
 
     override suspend fun onDeviceDied(device: Device, message: String, reason: Throwable) {
