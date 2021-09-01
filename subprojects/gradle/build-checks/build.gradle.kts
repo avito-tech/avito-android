@@ -20,7 +20,6 @@ dependencies {
 
     // for test
     implementation(projects.gradle.moduleTypes)
-    implementation(projects.gradle.roomConfig)
 
     gradleTestImplementation(projects.gradle.testProject)
 }
