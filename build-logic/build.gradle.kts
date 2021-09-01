@@ -4,7 +4,7 @@ plugins {
     base
     // accessing version catalog here is blocked by IDE false-postive error
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
-    id("io.gitlab.arturbosch.detekt") version "1.18.0"
+    id("io.gitlab.arturbosch.detekt") version "1.18.1"
 }
 
 val detektAll = tasks.register<Detekt>("detektAll") {
