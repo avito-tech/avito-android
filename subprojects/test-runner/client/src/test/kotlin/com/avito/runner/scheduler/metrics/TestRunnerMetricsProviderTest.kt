@@ -1,6 +1,5 @@
 package com.avito.runner.scheduler.metrics
 
-import com.avito.math.fromZeroToHundredPercent
 import com.avito.runner.scheduler.metrics.model.DeviceWorkerState
 import com.avito.runner.scheduler.metrics.model.addCompletedTestExecution
 import com.avito.runner.scheduler.metrics.model.createFinishedStubInstance
@@ -201,11 +200,32 @@ internal class TestRunnerMetricsProviderTest {
     }
 
     @Test
-    fun `median device utilization - is median value for all valuable work to total work`() {
+    fun `two devices - devices living time - is sum of devices living`() {
         val states = setOf<DeviceWorkerState>(
             DeviceWorkerState.createFinishedStubInstance(
-                deviceKey = "12345".toDeviceKey(),
-                finished = Instant.ofEpochMilli(50),
+                deviceKey = "1".toDeviceKey(),
+                finished = Instant.ofEpochMilli(30),
+            ),
+            DeviceWorkerState.createFinishedStubInstance(
+                deviceKey = "2".toDeviceKey(),
+                finished = Instant.ofEpochMilli(30),
+            )
+        )
+        val aggregator = createTestMetricsAggregator(
+            deviceWorkerStates = states
+        )
+
+        val result = aggregator.devicesLiving()
+
+        assertThat(result).isEqualTo(Duration.ofMillis(60))
+    }
+
+    @Test
+    fun `two devices - devices working time - sum of devices working`() {
+        val states = setOf<DeviceWorkerState>(
+            DeviceWorkerState.createFinishedStubInstance(
+                deviceKey = "1".toDeviceKey(),
+                finished = Instant.ofEpochMilli(30),
             ) {
                 addCompletedTestExecution(
                     testKey = "test1".toTestKey(),
@@ -213,17 +233,16 @@ internal class TestRunnerMetricsProviderTest {
                     started = Instant.ofEpochMilli(10),
                     completed = Instant.ofEpochMilli(15)
                 )
+            },
+            DeviceWorkerState.createFinishedStubInstance(
+                deviceKey = "2".toDeviceKey(),
+                finished = Instant.ofEpochMilli(40),
+            ) {
                 addCompletedTestExecution(
-                    testKey = "test2".toTestKey(),
-                    intentionReceived = Instant.ofEpochMilli(20),
-                    started = Instant.ofEpochMilli(20),
-                    completed = Instant.ofEpochMilli(25)
-                )
-                addCompletedTestExecution(
-                    testKey = "test3".toTestKey(),
-                    intentionReceived = Instant.ofEpochMilli(35),
-                    started = Instant.ofEpochMilli(35),
-                    completed = Instant.ofEpochMilli(45)
+                    testKey = "test1".toTestKey(),
+                    intentionReceived = Instant.ofEpochMilli(10),
+                    started = Instant.ofEpochMilli(10),
+                    completed = Instant.ofEpochMilli(15)
                 )
             }
         )
@@ -231,9 +250,30 @@ internal class TestRunnerMetricsProviderTest {
             deviceWorkerStates = states
         )
 
-        val result = aggregator.medianDeviceUtilization()
+        val result = aggregator.devicesWorking()
 
-        assertThat(result.getOrThrow()).isEqualTo(40.fromZeroToHundredPercent())
+        assertThat(result).isEqualTo(Duration.ofMillis(10))
+    }
+
+    @Test
+    fun `two devices - devices idle time - is sum of idle`() {
+        val states = setOf<DeviceWorkerState>(
+            DeviceWorkerState.createFinishedStubInstance(
+                deviceKey = "1".toDeviceKey(),
+                finished = Instant.ofEpochMilli(30),
+            ),
+            DeviceWorkerState.createFinishedStubInstance(
+                deviceKey = "2".toDeviceKey(),
+                finished = Instant.ofEpochMilli(40),
+            )
+        )
+        val aggregator = createTestMetricsAggregator(
+            deviceWorkerStates = states
+        )
+
+        val result = aggregator.devicesIdle()
+
+        assertThat(result).isEqualTo(Duration.ofMillis(70))
     }
 
     private fun createTestMetricsAggregator(

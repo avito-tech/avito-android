@@ -1,7 +1,5 @@
 package com.avito.runner.scheduler.metrics.model
 
-import com.avito.math.Percent
-import com.avito.math.percentOf
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
@@ -79,13 +77,15 @@ internal sealed class DeviceWorkerState {
         override val key: DeviceKey,
     ) : DeviceWorkerState() {
 
-        private val totalTime: Duration = Duration.between(created, finished)
+        val livingTime: Duration = Duration.between(created, finished)
 
-        private val effectiveWorkTime = testExecutionStates.filterIsInstance<TestExecutionState.Completed>()
-            .map { it.effectiveWorkTime.toMillis() }
-            .sum()
+        val workingTime: Duration = Duration.ofMillis(
+            testExecutionStates.filterIsInstance<TestExecutionState.Completed>()
+                .map { it.processingTime }
+                .sumOf { it.toMillis() }
+        )
 
-        val utilizationPercent: Percent = effectiveWorkTime.percentOf(totalTime.toMillis())
+        val idleTime: Duration = livingTime - workingTime
 
         override fun testIntentionReceived(testKey: TestKey, time: Instant) {
             throw UnsupportedOperationException("Can't modify DeviceWorkerState.Finished")

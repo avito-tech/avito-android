@@ -133,11 +133,9 @@ internal class TestRunnerMetricsListener(
             )
 
             sendTotalTime(provider.totalTime())
-
-            provider.medianDeviceUtilization().fold(
-                { sendMedianDeviceUtilization(it) },
-                { logger.warn("Not sending median device relative wasted time, no data") }
-            )
+            sendDevicesLiving(provider.devicesLiving())
+            sendDevicesWorking(provider.devicesWorking())
+            sendDevicesIdle(provider.devicesIdle())
         }
     }
 

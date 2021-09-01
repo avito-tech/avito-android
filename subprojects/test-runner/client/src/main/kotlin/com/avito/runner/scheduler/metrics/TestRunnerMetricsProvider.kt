@@ -1,7 +1,6 @@
 package com.avito.runner.scheduler.metrics
 
 import com.avito.android.Result
-import com.avito.math.Percent
 import java.time.Duration
 
 internal interface TestRunnerMetricsProvider {
@@ -18,5 +17,9 @@ internal interface TestRunnerMetricsProvider {
 
     fun totalTime(): Duration
 
-    fun medianDeviceUtilization(): Result<Percent>
+    fun devicesLiving(): Duration
+
+    fun devicesWorking(): Duration
+
+    fun devicesIdle(): Duration
 }
