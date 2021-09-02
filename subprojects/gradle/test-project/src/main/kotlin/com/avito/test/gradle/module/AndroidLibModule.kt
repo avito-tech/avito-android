@@ -24,7 +24,7 @@ public class AndroidLibModule(
     override val enableKotlinAndroidPlugin: Boolean = true,
     override val dependencies: Set<GradleDependency> = emptySet(),
     override val useKts: Boolean = false,
-    private val mutator: File.() -> Unit = {}
+    private val mutator: File.() -> Unit = {},
 ) : AndroidModule {
 
     /**

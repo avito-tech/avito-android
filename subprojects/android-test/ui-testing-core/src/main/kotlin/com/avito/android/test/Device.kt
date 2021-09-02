@@ -3,6 +3,7 @@ package com.avito.android.test
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -12,6 +13,7 @@ import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import com.avito.android.test.action.InstrumentationOrientationChangeAction
 import com.avito.android.test.espresso.action.OrientationChangeAction
 import com.avito.android.test.internal.Cache
 import com.avito.android.test.internal.SQLiteDB
@@ -38,7 +40,13 @@ object Device {
      * Changes device orientation between portrait and landscape
      */
     fun rotate() {
-        onView(ViewMatchers.isRoot()).perform(OrientationChangeAction.toggle())
+        if (Build.VERSION.SDK_INT >= 30) {
+            // ViewAction with default root matcher is flaky
+            // It can pick wrong window in case of opened dialog
+            InstrumentationOrientationChangeAction().rotate()
+        } else {
+            onView(ViewMatchers.isRoot()).perform(OrientationChangeAction.toggle())
+        }
     }
 
     /**
@@ -68,8 +76,8 @@ object Device {
         onView(ViewMatchers.isRoot()).perform(OrientationChangeAction.toggle())
     }
 
-    fun getLauncherIntentForAppUnderTest(testContext: Context, appContext: Context): Intent {
-        val launchIntent = requireNotNull(testContext.packageManager.getLaunchIntentForPackage(appContext.packageName))
+    fun getLauncherIntentForAppUnderTest(appContext: Context): Intent {
+        val launchIntent = requireNotNull(appContext.packageManager.getLaunchIntentForPackage(appContext.packageName))
         return launchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) // Clear out any previous instances
     }
 

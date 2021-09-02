@@ -1,11 +1,13 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     base
-    // accessing version catalog here will be supported in grale 7.2
-    // https://github.com/gradle/gradle/pull/17394
-    id("io.gitlab.arturbosch.detekt") version "1.16.0"
+    // accessing version catalog here is blocked by IDE false-postive error
+    // https://youtrack.jetbrains.com/issue/KTIJ-19369
+    id("io.gitlab.arturbosch.detekt") version "1.18.1"
 }
 
-val detektAll = tasks.register<io.gitlab.arturbosch.detekt.Detekt>("detektAll") {
+val detektAll = tasks.register<Detekt>("detektAll") {
     description = "Runs over whole code base without the starting overhead for each module."
     parallel = true
     setSource(files(projectDir))

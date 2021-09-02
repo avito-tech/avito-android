@@ -15,6 +15,7 @@ import com.avito.runner.service.worker.device.adb.PullValidator
 import com.avito.test.model.TestCase
 import com.avito.utils.deleteRecursively
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
@@ -67,23 +68,10 @@ internal class ArtifactsTestListener(
 
         val testResult = when (result) {
 
-            Passed, is Failed.InRun -> testArtifactsDir.flatMap { dir ->
-                device.pullDir(
-                    deviceDir = dir.toPath(),
-                    hostDir = tempDirectory,
-                    validator = reportArtifactsPullValidator
-                )
-            }.fold(
-                onSuccess = { dir ->
-                    TestResult.Complete(dir)
-                },
-                onFailure = { throwable ->
-                    handleIncompleteTest(
-                        result = InfrastructureError.FailOnPullingArtifacts(throwable),
-                        device = device,
-                        tempDirectory = tempDirectory.toFile()
-                    )
-                }
+            Passed, is Failed.InRun -> handleFinishedTest(
+                device = device,
+                artifactsDir = testArtifactsDir,
+                tempDirectory = tempDirectory
             )
 
             is InfrastructureError -> handleIncompleteTest(
@@ -114,6 +102,33 @@ internal class ArtifactsTestListener(
                 logger.warn("Can't clear temp directory: $tempDirectory", error)
             }
         }
+    }
+
+    private fun handleFinishedTest(
+        device: Device,
+        artifactsDir: Result<File>,
+        tempDirectory: Path
+    ): TestResult {
+        return artifactsDir
+            .flatMap { dir ->
+                device.pullDir(
+                    deviceDir = dir.toPath(),
+                    hostDir = tempDirectory,
+                    validator = reportArtifactsPullValidator
+                )
+            }
+            .fold(
+                onSuccess = { dir ->
+                    TestResult.Complete(dir)
+                },
+                onFailure = { throwable ->
+                    handleIncompleteTest(
+                        result = InfrastructureError.FailOnPullingArtifacts(throwable),
+                        device = device,
+                        tempDirectory = tempDirectory.toFile()
+                    )
+                }
+            )
     }
 
     private fun handleIncompleteTest(

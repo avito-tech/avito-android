@@ -51,7 +51,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
-import java.time.Duration
 
 @Suppress("UnstableApiUsage")
 public class InstrumentationTestsPlugin : Plugin<Project> {
@@ -118,7 +117,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     }
 
                     project.tasks.register<InstrumentationTestsTask>(instrumentationTaskName(configuration.name)) {
-                        timeout.set(Duration.ofSeconds(configuration.timeoutInSeconds))
+                        timeout.set(configuration.instrumentationTaskTimeout)
                         group = CI_TASK_GROUP
 
                         this.parameters.set(
@@ -284,7 +283,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             kubernetesNamespace = configuration.kubernetesNamespace,
             targets = getTargets(configuration, mergedInstrumentationParameters),
             enableDeviceDebug = configuration.enableDeviceDebug,
-            timeoutInSeconds = configuration.timeoutInSeconds,
+            testRunnerExecutionTimeout = configuration.testRunnerExecutionTimeout,
+            instrumentationTaskTimeout = configuration.instrumentationTaskTimeout,
             filter = filters.singleOrNull { it.name == configuration.filter }
                 ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
             outputFolder = outputFolder

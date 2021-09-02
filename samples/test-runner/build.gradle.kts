@@ -53,7 +53,16 @@ instrumentation {
             name = "api29",
             api = 29,
             model = "Android_SDK_built_for_x86_64",
-            image = emulatorImage(29, "915c1f20be"),
+            image = emulatorImage(29, "1927fb7cda"),
+            cpuCoresRequest = "1",
+            cpuCoresLimit = "1.3",
+            memoryLimit = "4Gi"
+        )
+        val emulator30 = CloudEmulator(
+            name = "api30",
+            api = 30,
+            model = "sdk_gphone_x86_64_arm64",
+            image = emulatorImage(30, "42284ac584"),
             cpuCoresRequest = "1",
             cpuCoresLimit = "1.3",
             memoryLimit = "4Gi"
@@ -78,6 +87,23 @@ instrumentation {
 
                             testsCountBasedReservation {
                                 device = emulator29
+                                maximum = 1
+                                minimum = 1
+                                testsPerEmulator = 1
+                            }
+                        }
+                    }
+                    register("api30") {
+                        deviceName = "API30"
+
+                        scheduling {
+                            quota {
+                                retryCount = 1
+                                minimumSuccessCount = 1
+                            }
+
+                            testsCountBasedReservation {
+                                device = emulator30
                                 maximum = 1
                                 minimum = 1
                                 testsPerEmulator = 1

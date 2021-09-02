@@ -30,6 +30,9 @@ class FailViewElement(
 
     private lateinit var exception: Throwable
 
+    override val actions: Actions
+        get() = FailActions(interactionContext, super.actions, exception)
+
     fun firstFail(exception: Throwable): ViewElement {
         this.exception = exception
         return this
@@ -65,7 +68,4 @@ class FailViewElement(
             )
         }
     }
-
-    override val actions: Actions
-        get() = FailActions(interactionContext, super.actions, exception)
 }

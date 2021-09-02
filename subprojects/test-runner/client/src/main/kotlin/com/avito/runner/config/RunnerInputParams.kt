@@ -31,6 +31,7 @@ public data class RunnerInputParams(
     val uploadTestArtifacts: Boolean,
     val fetchLogcatForIncompleteTests: Boolean,
     val saveTestArtifactsToOutputs: Boolean,
+    val useLegacyExtensionsV1Beta: Boolean,
 ) : Serializable {
 
     public companion object

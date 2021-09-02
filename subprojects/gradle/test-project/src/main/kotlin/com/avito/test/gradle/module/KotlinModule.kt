@@ -19,7 +19,7 @@ public class KotlinModule(
     override val modules: List<Module> = emptyList(),
     override val dependencies: Set<GradleDependency> = emptySet(),
     override val useKts: Boolean = false,
-    private val mutator: File.() -> Unit = {}
+    private val mutator: File.() -> Unit = {},
 ) : Module {
 
     override fun generateIn(file: File) {

@@ -10,7 +10,7 @@ import com.avito.test.gradle.module.KotlinModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
+internal class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
 
     private val htmlVerdicts by lazy {
         HtmlVerdictCases.Configuration(temp)
@@ -75,18 +75,6 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
                 "Could not find method illegal()"
             )
         )
-
-        errors[1].assertSingleError(
-            expectedMessageLines = listOf(
-                "A problem occurred configuring project ':app'."
-            ),
-            expectedCauseMessages = listOf(
-                "A problem occurred configuring project ':app'.",
-                "com.android.builder.errors.EvalIssueException: compileSdkVersion is not specified. " +
-                    "Please add it to build.gradle",
-                "compileSdkVersion is not specified",
-            )
-        )
     }
 
     @Test
@@ -132,8 +120,12 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
         expectedHtmlVerdict: String
     ) {
         assertBuildVerdictFileExist(true)
-        assertThat(plainTextBuildVerdict.readText()).isEqualTo(expectedPlainTextVerdict)
-        assertThat(htmlBuildVerdict.readText()).isEqualTo(expectedHtmlVerdict)
+
+        val plainVerdict = plainTextBuildVerdict.readText()
+        assertThat(plainVerdict).startsWith(expectedPlainTextVerdict)
+
+        val htmlVerdict = htmlBuildVerdict.readText()
+        assertThat(htmlVerdict).startsWith(expectedHtmlVerdict)
     }
 
     private fun Single.assertSingleError(

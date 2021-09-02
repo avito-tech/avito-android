@@ -6,23 +6,46 @@ Metrics available at:
 
 `$namespace.testrunner.$projectName.$instrumentationConfigName.`
 
-### `device-utilization.median`
+### `devices.living`
 
-Median of all effective device time relative to total device claimed time (in percent `0-100`)
+Sum of all time from creation of device till finishing across all devices
 
 ```mermaid
 graph LR
-    id1[Device started] --> id2[Test claimed a device] 
-    subgraph ef1[effective part 1]
-    id2 --> id3[Test started] --> id4[Test finished]
+    subgraph ef1[Living]
+    id1[Device started] --> id2[Device finished]
+    end 
+```
+
+### `devices.working`
+
+Sum of all time when device executing tests across all devices
+
+```mermaid
+graph LR
+    id1[Device started] --> id2 
+    subgraph ef1[working]
+    id2[Received a test intention] --> id3[Test started] --> id4[Test finished]
     end
-    id4 --> id5[Waiting for another intention]
-    id5 --> id6[Another test run]
-    subgraph ef2[effective part 2]
-    id6
+    id4 --> id5[Waiting for another intention] --> id6
+    subgraph ef2[working]
+    id6[Another test run]
     end
     id6 --> id7[Device finished]
     
+```
+
+### `devices.idle`
+
+Sum of all time when device do nothing across all devices
+
+```mermaid
+graph LR
+    id1[Device started] --> id2 
+    id2[Received a test intention] --> id3[Test started] --> id4[Test finished] --> id5
+    subgraph ef2[idle]
+    id5[Waiting for another intention] --> id6[Device finished]
+    end
 ```
 
 ### `initial-delay`

@@ -12,12 +12,15 @@ public class StubDevicesProvider(
     private val devices: ReceiveChannel<Device>
 ) : DevicesProvider {
 
+    public var isReleased: Boolean = false
+        private set
+
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
     ): DeviceWorkerPool = provider.provide(devices)
 
     override suspend fun releaseDevices() {
-        // do nothing
+        isReleased = true
     }
 
     override suspend fun releaseDevice(coordinate: DeviceCoordinate) {

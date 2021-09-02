@@ -48,7 +48,7 @@ dependencyResolutionManagement {
             }
             filter {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
-                includeModuleByRegex("com\\.google\\.android.*", ".*")
+                includeModuleByRegex("com\\.google\\.android.*", "(?!annotations).*")
                 includeGroupByRegex("androidx\\..*")
                 includeGroup("com.google.testing.platform")
             }
@@ -58,13 +58,13 @@ dependencyResolutionManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "KotlinX",
-                        originalRepo = "https://kotlin.bintray.com/kotlinx"
+                        repositoryName = "jitpack.io",
+                        originalRepo = "https://jitpack.io"
                     )
                 }
             }
             filter {
-                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
+                includeModule("com.github.tiann", "FreeReflection")
             }
         }
         exclusiveContent {
@@ -81,7 +81,6 @@ dependencyResolutionManagement {
                 includeGroup("com.forkingcode.espresso.contrib")
                 includeGroup("org.jetbrains.trove4j")
                 includeModule("com.fkorotkov", "kubernetes-dsl")
-                includeModule("me.weishu", "free_reflection")
                 includeModule("org.jetbrains.teamcity", "teamcity-rest-client")
             }
         }

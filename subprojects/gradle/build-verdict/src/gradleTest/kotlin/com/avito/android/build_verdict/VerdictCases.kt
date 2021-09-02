@@ -1,6 +1,7 @@
 package com.avito.android.build_verdict
 
-object VerdictCases {
+internal object VerdictCases {
+
     interface Execution {
         fun compileKotlinFails(): String
         fun buildVerdictTaskFails(): String

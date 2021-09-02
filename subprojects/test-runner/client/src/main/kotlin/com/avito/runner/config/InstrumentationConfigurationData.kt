@@ -4,6 +4,7 @@ import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.reservation.request.Device
 import java.io.File
 import java.io.Serializable
+import java.time.Duration
 
 public data class InstrumentationConfigurationData(
     val name: String,
@@ -12,7 +13,8 @@ public data class InstrumentationConfigurationData(
     val kubernetesNamespace: String,
     val targets: List<TargetConfigurationData>,
     val enableDeviceDebug: Boolean,
-    val timeoutInSeconds: Long,
+    val testRunnerExecutionTimeout: Duration,
+    val instrumentationTaskTimeout: Duration,
     val filter: InstrumentationFilterData,
     val outputFolder: File,
 ) : Serializable {

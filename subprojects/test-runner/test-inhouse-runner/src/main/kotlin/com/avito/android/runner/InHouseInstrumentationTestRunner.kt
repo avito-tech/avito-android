@@ -7,6 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.instrumentation.ActivityProvider
 import com.avito.android.instrumentation.ActivityProviderFactory
+import com.avito.android.internal.RuntimeApplicationDirProvider
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
@@ -80,9 +81,10 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val testArtifactsProvider: TestArtifactsProvider by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+        val appDirProvider = RuntimeApplicationDirProvider(targetContext)
 
-        TestArtifactsProviderFactory.create(
-            testReportRootDir = runEnvironment.outputDirectory,
+        TestArtifactsProviderFactory.createForAndroidRuntime(
+            appDirProvider = appDirProvider,
             name = runEnvironment.testMetadata.name
         )
     }
@@ -104,7 +106,8 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Public for *TestApp to skip on orchestrator runs
+    // Public for *TestApp to skip on orchestrator runs
+    @Suppress("MemberVisibilityCanBePrivate")
     val testRunEnvironment: TestRunEnvironment by lazy {
         if (isRealRun(instrumentationArguments)) {
             createRunnerEnvironment(instrumentationArguments)
@@ -113,7 +116,8 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Public for synth monitoring
+    // Public for synth monitoring
+    @Suppress("MemberVisibilityCanBePrivate")
     val screenshotCapturer: ScreenshotCapturer by lazy {
         ScreenshotCapturerFactory.create(testArtifactsProvider, activityProvider)
     }
@@ -145,7 +149,8 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    @Suppress("unused") // used in avito
+    // used in avito
+    @Suppress("unused")
     val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
@@ -154,7 +159,8 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    @Suppress("unused") // used in avito
+    // used in avito
+    @Suppress("unused")
     val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
         ReportViewerWebsocketReporter(report)
     }

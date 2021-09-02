@@ -12,6 +12,9 @@ import com.avito.utils.fileFromJarResources
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.jupiter.api.Test
 
+/**
+ * use `make lint_test_fixtures` to update resources/
+ */
 internal class LintSlackAlertIntegrationTest {
 
     private val loggerFactory = StubLoggerFactory

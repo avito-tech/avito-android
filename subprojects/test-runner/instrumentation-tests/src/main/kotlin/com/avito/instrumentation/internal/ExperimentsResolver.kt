@@ -14,6 +14,7 @@ internal class ExperimentsResolver(private val project: Project) {
             saveTestArtifactsToOutputs = getSaveTestArtifactsToOutputs(extension),
             fetchLogcatForIncompleteTests = getFetchLogcatForIncompleteTests(extension),
             uploadArtifactsFromRunner = getUploadArtifactsFromRunner(extension),
+            useLegacyExtensionsV1Beta = getUseLegacyExtensionsV1Beta(extension),
         )
     }
 
@@ -23,6 +24,10 @@ internal class ExperimentsResolver(private val project: Project) {
 
     private fun getFetchLogcatForIncompleteTests(extension: GradleInstrumentationPluginConfiguration): Boolean {
         return extension.experimental.fetchLogcatForIncompleteTests.getOrElse(false)
+    }
+
+    private fun getUseLegacyExtensionsV1Beta(extension: GradleInstrumentationPluginConfiguration): Boolean {
+        return extension.experimental.useLegacyExtensionsV1Beta.getOrElse(true)
     }
 
     private fun getUploadArtifactsFromRunner(extension: GradleInstrumentationPluginConfiguration): Boolean {

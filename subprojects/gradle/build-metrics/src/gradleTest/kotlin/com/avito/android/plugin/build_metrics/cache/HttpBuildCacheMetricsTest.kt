@@ -13,43 +13,6 @@ import java.io.File
 
 internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
 
-    override fun setupProject(projectDir: File) {
-        File(projectDir, "build.gradle.kts").writeText(
-            """
-            plugins {
-                id("com.avito.android.build-metrics")
-            }
-            
-            @CacheableTask
-            abstract class CustomTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
-
-                @Input
-                var input: Long = 0
-
-                @OutputFile
-                val outputFile = objects.fileProperty()
-
-                @TaskAction
-                fun createFile() {
-                    outputFile.get().asFile.writeText("Output of CacheableTask: " + input)
-                }
-            }
-            
-            tasks.register("cacheMissTask", CustomTask::class.java) {
-                input = System.currentTimeMillis()
-                outputFile.set(file("build/cacheMissTask.txt"))
-            }
-            """.trimIndent()
-        )
-    }
-
-    private class TestCase(
-        val name: String,
-        val loadStatus: Int,
-        val storeStatus: Int,
-        val assertion: (result: TestResult) -> Unit
-    )
-
     private val cases = listOf(
         TestCase(
             name = "no errors - miss and successful store",
@@ -91,6 +54,43 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 result.assertHasEvents(".build.cache.errors.load.unknown")
             }
         ),
+    )
+
+    override fun setupProject(projectDir: File) {
+        File(projectDir, "build.gradle.kts").writeText(
+            """
+            plugins {
+                id("com.avito.android.build-metrics")
+            }
+            
+            @CacheableTask
+            abstract class CustomTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+
+                @Input
+                var input: Long = 0
+
+                @OutputFile
+                val outputFile = objects.fileProperty()
+
+                @TaskAction
+                fun createFile() {
+                    outputFile.get().asFile.writeText("Output of CacheableTask: " + input)
+                }
+            }
+            
+            tasks.register("cacheMissTask", CustomTask::class.java) {
+                input = System.currentTimeMillis()
+                outputFile.set(file("build/cacheMissTask.txt"))
+            }
+            """.trimIndent()
+        )
+    }
+
+    private class TestCase(
+        val name: String,
+        val loadStatus: Int,
+        val storeStatus: Int,
+        val assertion: (result: TestResult) -> Unit
     )
 
     @TestFactory

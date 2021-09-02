@@ -29,7 +29,7 @@ internal class LintResultsParserTest {
         val model = parse(
             xmlContent = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <issues by="lint 4.1.2" format="5">
+            <issues by="lint 7.0.1" format="6">
             
                 <issue
                     id="GoogleAppIndexingWarning"
@@ -133,7 +133,7 @@ internal class LintResultsParserTest {
             parse(
                 xmlContent = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <issues format="6" by="lint 4.0.0">
+            <issues format="5" by="lint 4.1.2">
             </issues>
             """.trimIndent()
             )
@@ -142,7 +142,7 @@ internal class LintResultsParserTest {
         }
         assertThat(readingError).isNotNull()
         assertThat(readingError).isInstanceOf<UnsupportedFormatVersion>()
-        assertThat(readingError?.message).contains("Lint xml report for version 6 is not supported")
+        assertThat(readingError?.message).contains("Lint xml report for version 5 is not supported")
     }
 
     @Test

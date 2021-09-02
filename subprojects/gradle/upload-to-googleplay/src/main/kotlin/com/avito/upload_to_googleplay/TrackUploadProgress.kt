@@ -1,6 +1,6 @@
 package com.avito.upload_to_googleplay
 
-import com.avito.math.percent
+import com.avito.math.fromZeroToOnePercent
 import com.google.api.client.googleapis.media.MediaHttpUploader
 import com.google.api.services.androidpublisher.AndroidPublisherRequest
 
@@ -15,7 +15,7 @@ internal fun <T> AndroidPublisherRequest<T>.trackUploadProgress(
                 MediaHttpUploader.UploadState.INITIATION_STARTED ->
                     println("Starting $thing upload")
                 MediaHttpUploader.UploadState.MEDIA_IN_PROGRESS ->
-                    println("Uploading $thing: ${it.progress.percent().toInt()}% complete")
+                    println("Uploading $thing: ${it.progress.fromZeroToOnePercent().roundToInt()}% complete")
                 MediaHttpUploader.UploadState.MEDIA_COMPLETE ->
                     println("${thing.capitalize()} upload complete")
             }

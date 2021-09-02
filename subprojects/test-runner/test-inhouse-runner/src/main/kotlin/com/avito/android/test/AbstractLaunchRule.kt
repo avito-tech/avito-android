@@ -14,8 +14,8 @@ import org.junit.runners.model.Statement
 @Suppress("unused")
 abstract class AbstractLaunchRule : TestRule {
 
-    private val testContext = InstrumentationRegistry.getInstrumentation().context
-    private val appUnderTestContext = InstrumentationRegistry.getInstrumentation().targetContext
+    private val instrumentationContext = InstrumentationRegistry.getInstrumentation().context
+    private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
     private val loggerFactory by lazy {
         (InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner).loggerFactory
     }
@@ -38,18 +38,20 @@ abstract class AbstractLaunchRule : TestRule {
 
     fun startFromHomeScreen() {
         beforeAppStart()
-        testContext.startActivity(Device.getLauncherIntentForAppUnderTest(testContext, appUnderTestContext))
-        Device.waitForAppLaunchAndReady(appUnderTestContext)
+        targetContext.startActivity(
+            Device.getLauncherIntentForAppUnderTest(targetContext)
+        )
+        Device.waitForAppLaunchAndReady(targetContext)
     }
 
     fun startFromDeeplink(url: String) {
         beforeAppStart()
-        testContext.startActivity(
+        targetContext.startActivity(
             Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         )
-        Device.waitForAppLaunchAndReady(appUnderTestContext)
+        Device.waitForAppLaunchAndReady(targetContext)
     }
 
     fun openDeeplink(url: String) {
@@ -59,7 +61,7 @@ abstract class AbstractLaunchRule : TestRule {
     }
 
     fun openDeeplinkWithAppContext(url: String) {
-        appUnderTestContext.startActivity(
+        targetContext.startActivity(
             Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )
@@ -73,7 +75,7 @@ abstract class AbstractLaunchRule : TestRule {
     }
 
     private fun beforeAppStart() {
-        appUnderTestContext.checkPlayServices(logger)
+        targetContext.checkPlayServices(logger)
         grantPermissionsNeededForTesting()
     }
 }

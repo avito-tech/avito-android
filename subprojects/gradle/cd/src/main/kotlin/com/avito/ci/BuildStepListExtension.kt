@@ -8,7 +8,6 @@ import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.CustomTaskStep
 import com.avito.ci.steps.DependencyAnalysisStep
-import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.FlakyReportStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.ImpactMetrics
@@ -22,6 +21,9 @@ import com.avito.ci.steps.UploadToArtifactory
 import com.avito.ci.steps.UploadToProsector
 import com.avito.ci.steps.UploadToQapps
 import com.avito.ci.steps.VerifyArtifactsStep
+import com.avito.ci.steps.deploy.DeployStep
+import com.avito.ci.steps.deploy.ToGooglePlayDeploysTransformer
+import com.avito.ci.steps.deploy.UploadCrashlyticsProguardFileTasksProvider
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Named
@@ -81,7 +83,12 @@ public open class BuildStepListExtension(
             UploadBuildResult(buildStepListName, name)
         }
         registerFactory(DeployStep::class.java) { name ->
-            DeployStep(buildStepListName, artifactsConfig, name)
+            DeployStep(
+                context = buildStepListName,
+                transformer = ToGooglePlayDeploysTransformer(artifactsConfig),
+                provider = UploadCrashlyticsProguardFileTasksProvider(),
+                name = name
+            )
         }
         registerFactory(VerifyArtifactsStep::class.java) { name ->
             VerifyArtifactsStep(buildStepListName, artifactsConfig, name)

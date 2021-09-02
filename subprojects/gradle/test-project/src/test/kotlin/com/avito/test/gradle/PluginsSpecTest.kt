@@ -4,7 +4,7 @@ import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class PluginsSpecTest {
+internal class PluginsSpecTest {
 
     @Test
     fun `formatting - plugin with only id`() {
@@ -74,5 +74,49 @@ class PluginsSpecTest {
                |    id("two")
                |}""".trimMargin()
         )
+    }
+
+    @Test
+    fun `empty plugin spec - empty string`() {
+        val spec = plugins { }
+        assertThat(spec.getScriptRepresentation()).isEmpty()
+    }
+
+    @Test
+    fun `one classpath plugin - buildscript classpath with apply`() {
+        val spec = plugins {
+            applyWithBuildscript("artifact:4.1.2", "plugin.id")
+        }
+        assertThat(spec.getScriptRepresentation()).isEqualTo("""
+            |buildscript {
+            |   dependencies {
+            |       classpath("artifact:4.1.2")
+            |   }
+            |}
+            |apply {
+            |   plugin("plugin.id")
+            |}
+        """.trimMargin())
+    }
+
+    @Test
+    fun `all plugin types`() {
+        val spec = plugins {
+            id("one")
+            applyWithBuildscript("artifact:4.1.2", "plugin.id")
+        }
+        assertThat(spec.getScriptRepresentation()).isEqualTo("""
+            |buildscript {
+            |   dependencies {
+            |       classpath("artifact:4.1.2")
+            |   }
+            |}
+            |plugins {
+            |    id("one")
+            |}
+            |apply {
+            |   plugin("plugin.id")
+            |}
+        """.trimMargin())
     }
 }

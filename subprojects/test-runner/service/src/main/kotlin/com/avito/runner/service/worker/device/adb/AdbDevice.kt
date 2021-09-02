@@ -99,7 +99,7 @@ public data class AdbDevice(
         }
     }
 
-    override fun runIsolatedTest(
+    override suspend fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun {

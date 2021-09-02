@@ -1,10 +1,10 @@
 package com.avito.android.runner
 
 import android.os.Bundle
+import androidx.test.internal.runner.RunnerArgsAccessor
 
 interface OrchestratorDelegate {
 
-    fun isRealRun(arguments: Bundle): Boolean = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
+    fun isRealRun(arguments: Bundle): Boolean =
+        !arguments.containsKey(RunnerArgsAccessor.ARGUMENT_ORCHESTRATOR_SERVICE)
 }
-
-private const val FAKE_ORCHESTRATOR_RUN_ARGUMENT = "listTestsForOrchestrator"

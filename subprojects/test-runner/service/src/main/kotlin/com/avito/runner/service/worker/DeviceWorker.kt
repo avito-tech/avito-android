@@ -2,6 +2,7 @@ package com.avito.runner.service.worker
 
 import com.avito.android.Result
 import com.avito.coroutines.extensions.Dispatchers
+import com.avito.report.ApplicationDirProviderFactory
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.model.TestCaseRun.Result.Failed
@@ -128,7 +129,7 @@ internal class DeviceWorker(
         stateWorker.clearPackages(currentState)
     }.map { intendedState }
 
-    private fun executeAction(action: InstrumentationTestRunAction): Result<DeviceTestCaseRun> {
+    private suspend fun executeAction(action: InstrumentationTestRunAction): Result<DeviceTestCaseRun> {
         return Result.tryCatch {
             try {
 
@@ -160,8 +161,12 @@ internal class DeviceWorker(
             }
         }.flatMap { deviceTestCaseRun ->
 
-            val reportFileProvider = TestArtifactsProviderFactory.createForAdbAccess(
-                appUnderTestPackage = action.targetPackage,
+            val appDirProvider = ApplicationDirProviderFactory.create(
+                api = device.api,
+                appPackage = action.targetPackage,
+            )
+            val reportFileProvider = TestArtifactsProviderFactory.createForAdb(
+                appDirProvider = appDirProvider,
                 name = action.test.name
             )
 

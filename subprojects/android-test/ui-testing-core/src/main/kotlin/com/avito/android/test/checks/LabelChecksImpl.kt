@@ -9,6 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
 import com.avito.android.test.matcher.CompoundDrawableMatcher
+import com.avito.android.test.matcher.TextMatchers
 import com.avito.android.test.matcher.TextViewLinesMatcher
 import com.avito.android.test.matcher.WithHintEndingMatcher
 import org.hamcrest.Matcher
@@ -24,23 +25,23 @@ import org.hamcrest.core.AllOf
 class LabelChecksImpl(private val driver: ChecksDriver) : LabelChecks {
 
     override fun withText(text: String) {
-        driver.check(matches(ViewMatchers.withText(text)))
+        driver.check(matches(TextMatchers.withText(text)))
     }
 
     override fun withText(textResId: Int) {
-        driver.check(matches(ViewMatchers.withText(textResId)))
+        driver.check(matches(TextMatchers.withText(textResId)))
     }
 
     override fun withText(matcher: Matcher<String>) {
-        driver.check(matches(ViewMatchers.withText(matcher)))
+        driver.check(matches(TextMatchers.withText(matcher)))
     }
 
     override fun withTextStartingWith(text: String) {
-        driver.check(matches(ViewMatchers.withText(startsWith(text))))
+        driver.check(matches(TextMatchers.withText(startsWith(text))))
     }
 
     override fun withTextIgnoringCase(text: String) {
-        driver.check(matches(ViewMatchers.withText(equalToIgnoringCase(text))))
+        driver.check(matches(TextMatchers.withText(equalToIgnoringCase(text))))
     }
 
     override fun withEmptyText() {
@@ -48,31 +49,31 @@ class LabelChecksImpl(private val driver: ChecksDriver) : LabelChecks {
     }
 
     override fun containsText(text: String) {
-        driver.check(matches(ViewMatchers.withText(containsString(text))))
+        driver.check(matches(TextMatchers.withText(containsString(text))))
     }
 
     override fun displayedWithText(text: String) {
-        displayedAndMatchedWith(ViewMatchers.withText(text))
+        displayedAndMatchedWith(TextMatchers.withText(text))
     }
 
     override fun displayedWithText(textResId: Int) {
-        displayedAndMatchedWith(ViewMatchers.withText(textResId))
+        displayedAndMatchedWith(TextMatchers.withText(textResId))
     }
 
     override fun displayedWithText(matcher: Matcher<String>) {
-        displayedAndMatchedWith(ViewMatchers.withText(matcher))
+        displayedAndMatchedWith(TextMatchers.withText(matcher))
     }
 
     override fun displayedWithTextStartingWith(text: String) {
-        displayedAndMatchedWith(ViewMatchers.withText(startsWith(text)))
+        displayedAndMatchedWith(TextMatchers.withText(startsWith(text)))
     }
 
     override fun displayedWithTextEndingWith(text: String) {
-        displayedAndMatchedWith(ViewMatchers.withText(endsWith(text)))
+        displayedAndMatchedWith(TextMatchers.withText(endsWith(text)))
     }
 
     override fun displayedWithTextIgnoringCase(text: String) {
-        displayedAndMatchedWith(ViewMatchers.withText(equalToIgnoringCase(text)))
+        displayedAndMatchedWith(TextMatchers.withText(equalToIgnoringCase(text)))
     }
 
     override fun displayedWithEmptyText() {

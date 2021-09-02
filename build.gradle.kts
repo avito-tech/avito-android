@@ -1,26 +1,7 @@
 plugins {
     base
-}
-
-/**
- * Tests run from IDE in subprojects module can't recognize root wrapper
- */
-val subprojectsWrapper by tasks.registering(Copy::class) {
-    into("$rootDir/subprojects/gradle/wrapper")
-    from("$rootDir/gradle/wrapper")
-}
-
-val samplesWrapper by tasks.registering(Copy::class) {
-    into("$rootDir/samples/gradle/wrapper")
-    from("$rootDir/gradle/wrapper")
-}
-
-tasks.withType<Wrapper> {
-    // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
-    distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "7.1"
-
-    finalizedBy(subprojectsWrapper, samplesWrapper)
+    id("convention.gradle-properties")
+    id("convention.gradle-wrapper")
 }
 
 tasks.register<Exec>("installGitHooks") {
@@ -35,7 +16,9 @@ val initialTaskNames: List<String> = project.gradle.startParameter.taskNames
 project.gradle.startParameter.setTaskNames(initialTaskNames + listOf("installGitHooks"))
 
 tasks.register("detektAll").configure {
-    gradle.includedBuilds.forEach { includedBuild ->
-        dependsOn(includedBuild.task(":detektAll"))
-    }
+    gradle.includedBuilds
+        .filterNot { it.name == "build-logic-settings" }
+        .forEach { includedBuild ->
+            dependsOn(includedBuild.task(":detektAll"))
+        }
 }

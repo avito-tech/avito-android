@@ -20,7 +20,6 @@ import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.div
 
 internal class RunnerInputParamsTest {
 
@@ -349,6 +348,10 @@ internal class RunnerInputParamsTest {
             Case("saveTestArtifactsToOutputs is disabled") {
                 assertThat(it.saveTestArtifactsToOutputs)
                     .isFalse()
+            },
+            Case("useLegacyExtensionsV1Beta is enabled") {
+                assertThat(it.useLegacyExtensionsV1Beta)
+                    .isTrue()
             },
         ).map { case ->
             DynamicTest.dynamicTest("[$lang] ${case.name}") {
