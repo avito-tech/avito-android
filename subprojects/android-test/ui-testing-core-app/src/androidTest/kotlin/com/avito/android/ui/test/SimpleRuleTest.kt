@@ -20,7 +20,7 @@ class SimpleRuleTest {
         rule.failAfterTest = true
 
         thrown.expect(RuleError::class.java)
-        thrown.expectCause(isA(IllegalStateException::class.java))
+        thrown.expectCause(isA<IllegalStateException>(IllegalStateException::class.java))
 
         throw IllegalStateException("Error from test")
     }
