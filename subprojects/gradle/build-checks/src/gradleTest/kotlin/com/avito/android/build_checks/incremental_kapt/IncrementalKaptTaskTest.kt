@@ -71,7 +71,7 @@ internal class IncrementalKaptTaskTest {
 
     @Test
     fun `build success - Room not applied`() {
-        generateProject(mode = "fail", applyRoomPlugin = false)
+        generateProject(mode = "fail")
 
         checkIncrementalKapt(javaVersion = SUPPORTED_JAVA_VERSION)
             .assertThat()
@@ -83,7 +83,7 @@ internal class IncrementalKaptTaskTest {
 
     @Test
     fun `build success - without Room and unsupported Java`() {
-        generateProject(mode = "fail", applyRoomPlugin = false)
+        generateProject(mode = "fail")
 
         checkIncrementalKapt(javaVersion = UNSUPPORTED_JAVA_VERSION)
             .assertThat()
@@ -106,10 +106,7 @@ internal class IncrementalKaptTaskTest {
         expectFailure = expectFailure
     )
 
-    private fun generateProject(
-        mode: String,
-        applyRoomPlugin: Boolean = true
-    ) {
+    private fun generateProject(mode: String) {
         TestProjectGenerator(
             plugins = plugins {
                 id("com.avito.android.build-checks")
@@ -127,7 +124,6 @@ internal class IncrementalKaptTaskTest {
                     name = "room-test",
                     plugins = plugins {
                         id("kotlin-kapt")
-                        if (applyRoomPlugin) id("com.avito.android.room-config")
                     }
                 )
             )
