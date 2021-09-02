@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.5.21"
-agp = "7.0.1"
+agp = "7.0.2"
 # formula: 23 + agp version
 androidTools = "30.0.1"
 okhttp = "4.9.0"
