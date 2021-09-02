@@ -19,7 +19,7 @@ import com.avito.android.build_verdict.internal.writer.HtmlBuildVerdictWriter.Co
 import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter.Companion.fileName as plainTextVerdictFileName
 import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter.Companion.fileName as rawVerdictFileName
 
-abstract class BaseBuildVerdictTest {
+internal abstract class BaseBuildVerdictTest {
 
     @field:TempDir
     lateinit var temp: File

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class TestProjectGeneratorTest {
+internal class TestProjectGeneratorTest {
 
     @Test
     fun `settings include generated`(@TempDir projectDir: File) {

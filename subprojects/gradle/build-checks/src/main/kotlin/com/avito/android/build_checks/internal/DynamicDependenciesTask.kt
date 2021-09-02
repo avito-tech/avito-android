@@ -1,7 +1,6 @@
 package com.avito.android.build_checks.internal
 
 import com.avito.android.build_checks.RootProjectChecksExtension
-import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
@@ -45,7 +44,6 @@ internal abstract class DynamicDependenciesTask : DefaultTask() {
 /**
  * https://docs.gradle.org/current/javadoc/org/gradle/api/artifacts/VersionConstraint.html
  */
-@VisibleForTesting
 internal fun isDynamicVersion(version: String): Boolean {
     return when {
         version.endsWith('+') -> true

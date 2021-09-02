@@ -289,6 +289,12 @@ benchmark_fast_check:
 benchmark_gradle_test:
 	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios gradleTest
 
+# To generate new test fixtures for LintSlackAlertIntegrationTest
+lint_test_app:
+	$(docker_command) ./gradlew --project-dir $(project) $(params) :android-test:ui-testing-core-app:lint
+	cp subprojects/android-test/ui-testing-core-app/build/reports/lint-results-debug.html subprojects/gradle/lint-report/src/integTest/resources/lint-results.html
+	cp subprojects/android-test/ui-testing-core-app/build/reports/lint-results-debug.xml subprojects/gradle/lint-report/src/integTest/resources/lint-results.xml
+
 ## Gradle cache node
 GRADLE_CACHE_NODE_TAG=9.9
 

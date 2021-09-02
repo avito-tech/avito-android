@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="5" by="lint 4.0.2">
+<issues format="6" by="lint 7.0.1">
 
     <issue
         id="DefaultLocale"
@@ -9,12 +9,12 @@
         priority="6"
         summary="Implied default locale in case conversion"
         explanation="Calling `String#toLowerCase()` or `#toUpperCase()` **without specifying an explicit locale** is a common source of bugs. The reason for that is that those methods will use the current locale on the user&apos;s device, and even though the code appears to work correctly when you are developing the app, it will fail in some locales. For example, in the Turkish locale, the uppercase replacement for `i` is **not** `I`.&#xA;&#xA;If you want the methods to just perform ASCII replacement, for example to convert an enum name, call `String#toUpperCase(Locale.US)` instead. If you really want to use the current locale, call `String#toUpperCase(Locale.getDefault())` instead."
-        url="http://developer.android.com/reference/java/util/Locale.html#default_locale"
-        urls="http://developer.android.com/reference/java/util/Locale.html#default_locale"
+        url="https://developer.android.com/reference/java/util/Locale.html#default_locale"
+        urls="https://developer.android.com/reference/java/util/Locale.html#default_locale"
         errorLine1="        override fun getItemViewType(position: Int): Int = ViewType.valueOf(hints[position].toUpperCase()).ordinal"
         errorLine2="                                                                                            ~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/kotlin/com/avito/android/ui/RecyclerAsLayoutActivity.kt"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/kotlin/com/avito/android/ui/RecyclerAsLayoutActivity.kt"
             line="65"
             column="93"/>
     </issue>
@@ -30,7 +30,7 @@
         errorLine1="            android:layout_weight=&quot;1&quot;"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_buttons_over_recycler.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_buttons_over_recycler.xml"
             line="44"
             column="13"/>
     </issue>
@@ -43,12 +43,12 @@
         priority="4"
         summary="FrameLayout can be replaced with `&lt;merge>` tag"
         explanation="If a `&lt;FrameLayout>` is the root of a layout and does not provide background or padding etc, it can often be replaced with a `&lt;merge>` tag which is slightly more efficient. Note that this depends on context, so make sure you understand how the `&lt;merge>` tag works before proceeding."
-        url="http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"
-        urls="http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"
+        url="https://android-developers.googleblog.com/2009/03/android-layout-tricks-3-optimize-by.html"
+        urls="https://android-developers.googleblog.com/2009/03/android-layout-tricks-3-optimize-by.html"
         errorLine1="&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_empty.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_empty.xml"
             line="2"
             column="1"/>
     </issue>
@@ -61,12 +61,12 @@
         priority="4"
         summary="FrameLayout can be replaced with `&lt;merge>` tag"
         explanation="If a `&lt;FrameLayout>` is the root of a layout and does not provide background or padding etc, it can often be replaced with a `&lt;merge>` tag which is slightly more efficient. Note that this depends on context, so make sure you understand how the `&lt;merge>` tag works before proceeding."
-        url="http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"
-        urls="http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"
+        url="https://android-developers.googleblog.com/2009/03/android-layout-tricks-3-optimize-by.html"
+        urls="https://android-developers.googleblog.com/2009/03/android-layout-tricks-3-optimize-by.html"
         errorLine1="&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_moving_button.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_moving_button.xml"
             line="2"
             column="1"/>
     </issue>
@@ -79,12 +79,12 @@
         priority="4"
         summary="FrameLayout can be replaced with `&lt;merge>` tag"
         explanation="If a `&lt;FrameLayout>` is the root of a layout and does not provide background or padding etc, it can often be replaced with a `&lt;merge>` tag which is slightly more efficient. Note that this depends on context, so make sure you understand how the `&lt;merge>` tag works before proceeding."
-        url="http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"
-        urls="http://android-developers.blogspot.com/2009/03/android-layout-tricks-3-optimize-by.html"
+        url="https://android-developers.googleblog.com/2009/03/android-layout-tricks-3-optimize-by.html"
+        urls="https://android-developers.googleblog.com/2009/03/android-layout-tricks-3-optimize-by.html"
         errorLine1="&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_overlap.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_overlap.xml"
             line="3"
             column="1"/>
     </issue>
@@ -96,11 +96,11 @@
         category="Performance"
         priority="3"
         summary="Inefficient layout weight"
-        explanation="When only a single widget in a LinearLayout defines a weight, it is more efficient to assign a width/height of `0dp` to it since it will absorb all the remaining space anyway. With a declared width/height of `0dp` it does not have to measure its own size first."
+        explanation="When only a single widget in a `LinearLayout` defines a weight, it is more efficient to assign a width/height of `0dp` to it since it will absorb all the remaining space anyway. With a declared width/height of `0dp` it does not have to measure its own size first."
         errorLine1="            android:layout_width=&quot;wrap_content&quot;"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_buttons_over_recycler.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_buttons_over_recycler.xml"
             line="24"
             column="13"/>
     </issue>
@@ -116,7 +116,7 @@
         errorLine1="&lt;androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_app_bar.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_app_bar.xml"
             line="3"
             column="1"/>
     </issue>
@@ -129,10 +129,10 @@
         priority="5"
         summary="Image defined in density-independent drawable folder"
         explanation="The res/drawable folder is intended for density-independent graphics such as shapes defined in XML. For bitmaps, move it to `drawable-mdpi` and consider providing higher and lower resolution versions in `drawable-ldpi`, `drawable-hdpi` and `drawable-xhdpi`. If the icon **really** is density independent (for example a solid color) you can place it in `drawable-nodpi`."
-        url="http://developer.android.com/guide/practices/screens_support.html"
-        urls="http://developer.android.com/guide/practices/screens_support.html">
+        url="https://developer.android.com/guide/practices/screens_support.html"
+        urls="https://developer.android.com/guide/practices/screens_support.html">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/drawable/red_bitmap.png"/>
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/drawable/red_bitmap.png"/>
     </issue>
 
     <issue
@@ -146,7 +146,7 @@
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_edittext.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_edittext.xml"
             line="9"
             column="6"/>
     </issue>
@@ -162,7 +162,7 @@
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_edittext.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_edittext.xml"
             line="23"
             column="6"/>
     </issue>
@@ -180,7 +180,7 @@
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_edittext.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_edittext.xml"
             line="9"
             column="6"/>
     </issue>
@@ -198,7 +198,7 @@
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_edittext.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_edittext.xml"
             line="23"
             column="6"/>
     </issue>
@@ -216,7 +216,7 @@
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/cell_with_edit_text.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/cell_with_edit_text.xml"
             line="9"
             column="6"/>
     </issue>
@@ -232,7 +232,7 @@
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_edittext.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_edittext.xml"
             line="9"
             column="6"/>
     </issue>
@@ -248,7 +248,7 @@
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_edittext.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_edittext.xml"
             line="23"
             column="6"/>
     </issue>
@@ -264,7 +264,7 @@
         errorLine1="            android:text=&quot;Do not press&quot; />"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_buttons_over_recycler.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_buttons_over_recycler.xml"
             line="29"
             column="13"/>
     </issue>
@@ -280,7 +280,7 @@
         errorLine1="            android:text=&quot;Do not press&quot; />"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_buttons_over_recycler.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_buttons_over_recycler.xml"
             line="46"
             column="13"/>
     </issue>
@@ -296,7 +296,7 @@
         errorLine1="            android:text=&quot;Do not press&quot; />"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_buttons_over_recycler_with_collapsing_toolbar.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_buttons_over_recycler_with_collapsing_toolbar.xml"
             line="26"
             column="13"/>
     </issue>
@@ -312,7 +312,7 @@
         errorLine1="            android:text=&quot;Test&quot; />"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_distant_view_on_scroll.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_distant_view_on_scroll.xml"
             line="21"
             column="13"/>
     </issue>
@@ -328,7 +328,7 @@
         errorLine1="        android:text=&quot;text&quot;"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_drawable.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_drawable.xml"
             line="48"
             column="9"/>
     </issue>
@@ -344,7 +344,7 @@
         errorLine1="        android:text=&quot;Clicked&quot;"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_moving_button.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_moving_button.xml"
             line="24"
             column="9"/>
     </issue>
@@ -360,7 +360,7 @@
         errorLine1="                android:text=&quot;Test&quot; />"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_swipe_refresh.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_swipe_refresh.xml"
             line="22"
             column="17"/>
     </issue>
@@ -376,7 +376,7 @@
         errorLine1="        android:text=&quot;top&quot;"
         errorLine2="        ~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/long_item.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/long_item.xml"
             line="15"
             column="9"/>
     </issue>
@@ -392,7 +392,7 @@
         errorLine1="        android:text=&quot;center&quot;"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/long_item.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/long_item.xml"
             line="26"
             column="9"/>
     </issue>
@@ -408,7 +408,7 @@
         errorLine1="        android:text=&quot;bottom&quot;"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/long_item.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/long_item.xml"
             line="37"
             column="9"/>
     </issue>
@@ -424,7 +424,7 @@
         errorLine1="        android:text=&quot;Even&quot; />"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/view_pager_even_item.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/view_pager_even_item.xml"
             line="14"
             column="9"/>
     </issue>
@@ -440,7 +440,7 @@
         errorLine1="        android:text=&quot;Odd&quot;"
         errorLine2="        ~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/view_pager_odd_item.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/view_pager_odd_item.xml"
             line="14"
             column="9"/>
     </issue>
@@ -456,7 +456,7 @@
         errorLine1="            android:layout_marginLeft=&quot;4dp&quot;"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/home/dsvoronin/Work/avito-android-github/samples/test-app/src/main/res/layout/activity_buttons_over_recycler.xml"
+            file="/home/dsvoronin/Work/avito-android-github/subprojects/android-test/ui-testing-core-app/src/main/res/layout/activity_buttons_over_recycler.xml"
             line="26"
             column="13"/>
     </issue>

@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.common.truthExtensions)
     implementation(testFixtures(projects.logger.logger))
 
+    implementation(libs.androidToolsCommon)
     implementation(libs.kotlinReflect)
     implementation(libs.truth)
 

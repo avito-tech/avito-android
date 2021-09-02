@@ -2,7 +2,7 @@
 
 package com.avito.plugin
 
-import com.android.build.api.component.ComponentIdentity
+import com.android.build.api.variant.ComponentIdentity
 import com.avito.android.taskName
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.tasks.TaskContainer
