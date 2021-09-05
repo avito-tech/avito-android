@@ -3,15 +3,19 @@ package com.avito.android.build_checks.internal
 import com.avito.android.build_checks.RootProjectChecksExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.util.Properties
 
 internal abstract class CheckGradleDaemonTask : DefaultTask() {
 
-    private val Project.buildSrcDir: File
-        get() = File(project.rootDir, "buildSrc")
+    @get:Input
+    abstract val buildSrcDir: Property<String>
+
+    @get:Input
+    abstract val rootDir: Property<String>
 
     @TaskAction
     fun check() {
@@ -20,14 +24,14 @@ internal abstract class CheckGradleDaemonTask : DefaultTask() {
     }
 
     private fun checkSameVersions() {
-        val buildSrcWrapperPropertiesFile = File(project.buildSrcDir, "gradle/wrapper/gradle-wrapper.properties")
+        val buildSrcWrapperPropertiesFile = File(buildSrcDir.get(), "gradle/wrapper/gradle-wrapper.properties")
 
         if (!buildSrcWrapperPropertiesFile.exists()) {
             logger.info("No buildSrc in project, no check needed")
             return
         }
 
-        val rootProperties = readProperties(File(project.rootDir, "gradle/wrapper/gradle-wrapper.properties"))
+        val rootProperties = readProperties(File(rootDir.get(), "gradle/wrapper/gradle-wrapper.properties"))
 
         val buildSrcWrapperProperties = readProperties(buildSrcWrapperPropertiesFile)
 
@@ -40,14 +44,14 @@ internal abstract class CheckGradleDaemonTask : DefaultTask() {
     }
 
     private fun checkSameDaemonArgs() {
-        val buildSrcPropertiesFile = File(project.buildSrcDir, "gradle.properties")
+        val buildSrcPropertiesFile = File(buildSrcDir.get(), "gradle.properties")
 
         if (!buildSrcPropertiesFile.exists()) {
             logger.info("No buildSrc in project, no check needed")
             return
         }
 
-        val rootProperties = readProperties(File(project.rootDir, "gradle.properties"))
+        val rootProperties = readProperties(File(rootDir.get(), "gradle.properties"))
 
         val buildSrcProperties = readProperties(buildSrcPropertiesFile)
 

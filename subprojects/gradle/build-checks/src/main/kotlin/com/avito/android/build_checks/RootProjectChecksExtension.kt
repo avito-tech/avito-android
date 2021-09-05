@@ -28,6 +28,7 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
     public fun gradleDaemon(action: Action<GradleDaemon>): Unit =
         register(GradleDaemon(), action)
 
+    @Deprecated("remove it, has no effect, use versions lock")
     public fun dynamicDependencies(action: Action<DynamicDependencies>): Unit =
         register(DynamicDependencies(), action)
 
@@ -37,9 +38,11 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
     public fun gradleProperties(action: Action<GradleProperties>): Unit =
         register(GradleProperties(), action)
 
+    @Deprecated("remove it, has no effect, use versions lock")
     public fun moduleTypes(action: Action<ModuleTypes>): Unit =
         register(ModuleTypes(), action)
 
+    @Deprecated("remove it, has no effect, use versions lock")
     public fun incrementalKapt(action: Action<IncrementalKapt>): Unit =
         register(IncrementalKapt(), action)
 
