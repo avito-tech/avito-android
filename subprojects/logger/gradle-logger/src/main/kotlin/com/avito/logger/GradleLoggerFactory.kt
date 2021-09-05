@@ -127,6 +127,7 @@ public class GradleLoggerFactory(
         public inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
             fromPlugin(plugin, project).create<T>()
 
+        @Deprecated("access to project is forbidden in task execution phase")
         public fun fromTask(task: Task): GradleLoggerFactory = fromProject(
             project = task.project,
             taskName = task.name
