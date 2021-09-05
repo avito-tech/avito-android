@@ -7,6 +7,7 @@ import com.android.build.api.variant.Variant
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.android.withAndroidApp
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
@@ -15,7 +16,6 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 
-@Suppress("UnstableApiUsage")
 public class SignServicePlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
@@ -119,6 +119,14 @@ public class SignServicePlugin : Plugin<Project> {
                 )
             })
             readWriteTimeoutSec.set(extension.readWriteTimeoutSec.convention(DEFAULT_TIMEOUT_SEC))
+
+            loggerFactory.set(
+                GradleLoggerFactory.fromProject(
+                    project = project,
+                    pluginName = "SignServicePlugin",
+                    taskName = T::class.java.simpleName
+                )
+            )
 
             onlyIf { signingResolver.isCustomSigningEnabled }
         }

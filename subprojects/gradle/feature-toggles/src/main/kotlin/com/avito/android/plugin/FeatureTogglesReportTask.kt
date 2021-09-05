@@ -1,7 +1,8 @@
 package com.avito.android.plugin
 
-import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.ProcessRunner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -10,9 +11,8 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.mapProperty
-import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -33,20 +33,25 @@ public abstract class FeatureTogglesReportTask : DefaultTask() {
     public val featureTogglesFile: File =
         File(project.rootDir, "common/features/src/main/java/com/avito/android/Features.kt")
 
-    @Input
-    public val slackHook: Property<String> = project.objects.property()
+    @get:Input
+    public abstract val slackHook: Property<String>
 
-    @Input
-    public val developersToTeam: MapProperty<DeveloperEmail /* = kotlin.String */, Team /* = kotlin.String */> =
-        project.objects.mapProperty()
+    @get:Input
+    public abstract val developersToTeam: MapProperty<DeveloperEmail, Team>
+
+    @get:Input
+    public abstract val projectDir: Property<String>
+
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
 
     @TaskAction
     public fun doWork() {
         val jsonToggles = readJsonReport()
-        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val loggerFactory = loggerFactory.get()
 
         val processRunner = ProcessRunner.create(
-            workingDirectory = project.projectDir
+            workingDirectory = File(projectDir.get())
         )
         val blameCodeLines = readBlameCodeLines(processRunner)
         val suspiciousToggles: List<Toggle> = SuspiciousTogglesCollector(
@@ -65,7 +70,7 @@ public abstract class FeatureTogglesReportTask : DefaultTask() {
         sendReport(
             slackHook = slackHook.get(),
             reportText = reportText,
-            logger = GradleLoggerFactory.getLogger(this)
+            logger = loggerFactory.create<FeatureTogglesReportTask>()
         )
     }
 

@@ -2,6 +2,7 @@ package com.avito.ci.steps
 
 import com.avito.ci.internal.ReportKey
 import com.avito.kotlin.dsl.typedNamedOrNull
+import com.avito.logger.GradleLoggerFactory
 import com.avito.report.model.Team
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.TestSummaryExtension
@@ -48,6 +49,14 @@ public class TestSummaryStep(context: String, name: String) : TestSummaryPluginB
                 this.slackClient.set(testSummaryFactory.createSlackClient(extension))
                 this.reportsApi.set(testSummaryFactory.createReportsApi(extension))
                 this.reportViewerUrl.set(extension.reportViewerUrl)
+
+                this.loggerFactory.set(
+                    GradleLoggerFactory.fromProject(
+                        project = project,
+                        pluginName = "TestSummaryPlugin",
+                        taskName = "TestSummaryTask"
+                    )
+                )
             }
     }
 }

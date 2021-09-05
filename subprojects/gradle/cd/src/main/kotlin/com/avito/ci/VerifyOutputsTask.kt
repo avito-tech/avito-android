@@ -5,12 +5,14 @@ import com.avito.ci.internal.signer.SignVerifier
 import com.avito.ci.internal.signer.SignVerifierImpl
 import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.Output
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import java.io.File
@@ -36,6 +38,9 @@ public abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFacto
     @Input
     public val checkSignatures: Property<Boolean> = objects.property()
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun doWork() {
         val signVerifier: SignVerifier = SignVerifierImpl(project.androidSdk)
@@ -45,7 +50,7 @@ public abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFacto
             outputsDir = outputsDir
         )
 
-        val logger = GradleLoggerFactory.getLogger(this)
+        val logger = loggerFactory.get().create<VerifyOutputsTask>()
 
         config.get().outputs.forEach { (_: String, output: Output) ->
             // Check file that have already been copied to outputs folder

@@ -19,6 +19,8 @@ public open class FeatureTogglesPlugin : Plugin<Project> {
             @Suppress("UnstableApiUsage")
             developersToTeam.set(extension.developersToTeam)
 
+            projectDir.set(project.projectDir.path)
+
             dependsOn("${project.path}:testReleaseUnitTest")
         }
     }

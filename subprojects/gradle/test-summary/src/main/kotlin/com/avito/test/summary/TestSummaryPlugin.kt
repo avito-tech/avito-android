@@ -46,6 +46,14 @@ public class TestSummaryPlugin : Plugin<Project> {
                 this.timeProvider.set(timeProvider)
                 this.reportsApi.set(reportsApi)
                 this.reportViewerUrl.set(extension.reportViewerUrl)
+
+                this.loggerFactory.set(
+                    GradleLoggerFactory.fromProject(
+                        project = project,
+                        pluginName = "TestSummaryPlugin",
+                        taskName = "FlakyReportTask"
+                    )
+                )
             }
         }
     }

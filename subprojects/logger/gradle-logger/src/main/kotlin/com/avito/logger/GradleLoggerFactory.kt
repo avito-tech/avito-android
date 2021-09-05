@@ -13,7 +13,6 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.logging.configuration.ShowStacktrace
 import java.io.Serializable
 import java.util.Locale
@@ -122,16 +121,8 @@ public class GradleLoggerFactory(
 
     public companion object {
 
-        public inline fun <reified T : Task> getLogger(task: T): Logger = fromTask(task).create<T>()
-
         public inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
             fromPlugin(plugin, project).create<T>()
-
-        @Deprecated("access to project is forbidden in task execution phase")
-        public fun fromTask(task: Task): GradleLoggerFactory = fromProject(
-            project = task.project,
-            taskName = task.name
-        )
 
         public fun fromPlugin(
             plugin: Plugin<*>,

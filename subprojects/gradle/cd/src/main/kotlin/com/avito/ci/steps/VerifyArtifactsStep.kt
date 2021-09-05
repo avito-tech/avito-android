@@ -56,7 +56,10 @@ public open class VerifyArtifactsStep(
             destinationDir.set(File("${project.rootProject.rootDir}/outputs"))
             entries.set(project.files(artifactsConfig.outputs.values.map { it.path }))
 
-            val logger = GradleLoggerFactory.fromProject(project).create<VerifyArtifactsStep>()
+            val loggerFactory = GradleLoggerFactory.fromProject(project, "CiStepsPlugin", "CopyArtifactsTask")
+            val logger = loggerFactory.create<VerifyArtifactsStep>()
+
+            this.loggerFactory.set(loggerFactory)
 
             project.gradle.onBuildFailed {
                 if (!didWork) {
@@ -73,6 +76,15 @@ public open class VerifyArtifactsStep(
             description = "Checks that all defined release artifacts are present"
             config.set(artifactsConfig)
             checkSignatures.set(artifactsConfig.failOnSignatureError)
+
+            loggerFactory.set(
+                GradleLoggerFactory.fromProject(
+                    project = project,
+                    pluginName = "CiStepsPlugin",
+                    taskName = "VerifyOutputsTask"
+                )
+            )
+
             dependsOn(copyTask)
         }
 

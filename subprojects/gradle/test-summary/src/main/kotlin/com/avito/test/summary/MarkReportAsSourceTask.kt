@@ -1,6 +1,6 @@
 package com.avito.test.summary
 
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.time.TimeProvider
@@ -21,12 +21,15 @@ public abstract class MarkReportAsSourceTask : DefaultTask() {
     @get:Internal
     public abstract val timeProvider: Property<TimeProvider>
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun doWork() {
         MarkReportAsSourceAction(
             reportsApi = reportsApi.get(),
             timeProvider = timeProvider.get(),
-            loggerFactory = GradleLoggerFactory.fromTask(this)
+            loggerFactory = loggerFactory.get()
         ).mark(reportCoordinates = reportCoordinates.get())
     }
 }

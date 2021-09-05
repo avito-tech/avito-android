@@ -2,6 +2,7 @@ package com.avito.android
 
 import com.avito.android.InstrumentationChangedTestsFinderApi.changedTestsFinderExtensionName
 import com.avito.android.InstrumentationChangedTestsFinderApi.changedTestsFinderTaskName
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -16,6 +17,14 @@ public class ChangedTestsFinderPlugin : Plugin<Project> {
             group = "impact-analysis"
 
             targetCommit.set(extension.targetCommit)
+
+            loggerFactory.set(
+                GradleLoggerFactory.fromProject(
+                    project = target,
+                    pluginName = "ChangedTestsFinderPlugin",
+                    taskName = "ChangedTestsFinderExtension"
+                )
+            )
         }
     }
 }

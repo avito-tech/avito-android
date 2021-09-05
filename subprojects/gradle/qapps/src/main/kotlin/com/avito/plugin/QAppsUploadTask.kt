@@ -2,7 +2,7 @@ package com.avito.plugin
 
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -13,6 +13,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
@@ -48,6 +49,9 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
     @Input
     public val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @InputFile
     public abstract fun getApk(): RegularFileProperty // setup in ci build step
 
@@ -55,7 +59,7 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
     public fun upload() {
         val apk = getApk().asFile.get()
 
-        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val loggerFactory = loggerFactory.get()
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         val httpClientProvider = HttpClientProvider(

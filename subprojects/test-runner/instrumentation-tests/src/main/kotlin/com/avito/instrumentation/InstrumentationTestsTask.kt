@@ -6,12 +6,12 @@ import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.build_verdict.span.SpannedString.Companion.multiline
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
-import com.avito.android.stats.statsdConfig
+import com.avito.android.stats.StatsDConfig
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
 import com.avito.instrumentation.configuration.ReportViewer
 import com.avito.instrumentation.internal.RunnerInputDumper
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
@@ -20,6 +20,7 @@ import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.utils.BuildFailer
 import com.avito.utils.buildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.Gson
@@ -39,7 +40,6 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
 public abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
@@ -105,8 +105,20 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:Input
     public abstract val gradleTestKitRun: Property<Boolean>
 
+    @get:Input
+    public abstract val projectName: Property<String>
+
     @get:Internal
     public abstract val kubernetesCredentials: Property<KubernetesCredentials>
+
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
+    @get:Internal
+    public abstract val buildFailer: Property<BuildFailer>
+
+    @get:Internal
+    public abstract val statsDConfig: Property<StatsDConfig>
 
     @get:OutputDirectory
     public abstract val output: DirectoryProperty
@@ -133,9 +145,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public fun doWork() {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
-        val loggerFactory = GradleLoggerFactory.fromTask(this)
-
-        val statsDConfig = project.statsdConfig.get()
+        val loggerFactory = loggerFactory.get()
 
         val reportViewerData = reportViewerProperty.orNull
         val reportViewerConfig = if (reportViewerData != null) {
@@ -162,7 +172,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
             },
-            projectName = project.name,
+            projectName = projectName.get(),
             suppressFailure = suppressFailure.getOrElse(false),
             suppressFlaky = suppressFlaky.getOrElse(false),
             impactAnalysisResult = ImpactAnalysisResult.create(
@@ -173,7 +183,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             outputDir = output,
             verdictFile = verdictFile.get().asFile,
             fileStorageUrl = getFileStorageUrl(),
-            statsDConfig = statsDConfig,
+            statsDConfig = statsDConfig.get(),
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
@@ -203,7 +213,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                     TestSchedulerResult.Ok -> {
                         // do nothing
                     }
-                    is TestSchedulerResult.Failure -> project.buildFailer.failBuild(result.message)
+                    is TestSchedulerResult.Failure -> buildFailer.get().failBuild(result.message)
                 }
             }
         }
