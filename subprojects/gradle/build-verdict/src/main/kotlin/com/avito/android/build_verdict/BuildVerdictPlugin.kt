@@ -26,8 +26,9 @@ public class BuildVerdictPlugin : Plugin<ProjectInternal> {
             "build-verdict plugin must be applied to the root project"
         }
 
+        val extension = project.extensions.create<BuildVerdictPluginExtension>("buildVerdict")
+
         if (project.pluginIsEnabled) {
-            val extension = project.extensions.create<BuildVerdictPluginExtension>("buildVerdict")
             val logger = GradleLoggerFactory.getLogger(this, project)
             val services = BuildVerdictPluginServices(extension, logger)
             project.gradle.addListener(services.gradleTaskExecutionListener())
