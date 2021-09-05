@@ -20,7 +20,6 @@ import java.util.Locale
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 
-@Suppress("UnstableApiUsage")
 internal abstract class MacOSLocalhostResolvingTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
@@ -41,7 +40,6 @@ internal abstract class MacOSLocalhostResolvingTask @Inject constructor(
         }
     }
 
-    @Suppress("UnstableApiUsage")
     abstract class Action : WorkAction<Parameters> {
 
         interface Parameters : WorkParameters {

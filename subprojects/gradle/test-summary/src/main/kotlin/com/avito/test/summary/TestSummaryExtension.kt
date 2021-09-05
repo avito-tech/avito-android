@@ -22,7 +22,6 @@ public abstract class TestSummaryExtension {
 
     public abstract val reportViewerUrl: Property<String>
 
-    @Suppress("UnstableApiUsage")
     public abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
 
     public abstract val mentionOnFailures: SetProperty<String>

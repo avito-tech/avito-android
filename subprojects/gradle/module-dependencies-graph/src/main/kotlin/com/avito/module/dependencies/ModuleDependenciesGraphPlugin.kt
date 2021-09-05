@@ -5,7 +5,6 @@ import com.avito.module.metrics.CollectAppsMetricsTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-@Suppress("UnstableApiUsage")
 public class ModuleDependenciesGraphPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {

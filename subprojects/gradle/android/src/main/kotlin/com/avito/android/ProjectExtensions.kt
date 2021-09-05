@@ -54,7 +54,7 @@ public fun TaskContainer.packageTaskProvider(variantName: String): TaskProvider<
 public fun TaskContainer.bundleTaskProvider(variantName: String): TaskProvider<*> =
     named("bundle${variantName.capitalize()}")
 
-@Suppress("DefaultLocale", "UnstableApiUsage")
+@Suppress("DefaultLocale")
 public fun taskName(prefix: String, component: ComponentIdentity): String {
     return prefix + component.flavorName.orEmpty().capitalize() + component.buildType.orEmpty().capitalize()
 }

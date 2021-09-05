@@ -77,7 +77,6 @@ public open class BuildMetricsPlugin : Plugin<Project> {
     }
 }
 
-@Suppress("UnstableApiUsage")
 internal val Project.pluginIsEnabled: Boolean
     get() = providers
         .gradleProperty(enabledProp)

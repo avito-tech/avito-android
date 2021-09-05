@@ -54,7 +54,6 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public class InstrumentationTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {

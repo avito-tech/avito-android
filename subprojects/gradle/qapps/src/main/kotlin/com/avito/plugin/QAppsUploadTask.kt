@@ -45,7 +45,6 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
     /**
      * modified by [com.avito.ci.steps.UploadToQapps] in release pipeline
      */
-    @Suppress("UnstableApiUsage")
     @Input
     public val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
 

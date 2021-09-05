@@ -59,7 +59,6 @@ internal class UniqueAppResourcesTaskCreator(
 
             packageAwareRFiles.set(collectRFiles(appVariant))
             ignoredResourceTypes.set(config.ignoredResourceTypes)
-            @Suppress("UnstableApiUsage")
             ignoredResources.set(config.ignoredResources)
             output.set(
                 project.layout.buildDirectory.file("$outputDirName/$taskName/${appVariant.name}/output")
@@ -72,7 +71,7 @@ internal class UniqueAppResourcesTaskCreator(
      * but for projects only
      */
     private fun collectRFiles(appVariant: ApplicationVariant): FileCollection {
-        @Suppress("UnstableApiUsage")
+
         val files: ConfigurableFileCollection = appProject.objects.fileCollection()
 
         appProject.internalModule.mainConfiguration

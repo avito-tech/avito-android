@@ -9,7 +9,6 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public class UploadToQapps(
     context: String,
     artifactsConfiguration: ArtifactsConfiguration,

@@ -31,7 +31,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
 
-@Suppress("UnstableApiUsage", "unused", "MemberVisibilityCanBePrivate")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 public open class BuildStepListExtension(
     internal val buildStepListName: String,
     objects: ObjectFactory

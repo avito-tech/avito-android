@@ -93,7 +93,6 @@ public class SignServicePlugin : Plugin<Project> {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private inline fun <reified T : SignArtifactTask> registerTask(
         tasks: TaskContainer,
         variant: Variant,

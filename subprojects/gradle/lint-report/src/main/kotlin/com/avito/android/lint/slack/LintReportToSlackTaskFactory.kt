@@ -31,7 +31,6 @@ public class LintReportToSlackTaskFactory(
         project.extensions.getByType()
     }
 
-    @Suppress("UnstableApiUsage")
     private val slackClientProvider: Provider<SlackClient> by lazy {
         extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
             SlackClient.create(

@@ -146,7 +146,6 @@ public class GradleLoggerFactory(
             verboseMode = getVerbosity(project)?.let { VerboseMode(it, doPrintStackTrace(project)) }
         )
 
-        @Suppress("UnstableApiUsage")
         private fun getVerbosity(project: Project): LogLevel? {
             return project.providers
                 .gradleProperty("avito.logging.verbosity")

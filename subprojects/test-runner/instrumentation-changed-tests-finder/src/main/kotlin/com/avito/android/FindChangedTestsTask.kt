@@ -20,7 +20,6 @@ import javax.inject.Inject
 /**
  * todo @CacheableTask + test for it
  */
-@Suppress("UnstableApiUsage")
 public abstract class FindChangedTestsTask @Inject constructor(
     objects: ObjectFactory,
     layout: ProjectLayout,
