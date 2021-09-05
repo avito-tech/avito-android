@@ -37,9 +37,7 @@ public class BuildVerdictPlugin : Plugin<ProjectInternal> {
             project.gradle.taskGraph.whenReady { graph ->
                 project.gradle.removeListener(configurationListener)
                 project.gradle.addBuildListener(
-                    services.gradleBuildFinishedListener(
-                        graph
-                    )
+                    services.gradleBuildFinishedListener(graph)
                 )
             }
         }
