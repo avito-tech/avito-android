@@ -51,7 +51,6 @@ public class TestSummaryPlugin : Plugin<Project> {
                     GradleLoggerFactory.fromTask(
                         project = project,
                         taskName = this.name,
-                        plugin = this@TestSummaryPlugin
                     )
                 )
             }

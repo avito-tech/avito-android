@@ -17,7 +17,6 @@ public class ModuleDependenciesGraphPlugin : Plugin<Project> {
                 GradleLoggerFactory.fromTask(
                     project = target,
                     taskName = this.name,
-                    plugin = this@ModuleDependenciesGraphPlugin
                 )
             )
         }
@@ -26,7 +25,6 @@ public class ModuleDependenciesGraphPlugin : Plugin<Project> {
                 GradleLoggerFactory.fromTask(
                     project = target,
                     taskName = this.name,
-                    plugin = this@ModuleDependenciesGraphPlugin
                 )
             )
 

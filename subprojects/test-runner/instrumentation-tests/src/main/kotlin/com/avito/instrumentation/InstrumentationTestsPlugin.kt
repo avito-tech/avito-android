@@ -169,7 +169,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                             GradleLoggerFactory.fromTask(
                                 project = project,
                                 taskName = this.name,
-                                plugin = this@InstrumentationTestsPlugin
                             )
                         )
                         this.buildFailer.set(project.buildFailer)

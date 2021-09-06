@@ -32,7 +32,6 @@ public class QAppsPlugin : Plugin<Project> {
                         GradleLoggerFactory.fromTask(
                             project = project,
                             taskName = this.name,
-                            plugin = this@QAppsPlugin
                         )
                     )
                 }

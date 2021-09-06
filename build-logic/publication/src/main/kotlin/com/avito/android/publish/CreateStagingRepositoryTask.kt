@@ -33,7 +33,7 @@ abstract class CreateStagingRepositoryTask : DefaultTask() {
     abstract val repositoryDescription: Property<String>
 
     @get:OutputFile
-    abstract val repositoryIdFile: Property<RegularFile>
+    val repositoryIdFile: Property<RegularFile> = project.objects.fileProperty()
 
     @TaskAction
     fun doWork() {

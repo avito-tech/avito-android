@@ -35,7 +35,6 @@ public class ProsectorPlugin : Plugin<Project> {
                         GradleLoggerFactory.fromTask(
                             project = project,
                             taskName = this.name,
-                            plugin = this@ProsectorPlugin
                         )
                     )
 

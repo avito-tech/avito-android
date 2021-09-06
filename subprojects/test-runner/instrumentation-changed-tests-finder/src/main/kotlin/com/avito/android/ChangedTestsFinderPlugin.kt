@@ -22,7 +22,6 @@ public class ChangedTestsFinderPlugin : Plugin<Project> {
                 GradleLoggerFactory.fromTask(
                     project = target,
                     taskName = this.name,
-                    plugin = this@ChangedTestsFinderPlugin
                 )
             )
         }
