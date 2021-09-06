@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-@Suppress("UnstableApiUsage")
 public abstract class UploadArtifactsStep(
     context: String,
     private val artifactsConfiguration: ArtifactsConfiguration,

@@ -1,6 +1,6 @@
 package com.avito.test.summary
 
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.report.model.Team
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
@@ -25,7 +25,6 @@ public abstract class TestSummaryTask : DefaultTask() {
     @get:Input
     public abstract val buildUrl: Property<String>
 
-    @Suppress("UnstableApiUsage")
     @get:Input
     public abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
 
@@ -47,13 +46,16 @@ public abstract class TestSummaryTask : DefaultTask() {
     @get:Internal
     public abstract val reportViewerUrl: Property<String>
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun doWork() {
         val testSummarySender: TestSummarySender = TestSummarySenderImpl(
             slackClient = slackClient.get(),
             reportViewerUrl = reportViewerUrl.get(),
             reportsApi = reportsApi.get(),
-            loggerFactory = GradleLoggerFactory.fromTask(this),
+            loggerFactory = loggerFactory.get(),
             buildUrl = buildUrl.get(),
             reportCoordinates = reportCoordinates.get(),
             globalSummaryChannel = summaryChannel.get(),

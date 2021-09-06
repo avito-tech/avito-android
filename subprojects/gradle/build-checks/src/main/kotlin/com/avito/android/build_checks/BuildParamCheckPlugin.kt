@@ -28,7 +28,6 @@ import org.gradle.kotlin.dsl.register
 @Suppress("unused")
 public open class BuildParamCheckPlugin : Plugin<Project> {
 
-    @Suppress("UnstableApiUsage")
     private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty(enabledProp)

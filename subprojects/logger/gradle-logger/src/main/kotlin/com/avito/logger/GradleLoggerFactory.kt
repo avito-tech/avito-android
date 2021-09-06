@@ -122,20 +122,20 @@ public class GradleLoggerFactory(
 
     public companion object {
 
-        public inline fun <reified T : Task> getLogger(task: T): Logger = fromTask(task).create<T>()
-
         public inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
             fromPlugin(plugin, project).create<T>()
 
-        @Deprecated("access to project is forbidden in task execution phase")
-        public fun fromTask(task: Task): GradleLoggerFactory = fromProject(
-            project = task.project,
-            taskName = task.name
-        )
+        public fun fromTask(project: Project, task: Task, plugin: Plugin<*>? = null): GradleLoggerFactory {
+            return fromProject(
+                project = project,
+                pluginName = plugin?.let { it::class.java.simpleName },
+                taskName = task.name
+            )
+        }
 
         public fun fromPlugin(
             plugin: Plugin<*>,
-            project: Project
+            project: Project,
         ): GradleLoggerFactory = fromProject(
             project = project,
             pluginName = plugin.javaClass.simpleName
@@ -155,7 +155,6 @@ public class GradleLoggerFactory(
             verboseMode = getVerbosity(project)?.let { VerboseMode(it, doPrintStackTrace(project)) }
         )
 
-        @Suppress("UnstableApiUsage")
         private fun getVerbosity(project: Project): LogLevel? {
             return project.providers
                 .gradleProperty("avito.logging.verbosity")

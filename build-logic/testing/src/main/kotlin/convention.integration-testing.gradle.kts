@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {

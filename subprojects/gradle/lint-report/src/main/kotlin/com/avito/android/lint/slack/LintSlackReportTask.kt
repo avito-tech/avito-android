@@ -3,7 +3,6 @@ package com.avito.android.lint.slack
 import com.avito.android.lint.internal.model.LintResultsParser
 import com.avito.android.lint.internal.slack.LintSlackReporter
 import com.avito.android.lint.internal.teamcity.TeamcityBuildLinkAccessor
-import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
@@ -23,6 +22,9 @@ public abstract class LintSlackReportTask : DefaultTask() {
     @get:Input
     public abstract val slackChannelForLintBugs: Property<SlackChannel>
 
+    @get:Input
+    public abstract val projectPath: Property<String>
+
     @get:InputFile
     public abstract val lintXml: RegularFileProperty
 
@@ -32,12 +34,15 @@ public abstract class LintSlackReportTask : DefaultTask() {
     @get:Internal
     public abstract val slackClient: Property<SlackClient>
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun doWork() {
-        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val loggerFactory = loggerFactory.get()
 
         val models = createLintParser(loggerFactory).parse(
-            projectPath = project.path,
+            projectPath = projectPath.get(),
             lintXml = lintXml.get().asFile,
             lintHtml = lintHtml.get().asFile
         )

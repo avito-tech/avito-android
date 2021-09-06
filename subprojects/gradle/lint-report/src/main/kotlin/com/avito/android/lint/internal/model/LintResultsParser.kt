@@ -32,7 +32,6 @@ internal class LintResultsParser(loggerFactory: LoggerFactory) {
         var id: String = "",
         var summary: String = "",
         var message: String = "",
-        @Suppress("UnstableApiUsage")
         var severity: Severity? = null,
         var path: String = "",
         var line: Int = 0
@@ -65,7 +64,6 @@ internal class LintResultsParser(loggerFactory: LoggerFactory) {
                         issue.id = requireNotNull(startElement.getAttributeByName(QName("id"))?.value)
                         issue.summary = requireNotNull(startElement.getAttributeByName(QName("summary"))?.value)
                         issue.message = startElement.getAttributeByName(QName("message"))?.value ?: "No message"
-                        @Suppress("UnstableApiUsage")
                         issue.severity = Severity.values().firstOrNull { severity ->
                             severity.description == startElement.getAttributeByName(QName("severity"))?.value.orEmpty()
                         }

@@ -4,7 +4,6 @@ plugins {
 
 group = "com.avito.android"
 
-@Suppress("UnstableApiUsage")
 version = providers.gradleProperty("projectVersion")
     .forUseAtConfigurationTime()
     .get()

@@ -5,7 +5,7 @@ import com.avito.android.stats.statsd
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -15,12 +15,12 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-@Suppress("UnstableApiUsage", "LeakingThis")
 public abstract class SignArtifactTask constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
@@ -33,6 +33,9 @@ public abstract class SignArtifactTask constructor(
 
     @get:Input
     public abstract val readWriteTimeoutSec: Property<Long>
+
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
 
     protected abstract fun unsignedFile(): File
 
@@ -48,7 +51,7 @@ public abstract class SignArtifactTask constructor(
 
     @TaskAction
     public fun run() {
-        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val loggerFactory = loggerFactory.get()
         val unsignedFile = unsignedFile()
         val signedFile = signedFile()
         val timeProvider: TimeProvider = DefaultTimeProvider()

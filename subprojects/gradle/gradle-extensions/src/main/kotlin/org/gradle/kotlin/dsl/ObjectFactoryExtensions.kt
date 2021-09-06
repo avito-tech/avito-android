@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package org.gradle.kotlin.dsl
 
 import org.gradle.api.model.ObjectFactory
