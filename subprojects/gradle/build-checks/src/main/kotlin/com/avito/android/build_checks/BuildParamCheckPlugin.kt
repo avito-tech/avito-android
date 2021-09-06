@@ -8,7 +8,6 @@ import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectChec
 import com.avito.android.build_checks.internal.BuildEnvLogger
 import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.android.build_checks.internal.CheckAndroidSdkVersionTask
-import com.avito.android.build_checks.internal.CheckGradleDaemonTask
 import com.avito.android.build_checks.internal.MacOSLocalhostResolvingTask
 import com.avito.android.build_checks.internal.RootTaskCreator
 import com.avito.android.build_checks.internal.params.GradlePropertiesChecker
@@ -17,7 +16,9 @@ import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreato
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -57,7 +58,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         if (!project.pluginIsEnabled) return
 
         val loggerFactory = GradleLoggerFactory.fromProject(project)
-        val logger = loggerFactory.create(this::class.java.simpleName)
+        val logger = loggerFactory.create<BuildParamCheckPlugin>()
         val envInfo = BuildEnvironmentInfo(project.providers)
 
         BuildEnvLogger(project, logger, envInfo).log()
@@ -74,7 +75,8 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 project = project,
                 checks = checks,
                 envInfo = envInfo,
-                loggerFactory = loggerFactory
+                loggerFactory = loggerFactory,
+                logger = logger,
             )
 
             if (checks.hasInstance<RootProjectCheck.JavaVersion>()) {
@@ -124,6 +126,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         checks: List<Check>,
         envInfo: BuildEnvironmentInfo,
         loggerFactory: LoggerFactory,
+        logger: Logger,
     ) {
         val rootTask = RootTaskCreator(project).getOrCreate()
 
@@ -150,18 +153,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
-        if (checks.hasInstance<RootProjectCheck.GradleDaemon>()) {
-            val task = project.tasks.register<CheckGradleDaemonTask>("checkGradleDaemon") {
-                group = "verification"
-                description = "Check gradle daemon problems"
-
-                buildSrcDir.set(project.layout.projectDirectory.dir("buildSrc").asFile.path)
-                rootDir.set(project.rootProject.layout.projectDirectory.asFile.path)
-            }
-            rootTask {
-                dependsOn(task)
-            }
-        }
         if (checks.hasInstance<RootProjectCheck.MacOSLocalhost>() && envInfo.isMac) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
                 group = "verification"
@@ -171,6 +162,22 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             rootTask {
                 dependsOn(task)
             }
+        }
+
+        if (checks.hasInstance<RootProjectCheck.DynamicDependencies>()) {
+            logger.warn("buildChecks.dynamicDependencies has no effect and should be removed")
+        }
+
+        if (checks.hasInstance<RootProjectCheck.GradleDaemon>()) {
+            logger.warn("buildChecks.gradleDaemon has no effect and should be removed")
+        }
+
+        if (checks.hasInstance<RootProjectCheck.IncrementalKapt>()) {
+            logger.warn("buildChecks.incrementalKapt has no effect and should be removed")
+        }
+
+        if (checks.hasInstance<RootProjectCheck.ModuleTypes>()) {
+            logger.warn("buildChecks.moduleTypes has no effect and should be removed")
         }
     }
 }

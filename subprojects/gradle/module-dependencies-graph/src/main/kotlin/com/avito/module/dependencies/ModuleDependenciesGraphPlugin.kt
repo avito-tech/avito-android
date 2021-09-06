@@ -16,7 +16,7 @@ public class ModuleDependenciesGraphPlugin : Plugin<Project> {
             loggerFactory.set(
                 GradleLoggerFactory.fromTask(
                     project = target,
-                    task = this,
+                    taskName = this.name,
                     plugin = this@ModuleDependenciesGraphPlugin
                 )
             )
@@ -25,7 +25,7 @@ public class ModuleDependenciesGraphPlugin : Plugin<Project> {
             loggerFactory.set(
                 GradleLoggerFactory.fromTask(
                     project = target,
-                    task = this,
+                    taskName = this.name,
                     plugin = this@ModuleDependenciesGraphPlugin
                 )
             )

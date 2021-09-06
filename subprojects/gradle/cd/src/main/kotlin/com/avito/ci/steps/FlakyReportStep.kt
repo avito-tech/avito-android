@@ -48,7 +48,7 @@ public class FlakyReportStep(context: String, name: String) : TestSummaryPluginB
                 this.loggerFactory.set(
                     GradleLoggerFactory.fromTask(
                         project = project,
-                        task = this
+                        taskName = this.name,
                     )
                 )
             }

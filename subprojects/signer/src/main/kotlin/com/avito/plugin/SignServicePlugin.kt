@@ -124,7 +124,7 @@ public class SignServicePlugin : Plugin<Project> {
             loggerFactory.set(
                 GradleLoggerFactory.fromTask(
                     project = project,
-                    task = this,
+                    taskName = this.name,
                     plugin = this@SignServicePlugin
                 )
             )

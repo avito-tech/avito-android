@@ -58,7 +58,7 @@ public open class VerifyArtifactsStep(
 
             val loggerFactory = GradleLoggerFactory.fromTask(
                 project = project,
-                task = this
+                taskName = this.name,
             )
 
             val logger = loggerFactory.create<VerifyArtifactsStep>()
@@ -84,7 +84,7 @@ public open class VerifyArtifactsStep(
             loggerFactory.set(
                 GradleLoggerFactory.fromTask(
                     project = project,
-                    task = this,
+                    taskName = this.name,
                 )
             )
 

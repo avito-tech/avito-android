@@ -41,8 +41,8 @@ public open class BuildMetricsPlugin : Plugin<Project> {
             this.loggerFactory.set(
                 GradleLoggerFactory.fromTask(
                     project = project,
+                    taskName = this.name,
                     plugin = this@BuildMetricsPlugin,
-                    task = this
                 )
             )
             this.teamcityCredentials.set(project.teamcityCredentials)

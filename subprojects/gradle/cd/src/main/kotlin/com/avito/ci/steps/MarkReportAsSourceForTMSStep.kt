@@ -38,7 +38,7 @@ public class MarkReportAsSourceForTMSStep(context: String, name: String) : TestS
                 this.loggerFactory.set(
                     GradleLoggerFactory.fromTask(
                         project = project,
-                        task = this
+                        taskName = this.name,
                     )
                 )
             }

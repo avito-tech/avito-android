@@ -25,7 +25,7 @@ public class ScreenshotsPlugin : Plugin<Project> {
                         loggerFactory.set(
                             GradleLoggerFactory.fromTask(
                                 project = project,
-                                task = this,
+                                taskName = this.name,
                                 plugin = this@ScreenshotsPlugin
                             )
                         )
@@ -42,7 +42,7 @@ public class ScreenshotsPlugin : Plugin<Project> {
                         loggerFactory.set(
                             GradleLoggerFactory.fromTask(
                                 project = project,
-                                task = this,
+                                taskName = this.name,
                                 plugin = this@ScreenshotsPlugin
                             )
                         )

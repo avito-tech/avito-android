@@ -61,7 +61,7 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
                 loggerFactory.set(
                     GradleLoggerFactory.fromTask(
                         project = project,
-                        task = this
+                        taskName = this.name,
                     )
                 )
 

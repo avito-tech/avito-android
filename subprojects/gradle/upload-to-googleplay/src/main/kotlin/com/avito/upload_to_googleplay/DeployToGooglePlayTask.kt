@@ -28,7 +28,7 @@ public fun TaskContainer.registerDeployToGooglePlayTask(
             it.loggerFactory.set(
                 GradleLoggerFactory.fromTask(
                     project = project,
-                    task = it
+                    taskName = it.name,
                 )
             )
         }

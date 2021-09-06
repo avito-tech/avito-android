@@ -75,7 +75,7 @@ public class LintReportToSlackTaskFactory(
                 loggerFactory.set(
                     GradleLoggerFactory.fromTask(
                         project = project,
-                        task = this
+                        taskName = this.name,
                     )
                 )
             }

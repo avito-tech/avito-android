@@ -13,7 +13,6 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.logging.configuration.ShowStacktrace
 import java.io.Serializable
 import java.util.Locale
@@ -125,11 +124,17 @@ public class GradleLoggerFactory(
         public inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
             fromPlugin(plugin, project).create<T>()
 
-        public fun fromTask(project: Project, task: Task, plugin: Plugin<*>? = null): GradleLoggerFactory {
+        @JvmStatic
+        @JvmOverloads
+        public fun fromTask(
+            project: Project,
+            taskName: String,
+            plugin: Plugin<*>? = null
+        ): GradleLoggerFactory {
             return fromProject(
                 project = project,
                 pluginName = plugin?.let { it::class.java.simpleName },
-                taskName = task.name
+                taskName = taskName
             )
         }
 
@@ -141,6 +146,8 @@ public class GradleLoggerFactory(
             pluginName = plugin.javaClass.simpleName
         )
 
+        @JvmStatic
+        @JvmOverloads
         public fun fromProject(
             project: Project,
             pluginName: String? = null,
