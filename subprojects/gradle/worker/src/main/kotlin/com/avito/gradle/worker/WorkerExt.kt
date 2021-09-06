@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.gradle.worker
 
 import org.gradle.internal.hash.Hasher

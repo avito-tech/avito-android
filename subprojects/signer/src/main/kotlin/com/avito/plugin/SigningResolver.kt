@@ -5,7 +5,6 @@ import com.avito.android.Result
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
-@Suppress("UnstableApiUsage")
 internal class SigningResolver(
     private val extension: SignExtension,
     private val variant: ApplicationVariant,

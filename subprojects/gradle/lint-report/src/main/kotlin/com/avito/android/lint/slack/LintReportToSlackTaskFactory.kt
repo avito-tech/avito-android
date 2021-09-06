@@ -31,7 +31,6 @@ public class LintReportToSlackTaskFactory(
         project.extensions.getByType()
     }
 
-    @Suppress("UnstableApiUsage")
     private val slackClientProvider: Provider<SlackClient> by lazy {
         extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
             SlackClient.create(
@@ -74,10 +73,9 @@ public class LintReportToSlackTaskFactory(
                 slackClient.set(slackClientProvider)
 
                 loggerFactory.set(
-                    GradleLoggerFactory.fromProject(
+                    GradleLoggerFactory.fromTask(
                         project = project,
-                        pluginName = "LintReportPlugin",
-                        taskName = "LintSlackReportTask"
+                        task = this
                     )
                 )
             }

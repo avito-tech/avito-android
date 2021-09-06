@@ -13,6 +13,7 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.configuration.ShowStacktrace
 import java.io.Serializable
 import java.util.Locale
@@ -124,9 +125,17 @@ public class GradleLoggerFactory(
         public inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
             fromPlugin(plugin, project).create<T>()
 
+        public fun fromTask(project: Project, task: Task, plugin: Plugin<*>? = null): GradleLoggerFactory {
+            return fromProject(
+                project = project,
+                pluginName = plugin?.let { it::class.java.simpleName },
+                taskName = task.name
+            )
+        }
+
         public fun fromPlugin(
             plugin: Plugin<*>,
-            project: Project
+            project: Project,
         ): GradleLoggerFactory = fromProject(
             project = project,
             pluginName = plugin.javaClass.simpleName
@@ -146,7 +155,6 @@ public class GradleLoggerFactory(
             verboseMode = getVerbosity(project)?.let { VerboseMode(it, doPrintStackTrace(project)) }
         )
 
-        @Suppress("UnstableApiUsage")
         private fun getVerbosity(project: Project): LogLevel? {
             return project.providers
                 .gradleProperty("avito.logging.verbosity")

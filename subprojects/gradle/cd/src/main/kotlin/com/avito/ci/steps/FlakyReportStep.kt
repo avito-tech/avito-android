@@ -46,10 +46,9 @@ public class FlakyReportStep(context: String, name: String) : TestSummaryPluginB
                 this.reportViewerUrl.set(extension.reportViewerUrl)
 
                 this.loggerFactory.set(
-                    GradleLoggerFactory.fromProject(
+                    GradleLoggerFactory.fromTask(
                         project = project,
-                        pluginName = "TestSummaryPlugin",
-                        taskName = "FlakyReportTask"
+                        task = this
                     )
                 )
             }

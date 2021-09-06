@@ -36,10 +36,9 @@ public class MarkReportAsSourceForTMSStep(context: String, name: String) : TestS
                 this.timeProvider.set(testSummaryFactory.timeProvider)
 
                 this.loggerFactory.set(
-                    GradleLoggerFactory.fromProject(
+                    GradleLoggerFactory.fromTask(
                         project = project,
-                        pluginName = "TestSummaryPlugin",
-                        taskName = "MarkReportAsSourceTask"
+                        task = this
                     )
                 )
             }

@@ -56,7 +56,11 @@ public open class VerifyArtifactsStep(
             destinationDir.set(File("${project.rootProject.rootDir}/outputs"))
             entries.set(project.files(artifactsConfig.outputs.values.map { it.path }))
 
-            val loggerFactory = GradleLoggerFactory.fromProject(project, "CiStepsPlugin", "CopyArtifactsTask")
+            val loggerFactory = GradleLoggerFactory.fromTask(
+                project = project,
+                task = this
+            )
+
             val logger = loggerFactory.create<VerifyArtifactsStep>()
 
             this.loggerFactory.set(loggerFactory)
@@ -78,10 +82,9 @@ public open class VerifyArtifactsStep(
             checkSignatures.set(artifactsConfig.failOnSignatureError)
 
             loggerFactory.set(
-                GradleLoggerFactory.fromProject(
+                GradleLoggerFactory.fromTask(
                     project = project,
-                    pluginName = "CiStepsPlugin",
-                    taskName = "VerifyOutputsTask"
+                    task = this,
                 )
             )
 

@@ -16,7 +16,6 @@ public open class FeatureTogglesPlugin : Plugin<Project> {
 
             slackHook.set(extension.slackHook)
 
-            @Suppress("UnstableApiUsage")
             developersToTeam.set(extension.developersToTeam)
 
             projectDir.set(project.projectDir.path)

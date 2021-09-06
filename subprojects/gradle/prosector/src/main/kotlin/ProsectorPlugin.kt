@@ -31,10 +31,10 @@ public class ProsectorPlugin : Plugin<Project> {
                     )
 
                     loggerFactory.set(
-                        GradleLoggerFactory.fromProject(
+                        GradleLoggerFactory.fromTask(
                             project = project,
-                            pluginName = "ProsectorPlugin",
-                            taskName = "ProsectorReleaseAnalysisTask"
+                            task = this,
+                            plugin = this@ProsectorPlugin
                         )
                     )
 

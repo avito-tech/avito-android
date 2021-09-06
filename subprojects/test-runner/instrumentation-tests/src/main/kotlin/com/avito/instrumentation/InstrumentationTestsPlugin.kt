@@ -54,7 +54,6 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public class InstrumentationTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -165,10 +164,10 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                         this.projectName.set(project.name)
                         this.statsDConfig.set(project.statsdConfig)
                         this.loggerFactory.set(
-                            GradleLoggerFactory.fromProject(
+                            GradleLoggerFactory.fromTask(
                                 project = project,
-                                pluginName = "InstrumentationTestsPlugin",
-                                taskName = "InstrumentationTestsTask"
+                                task = this,
+                                plugin = this@InstrumentationTestsPlugin
                             )
                         )
                         this.buildFailer.set(project.buildFailer)

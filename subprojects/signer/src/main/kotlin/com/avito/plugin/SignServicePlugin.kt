@@ -93,7 +93,6 @@ public class SignServicePlugin : Plugin<Project> {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private inline fun <reified T : SignArtifactTask> registerTask(
         tasks: TaskContainer,
         variant: Variant,
@@ -121,10 +120,10 @@ public class SignServicePlugin : Plugin<Project> {
             readWriteTimeoutSec.set(extension.readWriteTimeoutSec.convention(DEFAULT_TIMEOUT_SEC))
 
             loggerFactory.set(
-                GradleLoggerFactory.fromProject(
+                GradleLoggerFactory.fromTask(
                     project = project,
-                    pluginName = "SignServicePlugin",
-                    taskName = T::class.java.simpleName
+                    task = this,
+                    plugin = this@SignServicePlugin
                 )
             )
 

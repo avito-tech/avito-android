@@ -19,10 +19,10 @@ public class ChangedTestsFinderPlugin : Plugin<Project> {
             targetCommit.set(extension.targetCommit)
 
             loggerFactory.set(
-                GradleLoggerFactory.fromProject(
+                GradleLoggerFactory.fromTask(
                     project = target,
-                    pluginName = "ChangedTestsFinderPlugin",
-                    taskName = "ChangedTestsFinderExtension"
+                    task = this,
+                    plugin = this@ChangedTestsFinderPlugin
                 )
             )
         }

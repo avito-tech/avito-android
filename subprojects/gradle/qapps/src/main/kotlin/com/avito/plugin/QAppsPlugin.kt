@@ -29,10 +29,10 @@ public class QAppsPlugin : Plugin<Project> {
                     branch.set(extension.branchName)
 
                     loggerFactory.set(
-                        GradleLoggerFactory.fromProject(
+                        GradleLoggerFactory.fromTask(
                             project = project,
-                            pluginName = "QAppsPlugin",
-                            taskName = "QAppsUploadTask"
+                            task = this,
+                            plugin = this@QAppsPlugin
                         )
                     )
                 }

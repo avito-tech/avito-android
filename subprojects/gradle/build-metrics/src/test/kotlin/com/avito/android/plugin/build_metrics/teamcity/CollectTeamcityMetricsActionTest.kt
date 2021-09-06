@@ -18,7 +18,6 @@ import java.time.Month
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-@Suppress("UnstableApiUsage")
 internal class CollectTeamcityMetricsActionTest {
 
     private val buildId = "BUILD_ID"

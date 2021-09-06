@@ -59,7 +59,6 @@ internal fun isRunFromGradleTestKit(project: Project): Boolean {
     return project.hasProperty("injected.from.gradle_testkit")
 }
 
-@Suppress("UnstableApiUsage")
 internal fun isRunInGradleTestKit(providers: ProviderFactory): Boolean =
     providers.systemProperty("isTest")
         .forUseAtConfigurationTime()

@@ -26,10 +26,9 @@ public fun TaskContainer.registerDeployToGooglePlayTask(
             it.group = "Google play"
 
             it.loggerFactory.set(
-                GradleLoggerFactory.fromProject(
+                GradleLoggerFactory.fromTask(
                     project = project,
-                    pluginName = "CiStepsPlugin",
-                    taskName = "DeployToGooglePlayTask"
+                    task = it
                 )
             )
         }

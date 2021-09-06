@@ -59,10 +59,9 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
                 this.runId.set(reportCoordinates.runId)
 
                 loggerFactory.set(
-                    GradleLoggerFactory.fromProject(
+                    GradleLoggerFactory.fromTask(
                         project = project,
-                        pluginName = "CiStepsPlugin",
-                        taskName = "UploadCdBuildResultTask"
+                        task = this
                     )
                 )
 

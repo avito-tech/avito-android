@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import com.avito.android.publish.CreateStagingRepositoryTask
 
 plugins {

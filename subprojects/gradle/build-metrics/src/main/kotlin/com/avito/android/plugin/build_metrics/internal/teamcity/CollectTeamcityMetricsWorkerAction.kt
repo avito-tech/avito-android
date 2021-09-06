@@ -10,7 +10,6 @@ import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 
-@Suppress("UnstableApiUsage")
 internal abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
 
     interface Parameters : WorkParameters {

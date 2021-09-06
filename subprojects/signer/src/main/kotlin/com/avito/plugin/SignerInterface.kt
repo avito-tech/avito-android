@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.plugin
 
 import com.android.build.api.variant.ComponentIdentity

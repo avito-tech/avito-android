@@ -39,10 +39,10 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         project.tasks.register<CollectTeamcityMetricsTask>("collectTeamcityMetrics") {
             buildId.set(project.getOptionalStringProperty("avito.build.metrics.teamcityBuildId"))
             this.loggerFactory.set(
-                GradleLoggerFactory.fromProject(
+                GradleLoggerFactory.fromTask(
                     project = project,
-                    pluginName = "BuildMetricsPlugin",
-                    taskName = "CollectTeamcityMetricsTask"
+                    plugin = this@BuildMetricsPlugin,
+                    task = this
                 )
             )
             this.teamcityCredentials.set(project.teamcityCredentials)
@@ -77,7 +77,6 @@ public open class BuildMetricsPlugin : Plugin<Project> {
     }
 }
 
-@Suppress("UnstableApiUsage")
 internal val Project.pluginIsEnabled: Boolean
     get() = providers
         .gradleProperty(enabledProp)

@@ -3,7 +3,6 @@ package com.avito.android.build_checks.internal
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 
-@Suppress("UnstableApiUsage")
 internal class BuildEnvironmentInfo(private val providers: ProviderFactory) {
 
     private val osName: String?

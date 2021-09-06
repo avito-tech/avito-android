@@ -18,7 +18,6 @@ import org.gradle.util.Path
 import java.io.File
 import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
 public abstract class CollectAppsMetricsTask @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {

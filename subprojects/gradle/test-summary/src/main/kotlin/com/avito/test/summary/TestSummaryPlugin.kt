@@ -48,10 +48,10 @@ public class TestSummaryPlugin : Plugin<Project> {
                 this.reportViewerUrl.set(extension.reportViewerUrl)
 
                 this.loggerFactory.set(
-                    GradleLoggerFactory.fromProject(
+                    GradleLoggerFactory.fromTask(
                         project = project,
-                        pluginName = "TestSummaryPlugin",
-                        taskName = "FlakyReportTask"
+                        task = this,
+                        plugin = this@TestSummaryPlugin
                     )
                 )
             }

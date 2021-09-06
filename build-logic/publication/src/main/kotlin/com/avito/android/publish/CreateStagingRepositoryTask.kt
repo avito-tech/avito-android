@@ -32,9 +32,8 @@ abstract class CreateStagingRepositoryTask : DefaultTask() {
     @get:Input
     abstract val repositoryDescription: Property<String>
 
-    @Suppress("UnstableApiUsage")
     @get:OutputFile
-    val repositoryIdFile: Property<RegularFile> = project.objects.fileProperty()
+    abstract val repositoryIdFile: Property<RegularFile>
 
     @TaskAction
     fun doWork() {

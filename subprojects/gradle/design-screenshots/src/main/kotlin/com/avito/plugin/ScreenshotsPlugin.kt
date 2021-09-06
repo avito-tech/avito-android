@@ -21,10 +21,10 @@ public class ScreenshotsPlugin : Plugin<Project> {
 
                         variant.set(applicationVariant)
                         loggerFactory.set(
-                            GradleLoggerFactory.fromProject(
+                            GradleLoggerFactory.fromTask(
                                 project = project,
-                                pluginName = "ScreenshotsPlugin",
-                                taskName = "PullScreenshotsTask"
+                                task = this,
+                                plugin = this@ScreenshotsPlugin
                             )
                         )
                     }
@@ -37,10 +37,10 @@ public class ScreenshotsPlugin : Plugin<Project> {
 
                         variant.set(applicationVariant)
                         loggerFactory.set(
-                            GradleLoggerFactory.fromProject(
+                            GradleLoggerFactory.fromTask(
                                 project = project,
-                                pluginName = "ScreenshotsPlugin",
-                                taskName = "ClearScreenshotsTask"
+                                task = this,
+                                plugin = this@ScreenshotsPlugin
                             )
                         )
                     }

@@ -6,7 +6,6 @@ import org.gradle.api.tasks.TaskProvider
 import prosectorTaskProvider
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public class UploadToProsector(
     context: String,
     artifactsConfiguration: ArtifactsConfiguration,
