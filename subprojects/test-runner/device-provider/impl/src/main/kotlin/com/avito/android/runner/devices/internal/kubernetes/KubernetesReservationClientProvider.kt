@@ -17,12 +17,19 @@ public class KubernetesReservationClientProvider(
     internal fun provide(
         tempLogcatDir: File
     ): KubernetesReservationClient {
+        val kubernetesApi = kubernetesApiFactory.create()
+        val emulatorsLogsReporter = emulatorsLogsReporterProvider.provide(tempLogcatDir)
         return KubernetesReservationClient(
-            androidDebugBridge = androidDebugBridgeProvider.provide(),
-            kubernetesApi = kubernetesApiFactory.create(),
+            deviceProvider = RemoteDeviceProviderImpl(
+                kubernetesApi,
+                emulatorsLogsReporter,
+                androidDebugBridgeProvider.provide(),
+                loggerFactory
+            ),
+            kubernetesApi = kubernetesApi,
             reservationDeploymentFactory = reservationDeploymentFactoryProvider.provide(),
             loggerFactory = loggerFactory,
-            emulatorsLogsReporter = emulatorsLogsReporterProvider.provide(tempLogcatDir)
+            emulatorsLogsReporter = emulatorsLogsReporter
         )
     }
 }

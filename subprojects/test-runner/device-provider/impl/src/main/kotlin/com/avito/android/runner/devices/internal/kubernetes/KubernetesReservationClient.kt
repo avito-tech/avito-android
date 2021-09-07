@@ -1,7 +1,6 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.Result
-import com.avito.android.runner.devices.internal.AndroidDebugBridge
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
 import com.avito.android.runner.devices.internal.RemoteDevice
 import com.avito.android.runner.devices.internal.ReservationClient
@@ -11,7 +10,6 @@ import com.avito.k8s.model.KubePod
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.DeviceCoordinate
-import com.avito.runner.service.worker.device.Serial
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +37,7 @@ import kotlin.coroutines.coroutineContext
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class KubernetesReservationClient(
-    private val androidDebugBridge: AndroidDebugBridge,
+    private val deviceProvider: RemoteDeviceProvider,
     private val kubernetesApi: KubernetesApi,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
     loggerFactory: LoggerFactory,
@@ -134,7 +132,7 @@ internal class KubernetesReservationClient(
                 .distinctBy { it.name }
                 .consumeEach { pod ->
                     launch(CoroutineName("boot-pod-${pod.name}")) {
-                        pod.initializeDevice()
+                        deviceProvider.create(pod)
                             .onSuccess { device ->
                                 device.sendTo(
                                     pod.name,
@@ -169,26 +167,6 @@ internal class KubernetesReservationClient(
         logger.debug("Pod $podName sent outside for further usage")
     }
 
-    private suspend fun KubePod.initializeDevice(): Result<RemoteDevice> {
-        val podName = name
-        logger.debug("Found new pod: $podName")
-        return bootDevice().onFailure { error ->
-            logger.warn(initializeFailureMessage(podName, ip), error)
-            val isDeleted = kubernetesApi.deletePod(podName)
-            logger.debug("Pod $podName is deleted: $isDeleted")
-        }
-    }
-
-    private fun initializeFailureMessage(podName: String, podIp: String?): String {
-        return buildString {
-            append("Pod $podName can't load device. Disconnect and delete.")
-            if (!podIp.isNullOrBlank()) {
-                appendLine()
-                append("Check device logs in artifacts: ${emulatorsLogsReporter.getLogFile(podIp)}")
-            }
-        }
-    }
-
     override suspend fun remove(podName: String) {
         withContext(CoroutineName("delete-pod-$podName") + dispatcher) {
             kubernetesApi.deletePod(podName)
@@ -215,7 +193,7 @@ internal class KubernetesReservationClient(
                                     for (pod in runningPods) {
                                         launch(CoroutineName("get-pod-logs-${pod.name}")) {
                                             val podName = pod.name
-                                            pod.getDevice().onSuccess { device ->
+                                            deviceProvider.get(pod).onSuccess { device ->
                                                 val serial = device.serial
                                                 try {
                                                     emulatorsLogsReporter.reportEmulatorLogs(
@@ -257,28 +235,6 @@ internal class KubernetesReservationClient(
         logger.debug("release finished")
     }
 
-    private suspend fun KubePod.bootDevice(): Result<RemoteDevice> {
-        return getDevice()
-            .flatMap { device ->
-                device.waitForBoot()
-                    .map { device }
-                    .onFailure { device.disconnect() }
-            }
-    }
-
-    private fun KubePod.getDevice(): Result<RemoteDevice> {
-        return Result.tryCatch {
-            val podIp = ip
-            requireNotNull(podIp) { "Pod: $name must have an IP" }
-
-            val serial = emulatorSerialName(name = podIp)
-
-            androidDebugBridge.getRemoteDevice(
-                serial = serial
-            )
-        }
-    }
-
     private suspend fun listenPodsFromDeployment(
         deploymentName: String,
         podsChannel: Channel<KubePod>,
@@ -312,8 +268,6 @@ internal class KubernetesReservationClient(
         logger.debug("listenPodsFromDeployment finished, [deploymentName=$deploymentName]")
     }
 
-    private fun emulatorSerialName(name: String): Serial.Remote = Serial.Remote("$name:$ADB_DEFAULT_PORT")
-
     private sealed class State {
         class Reserving(
             val pods: Channel<KubePod>,
@@ -325,5 +279,3 @@ internal class KubernetesReservationClient(
 
     companion object
 }
-
-private const val ADB_DEFAULT_PORT = 5555

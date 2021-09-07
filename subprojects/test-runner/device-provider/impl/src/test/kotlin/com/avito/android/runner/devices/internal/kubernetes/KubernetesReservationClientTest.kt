@@ -41,7 +41,12 @@ internal class KubernetesReservationClientTest {
         dispatcher: CoroutineDispatcher = this.dispatcher,
     ): KubernetesReservationClient {
         return KubernetesReservationClient(
-            androidDebugBridge = androidDebugBridge,
+            deviceProvider = RemoteDeviceProviderImpl(
+                kubernetesApi,
+                StubEmulatorsLogsReporter,
+                androidDebugBridge,
+                StubLoggerFactory
+            ),
             kubernetesApi = kubernetesApi,
             emulatorsLogsReporter = StubEmulatorsLogsReporter,
             loggerFactory = StubLoggerFactory,
