@@ -1,6 +1,5 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
-import com.avito.android.Result
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
 import com.avito.android.runner.devices.internal.RemoteDevice
 import com.avito.android.runner.devices.internal.ReservationClient
@@ -22,7 +21,6 @@ import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.channels.toList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -40,17 +38,16 @@ internal class KubernetesReservationClient(
     private val deviceProvider: RemoteDeviceProvider,
     private val kubernetesApi: KubernetesApi,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
-    loggerFactory: LoggerFactory,
     private val reservationDeploymentFactory: ReservationDeploymentFactory,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val podsQueryIntervalMs: Long = 5000L
+    loggerFactory: LoggerFactory,
+    podsQueryIntervalMs: Long = 5000L
 ) : ReservationClient {
 
     private val logger = loggerFactory.create<KubernetesReservationClient>()
-
     private var state: State = State.Idling
-
     private val lock = Mutex()
+    private val deploymentPodsListener = DeploymentPodsListener(logger, lock, kubernetesApi, podsQueryIntervalMs)
 
     override suspend fun claim(
         reservations: Collection<ReservationData>
@@ -59,11 +56,11 @@ internal class KubernetesReservationClient(
             "Must have at least one reservation but empty"
         }
         return lock.withLock {
-            // TODO close serialsChannel
-            val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
             if (state !is State.Idling) {
                 throw IllegalStateException("Unable claim reservation. State is already started")
             }
+            // TODO close serialsChannel
+            val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
             with(CoroutineScope(coroutineContext + dispatcher)) {
                 launch(CoroutineName("main-reservation")) {
                     val podsChannel = Channel<KubePod>(Channel.UNLIMITED)
@@ -107,11 +104,12 @@ internal class KubernetesReservationClient(
             deploymentName
         }
 
-        listenPodsFromDeployment(
-            deploymentName = deploymentName,
-            podsChannel = podsChannel,
-            serialsChannel = serialsChannel
-        )
+        deploymentPodsListener.start(
+            deploymentName, podsChannel
+        ).onFailure {
+            podsChannel.cancel()
+            serialsChannel.close()
+        }
     }
 
     private fun CoroutineScope.initializeDevices(
@@ -233,39 +231,6 @@ internal class KubernetesReservationClient(
             }
         }
         logger.debug("release finished")
-    }
-
-    private suspend fun listenPodsFromDeployment(
-        deploymentName: String,
-        podsChannel: Channel<KubePod>,
-        serialsChannel: Channel<DeviceCoordinate>
-    ) {
-        logger.debug("Start listening devices for $deploymentName")
-
-        var next = true
-        while (next) {
-            lock.withLock {
-                if (!podsChannel.isClosedForSend) {
-                    when (val result = kubernetesApi.getPods(deploymentName)) {
-                        is Result.Success -> {
-                            result.value.forEach { pod ->
-                                podsChannel.send(pod)
-                            }
-                            delay(podsQueryIntervalMs)
-                        }
-                        is Result.Failure -> {
-                            next = false
-                            logger.critical("Error get pods", result.throwable)
-                            podsChannel.cancel()
-                            serialsChannel.close()
-                        }
-                    }
-                } else {
-                    next = false
-                }
-            }
-        }
-        logger.debug("listenPodsFromDeployment finished, [deploymentName=$deploymentName]")
     }
 
     private sealed class State {

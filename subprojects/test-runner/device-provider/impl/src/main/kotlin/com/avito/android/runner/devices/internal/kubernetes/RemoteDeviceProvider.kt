@@ -51,7 +51,6 @@ internal class RemoteDeviceProviderImpl(
         }
     }
 
-
     private suspend fun KubePod.bootDevice(): Result<RemoteDevice> {
         return getDevice()
             .flatMap { device ->
