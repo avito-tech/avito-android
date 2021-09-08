@@ -3,7 +3,8 @@ package com.avito.android.runner.devices.internal.kubernetes
 import com.avito.android.Result
 import com.avito.k8s.KubernetesApi
 import com.avito.k8s.model.KubePod
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
@@ -12,11 +13,13 @@ import kotlinx.coroutines.sync.withLock
 
 @ExperimentalCoroutinesApi
 internal class DeploymentPodsListener(
-    private val logger: Logger,
     private val lock: Mutex,
     private val kubernetesApi: KubernetesApi,
-    private val podsQueryIntervalMs: Long
+    private val podsQueryIntervalMs: Long,
+    loggerFactory: LoggerFactory,
 ) {
+    private val logger = loggerFactory.create<DeploymentPodsListener>()
+
     suspend fun start(
         deploymentName: String,
         podsChannel: SendChannel<KubePod>

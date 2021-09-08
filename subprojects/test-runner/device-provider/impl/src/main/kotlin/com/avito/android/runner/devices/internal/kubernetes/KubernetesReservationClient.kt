@@ -20,7 +20,6 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.channels.map
-import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -47,7 +46,10 @@ internal class KubernetesReservationClient(
     private val logger = loggerFactory.create<KubernetesReservationClient>()
     private var state: State = State.Idling
     private val lock = Mutex()
-    private val deploymentPodsListener = DeploymentPodsListener(logger, lock, kubernetesApi, podsQueryIntervalMs)
+    private val deploymentPodsListener = DeploymentPodsListener(lock, kubernetesApi, podsQueryIntervalMs, loggerFactory)
+    private val reservationReleaser = KubernetesReservationReleaser(
+        kubernetesApi, deviceProvider, emulatorsLogsReporter, loggerFactory
+    )
 
     override suspend fun claim(
         reservations: Collection<ReservationData>
@@ -179,54 +181,7 @@ internal class KubernetesReservationClient(
                 // TODO this leads to deployment leak
                 throw IllegalStateException("Unable to stop reservation job. Hasn't started yet")
             } else {
-                state.pods.close()
-                state.deployments.close()
-                for (deploymentName in state.deployments.toList()) {
-                    launch(CoroutineName("delete-deployment-$deploymentName")) {
-                        kubernetesApi.getPods(deploymentName).fold(
-                            { pods ->
-                                val runningPods = pods.filter { it.phase is KubePod.PodPhase.Running }
-                                if (runningPods.isNotEmpty()) {
-                                    logger.debug("Save emulators logs for deployment: $deploymentName")
-                                    for (pod in runningPods) {
-                                        launch(CoroutineName("get-pod-logs-${pod.name}")) {
-                                            val podName = pod.name
-                                            deviceProvider.get(pod).onSuccess { device ->
-                                                val serial = device.serial
-                                                try {
-                                                    emulatorsLogsReporter.reportEmulatorLogs(
-                                                        pod = pod,
-                                                        emulatorName = serial,
-                                                        log = kubernetesApi.getPodLogs(podName)
-                                                    )
-                                                } catch (throwable: Throwable) {
-                                                    // TODO must be fixed after adding affinity to POD
-                                                    val podDescription = kubernetesApi.getPodDescription(podName)
-                                                    logger.warn(
-                                                        "Get logs from emulator failed; pod=$podName; " +
-                                                            "podDescription=$podDescription; " +
-                                                            "container serial=$serial",
-                                                        throwable
-                                                    )
-                                                }
-                                                device.disconnect().fold(
-                                                    { logger.debug("Device: $serial disconnected") },
-                                                    { error ->
-                                                        logger.warn("Failed to disconnect device: $serial", error)
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            { error ->
-                                logger.warn("Can't get pods when release", error)
-                            }
-                        )
-                        kubernetesApi.deleteDeployment(deploymentName)
-                    }
-                }
+                reservationReleaser.release(state.pods, state.deployments)
                 this@KubernetesReservationClient.state = State.Idling
             }
         }
