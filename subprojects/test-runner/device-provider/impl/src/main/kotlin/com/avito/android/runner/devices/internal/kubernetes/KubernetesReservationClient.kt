@@ -1,7 +1,6 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
-import com.avito.android.runner.devices.internal.RemoteDevice
 import com.avito.android.runner.devices.internal.ReservationClient
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.k8s.KubernetesApi
@@ -15,11 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.distinctBy
-import kotlinx.coroutines.channels.filter
-import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -34,11 +28,11 @@ import kotlin.coroutines.coroutineContext
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class KubernetesReservationClient(
-    private val deviceProvider: RemoteDeviceProvider,
     private val kubernetesApi: KubernetesApi,
-    private val emulatorsLogsReporter: EmulatorsLogsReporter,
-    private val reservationDeploymentFactory: ReservationDeploymentFactory,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    reservationDeploymentFactory: ReservationDeploymentFactory,
+    emulatorsLogsReporter: EmulatorsLogsReporter,
+    deviceProvider: RemoteDeviceProvider,
     loggerFactory: LoggerFactory,
     podsQueryIntervalMs: Long = 5000L
 ) : ReservationClient {
@@ -47,6 +41,15 @@ internal class KubernetesReservationClient(
     private var state: State = State.Idling
     private val lock = Mutex()
     private val deploymentPodsListener = DeploymentPodsListener(lock, kubernetesApi, podsQueryIntervalMs, loggerFactory)
+    private val claimer = KubernetesReservationClaimer(
+        reservationDeploymentFactory,
+        kubernetesApi,
+        deploymentPodsListener,
+        deviceProvider,
+        emulatorsLogsReporter,
+        lock,
+        loggerFactory
+    )
     private val reservationReleaser = KubernetesReservationReleaser(
         kubernetesApi, deviceProvider, emulatorsLogsReporter, loggerFactory
     )
@@ -68,18 +71,7 @@ internal class KubernetesReservationClient(
                     val podsChannel = Channel<KubePod>(Channel.UNLIMITED)
                     val deploymentsChannel = Channel<String>(reservations.size)
                     state = State.Reserving(pods = podsChannel, deployments = deploymentsChannel)
-
-                    reservations.forEach { reservation ->
-                        launch(CoroutineName("create-deployment")) {
-                            createDeployment(
-                                reservation,
-                                deploymentsChannel,
-                                podsChannel,
-                                serialsChannel
-                            )
-                        }
-                    }
-                    initializeDevices(podsChannel, serialsChannel)
+                    claimer.claiming(reservations, serialsChannel, podsChannel, deploymentsChannel)
                 }
             }
 
@@ -87,84 +79,6 @@ internal class KubernetesReservationClient(
                 deviceCoordinates = serialsChannel
             )
         }
-    }
-
-    private suspend fun createDeployment(
-        reservation: ReservationData,
-        deploymentsChannel: Channel<String>,
-        podsChannel: Channel<KubePod>,
-        serialsChannel: Channel<DeviceCoordinate>
-    ) {
-        val deployment = reservationDeploymentFactory.createDeployment(
-            namespace = kubernetesApi.namespace,
-            reservation = reservation
-        )
-        val deploymentName = lock.withLock {
-            val deploymentName = deployment.metadata.name
-            deploymentsChannel.send(deploymentName)
-            kubernetesApi.createDeployment(deployment)
-            deploymentName
-        }
-
-        deploymentPodsListener.start(
-            deploymentName, podsChannel
-        ).onFailure {
-            podsChannel.cancel()
-            serialsChannel.close()
-        }
-    }
-
-    private fun CoroutineScope.initializeDevices(
-        podsChannel: ReceiveChannel<KubePod>,
-        serialsChannel: Channel<DeviceCoordinate>
-    ) {
-        launch(CoroutineName("waiting-pods")) {
-            @Suppress("DEPRECATION")
-            podsChannel
-                .map {
-                    if (serialsChannel.isClosedForSend) {
-                        logger.debug("cancel waiting-pods")
-                        podsChannel.cancel()
-                    }
-                    it
-                }
-                .filter { it.phase is KubePod.PodPhase.Running }
-                .distinctBy { it.name }
-                .consumeEach { pod ->
-                    launch(CoroutineName("boot-pod-${pod.name}")) {
-                        deviceProvider.create(pod)
-                            .onSuccess { device ->
-                                device.sendTo(
-                                    pod.name,
-                                    serialsChannel
-                                )
-                            }
-                    }
-                }
-            logger.debug("initializeDevices finished")
-        }
-    }
-
-    private suspend fun RemoteDevice.sendTo(
-        podName: String,
-        serials: Channel<DeviceCoordinate>,
-    ) {
-        if (serials.isClosedForSend) {
-            logger.debug("Pod $podName boot device but serials channel closed")
-            return
-        }
-        emulatorsLogsReporter.redirectLogcat(
-            emulatorName = serial,
-            device = this
-        )
-        serials.send(
-            DeviceCoordinate.Kubernetes(
-                serial = serial,
-                podName = podName
-            )
-        )
-
-        logger.debug("Pod $podName sent outside for further usage")
     }
 
     override suspend fun remove(podName: String) {
