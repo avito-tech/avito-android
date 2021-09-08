@@ -1,6 +1,5 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
-import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
 import com.avito.android.runner.devices.internal.ReservationClient
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.k8s.KubernetesApi
@@ -28,31 +27,16 @@ import kotlin.coroutines.coroutineContext
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class KubernetesReservationClient(
+    private val claimer: KubernetesReservationClaimer,
+    private val reservationReleaser: KubernetesReservationReleaser,
     private val kubernetesApi: KubernetesApi,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    reservationDeploymentFactory: ReservationDeploymentFactory,
-    emulatorsLogsReporter: EmulatorsLogsReporter,
-    deviceProvider: RemoteDeviceProvider,
+    private val lock: Mutex,
     loggerFactory: LoggerFactory,
-    podsQueryIntervalMs: Long = 5000L
 ) : ReservationClient {
 
     private val logger = loggerFactory.create<KubernetesReservationClient>()
     private var state: State = State.Idling
-    private val lock = Mutex()
-    private val deploymentPodsListener = DeploymentPodsListener(lock, kubernetesApi, podsQueryIntervalMs, loggerFactory)
-    private val claimer = KubernetesReservationClaimer(
-        reservationDeploymentFactory,
-        kubernetesApi,
-        deploymentPodsListener,
-        deviceProvider,
-        emulatorsLogsReporter,
-        lock,
-        loggerFactory
-    )
-    private val reservationReleaser = KubernetesReservationReleaser(
-        kubernetesApi, deviceProvider, emulatorsLogsReporter, loggerFactory
-    )
 
     override suspend fun claim(
         reservations: Collection<ReservationData>
@@ -71,7 +55,7 @@ internal class KubernetesReservationClient(
                     val podsChannel = Channel<KubePod>(Channel.UNLIMITED)
                     val deploymentsChannel = Channel<String>(reservations.size)
                     state = State.Reserving(pods = podsChannel, deployments = deploymentsChannel)
-                    claimer.claiming(reservations, serialsChannel, podsChannel, deploymentsChannel)
+                    claimer.claim(reservations, serialsChannel, podsChannel, deploymentsChannel)
                 }
             }
 

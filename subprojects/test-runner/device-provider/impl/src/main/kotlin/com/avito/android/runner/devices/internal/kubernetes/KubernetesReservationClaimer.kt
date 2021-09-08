@@ -35,7 +35,7 @@ internal class KubernetesReservationClaimer(
 
     private val logger = loggerFactory.create<KubernetesReservationClaimer>()
 
-    suspend fun claiming(
+    suspend fun claim(
         reservations: Collection<ReservationData>,
         serialsChannel: Channel<DeviceCoordinate>,
         podsChannel: Channel<KubePod>,
