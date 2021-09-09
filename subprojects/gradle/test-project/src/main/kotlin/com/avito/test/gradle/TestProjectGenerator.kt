@@ -116,6 +116,8 @@ pluginManagement {
     ${repositories()}
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "${this@TestProjectGenerator.name}"
 
 ${generateIncludes(modules, "")}
