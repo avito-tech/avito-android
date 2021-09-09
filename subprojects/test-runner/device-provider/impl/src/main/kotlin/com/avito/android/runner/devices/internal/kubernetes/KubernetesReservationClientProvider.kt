@@ -4,6 +4,8 @@ import com.avito.android.runner.devices.internal.AndroidDebugBridgeProvider
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
 import com.avito.k8s.KubernetesApiFactory
 import com.avito.logger.LoggerFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
 
 public class KubernetesReservationClientProvider(
@@ -14,15 +16,25 @@ public class KubernetesReservationClientProvider(
     private val androidDebugBridgeProvider: AndroidDebugBridgeProvider
 ) {
 
+    @ExperimentalCoroutinesApi
     internal fun provide(
         tempLogcatDir: File
     ): KubernetesReservationClient {
-        return KubernetesReservationClient(
-            androidDebugBridge = androidDebugBridgeProvider.provide(),
-            kubernetesApi = kubernetesApiFactory.create(),
+        val kubernetesApi = kubernetesApiFactory.create()
+        val emulatorsLogsReporter = emulatorsLogsReporterProvider.provide(tempLogcatDir)
+        return KubernetesReservationClientFactory(
+            kubernetesApi = kubernetesApi,
             reservationDeploymentFactory = reservationDeploymentFactoryProvider.provide(),
+            emulatorsLogsReporter = emulatorsLogsReporter,
+            deviceProvider = RemoteDeviceProviderImpl(
+                kubernetesApi,
+                emulatorsLogsReporter,
+                androidDebugBridgeProvider.provide(),
+                loggerFactory
+            ),
             loggerFactory = loggerFactory,
-            emulatorsLogsReporter = emulatorsLogsReporterProvider.provide(tempLogcatDir)
-        )
+            podsQueryIntervalMs = 5000L,
+            dispatcher = Dispatchers.IO
+        ).create()
     }
 }

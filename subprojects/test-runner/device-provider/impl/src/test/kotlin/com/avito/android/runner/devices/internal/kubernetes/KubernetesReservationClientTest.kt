@@ -40,15 +40,20 @@ internal class KubernetesReservationClientTest {
     private fun client(
         dispatcher: CoroutineDispatcher = this.dispatcher,
     ): KubernetesReservationClient {
-        return KubernetesReservationClient(
-            androidDebugBridge = androidDebugBridge,
+        return KubernetesReservationClientFactory(
+            deviceProvider = RemoteDeviceProviderImpl(
+                kubernetesApi,
+                StubEmulatorsLogsReporter,
+                androidDebugBridge,
+                StubLoggerFactory
+            ),
             kubernetesApi = kubernetesApi,
             emulatorsLogsReporter = StubEmulatorsLogsReporter,
             loggerFactory = StubLoggerFactory,
             reservationDeploymentFactory = FakeReservationDeploymentFactory(),
             dispatcher = dispatcher,
-            podsQueryIntervalMs = podsQueryInterval
-        )
+            podsQueryIntervalMs = podsQueryInterval,
+        ).create()
     }
 
     @Test
