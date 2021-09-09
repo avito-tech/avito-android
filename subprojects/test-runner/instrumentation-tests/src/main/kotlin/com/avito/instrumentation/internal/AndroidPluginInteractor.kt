@@ -17,7 +17,7 @@ internal class AndroidPluginInteractor(loggerFactory: LoggerFactory) {
         val filteredArgs = filterNotBlankValues(args) { key ->
             logger.warn("Runner argument '$key' was filtered out for local ui tests run because of a blank value")
         }
-        testedExtension.defaultConfig.testInstrumentationRunnerArguments(filteredArgs)
+        testedExtension.defaultConfig.testInstrumentationRunnerArguments.putAll(filteredArgs)
     }
 
     fun getTestInstrumentationRunnerOrThrow(defaultConfig: DefaultConfig): String {

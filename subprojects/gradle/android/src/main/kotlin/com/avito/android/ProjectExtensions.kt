@@ -7,6 +7,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.TestedExtension
+import com.avito.capitalize
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider

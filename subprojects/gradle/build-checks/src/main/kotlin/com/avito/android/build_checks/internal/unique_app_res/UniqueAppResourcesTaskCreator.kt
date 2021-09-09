@@ -1,3 +1,6 @@
+// todo use new agp api
+@file:Suppress("DEPRECATION")
+
 package com.avito.android.build_checks.internal.unique_app_res
 
 import com.android.build.gradle.api.ApplicationVariant

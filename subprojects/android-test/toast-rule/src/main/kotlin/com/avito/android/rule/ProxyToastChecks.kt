@@ -50,6 +50,7 @@ internal class ProxyToastChecks(private val proxyToast: MockProxyToast) : ToastC
         }
 
         override fun matchesSafely(item: Toast): Boolean {
+            @Suppress("DEPRECATION")
             return ViewMatchers.hasDescendant(viewMatcher).matches(item.view)
         }
     }

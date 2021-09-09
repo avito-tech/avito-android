@@ -12,6 +12,7 @@ import com.avito.report.model.Step
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl
 import java.lang.reflect.Field
+import java.util.Locale
 
 interface TransportMappers {
 
@@ -79,8 +80,15 @@ interface TransportMappers {
     }
 
     private fun Any.getFieldStringValue(field: Field): String {
+        val fieldNameCapitalized = field.name.replaceFirstChar {
+            if (it.isLowerCase()) {
+                it.titlecase(Locale.getDefault())
+            } else {
+                it.toString()
+            }
+        }
         return javaClass.methods
-            .find { it.name == "get${field.name.capitalize()}" }
+            .find { it.name == "get$fieldNameCapitalized" }
             ?.invoke(this)
             .toString()
     }

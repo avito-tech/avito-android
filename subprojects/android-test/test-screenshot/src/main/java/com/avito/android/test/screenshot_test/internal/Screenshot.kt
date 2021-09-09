@@ -68,8 +68,14 @@ internal class ScreenshotDirectory(
 
         private fun Context.getResolution(): String {
             val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+            // suggested method only available on 30+ API
+            @Suppress("DEPRECATION")
             val display: Display = wm.defaultDisplay
             val metrics = DisplayMetrics()
+
+            // suggested method only available on 30+ API
+            @Suppress("DEPRECATION")
             display.getMetrics(metrics)
             val width = metrics.widthPixels
             val height = metrics.heightPixels

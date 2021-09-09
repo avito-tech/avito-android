@@ -1,5 +1,6 @@
 package com.avito.upload_to_googleplay
 
+import com.avito.capitalize
 import com.avito.math.fromZeroToOnePercent
 import com.google.api.client.googleapis.media.MediaHttpUploader
 import com.google.api.services.androidpublisher.AndroidPublisherRequest

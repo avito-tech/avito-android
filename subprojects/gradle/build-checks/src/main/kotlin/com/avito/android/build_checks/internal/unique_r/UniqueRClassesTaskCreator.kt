@@ -1,3 +1,6 @@
+// todo use new agp api
+@file:Suppress("DEPRECATION")
+
 package com.avito.android.build_checks.internal.unique_r
 
 import com.android.build.gradle.api.ApplicationVariant
@@ -8,6 +11,7 @@ import com.avito.android.androidAppExtension
 import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck
 import com.avito.android.build_checks.outputDirName
 import com.avito.android.isAndroidApp
+import com.avito.capitalize
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider

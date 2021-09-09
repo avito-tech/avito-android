@@ -1,14 +1,17 @@
+// todo use new agp api
+@file:Suppress("DEPRECATION")
+
 package com.avito.instrumentation
 
+import com.avito.capitalize
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.reportviewer.model.ReportCoordinates
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import java.util.Locale
 
 internal fun instrumentationTaskName(configuration: String): String =
-    "instrumentation${configuration.capitalize(Locale.getDefault())}"
+    "instrumentation${configuration.capitalize()}"
 
 /**
  * Available only afterEvaluate MBS-6926

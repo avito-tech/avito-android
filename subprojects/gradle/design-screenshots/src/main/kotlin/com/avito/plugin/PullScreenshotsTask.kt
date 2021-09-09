@@ -1,6 +1,5 @@
 package com.avito.plugin
 
-import com.android.build.gradle.api.ApplicationVariant
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
 import com.avito.logger.create
@@ -13,21 +12,20 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.nio.file.Paths
 
 public abstract class PullScreenshotsTask : DefaultTask() {
 
-    @Input
-    public val variant: Property<ApplicationVariant> = project.objects.property()
+    @get:Input
+    public abstract val applicationIdProperty: Property<String>
 
     @TaskAction
     public fun pullScreenshots() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val logger = loggerFactory.create<PullScreenshotsTask>()
 
-        val applicationId = variant.get().testVariant.applicationId
+        val applicationId = applicationIdProperty.get()
         val adb = Adb()
         val adbDevicesManager = AdbDevicesManager(loggerFactory = loggerFactory, adb = adb)
         val currentDevice = DeviceProviderLocal(

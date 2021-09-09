@@ -1,3 +1,6 @@
+// todo use new agp api
+@file:Suppress("DEPRECATION")
+
 import com.android.build.gradle.api.ApplicationVariant
 import com.avito.android.withAndroidApp
 import org.gradle.api.Plugin
@@ -11,6 +14,7 @@ public class ProsectorPlugin : Plugin<Project> {
         val config = target.extensions.create<ProsectorConfig>("prosector")
 
         target.withAndroidApp {
+
             it.applicationVariants.all { variant: ApplicationVariant ->
 
                 val packageTask = variant.packageApplicationProvider

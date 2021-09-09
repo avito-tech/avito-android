@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class PlatformDependencyTest {
+internal class PlatformDependencyTest {
 
     @Test
     fun `code ownership - skip platform module check`(@TempDir projectDir: File) {

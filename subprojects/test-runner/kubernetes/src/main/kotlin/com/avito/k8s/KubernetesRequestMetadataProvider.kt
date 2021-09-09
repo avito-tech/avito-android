@@ -22,7 +22,7 @@ internal class KubernetesRequestMetadataProvider : RequestMetadataProvider {
                         return Result.Success(
                             RequestMetadata(
                                 serviceName = serviceName,
-                                methodName = "pods_${request.method().toLowerCase()}"
+                                methodName = "pods_${request.method().lowercase()}"
                             )
                         )
                     }
@@ -35,7 +35,7 @@ internal class KubernetesRequestMetadataProvider : RequestMetadataProvider {
                                 return Result.Success(
                                     RequestMetadata(
                                         serviceName = serviceName,
-                                        methodName = "deployments_${request.method().toLowerCase()}"
+                                        methodName = "deployments_${request.method().lowercase()}"
                                     )
                                 )
                             }

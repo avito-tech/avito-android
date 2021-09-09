@@ -1,3 +1,6 @@
+// todo use new agp api
+@file:Suppress("DEPRECATION")
+
 package com.avito.instrumentation
 
 import com.android.build.gradle.AppExtension

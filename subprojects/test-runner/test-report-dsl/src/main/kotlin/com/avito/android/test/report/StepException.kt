@@ -18,7 +18,14 @@ public class StepException(
         public fun title(isPrecondition: Boolean): String = "Не удалось выполнить ${slug(isPrecondition)}"
 
         public fun data(isPrecondition: Boolean, action: String, assertion: String?): String {
-            return "${slug(isPrecondition).capitalize(Locale.getDefault())}:\n${action.prependIndent()}"
+            val capitalizedSlug = slug(isPrecondition).replaceFirstChar {
+                if (it.isLowerCase()) {
+                    it.titlecase(Locale.getDefault())
+                } else {
+                    it.toString()
+                }
+            }
+            return "$capitalizedSlug:\n${action.prependIndent()}"
                 .let {
                     if (assertion != null) {
                         "$it\nПроверка:\n${assertion.prependIndent()}"

@@ -11,16 +11,16 @@ import org.hamcrest.core.Is
     "HasPlatformType",
     "FunctionName"
 )
-fun <T> Is(matcher: Matcher<T>) = Is.`is`(matcher)
+public fun <T> Is(matcher: Matcher<T>): Matcher<T> = Is.`is`(matcher)
 
 @Suppress(
     "HasPlatformType",
     "FunctionName"
 )
-fun <T> Is(value: T) = Is.`is`(value)
+public fun <T> Is(value: T): Matcher<T> = Is.`is`(value)
 
-fun <T> isNot(value: T) = Is(not(value))
+public fun <T> isNot(value: T): Is<T> = Is(not(value))
 
-fun <T> isNot(matcher: Matcher<T>) = Is(not(matcher))
+public fun <T> isNot(matcher: Matcher<T>): Is<T> = Is(not(matcher))
 
-fun <T> anyOf(values: List<T>): Matcher<T> = anyOf(values.map { Is(it) })
+public fun <T> anyOf(values: List<T>): Matcher<T> = anyOf(values.map { Is(it) })
