@@ -1,9 +1,5 @@
-// todo use new agp api
-@file:Suppress("DEPRECATION")
-
 package com.avito.android.build_checks.internal.unique_r
 
-import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.android.build.gradle.tasks.ProcessTestManifest
@@ -46,7 +42,10 @@ internal class UniqueRClassesTaskCreator(
         }
     }
 
-    private fun registerTask(project: Project, appVariant: ApplicationVariant): TaskProvider<UniqueRClassesTask> {
+    private fun registerTask(
+        project: Project,
+        appVariant: @Suppress("DEPRECATION") com.android.build.gradle.api.ApplicationVariant
+    ): TaskProvider<UniqueRClassesTask> {
         return project.tasks.register<UniqueRClassesTask>(taskName + appVariant.name.capitalize()) {
             group = "verification"
             description = "Verify unique R classes"

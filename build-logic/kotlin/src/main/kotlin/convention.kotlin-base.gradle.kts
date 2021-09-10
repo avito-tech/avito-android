@@ -26,7 +26,8 @@ tasks.withType<KotlinCompile>().configureEach {
         apiVersion = kotlinLanguageVersion
 
         freeCompilerArgs = freeCompilerArgs +
-            "-Xopt-in=kotlin.RequiresOptIn" +
-            "-progressive"
+            "-Xopt-in=kotlin.RequiresOptIn"
+            // todo enable after MBS-11359
+            // "-progressive"
     }
 }

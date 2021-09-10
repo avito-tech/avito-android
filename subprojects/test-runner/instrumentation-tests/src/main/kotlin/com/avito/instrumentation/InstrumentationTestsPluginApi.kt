@@ -1,6 +1,3 @@
-// todo use new agp api
-@file:Suppress("DEPRECATION")
-
 package com.avito.instrumentation
 
 import com.avito.capitalize
