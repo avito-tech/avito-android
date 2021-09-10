@@ -15,6 +15,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher
  * @param maxDepth depth=1 is root exception's cause and so on.
  *                 maxDepth needed to stop recursion at some point for failure cases
  */
+// TODO DELETE
 public class DeepCauseMatcher<T>(
     private val typeMatcher: Matcher<T>,
     private val expectedMessage: Matcher<String>,
