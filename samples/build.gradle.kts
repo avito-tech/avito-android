@@ -1,4 +1,5 @@
 plugins {
+    id("convention.lifecycle")
     id("convention.detekt")
 }
 

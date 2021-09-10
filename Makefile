@@ -173,14 +173,17 @@ compile_tests:
 	$(docker_command) ./gradlew --project-dir $(project) $(params) compileTestKotlin
 
 compile:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll
+	$(docker_command) ./gradlew $(params) compileAll
+
+assemble:
+	$(docker_command) ./gradlew $(params) assembleAll
 
 check:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) check
+	$(docker_command) ./gradlew $(params) checkAll
 
 .PHONY: build
 build:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) build
+	$(docker_command) ./gradlew $(params) build
 
 fast_check:
 	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test

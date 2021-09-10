@@ -1,4 +1,5 @@
 plugins {
+    id("convention.lifecycle")
     // accessing version catalog here is blocked by IDE false-postive error
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
     id("com.autonomousapps.dependency-analysis") version "0.74.0"
