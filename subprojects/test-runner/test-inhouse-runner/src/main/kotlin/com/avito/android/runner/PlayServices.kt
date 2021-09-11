@@ -2,14 +2,10 @@ package com.avito.android.runner
 
 import android.content.Context
 import android.content.pm.PackageManager
-import com.avito.logger.Logger
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 
-internal fun Context.checkPlayServices(logger: Logger) {
-    logger.debug(
-        "Required play services version: $playServicesMetaDataVersion, on device: $playServicesOnDeviceVersion"
-    )
+internal fun Context.checkPlayServices() {
     when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)) {
         ConnectionResult.SUCCESS -> {
         }

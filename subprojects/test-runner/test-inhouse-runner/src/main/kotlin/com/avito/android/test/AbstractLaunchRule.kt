@@ -3,10 +3,8 @@ package com.avito.android.test
 import android.content.Intent
 import android.net.Uri
 import androidx.test.platform.app.InstrumentationRegistry
-import com.avito.android.runner.InHouseInstrumentationTestRunner
 import com.avito.android.runner.checkPlayServices
 import com.avito.android.test.util.getCurrentActivity
-import com.avito.logger.create
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -16,10 +14,6 @@ abstract class AbstractLaunchRule : TestRule {
 
     private val instrumentationContext = InstrumentationRegistry.getInstrumentation().context
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-    private val loggerFactory by lazy {
-        (InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner).loggerFactory
-    }
-    private val logger by lazy { loggerFactory.create<AbstractLaunchRule>() }
 
     override fun apply(base: Statement, description: Description): Statement = LaunchStatement(base)
 
@@ -75,7 +69,7 @@ abstract class AbstractLaunchRule : TestRule {
     }
 
     private fun beforeAppStart() {
-        targetContext.checkPlayServices(logger)
+        targetContext.checkPlayServices()
         grantPermissionsNeededForTesting()
     }
 }
