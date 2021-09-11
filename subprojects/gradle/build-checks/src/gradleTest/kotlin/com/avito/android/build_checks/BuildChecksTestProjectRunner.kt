@@ -32,8 +32,14 @@ internal class BuildChecksTestProjectRunner(
 
         val environment: Map<String, String>? = when (androidHome) {
             is AndroidHomeLocation.Default -> null // the build use the system environment
-            is AndroidHomeLocation.Absent -> mapOf("ANDROID_HOME" to "")
-            is AndroidHomeLocation.Custom -> mapOf("ANDROID_HOME" to androidHome.dir.path.toString())
+            is AndroidHomeLocation.Absent -> mapOf(
+                "ANDROID_HOME" to "",
+                "ANDROID_SDK_ROOT" to ""
+            )
+            is AndroidHomeLocation.Custom -> mapOf(
+                "ANDROID_HOME" to androidHome.dir.path.toString(),
+                "ANDROID_SDK_ROOT" to androidHome.dir.path.toString()
+            )
         }
         TestProjectGenerator(
             plugins = plugins {

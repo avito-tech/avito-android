@@ -9,6 +9,7 @@ dependencies {
 
     implementation(projects.logger.gradleLogger)
     implementation(projects.common.math)
+    implementation(projects.gradle.gradleExtensions)
 
     gradleTestImplementation(projects.common.truthExtensions)
     gradleTestImplementation(testFixtures(projects.logger.logger))

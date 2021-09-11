@@ -19,7 +19,13 @@ internal class ConfigurationCacheCompatibilityTest {
             },
             buildGradleExtra = """
                  buildChecks {
-                     enableByDefault = false
+                    androidSdk {
+                        compileSdkVersion = 30
+                        revision = 3
+                    }
+                    javaVersion {
+                        version = org.gradle.api.JavaVersion.VERSION_11
+                    }
                  }
             """.trimIndent()
         ).generateIn(projectDir)
@@ -33,7 +39,9 @@ internal class ConfigurationCacheCompatibilityTest {
         return gradlew(
             projectDir,
             "help",
-            dryRun = true,
+            "-Pkapt.incremental.apt=true",
+            "-Dos.name=Mac OS X",
+            dryRun = false,
             configurationCache = true
         )
     }

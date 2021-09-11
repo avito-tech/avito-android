@@ -6,7 +6,6 @@ internal class UrlResolver(
     private val extension: SignExtension,
 ) {
 
-    @Suppress("UnstableApiUsage")
     fun resolveServiceUrl(onFailure: (Throwable) -> Nothing): String {
         val value = extension.url
             .orElse("")

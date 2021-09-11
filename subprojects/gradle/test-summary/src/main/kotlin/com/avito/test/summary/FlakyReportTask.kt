@@ -1,6 +1,5 @@
 package com.avito.test.summary
 
-import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportsApi
@@ -49,13 +48,16 @@ public abstract class FlakyReportTask : DefaultTask() {
     @get:Internal
     public abstract val reportViewerUrl: Property<String>
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun doWork() {
         val flakyTestInfo = FlakyTestInfo()
 
         flakyTestInfo.addReport(reportsApi.get().getTestsForRunId(reportCoordinates.get()))
 
-        val loggerFactory: LoggerFactory = GradleLoggerFactory.fromTask(this)
+        val loggerFactory: LoggerFactory = loggerFactory.get()
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         createFlakyTestReporter(

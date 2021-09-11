@@ -3,6 +3,7 @@ package com.avito.android.plugin.build_metrics
 import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.critical_path.CriticalPathRegistry
 import com.avito.android.gradle.metric.GradleCollector
+import com.avito.android.graphite.graphiteConfig
 import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
@@ -15,6 +16,7 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
+import com.avito.teamcity.teamcityCredentials
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
@@ -36,6 +38,14 @@ public open class BuildMetricsPlugin : Plugin<Project> {
 
         project.tasks.register<CollectTeamcityMetricsTask>("collectTeamcityMetrics") {
             buildId.set(project.getOptionalStringProperty("avito.build.metrics.teamcityBuildId"))
+            this.loggerFactory.set(
+                GradleLoggerFactory.fromTask(
+                    project = project,
+                    taskName = this.name,
+                )
+            )
+            this.teamcityCredentials.set(project.teamcityCredentials)
+            this.graphiteConfig.set(project.graphiteConfig)
         }
 
         val buildOperationsListener = BuildOperationsResultProvider.register(project)
@@ -66,7 +76,6 @@ public open class BuildMetricsPlugin : Plugin<Project> {
     }
 }
 
-@Suppress("UnstableApiUsage")
 internal val Project.pluginIsEnabled: Boolean
     get() = providers
         .gradleProperty(enabledProp)

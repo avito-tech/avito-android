@@ -1,17 +1,25 @@
 package com.avito.android.build_checks.internal
 
-import com.avito.android.AndroidSdk
 import com.avito.android.build_checks.RootProjectChecksExtension
 import com.avito.utils.loadProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import javax.inject.Inject
 
-internal abstract class CheckAndroidSdkVersionTask : DefaultTask() {
+internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
+    layout: ProjectLayout
+) : DefaultTask() {
+
+    @get:Input
+    abstract val platformDir: Property<File>
 
     @get:Input
     abstract val compileSdkVersion: Property<Int>
@@ -21,15 +29,15 @@ internal abstract class CheckAndroidSdkVersionTask : DefaultTask() {
 
     // synthetic output just for up-to-date checks
     @OutputFile
-    val output: File = File(project.buildDir, "reports/checkAndroidSdkVersionTask.out")
+    val output: Provider<RegularFile> = layout.buildDirectory.file("reports/checkAndroidSdkVersionTask.out")
 
     private val platformSourceProperties: File
         get() = File(platform, "source.properties")
 
     private val platform: File
         get() {
-            val dir = sdk().platform(compileSdkVersion.get())
-            require(dir.exists()) {
+            val dir = platformDir.get()
+            require(platformDir.get().exists()) {
                 """========= ERROR =========
                Android SDK platform ${compileSdkVersion.get()} is not found in ${dir.canonicalPath}.
                Please install it or update.
@@ -73,7 +81,7 @@ internal abstract class CheckAndroidSdkVersionTask : DefaultTask() {
                 ).toString()
             )
         }
-        output.writeText(localRevision.toString())
+        output.get().asFile.writeText(localRevision.toString())
     }
 
     private fun localRevision(): Int {
@@ -81,6 +89,4 @@ internal abstract class CheckAndroidSdkVersionTask : DefaultTask() {
         return requireNotNull(sourceProperties.loadProperties().getProperty("Pkg.Revision", null))
             .toInt()
     }
-
-    private fun sdk() = AndroidSdk.fromProject(project)
 }

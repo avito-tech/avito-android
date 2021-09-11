@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.kotlin.dsl
 
 import org.gradle.api.file.RegularFile

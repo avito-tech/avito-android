@@ -3,12 +3,14 @@ package com.avito.cd
 import com.avito.android.androidAppExtension
 import com.avito.git.gitState
 import com.avito.http.HttpLogger
-import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.gradle.envArgs
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 public abstract class UploadCdBuildResultTask : DefaultTask() {
@@ -34,10 +36,13 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
     @get:Input
     public abstract val runId: Property<String>
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun sendCdBuildResult() {
         val gitState = project.gitState()
-        val logger = GradleLoggerFactory.getLogger(this)
+        val logger = loggerFactory.get().create<UploadCdBuildResultTask>()
         createUploadAction(logger).send(
             testResults = CdBuildResult.TestResultsLink(
                 reportUrl.get(),

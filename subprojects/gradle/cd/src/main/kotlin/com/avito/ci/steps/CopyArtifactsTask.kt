@@ -1,17 +1,18 @@
 package com.avito.ci.steps
 
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public abstract class CopyArtifactsTask : DefaultTask() {
 
     @Input
@@ -23,9 +24,12 @@ public abstract class CopyArtifactsTask : DefaultTask() {
     @InputFiles
     public val entries: Property<FileCollection> = project.objects.property()
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun doAction() {
-        val logger = GradleLoggerFactory.getLogger(this)
+        val logger = loggerFactory.get().create<CopyArtifactsTask>()
 
         entries.get().forEach { entry ->
             if (entry.exists()) {

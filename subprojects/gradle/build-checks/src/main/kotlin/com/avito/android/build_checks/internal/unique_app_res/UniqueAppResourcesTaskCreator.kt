@@ -63,7 +63,6 @@ internal class UniqueAppResourcesTaskCreator(
 
             packageAwareRFiles.set(collectRFiles(appVariant))
             ignoredResourceTypes.set(config.ignoredResourceTypes)
-            @Suppress("UnstableApiUsage")
             ignoredResources.set(config.ignoredResources)
             output.set(
                 project.layout.buildDirectory.file("$outputDirName/$taskName/${appVariant.name}/output")
@@ -79,7 +78,6 @@ internal class UniqueAppResourcesTaskCreator(
      */
     @Suppress("DEPRECATION")
     private fun collectRFiles(appVariant: com.android.build.gradle.api.ApplicationVariant): FileCollection {
-        @Suppress("UnstableApiUsage")
         val files: ConfigurableFileCollection = appProject.objects.fileCollection()
 
         appProject.internalModule.mainConfiguration

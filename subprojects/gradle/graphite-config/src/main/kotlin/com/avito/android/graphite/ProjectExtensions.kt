@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.android.graphite
 
 import com.avito.kotlin.dsl.ProjectProperty

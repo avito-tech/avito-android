@@ -31,9 +31,9 @@ internal class ConfigurationCacheCompatibilityTest {
     private fun runTask(projectDir: File): TestResult {
         return gradlew(
             projectDir,
-            "help",
+            ":app:preBuild",
             "-Pavito.build.metrics.enabled=true",
-            dryRun = true,
+            dryRun = false,
             configurationCache = true
         )
     }

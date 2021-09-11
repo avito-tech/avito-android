@@ -7,6 +7,7 @@ import com.avito.android.InstrumentationChangedTestsFinderApi
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
 import com.avito.android.runner.devices.model.DeviceType.CLOUD
+import com.avito.android.stats.statsdConfig
 import com.avito.android.withAndroidModule
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationFilter
@@ -40,6 +41,7 @@ import com.avito.runner.scheduler.suite.filter.Filter
 import com.avito.test.model.DeviceName
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import com.avito.utils.buildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.kubernetesCredentials
 import org.gradle.api.Plugin
@@ -49,7 +51,6 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public class InstrumentationTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -162,10 +163,20 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                             this.gitCommit.set(GitResolver.getGitCommit(project))
                             this.output.set(outputFolder)
 
-                            if (reportViewer != null) {
-                                this.reportViewerProperty.set(reportViewer)
-                            }
-                            this.kubernetesCredentials.set(project.kubernetesCredentials)
+                            this.projectName.set(project.name)
+                        this.statsDConfig.set(project.statsdConfig)
+                        this.loggerFactory.set(
+                            GradleLoggerFactory.fromTask(
+                                project = project,
+                                taskName = this.name,
+                            )
+                        )
+                        this.buildFailer.set(project.buildFailer)
+
+                        if (reportViewer != null) {
+                            this.reportViewerProperty.set(reportViewer)
+                        }
+                        this.kubernetesCredentials.set(project.kubernetesCredentials)
 
                             val runOnlyChangedTests = configuration.runOnlyChangedTests
 
