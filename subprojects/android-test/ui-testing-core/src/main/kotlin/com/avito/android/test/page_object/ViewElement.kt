@@ -20,13 +20,13 @@ open class ViewElement : PageObjectElement, Actions {
     override val actions: Actions
     override val checks: Checks
 
-    // TODO: make this constructor private and remove matcher
-    @Deprecated(
-        "Use constructor with interaction context. " +
-            "Otherwise, you can get actions and checks in a wrong screen or window." +
-            "See [PageObject.element] to create an instance with correct interaction context inside page objects." +
-            "For a custom class use `ViewElement(interactionContext)`"
-    )
+    /**
+     * "Use constructor with interaction context. " +
+     * "Otherwise, you can get actions and checks in a wrong screen or window." +
+     * "See [PageObject.element] to create an instance with correct interaction context inside page objects." +
+     * "For a custom class use `ViewElement(interactionContext)`"
+     * TODO: make this constructor private and remove matcher
+     */
     constructor(
         matcher: Matcher<View>,
         interactionContext: InteractionContext = SimpleInteractionContext(matcher),

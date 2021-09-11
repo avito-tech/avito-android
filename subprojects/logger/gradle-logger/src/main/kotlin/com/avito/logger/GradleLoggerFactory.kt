@@ -161,7 +161,7 @@ public class GradleLoggerFactory(
                 .forUseAtConfigurationTime()
                 .map { value ->
                     try {
-                        LogLevel.valueOf(value.toUpperCase(Locale.getDefault()))
+                        LogLevel.valueOf(value.uppercase(Locale.getDefault()))
                     } catch (e: Throwable) {
                         throw IllegalArgumentException(
                             "`avito.logging.verbosity` should be one of: " +

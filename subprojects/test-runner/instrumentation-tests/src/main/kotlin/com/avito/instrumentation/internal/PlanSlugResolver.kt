@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal
 
+import com.avito.capitalize
 import org.gradle.util.Path
-import java.util.Locale
 
 internal object PlanSlugResolver {
 
@@ -20,7 +20,7 @@ internal object PlanSlugResolver {
         return string.split(symbols)
             .joinToString(
                 separator = "",
-                transform = { it.capitalize(Locale.getDefault()) }
+                transform = { it.capitalize() }
             )
     }
 }

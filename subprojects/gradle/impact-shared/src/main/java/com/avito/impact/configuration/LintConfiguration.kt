@@ -1,9 +1,5 @@
-@file:Suppress("DEPRECATION")
-// todo use new api?
-
 package com.avito.impact.configuration
 
-import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.module.configurations.ConfigurationType.Lint
 
 internal class LintConfiguration(module: InternalModule) : BaseConfiguration(module, Lint::class.java) {
@@ -14,7 +10,10 @@ internal class LintConfiguration(module: InternalModule) : BaseConfiguration(mod
             || hasChangedFiles
     }
 
-    override fun containsSources(sourceSet: AndroidSourceSet) = false
+    override fun containsSources(
+        @Suppress("DEPRECATION")
+        sourceSet: com.android.build.gradle.api.AndroidSourceSet
+    ) = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

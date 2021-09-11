@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 
 @Suppress("MaxLineLength")
-class CodeOwnershipValidationTest {
+internal class CodeOwnershipValidationTest {
 
     @TestFactory
     fun cases(): List<DynamicTest> = listOf(
@@ -193,18 +193,18 @@ class CodeOwnershipValidationTest {
             val name = StringBuilder()
 
             if (featureModuleType != ModuleType.IMPLEMENTATION) {
-                name.append(featureModuleType.name.toLowerCase())
+                name.append(featureModuleType.name.lowercase())
                 name.append(" ")
             }
 
             val hasDifferentVisibilities = featureOwnership.visibility != dependentOwnership.visibility
             if (hasDifferentVisibilities || featureOwnership.visibility == Visibility.TEAM) {
-                name.append(featureOwnership.visibility.name.toLowerCase())
+                name.append(featureOwnership.visibility.name.lowercase())
                 name.append(" ")
             }
             name.append("module has ")
             if (hasDifferentVisibilities) {
-                name.append(dependentOwnership.visibility.name.toLowerCase())
+                name.append(dependentOwnership.visibility.name.lowercase())
                 name.append(" ")
             }
             val hasDifferentUnits = featureOwnership.team != dependentOwnership.team

@@ -12,6 +12,7 @@ import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import com.avito.utils.ProcessRunner
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import java.io.File
 
@@ -26,6 +27,7 @@ internal class DeviceProviderFactoryImpl(
     private val processRunner: ProcessRunner
 ) : DevicesProviderFactory {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun create(
         tempLogcatDir: File,
         deviceWorkerPoolProvider: DeviceWorkerPoolProvider

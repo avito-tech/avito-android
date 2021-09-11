@@ -10,6 +10,6 @@ public enum class TestCaseBehavior(public val tmsValue: Int) {
             values().find { it.tmsValue == tmsId }
 
         public fun fromName(name: String): TestCaseBehavior? =
-            values().find { it.name == name.toUpperCase() }
+            values().find { it.name == name.uppercase() }
     }
 }

@@ -7,7 +7,6 @@ import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.kotlin.dsl.container
 import org.gradle.kotlin.dsl.register
 
 public class CiStepsPlugin : Plugin<Project> {
@@ -17,7 +16,8 @@ public class CiStepsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
         val logger = loggerFactory.create<CiStepsPlugin>()
-        val buildContainer = project.container { name ->
+
+        val buildContainer = project.container(BuildStepListExtension::class.java) { name ->
             BuildStepListExtension(
                 buildStepListName = name,
                 project.objects

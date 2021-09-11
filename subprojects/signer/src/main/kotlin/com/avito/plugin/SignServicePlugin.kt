@@ -24,6 +24,8 @@ public class SignServicePlugin : Plugin<Project> {
 
         target.withAndroidApp { appExtension ->
 
+            // todo rewrite signer to use new api
+            @Suppress("DEPRECATION")
             appExtension.applicationVariants.all { variant: com.android.build.gradle.api.ApplicationVariant ->
 
                 val buildTypeName = variant.buildType.name

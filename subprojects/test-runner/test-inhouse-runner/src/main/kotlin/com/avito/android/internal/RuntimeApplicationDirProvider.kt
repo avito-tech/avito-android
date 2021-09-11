@@ -17,7 +17,9 @@ internal class RuntimeApplicationDirProvider(context: Context) : ApplicationDirP
 
     private fun runtimeDir(context: Context): File {
         return if (Build.VERSION.SDK_INT >= 30) {
+            // it's ok to use deprecated method here
             // public dir which is accessible also by adb
+            @Suppress("DEPRECATION")
             context.externalMediaDirs[0]
         } else {
             ContextCompat.getExternalFilesDirs(context, null)[0]
