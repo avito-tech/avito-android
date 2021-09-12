@@ -27,7 +27,6 @@ import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import java.util.regex.Pattern
 
 /**
  * Abstraction of android phone from user's perspective
@@ -106,7 +105,7 @@ object Device {
             //   Adding it only to some build variants will make others unusable for tests and more sophisticated configuration.
             //   Adding it through test manifest didn't work.
             // - Granted by default QUERY_ALL_PACKAGES permission will prevent testing package visibility restrictions.
-            By.pkg(Pattern.compile(".+launcher.*"))
+            By.pkg(UITestConfig.deviceLauncherPackage)
         }
     }
 
