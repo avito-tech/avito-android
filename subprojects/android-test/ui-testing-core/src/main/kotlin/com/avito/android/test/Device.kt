@@ -92,7 +92,10 @@ object Device {
     }
 
     private fun getLauncherPackageNameSelector(): BySelector {
-        return if (Build.VERSION.SDK_INT < 30 || isPermissionGranted(QUERY_ALL_PACKAGES)) {
+        val noPackagesVisibilityRestriction = Build.VERSION.SDK_INT < 30 ||
+            InstrumentationRegistry.getInstrumentation().targetContext.applicationInfo.targetSdkVersion < 30
+
+        return if (noPackagesVisibilityRestriction || isPermissionGranted(QUERY_ALL_PACKAGES)) {
             val packageName = requireNotNull(uiDevice.launcherPackageName)
             return By.pkg(packageName)
         } else {
