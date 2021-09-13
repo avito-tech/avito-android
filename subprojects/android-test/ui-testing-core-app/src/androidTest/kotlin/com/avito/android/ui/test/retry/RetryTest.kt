@@ -4,9 +4,9 @@ import androidx.test.espresso.EspressoException
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.RetryActivity
 import com.avito.android.ui.test.Screen
+import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
-import ru.avito.util.assertThrows
 
 class RetryTest {
 
@@ -17,7 +17,7 @@ class RetryTest {
     fun failWithOriginalError_oneShotActionFailedWithUnexpectedError() {
         // We must preserve an original error for a user
         // It can get lost accidentally due to UITestConfig.waiterAllowedExceptions
-        assertThrows<UnexpectedFatalError> {
+        Assert.assertThrows(UnexpectedFatalError::class.java) {
             Screen.retry.button.firstFail(UnexpectedFatalError()).click()
         }
     }

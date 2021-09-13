@@ -7,7 +7,7 @@ import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.test.model.TestName
 import com.avito.truth.ResultSubject.Companion.assertThat
-import com.avito.utils.fileFromJarResources
+import com.avito.utils.ResourcesReader
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -54,7 +54,7 @@ internal class ReportsApiTest {
     fun `getReport - returns Report`() {
         mockWebServer.enqueue(
             MockResponse()
-                .setBody(fileFromJarResources<ReportsApiTest>("getReport.json").readText())
+                .setBody(ResourcesReader.readText("getReport.json"))
         )
 
         val result = createNoRetriesReportsApi().getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", ""))
@@ -67,10 +67,10 @@ internal class ReportsApiTest {
     @Test
     fun `getTestsForRunId - returns ok`() {
         mockWebServer.enqueue(
-            MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getReport.json").readText())
+            MockResponse().setBody(ResourcesReader.readText("getReport.json"))
         )
         mockWebServer.enqueue(
-            MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getTestsForRunId.json").readText())
+            MockResponse().setBody(ResourcesReader.readText("getTestsForRunId.json"))
         )
 
         val result = createNoRetriesReportsApi().getTestsForRunId(
@@ -90,7 +90,7 @@ internal class ReportsApiTest {
     @Test
     fun `pushPreparedData - returns ok`() {
         mockWebServer.enqueue(
-            MockResponse().setBody(fileFromJarResources<ReportsApiTest>("pushPreparedData.json").readText())
+            MockResponse().setBody(ResourcesReader.readText("pushPreparedData.json"))
         )
 
         val result = createNoRetriesReportsApi().pushPreparedData("any", "any", jsonObject("any" to "any"))

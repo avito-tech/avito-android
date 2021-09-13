@@ -7,9 +7,7 @@ import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.Priority
 import com.avito.android.test.annotations.TagId
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.android.util.Is
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.hasItems
+import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Rule
 import org.junit.Test
 
@@ -22,21 +20,17 @@ class DataFromAnnotationIsSent {
 
     @get:Rule
     val testCase = InfrastructureTestRule { startedReportState ->
-        assertThat(
-            "Field externalId must be taken from com.avito.android.test.annotations.ExternalId",
-            startedReportState.testMetadata.externalId,
-            Is("6faac31e-655c-4ac2-b18c-ede8e194e472")
-        )
-        assertThat(
-            "Field tagId must be taken from com.avito.android.test.annotations.TagId",
-            startedReportState.testMetadata.tagIds,
-            hasItems(-1, -2, -3)
-        )
-        assertThat(
-            "Field description must be taken from com.avito.android.test.annotations.Description",
-            startedReportState.testMetadata.description,
-            Is("annotation_data_sent")
-        )
+        assertWithMessage("Field externalId must be taken from com.avito.android.test.annotations.ExternalId")
+            .that(startedReportState.testMetadata.externalId)
+            .isEqualTo("6faac31e-655c-4ac2-b18c-ede8e194e472")
+
+        assertWithMessage("Field tagId must be taken from com.avito.android.test.annotations.TagId")
+            .that(startedReportState.testMetadata.tagIds)
+            .containsExactly(-1, -2, -3)
+
+        assertWithMessage("Field description must be taken from com.avito.android.test.annotations.Description")
+            .that(startedReportState.testMetadata.description)
+            .isEqualTo("annotation_data_sent")
     }
 
     @Test

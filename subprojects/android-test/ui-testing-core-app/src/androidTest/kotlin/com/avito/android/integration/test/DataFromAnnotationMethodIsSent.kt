@@ -3,8 +3,7 @@ package com.avito.android.integration.test
 import com.avito.android.integration.test.ReportTestUtils.simpleSuccessAssertion
 import com.avito.android.test.annotations.Description
 import com.avito.android.test.annotations.IntegrationTest
-import com.avito.android.util.Is
-import org.hamcrest.MatcherAssert.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Rule
 import org.junit.Test
 
@@ -13,11 +12,9 @@ class DataFromAnnotationMethodIsSent {
 
     @get:Rule
     val testCase = InfrastructureTestRule {
-        assertThat(
-            "Field description must be taken from com.avito.android.test.annotations.Description",
-            it.testMetadata.description,
-            Is("annotation_in_method_data_sent")
-        )
+        assertWithMessage("Field description must be taken from com.avito.android.test.annotations.Description")
+            .that(it.testMetadata.description)
+            .isEqualTo("annotation_in_method_data_sent")
     }
 
     @Test

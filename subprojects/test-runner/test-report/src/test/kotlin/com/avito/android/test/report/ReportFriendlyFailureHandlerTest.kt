@@ -1,7 +1,7 @@
 package com.avito.android.test.report
 
 import androidx.test.espresso.NoMatchingViewException
-import com.avito.utils.fileFromJarResources
+import com.avito.utils.ResourcesReader
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -13,7 +13,7 @@ internal class ReportFriendlyFailureHandlerTest {
         val exception = assertThrows<NoMatchingViewException> {
             ReportFriendlyFailureHandler().handle(
                 error = createExceptionWithPrivateStringConstructor<NoMatchingViewException>(
-                    fileFromJarResources<ReportFriendlyFailureHandlerTest>("view-hierarchy.txt").readText()
+                    ResourcesReader.readText("view-hierarchy.txt")
                 ),
                 viewMatcher = null
             )

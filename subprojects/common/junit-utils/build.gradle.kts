@@ -7,8 +7,6 @@ dependencies {
     implementation(libs.junit)
     implementation(libs.truth)
     implementation(libs.hamcrestLib)
-
-    testImplementation(libs.kotlinReflect)
 }
 
 kotlin {

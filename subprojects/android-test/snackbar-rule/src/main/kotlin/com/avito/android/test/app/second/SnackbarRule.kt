@@ -10,7 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
-import ru.avito.util.Is
+import org.hamcrest.Matchers.`is`
 import com.google.android.material.R as google_R
 
 interface SnackbarAsserts {
@@ -33,11 +33,11 @@ class SnackbarRule : SimpleRule(), SnackbarAsserts {
     }
 
     override fun assertIsShownWith(text: String) {
-        assertIsShownWith(Is(text))
+        assertIsShownWith(`is`(text))
     }
 
     override fun assertIsShownLastWith(text: String) {
-        assertIsShownLastWith(Is(text))
+        assertIsShownLastWith(`is`(text))
     }
 
     override fun assertIsShownWith(text: Matcher<String>) {
@@ -54,7 +54,7 @@ class SnackbarRule : SimpleRule(), SnackbarAsserts {
         waitFor {
             val last = proxy.snackbarTexts.lastOrNull() ?: throw AssertionError("There weren't shown any snackbar")
             MatcherAssert.assertThat(
-                "Snackbar with text mathes $text wasn't shown last",
+                "Snackbar with text matches $text wasn't shown last",
                 last,
                 text
             )
