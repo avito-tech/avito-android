@@ -11,7 +11,6 @@ import com.avito.math.percentOf
 import com.avito.module.configurations.ConfigurationType
 import com.avito.utils.gradle.Environment
 import org.gradle.api.Project
-import java.util.Locale
 
 internal class ImpactMetricsSender(
     private val projectsFinder: ModifiedProjectsFinder,
@@ -52,7 +51,7 @@ internal class ImpactMetricsSender(
         modified: Set<ModifiedProject>
     ) {
         val metric = GaugeLongMetric(
-            name = SeriesName.create("impact", "modules", configurationType.name.toLowerCase(Locale.US), "modified"),
+            name = SeriesName.create("impact", "modules", configurationType.name.lowercase(), "modified"),
             gauge = modified.size.percentOf(projects.size).roundToLong()
         )
         metricTracker.track(metric)
@@ -67,7 +66,7 @@ internal class ImpactMetricsSender(
         val modifiedApps = modified.count { it.project.isAndroidApp() }
 
         val metric = GaugeLongMetric(
-            name = SeriesName.create("impact", "apps", configurationType.name.toLowerCase(Locale.US), "modified"),
+            name = SeriesName.create("impact", "apps", configurationType.name.lowercase(), "modified"),
             gauge = modifiedApps.percentOf(apps).roundToLong()
         )
         metricTracker.track(metric)

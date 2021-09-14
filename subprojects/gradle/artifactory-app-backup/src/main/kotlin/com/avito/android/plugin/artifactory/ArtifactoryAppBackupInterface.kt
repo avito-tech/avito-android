@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.android.plugin.artifactory
 
 import com.avito.cd.BuildVariant

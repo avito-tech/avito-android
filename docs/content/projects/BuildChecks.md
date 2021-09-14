@@ -251,58 +251,6 @@ This check automatically detects the issue:
     }
     ```
 
-#### Dynamic dependency version
-
-Dynamic versions, such as "2.+", and snapshot versions force Gradle to check them on a remote server. It slows down
-a [configuration time](https://guides.gradle.org/performance/#minimize_dynamic_and_snapshot_versions)
-and makes build [less reproducible](https://reproducible-builds.org/).
-
-This check forbids dynamic dependency versions.
-
-=== "Kotlin"
-    `build.gradle.kts`
-
-    ```kotlin
-    buildChecks {
-        dynamicDependencies { }
-    }
-    ```
-
-=== "Groovy"
-    `build.gradle`
-
-    ```groovy
-    buildChecks {
-        dynamicDependencies { }
-    }
-    ```
-
-#### Gradle daemon reusage
-
-Gradle can run multiple daemons
-for [many reasons](https://docs.gradle.org/5.0/userguide/gradle_daemon.html#sec:why_is_there_more_than_one_daemon_process_on_my_machine)
-.
-
-If you use `buildSrc` in the project with standalone Gradle wrapper, this check will verify common problems to reuse it.
-
-=== "Kotlin"
-    `build.gradle.kts`
-
-    ```kotlin
-    buildChecks {
-        gradleDaemon { }
-    }
-    ```
-
-=== "Groovy"
-    `build.gradle`
-
-    ```groovy
-    buildChecks {
-        gradleDaemon { }
-    }
-    ```
-
 #### Module types
 
 This check force to

@@ -148,12 +148,10 @@ internal interface LintSlackReporter {
         }
 
         private fun LintIssue.shouldBeAlerted(): Boolean {
-            @Suppress("UnstableApiUsage")
             return !isFatal && severity in arrayOf(Severity.ERROR)
         }
 
         private fun LintIssue.shouldBeMentionedInAlert(): Boolean {
-            @Suppress("UnstableApiUsage")
             return !isFatal && severity in arrayOf(Severity.WARNING, Severity.INFORMATIONAL)
         }
 

@@ -1,8 +1,6 @@
 package com.avito.module.metrics
 
-import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.Logger
-import com.avito.logger.create
+import com.avito.logger.LoggerFactory
 import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
 import com.avito.module.metrics.metrics.AbsoluteMetrics
@@ -13,18 +11,16 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.Path
 import java.io.File
 import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
 public abstract class CollectAppsMetricsTask @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {
-
-    private val logger: Logger = GradleLoggerFactory.fromTask(this).create<CollectAppsMetricsTask>()
 
     init {
         description = "Collect Android applications modules health metrics"
@@ -47,9 +43,12 @@ public abstract class CollectAppsMetricsTask @Inject constructor(
         set(File(outputDir, "apps-common-modules-details.log"))
     }
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun action() {
-        val graphBuilder = DependenciesGraphBuilder(project.rootProject, GradleLoggerFactory.fromTask(this))
+        val graphBuilder = DependenciesGraphBuilder(project.rootProject, loggerFactory.get())
         val androidAppsGraphBuilder = AndroidAppsGraphBuilder(graphBuilder)
 
         val data = CollectAppsMetricsAction(androidAppsGraphBuilder).collect()

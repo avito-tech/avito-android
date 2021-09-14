@@ -8,6 +8,6 @@ public enum class TestCasePriority(public val tmsValue: Int) {
 
         public fun fromId(tmsId: Int): TestCasePriority? = values().find { it.tmsValue == tmsId }
 
-        public fun fromName(name: String): TestCasePriority? = values().find { it.name == name.toUpperCase() }
+        public fun fromName(name: String): TestCasePriority? = values().find { it.name == name.uppercase() }
     }
 }

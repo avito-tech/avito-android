@@ -135,7 +135,7 @@ internal class ArtifactoryAppBackupPluginTest {
 
         val rootPomRequest = dispatcher.captureRequest { path.endsWith(".pom") }
         val putApkRequest =
-            dispatcher.captureRequest { path.endsWith(".apk") && method.toLowerCase() == "put" }
+            dispatcher.captureRequest { path.endsWith(".apk") && method.lowercase() == "put" }
 
         val result = ciRun(
             projectDir,
@@ -223,7 +223,7 @@ internal class ArtifactoryAppBackupPluginTest {
         val putJsonFileRequests =
             artifacts.map { (id, _) ->
                 dispatcher.captureRequest {
-                    path.endsWith("$id.json") && method.toLowerCase() == "put"
+                    path.endsWith("$id.json") && method.lowercase() == "put"
                 }
             }
 

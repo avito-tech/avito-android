@@ -34,7 +34,7 @@ internal class SlackSummaryComposerImpl(private val reportViewerUrl: String) : S
             .sortedByDescending { it.second.size }
         val topFailures: List<Pair<String, List<FailureOnDevice>>> = failures.take(5)
         val rareFailures = failures.drop(5)
-        val rareFailuresCount = rareFailures.sumBy { it.second.size }
+        val rareFailuresCount = rareFailures.sumOf { it.second.size }
 
         return reportViewerUrl.map { url ->
             StringBuilder().apply {

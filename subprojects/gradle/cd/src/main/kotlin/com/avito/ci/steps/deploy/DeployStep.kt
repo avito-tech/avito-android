@@ -61,6 +61,7 @@ public class DeployStep internal constructor(
         val googlePlayDeploys = mapDeploymentsToGooglePlayDeploys(deployments)
         if (googlePlayDeploys.isNotEmpty()) {
             val uploadToPlayMarketTask = project.tasks.registerDeployToGooglePlayTask(
+                project = project,
                 deploys = googlePlayDeploys
             ) {
                 dependsOn(verifyTaskName(context))

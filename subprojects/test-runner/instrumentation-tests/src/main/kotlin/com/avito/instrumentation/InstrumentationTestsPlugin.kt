@@ -2,14 +2,12 @@ package com.avito.instrumentation
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.api.ApkVariant
-import com.android.build.gradle.api.ApplicationVariant
-import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
 import com.avito.android.InstrumentationChangedTestsFinderApi
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
 import com.avito.android.runner.devices.model.DeviceType.CLOUD
+import com.avito.android.stats.statsdConfig
 import com.avito.android.withAndroidModule
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationFilter
@@ -43,6 +41,7 @@ import com.avito.runner.scheduler.suite.filter.Filter
 import com.avito.test.model.DeviceName
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import com.avito.utils.buildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.kubernetesCredentials
 import org.gradle.api.Plugin
@@ -52,7 +51,6 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public class InstrumentationTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -106,109 +104,124 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     setupChangedTests(project)
                 }
 
-                testedExtension.testVariants.all { testVariant: TestVariant ->
+                testedExtension.testVariants
+                    .all { testVariant: @Suppress("DEPRECATION") com.android.build.gradle.api.TestVariant ->
 
-                    val testedVariant = when (testedExtension) {
-                        is AppExtension -> testVariant.testedVariant as ApplicationVariant
-                        is LibraryExtension -> testVariant
-                        else -> throw RuntimeException(
-                            "${testedExtension::class.java} not supported in InstrumentationPlugin"
-                        )
-                    }
+                        val testedVariant = when (testedExtension) {
+                            is AppExtension ->
+                                testVariant.testedVariant as
+                                    @Suppress("DEPRECATION") com.android.build.gradle.api.ApplicationVariant
 
-                    project.tasks.register<InstrumentationTestsTask>(instrumentationTaskName(configuration.name)) {
-                        timeout.set(configuration.instrumentationTaskTimeout)
-                        group = CI_TASK_GROUP
+                            is LibraryExtension -> testVariant
 
-                        this.parameters.set(
-                            getExecutionParameters(
-                                testedVariant = testedVariant,
-                                testVariant = testVariant,
+                            else -> throw RuntimeException(
+                                "${testedExtension::class.java} not supported in InstrumentationPlugin"
+                            )
+                        }
+
+                        project.tasks.register<InstrumentationTestsTask>(instrumentationTaskName(configuration.name)) {
+                            timeout.set(configuration.instrumentationTaskTimeout)
+                            group = CI_TASK_GROUP
+
+                            this.parameters.set(
+                                getExecutionParameters(
+                                    testedVariant = testedVariant,
+                                    testVariant = testVariant,
+                                    extension = extension,
+                                    configuration = configuration,
+                                    runner = androidPluginInteractor.getTestInstrumentationRunnerOrThrow(
+                                        testedExtension.defaultConfig
+                                    ),
+                                )
+                            )
+
+                            val reportViewer = reportResolver.getReportViewer(extension)
+
+                            val instrumentationParameters = instrumentationArgsResolver.getInstrumentationParams(
                                 extension = extension,
-                                configuration = configuration,
-                                runner = androidPluginInteractor.getTestInstrumentationRunnerOrThrow(
-                                    testedExtension.defaultConfig
-                                ),
+                                pluginLevelInstrumentationArgs = pluginLevelInstrumentationArgs
                             )
-                        )
 
-                        val reportViewer = reportResolver.getReportViewer(extension)
+                            val outputFolder = File(
+                                File(extension.output, reportResolver.getRunId(extension)),
+                                configuration.name
+                            )
 
-                        val instrumentationParameters = instrumentationArgsResolver.getInstrumentationParams(
-                            extension = extension,
-                            pluginLevelInstrumentationArgs = pluginLevelInstrumentationArgs
-                        )
+                            this.instrumentationConfiguration.set(
+                                getInstrumentationConfiguration(
+                                    project = project,
+                                    configuration = configuration,
+                                    parentInstrumentationParameters = instrumentationParameters,
+                                    filters = extension.filters.map { getInstrumentationFilter(it) },
+                                    outputFolder = outputFolder,
+                                )
+                            )
+                            this.buildId.set(BuildEnvResolver.getBuildId(project))
+                            this.buildType.set(BuildEnvResolver.getBuildType(project))
+                            this.experiments.set(experimentsResolver.getExperiments(extension))
+                            this.gitBranch.set(GitResolver.getGitBranch(project))
+                            this.gitCommit.set(GitResolver.getGitCommit(project))
+                            this.output.set(outputFolder)
 
-                        val outputFolder = File(
-                            File(extension.output, reportResolver.getRunId(extension)),
-                            configuration.name
-                        )
-
-                        this.instrumentationConfiguration.set(
-                            getInstrumentationConfiguration(
+                            this.projectName.set(project.name)
+                        this.statsDConfig.set(project.statsdConfig)
+                        this.loggerFactory.set(
+                            GradleLoggerFactory.fromTask(
                                 project = project,
-                                configuration = configuration,
-                                parentInstrumentationParameters = instrumentationParameters,
-                                filters = extension.filters.map { getInstrumentationFilter(it) },
-                                outputFolder = outputFolder,
+                                taskName = this.name,
                             )
                         )
-                        this.buildId.set(BuildEnvResolver.getBuildId(project))
-                        this.buildType.set(BuildEnvResolver.getBuildType(project))
-                        this.experiments.set(experimentsResolver.getExperiments(extension))
-                        this.gitBranch.set(GitResolver.getGitBranch(project))
-                        this.gitCommit.set(GitResolver.getGitCommit(project))
-                        this.output.set(outputFolder)
+                        this.buildFailer.set(project.buildFailer)
 
                         if (reportViewer != null) {
                             this.reportViewerProperty.set(reportViewer)
                         }
                         this.kubernetesCredentials.set(project.kubernetesCredentials)
 
-                        val runOnlyChangedTests = configuration.runOnlyChangedTests
+                            val runOnlyChangedTests = configuration.runOnlyChangedTests
 
-                        this.runOnlyChangedTests.set(runOnlyChangedTests)
+                            this.runOnlyChangedTests.set(runOnlyChangedTests)
 
-                        if (runOnlyChangedTests) {
-                            if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
-                                val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
+                            if (runOnlyChangedTests) {
+                                if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
+                                    val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
 
-                                this.dependencyOn(impactTaskProvider) {
-                                    this.changedTests.set(it.changedTestsFile)
+                                    this.dependencyOn(impactTaskProvider) {
+                                        this.changedTests.set(it.changedTestsFile)
+                                    }
                                 }
                             }
-                        }
 
-                        this.gradleTestKitRun.set(gradleTestKitRun)
+                            this.gradleTestKitRun.set(gradleTestKitRun)
 
-                        dependencyOn(testVariant.packageApplicationProvider) { task ->
-                            testApplication.set(task.apkDirectory())
-                        }
-
-                        setupProguardMapping(
-                            testProguardMapping,
-                            testVariant
-                        )
-
-                        if (testedExtension is AppExtension) {
-                            dependencyOn(testedVariant.packageApplicationProvider) { task ->
-                                application.set(task.apkDirectory())
+                            dependencyOn(testVariant.packageApplicationProvider) { task ->
+                                testApplication.set(task.apkDirectory())
                             }
 
                             setupProguardMapping(
-                                applicationProguardMapping,
-                                testedVariant
+                                testProguardMapping,
+                                testVariant
                             )
+
+                            if (testedExtension is AppExtension) {
+                                dependencyOn(testedVariant.packageApplicationProvider) { task ->
+                                    application.set(task.apkDirectory())
+                                }
+
+                                setupProguardMapping(
+                                    applicationProguardMapping,
+                                    testedVariant
+                                )
+                            }
                         }
                     }
-                }
             }
         }
     }
 
     private fun getExecutionParameters(
-        testedVariant: ApkVariant,
-        testVariant: TestVariant,
+        testedVariant: @Suppress("DEPRECATION") com.android.build.gradle.api.ApkVariant,
+        testVariant: @Suppress("DEPRECATION") com.android.build.gradle.api.TestVariant,
         extension: GradleInstrumentationPluginConfiguration,
         configuration: InstrumentationConfiguration,
         runner: String,
@@ -235,7 +248,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
     private fun InstrumentationTestsTask.setupProguardMapping(
         mappingProperty: RegularFileProperty,
-        variant: ApkVariant
+        variant: @Suppress("DEPRECATION") com.android.build.gradle.api.ApkVariant
     ) {
         project.tasks.withType<ProguardConfigurableTask>()
             .matching { it.variantName == variant.name }

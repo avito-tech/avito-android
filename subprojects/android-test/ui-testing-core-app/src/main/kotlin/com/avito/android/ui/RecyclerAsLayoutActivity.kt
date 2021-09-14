@@ -62,7 +62,7 @@ class RecyclerAsLayoutActivity : AppCompatActivity() {
 
         override fun getItemCount() = hints.size
 
-        override fun getItemViewType(position: Int): Int = ViewType.valueOf(hints[position].toUpperCase()).ordinal
+        override fun getItemViewType(position: Int): Int = ViewType.valueOf(hints[position].uppercase()).ordinal
     }
 
     enum class ViewType { INPUT, EDIT, LABEL }

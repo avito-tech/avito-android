@@ -14,7 +14,6 @@ import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 
-@Suppress("UnstableApiUsage")
 public abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params> {
 
     private val kotlinClassesFinder: KotlinClassesFinder = KotlinClassesFinder.create()

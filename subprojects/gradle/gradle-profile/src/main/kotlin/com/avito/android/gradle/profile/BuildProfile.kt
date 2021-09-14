@@ -1,6 +1,6 @@
 package com.avito.android.gradle.profile
 
-import org.gradle.util.CollectionUtils
+import com.avito.android.gradle.profile.Operation.Companion.slowestFirst
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
@@ -44,12 +44,11 @@ public class BuildProfile {
 
     public val projectConfiguration: CompositeOperation<Operation>
         get() {
-            var operations: MutableList<Operation> = ArrayList()
+            val operations: MutableList<Operation> = ArrayList()
             for (projectProfile in projects.values) {
                 operations.add(projectProfile.configurationOperation)
             }
-            operations = CollectionUtils.sort(operations, Operation.slowestFirst())
-            return CompositeOperation(operations)
+            return CompositeOperation(operations.sortedWith(slowestFirst()))
         }
 
     /**
@@ -132,7 +131,7 @@ public class BuildProfile {
      * @return list
      */
     public fun getProjects(): List<ProjectProfile> {
-        return CollectionUtils.sort(projects.values, Operation.slowestFirst())
+        return projects.values.sortedWith(slowestFirst())
     }
 
     /**

@@ -7,16 +7,22 @@ import java.util.Date
 
 public interface TimeProvider : Serializable {
 
-    @Deprecated("Use only in Android because old Java", replaceWith = ReplaceWith("nowInstant()"))
+    /**
+     * Use only in Android because old Java; otherwise use "nowInstant()"
+     */
     public fun nowInMillis(): Long
 
     @RequiresApi(26)
     public fun nowInstant(): Instant
 
-    @Deprecated("Use only in Android because old Java", replaceWith = ReplaceWith("nowInstant()"))
+    /**
+     * Use only in Android because old Java; otherwise use "nowInstant()"
+     */
     public fun nowInSeconds(): Long
 
-    @Deprecated("Use only in Android because old Java", replaceWith = ReplaceWith("nowInstant()"))
+    /**
+     * Use only in Android because old Java; otherwise use "nowInstant()"
+     */
     public fun now(): Date
 
     public fun toDate(seconds: Long): Date

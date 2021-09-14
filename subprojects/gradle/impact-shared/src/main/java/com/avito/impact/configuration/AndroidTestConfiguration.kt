@@ -1,9 +1,5 @@
-@file:Suppress("DEPRECATION")
-// todo use new api?
-
 package com.avito.impact.configuration
 
-import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.impact.configuration.sets.isAndroidTest
 import com.avito.module.configurations.ConfigurationType.AndroidTests
 
@@ -16,7 +12,10 @@ public class AndroidTestConfiguration(module: InternalModule) :
             || hasChangedFiles
     }
 
-    override fun containsSources(sourceSet: AndroidSourceSet): Boolean = sourceSet.isAndroidTest()
+    override fun containsSources(
+        @Suppress("DEPRECATION")
+        sourceSet: com.android.build.gradle.api.AndroidSourceSet
+    ): Boolean = sourceSet.isAndroidTest()
 
     override fun toString(): String {
         return "AndroidTestConfiguration(${project.path})"

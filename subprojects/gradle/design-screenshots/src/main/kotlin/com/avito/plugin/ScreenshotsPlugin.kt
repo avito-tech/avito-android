@@ -1,6 +1,8 @@
 package com.avito.plugin
 
 import com.avito.android.withAndroidApp
+import com.avito.capitalize
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
@@ -11,19 +13,37 @@ public class ScreenshotsPlugin : Plugin<Project> {
         project.withAndroidApp { appExtension ->
             appExtension.applicationVariants.all { applicationVariant ->
                 if (applicationVariant.name != "release") {
+
                     project.tasks.register<PullScreenshotsTask>(
                         "recordScreenshots${applicationVariant.name.capitalize()}"
                     ) {
                         group = "design"
-                        variant.set(applicationVariant)
                         description = "Create and pull screenshots from device"
+
+                        applicationIdProperty.set(applicationVariant.testVariant.applicationId)
+
+                        loggerFactory.set(
+                            GradleLoggerFactory.fromTask(
+                                project = project,
+                                taskName = this.name,
+                            )
+                        )
                     }
+
                     project.tasks.register<ClearScreenshotsTask>(
                         "clearScreenshots${applicationVariant.name.capitalize()}"
                     ) {
                         group = "design"
-                        variant.set(applicationVariant)
                         description = "Clear screenshots on device"
+
+                        applicationIdProperty.set(applicationVariant.applicationId)
+
+                        loggerFactory.set(
+                            GradleLoggerFactory.fromTask(
+                                project = project,
+                                taskName = this.name,
+                            )
+                        )
                     }
                 }
             }

@@ -7,6 +7,7 @@ import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.typedNamedOrNull
+import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.slack.SlackClient
@@ -30,7 +31,6 @@ public class LintReportToSlackTaskFactory(
         project.extensions.getByType()
     }
 
-    @Suppress("UnstableApiUsage")
     private val slackClientProvider: Provider<SlackClient> by lazy {
         extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
             SlackClient.create(
@@ -60,6 +60,8 @@ public class LintReportToSlackTaskFactory(
                 group = "ci"
                 description = "Report to slack channel ${channel.name} about lint errors"
 
+                projectPath.set(project.path)
+
                 dependencyOn(androidLintAccessor.taskProvider()) {
                     lintXml.set(androidLintAccessor.resultXml())
                     lintHtml.set(androidLintAccessor.resultHtml())
@@ -69,6 +71,13 @@ public class LintReportToSlackTaskFactory(
                 slackChannelForLintBugs.set(extension.slackChannelToReportLintBugs)
 
                 slackClient.set(slackClientProvider)
+
+                loggerFactory.set(
+                    GradleLoggerFactory.fromTask(
+                        project = project,
+                        taskName = this.name,
+                    )
+                )
             }
         } else {
             logger.warn("LintCheck: task $taskName already created in another ciStep; multiple reports are possible")

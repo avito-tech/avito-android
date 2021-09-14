@@ -6,8 +6,7 @@ import com.avito.android.test.annotations.DataSetNumber
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.report.dataSet
 import com.avito.android.test.report.model.DataSet
-import com.avito.android.util.Is
-import org.hamcrest.MatcherAssert.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,17 +16,17 @@ class DataSetIsSent {
 
     @get:Rule
     val testCase = InfrastructureTestRule {
-        assertThat(
-            "Field data_set must be equal to the com.avito.android.test.report.StepKt.dataSet value argument",
-            it.dataSet,
-            Is<DataSet>(DataSetImpl("messageOne"))
+        assertWithMessage(
+            "Field data_set must be equal to the com.avito.android.test.report.StepKt.dataSet value argument"
         )
+            .that(it.dataSet)
+            .isEqualTo(DataSetImpl("messageOne"))
 
-        assertThat(
-            "Field dataSetNumber must be taken from com.avito.android.test.annotations.DataSetNumber",
-            it.testMetadata.dataSetNumber,
-            Is(1)
+        assertWithMessage(
+            "Field dataSetNumber must be taken from com.avito.android.test.annotations.DataSetNumber"
         )
+            .that(it.testMetadata.dataSetNumber)
+            .isEqualTo(1)
     }
 
     fun test(@Suppress("UNUSED_PARAMETER") dataSetValue: DataSetImpl) {

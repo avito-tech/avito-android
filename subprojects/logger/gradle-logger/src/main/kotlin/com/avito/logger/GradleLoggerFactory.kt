@@ -13,7 +13,6 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.logging.configuration.ShowStacktrace
 import java.io.Serializable
 import java.util.Locale
@@ -122,24 +121,33 @@ public class GradleLoggerFactory(
 
     public companion object {
 
-        public inline fun <reified T : Task> getLogger(task: T): Logger = fromTask(task).create<T>()
-
         public inline fun <reified T : Plugin<*>> getLogger(plugin: T, project: Project): Logger =
             fromPlugin(plugin, project).create<T>()
 
-        public fun fromTask(task: Task): GradleLoggerFactory = fromProject(
-            project = task.project,
-            taskName = task.name
-        )
+        @JvmStatic
+        @JvmOverloads
+        public fun fromTask(
+            project: Project,
+            taskName: String,
+            plugin: Plugin<*>? = null
+        ): GradleLoggerFactory {
+            return fromProject(
+                project = project,
+                pluginName = plugin?.let { it::class.java.simpleName },
+                taskName = taskName
+            )
+        }
 
         public fun fromPlugin(
             plugin: Plugin<*>,
-            project: Project
+            project: Project,
         ): GradleLoggerFactory = fromProject(
             project = project,
             pluginName = plugin.javaClass.simpleName
         )
 
+        @JvmStatic
+        @JvmOverloads
         public fun fromProject(
             project: Project,
             pluginName: String? = null,
@@ -154,14 +162,13 @@ public class GradleLoggerFactory(
             verboseMode = getVerbosity(project)?.let { VerboseMode(it, doPrintStackTrace(project)) }
         )
 
-        @Suppress("UnstableApiUsage")
         private fun getVerbosity(project: Project): LogLevel? {
             return project.providers
                 .gradleProperty("avito.logging.verbosity")
                 .forUseAtConfigurationTime()
                 .map { value ->
                     try {
-                        LogLevel.valueOf(value.toUpperCase(Locale.getDefault()))
+                        LogLevel.valueOf(value.uppercase(Locale.getDefault()))
                     } catch (e: Throwable) {
                         throw IllegalArgumentException(
                             "`avito.logging.verbosity` should be one of: " +
