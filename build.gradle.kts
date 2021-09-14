@@ -3,7 +3,7 @@ plugins {
     id("convention.gradle-wrapper")
 }
 
-val taskGroup = "Avito android build"
+val taskGroup = "Avito Android build"
 
 tasks.register<Exec>("installGitHooks") {
     group = "Build Setup"
@@ -16,6 +16,8 @@ tasks.register<Exec>("installGitHooks") {
 val initialTaskNames: List<String> = project.gradle.startParameter.taskNames
 project.gradle.startParameter.setTaskNames(initialTaskNames + listOf("installGitHooks"))
 
+// Register lifecycle tasks in this umbrella build.
+// A user/CI usually only needs these.
 val detektAllTask = tasks.register("detektAll") {
     gradle.includedBuilds
         .filterNot { it.name == "build-logic-settings" }
@@ -24,47 +26,34 @@ val detektAllTask = tasks.register("detektAll") {
         }
 }
 
-// Register lifecycle tasks in this umbrella build.
-// A user/CI usually only needs these.
+val compileAll = tasks.register("compileAll") {
+    group = taskGroup
+    description = "Compiles all available modules in all variants + test/androidTest sources"
+
+    dependsOn(gradle.includedBuilds.map { it.task(":compileAll") })
+}
+
+val assembleAll = tasks.register("assembleAll") {
+    group = taskGroup
+    description = "Assemble all components"
+
+    dependsOn(gradle.includedBuilds.map { it.task(":assembleAll") })
+}
+
 val checkAll = tasks.register("checkAll") {
     group = taskGroup
-    description = "Run all tests and create code coverage report"
+    description = "Run all tests and static analysis tools"
 
-    dependsOn(
-        gradle.includedBuilds
-            .filter { !it.name.startsWith("build-logic") }
-            .map { it.task(":checkAll") }
-    )
+    dependsOn(gradle.includedBuilds.map { it.task(":checkAll") })
 
     dependsOn(detektAllTask)
     dependsOn(tasks.named("checkGradleWrappers"))
     dependsOn(tasks.named("checkCommonProperties"))
 }
 
-val compileAll = tasks.register("compileAll") {
-    group = taskGroup
-    description = "Compiles all available modules in all variants + test/androidTest sources"
-
-    dependsOn(
-        gradle.includedBuilds
-            .filter { !it.name.startsWith("build-logic") }
-            .map { it.task(":compileAll") }
-    )
-}
-
-val assembleAll = tasks.register("assembleAll") {
-    group = taskGroup
-    description = "Compile all code of all components"
-
-    dependsOn(
-        gradle.includedBuilds
-            .filter { !it.name.startsWith("build-logic") }
-            .map { it.task(":assembleAll") }
-    )
-}
-
 tasks.register("build") {
     group = taskGroup
-    description = "Run all tests, build (without publishing)"
-    dependsOn(assembleAll, compileAll, checkAll)
+    description = "Build and run all tests (without publishing)"
+
+    dependsOn(assembleAll, checkAll)
 }
