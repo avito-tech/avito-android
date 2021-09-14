@@ -64,10 +64,7 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     )
 
     minHeapSize = "128m"
-    /**
-     * Before was 256m, gradle tests with lint execution got the OOM
-     */
-    maxHeapSize = "512m"
+    maxHeapSize = "256m"
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("buildDir", "$buildDir")
