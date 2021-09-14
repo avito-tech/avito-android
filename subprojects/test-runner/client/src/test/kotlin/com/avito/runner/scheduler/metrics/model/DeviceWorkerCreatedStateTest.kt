@@ -1,5 +1,7 @@
 package com.avito.runner.scheduler.metrics.model
 
+import com.avito.runner.service.worker.device.DeviceCoordinate
+import com.avito.runner.service.worker.device.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -11,7 +13,7 @@ internal class DeviceWorkerCreatedStateTest {
     private val state = DeviceWorkerState.Created(
         created = Instant.now(),
         testExecutionStates = ConcurrentHashMap.newKeySet(),
-        key = DeviceKey("stub")
+        key = DeviceCoordinate.Local.createStubInstance()
     )
 
     @Test

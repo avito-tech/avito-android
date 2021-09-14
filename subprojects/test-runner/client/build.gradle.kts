@@ -46,6 +46,7 @@ dependencies {
     testImplementation(testFixtures(projects.testRunner.report))
     testImplementation(testFixtures(projects.testRunner.reportViewer))
     testImplementation(testFixtures(projects.testRunner.service))
+    testImplementation(testFixtures(projects.testRunner.deviceProvider.model))
 
     testFixturesImplementation(testFixtures(projects.common.time))
     testFixturesImplementation(testFixtures(projects.logger.logger))
