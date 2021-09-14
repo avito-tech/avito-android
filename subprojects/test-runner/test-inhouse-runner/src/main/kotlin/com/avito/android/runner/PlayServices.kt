@@ -2,19 +2,19 @@ package com.avito.android.runner
 
 import android.content.Context
 import android.content.pm.PackageManager
-import com.avito.logger.Logger
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 
-internal fun Context.checkPlayServices(logger: Logger) {
-    logger.debug(
-        "Required play services version: $playServicesMetaDataVersion, on device: $playServicesOnDeviceVersion"
-    )
-    when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)) {
+internal fun Context.checkPlayServices() {
+    when (val result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)) {
         ConnectionResult.SUCCESS -> {
         }
-        ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED -> error("Play services requires update")
-        else -> error("Play Services unavailable")
+        ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED -> error(
+            "Play services requires update. " +
+                "Required: $playServicesMetaDataVersion, " +
+                "on device: $playServicesOnDeviceVersion"
+        )
+        else -> error("Play Services unavailable: com.google.android.gms.common.ConnectionResult = $result")
     }
 }
 

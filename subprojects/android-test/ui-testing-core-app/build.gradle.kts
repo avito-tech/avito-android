@@ -16,6 +16,7 @@ android {
         versionName = "1.0"
         versionCode = 1
         testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
+        targetSdk = 30 // TODO: update for all modules in MBS-9389
 
         val instrumentationArgs = mapOf<String, String>(
             "planSlug" to "AndroidTestApp",

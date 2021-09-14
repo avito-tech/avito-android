@@ -1,4 +1,4 @@
-package com.avito.android.rule
+package com.avito.android.rule.internal
 
 import android.widget.Toast
 import com.avito.android.util.ProxyToast

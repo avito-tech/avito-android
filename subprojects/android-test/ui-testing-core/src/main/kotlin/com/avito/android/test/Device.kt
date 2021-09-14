@@ -1,9 +1,11 @@
 package com.avito.android.test
 
+import android.Manifest.permission.QUERY_ALL_PACKAGES
 import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.core.content.ContextCompat
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -11,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.avito.android.test.action.InstrumentationOrientationChangeAction
@@ -19,7 +22,6 @@ import com.avito.android.test.internal.Cache
 import com.avito.android.test.internal.SQLiteDB
 import com.avito.android.test.internal.SharedPreferences
 import com.avito.android.test.page_object.KeyboardElement
-import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
@@ -82,16 +84,28 @@ object Device {
     }
 
     fun waitForLauncher(timeout: Long = UITestConfig.activityLaunchTimeoutMilliseconds) {
-        with(uiDevice) {
-            assertThat(
-                "Launcher package name must be not null",
-                launcherPackageName,
-                CoreMatchers.notNullValue()
-            )
-            assertTrue(
-                "Waiting for launcher screen was exceeded timeout: $timeout milliseconds",
-                wait(Until.hasObject(By.pkg(launcherPackageName).depth(0)), timeout)
-            )
+        assertTrue(
+            "Waiting for launcher screen was exceeded timeout: $timeout milliseconds",
+            uiDevice.wait(Until.hasObject(getLauncherPackageNameSelector().depth(0)), timeout)
+        )
+    }
+
+    private fun getLauncherPackageNameSelector(): BySelector {
+        val noPackagesVisibilityRestriction = Build.VERSION.SDK_INT < 30 ||
+            InstrumentationRegistry.getInstrumentation().targetContext.applicationInfo.targetSdkVersion < 30
+
+        return if (noPackagesVisibilityRestriction || isPermissionGranted(QUERY_ALL_PACKAGES)) {
+            val packageName = requireNotNull(uiDevice.launcherPackageName)
+            return By.pkg(packageName)
+        } else {
+            // Due to package visibility restrictions:
+            // https://developer.android.com/training/package-visibility/declaring
+            // Other options are worse:
+            // - <queries><intent> will change production behavior.
+            //   Adding it only to some build variants will make others unusable for tests and more sophisticated configuration.
+            //   Adding it through test manifest didn't work.
+            // - Granted by default QUERY_ALL_PACKAGES permission will prevent testing package visibility restrictions.
+            By.pkg(UITestConfig.deviceLauncherPackage)
         }
     }
 
@@ -115,6 +129,14 @@ object Device {
         val requester = PermissionRequester()
         requester.addPermissions(*permissions)
         requester.requestPermissions()
+    }
+
+    private fun isPermissionGranted(permission: String): Boolean {
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        return ContextCompat.checkSelfPermission(
+            targetContext,
+            permission
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
     }
 
     /**
