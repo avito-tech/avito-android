@@ -2,14 +2,14 @@ package com.avito.slack
 
 import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.createStubInstance
-import com.avito.time.StubTimeProvider
+import com.avito.time.TimeMachineProvider
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.util.Calendar
 
 internal class SlackConditionalSenderTest {
 
-    private val timeProvider = StubTimeProvider()
+    private val timeProvider = TimeMachineProvider()
 
     @Test
     fun `todayMessage - returns true - for today message`() {
@@ -19,7 +19,7 @@ internal class SlackConditionalSenderTest {
             .apply {
                 set(2019, Calendar.JULY, 27)
             }
-            .time
+            .timeInMillis
 
         val result = TodayMessageCondition(timeProvider).matches(existingMessage)
 
@@ -34,7 +34,7 @@ internal class SlackConditionalSenderTest {
             .apply {
                 set(2019, Calendar.JULY, 27)
             }
-            .time
+            .timeInMillis
 
         val result = TodayMessageCondition(timeProvider).matches(existingMessage)
 

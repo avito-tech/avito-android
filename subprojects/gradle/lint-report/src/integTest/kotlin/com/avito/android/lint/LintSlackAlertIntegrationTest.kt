@@ -7,7 +7,7 @@ import com.avito.http.HttpClientProvider
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.avito.utils.fileFromJarResources
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.jupiter.api.Test
@@ -18,8 +18,6 @@ import org.junit.jupiter.api.Test
 internal class LintSlackAlertIntegrationTest {
 
     private val loggerFactory = StubLoggerFactory
-
-    private val timeProvider = StubTimeProvider()
 
     private val statsdSender = StubStatsdSender()
 
@@ -38,7 +36,7 @@ internal class LintSlackAlertIntegrationTest {
         workspace = workspace,
         httpClientProvider = HttpClientProvider(
             statsDSender = statsdSender,
-            timeProvider = timeProvider,
+            timeProvider = DefaultTimeProvider(),
             loggerFactory = loggerFactory
         )
     )
