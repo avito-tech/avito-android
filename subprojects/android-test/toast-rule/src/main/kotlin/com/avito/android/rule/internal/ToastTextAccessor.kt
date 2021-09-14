@@ -65,10 +65,17 @@ internal class SystemUIToastTextAccessor : ToastTextAccessor {
     }
 }
 
-internal fun Any.getFieldByReflection(fieldName: String): Any {
+internal fun Any.getFieldByReflection(fieldName: String): Any? {
     HiddenApiOpener.ensureUnseal()
 
-    return this::class.java.getDeclaredField(fieldName)
+    val clazz = this::class.java
+    val declaredField = clazz.getDeclaredField(fieldName)
+    requireNotNull(declaredField) {
+        "Expected to find field $fieldName in $clazz. " +
+            "Declared fields: ${clazz.declaredFields}." +
+            "Probable reason: unsupported API version."
+    }
+    return declaredField
         .also { it.isAccessible = true }
-        .get(this)!!
+        .get(this)
 }
