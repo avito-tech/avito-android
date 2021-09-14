@@ -4,6 +4,7 @@ import androidx.test.espresso.EspressoException
 import com.avito.android.test.interceptor.ActionInterceptor
 import com.avito.android.test.interceptor.AssertionInterceptor
 import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
 object UITestConfig {
 
@@ -52,6 +53,13 @@ object UITestConfig {
         EspressoException::class.java,
         AssertionError::class.java
     )
+
+    /**
+     * Pattern for launcher package in Android 11+ devices.
+     * Hardcoded values due to package visibility restrictions:
+     * https://developer.android.com/training/package-visibility/declaring
+     */
+    var deviceLauncherPackage: Pattern = Pattern.compile(".+launcher.*")
 
     sealed class ClickType {
         /**
