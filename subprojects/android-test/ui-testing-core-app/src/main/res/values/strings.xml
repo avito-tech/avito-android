@@ -1,4 +1,4 @@
 <resources>
-
+    <string name="simple_toast_text">Simple toast</string>
     <string name="string_with_non_breaking_spaces">test string we expect</string>
 </resources>

@@ -11,12 +11,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.espresso.EspressoActions
+import com.avito.android.test.util.HiddenApiOpener
 import com.avito.android.test.util.executeMethod
 import com.avito.android.test.util.getFieldByReflectionWithAnyField
 import com.avito.android.waiter.waitFor
-import me.weishu.reflection.Reflection
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -70,7 +69,7 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
     }
 
     private fun writeText(uiController: UiController, editText: EditText) {
-        assertThat("Hidden API is unavailable", unseal, Matchers.`is`(true))
+        HiddenApiOpener.ensureUnseal()
 
         val context = (
             ApplicationProvider.getApplicationContext<Application>()
@@ -116,19 +115,6 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
     )
 
     override fun getDescription(): String = "type text $stringToBeTyped"
-
-    private companion object HiddenApiHack {
-
-        /**
-         * Workaround for access to restricted API.
-         * https://developer.android.com/distribute/best-practices/develop/restrictions-non-sdk-interfaces
-         *
-         * Our public API request: https://issuetracker.google.com/issues/144891978
-         */
-        private val unseal: Boolean by lazy {
-            0 == Reflection.unseal(InstrumentationRegistry.getInstrumentation().targetContext)
-        }
-    }
 }
 
 internal open class SimpleTextWatcher : TextWatcher {
