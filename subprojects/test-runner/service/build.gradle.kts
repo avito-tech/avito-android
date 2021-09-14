@@ -35,4 +35,5 @@ dependencies {
     testImplementation(projects.common.truthExtensions)
     testImplementation(projects.common.resources)
     testImplementation(libs.coroutinesTest)
+    testImplementation(testFixtures(projects.testRunner.deviceProvider.model))
 }

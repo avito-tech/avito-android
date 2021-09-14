@@ -57,7 +57,7 @@ internal class TestRunnerMetricsListenerTest {
         }
 
         assertThat(error.message)
-            .isEqualTo("Can't find DeviceWorkerState for DeviceKey(serial=second)")
+            .isEqualTo("Can't find DeviceWorkerState for Local(serial=second)")
     }
 
     @Test
@@ -73,7 +73,7 @@ internal class TestRunnerMetricsListenerTest {
         }
 
         assertThat(error.message)
-            .isEqualTo("Device DeviceKey(serial=stub) already called onDeviceCreated")
+            .isEqualTo("Device Local(serial=stub) already called onDeviceCreated")
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class TestRunnerMetricsListenerTest {
         }
 
         assertThat(error.message)
-            .isEqualTo("Can't find DeviceWorkerState for DeviceKey(serial=stub)")
+            .isEqualTo("Can't find DeviceWorkerState for Local(serial=stub)")
     }
 
     @Test
@@ -102,7 +102,7 @@ internal class TestRunnerMetricsListenerTest {
         }
 
         assertThat(error.message)
-            .isEqualTo("Can't find DeviceWorkerState for DeviceKey(serial=stub)")
+            .isEqualTo("Can't find DeviceWorkerState for Local(serial=stub)")
     }
 
     @Test
@@ -117,7 +117,7 @@ internal class TestRunnerMetricsListenerTest {
         }
 
         assertThat(error.message)
-            .isEqualTo("Can't find DeviceWorkerState for DeviceKey(serial=stub)")
+            .isEqualTo("Can't find DeviceWorkerState for Local(serial=stub)")
     }
 
     @Test
@@ -136,6 +136,6 @@ internal class TestRunnerMetricsListenerTest {
         }
 
         assertThat(error.message)
-            .isEqualTo("Can't find DeviceWorkerState for DeviceKey(serial=stub)")
+            .isEqualTo("Can't find DeviceWorkerState for Local(serial=stub)")
     }
 }
