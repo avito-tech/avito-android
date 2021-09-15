@@ -1,5 +1,7 @@
 # Workaround for Android lint that doesn't use Gradle Worker API 
 
+**OUTDATED**
+
 [Issue #145235363](https://issuetracker.google.com/issues/145235363)
 
 ## Problem
