@@ -1,5 +1,6 @@
 package com.avito.time
 
+import java.time.Duration
 import java.time.Instant
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -17,8 +18,16 @@ public class TimeMachineProvider : TimeProvider {
         now += unit.toMillis(time)
     }
 
+    public fun moveForwardOn(duration: Duration) {
+        now += duration.toMillis()
+    }
+
     public fun moveBackOn(time: Long, unit: TimeUnit = TimeUnit.MILLISECONDS) {
         now -= unit.toMillis(time)
+    }
+
+    public fun moveBackOn(duration: Duration) {
+        now -= duration.toMillis()
     }
 
     override fun nowInMillis(): Long = now
