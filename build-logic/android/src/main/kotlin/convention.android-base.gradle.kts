@@ -30,6 +30,7 @@ configure<BaseExtension> {
         isWarningsAsErrors = true
         textReport = true
         isQuiet = true
+        isCheckReleaseBuilds = false
     }
 
     @Suppress("UnstableApiUsage")

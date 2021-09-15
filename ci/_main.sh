@@ -45,47 +45,51 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
 
-GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
-             -Pci=true \\
-             -PteamcityUrl=${TEAMCITY_URL} \\
-             -PteamcityApiUser=${TEAMCITY_API_USER} \\
-             -PteamcityApiPassword=${TEAMCITY_API_PASSWORD} \\
-             -PteamcityBuildType=${BUILD_TYPE} \\
-             -PbuildNumber \\
-             -PgitBranch=$BUILD_BRANCH \\
-             -PbuildCommit=$BUILD_COMMIT \\
-             -PteamcityBuildId=$BUILD_ID \\
-             -Pavito.slack.token=$AVITO_SLACK_TOKEN \\
-             -Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL \\
-             -Pavito.repo.ssh.url \\
-             -Pavito.report.url=$AVITO_REPORT_URL \\
-             -Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL \\
-             -Pavito.report.viewerUrl=$AVITO_REPORT_VIEWER_URL \\
-             -Pavito.registry=$AVITO_REGISTRY \\
-             -Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL \\
-             -Pavito.bitbucket.url=$AVITO_BITBUCKET_URL \\
-             -Pavito.bitbucket.projectKey=AG \\
-             -Pavito.bitbucket.repositorySlug=avito-github \\
-             -PatlassianUser=test \\
-             -PatlassianPassword=test \\
-             -Pavito.stats.host=$AVITO_STATS_HOST \\
-             -Pavito.stats.fallbackHost=$AVITO_STATS_FALLBACK_HOST \\
-             -Pavito.stats.port=$AVITO_STATS_PORT \\
-             -Pavito.stats.namespace=$AVITO_STATS_NAMESPACE \\
-             -Pavito.build=teamcity \\
-             -Pavito.elastic.enabled=true \\
-             -Pavito.elastic.endpoints=$ELASTIC_ENDPOINTS \\
-             -Pavito.elastic.indexpattern=speed-android \\
-             -Pavito.slack.test.channelId=$SLACK_TEST_CHANNEL_ID \\
-             -Pavito.slack.test.channel=$SLACK_TEST_CHANNEL \\
-             -Pavito.slack.test.token=$SLACK_TEST_TOKEN \\
-             -Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE \\
-             -PkubernetesUrl=$KUBERNETES_URL \\
-             -PkubernetesNamespace=android-emulator \\
-             -PkubernetesToken=$KUBERNETES_TOKEN \\
-             -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
-             -Pavito.build-verdict.enabled=true \\
-             -Pavito.bitbucket.enabled=true"
+GRADLE_ARGS="-Pci=true "
+GRADLE_ARGS+="-PartifactoryUrl=$ARTIFACTORY_URL "
+GRADLE_ARGS+="-PteamcityUrl=${TEAMCITY_URL} "
+GRADLE_ARGS+="-PteamcityApiUser=${TEAMCITY_API_USER} "
+GRADLE_ARGS+="-PteamcityApiPassword=${TEAMCITY_API_PASSWORD} "
+GRADLE_ARGS+="-PteamcityBuildType=${BUILD_TYPE} "
+GRADLE_ARGS+="-PbuildNumber "
+GRADLE_ARGS+="-PgitBranch=$BUILD_BRANCH "
+GRADLE_ARGS+="-PbuildCommit=$BUILD_COMMIT "
+GRADLE_ARGS+="-PteamcityBuildId=$BUILD_ID "
+GRADLE_ARGS+="-Pavito.slack.token=$AVITO_SLACK_TOKEN "
+GRADLE_ARGS+="-Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL "
+GRADLE_ARGS+="-Pavito.repo.ssh.url "
+GRADLE_ARGS+="-Pavito.report.url=$AVITO_REPORT_URL "
+GRADLE_ARGS+="-Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL "
+GRADLE_ARGS+="-Pavito.report.viewerUrl=$AVITO_REPORT_VIEWER_URL "
+GRADLE_ARGS+="-Pavito.registry=$AVITO_REGISTRY "
+GRADLE_ARGS+="-Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL "
+GRADLE_ARGS+="-Pavito.bitbucket.url=$AVITO_BITBUCKET_URL "
+GRADLE_ARGS+="-Pavito.bitbucket.projectKey=AG "
+GRADLE_ARGS+="-Pavito.bitbucket.repositorySlug=avito-github "
+GRADLE_ARGS+="-PatlassianUser=test "
+GRADLE_ARGS+="-PatlassianPassword=test "
+GRADLE_ARGS+="-Pavito.stats.host=$AVITO_STATS_HOST "
+GRADLE_ARGS+="-Pavito.stats.fallbackHost=$AVITO_STATS_FALLBACK_HOST "
+GRADLE_ARGS+="-Pavito.stats.port=$AVITO_STATS_PORT "
+GRADLE_ARGS+="-Pavito.stats.namespace=$AVITO_STATS_NAMESPACE "
+GRADLE_ARGS+="-Pavito.build=teamcity "
+
+if [ -n "$ELASTIC_ENDPOINTS" ]; then
+    GRADLE_ARGS+="-Pavito.elastic.enabled=true "
+    GRADLE_ARGS+="-Pavito.elastic.endpoints=$ELASTIC_ENDPOINTS "
+    GRADLE_ARGS+="-Pavito.elastic.indexpattern=speed-android "
+fi
+
+GRADLE_ARGS+="-Pavito.slack.test.channelId=$SLACK_TEST_CHANNEL_ID "
+GRADLE_ARGS+="-Pavito.slack.test.channel=$SLACK_TEST_CHANNEL "
+GRADLE_ARGS+="-Pavito.slack.test.token=$SLACK_TEST_TOKEN "
+GRADLE_ARGS+="-Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE "
+GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL "
+GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "
+GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
+GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
+GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "
+GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
 
 function runInBuilder() {
     COMMANDS=$@
