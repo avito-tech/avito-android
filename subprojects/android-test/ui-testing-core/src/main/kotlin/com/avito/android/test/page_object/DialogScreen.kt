@@ -28,10 +28,10 @@ abstract class DialogScreen(
 
     val rootElement = element<ViewElement>()
 
-    open class DialogScreenChecks(
-        screen: DialogScreen,
+    open class DialogScreenChecks<T : DialogScreen>(
+        screen: T,
         override val checkOnEachScreenInteraction: Boolean = true
-    ) : BaseScreenChecks<DialogScreen>(screen) {
+    ) : BaseScreenChecks<T>(screen) {
 
         @CallSuper
         override fun screenOpenedCheck() {

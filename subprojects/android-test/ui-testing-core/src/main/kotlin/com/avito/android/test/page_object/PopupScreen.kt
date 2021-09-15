@@ -28,10 +28,10 @@ abstract class PopupScreen(
 
     val rootElement = element<ViewElement>()
 
-    open class PopupScreenChecks(
-        screen: PopupScreen,
+    open class PopupScreenChecks<T : PopupScreen>(
+        screen: T,
         override val checkOnEachScreenInteraction: Boolean = true
-    ) : BaseScreenChecks<PopupScreen>(screen) {
+    ) : BaseScreenChecks<T>(screen) {
 
         @CallSuper
         override fun screenOpenedCheck() {
