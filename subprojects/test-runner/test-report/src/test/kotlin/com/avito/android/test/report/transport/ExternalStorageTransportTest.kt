@@ -11,7 +11,7 @@ import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
 import com.avito.report.serialize.ReportSerializer
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -19,10 +19,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal class ExternalStorageTransportTest {
-
-    private val timeProvider = StubTimeProvider()
-
-    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `sendReport - file written`(@TempDir tempDir: File) {
@@ -73,8 +69,8 @@ internal class ExternalStorageTransportTest {
 
     private fun createTransport(testArtifactsProvider: TestArtifactsProvider): ExternalStorageTransport {
         return ExternalStorageTransport(
-            timeProvider = timeProvider,
-            loggerFactory = loggerFactory,
+            timeProvider = DefaultTimeProvider(),
+            loggerFactory = StubLoggerFactory,
             testArtifactsProvider = testArtifactsProvider,
             reportSerializer = ReportSerializer()
         )

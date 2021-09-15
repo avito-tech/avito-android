@@ -36,7 +36,7 @@ import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -744,7 +744,7 @@ internal class RunnerIntegrationTest {
         dispatcher: CoroutineDispatcher = testCoroutineDispatcher
     ) = StubDevicesProvider(
         provider = DeviceWorkerPoolProvider(
-            timeProvider = StubTimeProvider(),
+            timeProvider = DefaultTimeProvider(),
             loggerFactory = loggerFactory,
             deviceListener = StubDeviceListener(),
             intentions = state.intentions,

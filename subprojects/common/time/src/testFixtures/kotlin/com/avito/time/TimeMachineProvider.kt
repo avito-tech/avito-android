@@ -1,6 +1,5 @@
 package com.avito.time
 
-import java.time.Duration
 import java.time.Instant
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -10,25 +9,25 @@ import java.util.concurrent.TimeUnit
  */
 public class TimeMachineProvider : TimeProvider {
 
-    private var timeShift: Long = 0
+    public var now: Long = 0
 
     private val defaultTimeProvider = DefaultTimeProvider()
 
     public fun moveForwardOn(time: Long, unit: TimeUnit = TimeUnit.MILLISECONDS) {
-        timeShift += unit.toMillis(time)
+        now += unit.toMillis(time)
     }
 
     public fun moveBackOn(time: Long, unit: TimeUnit = TimeUnit.MILLISECONDS) {
-        timeShift -= unit.toMillis(time)
+        now -= unit.toMillis(time)
     }
 
-    override fun nowInMillis(): Long = defaultTimeProvider.nowInMillis() + timeShift
+    override fun nowInMillis(): Long = now
 
-    override fun nowInstant(): Instant = defaultTimeProvider.nowInstant().plus(Duration.ofMillis(timeShift))
+    override fun nowInstant(): Instant = Instant.ofEpochMilli(now)
 
-    override fun nowInSeconds(): Long = defaultTimeProvider.nowInMillis() + TimeUnit.MILLISECONDS.toSeconds(timeShift)
+    override fun nowInSeconds(): Long = Instant.ofEpochMilli(now).epochSecond
 
-    override fun now(): Date = defaultTimeProvider.toDate(nowInSeconds())
+    override fun now(): Date = Date(now)
 
     override fun toDate(seconds: Long): Date = defaultTimeProvider.toDate(seconds)
 }
