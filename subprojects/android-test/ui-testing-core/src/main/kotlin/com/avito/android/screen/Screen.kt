@@ -18,6 +18,7 @@ interface Screen {
     val rootId: Int
 
     // TODO: remove default implementation after migrating clients to specific implementations in MBS-11808
+    @Suppress("DEPRECATION")
     val checks: ScreenChecks
         get() = StrictScreenChecks(screen = this, checkOnEachScreenInteraction = false)
 

@@ -1,5 +1,6 @@
 package com.avito.android.test.page_object
 
+import androidx.annotation.CallSuper
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.avito.android.screen.BaseScreenChecks
@@ -30,6 +31,7 @@ abstract class SimpleScreen : PageObject(), Screen {
         override val checkOnEachScreenInteraction: Boolean = false
     ) : BaseScreenChecks<T>(screen) {
 
+        @CallSuper
         override fun screenOpenedCheck() {
             if (screen.rootId != Screen.UNKNOWN_ROOT_ID) {
                 screen.rootElement.checks.exists()

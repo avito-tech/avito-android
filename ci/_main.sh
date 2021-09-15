@@ -35,9 +35,6 @@ function clearDockerContainers() {
     fi
 }
 
-GRADLE_CACHE_DIR=$HOME/.gradle/caches
-GRADLE_WRAPPER_DIR=$HOME/.gradle/wrapper
-
 clearDockerContainers
 clearGradleLockFiles
 
