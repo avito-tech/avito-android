@@ -14,8 +14,8 @@ buildTools = "30.0.3"
 compileSdk = "30"
 targetSdk = "29"
 minSdk = "21"
-junit5 = "5.7.2"
-junit5Platform = "1.7.2"
+junit5 = "5.8.0"
+junit5Platform = "1.8.0"
 
 [libraries]
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
