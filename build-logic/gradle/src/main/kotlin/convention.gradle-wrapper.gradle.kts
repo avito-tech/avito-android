@@ -1,14 +1,6 @@
 import com.avito.android.CheckWrapper
 import com.avito.android.resolveDir
 
-plugins {
-    /**
-     * https://docs.gradle.org/current/userguide/base_plugin.html
-     * base plugin added to add wiring on check->build tasks
-     */
-    base
-}
-
 /**
  * Symlinks would be better, but need a platform independent way
  */
@@ -43,17 +35,13 @@ tasks.withType<Wrapper>().configureEach {
     finalizedBy(copyWrapperTasks)
 }
 
-val checkGradleWrappersTaskProvider = tasks.register<CheckWrapper>("checkGradleWrappers") {
+tasks.register<CheckWrapper>("checkGradleWrappers") {
     group = "Build setup"
     description = "Checks gradle-wrapper.properties consistency for all included builds"
 
     expectedGradleVersion.set(gradleVer)
     expectedDistributionType.set(distribution)
     projectDirs.set(allProjectDirsProvider)
-}
-
-tasks.named("check").configure {
-    dependsOn(checkGradleWrappersTaskProvider)
 }
 
 fun makeProjectNameSuitableForTaskNameSlug(projectName: String): String {

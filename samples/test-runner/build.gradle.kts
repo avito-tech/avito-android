@@ -112,6 +112,10 @@ instrumentation {
                     }
                 }
             }
+
+            tasks.check.configure {
+                dependsOn(tasks.named("instrumentationUi"))
+            }
         }
     }
 }

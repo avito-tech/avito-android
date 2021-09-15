@@ -38,7 +38,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("cicd") {
-            id = "com.avito.android.cd" // todo rename to ci-steps
+            id = "com.avito.android.cd"
             implementationClass = "com.avito.ci.CiStepsPlugin"
             displayName = "CI/CD"
         }
