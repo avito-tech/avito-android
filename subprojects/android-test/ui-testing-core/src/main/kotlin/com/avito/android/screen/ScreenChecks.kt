@@ -40,6 +40,7 @@ abstract class BaseScreenChecks<out T : Screen>(
 }
 
 // TODO: Remove after migrating clients from bare PageObject to screens (MBS-11808)
+@Deprecated("Use other implementations of BaseScreenChecks from page objects: SimpleScreen, DialogScreen, ...")
 open class StrictScreenChecks<out T : Screen>(
     screen: T,
     override val checkOnEachScreenInteraction: Boolean = true
