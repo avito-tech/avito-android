@@ -199,4 +199,3 @@ include(":logger:sentry-logger")
 include(":logger:elastic-logger")
 
 include(":signer")
-
