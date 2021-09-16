@@ -19,7 +19,7 @@ import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installA
 import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.test.TestDispatcher
 import com.avito.test.receiveAvailable
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -203,7 +203,7 @@ internal class DeviceWorkerPoolTest {
         testListener = NoOpTestListener,
         deviceListener = StubDeviceListener(),
         deviceWorkersDispatcher = TestDispatcher,
-        timeProvider = StubTimeProvider(),
+        timeProvider = DefaultTimeProvider(),
         state = DeviceWorkerPoolState(
             devices = devices,
             intentions = intentionsChannel,
