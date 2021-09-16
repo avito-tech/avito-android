@@ -11,7 +11,7 @@ public class KubernetesReservationListenerProvider(
     private val loggerFactory: LoggerFactory
 ) {
     internal fun provide(): KubernetesReservationListener {
-        return StatsDKubernetesReservationListener(
+        return StatsDKubernetesReservationMetricsSender(
             StatsDSender.create(runnerMetricsConfig.statsDConfig, loggerFactory),
             KubernetesReservationState(timeProvider),
             runnerMetricsConfig.runnerPrefix

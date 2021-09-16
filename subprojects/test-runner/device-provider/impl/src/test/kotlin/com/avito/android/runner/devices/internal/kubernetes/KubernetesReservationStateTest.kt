@@ -26,7 +26,7 @@ internal class KubernetesReservationStateTest {
         state.claim(requestedPodCount = 1)
 
         val actualPodAcquiredDuration = Duration.ofSeconds(1)
-        timeProvider.moveForwardOn(actualPodAcquiredDuration)
+        timeProvider.moveForwardBy(actualPodAcquiredDuration)
         val queueTime = state.podAcquired()
 
         assertThat(queueTime)
@@ -49,7 +49,7 @@ internal class KubernetesReservationStateTest {
         state.claim(requestedPodCount = 1)
 
         val releaseTimeDuration = Duration.ofSeconds(1)
-        timeProvider.moveForwardOn(releaseTimeDuration)
+        timeProvider.moveForwardBy(releaseTimeDuration)
         val queueTimes = state.release()
 
         assertThat(queueTimes).hasSize(1)
@@ -64,7 +64,7 @@ internal class KubernetesReservationStateTest {
         state.podRemoved()
 
         val releaseTimeDuration = Duration.ofSeconds(1)
-        timeProvider.moveForwardOn(releaseTimeDuration)
+        timeProvider.moveForwardBy(releaseTimeDuration)
         val queueTimes = state.release()
 
         assertThat(queueTimes).hasSize(1)

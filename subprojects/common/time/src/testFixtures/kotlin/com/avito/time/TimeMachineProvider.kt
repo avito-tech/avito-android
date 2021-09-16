@@ -18,7 +18,7 @@ public class TimeMachineProvider : TimeProvider {
         now += unit.toMillis(time)
     }
 
-    public fun moveForwardOn(duration: Duration) {
+    public fun moveForwardBy(duration: Duration) {
         now += duration.toMillis()
     }
 
@@ -26,7 +26,7 @@ public class TimeMachineProvider : TimeProvider {
         now -= unit.toMillis(time)
     }
 
-    public fun moveBackOn(duration: Duration) {
+    public fun moveBackBy(duration: Duration) {
         now -= duration.toMillis()
     }
 

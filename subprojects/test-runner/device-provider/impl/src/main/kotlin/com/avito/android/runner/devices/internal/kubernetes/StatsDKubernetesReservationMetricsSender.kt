@@ -8,7 +8,7 @@ import com.avito.android.stats.StatsMetric
 /**
  * Send the queue time for each requested POD
  */
-internal class StatsDKubernetesReservationListener(
+internal class StatsDKubernetesReservationMetricsSender(
     private val statsDSender: StatsDSender,
     private val state: KubernetesReservationState,
     runnerPrefix: SeriesName
@@ -37,6 +37,6 @@ internal class StatsDKubernetesReservationListener(
     }
 
     private fun sendQueueTime(queueTime: KubernetesReservationState.QueueTime) {
-        statsDSender.send(StatsMetric.time(queueSeriesName, queueTime.value.toMillis()))
+        statsDSender.send(StatsMetric.time(queueSeriesName, queueTime.value.seconds))
     }
 }

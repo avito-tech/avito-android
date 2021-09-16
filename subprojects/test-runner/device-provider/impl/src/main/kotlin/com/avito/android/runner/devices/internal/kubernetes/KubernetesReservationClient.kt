@@ -29,7 +29,7 @@ import kotlin.coroutines.coroutineContext
 internal class KubernetesReservationClient(
     private val claimer: KubernetesReservationClaimer,
     private val reservationReleaser: KubernetesReservationReleaser,
-    private val listener: KubernetesReservationListener,
+    private val kubernetesReservationListener: KubernetesReservationListener,
     private val kubernetesApi: KubernetesApi,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val lock: Mutex,
@@ -49,7 +49,7 @@ internal class KubernetesReservationClient(
             if (state !is State.Idling) {
                 throw IllegalStateException("Unable claim reservation. State is already started")
             }
-            listener.onClaim(reservations)
+            kubernetesReservationListener.onClaim(reservations)
             // TODO close serialsChannel
             val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
             with(CoroutineScope(coroutineContext + dispatcher)) {
@@ -69,7 +69,7 @@ internal class KubernetesReservationClient(
 
     override suspend fun remove(podName: String) {
         withContext(CoroutineName("delete-pod-$podName") + dispatcher) {
-            listener.onPodRemoved()
+            kubernetesReservationListener.onPodRemoved()
             kubernetesApi.deletePod(podName)
         }
     }
@@ -82,7 +82,7 @@ internal class KubernetesReservationClient(
                 // TODO this leads to deployment leak
                 throw IllegalStateException("Unable to stop reservation job. Hasn't started yet")
             } else {
-                listener.onRelease()
+                kubernetesReservationListener.onRelease()
                 reservationReleaser.release(state.pods, state.deployments)
                 this@KubernetesReservationClient.state = State.Idling
             }

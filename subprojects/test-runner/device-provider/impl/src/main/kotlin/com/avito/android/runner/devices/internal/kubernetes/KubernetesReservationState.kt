@@ -7,11 +7,11 @@ import java.time.Instant
 import java.util.concurrent.PriorityBlockingQueue
 
 /**
- * Hold data about POD requests
+ * Holds data about POD requests
  *
- * When new POD acquired calculate queue time for that POD
+ * When new POD acquired, calculate queue time for that POD
  *
- * Assumption, when we [podRemoved] Kubernetes will create a replacement which will be acquired in the future
+ * Assumption: when we [podRemoved] Kubernetes will create a replacement which will be acquired in the future
  *
  * The queue time for PODs those weren't acquired is [release] time minus [PodRequest.requestTime]
  */
