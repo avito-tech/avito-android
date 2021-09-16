@@ -8,6 +8,6 @@ dependencies {
     implementation(projects.gradle.buildEnvironment)
 
     testImplementation(testFixtures(projects.common.graphite))
-    testImplementation(testFixtures(projects.common.statsd))
+    testImplementation(testFixtures(project(":common:statsd")))
     testImplementation(testFixtures(projects.gradle.buildEnvironment))
 }

@@ -8,4 +8,4 @@ source $(dirname $0)/_main.sh
 
 bash $(dirname $0)/documentation/lint.sh
 
-runInBuilder "set -e; ./gradlew build ${GRADLE_ARGS} --stacktrace"
+runInBuilder "set -e; ./gradlew -p subprojects build ${GRADLE_ARGS} --stacktrace"
