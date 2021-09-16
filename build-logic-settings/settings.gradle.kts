@@ -1,12 +1,26 @@
-enableFeaturePreview("VERSION_CATALOGS")
-
 rootProject.name = "build-logic-settings"
 
-dependencyResolutionManagement {
+pluginManagement {
+    val artifactoryUrl: String? by settings
+
     repositories {
+        maven {
+            if (artifactoryUrl.isNullOrBlank()) {
+                name = "gradle-plugins"
+                setUrl("https://plugins.gradle.org/m2/")
+            } else {
+                name = "Proxy for gradle-plugins: https://plugins.gradle.org/m2/"
+                setUrl("$artifactoryUrl/gradle-plugins")
+                isAllowInsecureProtocol = true
+            }
+        }
+    }
+}
 
-        val artifactoryUrl: String? by settings
+dependencyResolutionManagement {
+    val artifactoryUrl: String? by settings
 
+    repositories {
         maven {
             if (artifactoryUrl.isNullOrBlank()) {
                 name = "gradle-plugins"
