@@ -3,8 +3,6 @@ import com.avito.android.artifactory.setUrlOrProxy
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-val artifactoryUrl: String? by settings
-
 dependencyResolutionManagement {
 
     versionCatalogs {
@@ -12,6 +10,8 @@ dependencyResolutionManagement {
             from(files("../gradle/libs.versions.toml"))
         }
     }
+
+    val artifactoryUrl: String? by settings
 
     repositories {
         maven {
