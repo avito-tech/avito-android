@@ -158,17 +158,17 @@ test_runner_instrumentation:
 	$(docker_command) ./gradlew --project-dir samples $(params) :test-runner:instrumentationUi --no-daemon
 
 compile:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll
+	$(docker_command) ./gradlew $(params) compileAll
 
 assemble:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) assembleAll
+	$(docker_command) ./gradlew $(params) assembleAll
 
 check:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) checkAll
+	$(docker_command) ./gradlew $(params) checkAll
 
 .PHONY: build
 build:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) build
+	$(docker_command) ./gradlew $(params) build
 
 # Analyze modules dependencies issues
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/wiki/Tasks#build-health
