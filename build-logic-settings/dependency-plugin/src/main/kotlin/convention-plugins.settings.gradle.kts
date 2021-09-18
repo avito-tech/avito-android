@@ -1,3 +1,4 @@
+import com.avito.android.artifactory.avitoRepoPrefix
 import com.avito.android.artifactory.setUrlOrProxy
 
 pluginManagement {
@@ -43,6 +44,15 @@ pluginManagement {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("androidx.*")
                 includeGroup("com.google.testing.platform")
+            }
+        }
+
+        /**
+         * Removing implicitly added Gradle Plugins Repo, to prevent download avoiding artifactory
+         */
+        withType<MavenArtifactRepository> {
+            if (!name.contains(avitoRepoPrefix) && name != "MavenLocal") {
+                remove(this)
             }
         }
     }

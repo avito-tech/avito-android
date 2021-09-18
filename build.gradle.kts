@@ -3,6 +3,24 @@ plugins {
     id("convention.gradle-wrapper")
 }
 
+buildscript {
+
+    /**
+     *  workaround to load plugin classes once:
+     *  https://youtrack.jetbrains.com/issue/KT-31643#focus=Comments-27-3510019.0-0
+     */
+    dependencies {
+        classpath(libs.androidGradle)
+        classpath(libs.kotlinGradle)
+
+        /**
+         * com.autonomousapps.dependency-analysis depends on older version of okio, and it's resolved for
+         * our instrumentation-tests plugin in subprojects in runtime
+         */
+        classpath(libs.okio)
+    }
+}
+
 val taskGroup = "Avito Android build"
 
 tasks.register<Exec>("installGitHooks") {
