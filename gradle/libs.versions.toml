@@ -70,7 +70,7 @@ espressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = 
 espressoWeb = { module = "androidx.test.espresso:espresso-web", version.ref = "espresso" }
 espressoIntents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso" }
 espressoDescendantActions = "com.forkingcode.espresso.contrib:espresso-descendant-actions:1.4.0"
-radiography = "com.squareup.radiography:radiography:2.4.0"
+radiography = "com.squareup.radiography:radiography:2.4.1"
 rx3Ilder = "com.squareup.rx.idler:rx3-idler:0.11.0"
 r8 = "com.android.tools:r8:2.2.41"
 proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"

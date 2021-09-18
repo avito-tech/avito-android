@@ -11,7 +11,6 @@ import com.avito.ci.steps.DependencyAnalysisStep
 import com.avito.ci.steps.FlakyReportStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.ImpactMetrics
-import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.MarkReportAsSourceForTMSStep
 import com.avito.ci.steps.TestSummaryStep
 import com.avito.ci.steps.UiTestCheck
@@ -54,9 +53,6 @@ public open class BuildStepListExtension(
         }
         registerFactory(UnitTestCheck::class.java) { name ->
             UnitTestCheck(buildStepListName, name)
-        }
-        registerFactory(LintCheck::class.java) { name ->
-            LintCheck(buildStepListName, name)
         }
         registerFactory(MarkReportAsSourceForTMSStep::class.java) { name ->
             MarkReportAsSourceForTMSStep(buildStepListName, name)
@@ -151,14 +147,6 @@ public open class BuildStepListExtension(
 
     public fun dependencyAnalysis(action: Action<DependencyAnalysisStep>) {
         configureAndAdd("dependencyAnalysis", action)
-    }
-
-    public fun lint(closure: Closure<LintCheck>) {
-        configureAndAdd("lint", closure)
-    }
-
-    public fun lint(action: Action<LintCheck>) {
-        configureAndAdd("lint", action)
     }
 
     public fun markReportAsSourceForTMS(closure: Closure<MarkReportAsSourceForTMSStep>) {

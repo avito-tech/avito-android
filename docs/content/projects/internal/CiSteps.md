@@ -69,7 +69,6 @@ Step is a declaration to run some logic. It works inside a chain:
     
             unitTests {} // <--- step
             uiTests {}
-            lint {}
     
             //optional description for generated task
             taskDescription.set("This chain does something useful")
@@ -85,7 +84,6 @@ Step is a declaration to run some logic. It works inside a chain:
     
             unitTests {} // <--- step
             uiTests {}
-            lint {}
     
             //optional description for generated task
             taskDescription.set("This chain does something useful")
@@ -93,7 +91,7 @@ Step is a declaration to run some logic. It works inside a chain:
     }
     ```
 
-Now when you invoke `./gradlew fastCheck` gradle will run unitTests, uiTests and lint of corresponding project
+Now when you invoke `./gradlew fastCheck` gradle will run unitTests, uiTests of corresponding project
 
 ### Built-in steps
 
@@ -123,22 +121,6 @@ Runs instrumentation tests.
       useImpactAnalysis = true // by default
       suppressFlaky = false // by default. [игнорирование падений FlakyTest](../test/FlakyAnnotation.md).
     }
-    ```
-
-#### Android lint
-
-Runs Android lint tasks.
-
-=== "Kotlin"
-
-    ```kotlin
-    lint {}
-    ```
-
-=== "Groovy"
-
-    ```groovy
-    lint {}
     ```
 
 #### Compile UI tests

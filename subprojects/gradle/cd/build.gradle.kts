@@ -18,7 +18,6 @@ dependencies {
     implementation(projects.gradle.impactShared)
     implementation(projects.testRunner.instrumentationTests)
     implementation(projects.gradle.gradleExtensions)
-    implementation(projects.gradle.lintReport)
     implementation(projects.gradle.prosector)
     implementation(projects.gradle.qapps)
     implementation(projects.signer)

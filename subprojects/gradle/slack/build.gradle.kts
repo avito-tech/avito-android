@@ -1,4 +1,4 @@
-import com.avito.android.test.applyOptionalSystemProperty
+import com.avito.android.test.applySystemProperties
 
 plugins {
     id("convention.kotlin-jvm")
@@ -29,8 +29,17 @@ dependencies {
 }
 
 tasks.named<Test>("integrationTest").configure {
-    applyOptionalSystemProperty("avito.slack.test.channelId")
-    applyOptionalSystemProperty("avito.slack.test.channel")
-    applyOptionalSystemProperty("avito.slack.test.token")
-    applyOptionalSystemProperty("avito.slack.test.workspace")
+
+    applySystemProperties(
+        "avito.slack.test.channelId",
+        "avito.slack.test.channel",
+        "avito.slack.test.token",
+        "avito.slack.test.workspace"
+    ) { missing ->
+        require(missing.isEmpty()) {
+            "$path:integrationTest requires additional properties to be applied\n" +
+                "missing values are: $missing\n" +
+                "It should be added to ~/.gradle/gradle.properties"
+        }
+    }
 }
