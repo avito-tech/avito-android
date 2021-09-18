@@ -98,7 +98,10 @@ instrumentation {
     }
 
     val credentials = project.kubernetesCredentials
-    if (credentials is Service || credentials is KubernetesCredentials.Config) {
+    if (credentials !is Service && credentials !is KubernetesCredentials.Config) {
+        // todo fix this in MBS-11834
+        logger.warn("Instrumentation tasks are not created because kubernetes credentials not set")
+    } else {
 
         afterEvaluate {
             tasks.named("check").dependsOn(tasks.named("instrumentationUi"))
