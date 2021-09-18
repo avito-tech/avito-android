@@ -47,7 +47,10 @@ instrumentation {
     }
 
     val credentials = project.kubernetesCredentials
-    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
+    if (credentials !is KubernetesCredentials.Service && credentials !is KubernetesCredentials.Config) {
+        // todo fix this in MBS-11834
+        logger.warn("Instrumentation tasks are not created because kubernetes credentials not set")
+    } else {
 
         val emulator29 = CloudEmulator(
             name = "api29",
@@ -58,6 +61,7 @@ instrumentation {
             cpuCoresLimit = "1.3",
             memoryLimit = "4Gi"
         )
+
         val emulator30 = CloudEmulator(
             name = "api30",
             api = 30,
