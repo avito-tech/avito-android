@@ -1,4 +1,5 @@
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.tasks.VerifyLibraryResourcesTask
 
 configure<BaseExtension> {
     sourceSets {
@@ -44,4 +45,9 @@ configure<BaseExtension> {
         shaders = false
         viewBinding = false
     }
+}
+
+tasks.withType<VerifyLibraryResourcesTask>().configureEach {
+    // todo fix and enable MBS-11914
+    onlyIf { false }
 }
