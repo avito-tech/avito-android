@@ -4,10 +4,18 @@ public sealed class StatsMetric {
     public abstract val name: SeriesName
     public abstract val value: Any
     public abstract val type: String
+
+    public companion object {
+        public fun time(name: SeriesName, ms: Long): TimeMetric = TimeMetric(name, ms)
+        public fun count(name: SeriesName, value: Long = 1): CountMetric = CountMetric(name, value)
+        public fun gaugeLong(name: SeriesName, value: Long): GaugeLongMetric = GaugeLongMetric(name, value)
+        public fun gaugeDouble(name: SeriesName, value: Double): GaugeDoubleMetric = GaugeDoubleMetric(name, value)
+    }
 }
 
 public data class TimeMetric(
     override val name: SeriesName,
+    // todo use java.time.api
     public val timeInMs: Long
 ) : StatsMetric() {
     override val value: Long = timeInMs
