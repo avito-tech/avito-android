@@ -13,7 +13,8 @@ public class KubernetesReservationClientProvider(
     private val kubernetesApiFactory: KubernetesApiFactory,
     private val reservationDeploymentFactoryProvider: ReservationDeploymentFactoryProvider,
     private val emulatorsLogsReporterProvider: EmulatorsLogsReporterProvider,
-    private val androidDebugBridgeProvider: AndroidDebugBridgeProvider
+    private val androidDebugBridgeProvider: AndroidDebugBridgeProvider,
+    private val kubernetesReservationListenerProvider: KubernetesReservationListenerProvider
 ) {
 
     @ExperimentalCoroutinesApi
@@ -32,6 +33,7 @@ public class KubernetesReservationClientProvider(
                 androidDebugBridgeProvider.provide(),
                 loggerFactory
             ),
+            listener = kubernetesReservationListenerProvider.provide(),
             loggerFactory = loggerFactory,
             podsQueryIntervalMs = 5000L,
             dispatcher = Dispatchers.IO

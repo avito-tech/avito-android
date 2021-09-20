@@ -29,6 +29,7 @@ internal class KubernetesReservationClaimer(
     private val deploymentPodsListener: DeploymentPodsListener,
     private val deviceProvider: RemoteDeviceProvider,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
+    private val kubernetesReservationListener: KubernetesReservationListener,
     private val lock: Mutex,
     loggerFactory: LoggerFactory
 ) {
@@ -97,6 +98,7 @@ internal class KubernetesReservationClaimer(
                     .filter { it.phase is KubePod.PodPhase.Running }
                     .distinctBy { it.name }
                     .consumeEach { pod ->
+                        kubernetesReservationListener.onPodAcquired()
                         launch(CoroutineName("boot-pod-${pod.name}")) {
                             deviceProvider.create(pod)
                                 .onSuccess { device ->
