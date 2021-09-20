@@ -29,4 +29,7 @@ public abstract class ExperimentalExtension {
     public abstract val uploadArtifactsFromRunner: Property<Boolean>
 
     public abstract val useLegacyExtensionsV1Beta: Property<Boolean>
+
+    // TODO: enable after fixing "Pod requests queue is empty", see MBS-11776 comments
+    public abstract val sendPodsMetrics: Property<Boolean>
 }

@@ -15,7 +15,12 @@ internal class ExperimentsResolver(private val project: Project) {
             fetchLogcatForIncompleteTests = getFetchLogcatForIncompleteTests(extension),
             uploadArtifactsFromRunner = getUploadArtifactsFromRunner(extension),
             useLegacyExtensionsV1Beta = getUseLegacyExtensionsV1Beta(extension),
+            sendPodsMetrics = getSendPodsMetrics(extension)
         )
+    }
+
+    private fun getSendPodsMetrics(extension: GradleInstrumentationPluginConfiguration): Boolean {
+        return extension.experimental.sendPodsMetrics.getOrElse(false)
     }
 
     private fun getSaveTestArtifactsToOutputs(extension: GradleInstrumentationPluginConfiguration): Boolean {

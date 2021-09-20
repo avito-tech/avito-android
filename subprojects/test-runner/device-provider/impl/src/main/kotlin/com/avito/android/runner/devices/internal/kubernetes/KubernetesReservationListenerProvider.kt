@@ -8,13 +8,19 @@ import com.avito.time.TimeProvider
 public class KubernetesReservationListenerProvider(
     private val timeProvider: TimeProvider,
     private val runnerMetricsConfig: RunnerMetricsConfig,
-    private val loggerFactory: LoggerFactory
+    private val loggerFactory: LoggerFactory,
+    private val sendPodsMetrics: Boolean,
 ) {
+
     internal fun provide(): KubernetesReservationListener {
-        return StatsDKubernetesReservationMetricsSender(
-            StatsDSender.create(runnerMetricsConfig.statsDConfig, loggerFactory),
-            KubernetesReservationState(timeProvider),
-            runnerMetricsConfig.runnerPrefix
-        )
+        return if (sendPodsMetrics) {
+            StatsDKubernetesReservationMetricsSender(
+                StatsDSender.create(runnerMetricsConfig.statsDConfig, loggerFactory),
+                KubernetesReservationState(timeProvider),
+                runnerMetricsConfig.runnerPrefix
+            )
+        } else {
+            StubKubernetesReservationListener
+        }
     }
 }
