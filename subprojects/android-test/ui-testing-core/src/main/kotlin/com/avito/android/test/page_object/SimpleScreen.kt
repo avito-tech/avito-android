@@ -1,7 +1,6 @@
 package com.avito.android.test.page_object
 
 import androidx.annotation.CallSuper
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.avito.android.screen.BaseScreenChecks
 import com.avito.android.screen.Screen
@@ -11,7 +10,7 @@ import com.avito.android.test.SimpleInteractionContext
 abstract class SimpleScreen : PageObject(), Screen {
 
     override val interactionContext: InteractionContext by lazy {
-        SimpleInteractionContext(ViewMatchers.isRoot()) {
+        SimpleInteractionContext(withId(rootId)) {
             if (checks.checkOnEachScreenInteraction) {
                 checks.isScreenOpened()
             }

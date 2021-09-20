@@ -46,6 +46,7 @@ private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> 
                 -> throw AssertionError(
                     matchResult.description
                 )
+                else -> { }
             }
 
             uiController.loopMainThreadUntilIdle()
