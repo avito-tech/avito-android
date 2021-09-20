@@ -11,6 +11,7 @@ import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.IM
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.TEST_IMPLEMENTATION
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.platformProject
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.typesafeProjectAccessor
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class ImpactAnalysisTest {
+internal class ImpactAnalysisTest {
 
     private lateinit var projectDir: File
 
@@ -190,6 +191,37 @@ class ImpactAnalysisTest {
                     dependencies = setOf(
                         project(":feature_a"),
                         project(":feature_b")
+                    )
+                ),
+                AndroidLibModule("feature_a"),
+                AndroidLibModule("feature_b")
+            )
+        )
+        with(projectDir) {
+            checkoutSourceBranch()
+            file("feature_a/$KOTLIN_SOURCE_SET/SomeClass.kt").mutate()
+            commit()
+        }
+        val result = detectChanges()
+
+        result.assertMarkedModules(
+            projectDir,
+            implementation = setOf("feature_a", "app"),
+            unitTests = setOf("feature_a", "app"),
+            androidTests = setOf("feature_a", "app")
+        )
+    }
+
+    @Test
+    fun `transitive changes - changed implementation dependency - with typesafe accessor`() {
+        generateProject(
+            modules = listOf(
+                AndroidAppModule("standalone_app"),
+                AndroidAppModule(
+                    name = "app",
+                    dependencies = setOf(
+                        typesafeProjectAccessor("featureA"),
+                        typesafeProjectAccessor("featureB"),
                     )
                 ),
                 AndroidLibModule("feature_a"),
