@@ -21,7 +21,6 @@ import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.utils.BuildFailer
-import com.avito.utils.buildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -193,6 +192,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             fetchLogcatForIncompleteTests = experiments.fetchLogcatForIncompleteTests,
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
             useLegacyExtensionsV1Beta = experiments.useLegacyExtensionsV1Beta,
+            sendPodsMetrics = experiments.sendPodsMetrics,
         )
 
         val isGradleTestKitRun = gradleTestKitRun.get()

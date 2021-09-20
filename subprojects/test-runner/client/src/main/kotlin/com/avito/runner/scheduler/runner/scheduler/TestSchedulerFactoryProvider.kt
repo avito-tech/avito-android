@@ -114,7 +114,8 @@ public class TestSchedulerFactoryProvider {
                         kubernetesReservationListenerProvider = KubernetesReservationListenerProvider(
                             timeProvider = timeProvider,
                             runnerMetricsConfig = metricsConfig,
-                            loggerFactory = params.loggerFactory
+                            loggerFactory = params.loggerFactory,
+                            sendPodsMetrics = params.sendPodsMetrics,
                         )
                     ),
                     androidDebugBridgeProvider = androidDebugBridgeProvider,

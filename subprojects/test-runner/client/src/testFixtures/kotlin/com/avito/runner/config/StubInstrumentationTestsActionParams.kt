@@ -38,6 +38,7 @@ public fun RunnerInputParams.Companion.createStubInstance(
     fetchLogcatForIncompleteTests: Boolean = false,
     saveTestArtifactsToOutputs: Boolean = false,
     useLegacyExtensionsV1Beta: Boolean = true,
+    sendPodsMetrics: Boolean = true,
 ): RunnerInputParams = RunnerInputParams(
     mainApk = mainApk,
     testApk = testApk,
@@ -61,4 +62,5 @@ public fun RunnerInputParams.Companion.createStubInstance(
     saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
     fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
     useLegacyExtensionsV1Beta = useLegacyExtensionsV1Beta,
+    sendPodsMetrics = sendPodsMetrics,
 )
