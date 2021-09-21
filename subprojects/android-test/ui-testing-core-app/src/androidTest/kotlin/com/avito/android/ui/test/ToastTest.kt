@@ -5,9 +5,9 @@ import com.avito.android.rule.ToastRule
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.R
 import com.avito.android.ui.ToastActivity
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
-import ru.avito.util.assertThrows
 
 class ToastTest {
 
@@ -49,7 +49,7 @@ class ToastTest {
         rule.launchActivity(
             ToastActivity.intent(showSimpleToast = false)
         )
-        assertThrows<AssertionError> {
+        assertThrows(AssertionError::class.java) {
             toast.checks.toastDisplayedWithText("Simple toast")
         }
     }
