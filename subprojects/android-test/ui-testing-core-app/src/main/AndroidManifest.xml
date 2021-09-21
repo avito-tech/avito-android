@@ -8,6 +8,12 @@
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <!-- For checks in [com.avito.android.runner.PlayServices] -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        
         <activity
             android:name=".VisibilityActivity"
             android:exported="true">

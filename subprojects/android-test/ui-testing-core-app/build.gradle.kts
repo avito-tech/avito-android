@@ -41,7 +41,7 @@ android {
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.playServicesMaps)
+    implementation(libs.playServicesBase)
     implementation(libs.recyclerView)
 
     implementation(projects.androidLib.proxyToast)

@@ -4,18 +4,18 @@ import android.view.View
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import com.avito.android.screen.Screen
 import com.avito.android.test.InteractionContext
 import com.avito.android.test.action.Actions
 import com.avito.android.test.action.ActionsDriver
 import com.avito.android.test.espresso.EspressoActions
-import com.avito.android.test.page_object.PageObject
+import com.avito.android.test.page_object.SimpleScreen
 import com.avito.android.test.page_object.ViewElement
 import com.avito.android.ui.R
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class RetryScreen : PageObject(), Screen {
+class RetryScreen : SimpleScreen() {
+
     override val rootId: Int = R.id.activity_retry
 
     val button: FailViewElement = element(withId(R.id.button))
