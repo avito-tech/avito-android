@@ -9,9 +9,9 @@ import com.avito.android.test.util.toBitmap
 import com.avito.android.ui.BitmapActivity
 import com.avito.android.ui.R
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
-import ru.avito.util.assertThrows
 
 class BitmapMatcherTest {
 
@@ -34,7 +34,7 @@ class BitmapMatcherTest {
     fun fails_differentImageSize() {
         val image = getDrawable(R.drawable.ic_check_black_24dp).toBitmap()
 
-        val error = assertThrows<AssertionError> {
+        val error = assertThrows(AssertionError::class.java) {
             Screen.bitmapScreen.imageViewBitmap.checks.withImage(image)
         }
         assertThat(error).hasMessageThat().containsMatch(
@@ -46,7 +46,7 @@ class BitmapMatcherTest {
     fun fails_differentImage() {
         val image = getDrawable(R.drawable.blue).toBitmap()
 
-        val error = assertThrows<AssertionError> {
+        val error = assertThrows(AssertionError::class.java) {
             Screen.bitmapScreen.imageViewVector.checks.withImage(image)
         }
         assertThat(error).hasMessageThat().contains("Bitmaps are different")

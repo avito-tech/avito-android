@@ -1,6 +1,6 @@
 package com.avito.android
 
-import com.avito.utils.fileFromJarResources
+import com.avito.utils.ResourcesReader
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -152,7 +152,7 @@ internal class TestSuiteLoaderIntegrationTest {
      *
      */
     private fun getTestApkWithAnnotationWithValues(): File {
-        return fileFromJarResources<TestSuiteLoaderIntegrationTest>("test-annotation-with-values.apk")
+        return ResourcesReader.readFile("test-annotation-with-values.apk")
     }
 
     /**
@@ -184,7 +184,7 @@ internal class TestSuiteLoaderIntegrationTest {
      * </pre></blockquote>
      */
     private fun getTestApkWithoutAnnotations(): File {
-        return fileFromJarResources<TestSuiteLoaderIntegrationTest>("test-without-annotations.apk")
+        return ResourcesReader.readFile("test-without-annotations.apk")
     }
 
     /**
@@ -218,5 +218,5 @@ internal class TestSuiteLoaderIntegrationTest {
      * }
      * </pre></blockquote>
      */
-    private fun getTestApk() = fileFromJarResources<TestSuiteLoaderIntegrationTest>("test.apk")
+    private fun getTestApk() = ResourcesReader.readFile("test.apk")
 }
