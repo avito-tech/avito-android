@@ -16,8 +16,8 @@ configure<BaseExtension> {
         compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
         defaultConfig {
-            minSdkVersion(libs.versions.minSdk.get().toInt())
-            targetSdkVersion(libs.versions.targetSdk.get().toInt())
+            minSdk = libs.versions.minSdk.get().toInt()
+            targetSdk = libs.versions.targetSdk.get().toInt()
         }
     }
 
