@@ -37,32 +37,38 @@ project.gradle.startParameter.setTaskNames(initialTaskNames + listOf("installGit
 // Register lifecycle tasks in this umbrella build.
 // A user/CI usually only needs these.
 val detektAllTask = tasks.register("detektAll") {
-    gradle.includedBuilds
-        .filterNot { it.name == "build-logic-settings" }
-        .forEach { includedBuild ->
-            dependsOn(includedBuild.task(":detektAll"))
-        }
+    group = taskGroup
+    description = "Run detekt in all included builds"
+
+    dependsOn(includedBuildTasks(":detektAll"))
 }
 
 val compileAll = tasks.register("compileAll") {
     group = taskGroup
     description = "Compiles all available modules in all variants + test/androidTest sources"
 
-    dependsOn(gradle.includedBuilds.map { it.task(":compileAll") })
+    dependsOn(includedBuildTasks(":compileAll"))
 }
 
 val assembleAll = tasks.register("assembleAll") {
     group = taskGroup
     description = "Assemble all components"
 
-    dependsOn(gradle.includedBuilds.map { it.task(":assembleAll") })
+    dependsOn(includedBuildTasks(":assembleAll"))
+}
+
+tasks.register("resolveAndLockAll") {
+    group = taskGroup
+    description = "Resolve all dependencies and write locks"
+
+    dependsOn(includedBuildTasks(":resolveAndLockAll"))
 }
 
 val checkAll = tasks.register("checkAll") {
     group = taskGroup
     description = "Run all tests and static analysis tools"
 
-    dependsOn(gradle.includedBuilds.map { it.task(":checkAll") })
+    dependsOn(includedBuildTasks(":checkAll"))
 
     dependsOn(detektAllTask)
     dependsOn(tasks.named("checkGradleWrappers"))
@@ -74,4 +80,10 @@ tasks.register("build") {
     description = "Build and run all tests (without publishing)"
 
     dependsOn(assembleAll, checkAll)
+}
+
+fun includedBuildTasks(path: String): List<TaskReference> {
+    return gradle.includedBuilds
+        .filter { !it.name.startsWith("build-logic") }
+        .map { it.task(path) }
 }
