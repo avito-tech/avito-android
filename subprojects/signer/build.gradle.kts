@@ -4,6 +4,15 @@ plugins {
     id("convention.gradle-testing")
 }
 
+buildscript {
+    dependencyLocking {
+        lockFile.set(file("$projectDir/locking/buildscript-gradle.lockfile"))
+    }
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
 dependencies {
     implementation(projects.common.files)
     implementation(projects.common.okhttp)
