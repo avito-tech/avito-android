@@ -2,14 +2,16 @@ package com.avito.android.ui.test
 
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.avito.android.test.InteractionContext
-import com.avito.android.test.page_object.PageObject
+import com.avito.android.test.page_object.SimpleScreen
 import com.avito.android.test.page_object.ViewElement
 import com.avito.android.test.page_object.ViewPagerElement
 import com.avito.android.ui.R
 
-class ViewPagerScreen : PageObject() {
+class ViewPagerScreen : SimpleScreen() {
 
-    val pager: Pager = element(withId(R.id.view_pager))
+    override val rootId: Int = R.id.view_pager
+
+    val pager: Pager = element(withId(rootId))
 
     class Pager(interactionContext: InteractionContext) : ViewPagerElement(interactionContext) {
         val currentEvenPage: EvenPage = currentPageElement(withId(R.id.even_page_root))
