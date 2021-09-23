@@ -1,9 +1,15 @@
-import org.gradle.api.artifacts.dsl.LockMode
-
 val taskGroup = "Avito Android build"
 
+val configurationsToLock = setOf("compileClasspath", "runtimeClasspath")
+
+configurations {
+    matching { shouldBeLocked(it) }
+        .configureEach {
+            resolutionStrategy.activateDependencyLocking()
+        }
+}
+
 dependencyLocking {
-    lockAllConfigurations()
     lockMode.set(LockMode.DEFAULT)
     lockFile.set(file("$projectDir/locking/gradle.lockfile"))
 }
@@ -13,14 +19,20 @@ tasks.register("resolveAndLockAll") {
     description = "Resolve all dependencies and write locks"
 
     doFirst {
-        require(gradle.startParameter.isWriteDependencyLocks)
+        require(gradle.startParameter.isWriteDependencyLocks) {
+            "should be called with --write-locks flag"
+        }
     }
 
-    /**
-     * Can't use "resolve" method, probably because of some project misconfiguration,
-     * seems like dependencies will do the same
-     *
-     * see https://docs.gradle.org/current/userguide/dependency_locking.html#lock_all_configurations_in_one_build_execution
-     */
-    dependsOn(tasks.named("dependencies"), tasks.named("buildEnvironment"))
+    doLast {
+        configurations
+            .filter { it.isCanBeResolved && shouldBeLocked(it) }
+            .forEach { it.resolve() }
+    }
+}
+
+fun shouldBeLocked(configuration: Configuration): Boolean {
+    return configurationsToLock.any { confToLock ->
+        configuration.name.contains(confToLock, ignoreCase = true)
+    }
 }
