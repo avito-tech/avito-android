@@ -24,3 +24,9 @@ tasks.register("resolveAndLockAll") {
      */
     dependsOn(tasks.named("dependencies"), tasks.named("buildEnvironment"))
 }
+
+fun shouldBeLocked(configuration: Configuration): Boolean {
+    return configurationsToLock.any { confToLock ->
+        configuration.name.contains(confToLock, ignoreCase = true)
+    }
+}
