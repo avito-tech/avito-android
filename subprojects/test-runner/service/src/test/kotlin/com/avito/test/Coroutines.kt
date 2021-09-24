@@ -2,7 +2,7 @@ package com.avito.test
 
 import kotlinx.coroutines.channels.ReceiveChannel
 
-suspend fun <E> ReceiveChannel<E>.receiveAvailable(): List<E> {
+internal suspend fun <E> ReceiveChannel<E>.receiveAvailable(): List<E> {
     val allMessages = mutableListOf<E>()
 
     allMessages.add(receive())

@@ -243,6 +243,51 @@ internal class DeviceWorkerTest {
         }
 
     @Test
+    fun `fail with device died event - device is freeze before starting a test`() =
+        runBlockingTest {
+            val deviceStateWithoutApplication = State(
+                layers = listOf(
+                    State.Layer.Model(model = "model"),
+                    State.Layer.ApiLevel(api = 22),
+                )
+            )
+            val intentions = listOf(
+                Intention.createStubInstance(
+                    state = deviceStateWithoutApplication,
+                    action = InstrumentationTestRunAction.createStubInstance()
+                )
+            )
+            val freezeDevice = StubDevice(
+                loggerFactory = loggerFactory,
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
+                apiResult = StubActionResult.Success(22),
+                installApplicationResults = emptyList(),
+                gettingDeviceStatusResults = listOf(
+                    DeviceStatus.Alive,
+                    DeviceStatus.Freeze(RuntimeException())
+                ),
+                runTestsResults = emptyList()
+            )
+            val resultsChannel = Channel<DeviceWorkerMessage>(Channel.UNLIMITED)
+            val router = IntentionsRouter(loggerFactory = loggerFactory).apply {
+                intentions.forEach { sendIntention(it) }
+            }
+
+            val worker = provideDeviceWorker(
+                device = freezeDevice,
+                router = router,
+                deviceListener = MessagesDeviceListener(resultsChannel)
+            ).run()
+
+            router.cancel()
+            worker.join()
+
+            freezeDevice.verify()
+
+//            val actualResults = resultsChannel.receiveAvailable()
+        }
+
+    @Test
     fun `returns failed message - device is freeze while processing first intention`() =
         runBlockingTest {
             val compatibleWithDeviceState = State(

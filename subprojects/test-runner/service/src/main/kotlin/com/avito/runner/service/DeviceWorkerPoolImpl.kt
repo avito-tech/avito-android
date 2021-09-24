@@ -62,7 +62,7 @@ internal class DeviceWorkerPoolImpl(
 
                 launch(CoroutineName("send-intentions")) {
                     for (intention in state.intentions) {
-                        logger.debug("received intention: $intention")
+                        println("=== received intention from state: $intention")
                         intentionsRouter.sendIntention(intention = intention)
                     }
                 }
@@ -79,6 +79,7 @@ internal class DeviceWorkerPoolImpl(
                                     "Received worker failed message during executing intention:" +
                                         " ${message.intention}. Rescheduling..."
                                 )
+                                println("=== sendIntention from FailedIntentionProcessing ${message.intention}")
 
                                 intentionsRouter.sendIntention(intention = message.intention)
                             }

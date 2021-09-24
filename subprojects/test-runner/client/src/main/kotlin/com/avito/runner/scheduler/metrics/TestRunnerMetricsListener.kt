@@ -47,10 +47,7 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onIntentionReceived(device: Device, intention: Intention) {
-        val key = device.coordinate
-        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
-            "Can't find DeviceWorkerState for $key"
-        }
+        val state = getWorkerState(device)
         state.testIntentionReceived(intention.testKey(), timeProvider.nowInstant())
     }
 
@@ -63,26 +60,17 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
-        val key = device.coordinate
-        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
-            "Can't find DeviceWorkerState for $key"
-        }
+        val state = getWorkerState(device)
         state.testStarted(intention.testKey(), timeProvider.nowInstant())
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
-        val key = device.coordinate
-        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
-            "Can't find DeviceWorkerState for $key"
-        }
+        val state = getWorkerState(device)
         state.testCompleted(intention.testKey(), timeProvider.nowInstant())
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
-        val key = device.coordinate
-        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
-            "Can't find DeviceWorkerState for $key"
-        }
+        val state = getWorkerState(device)
         state.testIntentionFailed(intention.testKey())
     }
 
@@ -91,12 +79,16 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onFinished(device: Device) {
-        val key = device.coordinate
-        val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
-            "Can't find DeviceWorkerState for $key"
-        }
+        val state = getWorkerState(device)
         val newState = state.finish(timeProvider.nowInstant())
         deviceWorkerStates.replace(state, newState)
+    }
+
+    private fun getWorkerState(device: Device): DeviceWorkerState {
+        val key = device.coordinate
+        return checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
+            "Can't find DeviceWorkerState for $key"
+        }
     }
 
     private fun DeviceWorkerStates.replace(

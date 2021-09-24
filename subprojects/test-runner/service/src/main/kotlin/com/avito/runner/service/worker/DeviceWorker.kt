@@ -57,15 +57,16 @@ internal class DeviceWorker(
             deviceListener.onDeviceCreated(device, state)
 
             try {
-
                 for (intention in intentionsRouter.observeIntentions(state)) {
 
+                    println("=== onIntentionReceived: worker:$this@DeviceWorker, intention: $intention")
                     deviceListener.onIntentionReceived(device, intention)
 
                     when (val status = device.deviceStatus()) {
 
                         is Device.DeviceStatus.Freeze -> {
                             onDeviceDieWhenPrepareState(intention, status.reason)
+                            println("=== status freeze: worker:$this@DeviceWorker, intention: $intention")
                             return@launch
                         }
 
@@ -74,6 +75,7 @@ internal class DeviceWorker(
                             intendedState = intention.state
                         ).onFailure { reason ->
                             onDeviceDieWhenPrepareState(intention, reason)
+                            println("=== prepare failure: worker:$this@DeviceWorker, intention: $intention")
                             return@launch
                         }.onSuccess { newState ->
                             state = newState
@@ -194,11 +196,13 @@ internal class DeviceWorker(
         intention: Intention,
         reason: Throwable
     ) {
+        println("=== onDeviceDieWhenPrepareState.onDeviceDied: worker:$this@DeviceWorker, intention: $intention")
         deviceListener.onDeviceDied(
             device = device,
             message = "DeviceWorker died when prepare device for test execution. Can't process intention: $intention",
             reason = reason
         )
+        println("=== onDeviceDieWhenPrepareState.onIntentionFail: worker:$this@DeviceWorker, intention: $intention")
         deviceListener.onIntentionFail(
             device = device,
             intention = intention,

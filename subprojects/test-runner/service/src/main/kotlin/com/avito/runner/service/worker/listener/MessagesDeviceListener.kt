@@ -29,6 +29,7 @@ internal class MessagesDeviceListener(private val messagesChannel: Channel<Devic
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
+        println("=== onTestCompleted $intention, $result")
         messagesChannel.send(
             DeviceWorkerMessage.Result(
                 intentionResult = IntentionResult(
@@ -42,6 +43,7 @@ internal class MessagesDeviceListener(private val messagesChannel: Channel<Devic
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
+        println("=== onIntentionFail $intention")
         messagesChannel.send(
             DeviceWorkerMessage.FailedIntentionProcessing(
                 t = reason,
@@ -51,6 +53,7 @@ internal class MessagesDeviceListener(private val messagesChannel: Channel<Devic
     }
 
     override suspend fun onDeviceDied(device: Device, message: String, reason: Throwable) {
+        println("=== onDeviceDied $device")
         messagesChannel.send(
             DeviceWorkerMessage.WorkerDied(
                 t = reason,
