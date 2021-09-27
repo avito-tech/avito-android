@@ -1,6 +1,7 @@
 package com.avito.android.build_checks.internal.unique_r
 
 import com.avito.android.build_checks.AndroidAppChecksExtension
+import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck.UniqueRClasses
 import com.avito.android.build_checks.internal.FailedCheckMessage
 import com.avito.android.isAndroidApp
 import com.avito.impact.util.AndroidManifestPackageParser
@@ -65,13 +66,17 @@ internal abstract class UniqueRClassesTask @Inject constructor(
 
         val duplicates = packages.duplicates()
         if (duplicates.isNotEmpty()) {
+            @Suppress("MaxLineLength")
             throw IllegalStateException(
                 FailedCheckMessage(
                     AndroidAppChecksExtension::uniqueRClasses,
                     """
-                    Application ${project.path} has modules with the same package: $duplicates.
+                    Application ${project.path} has dependencies with the same package in AndroidManifest.xml: $duplicates.
                     It leads to unexpected resource overriding.
-                    Please, make packages unique.
+                    
+                    How to fix: 
+                    Make packages in manifests unique.
+                    If this is impossible because of clashes between external dependencies, ignore them in '${AndroidAppChecksExtension::uniqueRClasses.name}.${UniqueRClasses::allowedNonUniquePackageNames.name}' 
                     """
                 ).toString()
             )
