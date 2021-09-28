@@ -122,8 +122,14 @@ __check_defined = \
     $(if $(value $1),, \
       $(error Undefined argument: $1$(if $2, ($2))))
 
-clean:
+clean_build:
 	rm -rf `find . -type d -name build`
+
+clean_configuration_cache:
+	rm -rf .gradle/configuration-cache
+
+clean_build_cache:
+	rm -rf ~/.gradle/caches/build-cache-1/
 
 unsafe_clean:
 	git clean -fdx
