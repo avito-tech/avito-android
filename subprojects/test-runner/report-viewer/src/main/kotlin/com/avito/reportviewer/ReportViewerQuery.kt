@@ -1,5 +1,6 @@
 package com.avito.reportviewer
 
+import androidx.annotation.RequiresApi
 import com.avito.report.model.Team
 import com.github.salomonbrys.kotson.isNotEmpty
 import com.github.salomonbrys.kotson.jsonArray
@@ -7,10 +8,9 @@ import com.github.salomonbrys.kotson.jsonObject
 import com.github.salomonbrys.kotson.plusAssign
 import java.util.Base64
 
-public class ReportViewerQuery {
-
-    // todo use a universal encoder (android / jvm)
-    private val encoder by lazy { Base64.getEncoder() }
+public class ReportViewerQuery(
+    private val base64Encoder: (source: ByteArray) -> String
+) {
 
     /**
      * Result example:
@@ -33,7 +33,7 @@ public class ReportViewerQuery {
 
         return if (query.isNotEmpty()) {
             val resultFilter = jsonObject("filter" to query)
-            "?q=${encoder.encodeToString(resultFilter.toString().toByteArray())}"
+            "?q=${base64Encoder(resultFilter.toString().toByteArray())}"
         } else {
             ""
         }
@@ -53,6 +53,14 @@ public class ReportViewerQuery {
         val query = jsonObject()
         query += "search" to "$testClass::$testMethod"
         val resultFilter = jsonObject("filter" to query)
-        return "?q=${encoder.encodeToString(resultFilter.toString().toByteArray())}"
+        return "?q=${base64Encoder(resultFilter.toString().toByteArray())}"
+    }
+
+    public companion object {
+
+        @RequiresApi(26)
+        public fun createForJvm(): ReportViewerQuery = ReportViewerQuery(
+            base64Encoder = Base64.getEncoder()::encodeToString
+        )
     }
 }

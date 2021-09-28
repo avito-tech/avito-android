@@ -11,6 +11,7 @@ import com.avito.report.model.TestAttempt
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStatus
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
+import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.model.DeviceName
@@ -44,6 +45,7 @@ internal class AvitoReport(
     private val reportViewerLinksGenerator = ReportViewerLinksGeneratorImpl(
         reportViewerUrl = reportViewerUrl,
         reportCoordinates = reportCoordinates,
+        reportViewerQuery = ReportViewerQuery.createForJvm()
     )
 
     override val reportLinksGenerator: ReportLinksGenerator
