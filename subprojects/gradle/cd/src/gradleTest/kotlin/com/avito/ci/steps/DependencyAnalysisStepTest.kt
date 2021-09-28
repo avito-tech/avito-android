@@ -19,7 +19,7 @@ internal class DependencyAnalysisStepTest {
         TestProjectGenerator(
             plugins = plugins {
                 id("com.avito.android.cd")
-                id("com.autonomousapps.dependency-analysis").version("0.74.0")
+                id("com.autonomousapps.dependency-analysis").version("0.78.0")
             },
             modules = listOf(
                 // Don't use arbitrary module due to issue with Kotlin. Didn't find workaround.

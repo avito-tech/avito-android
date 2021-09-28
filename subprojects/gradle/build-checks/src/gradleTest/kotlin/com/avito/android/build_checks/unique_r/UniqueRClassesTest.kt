@@ -124,7 +124,7 @@ internal class UniqueRClassesTest {
 
         build.assertThat()
             .buildFailed()
-            .outputContains("Application :app has modules with the same package: [lib.a]")
+            .outputContains("Application :app has dependencies with the same package in AndroidManifest.xml: [lib.a]")
     }
 
     /**
@@ -167,9 +167,10 @@ internal class UniqueRClassesTest {
 
         val build = runCheck(expectFailure = true)
 
+        @Suppress("MaxLineLength")
         build.assertThat()
             .buildFailed()
-            .outputContains("Application :app has modules with the same package: [lib.package]")
+            .outputContains("Application :app has dependencies with the same package in AndroidManifest.xml: [lib.package]")
     }
 
     private fun runCheck(expectFailure: Boolean = false) = gradlew(

@@ -9,7 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 
-class KeyboardElement : PageObject() {
+class KeyboardElement {
 
     val actions = ActionLibrary()
 

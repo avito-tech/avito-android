@@ -2,11 +2,13 @@ package com.avito.android.ui.test
 
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.avito.android.test.page_object.ImageViewElement
-import com.avito.android.test.page_object.PageObject
+import com.avito.android.test.page_object.SimpleScreen
 import com.avito.android.test.page_object.ViewElement
 import com.avito.android.ui.R
 
-class DrawablesScreen : PageObject() {
+class DrawablesScreen : SimpleScreen() {
+
+    override val rootId: Int = R.id.drawables
 
     val viewWithBackgroundColor: ViewElement = element(withId(R.id.background_view_color))
 
