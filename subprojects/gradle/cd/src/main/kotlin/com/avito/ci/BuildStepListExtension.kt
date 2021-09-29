@@ -5,7 +5,6 @@ import com.avito.android.asRuntimeException
 import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
-import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.CustomTaskStep
 import com.avito.ci.steps.DependencyAnalysisStep
 import com.avito.ci.steps.FlakyReportStep
@@ -39,9 +38,6 @@ public open class BuildStepListExtension(
     private val artifactsConfig = ArtifactsConfiguration()
 
     internal val steps = objects.polymorphicDomainObjectContainer(BuildStep::class.java).apply {
-        registerFactory(ConfigurationCheck::class.java) { name ->
-            ConfigurationCheck(buildStepListName, name)
-        }
         registerFactory(UiTestCheck::class.java) { name ->
             UiTestCheck(buildStepListName, name)
         }
@@ -100,14 +96,6 @@ public open class BuildStepListExtension(
     public val taskDescription: Property<String> = objects.property()
 
     override fun getName(): String = buildStepListName
-
-    public fun configuration(closure: Closure<ConfigurationCheck>) {
-        configureAndAdd("configuration", closure)
-    }
-
-    public fun configuration(action: Action<ConfigurationCheck>) {
-        configureAndAdd("configuration", action)
-    }
 
     public fun uiTests(closure: Closure<UiTestCheck>) {
         configureAndAdd("uiTests", closure)
