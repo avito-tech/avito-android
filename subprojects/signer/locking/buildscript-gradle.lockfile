@@ -36,7 +36,6 @@ com.android.tools:sdk-common:30.0.2=classpath
 com.android.tools:sdklib:30.0.2=classpath
 com.android:signflinger:7.0.2=classpath
 com.android:zipflinger:7.0.2=classpath
-com.fasterxml.jackson:jackson-bom:2.9.10.20210106=classpath
 com.github.gundy:semver4j:0.16.4=classpath
 com.github.salomonbrys.kotson:kotson:2.5.0=classpath
 com.google.android:annotations:4.1.1.4=classpath

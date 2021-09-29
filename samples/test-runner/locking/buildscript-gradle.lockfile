@@ -43,7 +43,6 @@ com.fasterxml.jackson.core:jackson-databind:2.9.10.8=classpath
 com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.10=classpath
 com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.10=classpath
 com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.9.10=classpath
-com.fasterxml.jackson:jackson-bom:2.9.10.20210106=classpath
 com.fkorotkov:kubernetes-dsl:2.7.1=classpath
 com.github.gundy:semver4j:0.16.4=classpath
 com.github.mifmif:generex:1.0.2=classpath
