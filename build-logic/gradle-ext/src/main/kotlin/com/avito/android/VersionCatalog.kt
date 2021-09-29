@@ -9,6 +9,8 @@ import org.gradle.kotlin.dsl.the
  * https://github.com/gradle/gradle/issues/15383
  */
 fun Project.withVersionCatalog(block: (libs: LibrariesForLibs) -> Unit) {
-    val libs = the<LibrariesForLibs>()
-    block.invoke(libs)
+    if (project.name != "gradle-kotlin-dsl-accessors") {
+        val libs = the<LibrariesForLibs>()
+        block.invoke(libs)
+    }
 }
