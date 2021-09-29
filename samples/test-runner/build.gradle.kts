@@ -8,15 +8,6 @@ plugins {
     id("com.avito.android.instrumentation-tests")
 }
 
-buildscript {
-    dependencyLocking {
-        lockFile.set(file("$projectDir/locking/buildscript-gradle.lockfile"))
-    }
-    configurations.classpath {
-        resolutionStrategy.activateDependencyLocking()
-    }
-}
-
 android {
     defaultConfig {
         testInstrumentationRunner = "com.avito.android.test.TestRunner"
