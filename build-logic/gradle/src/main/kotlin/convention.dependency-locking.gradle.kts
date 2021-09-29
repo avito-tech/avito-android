@@ -1,5 +1,3 @@
-import org.gradle.api.artifacts.dsl.LockMode
-
 val taskGroup = "Avito Android build"
 
 dependencyLocking {
@@ -13,7 +11,9 @@ tasks.register("resolveAndLockAll") {
     description = "Resolve all dependencies and write locks"
 
     doFirst {
-        require(gradle.startParameter.isWriteDependencyLocks)
+        require(gradle.startParameter.isWriteDependencyLocks) {
+            "should be called with --write-locks flag"
+        }
     }
 
     /**
