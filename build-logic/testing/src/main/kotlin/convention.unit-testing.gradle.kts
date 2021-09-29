@@ -1,3 +1,4 @@
+import com.avito.android.withVersionCatalog
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
@@ -50,11 +51,7 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-// workaround for https://github.com/gradle/gradle/issues/15383
-if (project.name != "gradle-kotlin-dsl-accessors") {
-
-    val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
-
+project.withVersionCatalog { libs ->
     plugins.withType<KotlinBasePluginWrapper> {
         dependencies {
             add("testImplementation", libs.junitJupiterApi)
