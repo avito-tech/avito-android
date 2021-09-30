@@ -5,8 +5,8 @@ import com.avito.android.runner.annotation.resolver.MethodStringRepresentation.R
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation.Resolution.Method
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation.Resolution.ParseError
 import com.test.fixtures.ClassWithMethod
-import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 class MethodStringRepresentationTest {
@@ -59,7 +59,7 @@ class MethodStringRepresentationTest {
     private fun assertResolution(methodStringRepresentation: String, resolution: Resolution) {
         assertThat(
             MethodStringRepresentation.parseString(methodStringRepresentation),
-            equalTo<Resolution>(resolution)
+            equalTo(resolution)
         )
     }
 }

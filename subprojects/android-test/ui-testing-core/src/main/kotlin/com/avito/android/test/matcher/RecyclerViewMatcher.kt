@@ -2,9 +2,9 @@ package com.avito.android.test.matcher
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers.not
 import org.hamcrest.TypeSafeMatcher
 
 class RecyclerViewMatcher {
