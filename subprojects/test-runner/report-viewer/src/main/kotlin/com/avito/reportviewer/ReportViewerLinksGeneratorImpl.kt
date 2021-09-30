@@ -11,7 +11,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 public class ReportViewerLinksGeneratorImpl(
     reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
-    private val reportViewerQuery: ReportViewerQuery = ReportViewerQuery()
+    private val reportViewerQuery: ReportViewerQuery
 ) : ReportLinksGenerator, TestSuiteNameProvider {
 
     private val host = reportViewerUrl.removeSuffix("/")

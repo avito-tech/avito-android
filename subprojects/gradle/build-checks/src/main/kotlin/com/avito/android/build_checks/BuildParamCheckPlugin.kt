@@ -16,7 +16,6 @@ import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreato
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import org.gradle.api.JavaVersion
@@ -76,7 +75,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 checks = checks,
                 envInfo = envInfo,
                 loggerFactory = loggerFactory,
-                logger = logger,
             )
 
             if (checks.hasInstance<RootProjectCheck.JavaVersion>()) {
@@ -126,7 +124,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         checks: List<Check>,
         envInfo: BuildEnvironmentInfo,
         loggerFactory: LoggerFactory,
-        logger: Logger,
     ) {
         val rootTask = RootTaskCreator(project).getOrCreate()
 
@@ -162,22 +159,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             rootTask {
                 dependsOn(task)
             }
-        }
-
-        if (checks.hasInstance<RootProjectCheck.DynamicDependencies>()) {
-            logger.warn("buildChecks.dynamicDependencies has no effect and should be removed")
-        }
-
-        if (checks.hasInstance<RootProjectCheck.GradleDaemon>()) {
-            logger.warn("buildChecks.gradleDaemon has no effect and should be removed")
-        }
-
-        if (checks.hasInstance<RootProjectCheck.IncrementalKapt>()) {
-            logger.warn("buildChecks.incrementalKapt has no effect and should be removed")
-        }
-
-        if (checks.hasInstance<RootProjectCheck.ModuleTypes>()) {
-            logger.warn("buildChecks.moduleTypes has no effect and should be removed")
         }
     }
 }

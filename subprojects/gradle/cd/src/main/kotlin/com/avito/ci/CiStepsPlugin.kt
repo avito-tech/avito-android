@@ -27,7 +27,7 @@ public class CiStepsPlugin : Plugin<Project> {
         project.extensions.add("builds", buildContainer)
 
         if (project.buildEnvironment !is BuildEnvironment.CI) {
-            logger.warn("The plugin is applied but it's disabled. Add -Pci=true to enable the plugin")
+            logger.info("The plugin is applied but it's disabled. Add -Pci=true to enable the plugin")
             return
         }
 
