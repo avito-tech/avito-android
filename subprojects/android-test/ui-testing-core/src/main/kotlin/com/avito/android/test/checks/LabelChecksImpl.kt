@@ -13,6 +13,7 @@ import com.avito.android.test.matcher.TextMatchers
 import com.avito.android.test.matcher.TextViewLinesMatcher
 import com.avito.android.test.matcher.WithHintEndingMatcher
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
@@ -20,7 +21,6 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.equalToIgnoringCase
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.startsWith
-import org.hamcrest.core.AllOf
 
 class LabelChecksImpl(private val driver: ChecksDriver) : LabelChecks {
 
@@ -127,7 +127,7 @@ class LabelChecksImpl(private val driver: ChecksDriver) : LabelChecks {
     private fun displayedAndMatchedWith(matcher: Matcher<View>) {
         driver.check(
             matches(
-                AllOf.allOf(
+                Matchers.allOf(
                     isDisplayed(),
                     matcher
                 )

@@ -28,7 +28,7 @@ import com.avito.android.test.espresso.action.click.inProcessClickAction
 import com.avito.android.test.espresso.action.click.inProcessLongClickAction
 import com.avito.android.test.espresso.action.scroll.ScrollToIfPossibleAction
 import org.hamcrest.Matcher
-import org.hamcrest.core.IsAnything
+import org.hamcrest.Matchers
 
 // TODO: make internal
 object EspressoActions {
@@ -95,7 +95,7 @@ object EspressoActions {
                         override fun getDescription(): String =
                             "fake fail action after click interpreted as long click"
 
-                        override fun getConstraints(): Matcher<View> = IsAnything()
+                        override fun getConstraints(): Matcher<View> = Matchers.any(View::class.java)
 
                         override fun perform(uiController: UiController?, view: View?) {
                             throw PerformException.Builder()

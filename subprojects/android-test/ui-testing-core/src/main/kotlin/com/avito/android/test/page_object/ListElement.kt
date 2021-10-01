@@ -39,11 +39,11 @@ import com.avito.android.test.matcher.RecyclerViewMatcher
 import com.avito.android.test.matcher.ViewGroupMatcher
 import com.forkingcode.espresso.contrib.DescendantViewActions
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.TypeSafeMatcher
-import org.hamcrest.core.AnyOf.anyOf
 
 open class ListElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
@@ -68,7 +68,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             .newInstance(
                 RecyclerViewInteractionContext(
                     interactionContext = interactionContext,
-                    cellMatcher = anyOf(hasDescendant(matcher), matcher),
+                    cellMatcher = Matchers.anyOf(hasDescendant(matcher), matcher),
                     childMatcher = matcher,
                     position = position,
                     needScroll = needScroll

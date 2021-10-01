@@ -17,7 +17,7 @@ import com.avito.android.test.checks.ChecksImpl
 import com.avito.android.test.espresso.EspressoActions
 import com.avito.android.test.matcher.IsRefreshingMatcher
 import org.hamcrest.Matcher
-import org.hamcrest.core.Is.`is`
+import org.hamcrest.Matchers.`is`
 
 class SwipeRefreshElement(
     interactionContext: InteractionContext
