@@ -134,6 +134,5 @@ pluginManagement {
 plugins {
     id("convention-plugins")
     id("convention-scan")
-    id("convention-cache")
     id("convention-dependencies")
 }

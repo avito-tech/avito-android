@@ -46,6 +46,5 @@ dependencyResolutionManagement {
     }
 }
 
-include("cache-plugin")
 include("dependency-plugin")
 include("scan-plugin")

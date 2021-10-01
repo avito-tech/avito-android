@@ -10,7 +10,16 @@ pluginManagement {
 plugins {
     id("convention-plugins")
     id("convention-scan")
-    id("convention-cache")
+}
+
+buildCache {
+    remote<HttpBuildCache> {
+        setUrl("http://localhost:5071/cache/") // local cache node to test
+        isEnabled = true
+        isPush = false
+        isAllowUntrustedServer = true
+        isAllowInsecureProtocol = true
+    }
 }
 
 includeBuild("build-logic")
