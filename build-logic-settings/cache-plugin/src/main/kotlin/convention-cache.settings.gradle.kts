@@ -1,3 +1,4 @@
+// See also duplicated settings in parent project
 @Suppress("UnstableApiUsage")
 val avitoGithubRemoteCacheHost: Provider<String> = settings.providers
     .environmentVariable("GRADLE_CACHE_NODE_HOST")
