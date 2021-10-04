@@ -12,7 +12,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.containsString
 import java.util.concurrent.TimeUnit
 
-open class WebView(private val webViewMatcher: Matcher<View>) : PageObject() {
+open class WebView(private val webViewMatcher: Matcher<View>) {
 
     private val interaction: Web.WebInteraction<Void>
         get() = Web.onWebView(webViewMatcher)
@@ -39,7 +39,7 @@ open class WebView(private val webViewMatcher: Matcher<View>) : PageObject() {
     inner class WebViewElement(
         private val elementMatcher: Atom<ElementReference>,
         private val timeoutSeconds: Long
-    ) : PageObject() {
+    ) {
 
         val actions: WebElementActions
             get() = WebElementActions(

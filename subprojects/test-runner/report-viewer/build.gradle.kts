@@ -10,6 +10,7 @@ dependencies {
     api(projects.common.okhttp)
     api(projects.common.result)
     api(projects.testRunner.report)
+    api(libs.androidAnnotations)
 
     implementation(libs.kotson)
     implementation(projects.common.httpClient)

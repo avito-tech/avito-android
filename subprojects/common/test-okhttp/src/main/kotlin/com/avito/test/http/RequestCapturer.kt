@@ -5,7 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.StringContains
+import org.hamcrest.Matchers.containsString
 
 public class RequestCapturer(
     public val requestMatcher: RequestData.() -> Boolean
@@ -37,14 +37,14 @@ public class RequestCapturer(
         )
 
         public fun pathContains(substring: String): RequestChecks {
-            assertThat(requestData.path, StringContains(substring))
+            assertThat(requestData.path, containsString(substring))
             return this
         }
 
         public fun bodyContains(vararg substrings: String): RequestChecks {
             substrings.forEach {
                 waitForAssertion {
-                    assertThat(requestData.body, StringContains(it))
+                    assertThat(requestData.body, containsString(it))
                 }
             }
             return this

@@ -16,7 +16,6 @@ android {
         versionName = "1.0"
         versionCode = 1
         testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
-        targetSdk = 30 // TODO: update for all modules in MBS-9389
 
         val instrumentationArgs = mapOf<String, String>(
             "planSlug" to "AndroidTestApp",
@@ -26,7 +25,7 @@ android {
         )
 
         // These arguments are updated in IDE configuration only after sync!
-        testInstrumentationRunnerArguments(instrumentationArgs)
+        testInstrumentationRunnerArguments.putAll(instrumentationArgs)
     }
 
     testOptions {
@@ -34,14 +33,14 @@ android {
     }
 
     packagingOptions {
-        pickFirst("META-INF/okhttp.kotlin_module")
+        resources.pickFirsts.add("META-INF/okhttp.kotlin_module")
     }
 }
 
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.playServicesMaps)
+    implementation(libs.playServicesBase)
     implementation(libs.recyclerView)
 
     implementation(projects.androidLib.proxyToast)

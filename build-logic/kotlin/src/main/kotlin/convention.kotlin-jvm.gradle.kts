@@ -3,6 +3,7 @@ import java.util.jar.Attributes
 plugins {
     id("kotlin")
     id("convention.kotlin-base")
+    id("convention.dependency-locking")
 }
 
 kotlin {

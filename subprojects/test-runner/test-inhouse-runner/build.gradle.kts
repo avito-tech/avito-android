@@ -31,7 +31,7 @@ dependencies {
     implementation(projects.common.time)
     implementation(projects.logger.androidLog)
     implementation(projects.androidTest.uiTestingCore)
-    implementation(projects.androidTest.uiTestingMaps)
+    implementation(libs.playServicesBase)
     implementation(projects.androidTest.instrumentation)
     implementation(projects.testRunner.testReport)
     implementation(libs.androidXTestRunner)

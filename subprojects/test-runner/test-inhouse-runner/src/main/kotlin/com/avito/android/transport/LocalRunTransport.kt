@@ -1,6 +1,7 @@
 package com.avito.android.transport
 
 import android.os.Looper
+import android.util.Base64
 import com.avito.android.Result
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
@@ -15,6 +16,7 @@ import com.avito.report.model.Entry
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
+import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.model.DeviceName
@@ -35,7 +37,8 @@ internal class LocalRunTransport(
 
     private val reportLinksGenerator: ReportLinksGenerator = ReportViewerLinksGeneratorImpl(
         reportViewerUrl = reportViewerUrl,
-        reportCoordinates = reportCoordinates
+        reportCoordinates = reportCoordinates,
+        reportViewerQuery = ReportViewerQuery.createForAndroidRuntime()
     )
 
     override fun sendReport(state: Started) {
@@ -116,4 +119,8 @@ internal class LocalRunTransport(
     ): FutureValue<Entry.File> {
         return remoteStorageTransport.sendContent(test, content, type, comment)
     }
+
+    private fun ReportViewerQuery.Companion.createForAndroidRuntime() = ReportViewerQuery(
+        base64Encoder = { Base64.encodeToString(it, Base64.DEFAULT) }
+    )
 }

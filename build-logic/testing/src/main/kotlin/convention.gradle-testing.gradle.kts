@@ -1,3 +1,4 @@
+import com.avito.android.withVersionCatalog
 import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.configurationcache.extensions.serviceOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -79,9 +80,7 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 var compileSdkVersion: Int? = null
 var buildToolsVersion: String? = null
 
-// workaround for https://github.com/gradle/gradle/issues/15383
-if (project.name != "gradle-kotlin-dsl-accessors") {
-    val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
+project.withVersionCatalog { libs ->
     compileSdkVersion = libs.versions.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
 }
