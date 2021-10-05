@@ -2,7 +2,7 @@
 kotlin = "1.5.21"
 agp = "7.0.2"
 # formula: 23 + agp version
-androidTools = "30.0.1"
+androidTools = "30.0.2"
 okhttp = "4.9.0"
 retrofit = "2.9.0"
 androidX = "1.0.0"
@@ -12,10 +12,11 @@ androidXTest = "1.4.0"
 detekt = "1.18.0"
 buildTools = "30.0.3"
 compileSdk = "30"
-targetSdk = "29"
+targetSdk = "30"
 minSdk = "21"
-junit5 = "5.7.2"
-junit5Platform = "1.7.2"
+junit5 = "5.8.0"
+junit5Platform = "1.8.0"
+hamcrest = "2.2"
 hamcrest = "2.2"
 
 [libraries]
@@ -56,7 +57,7 @@ appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidX" 
 material = { module = "com.google.android.material:material", version.ref = "androidX" }
 recyclerView = "androidx.recyclerview:recyclerview:1.1.0"
 androidAnnotations = "androidx.annotation:annotation:1.1.0"
-playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
+playServicesBase = "com.google.android.gms:play-services-base:17.0.0"
 
 officialKubernetesClient = "io.kubernetes:client-java:8.0.0"
 kubernetesClient = "io.fabric8:kubernetes-client:4.9.0"
@@ -71,7 +72,7 @@ espressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = 
 espressoWeb = { module = "androidx.test.espresso:espresso-web", version.ref = "espresso" }
 espressoIntents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso" }
 espressoDescendantActions = "com.forkingcode.espresso.contrib:espresso-descendant-actions:1.4.0"
-radiography = "com.squareup.radiography:radiography:2.4.0"
+radiography = "com.squareup.radiography:radiography:2.4.1"
 rx3Ilder = "com.squareup.rx.idler:rx3-idler:0.11.0"
 r8 = "com.android.tools:r8:2.2.41"
 proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
@@ -90,7 +91,7 @@ antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
 okhttpMock = "com.github.gmazzo:okhttp-mock:1.4.0"
 kotlinTest = "io.kotlintest:kotlintest:2.0.7"
 coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-nebulaIntegTest = "com.netflix.nebula:nebula-project-plugin:8.0.0"
+nebulaIntegTest = "com.netflix.nebula:nebula-project-plugin:9.1.1"
 testRetryGradle = "org.gradle:test-retry-gradle-plugin:1.3.1"
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }

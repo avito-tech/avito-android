@@ -1,8 +1,8 @@
 package com.avito.test.summary
 
-import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
+import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.slack.ConjunctionMessagePredicate
@@ -49,13 +49,16 @@ public abstract class FlakyReportTask : DefaultTask() {
     @get:Internal
     public abstract val reportViewerUrl: Property<String>
 
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
+
     @TaskAction
     public fun doWork() {
         val flakyTestInfo = FlakyTestInfo()
 
         flakyTestInfo.addReport(reportsApi.get().getTestsForRunId(reportCoordinates.get()))
 
-        val loggerFactory: LoggerFactory = GradleLoggerFactory.fromTask(this)
+        val loggerFactory: LoggerFactory = loggerFactory.get()
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         createFlakyTestReporter(
@@ -80,7 +83,11 @@ public abstract class FlakyReportTask : DefaultTask() {
         loggerFactory: LoggerFactory,
         timeProvider: TimeProvider
     ): FlakyTestReporterImpl {
-        val reportViewerLinksGenerator = ReportViewerLinksGeneratorImpl(reportViewerUrl, reportCoordinates)
+        val reportViewerLinksGenerator = ReportViewerLinksGeneratorImpl(
+            reportViewerUrl,
+            reportCoordinates,
+            ReportViewerQuery.createForJvm()
+        )
         return FlakyTestReporterImpl(
             slackClient = SlackConditionalSender(
                 slackClient = slackClient.get(),

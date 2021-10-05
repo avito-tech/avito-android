@@ -5,6 +5,7 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
+    implementation(projects.gradleExt)
     implementation(libs.kotlinGradle)
     implementation(libs.nebulaIntegTest)
     implementation(libs.testRetryGradle)

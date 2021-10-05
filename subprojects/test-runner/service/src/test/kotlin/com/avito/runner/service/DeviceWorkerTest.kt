@@ -25,7 +25,7 @@ import com.avito.runner.service.worker.listener.MessagesDeviceListener
 import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.test.TestDispatcher
 import com.avito.test.receiveAvailable
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -322,7 +322,7 @@ internal class DeviceWorkerTest {
                 DeviceLogListener(StubLogger("${device.coordinate}"))
             )
         ),
-        timeProvider = StubTimeProvider(),
+        timeProvider = DefaultTimeProvider(),
         dispatchers = TestDispatcher
     )
 }

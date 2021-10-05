@@ -47,11 +47,7 @@ internal class ConfigurationTest {
                 javaVersion { enabled = false }
                 androidSdk { enabled = false }
                 macOSLocalhost { enabled = false }
-                dynamicDependencies { enabled = false }
-                gradleDaemon { enabled = false }
-                moduleTypes { enabled = false }
                 gradleProperties { enabled = false }
-                incrementalKapt { enabled = false }
             """
         ).runChecks()
 

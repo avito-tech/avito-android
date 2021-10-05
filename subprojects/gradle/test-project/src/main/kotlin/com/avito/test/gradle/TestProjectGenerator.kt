@@ -66,6 +66,15 @@ public class TestProjectGenerator(
     override val useKts: Boolean = false,
     public val localBuildCache: File? = null,
     public val androidHome: String? = null,
+    /**
+     * https://docs.gradle.org/current/userguide/build_environment.html#sec:configuring_jvm_memory
+     * default is -Xmx512m "-XX:MaxMetaspaceSize=256m
+     * bumped because of Metaspace issues
+     * https://github.com/gradle/gradle/issues/10527
+     */
+    public val gradleProperties: Map<String, String> = mapOf(
+        "org.gradle.jvmargs" to "-Xmx1g -XX:MaxMetaspaceSize=512m"
+    )
 ) : Module {
 
     private val logger: Logger = StubLoggerFactory.create<TestProjectGenerator>()
@@ -107,6 +116,8 @@ pluginManagement {
     ${repositories()}
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "${this@TestProjectGenerator.name}"
 
 ${generateIncludes(modules, "")}
@@ -135,6 +146,15 @@ buildCache {
                         *build/
                         """.trimIndent()
             )
+
+            FileOutputStream(file("gradle.properties")).use { file ->
+                Properties().run {
+                    gradleProperties.forEach { (key, value) ->
+                        setProperty(key, value)
+                    }
+                    store(file, null)
+                }
+            }
 
             FileOutputStream(file("local.properties")).use { file ->
                 Properties().run {

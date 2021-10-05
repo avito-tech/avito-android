@@ -122,8 +122,14 @@ __check_defined = \
     $(if $(value $1),, \
       $(error Undefined argument: $1$(if $2, ($2))))
 
-clean:
+clean_build:
 	rm -rf `find . -type d -name build`
+
+clean_configuration_cache:
+	rm -rf .gradle/configuration-cache
+
+clean_build_cache:
+	rm -rf ~/.gradle/caches/build-cache-1/
 
 unsafe_clean:
 	git clean -fdx
@@ -145,9 +151,6 @@ clear_docker_containers:
 	docker container rm --force $(containers); \
 	fi
 
-help:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) help
-
 publish_to_maven_local:
 	$(docker_command) ./gradlew --project-dir $(project) $(params) publishToMavenLocal -PprojectVersion=local --no-configuration-cache
 
@@ -160,40 +163,18 @@ stage_ui_tests:
 test_runner_instrumentation:
 	$(docker_command) ./gradlew --project-dir samples $(params) :test-runner:instrumentationUi --no-daemon
 
-unit_tests:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) test
-
-gradle_test:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) gradleTest
-
-integration_tests:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) integrationTest
-
-compile_tests:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) compileTestKotlin
-
 compile:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll
+	$(docker_command) ./gradlew $(params) compileAll
+
+assemble:
+	$(docker_command) ./gradlew $(params) assembleAll
 
 check:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) check
+	$(docker_command) ./gradlew $(params) checkAll
 
 .PHONY: build
 build:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) build
-
-fast_check:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test
-
-full_check:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test gradleTest
-
-clean_fast_check:
-	make clean
-	$(docker_command) ./gradlew --project-dir $(project) $(params) compileAll detektAll test --rerun-tasks --no-build-cache
-
-detekt:
-	$(docker_command) ./gradlew $(params) detektAll --no-configuration-cache
+	$(docker_command) ./gradlew $(params) build
 
 # Analyze modules dependencies issues
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/wiki/Tasks#build-health

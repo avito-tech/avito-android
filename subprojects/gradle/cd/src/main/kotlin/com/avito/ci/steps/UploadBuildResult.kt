@@ -11,8 +11,10 @@ import com.avito.instrumentation.extractReportCoordinates
 import com.avito.instrumentation.extractReportViewerUrl
 import com.avito.instrumentation.instrumentationTask
 import com.avito.kotlin.dsl.namedOrNull
+import com.avito.logger.GradleLoggerFactory
 import com.avito.report.ReportLinksGenerator
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
+import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.upload_to_googleplay.deployTaskName
 import org.gradle.api.Project
@@ -57,6 +59,13 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
                 this.jobSlug.set(reportCoordinates.jobSlug)
                 this.runId.set(reportCoordinates.runId)
 
+                loggerFactory.set(
+                    GradleLoggerFactory.fromTask(
+                        project = project,
+                        taskName = this.name,
+                    )
+                )
+
                 project.tasks.namedOrNull(deployTaskName)?.also { deployTask -> dependsOn(deployTask) }
 
                 mustRunAfter(project.tasks.artifactoryAppBackupTask())
@@ -75,6 +84,7 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
         reportCoordinates: ReportCoordinates
     ): ReportLinksGenerator = ReportViewerLinksGeneratorImpl(
         reportViewerUrl = reportViewerUrl,
-        reportCoordinates = reportCoordinates
+        reportCoordinates = reportCoordinates,
+        reportViewerQuery = ReportViewerQuery.createForJvm()
     )
 }

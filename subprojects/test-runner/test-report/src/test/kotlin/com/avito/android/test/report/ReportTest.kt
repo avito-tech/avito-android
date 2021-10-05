@@ -5,7 +5,7 @@ import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentElement
-import com.avito.time.TimeMachineProvider
+import com.avito.time.DefaultTimeProvider
 import com.avito.truth.ExtendedIterableSubject.Companion.assertIterable
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
@@ -14,18 +14,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
-import java.util.concurrent.TimeUnit
 
 @Suppress("MaxLineLength")
 @ExtendWith(StepDslExtension::class)
 class ReportTest {
 
-    private val timeMachine = TimeMachineProvider()
-
     @JvmField
     @RegisterExtension
     val report = ReportTestExtension(
-        timeProvider = timeMachine
+        timeProvider = DefaultTimeProvider()
     )
 
     @BeforeEach
@@ -221,13 +218,11 @@ class ReportTest {
             report.addComment(
                 "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
             )
-            timeMachine.moveForwardOn(1, TimeUnit.SECONDS)
             repeat(2) {
                 report.addComment(
                     "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
                 )
             }
-            timeMachine.moveForwardOn(1, TimeUnit.SECONDS)
             report.addComment(
                 "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
             )

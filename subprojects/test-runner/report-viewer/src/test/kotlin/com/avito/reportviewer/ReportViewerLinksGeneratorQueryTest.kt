@@ -8,7 +8,10 @@ internal class ReportViewerLinksGeneratorQueryTest {
 
     @Test
     fun test() {
-        assertThat(ReportViewerQuery().createQuery(onlyFailures = true, team = Team("messenger")))
+        val query = ReportViewerQuery.createForJvm()
+            .createQuery(onlyFailures = true, team = Team("messenger"))
+
+        assertThat(query)
             .isEqualTo("?q=eyJmaWx0ZXIiOnsic3VjY2VzcyI6MCwic2tpcCI6MCwiZ3JvdXBzIjpbIm1lc3NlbmdlciJdfX0=")
     }
 }

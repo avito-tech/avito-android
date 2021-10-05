@@ -1,5 +1,5 @@
+import com.avito.android.withVersionCatalog
 import io.gitlab.arturbosch.detekt.Detekt
-import org.gradle.accessors.dm.LibrariesForLibs
 
 plugins {
     /**
@@ -11,9 +11,7 @@ plugins {
 }
 
 // workaround for https://github.com/gradle/gradle/issues/15383
-if (project.name != "gradle-kotlin-dsl-accessors") {
-    val libs = the<LibrariesForLibs>()
-
+project.withVersionCatalog { libs ->
     dependencies {
         detektPlugins(libs.detektFormatting)
     }

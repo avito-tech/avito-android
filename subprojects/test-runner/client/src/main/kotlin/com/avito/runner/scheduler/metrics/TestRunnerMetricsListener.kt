@@ -2,7 +2,6 @@ package com.avito.runner.scheduler.metrics
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.runner.scheduler.metrics.model.DeviceKey
 import com.avito.runner.scheduler.metrics.model.DeviceWorkerState
 import com.avito.runner.scheduler.metrics.model.TestKey
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -39,16 +38,16 @@ internal class TestRunnerMetricsListener(
                 DeviceWorkerState.Created(
                     created = timeProvider.nowInstant(),
                     testExecutionStates = ConcurrentHashMap.newKeySet(),
-                    key = device.key()
+                    key = device.coordinate
                 )
             )
         ) {
-            "Device ${device.key()} already called onDeviceCreated"
+            "Device ${device.coordinate} already called onDeviceCreated"
         }
     }
 
     override suspend fun onIntentionReceived(device: Device, intention: Intention) {
-        val key = device.key()
+        val key = device.coordinate
         val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
             "Can't find DeviceWorkerState for $key"
         }
@@ -64,7 +63,7 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
-        val key = device.key()
+        val key = device.coordinate
         val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
             "Can't find DeviceWorkerState for $key"
         }
@@ -72,7 +71,7 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
-        val key = device.key()
+        val key = device.coordinate
         val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
             "Can't find DeviceWorkerState for $key"
         }
@@ -80,7 +79,7 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
-        val key = device.key()
+        val key = device.coordinate
         val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
             "Can't find DeviceWorkerState for $key"
         }
@@ -92,7 +91,7 @@ internal class TestRunnerMetricsListener(
     }
 
     override suspend fun onFinished(device: Device) {
-        val key = device.key()
+        val key = device.coordinate
         val state = checkNotNull(deviceWorkerStates.singleOrNull { it.key == key }) {
             "Can't find DeviceWorkerState for $key"
         }
@@ -142,8 +141,6 @@ internal class TestRunnerMetricsListener(
             sendDevicesIdle(provider.devicesIdle())
         }
     }
-
-    private fun Device.key() = DeviceKey(coordinate.serial.value)
 
     private fun Intention.testKey() = TestKey(action.test, action.executionNumber)
 

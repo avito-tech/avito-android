@@ -4,10 +4,7 @@ import android.view.View
 
 /**
  * Single "screen" of an app
- * Could be activity or fragment or view based
- *
- * Also used for navigation drawer and dialogs for now
- * todo consider separate interface?
+ * Could be activity, fragment, dialog or view
  */
 interface Screen {
 
@@ -17,9 +14,7 @@ interface Screen {
      */
     val rootId: Int
 
-    // TODO: remove default implementation after migrating clients to specific implementations in MBS-11808
     val checks: ScreenChecks
-        get() = StrictScreenChecks(screen = this, checkOnEachScreenInteraction = false)
 
     companion object {
 

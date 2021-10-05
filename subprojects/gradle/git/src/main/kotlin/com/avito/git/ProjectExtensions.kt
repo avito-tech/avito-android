@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage", "MoveVariableDeclarationIntoWhen")
+@file:Suppress("MoveVariableDeclarationIntoWhen")
 
 package com.avito.git
 

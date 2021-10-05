@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.git
 
 public interface GitState {

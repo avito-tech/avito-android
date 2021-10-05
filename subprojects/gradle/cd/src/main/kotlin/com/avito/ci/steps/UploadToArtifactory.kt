@@ -5,6 +5,7 @@ import com.avito.android.androidAppExtension
 import com.avito.android.plugin.artifactory.appBackupExtension
 import com.avito.android.plugin.artifactory.artifactoryAndroidArtifactsBuildVariants
 import com.avito.android.plugin.artifactory.artifactoryAppBackupTask
+import com.avito.capitalize
 import com.avito.cd.cdBuildConfig
 import com.avito.utils.gradle.envArgs
 import org.gradle.api.Project

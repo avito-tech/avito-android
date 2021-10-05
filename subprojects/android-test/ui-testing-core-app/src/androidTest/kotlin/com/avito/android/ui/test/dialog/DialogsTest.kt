@@ -4,9 +4,9 @@ import androidx.test.espresso.NoMatchingRootException
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.DialogsActivity
 import com.avito.android.ui.test.Screen
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
-import ru.avito.util.assertThrows
 
 class DialogsTest {
 
@@ -24,7 +24,7 @@ class DialogsTest {
     fun check_regular_window__fail__matcher_with_dialog_root() {
         rule.launchActivity(null)
 
-        assertThrows<NoMatchingRootException> {
+        assertThrows(NoMatchingRootException::class.java) {
             DialogScreenWithDialogRoot().label.checks.isDisplayed()
         }
     }
@@ -33,7 +33,7 @@ class DialogsTest {
     fun check_regular_window__fail__matcher_with_popup_window() {
         rule.launchActivity(null)
 
-        assertThrows<NoMatchingRootException> {
+        assertThrows(NoMatchingRootException::class.java) {
             DialogScreenWithPopupRoot().label.checks.isDisplayed()
         }
     }
@@ -44,7 +44,7 @@ class DialogsTest {
             DialogsActivity.intent(openDialog = true)
         )
         // Espresso pick's wrongly dialog window
-        assertThrows<AssertionError> {
+        assertThrows(AssertionError::class.java) {
             Screen.dialogsScreen.label.checks.isDisplayed()
         }
     }

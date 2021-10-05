@@ -1,5 +1,6 @@
 package com.avito.runner.scheduler.metrics.model
 
+import com.avito.runner.service.worker.device.DeviceCoordinate
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
@@ -7,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal sealed class DeviceWorkerState {
 
     abstract val created: Instant
-    abstract val key: DeviceKey
+    abstract val key: DeviceCoordinate
     protected abstract val testExecutionStates: ConcurrentHashMap.KeySetView<TestExecutionState, Boolean>
 
     fun testExecutionStates(): Set<TestExecutionState> {
@@ -35,7 +36,7 @@ internal sealed class DeviceWorkerState {
     class Created(
         override val created: Instant,
         override val testExecutionStates: ConcurrentHashMap.KeySetView<TestExecutionState, Boolean>,
-        override val key: DeviceKey,
+        override val key: DeviceCoordinate,
     ) : DeviceWorkerState() {
 
         override fun testIntentionReceived(testKey: TestKey, time: Instant) {
@@ -81,7 +82,7 @@ internal sealed class DeviceWorkerState {
         override val created: Instant,
         override val testExecutionStates: ConcurrentHashMap.KeySetView<TestExecutionState, Boolean>,
         val finished: Instant,
-        override val key: DeviceKey,
+        override val key: DeviceCoordinate,
     ) : DeviceWorkerState() {
 
         val livingTime: Duration = Duration.between(created, finished)

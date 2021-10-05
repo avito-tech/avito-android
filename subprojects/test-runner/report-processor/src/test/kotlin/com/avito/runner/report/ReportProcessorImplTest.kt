@@ -22,7 +22,7 @@ import com.avito.runner.model.timeout
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.test.model.TestName
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,7 +36,6 @@ internal class ReportProcessorImplTest {
     private val loggerFactory = StubLoggerFactory
     private val artifactsUploader = StubTestArtifactsUploader()
     private val logcatProcessor = LogcatProcessor.Impl(artifactsUploader, Stub)
-    private val timeProvider = StubTimeProvider()
     private val reportSerializer = ReportSerializer()
 
     @Test
@@ -154,7 +153,7 @@ internal class ReportProcessorImplTest {
                 dispatcher = dispatcher
             ),
             logcatProcessor = logcatProcessor,
-            timeProvider = timeProvider,
+            timeProvider = DefaultTimeProvider(),
             dispatcher = dispatcher
         )
     }

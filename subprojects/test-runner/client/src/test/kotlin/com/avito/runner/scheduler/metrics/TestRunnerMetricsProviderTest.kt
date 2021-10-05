@@ -3,8 +3,9 @@ package com.avito.runner.scheduler.metrics
 import com.avito.runner.scheduler.metrics.model.DeviceWorkerState
 import com.avito.runner.scheduler.metrics.model.addCompletedTestExecution
 import com.avito.runner.scheduler.metrics.model.createFinishedStubInstance
-import com.avito.runner.scheduler.metrics.model.toDeviceKey
 import com.avito.runner.scheduler.metrics.model.toTestKey
+import com.avito.runner.service.worker.device.DeviceCoordinate
+import com.avito.runner.service.worker.device.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -15,7 +16,7 @@ internal class TestRunnerMetricsProviderTest {
     @Test
     fun `initial delay - is diff between suite start and first test start`() {
         val states = setOf<DeviceWorkerState>(
-            DeviceWorkerState.createFinishedStubInstance("12345".toDeviceKey()) {
+            DeviceWorkerState.createFinishedStubInstance(DeviceCoordinate.Local.createStubInstance()) {
                 addCompletedTestExecution(
                     testKey = "test1".toTestKey(),
                     intentionReceived = Instant.ofEpochMilli(10),
@@ -43,7 +44,7 @@ internal class TestRunnerMetricsProviderTest {
     @Test
     fun `end delay - is diff between last test finish and suite finish`() {
         val states = setOf<DeviceWorkerState>(
-            DeviceWorkerState.createFinishedStubInstance("12345".toDeviceKey()) {
+            DeviceWorkerState.createFinishedStubInstance(DeviceCoordinate.Local.createStubInstance()) {
                 addCompletedTestExecution(
                     testKey = "test1".toTestKey(),
                     intentionReceived = Instant.ofEpochMilli(10),
@@ -71,7 +72,7 @@ internal class TestRunnerMetricsProviderTest {
     @Test
     fun `suite time - is diff between first test start and last test finish`() {
         val states = setOf<DeviceWorkerState>(
-            DeviceWorkerState.createFinishedStubInstance("12345".toDeviceKey()) {
+            DeviceWorkerState.createFinishedStubInstance(DeviceCoordinate.Local.createStubInstance()) {
                 addCompletedTestExecution(
                     testKey = "test1".toTestKey(),
                     intentionReceived = Instant.ofEpochMilli(10),
@@ -123,7 +124,7 @@ internal class TestRunnerMetricsProviderTest {
     @Test
     fun `median queue time - is median value for all tests between suite start and test claimed a device`() {
         val states = setOf<DeviceWorkerState>(
-            DeviceWorkerState.createFinishedStubInstance("12345".toDeviceKey()) {
+            DeviceWorkerState.createFinishedStubInstance(DeviceCoordinate.Local.createStubInstance()) {
                 addCompletedTestExecution(
                     testKey = "test1".toTestKey(),
                     intentionReceived = Instant.ofEpochMilli(10),
@@ -163,7 +164,7 @@ internal class TestRunnerMetricsProviderTest {
     @Test
     fun `median install time - is median value for all tests between device claim and test start`() {
         val states = setOf<DeviceWorkerState>(
-            DeviceWorkerState.createFinishedStubInstance("12345".toDeviceKey()) {
+            DeviceWorkerState.createFinishedStubInstance(DeviceCoordinate.Local.createStubInstance()) {
                 addCompletedTestExecution(
                     testKey = "test1".toTestKey(),
                     intentionReceived = Instant.ofEpochMilli(10),
@@ -203,11 +204,11 @@ internal class TestRunnerMetricsProviderTest {
     fun `two devices - devices living time - is sum of devices living`() {
         val states = setOf<DeviceWorkerState>(
             DeviceWorkerState.createFinishedStubInstance(
-                deviceKey = "1".toDeviceKey(),
+                deviceKey = DeviceCoordinate.Local.createStubInstance("1"),
                 finished = Instant.ofEpochMilli(30),
             ),
             DeviceWorkerState.createFinishedStubInstance(
-                deviceKey = "2".toDeviceKey(),
+                deviceKey = DeviceCoordinate.Local.createStubInstance("2"),
                 finished = Instant.ofEpochMilli(30),
             )
         )
@@ -224,7 +225,7 @@ internal class TestRunnerMetricsProviderTest {
     fun `two devices - devices working time - sum of devices working`() {
         val states = setOf<DeviceWorkerState>(
             DeviceWorkerState.createFinishedStubInstance(
-                deviceKey = "1".toDeviceKey(),
+                deviceKey = DeviceCoordinate.Local.createStubInstance("1"),
                 finished = Instant.ofEpochMilli(30),
             ) {
                 addCompletedTestExecution(
@@ -235,7 +236,7 @@ internal class TestRunnerMetricsProviderTest {
                 )
             },
             DeviceWorkerState.createFinishedStubInstance(
-                deviceKey = "2".toDeviceKey(),
+                deviceKey = DeviceCoordinate.Local.createStubInstance("2"),
                 finished = Instant.ofEpochMilli(40),
             ) {
                 addCompletedTestExecution(
@@ -259,11 +260,11 @@ internal class TestRunnerMetricsProviderTest {
     fun `two devices - devices idle time - is sum of idle`() {
         val states = setOf<DeviceWorkerState>(
             DeviceWorkerState.createFinishedStubInstance(
-                deviceKey = "1".toDeviceKey(),
+                deviceKey = DeviceCoordinate.Local.createStubInstance("1"),
                 finished = Instant.ofEpochMilli(30),
             ),
             DeviceWorkerState.createFinishedStubInstance(
-                deviceKey = "2".toDeviceKey(),
+                deviceKey = DeviceCoordinate.Local.createStubInstance("2"),
                 finished = Instant.ofEpochMilli(40),
             )
         )

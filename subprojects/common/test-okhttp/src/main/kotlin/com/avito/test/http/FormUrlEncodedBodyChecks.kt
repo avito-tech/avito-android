@@ -5,7 +5,7 @@ import com.avito.test.http.FormUrlEncodedBodyChecks.Result.NoProblem
 import com.avito.test.http.FormUrlEncodedBodyChecks.Result.ValueDoesNotMatch
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.MatcherAssert
-import org.hamcrest.core.Is
+import org.hamcrest.Matchers.`is`
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -27,7 +27,7 @@ public class FormUrlEncodedBodyChecks(
                 val keyValue = it.split('=')
                 MatcherAssert.assertThat(
                     keyValue.size,
-                    Is.`is`(2)
+                    `is`(2)
                 )
                 Pair(keyValue[0], keyValue[1])
             }

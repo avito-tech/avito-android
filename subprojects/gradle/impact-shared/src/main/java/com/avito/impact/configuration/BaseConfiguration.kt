@@ -1,9 +1,5 @@
-@file:Suppress("DEPRECATION")
-// todo use new api?
-
 package com.avito.impact.configuration
 
-import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.android.Result
 import com.avito.android.androidBaseExtension
 import com.avito.android.isAndroid
@@ -96,5 +92,8 @@ public abstract class BaseConfiguration(
             }
     }
 
-    protected abstract fun containsSources(sourceSet: AndroidSourceSet): Boolean
+    protected abstract fun containsSources(
+        @Suppress("DEPRECATION")
+        sourceSet: com.android.build.gradle.api.AndroidSourceSet
+    ): Boolean
 }

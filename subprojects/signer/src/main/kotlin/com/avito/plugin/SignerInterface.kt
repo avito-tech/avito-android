@@ -1,21 +1,19 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.plugin
 
 import com.android.build.api.variant.ComponentIdentity
 import com.avito.android.taskName
+import com.avito.capitalize
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import java.util.Locale
 
 internal fun signApkTaskName(variantName: String): String =
-    "signApkViaService${variantName.capitalize(Locale.getDefault())}"
+    "signApkViaService${variantName.capitalize()}"
 
 internal fun signApkTaskName(component: ComponentIdentity): String = taskName("signApkViaService", component)
 
 internal fun signBundleTaskName(variantName: String): String =
-    "signBundleViaService${variantName.capitalize(Locale.getDefault())}"
+    "signBundleViaService${variantName.capitalize()}"
 
 internal fun signBundleTaskName(component: ComponentIdentity): String = taskName("signBundleViaService", component)
 

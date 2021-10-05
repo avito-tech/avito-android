@@ -25,7 +25,7 @@ internal class ToGooglePlayDeploysTransformer(
 
                     GooglePlayDeploy(
                         binaryType = GooglePlayDeploy.BinaryType.APK,
-                        track = deployment.track.name.toLowerCase(Locale.getDefault()),
+                        track = deployment.track.name.lowercase(Locale.getDefault()),
                         applicationId = apk.packageName,
                         binary = File(apk.path),
                         mapping = File(mappings.path)
@@ -38,7 +38,7 @@ internal class ToGooglePlayDeploysTransformer(
 
                     GooglePlayDeploy(
                         binaryType = GooglePlayDeploy.BinaryType.BUNDLE,
-                        track = deployment.track.name.toLowerCase(Locale.getDefault()),
+                        track = deployment.track.name.lowercase(Locale.getDefault()),
                         applicationId = bundle.packageName,
                         binary = File(bundle.path),
                         mapping = File(mappings.path)

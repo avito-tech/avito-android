@@ -18,7 +18,7 @@ public class KeyTool(private val processRunner: ProcessRunner) {
                     ?.groupValues
                     ?.get(1)
                     ?.replace(":", "")
-                    ?.toLowerCase()
+                    ?.lowercase()
 
                 if (result != null) {
                     Result.Success(result)

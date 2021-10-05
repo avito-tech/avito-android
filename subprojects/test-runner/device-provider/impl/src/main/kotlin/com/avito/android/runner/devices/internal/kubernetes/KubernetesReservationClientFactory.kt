@@ -13,6 +13,7 @@ internal class KubernetesReservationClientFactory(
     private val reservationDeploymentFactory: ReservationDeploymentFactory,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
     private val deviceProvider: RemoteDeviceProvider,
+    private val listener: KubernetesReservationListener,
     private val loggerFactory: LoggerFactory,
     private val podsQueryIntervalMs: Long,
     private val dispatcher: CoroutineDispatcher
@@ -23,6 +24,7 @@ internal class KubernetesReservationClientFactory(
         return KubernetesReservationClient(
             claimer(lock),
             releaser(),
+            listener,
             kubernetesApi,
             dispatcher,
             lock,
@@ -37,6 +39,7 @@ internal class KubernetesReservationClientFactory(
             DeploymentPodsListener(lock, kubernetesApi, podsQueryIntervalMs, loggerFactory),
             deviceProvider,
             emulatorsLogsReporter,
+            listener,
             lock,
             loggerFactory
         )

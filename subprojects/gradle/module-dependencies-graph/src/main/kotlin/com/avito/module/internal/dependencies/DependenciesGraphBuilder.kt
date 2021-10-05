@@ -6,7 +6,7 @@ import com.avito.module.configurations.ConfigurationType
 import com.avito.module.internal.configurations.ConfigurationCoordinate
 import com.avito.module.internal.dependencies.ProjectConfigurationNode.ConfigurationNode
 import org.gradle.api.Project
-import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
+import org.gradle.api.artifacts.ProjectDependency
 
 internal class DependenciesGraphBuilder(
     private val root: Project,
@@ -50,7 +50,8 @@ internal class DependenciesGraphBuilder(
                     }
                     .map { (coordinate, conf) ->
                         coordinate.gradleName to conf.dependencies
-                            .withType(DefaultProjectDependency::class.java)
+                            .matching { it is ProjectDependency }
+                            .map { it as ProjectDependency }
                             .filter { projectDependency ->
                                 val isOtherProject = projectDependency.dependencyProject != project
                                 if (!isOtherProject) {

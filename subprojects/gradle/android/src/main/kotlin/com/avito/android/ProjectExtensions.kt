@@ -7,6 +7,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.TestedExtension
+import com.avito.capitalize
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
@@ -54,7 +55,7 @@ public fun TaskContainer.packageTaskProvider(variantName: String): TaskProvider<
 public fun TaskContainer.bundleTaskProvider(variantName: String): TaskProvider<*> =
     named("bundle${variantName.capitalize()}")
 
-@Suppress("DefaultLocale", "UnstableApiUsage")
+@Suppress("DefaultLocale")
 public fun taskName(prefix: String, component: ComponentIdentity): String {
     return prefix + component.flavorName.orEmpty().capitalize() + component.buildType.orEmpty().capitalize()
 }

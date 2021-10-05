@@ -3,7 +3,7 @@ package com.avito.test.http
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.utils.resourceFrom
+import com.avito.utils.ResourcesReader
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -71,7 +71,7 @@ private val gson = Gson()
  *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
  */
 public fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
-    val text = resourceFrom<MockDispatcher>(fileName).readText()
+    val text = ResourcesReader.readText(fileName)
     if (fileName.endsWith(".json")) {
         validateJson(text).onFailure {
             throw IllegalArgumentException("$fileName contains invalid json", it)

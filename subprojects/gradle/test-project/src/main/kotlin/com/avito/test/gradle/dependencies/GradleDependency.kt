@@ -35,6 +35,10 @@ public sealed class GradleDependency : GradleScriptCompatible {
                 override fun getScriptRepresentation(): String = "project(\"${path.path}\")"
             }
 
+            public data class TypesafeProjectAccessor(val accessor: String) : Coordinate() {
+                override fun getScriptRepresentation(): String = "projects.$accessor"
+            }
+
             public data class Platform(val coordinate: Coordinate) : Coordinate() {
                 override fun getScriptRepresentation(): String {
                     return "platform(${
@@ -65,6 +69,11 @@ public sealed class GradleDependency : GradleScriptCompatible {
                 path: String,
                 configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
             ): Safe = Safe(configuration, Project(Path.path(path)))
+
+            public fun typesafeProjectAccessor(
+                path: String,
+                configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
+            ): Safe = Safe(configuration, Coordinate.TypesafeProjectAccessor(path))
 
             public fun platformProject(
                 path: String,

@@ -1,14 +1,18 @@
-@file:Suppress("DEPRECATION")
-
 package com.avito.android.ui.test
 
-import com.avito.android.test.page_object.PageObject
-import com.avito.android.test.page_object.SnackbarElement
+import com.avito.android.test.page_object.SimpleScreen
+import com.avito.android.ui.R
 import org.hamcrest.Matchers
 
-class SnackbarScreen : PageObject() {
+class SnackbarScreen : SimpleScreen() {
 
-    val snackbar = SnackbarElement()
+    override val rootId: Int = R.id.root
 
-    fun snackbar(text: String) = SnackbarElement(Matchers.equalTo(text))
+    val snackbar =
+        @Suppress("DEPRECATION")
+        com.avito.android.test.page_object.SnackbarElement()
+
+    fun snackbar(text: String) =
+        @Suppress("DEPRECATION")
+        com.avito.android.test.page_object.SnackbarElement(Matchers.equalTo(text))
 }

@@ -1,4 +1,6 @@
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.tasks.VerifyLibraryResourcesTask
+import com.avito.android.withVersionCatalog
 
 configure<BaseExtension> {
     sourceSets {
@@ -7,16 +9,13 @@ configure<BaseExtension> {
         named("test").configure { java.srcDir("src/test/kotlin") }
     }
 
-    // workaround for https://github.com/gradle/gradle/issues/15383
-    if (project.name != "gradle-kotlin-dsl-accessors") {
-        val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
-
+    project.withVersionCatalog { libs ->
         buildToolsVersion(libs.versions.buildTools.get())
         compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
         defaultConfig {
-            minSdkVersion(libs.versions.minSdk.get().toInt())
-            targetSdkVersion(libs.versions.targetSdk.get().toInt())
+            minSdk = libs.versions.minSdk.get().toInt()
+            targetSdk = libs.versions.targetSdk.get().toInt()
         }
     }
 
@@ -30,6 +29,7 @@ configure<BaseExtension> {
         isWarningsAsErrors = true
         textReport = true
         isQuiet = true
+        isCheckReleaseBuilds = false
     }
 
     @Suppress("UnstableApiUsage")
@@ -43,4 +43,9 @@ configure<BaseExtension> {
         shaders = false
         viewBinding = false
     }
+}
+
+tasks.withType<VerifyLibraryResourcesTask>().configureEach {
+    // todo fix and enable MBS-11914
+    onlyIf { false }
 }

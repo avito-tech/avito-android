@@ -4,10 +4,7 @@ plugins {
     id("convention.unit-testing")
 }
 
-/**
- * overrides 1.4, that comes from kotlin dsl bundled version
- */
-val kotlinLanguageVersion = "1.4"
+val kotlinLanguageVersion = "1.5"
 
 /**
  * Exists because `compile` task ambiguous in projects with jvm and android modules combined
@@ -23,12 +20,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
         jvmTarget = JavaVersion.VERSION_1_8.toString()
 
-        /**
-         * Can't enable because of warning
-         * "Runtime JAR files in the classpath should have the same version. These files were found in the classpath:"
-         * Gradle has 1.4.x bundled
-         */
-        allWarningsAsErrors = false
+        allWarningsAsErrors = true
 
         languageVersion = kotlinLanguageVersion
         apiVersion = kotlinLanguageVersion

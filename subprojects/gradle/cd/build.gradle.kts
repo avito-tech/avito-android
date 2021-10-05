@@ -18,7 +18,6 @@ dependencies {
     implementation(projects.gradle.impactShared)
     implementation(projects.testRunner.instrumentationTests)
     implementation(projects.gradle.gradleExtensions)
-    implementation(projects.gradle.lintReport)
     implementation(projects.gradle.prosector)
     implementation(projects.gradle.qapps)
     implementation(projects.signer)
@@ -38,7 +37,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("cicd") {
-            id = "com.avito.android.cd" // todo rename to ci-steps
+            id = "com.avito.android.cd"
             implementationClass = "com.avito.ci.CiStepsPlugin"
             displayName = "CI/CD"
         }

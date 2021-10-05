@@ -1,6 +1,5 @@
 package com.avito.android.gradle.profile
 
-import org.gradle.util.CollectionUtils
 import org.gradle.util.Path
 import java.util.HashMap
 
@@ -37,7 +36,7 @@ public class ProjectProfile(
      * Returns the task executions for this project.
      */
     public fun getTasks(): CompositeOperation<TaskExecution> {
-        val taskExecutions = CollectionUtils.sort(tasks.values, Operation.slowestFirst())
+        val taskExecutions = tasks.values.sortedWith(slowestFirst())
         return CompositeOperation(taskExecutions)
     }
 

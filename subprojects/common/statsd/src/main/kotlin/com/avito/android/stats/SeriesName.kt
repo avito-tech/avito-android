@@ -41,6 +41,8 @@ public class SeriesName private constructor(
         return part.prefix(this)
     }
 
+    public fun asAspect(): String = toString()
+
     override fun toString(): String {
         return parts.joinToString(separator = ".")
     }

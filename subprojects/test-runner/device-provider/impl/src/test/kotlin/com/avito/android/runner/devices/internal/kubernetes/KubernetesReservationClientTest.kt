@@ -53,6 +53,7 @@ internal class KubernetesReservationClientTest {
             reservationDeploymentFactory = FakeReservationDeploymentFactory(),
             dispatcher = dispatcher,
             podsQueryIntervalMs = podsQueryInterval,
+            listener = StubKubernetesReservationListener
         ).create()
     }
 

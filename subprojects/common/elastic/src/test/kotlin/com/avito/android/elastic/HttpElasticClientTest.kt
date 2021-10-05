@@ -3,11 +3,10 @@ package com.avito.android.elastic
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
-import com.avito.time.StubTimeProvider
+import com.avito.time.TimeMachineProvider
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import java.util.Date
 
 internal class HttpElasticClientTest {
 
@@ -15,7 +14,7 @@ internal class HttpElasticClientTest {
 
     private val loggerFactory = StubLoggerFactory
 
-    private val timeProvider = StubTimeProvider()
+    private val timeProvider = TimeMachineProvider()
 
     private val dispatcher = MockDispatcher(
         unmockedResponse = MockResponse().setResponseCode(200),
@@ -26,7 +25,7 @@ internal class HttpElasticClientTest {
     @Test
     fun testRequestParams() {
 
-        timeProvider.now = Date(1609858594000)
+        timeProvider.now = 1609858594000
 
         val elasticClient: ElasticClient = HttpElasticClient(
             timeProvider = timeProvider,

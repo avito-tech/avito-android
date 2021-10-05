@@ -25,7 +25,7 @@ android {
         )
 
         // These arguments are updated in IDE configuration only after sync!
-        testInstrumentationRunnerArguments(instrumentationArgs)
+        testInstrumentationRunnerArguments.putAll(instrumentationArgs)
     }
 
     testOptions {
@@ -33,14 +33,14 @@ android {
     }
 
     packagingOptions {
-        pickFirst("META-INF/okhttp.kotlin_module")
+        resources.pickFirsts.add("META-INF/okhttp.kotlin_module")
     }
 }
 
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.playServicesMaps)
+    implementation(libs.playServicesBase)
     implementation(libs.recyclerView)
 
     implementation(projects.androidLib.proxyToast)
@@ -97,7 +97,10 @@ instrumentation {
     }
 
     val credentials = project.kubernetesCredentials
-    if (credentials is Service || credentials is KubernetesCredentials.Config) {
+    if (credentials !is Service && credentials !is KubernetesCredentials.Config) {
+        // todo fix this in MBS-11834
+        logger.warn("Instrumentation tasks are not created because kubernetes credentials not set")
+    } else {
 
         afterEvaluate {
             tasks.named("check").dependsOn(tasks.named("instrumentationUi"))

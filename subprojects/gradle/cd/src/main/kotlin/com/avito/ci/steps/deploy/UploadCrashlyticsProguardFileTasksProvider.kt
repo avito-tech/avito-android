@@ -1,9 +1,9 @@
 package com.avito.ci.steps.deploy
 
+import com.avito.capitalize
 import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildConfig
 import org.gradle.api.Project
-import java.util.Locale
 
 internal class UploadCrashlyticsProguardFileTasksProvider {
 
@@ -24,8 +24,8 @@ internal class UploadCrashlyticsProguardFileTasksProvider {
         val projectName = project.name
         val buildVariantCapitalized =
             buildVariant.toString()
-                .toLowerCase(Locale.getDefault())
-                .capitalize(Locale.getDefault())
+                .lowercase()
+                .capitalize()
         /**
          * TODO when I try to find task provider via project.tasks.named I get Exception that there is no task
          * That's because firebase-crashlytics-plugin creates task some how after we trying bind to it

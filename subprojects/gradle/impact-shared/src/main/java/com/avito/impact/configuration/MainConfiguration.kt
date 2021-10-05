@@ -1,9 +1,5 @@
-@file:Suppress("DEPRECATION")
-// todo use new api?
-
 package com.avito.impact.configuration
 
-import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.android.Result
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.configuration.sets.isImplementation
@@ -42,7 +38,10 @@ public class MainConfiguration(module: InternalModule) : BaseConfiguration(
         )
     }
 
-    override fun containsSources(sourceSet: AndroidSourceSet): Boolean = sourceSet.isImplementation()
+    override fun containsSources(
+        @Suppress("DEPRECATION")
+        sourceSet: com.android.build.gradle.api.AndroidSourceSet
+    ): Boolean = sourceSet.isImplementation()
 
     override fun toString(): String {
         return "ImplementationConfiguration(${project.path})"

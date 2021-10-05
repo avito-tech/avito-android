@@ -1,7 +1,7 @@
 package com.avito.ci.internal
 
+import com.avito.capitalize
 import com.avito.reportviewer.model.ReportCoordinates
-import java.util.Locale
 
 /**
  * RunId doesn't matter here, because it's stable for a single build
@@ -9,7 +9,7 @@ import java.util.Locale
 internal data class ReportKey(val planSlug: String, val jobSlug: String) {
 
     fun appendToTaskName(taskName: String): String {
-        return "$taskName${planSlug.capitalize(Locale.getDefault())}${jobSlug.capitalize(Locale.getDefault())}"
+        return "$taskName${planSlug.capitalize()}${jobSlug.capitalize()}"
     }
 
     internal companion object {

@@ -1,7 +1,6 @@
 package com.avito.plugin
 
-import com.android.build.gradle.api.ApplicationVariant
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
@@ -11,21 +10,24 @@ import com.avito.utils.ProcessRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
 import java.nio.file.Paths
 
 public abstract class ClearScreenshotsTask : DefaultTask() {
 
-    @Input
-    public val variant: Property<ApplicationVariant> = project.objects.property()
+    @get:Input
+    public abstract val applicationIdProperty: Property<String>
+
+    @get:Internal
+    public abstract val loggerFactory: Property<LoggerFactory>
 
     @TaskAction
     public fun clearScreenshots() {
-        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val loggerFactory = loggerFactory.get()
         val logger = loggerFactory.create<ClearScreenshotsTask>()
 
-        val applicationId = variant.get().applicationId
+        val applicationId = applicationIdProperty.get()
         val adb = Adb()
         val adbDevicesManager = AdbDevicesManager(
             loggerFactory = loggerFactory,

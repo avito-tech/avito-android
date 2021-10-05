@@ -1,6 +1,6 @@
 package com.avito.android.stats
 
-class StubStatsdSender : StatsDSender {
+public class StubStatsdSender : StatsDSender {
 
     private val sentMetrics = mutableListOf<StatsMetric>()
 
@@ -8,9 +8,5 @@ class StubStatsdSender : StatsDSender {
         sentMetrics += metric
     }
 
-    override fun send(prefix: SeriesName, metric: StatsMetric) {
-        TODO("Will be deleted")
-    }
-
-    fun getSentMetrics(): List<StatsMetric> = sentMetrics
+    public fun getSentMetrics(): List<StatsMetric> = sentMetrics
 }

@@ -7,13 +7,12 @@ import com.avito.report.model.Incident
 import com.avito.report.model.TestAttempt
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.createStubInstance
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class InMemoryReportTest {
 
-    private val timeProvider = StubTimeProvider()
     private val loggerFactory = StubLoggerFactory
 
     @Test
@@ -67,7 +66,7 @@ internal class InMemoryReportTest {
     }
 
     private fun createInMemoryReport(): Report = InMemoryReportFactory(
-        timeProvider = timeProvider,
+        timeProvider = DefaultTimeProvider(),
         loggerFactory = loggerFactory,
     ).createReport()
 }

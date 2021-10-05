@@ -10,7 +10,7 @@ import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestName
-import com.avito.time.StubTimeProvider
+import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf
@@ -365,7 +365,7 @@ internal class VerdictDeterminerImplTest {
     private fun createVerdictDeterminer(
         suppressFlaky: Boolean = false,
         suppressFailure: Boolean = false,
-        timeProvider: TimeProvider = StubTimeProvider(),
+        timeProvider: TimeProvider = DefaultTimeProvider(),
     ): VerdictDeterminer {
         return VerdictDeterminerImpl(
             suppressFlaky = suppressFlaky,

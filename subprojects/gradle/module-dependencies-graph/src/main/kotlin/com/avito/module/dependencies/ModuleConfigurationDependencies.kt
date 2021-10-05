@@ -2,15 +2,16 @@ package com.avito.module.dependencies
 
 import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
-import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
+import org.gradle.api.artifacts.ProjectDependency
 
 public fun Project.dependenciesOnProjects(
     types: Set<Class<out ConfigurationType>>
-): Set<DefaultProjectDependency> {
+): Set<ProjectDependency> {
     return configurations
         .associateWith {
             it.dependencies
-                .withType(DefaultProjectDependency::class.java)
+                .matching { it is ProjectDependency }
+                .map { it as ProjectDependency }
                 // project has dependency to itself in a default configuration
                 .filter { it.dependencyProject != this }
         }

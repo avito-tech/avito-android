@@ -43,7 +43,6 @@ public class AdbDeviceParser {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private fun isRemote(serial: String): Boolean {
         return serial.contains(':')
             && InetAddresses.isInetAddress(serial.substringBefore(':'))

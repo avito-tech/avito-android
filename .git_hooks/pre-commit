@@ -19,5 +19,5 @@ if [ -n "${INTERNAL_URLS}" ]; then
 fi
 
 if [ "$COMMIT_CHECK" == "true" ]; then
-  make fast_check
+  make compile
 fi

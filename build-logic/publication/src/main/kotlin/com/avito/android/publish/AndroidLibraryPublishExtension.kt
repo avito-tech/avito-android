@@ -12,7 +12,6 @@ abstract class AndroidLibraryPublishExtension @Inject constructor(objects: Objec
      *
      * default: release
      */
-    @Suppress("UnstableApiUsage")
     val variant: Property<String> = objects.property<String>().convention("release")
 
     /**

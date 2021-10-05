@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.utils.gradle
 
 import com.avito.kotlin.dsl.ProjectProperty
@@ -17,7 +15,7 @@ public interface EnvArgs {
 
     public sealed class Build : Serializable {
         /**
-         * @todo change to string after refactor [TestRunEnvironment.teamcityBuildId]
+         * todo change to string after refactor [TestRunEnvironment.teamcityBuildId]
          */
         public abstract val id: Int
         public abstract val url: String

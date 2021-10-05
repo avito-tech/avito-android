@@ -5,6 +5,7 @@ import com.avito.android.runner.devices.DeviceProviderFactoryProvider
 import com.avito.android.runner.devices.internal.AndroidDebugBridgeProvider
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClientProvider
+import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationListenerProvider
 import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactoryProvider
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
@@ -109,7 +110,13 @@ public class TestSchedulerFactoryProvider {
                             loggerFactory = params.loggerFactory,
                             useLegacyExtensionsV1Beta = params.useLegacyExtensionsV1Beta,
                         ),
-                        emulatorsLogsReporterProvider = emulatorsLogsReporterProvider
+                        emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
+                        kubernetesReservationListenerProvider = KubernetesReservationListenerProvider(
+                            timeProvider = timeProvider,
+                            runnerMetricsConfig = metricsConfig,
+                            loggerFactory = params.loggerFactory,
+                            sendPodsMetrics = params.sendPodsMetrics,
+                        )
                     ),
                     androidDebugBridgeProvider = androidDebugBridgeProvider,
                     emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,

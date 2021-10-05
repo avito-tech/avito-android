@@ -7,4 +7,5 @@ public data class Experiments(
     val fetchLogcatForIncompleteTests: Boolean,
     val uploadArtifactsFromRunner: Boolean,
     val useLegacyExtensionsV1Beta: Boolean,
+    val sendPodsMetrics: Boolean,
 ) : Serializable
