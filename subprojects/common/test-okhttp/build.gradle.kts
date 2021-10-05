@@ -8,7 +8,7 @@ dependencies {
     api(projects.logger.logger)
     api(projects.common.okhttp)
 
-    implementation(libs.hamcrestLib)
+    implementation(libs.bundles.hamcrest)
     implementation(libs.truth)
     implementation(libs.kotson)
     implementation(libs.commonsLang)

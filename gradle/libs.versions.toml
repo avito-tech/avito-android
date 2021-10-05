@@ -17,7 +17,6 @@ minSdk = "21"
 junit5 = "5.8.0"
 junit5Platform = "1.8.0"
 hamcrest = "2.2"
-hamcrest = "2.2"
 
 [libraries]
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
