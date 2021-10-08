@@ -1,3 +1,4 @@
+@file:Suppress("deprecation")
 package com.avito.android
 
 import com.avito.kotlin.dsl.getBooleanProperty
@@ -14,17 +15,23 @@ public class CodeOwnershipPlugin : Plugin<Project> {
 
         val enabled = target.getBooleanProperty("avito.moduleOwnershipValidationEnabled", false)
 
+        val forceConfiguration =
+            target.getBooleanProperty("avito.moduleOwnershipForceConfiguration", false)
+
         target.subprojects { subproject ->
             subproject.plugins.withId("kotlin") {
-                setupLibrary(subproject, enabled)
+                setupLibrary(subproject, enabled, forceConfiguration)
             }
             subproject.plugins.withId("com.android.library") {
-                setupLibrary(subproject, enabled)
+                setupLibrary(subproject, enabled, forceConfiguration)
+            }
+            subproject.plugins.withId("com.android.application") {
+                setupLibrary(subproject, enabled, forceConfiguration)
             }
         }
     }
 
-    private fun setupLibrary(project: Project, enabled: Boolean) {
+    private fun setupLibrary(project: Project, enabled: Boolean, forceConfiguration: Boolean) {
         val codeOwnershipExtension = project.extensions.create<CodeOwnershipExtension>("ownership")
 
         val ownershipTask =
@@ -36,7 +43,9 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         project.addPreBuildTasks(ownershipTask)
 
         project.afterEvaluate {
-            codeOwnershipExtension.checkProjectOwnershipSettings(it.path)
+            if (forceConfiguration) {
+                codeOwnershipExtension.checkProjectOwnershipSettings(it.path)
+            }
         }
     }
 }
