@@ -13,20 +13,17 @@ public class CodeOwnershipPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         check(target.isRoot()) { "Code ownership plugin must be applied to the root project" }
 
-        val enabled = target.getBooleanProperty("avito.moduleOwnershipValidationEnabled", false)
-
-        val forceConfiguration =
-            target.getBooleanProperty("avito.ownership.strictOwnership", false)
+        val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
 
         target.subprojects { subproject ->
             subproject.plugins.withId("kotlin") {
-                setupLibrary(subproject, enabled, forceConfiguration)
+                setupLibrary(subproject, strictOwnership)
             }
             subproject.plugins.withId("com.android.library") {
-                setupLibrary(subproject, enabled, forceConfiguration)
+                setupLibrary(subproject, strictOwnership)
             }
             subproject.plugins.withId("com.android.application") {
-                setupLibrary(subproject, enabled, forceConfiguration)
+                setupLibrary(subproject, strictOwnership)
             }
         }
 
@@ -36,11 +33,11 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         }
     }
 
-    private fun setupLibrary(project: Project, enabled: Boolean, forceConfiguration: Boolean) {
+    private fun setupLibrary(project: Project, strictOwnership: Boolean) {
         val codeOwnershipExtension = project.extensions.create<CodeOwnershipExtension>("ownership")
 
         project.afterEvaluate {
-            if (forceConfiguration) {
+            if (strictOwnership) {
                 codeOwnershipExtension.checkProjectOwnershipSettings(it.path)
             }
         }
