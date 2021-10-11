@@ -97,11 +97,11 @@ internal class ForceConfigurationTest {
                 ).generateIn(projectDir)
 
                 val args = mutableListOf(
-                    "checkProjectDependenciesOwnership",
+                    "exportCodeOwnershipInfo",
                     "-PgitBranch=xxx"
                 )
                 if (case.isForceOwnershipFlagEnabled) {
-                    args.add("-Pavito.moduleOwnershipForceConfiguration=true")
+                    args.add("-Pavito.ownership.strictOwnership=true")
                 }
 
                 when (case) {

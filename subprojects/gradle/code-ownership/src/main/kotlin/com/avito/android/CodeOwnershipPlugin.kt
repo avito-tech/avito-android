@@ -16,7 +16,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         val enabled = target.getBooleanProperty("avito.moduleOwnershipValidationEnabled", false)
 
         val forceConfiguration =
-            target.getBooleanProperty("avito.moduleOwnershipForceConfiguration", false)
+            target.getBooleanProperty("avito.ownership.strictOwnership", false)
 
         target.subprojects { subproject ->
             subproject.plugins.withId("kotlin") {
@@ -29,18 +29,15 @@ public class CodeOwnershipPlugin : Plugin<Project> {
                 setupLibrary(subproject, enabled, forceConfiguration)
             }
         }
+
+        target.tasks.register<ExportCodeOwnershipInfoTask>("exportCodeOwnershipInfo") {
+            group = "documentation"
+            description = "Exports code ownership info for all the modules to CSV file"
+        }
     }
 
     private fun setupLibrary(project: Project, enabled: Boolean, forceConfiguration: Boolean) {
         val codeOwnershipExtension = project.extensions.create<CodeOwnershipExtension>("ownership")
-
-        val ownershipTask =
-            project.tasks.register<CheckProjectDependenciesOwnershipTask>("checkProjectDependenciesOwnership") {
-                group = "verification"
-                description = "Checks project dependencies validity based on code ownership rules"
-                onlyIf { enabled }
-            }
-        project.addPreBuildTasks(ownershipTask)
 
         project.afterEvaluate {
             if (forceConfiguration) {
