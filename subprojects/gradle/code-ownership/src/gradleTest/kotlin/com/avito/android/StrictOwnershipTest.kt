@@ -11,18 +11,18 @@ import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 
-internal class ForceConfigurationTest {
+internal class StrictOwnershipTest {
 
     @TestFactory
     fun cases(): List<DynamicTest> = listOf(
-        Case.PositiveCase(isOwnershipConfigured = true, isForceOwnershipFlagEnabled = true),
-        Case.PositiveCase(isOwnershipConfigured = true, isForceOwnershipFlagEnabled = false),
+        Case.PositiveCase(isOwnershipConfigured = true, isStrictOwnershipFlagEnabled = true),
+        Case.PositiveCase(isOwnershipConfigured = true, isStrictOwnershipFlagEnabled = false),
         Case.NegativeCase(
             isOwnershipConfigured = false,
             isForceOwnershipFlagEnabled = true,
             errorMessage = "Owners must be set for :app"
         ),
-        Case.PositiveCase(isOwnershipConfigured = false, isForceOwnershipFlagEnabled = false),
+        Case.PositiveCase(isOwnershipConfigured = false, isStrictOwnershipFlagEnabled = false),
     ).map { case ->
         DynamicTest.dynamicTest(case.name(case)) {
             ManualTempFolder.runIn { projectDir ->
@@ -100,7 +100,7 @@ internal class ForceConfigurationTest {
                     "exportCodeOwnershipInfo",
                     "-PgitBranch=xxx"
                 )
-                if (case.isForceOwnershipFlagEnabled) {
+                if (case.isStrictOwnershipFlagEnabled) {
                     args.add("-Pavito.ownership.strictOwnership=true")
                 }
 
@@ -122,12 +122,12 @@ internal class ForceConfigurationTest {
 
     private sealed class Case(
         val isOwnershipConfigured: Boolean,
-        val isForceOwnershipFlagEnabled: Boolean
+        val isStrictOwnershipFlagEnabled: Boolean
     ) {
         class PositiveCase(
             isOwnershipConfigured: Boolean,
-            isForceOwnershipFlagEnabled: Boolean,
-        ) : Case(isOwnershipConfigured, isForceOwnershipFlagEnabled)
+            isStrictOwnershipFlagEnabled: Boolean,
+        ) : Case(isOwnershipConfigured, isStrictOwnershipFlagEnabled)
 
         class NegativeCase(
             isOwnershipConfigured: Boolean,
@@ -136,7 +136,7 @@ internal class ForceConfigurationTest {
         ) : Case(isOwnershipConfigured, isForceOwnershipFlagEnabled)
 
         fun name(case: Case): String = buildString {
-            when (isForceOwnershipFlagEnabled) {
+            when (isStrictOwnershipFlagEnabled) {
                 true -> append("force owners flag is enabled")
                 false -> append("force owners flag is not enabled")
             }

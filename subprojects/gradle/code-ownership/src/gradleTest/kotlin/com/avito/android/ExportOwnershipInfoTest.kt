@@ -17,7 +17,7 @@ import java.io.File
 internal class ExportOwnershipInfoTest {
 
     @Test
-    internal fun `ownership printing - works correctly - when ownership applied`(@TempDir projectDir: File) {
+    internal fun `ownership exporting to csv file - works correctly`(@TempDir projectDir: File) {
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
