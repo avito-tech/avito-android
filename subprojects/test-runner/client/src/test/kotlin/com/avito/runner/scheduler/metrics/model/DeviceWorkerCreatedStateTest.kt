@@ -44,7 +44,7 @@ internal class DeviceWorkerCreatedStateTest {
 
         @Suppress("MaxLineLength")
         assertThat(error.message)
-            .isEqualTo("Intention TestKey(test=com.avito.Test.test.api22, executionNumber=0) already have been received")
+            .isEqualTo("Intention TestKey(test=com.avito.Test.test.api22, executionNumber=0) already has been received")
     }
 
     @Test

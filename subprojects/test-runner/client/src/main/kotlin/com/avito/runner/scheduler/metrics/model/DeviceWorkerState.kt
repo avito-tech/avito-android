@@ -41,7 +41,7 @@ internal sealed class DeviceWorkerState {
 
         override fun testIntentionReceived(testKey: TestKey, time: Instant) {
             check(testExecutionStates.singleOrNull { it.test == testKey } == null) {
-                "Intention $testKey already have been received"
+                "Intention $testKey already has been received"
             }
             testExecutionStates.add(TestExecutionState.IntentionReceived(time, testKey))
         }
