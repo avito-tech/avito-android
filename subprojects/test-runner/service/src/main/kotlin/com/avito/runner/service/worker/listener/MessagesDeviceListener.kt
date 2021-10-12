@@ -8,9 +8,9 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.model.DeviceInstallation
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
 
-internal class MessagesDeviceListener(private val messagesChannel: Channel<DeviceWorkerMessage>) : DeviceListener {
+internal class MessagesDeviceListener(private val messagesChannel: SendChannel<DeviceWorkerMessage>) : DeviceListener {
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
     }

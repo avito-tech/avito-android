@@ -48,9 +48,10 @@ internal class DeviceWorkerPoolImpl(
                             testListener = testListener,
                             deviceListener = CompositeDeviceListener(
                                 listOf(
+                                    // TODO order impact the result
+                                    deviceListener,
                                     MessagesDeviceListener(messages),
                                     DeviceLogListener(device.logger),
-                                    deviceListener
                                 )
                             ),
                             timeProvider = timeProvider,
@@ -75,11 +76,11 @@ internal class DeviceWorkerPoolImpl(
                                 logger.debug("Application: ${message.installation.installation.application} installed")
 
                             is DeviceWorkerMessage.FailedIntentionProcessing -> {
-                                logger.debug(
+                                logger.warn(
                                     "Received worker failed message during executing intention:" +
-                                        " ${message.intention}. Rescheduling..."
+                                        " ${message.intention}. Rescheduling...", message.t
                                 )
-
+                                // TODO make rescheduling as a common with new execution number
                                 intentionsRouter.sendIntention(intention = message.intention)
                             }
 
