@@ -4,19 +4,19 @@ import com.avito.android.runner.devices.model.ReservationData
 
 internal object StubKubernetesReservationListener : KubernetesReservationListener {
 
-    override fun onClaim(reservations: Collection<ReservationData>) {
+    override suspend fun onClaim(reservations: Collection<ReservationData>) {
         // empty
     }
 
-    override fun onPodAcquired() {
+    override suspend fun onPodAcquired() {
         // empty
     }
 
-    override fun onPodRemoved() {
+    override suspend fun onPodRemoved() {
         // empty
     }
 
-    override fun onRelease() {
+    override suspend fun onRelease() {
         // empty
     }
 }

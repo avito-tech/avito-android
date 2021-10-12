@@ -1,7 +1,12 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationState.PodRequest
+import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationState.State.CLAIMED
+import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationState.State.INITIAL
+import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationState.State.RELEASED
 import com.avito.time.TimeProvider
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.PriorityBlockingQueue
@@ -20,34 +25,49 @@ internal class KubernetesReservationState(
 ) {
 
     private val requests = PriorityBlockingQueue<PodRequest>()
+    private var state = INITIAL
+    private val lock = Mutex()
 
-    fun claim(requestedPodCount: Int) {
+    suspend fun claim(requestedPodCount: Int): Unit = lock.withLock {
+        checkState(INITIAL)
         val claimTime = timeProvider.nowInstant()
         requests.addAll(
             (0 until requestedPodCount).map { PodRequest(claimTime) }
         )
+        state = CLAIMED
     }
 
-    fun podAcquired(): QueueTime {
+    suspend fun podAcquired(): QueueTime = lock.withLock {
+        checkState(CLAIMED)
         val request = checkNotNull(requests.poll()) {
             "Pod requests queue is empty"
         }
         val queueTime = Duration.between(request.requestTime, timeProvider.nowInstant())
-        return QueueTime(queueTime)
+        QueueTime(queueTime)
     }
 
-    fun podRemoved() {
+    suspend fun podRemoved(): Unit = lock.withLock {
+        checkState(CLAIMED)
         requests.add(
             PodRequest(timeProvider.nowInstant())
         )
     }
 
-    fun release(): List<QueueTime> {
+    suspend fun release(): List<QueueTime> = lock.withLock {
+        checkState(CLAIMED)
         val releaseTime = timeProvider.nowInstant()
-        return requests.toList().map { request ->
+        val result = requests.toList().map { request ->
             QueueTime(
                 Duration.between(request.requestTime, releaseTime)
             )
+        }
+        state = RELEASED
+        result
+    }
+
+    private fun checkState(expected: State) {
+        check(state == expected) {
+            "Must be $expected but was $state"
         }
     }
 
@@ -55,6 +75,12 @@ internal class KubernetesReservationState(
      * Duration between time when POD was requested and time when POD was acquired
      */
     data class QueueTime(val value: Duration)
+
+    private enum class State {
+        INITIAL,
+        CLAIMED,
+        RELEASED
+    }
 
     private class PodRequest(val requestTime: Instant) : Comparable<PodRequest> {
         override fun compareTo(other: PodRequest): Int {
