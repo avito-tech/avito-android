@@ -1,3 +1,4 @@
+@file:Suppress("deprecation")
 package com.avito.android
 
 import com.avito.kotlin.dsl.getBooleanProperty
@@ -12,31 +13,33 @@ public class CodeOwnershipPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         check(target.isRoot()) { "Code ownership plugin must be applied to the root project" }
 
-        val enabled = target.getBooleanProperty("avito.moduleOwnershipValidationEnabled", false)
+        val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
 
         target.subprojects { subproject ->
             subproject.plugins.withId("kotlin") {
-                setupLibrary(subproject, enabled)
+                setupLibrary(subproject, strictOwnership)
             }
             subproject.plugins.withId("com.android.library") {
-                setupLibrary(subproject, enabled)
+                setupLibrary(subproject, strictOwnership)
             }
+            subproject.plugins.withId("com.android.application") {
+                setupLibrary(subproject, strictOwnership)
+            }
+        }
+
+        target.tasks.register<ExportCodeOwnershipInfoTask>("exportCodeOwnershipInfo") {
+            group = "documentation"
+            description = "Exports code ownership info for all the modules to CSV file"
         }
     }
 
-    private fun setupLibrary(project: Project, enabled: Boolean) {
+    private fun setupLibrary(project: Project, strictOwnership: Boolean) {
         val codeOwnershipExtension = project.extensions.create<CodeOwnershipExtension>("ownership")
 
-        val ownershipTask =
-            project.tasks.register<CheckProjectDependenciesOwnershipTask>("checkProjectDependenciesOwnership") {
-                group = "verification"
-                description = "Checks project dependencies validity based on code ownership rules"
-                onlyIf { enabled }
-            }
-        project.addPreBuildTasks(ownershipTask)
-
         project.afterEvaluate {
-            codeOwnershipExtension.checkProjectOwnershipSettings(it.path)
+            if (strictOwnership) {
+                codeOwnershipExtension.checkProjectOwnershipSettings(it.path)
+            }
         }
     }
 }

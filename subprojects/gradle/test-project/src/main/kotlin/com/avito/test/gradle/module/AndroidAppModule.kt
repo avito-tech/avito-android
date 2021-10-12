@@ -19,6 +19,7 @@ import java.io.File
 public class AndroidAppModule(
     override val name: String,
     override val packageName: String = "com.$name",
+    override val imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
@@ -29,7 +30,6 @@ public class AndroidAppModule(
     private val instrumentationTests: List<InstrumentationTest> = emptyList(),
     private val versionName: String = "",
     private val versionCode: Int = 1,
-    private val imports: List<String> = emptyList(),
     private val mutator: File.(AndroidAppModule) -> Unit = {}
 ) : AndroidModule {
 
@@ -206,6 +206,4 @@ public class AndroidAppModule(
             if (enableKapt) id("kotlin-kapt")
         }
             .plus(plugins)
-
-    private fun imports() = imports.joinToString(separator = "\n")
 }

@@ -19,7 +19,20 @@ internal class ConfigurationCacheCompatibilityTest {
                 id("com.avito.android.code-ownership")
             },
             modules = listOf(
-                AndroidLibModule(name = "lib")
+                AndroidLibModule(
+                    name = "lib",
+                    imports = listOf("import com.avito.android.model.Owner"),
+                    buildGradleExtra = """
+                        |class Speed implements Owner { 
+                        |   String toString() { return "Speed" }
+                        |}
+                        |def speed = new Speed() { }
+                        |
+                        |ownership {
+                        |    owners = [speed]
+                        |}
+                    """.trimMargin()
+                )
             )
         ).generateIn(projectDir)
 
@@ -31,8 +44,8 @@ internal class ConfigurationCacheCompatibilityTest {
     private fun runTask(tempDir: File): TestResult {
         return gradlew(
             tempDir,
-            "checkProjectDependenciesOwnership",
-            "-Pavito.moduleOwnershipValidationEnabled",
+            "exportCodeOwnershipInfo",
+            "-Pavito.ownership.strictOwnership=true",
             dryRun = true,
             configurationCache = true
         )

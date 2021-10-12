@@ -1,32 +1,36 @@
+@file:Suppress("deprecation")
 package com.avito.android
 
 import Visibility
+import com.avito.android.model.Owner
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.kotlin.dsl.findByType
 
 public open class CodeOwnershipExtension(
+    public var owners: Set<Owner> = emptySet(),
+    @Deprecated("Modules visibility restriction is deprecated. Use `owners` property instead")
     public var team: String? = null,
+    @Deprecated("Modules visibility restriction is deprecated.")
     public var visibility: Visibility = Visibility.PUBLIC,
+    @Deprecated("Modules visibility restriction is deprecated.")
     public var allowedDependencies: Set<String> = emptySet()
 ) {
-
     public fun checkProjectOwnershipSettings(projectPath: String) {
-        if (team == null && visibility == Visibility.PRIVATE ||
-            team == null && visibility == Visibility.TEAM
-        ) {
-            throwInvalidOwnershipSettingsException(projectPath, visibility)
+        if (owners.isEmpty()) {
+            throwInvalidOwnershipSettingsException(projectPath)
         }
     }
 
-    private fun throwInvalidOwnershipSettingsException(projectPath: String, visibility: Visibility) {
+    private fun throwInvalidOwnershipSettingsException(projectPath: String) {
         throw IllegalStateException(
-            "Team must be set for $visibility modules. \n" +
-                "Configure ownership settings in $projectPath `build.gradle` file. For example: \n" +
-                "\n" +
-                "ownership {\n" +
-                "    team 'MY_TEAM_NAME'\n" +
-                "    visibility ${Visibility::class.java.simpleName}.$visibility\n" +
-                "}"
+            """
+                |Owners must be set for $projectPath
+                |Configure ownership settings in $projectPath `build.gradle` file. For example: 
+                |
+                |ownership {
+                |   owners = [OwnerImpl]
+                |}
+            """.trimMargin()
         )
     }
 }
