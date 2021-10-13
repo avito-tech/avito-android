@@ -82,8 +82,8 @@ internal class KubernetesReservationClient(
                 // TODO this leads to deployment leak
                 throw IllegalStateException("Unable to stop reservation job. Hasn't started yet")
             } else {
-                kubernetesReservationListener.onRelease()
                 reservationReleaser.release(state.pods, state.deployments)
+                kubernetesReservationListener.onRelease()
                 this@KubernetesReservationClient.state = State.Idling
             }
         }
