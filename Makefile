@@ -169,8 +169,9 @@ compile:
 assemble:
 	$(docker_command) ./gradlew $(params) assembleAll
 
+# Configuration cache fails in instrumentation tasks: MBS-11856
 check:
-	$(docker_command) ./gradlew $(params) checkAll
+	$(docker_command) ./gradlew $(params) checkAll --no-configuration-cache
 
 .PHONY: build
 build:
