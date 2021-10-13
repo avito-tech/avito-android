@@ -309,3 +309,6 @@ deploy_avito_cache_node:
 delete_avito_cache_node:
 	cd ./ci/k8s/gradle-remote-cache && \
 	kubectl delete -f avito-project.yaml
+
+write_locks:
+	./gradlew resolveAndLockAll --write-locks --no-configuration-cache --quiet > /dev/null

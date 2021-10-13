@@ -2,7 +2,7 @@ package com.avito.reportviewer
 
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.http.MockDispatcher
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.extension.AfterEachCallback
@@ -16,7 +16,7 @@ internal class StubReportsExtension : BeforeEachCallback, AfterEachCallback, Par
     private var state: State? = null
 
     override fun beforeEach(context: ExtensionContext) {
-        val loggerFactory = StubLoggerFactory
+        val loggerFactory = PrintlnLoggerFactory
         val mockDispatcher = MockDispatcher(loggerFactory = loggerFactory)
         val mockWebServer = MockWebServer().apply { dispatcher = mockDispatcher }
         state = State(
@@ -24,7 +24,7 @@ internal class StubReportsExtension : BeforeEachCallback, AfterEachCallback, Par
             stubReportApi = StubReportApi(
                 realApi = ReportsApiFactory.create(
                     host = mockWebServer.url("/").toString(),
-                    loggerFactory = StubLoggerFactory,
+                    loggerFactory = PrintlnLoggerFactory,
                     httpClientProvider = HttpClientProvider.createStubInstance()
                 ),
                 mockDispatcher = mockDispatcher

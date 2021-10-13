@@ -2,7 +2,7 @@ package com.avito.reportviewer
 
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.test.model.TestName
@@ -18,7 +18,7 @@ internal class ReportsApiTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     @Test
     fun `getReport - returns NotFound - when throws exception with no data`() {

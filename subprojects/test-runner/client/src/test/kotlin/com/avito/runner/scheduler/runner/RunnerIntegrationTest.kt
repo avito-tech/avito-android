@@ -5,7 +5,7 @@ import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.StubDevicesProvider
 import com.avito.coroutines.extensions.Dispatchers
 import com.avito.coroutines.extensions.isClosedForSendAndReceive
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.TargetConfigurationData
@@ -70,7 +70,7 @@ internal class RunnerIntegrationTest {
         minimumSuccessCount = 1,
         minimumFailedCount = 0
     )
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     @TempDir
     lateinit var outputDirectory: File

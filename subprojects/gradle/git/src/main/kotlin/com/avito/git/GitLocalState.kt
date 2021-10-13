@@ -1,7 +1,6 @@
 package com.avito.git
 
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.logger.LoggerFactory
 import org.gradle.api.Project
 import java.io.File
 
@@ -9,8 +8,7 @@ public interface GitLocalState : GitState
 
 internal class GitLocalStateImpl(
     rootDir: File,
-    targetBranch: String?,
-    loggerFactory: LoggerFactory
+    targetBranch: String?
 ) : GitLocalState {
 
     override val defaultBranch = "develop"
@@ -26,8 +24,7 @@ internal class GitLocalStateImpl(
         val targetBranch = targetBranch?.asBranchWithoutOrigin()
 
         val git = GitImpl(
-            rootDir = rootDir,
-            loggerFactory = loggerFactory
+            rootDir = rootDir
         )
 
         val gitBranch: String = git.tryParseRev("HEAD", abbrevRef = true).getOrThrow()
@@ -58,12 +55,11 @@ internal class GitLocalStateImpl(
 
     companion object {
 
-        fun from(project: Project, loggerFactory: LoggerFactory): GitState {
+        fun from(project: Project): GitState {
             val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
             return GitLocalStateImpl(
                 rootDir = project.rootDir,
-                targetBranch = targetBranch,
-                loggerFactory = loggerFactory
+                targetBranch = targetBranch
             )
         }
     }

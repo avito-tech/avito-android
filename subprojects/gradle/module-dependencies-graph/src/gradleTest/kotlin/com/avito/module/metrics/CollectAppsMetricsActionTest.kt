@@ -1,6 +1,6 @@
 package com.avito.module.metrics
 
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
 import com.avito.module.metrics.metrics.AppsHealthData
@@ -90,7 +90,7 @@ internal class CollectAppsMetricsActionTest {
     }
 
     private fun collectMetrics(root: Project): AppsHealthData {
-        val graphBuilder = DependenciesGraphBuilder(root, StubLoggerFactory)
+        val graphBuilder = DependenciesGraphBuilder(root, PrintlnLoggerFactory)
         val androidGraphBuilder = AndroidAppsGraphBuilder(graphBuilder)
 
         return CollectAppsMetricsAction(androidGraphBuilder).collect()

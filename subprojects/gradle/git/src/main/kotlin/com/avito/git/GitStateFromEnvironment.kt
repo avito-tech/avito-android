@@ -2,13 +2,11 @@ package com.avito.git
 
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.logger.LoggerFactory
 import org.gradle.api.Project
 import java.io.File
 
 internal class GitStateFromEnvironment(
     rootDir: File,
-    loggerFactory: LoggerFactory,
     gitBranch: String,
     targetBranch: String?,
     originalCommitHash: String?
@@ -30,8 +28,7 @@ internal class GitStateFromEnvironment(
         val targetBranch: String? = targetBranch?.asBranchWithoutOrigin()
 
         val git = GitImpl(
-            rootDir = rootDir,
-            loggerFactory = loggerFactory
+            rootDir = rootDir
         )
 
         val gitCommit = git.tryParseRev("HEAD").getOrThrow()
@@ -67,13 +64,12 @@ internal class GitStateFromEnvironment(
 
     companion object {
 
-        fun from(project: Project, loggerFactory: LoggerFactory): GitState {
+        fun from(project: Project): GitState {
             val gitBranch: String = project.getMandatoryStringProperty("gitBranch")
             val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
             val originalCommitHash: String? = project.getOptionalStringProperty("originalCommitHash")
             return GitStateFromEnvironment(
                 rootDir = project.rootDir,
-                loggerFactory = loggerFactory,
                 gitBranch = gitBranch,
                 targetBranch = targetBranch,
                 originalCommitHash = originalCommitHash

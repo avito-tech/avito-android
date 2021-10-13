@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.suite.filter
 
 import com.avito.logger.LoggerFactory
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.report.Report
 import com.avito.report.StubReport
 import com.avito.runner.config.InstrumentationFilterData
@@ -12,7 +12,7 @@ internal object StubFilterFactoryFactory {
     fun create(
         filter: InstrumentationFilterData = InstrumentationFilterData.createStub(),
         impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
-        loggerFactory: LoggerFactory = StubLoggerFactory,
+        loggerFactory: LoggerFactory = PrintlnLoggerFactory,
         report: Report = StubReport()
     ): FilterFactory {
         return FilterFactory.create(
