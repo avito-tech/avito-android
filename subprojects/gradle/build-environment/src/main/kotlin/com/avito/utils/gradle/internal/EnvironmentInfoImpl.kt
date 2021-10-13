@@ -24,7 +24,6 @@ internal class EnvironmentInfoImpl(
         }
     }
 
-
     override val node: String? by lazy {
         when (environment) {
             is Environment.Local -> gitUserEmail ?: userName()

@@ -10,10 +10,10 @@ import com.avito.runner.config.createStub
 internal object StubFilterFactoryFactory {
 
     fun create(
-      filter: InstrumentationFilterData = InstrumentationFilterData.createStub(),
-      impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
-      loggerFactory: LoggerFactory = PrintlnLoggerFactory,
-      report: Report = StubReport()
+        filter: InstrumentationFilterData = InstrumentationFilterData.createStub(),
+        impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
+        loggerFactory: LoggerFactory = PrintlnLoggerFactory,
+        report: Report = StubReport()
     ): FilterFactory {
         return FilterFactory.create(
             filterData = filter,

@@ -26,12 +26,12 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
 
 class ReportTestExtension(
-  val timeProvider: TimeProvider = mock(),
-  private val fileStorageUrl: String = "https://filestorage.com",
-  private val mockInterceptor: MockInterceptor = MockInterceptor(),
-  private val screenshotCapturer: ScreenshotCapturer = mock(),
-  private val loggerFactory: LoggerFactory = PrintlnLoggerFactory,
-  private val report: InternalReport = ReportFactory.createReport(
+    val timeProvider: TimeProvider = mock(),
+    private val fileStorageUrl: String = "https://filestorage.com",
+    private val mockInterceptor: MockInterceptor = MockInterceptor(),
+    private val screenshotCapturer: ScreenshotCapturer = mock(),
+    private val loggerFactory: LoggerFactory = PrintlnLoggerFactory,
+    private val report: InternalReport = ReportFactory.createReport(
         loggerFactory = loggerFactory,
         transport = NoOpTransport,
         screenshotCapturer = screenshotCapturer,

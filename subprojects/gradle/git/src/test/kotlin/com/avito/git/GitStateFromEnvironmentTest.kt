@@ -1,6 +1,5 @@
 package com.avito.git
 
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
@@ -13,7 +12,6 @@ import java.nio.file.Path
 
 class GitStateFromEnvironmentTest {
 
-    private val loggerFactory = PrintlnLoggerFactory
     private lateinit var remoteRepo: File
     private lateinit var localRepo: File
 
