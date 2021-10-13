@@ -20,7 +20,7 @@ internal class ExperimentsResolver(private val project: Project) {
     }
 
     private fun getSendPodsMetrics(extension: GradleInstrumentationPluginConfiguration): Boolean {
-        return extension.experimental.sendPodsMetrics.getOrElse(false)
+        return extension.experimental.sendPodsMetrics.getOrElse(true)
     }
 
     private fun getSaveTestArtifactsToOutputs(extension: GradleInstrumentationPluginConfiguration): Boolean {
