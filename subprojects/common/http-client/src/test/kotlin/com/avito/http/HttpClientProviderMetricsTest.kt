@@ -5,7 +5,7 @@ import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.StubStatsdSender
 import com.avito.android.stats.TimeMetric
 import com.avito.http.internal.RequestMetadata
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.Flaky
 import com.avito.time.DefaultTimeProvider
 import com.google.common.truth.Correspondence
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 
 internal class HttpClientProviderMetricsTest {
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     private val statsDSender = StubStatsdSender()
 

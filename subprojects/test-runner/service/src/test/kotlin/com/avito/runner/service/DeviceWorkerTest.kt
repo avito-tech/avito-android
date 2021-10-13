@@ -1,8 +1,8 @@
 package com.avito.runner.service
 
 import com.avito.android.Result
-import com.avito.logger.StubLogger
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLogger
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.listener.NoOpTestListener
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
@@ -40,7 +40,7 @@ import kotlin.io.path.ExperimentalPathApi
 @ExperimentalPathApi
 internal class DeviceWorkerTest {
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     @Test
     fun `returns application installed event and 4 passed intentions for 4 tests with of 2 applications`() =
@@ -319,7 +319,7 @@ internal class DeviceWorkerTest {
         deviceListener = CompositeDeviceListener(
             listOf(
                 deviceListener,
-                DeviceLogListener(StubLogger("${device.coordinate}"))
+                DeviceLogListener(PrintlnLogger("${device.coordinate}"))
             )
         ),
         timeProvider = DefaultTimeProvider(),

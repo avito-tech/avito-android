@@ -1,6 +1,6 @@
 package com.avito.android.elastic
 
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.avito.time.TimeMachineProvider
@@ -12,7 +12,7 @@ internal class HttpElasticClientTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     private val timeProvider = TimeMachineProvider()
 

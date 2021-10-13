@@ -1,6 +1,6 @@
 package com.avito.impact.changes
 
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -16,7 +16,7 @@ import java.nio.file.Path
 
 class ChangesDetectorTest {
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
     private lateinit var rootDir: File
     private lateinit var targetCommit: String
 

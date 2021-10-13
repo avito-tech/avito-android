@@ -14,7 +14,7 @@ import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.StubStatsdSender
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.utils.gradle.Environment
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
@@ -123,7 +123,7 @@ internal class BuildCacheMetricsTrackerTest {
 
     private fun processResults(result: BuildOperationsResult): List<StatsMetric> {
         val statsd = StubStatsdSender()
-        val loggerFactory = StubLoggerFactory
+        val loggerFactory = PrintlnLoggerFactory
         val metricsTracker = BuildMetricTracker(envInfo, statsd)
 
         val listener = BuildCacheMetricsTracker(metricsTracker, loggerFactory)

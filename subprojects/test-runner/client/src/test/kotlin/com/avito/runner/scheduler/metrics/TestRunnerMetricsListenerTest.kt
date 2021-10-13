@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.metrics
 
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.createStubInstance
 import com.avito.runner.service.model.intention.Intention
@@ -19,12 +19,12 @@ internal class TestRunnerMetricsListenerTest {
     private val listener = TestRunnerMetricsListener(
         testMetricsSender = StubTestMetricsSender(),
         timeProvider = DefaultTimeProvider(),
-        loggerFactory = StubLoggerFactory
+        loggerFactory = PrintlnLoggerFactory
     )
 
     @Test
     fun `add one test - success`() {
-        val device = StubDevice(loggerFactory = StubLoggerFactory)
+        val device = StubDevice(loggerFactory = PrintlnLoggerFactory)
         val state = State(emptyList())
         val intention = Intention.createStubInstance(state)
         val result = DeviceTestCaseRun.createStubInstance()
@@ -42,10 +42,10 @@ internal class TestRunnerMetricsListenerTest {
     fun `first device start and second finish - IllegaStateException`() {
         val deviceFirst = StubDevice(
             coordinate = DeviceCoordinate.Local(Serial.Local("first")),
-            loggerFactory = StubLoggerFactory)
+            loggerFactory = PrintlnLoggerFactory)
         val deviceSecond = StubDevice(
             coordinate = DeviceCoordinate.Local(Serial.Local("second")),
-            loggerFactory = StubLoggerFactory
+            loggerFactory = PrintlnLoggerFactory
         )
         val state = State(emptyList())
 
@@ -62,7 +62,7 @@ internal class TestRunnerMetricsListenerTest {
 
     @Test
     fun `onDeviceCreated twice - IllegalStateException`() {
-        val device = StubDevice(loggerFactory = StubLoggerFactory)
+        val device = StubDevice(loggerFactory = PrintlnLoggerFactory)
         val state = State(emptyList())
 
         val error = assertThrows<IllegalStateException> {
@@ -78,7 +78,7 @@ internal class TestRunnerMetricsListenerTest {
 
     @Test
     fun `onFinished called before onDeviceCreated - IllegalStateException`() {
-        val device = StubDevice(loggerFactory = StubLoggerFactory)
+        val device = StubDevice(loggerFactory = PrintlnLoggerFactory)
 
         val error = assertThrows<IllegalStateException> {
             runBlocking {
@@ -92,7 +92,7 @@ internal class TestRunnerMetricsListenerTest {
 
     @Test
     fun `onIntentionReceived called before onDeviceCreated - IllegalStateException`() {
-        val device = StubDevice(loggerFactory = StubLoggerFactory)
+        val device = StubDevice(loggerFactory = PrintlnLoggerFactory)
         val state = State(emptyList())
 
         val error = assertThrows<IllegalStateException> {
@@ -107,7 +107,7 @@ internal class TestRunnerMetricsListenerTest {
 
     @Test
     fun `onTestStarted called before onDeviceCreated - IllegalStateException`() {
-        val device = StubDevice(loggerFactory = StubLoggerFactory)
+        val device = StubDevice(loggerFactory = PrintlnLoggerFactory)
         val state = State(emptyList())
 
         val error = assertThrows<IllegalStateException> {
@@ -122,7 +122,7 @@ internal class TestRunnerMetricsListenerTest {
 
     @Test
     fun `onTestCompleted called before onDeviceCreated - IllegalStateException`() {
-        val device = StubDevice(loggerFactory = StubLoggerFactory)
+        val device = StubDevice(loggerFactory = PrintlnLoggerFactory)
         val state = State(emptyList())
 
         val error = assertThrows<IllegalStateException> {

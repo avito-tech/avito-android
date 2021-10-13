@@ -3,7 +3,7 @@ package com.avito.plugin
 import com.avito.android.Result
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.truth.assertThat
@@ -25,7 +25,7 @@ class QAppsUploadActionTest {
 
     private val server = MockWebServerFactory.create()
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     private val apk: File
         get() {

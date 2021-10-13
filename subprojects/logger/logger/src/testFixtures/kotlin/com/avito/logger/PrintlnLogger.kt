@@ -1,8 +1,8 @@
 package com.avito.logger
 
-class StubLogger(private val tag: String) : Logger {
+public class PrintlnLogger(private val tag: String) : Logger {
 
-    private val isRunFromIde = true
+    private val isRunFromIde = System.getProperty("isInvokedFromIde") == "true"
 
     override fun debug(msg: String) {
         if (isRunFromIde) {

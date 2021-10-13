@@ -9,7 +9,7 @@ import com.avito.android.runner.devices.model.stub
 import com.avito.k8s.StubKubernetesApi
 import com.avito.k8s.model.KubePod
 import com.avito.k8s.model.createStubInstance
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -45,11 +45,11 @@ internal class KubernetesReservationClientTest {
                 kubernetesApi,
                 StubEmulatorsLogsReporter,
                 androidDebugBridge,
-                StubLoggerFactory
+                PrintlnLoggerFactory
             ),
             kubernetesApi = kubernetesApi,
             emulatorsLogsReporter = StubEmulatorsLogsReporter,
-            loggerFactory = StubLoggerFactory,
+            loggerFactory = PrintlnLoggerFactory,
             reservationDeploymentFactory = FakeReservationDeploymentFactory(),
             dispatcher = dispatcher,
             podsQueryIntervalMs = podsQueryInterval,

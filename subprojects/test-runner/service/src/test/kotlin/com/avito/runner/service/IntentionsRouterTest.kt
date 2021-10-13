@@ -1,6 +1,6 @@
 package com.avito.runner.service
 
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
@@ -16,7 +16,7 @@ internal class IntentionsRouterTest {
 
     private lateinit var router: IntentionsRouter
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     @BeforeEach
     fun setup() {

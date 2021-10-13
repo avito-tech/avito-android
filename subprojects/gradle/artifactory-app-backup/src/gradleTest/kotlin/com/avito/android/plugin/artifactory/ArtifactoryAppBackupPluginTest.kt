@@ -1,7 +1,7 @@
 package com.avito.android.plugin.artifactory
 
 import com.avito.http.HttpCodes
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
@@ -21,7 +21,7 @@ private typealias Artifact = Pair<String, String>
 
 internal class ArtifactoryAppBackupPluginTest {
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     private val mockWebServer = MockWebServerFactory.create()
 

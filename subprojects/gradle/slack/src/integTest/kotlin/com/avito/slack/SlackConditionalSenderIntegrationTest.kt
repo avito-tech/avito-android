@@ -4,7 +4,7 @@ import com.avito.android.Result
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
 import com.avito.kotlin.dsl.getSystemProperty
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
@@ -15,7 +15,7 @@ import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     private val testChannelId = SlackChannel(
         id = getSystemProperty("avito.slack.test.channelId"),

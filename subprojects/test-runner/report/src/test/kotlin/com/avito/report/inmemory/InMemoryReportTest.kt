@@ -1,6 +1,6 @@
 package com.avito.report.inmemory
 
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.report.Report
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 internal class InMemoryReportTest {
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     @Test
     fun `getTestResults - returns single success - single success attempt`() {

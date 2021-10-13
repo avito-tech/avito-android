@@ -2,7 +2,7 @@ package com.avito.reportviewer
 
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
@@ -15,7 +15,7 @@ internal class ReportsApiRetryTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     private val retryCount = 5
 

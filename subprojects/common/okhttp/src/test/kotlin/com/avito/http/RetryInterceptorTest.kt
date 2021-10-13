@@ -1,7 +1,7 @@
 package com.avito.http
 
 import com.avito.android.Result
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.logger.create
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
@@ -22,7 +22,7 @@ internal class RetryInterceptorTest {
 
     private lateinit var server: MockWebServer
 
-    private val logger = StubLoggerFactory.create<RetryInterceptorTest>()
+    private val logger = PrintlnLoggerFactory.create<RetryInterceptorTest>()
 
     private val errorResponseCases = mapOf(
         "500" to MockResponse().setResponseCode(500),

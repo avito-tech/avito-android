@@ -10,7 +10,7 @@ import com.avito.android.test.report.transport.NoOpTransport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.logger.LoggerFactory
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.test.model.TestName
@@ -26,12 +26,12 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
 
 class ReportTestExtension(
-    val timeProvider: TimeProvider = mock(),
-    private val fileStorageUrl: String = "https://filestorage.com",
-    private val mockInterceptor: MockInterceptor = MockInterceptor(),
-    private val screenshotCapturer: ScreenshotCapturer = mock(),
-    private val loggerFactory: LoggerFactory = StubLoggerFactory,
-    private val report: InternalReport = ReportFactory.createReport(
+  val timeProvider: TimeProvider = mock(),
+  private val fileStorageUrl: String = "https://filestorage.com",
+  private val mockInterceptor: MockInterceptor = MockInterceptor(),
+  private val screenshotCapturer: ScreenshotCapturer = mock(),
+  private val loggerFactory: LoggerFactory = PrintlnLoggerFactory,
+  private val report: InternalReport = ReportFactory.createReport(
         loggerFactory = loggerFactory,
         transport = NoOpTransport,
         screenshotCapturer = screenshotCapturer,

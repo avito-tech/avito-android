@@ -4,7 +4,7 @@ import com.avito.android.test.report.ReportState.NotFinished.Initialized
 import com.avito.android.test.report.createStubInstance
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.report.ApplicationDirProvider
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
@@ -70,7 +70,7 @@ internal class ExternalStorageTransportTest {
     private fun createTransport(testArtifactsProvider: TestArtifactsProvider): ExternalStorageTransport {
         return ExternalStorageTransport(
             timeProvider = DefaultTimeProvider(),
-            loggerFactory = StubLoggerFactory,
+            loggerFactory = PrintlnLoggerFactory,
             testArtifactsProvider = testArtifactsProvider,
             reportSerializer = ReportSerializer()
         )

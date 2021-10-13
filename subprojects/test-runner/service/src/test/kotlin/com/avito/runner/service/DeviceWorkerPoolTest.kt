@@ -1,7 +1,7 @@
 package com.avito.runner.service
 
 import com.avito.android.Result
-import com.avito.logger.StubLoggerFactory
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.listener.NoOpTestListener
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
@@ -31,7 +31,7 @@ import java.io.File
 @ExperimentalCoroutinesApi
 internal class DeviceWorkerPoolTest {
 
-    private val loggerFactory = StubLoggerFactory
+    private val loggerFactory = PrintlnLoggerFactory
 
     private val intentionsChannel = Channel<Intention>(Channel.UNLIMITED)
     private val intentionResults = Channel<IntentionResult>(Channel.UNLIMITED)
