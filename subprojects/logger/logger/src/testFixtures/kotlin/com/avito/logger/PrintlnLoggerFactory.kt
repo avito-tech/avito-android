@@ -4,5 +4,11 @@ import java.io.Serializable
 
 public object PrintlnLoggerFactory : LoggerFactory, Serializable {
 
-    override fun create(tag: String): Logger = PrintlnLogger(tag)
+    private val isRunFromIde = System.getProperty("isInvokedFromIde") == "true"
+
+    override fun create(tag: String): Logger = if (isRunFromIde) {
+        PrintlnLogger(tag)
+    } else {
+        NoOpLogger
+    }
 }
