@@ -311,4 +311,4 @@ delete_avito_cache_node:
 	kubectl delete -f avito-project.yaml
 
 write_locks:
-	./gradlew resolveAndLockAll --write-locks
+	./gradlew resolveAndLockAll --write-locks --no-configuration-cache --quiet > /dev/null
