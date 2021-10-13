@@ -1,7 +1,6 @@
 package com.avito.git
 
 import com.avito.android.Result
-import com.avito.logger.LoggerFactory
 import java.io.File
 
 public interface Git {
@@ -34,7 +33,6 @@ public interface Git {
 
         public fun create(
             rootDir: File,
-            loggerFactory: LoggerFactory
-        ): Git = GitImpl(rootDir, loggerFactory)
+        ): Git = GitImpl(rootDir)
     }
 }

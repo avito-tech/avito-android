@@ -1,20 +1,15 @@
 package com.avito.git
 
 import com.avito.android.Result
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.utils.ProcessRunner
 import java.io.File
 import java.time.Duration
 
 internal class GitImpl(
     rootDir: File,
-    loggerFactory: LoggerFactory
 ) : Git {
 
     private val processRunner = ProcessRunner.create(rootDir)
-
-    private val logger = loggerFactory.create<Git>()
 
     override fun init(): Result<Unit> = git("init").map { Unit }
 
@@ -48,7 +43,6 @@ internal class GitImpl(
 
     private fun git(command: String): Result<String> =
         processRunner.run(command = "git $command", timeout = Duration.ofSeconds(10))
-            .onFailure { error -> logger.warn("git error running: '$command'", error) }
 
     private fun escapeGitMessage(message: String) = message.replace("\\s+".toRegex()) { "_" }
 }

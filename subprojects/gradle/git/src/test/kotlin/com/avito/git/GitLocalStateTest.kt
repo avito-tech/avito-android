@@ -1,6 +1,5 @@
 package com.avito.git
 
-import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
@@ -13,7 +12,6 @@ import java.nio.file.Path
 
 class GitLocalStateTest {
 
-    private val loggerFactory = StubLoggerFactory
     private lateinit var repoDir: File
 
     @BeforeEach
@@ -64,7 +62,6 @@ class GitLocalStateTest {
 
     private fun gitState(targetBranch: String?): GitState = GitLocalStateImpl(
         rootDir = repoDir,
-        targetBranch = targetBranch,
-        loggerFactory = loggerFactory
+        targetBranch = targetBranch
     )
 }
