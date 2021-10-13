@@ -1,7 +1,7 @@
 package com.avito.utils.gradle.internal
 
+import com.avito.android.Result
 import com.avito.android.sentry.EnvironmentInfo
-import com.avito.git.Git
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.Environment
@@ -10,8 +10,20 @@ import org.gradle.api.Project
 
 internal class EnvironmentInfoImpl(
     private val project: Project,
-    private val git: Git
+    private val gitUserEmailProvider: Lazy<Result<String>>
 ) : EnvironmentInfo {
+
+    private val gitUserEmail: String? by lazy {
+        if (hasGit) {
+            gitUserEmailProvider.value.fold(
+                { email -> email.substringBefore('@') },
+                { _ -> null }
+            )
+        } else {
+            null
+        }
+    }
+
 
     override val node: String? by lazy {
         when (environment) {
@@ -31,18 +43,6 @@ internal class EnvironmentInfoImpl(
             buildEnvironment is BuildEnvironment.CI -> Environment.CI
             buildEnvironment is BuildEnvironment.Mirkale -> Environment.Mirakle
             else -> Environment.Unknown
-        }
-    }
-
-    private val gitUserEmail: String? by lazy {
-        if (hasGit) {
-            try {
-                git.config("user.email").map { it.substringBefore('@') }.getOrThrow()
-            } catch (e: Throwable) {
-                null
-            }
-        } else {
-            null
         }
     }
 
