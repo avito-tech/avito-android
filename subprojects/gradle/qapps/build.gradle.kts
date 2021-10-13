@@ -5,26 +5,26 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.logger.logger)
-    implementation(projects.common.okhttp)
-    implementation(projects.common.httpClient)
-    implementation(projects.common.result)
-    implementation(projects.gradle.android)
-    implementation(projects.gradle.buildFailer)
-    implementation(projects.gradle.gradleExtensions)
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.gradle.statsdConfig)
+    implementation(projects.subprojects.logger.logger)
+    implementation(projects.subprojects.common.okhttp)
+    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.gradle.buildFailer)
+    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.gradle.statsdConfig)
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttpLogging)
 
-    testImplementation(projects.common.truthExtensions)
-    testImplementation(projects.common.testOkhttp)
-    testImplementation(testFixtures(projects.logger.logger))
-    testImplementation(testFixtures(projects.common.httpClient))
+    testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(projects.subprojects.common.testOkhttp)
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
+    testImplementation(testFixtures(projects.subprojects.common.httpClient))
 
-    gradleTestImplementation(projects.gradle.testProject)
-    gradleTestImplementation(projects.common.testOkhttp)
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(projects.subprojects.common.testOkhttp)
 }
 
 gradlePlugin {

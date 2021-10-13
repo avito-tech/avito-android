@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    api(projects.testRunner.deviceProvider.model)
+    api(projects.subprojects.testRunner.deviceProvider.model)
 }

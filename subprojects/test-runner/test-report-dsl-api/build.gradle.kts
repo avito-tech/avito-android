@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    api(projects.testRunner.testReportApi)
+    api(projects.subprojects.testRunner.testReportApi)
 }

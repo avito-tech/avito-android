@@ -4,13 +4,13 @@ plugins {
 }
 
 dependencies {
-    api(projects.gradle.process)
-    api(projects.common.result)
+    api(projects.subprojects.gradle.process)
+    api(projects.subprojects.common.result)
 
     implementation(gradleApi())
-    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.gradleExtensions)
 
-    testImplementation(projects.gradle.testProject)
-    testImplementation(testFixtures(projects.logger.logger))
+    testImplementation(projects.subprojects.gradle.testProject)
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
     testImplementation(libs.mockitoJUnitJupiter)
 }

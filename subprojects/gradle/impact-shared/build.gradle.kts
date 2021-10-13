@@ -5,23 +5,23 @@ plugins {
 }
 
 dependencies {
-    api(projects.gradle.moduleDependenciesGraph)
+    api(projects.subprojects.gradle.moduleDependenciesGraph)
 
     implementation(gradleApi())
 
-    implementation(projects.gradle.android)
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.gradle.git)
-    implementation(projects.gradle.gradleExtensions)
-    implementation(projects.gradle.process)
+    implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.gradle.git)
+    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.process)
 
     implementation(libs.antPattern)
     implementation(libs.kotlinGradle)
 
-    testImplementation(projects.common.truthExtensions)
-    testImplementation(projects.gradle.gitTestFixtures)
-    testImplementation(projects.gradle.testProject)
-    testImplementation(testFixtures(projects.logger.logger))
+    testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(projects.subprojects.gradle.gitTestFixtures)
+    testImplementation(projects.subprojects.gradle.testProject)
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
 
     testImplementation(libs.mockitoKotlin)
 }

@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    api(projects.testRunner.testReportApi)
-    api(projects.testRunner.testReportDslApi)
-    api(projects.logger.logger)
+    api(projects.subprojects.testRunner.testReportApi)
+    api(projects.subprojects.testRunner.testReportDslApi)
+    api(projects.subprojects.logger.logger)
     api(libs.junit)
 }

@@ -15,10 +15,10 @@ dependencies {
     api(libs.material)
 
     // todo implementation, waitForAssertion used in app
-    api(projects.common.waiter)
+    api(projects.subprojects.common.waiter)
 
     implementation(libs.bundles.hamcrest)
     implementation(libs.junit)
     implementation(libs.freeReflection)
-    implementation(projects.androidTest.instrumentation)
+    implementation(projects.subprojects.androidTest.instrumentation)
 }

@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(libs.kubernetesClient)
-    api(projects.common.teamcityCommon)
+    api(projects.subprojects.common.teamcityCommon)
     api(libs.kotlinXCli)
 }
 

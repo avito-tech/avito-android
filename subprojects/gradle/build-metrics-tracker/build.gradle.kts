@@ -4,10 +4,10 @@ plugins {
 }
 
 dependencies {
-    api(projects.common.statsd)
-    implementation(projects.gradle.buildEnvironment)
+    api(projects.subprojects.common.statsd)
+    implementation(projects.subprojects.gradle.buildEnvironment)
 
-    testImplementation(testFixtures(projects.common.graphite))
-    testImplementation(testFixtures(projects.common.statsd))
-    testImplementation(testFixtures(projects.gradle.buildEnvironment))
+    testImplementation(testFixtures(projects.subprojects.common.graphite))
+    testImplementation(testFixtures(projects.subprojects.common.statsd))
+    testImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
 }

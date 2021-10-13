@@ -5,26 +5,26 @@ plugins {
 }
 
 dependencies {
-    api(projects.testRunner.testModel)
-    api(projects.testRunner.runnerApi)
-    api(projects.testRunner.report)
-    api(projects.common.httpClient)
-    api(projects.logger.logger)
+    api(projects.subprojects.testRunner.testModel)
+    api(projects.subprojects.testRunner.runnerApi)
+    api(projects.subprojects.testRunner.report)
+    api(projects.subprojects.common.httpClient)
+    api(projects.subprojects.logger.logger)
 
-    implementation(projects.testRunner.testReportArtifacts)
-    implementation(projects.testRunner.fileStorage)
-    implementation(projects.common.time)
-    implementation(projects.common.problem)
-    implementation(projects.common.retrace)
-    implementation(projects.common.throwableUtils)
+    implementation(projects.subprojects.testRunner.testReportArtifacts)
+    implementation(projects.subprojects.testRunner.fileStorage)
+    implementation(projects.subprojects.common.time)
+    implementation(projects.subprojects.common.problem)
+    implementation(projects.subprojects.common.retrace)
+    implementation(projects.subprojects.common.throwableUtils)
     implementation(libs.coroutinesCore)
     implementation(libs.commonsIo) {
         because("LogcatBuffer.Impl.tailer needs to consider Charset (https://issues.apache.org/jira/browse/IO-354)")
     }
 
-    testImplementation(projects.common.truthExtensions)
-    testImplementation(testFixtures(projects.common.time))
-    testImplementation(testFixtures(projects.logger.logger))
-    testImplementation(testFixtures(projects.testRunner.report))
-    testImplementation(testFixtures(projects.testRunner.runnerApi))
+    testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
+    testImplementation(testFixtures(projects.subprojects.testRunner.report))
+    testImplementation(testFixtures(projects.subprojects.testRunner.runnerApi))
 }

@@ -6,5 +6,5 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    testImplementation(projects.gradle.testProject)
+    testImplementation(projects.subprojects.gradle.testProject)
 }

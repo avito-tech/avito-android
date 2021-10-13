@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.testRunner.reportViewer)
+    implementation(projects.subprojects.testRunner.reportViewer)
 }

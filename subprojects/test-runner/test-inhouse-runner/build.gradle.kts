@@ -4,36 +4,36 @@ plugins {
 }
 
 dependencies {
-    api(projects.testRunner.testInstrumentationRunner)
-    api(projects.common.junitUtils)
-    api(projects.testRunner.testReportDslApi)
+    api(projects.subprojects.testRunner.testInstrumentationRunner)
+    api(projects.subprojects.common.junitUtils)
+    api(projects.subprojects.testRunner.testReportDslApi)
     api(libs.sentry) {
         because("InHouseInstrumentationTestRunner.sentry")
     }
 
-    implementation(projects.common.buildMetadata)
-    implementation(projects.common.sentry)
-    implementation(projects.logger.elasticLogger)
-    implementation(projects.common.httpClient)
-    implementation(projects.common.okhttp)
-    implementation(projects.common.statsd)
-    implementation(projects.testRunner.reportViewer) {
+    implementation(projects.subprojects.common.buildMetadata)
+    implementation(projects.subprojects.common.sentry)
+    implementation(projects.subprojects.logger.elasticLogger)
+    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.okhttp)
+    implementation(projects.subprojects.common.statsd)
+    implementation(projects.subprojects.testRunner.reportViewer) {
         because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
     }
-    implementation(projects.testRunner.testReportArtifacts) {
+    implementation(projects.subprojects.testRunner.testReportArtifacts) {
         because("uses factory to create TestArtifactsProvider")
     }
-    implementation(projects.logger.logger)
-    implementation(projects.common.junitUtils)
-    implementation(projects.common.testOkhttp)
-    implementation(projects.testRunner.testAnnotations)
-    implementation(projects.testRunner.fileStorage)
-    implementation(projects.common.time)
-    implementation(projects.logger.androidLog)
-    implementation(projects.androidTest.uiTestingCore)
+    implementation(projects.subprojects.logger.logger)
+    implementation(projects.subprojects.common.junitUtils)
+    implementation(projects.subprojects.common.testOkhttp)
+    implementation(projects.subprojects.testRunner.testAnnotations)
+    implementation(projects.subprojects.testRunner.fileStorage)
+    implementation(projects.subprojects.common.time)
+    implementation(projects.subprojects.logger.androidLog)
+    implementation(projects.subprojects.androidTest.uiTestingCore)
     implementation(libs.playServicesBase)
-    implementation(projects.androidTest.instrumentation)
-    implementation(projects.testRunner.testReport)
+    implementation(projects.subprojects.androidTest.instrumentation)
+    implementation(projects.subprojects.testRunner.testReport)
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)
@@ -43,5 +43,5 @@ dependencies {
 
     testImplementation(libs.kotlinPoet)
     testImplementation(libs.kotlinCompileTesting)
-    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.subprojects.common.truthExtensions)
 }

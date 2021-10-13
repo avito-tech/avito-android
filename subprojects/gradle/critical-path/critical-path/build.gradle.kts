@@ -6,14 +6,14 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(projects.gradle.criticalPath.api)
-    implementation(projects.logger.gradleLogger)
+    implementation(projects.subprojects.gradle.criticalPath.api)
+    implementation(projects.subprojects.logger.gradleLogger)
     implementation(libs.gson)
-    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.gradleExtensions)
 
-    gradleTestImplementation(projects.common.junitUtils)
-    gradleTestImplementation(projects.gradle.testProject)
-    gradleTestImplementation(testFixtures(projects.logger.logger))
+    gradleTestImplementation(projects.subprojects.common.junitUtils)
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
 }
 
 gradlePlugin {

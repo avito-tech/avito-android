@@ -8,10 +8,10 @@ dependencies {
     api(libs.okhttpMockWebServer)
     api(gradleTestKit())
 
-    implementation(projects.gradle.process)
-    implementation(projects.gradle.android)
-    implementation(projects.common.truthExtensions)
-    implementation(testFixtures(projects.logger.logger))
+    implementation(projects.subprojects.gradle.process)
+    implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.common.truthExtensions)
+    implementation(testFixtures(projects.subprojects.logger.logger))
 
     implementation(libs.androidToolsCommon)
     implementation(libs.kotlinReflect)

@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    api(projects.common.result)
-    api(projects.common.httpClient)
+    api(projects.subprojects.common.result)
+    api(projects.subprojects.common.httpClient)
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)

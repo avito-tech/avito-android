@@ -9,18 +9,18 @@ publish {
 }
 
 dependencies {
-    api(projects.common.coroutinesExtension)
-    api(projects.common.statsd)
-    api(projects.common.time)
-    api(projects.gradle.process)
-    api(projects.testRunner.commandLineExecutor)
-    api(projects.testRunner.deviceProvider.api)
-    api(projects.testRunner.testModel)
-    api(projects.testRunner.runnerApi)
+    api(projects.subprojects.common.coroutinesExtension)
+    api(projects.subprojects.common.statsd)
+    api(projects.subprojects.common.time)
+    api(projects.subprojects.gradle.process)
+    api(projects.subprojects.testRunner.commandLineExecutor)
+    api(projects.subprojects.testRunner.deviceProvider.api)
+    api(projects.subprojects.testRunner.testModel)
+    api(projects.subprojects.testRunner.runnerApi)
 
-    implementation(projects.common.result)
-    implementation(projects.common.problem)
-    implementation(projects.testRunner.testReportArtifacts) {
+    implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.common.problem)
+    implementation(projects.subprojects.testRunner.testReportArtifacts) {
         because("DeviceWorker pulls test artifacts")
     }
     implementation(libs.ddmlib)
@@ -29,11 +29,11 @@ dependencies {
         because("java.nio.file.Path extensions")
     }
 
-    testImplementation(testFixtures(projects.logger.logger))
-    testImplementation(testFixtures(projects.common.time))
-    testImplementation(projects.common.files)
-    testImplementation(projects.common.truthExtensions)
-    testImplementation(projects.common.resources)
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
+    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(projects.subprojects.common.files)
+    testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(projects.subprojects.common.resources)
     testImplementation(libs.coroutinesTest)
-    testImplementation(testFixtures(projects.testRunner.deviceProvider.model))
+    testImplementation(testFixtures(projects.subprojects.testRunner.deviceProvider.model))
 }

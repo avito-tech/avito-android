@@ -5,17 +5,17 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.gradle.buildFailer)
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.gradle.android)
-    implementation(projects.gradle.impactShared)
-    implementation(projects.gradle.buildMetricsTracker)
-    implementation(projects.gradle.sentryConfig)
-    implementation(projects.gradle.buildEnvironment)
-    implementation(projects.common.files)
-    implementation(projects.common.result)
-    implementation(projects.gradle.statsdConfig)
-    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.buildFailer)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.gradle.impactShared)
+    implementation(projects.subprojects.gradle.buildMetricsTracker)
+    implementation(projects.subprojects.gradle.sentryConfig)
+    implementation(projects.subprojects.gradle.buildEnvironment)
+    implementation(projects.subprojects.common.files)
+    implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.gradle.statsdConfig)
+    implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(libs.kotlinGradle)
     implementation(libs.layoutLibApi) {
         because("com.android.resources.ResourceType")
@@ -25,9 +25,9 @@ dependencies {
     }
 
     // for test
-    implementation(projects.gradle.moduleTypes)
+    implementation(projects.subprojects.gradle.moduleTypes)
 
-    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
 }
 
 gradlePlugin {
