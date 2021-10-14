@@ -24,7 +24,7 @@ function publish() {
     local readonly CREDENTIALS="${profileId} ${user} ${password}"
     local readonly PGP="-Pavito.pgp.keyid=${PGP_KEY_ID} -Pavito.pgp.password=${PGP_PASSWORD}"
 
-    runInBuilder "./gradlew -p subprojects publishRelease ${GRADLE_ARGS} ${CREDENTIALS} ${PGP} --no-parallel --stacktrace"
+    runInBuilder "./gradlew publishRelease ${GRADLE_ARGS} ${CREDENTIALS} ${PGP} --no-parallel --stacktrace"
 }
 
 readonly CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)

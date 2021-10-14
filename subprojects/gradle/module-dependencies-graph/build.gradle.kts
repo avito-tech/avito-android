@@ -7,13 +7,13 @@ plugins {
 dependencies {
     compileOnly(gradleApi())
 
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.common.math)
-    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.common.math)
+    implementation(projects.subprojects.gradle.gradleExtensions)
 
-    gradleTestImplementation(projects.common.truthExtensions)
-    gradleTestImplementation(testFixtures(projects.logger.logger))
-    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.subprojects.common.truthExtensions)
+    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
 }
 
 gradlePlugin {

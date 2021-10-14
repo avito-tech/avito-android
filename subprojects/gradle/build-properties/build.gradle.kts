@@ -5,12 +5,12 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.gradle.android)
-    implementation(projects.gradle.preBuild)
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.gradle.preBuild)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.gradle.gradleExtensions)
 
-    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
 }
 
 gradlePlugin {

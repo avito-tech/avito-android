@@ -25,7 +25,6 @@ includeAnnotation?=
 dry_run=false
 instrumentation=Ui
 stacktrace?=
-project=subprojects
 
 # see Logging.md#Verbose-mode
 verbose?=
@@ -152,16 +151,11 @@ clear_docker_containers:
 	fi
 
 publish_to_maven_local:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) publishToMavenLocal -PprojectVersion=local --no-configuration-cache
+	$(docker_command) ./gradlew $(params) publishToMavenLocal -PprojectVersion=local --no-configuration-cache
 
 stage_ui_tests:
 	make publish_to_maven_local
-	./gradlew --project-dir $(project) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
-
-# todo remove --no-daemon MBS-11385
-# see https://avito-tech.github.io/avito-android/test_runner/SampleApp/
-test_runner_instrumentation:
-	$(docker_command) ./gradlew --project-dir samples $(params) :test-runner:instrumentationUi --no-daemon
+	./gradlew $(params) :subprojects:android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
 
 compile:
 	$(docker_command) ./gradlew $(params) compileAll
@@ -180,7 +174,7 @@ build:
 # Analyze modules dependencies issues
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/wiki/Tasks#build-health
 build_health:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) buildHealth
+	$(docker_command) ./gradlew $(params) buildHealth
 
 # Precondition: installed graphviz: https://graphviz.org/download/
 #
@@ -189,12 +183,12 @@ build_health:
 # Example: make project_graph_report id=:test-runner:client
 project_graph_report:
 	$(call check_defined, id)
-	$(docker_command) ./gradlew --project-dir $(project) $(params) projectGraphReport --id $(id)
-	cd $(project)/build/reports/dependency-analysis && \
+	$(docker_command) ./gradlew $(params) projectGraphReport --id $(id)
+	cd build/reports/dependency-analysis && \
 		dot -Tsvg merged-graph.gv -o merged-graph.svg && \
 		dot -Tsvg merged-graph-rev.gv -o merged-graph-rev.svg && \
 		dot -Tsvg merged-graph-rev-sub.gv -o merged-graph-rev-sub.svg && \
-		echo "See artifacts in $(project)/build/reports/dependency-analysis"
+		echo "See artifacts in build/reports/dependency-analysis"
 
 build_android_image:
 	cd ./ci/docker/android-builder && \
@@ -263,19 +257,13 @@ check_avito_configuration:
 	cd ../avito-android && ./gradlew tasks -DinfraVersion=local
 
 dependency_updates:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) dependencyUpdates -Drevision=release
+	$(docker_command) ./gradlew $(params) dependencyUpdates -Drevision=release
 
 benchmark_fast_check:
-	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios fastCheck
+	gradle-profiler --benchmark --scenario-file gradle/performance.scenarios fastCheck
 
 benchmark_gradle_test:
-	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios gradleTest
-
-# To generate new test fixtures for LintSlackAlertIntegrationTest
-lint_test_app:
-	$(docker_command) ./gradlew --project-dir $(project) $(params) :android-test:ui-testing-core-app:lint
-	cp subprojects/android-test/ui-testing-core-app/build/reports/lint-results-debug.html subprojects/gradle/lint-report/src/integTest/resources/lint-results.html
-	cp subprojects/android-test/ui-testing-core-app/build/reports/lint-results-debug.xml subprojects/gradle/lint-report/src/integTest/resources/lint-results.xml
+	gradle-profiler --benchmark --scenario-file gradle/performance.scenarios gradleTest
 
 ## Gradle cache node
 GRADLE_CACHE_NODE_TAG=9.9

@@ -32,7 +32,7 @@ publishing {
                     require(project.name == pluginName) {
                         // See isAutomatedPublishing comments above
                         "Gradle plugin '${pluginDeclaration.id}' (${pluginDeclaration.name}) " +
-                            "must have id '${pluginPrefix}.${project.name}'. " +
+                            "must have id '$pluginPrefix.${project.name}'. " +
                             "This is due to a publication issue: MBS-10660"
                     }
 

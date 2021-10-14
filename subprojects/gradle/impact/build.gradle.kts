@@ -5,28 +5,28 @@ plugins {
 }
 
 dependencies {
-    api(projects.gradle.impactShared)
+    api(projects.subprojects.gradle.impactShared)
 
     implementation(gradleApi())
-    implementation(projects.gradle.android)
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.common.files)
-    implementation(projects.common.math)
-    implementation(projects.gradle.git)
-    implementation(projects.gradle.buildEnvironment)
-    implementation(projects.gradle.buildMetricsTracker)
-    implementation(projects.gradle.gradleExtensions)
-    implementation(projects.gradle.sentryConfig)
-    implementation(projects.gradle.statsdConfig)
+    implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.common.files)
+    implementation(projects.subprojects.common.math)
+    implementation(projects.subprojects.gradle.git)
+    implementation(projects.subprojects.gradle.buildEnvironment)
+    implementation(projects.subprojects.gradle.buildMetricsTracker)
+    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.sentryConfig)
+    implementation(projects.subprojects.gradle.statsdConfig)
 
     implementation(libs.antPattern)
     implementation(libs.kotlinGradle)
 
-    gradleTestImplementation(testFixtures(projects.gradle.buildEnvironment))
-    gradleTestImplementation(testFixtures(projects.gradle.impactShared))
-    gradleTestImplementation(testFixtures(projects.common.statsd))
-    gradleTestImplementation(projects.gradle.testProject)
-    gradleTestImplementation(projects.gradle.impactSharedTestFixtures)
+    gradleTestImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
+    gradleTestImplementation(testFixtures(projects.subprojects.gradle.impactShared))
+    gradleTestImplementation(testFixtures(projects.subprojects.common.statsd))
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(projects.subprojects.gradle.impactSharedTestFixtures)
 }
 
 gradlePlugin {

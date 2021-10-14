@@ -6,6 +6,6 @@ plugins {
 
 dependencies {
     api(gradleApi())
-    api(projects.gradle.gradleExtensions)
-    implementation(projects.gradle.git)
+    api(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.git)
 }

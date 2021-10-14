@@ -10,16 +10,16 @@ dependencies {
     api(libs.kotlinReflect) {
         because("kubernetes dsl uses old version")
     }
-    api(projects.gradle.gradleExtensions)
-    api(projects.common.httpClient)
+    api(projects.subprojects.gradle.gradleExtensions)
+    api(projects.subprojects.common.httpClient)
 
     implementation(gradleApi())
     implementation(libs.officialKubernetesClient)
     implementation(libs.googleAuthLibrary)
     implementation(libs.coroutinesCore)
-    implementation(projects.common.result)
-    implementation(projects.common.waiter)
-    implementation(projects.logger.logger)
+    implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.common.waiter)
+    implementation(projects.subprojects.logger.logger)
 
-    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.subprojects.common.truthExtensions)
 }

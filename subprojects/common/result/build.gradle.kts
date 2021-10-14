@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.common.compositeException)
+    implementation(projects.subprojects.common.compositeException)
 }

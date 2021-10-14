@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    api(projects.logger.logger)
+    api(projects.subprojects.logger.logger)
 
-    implementation(projects.logger.elasticLogger)
-    implementation(projects.logger.sentryLogger)
+    implementation(projects.subprojects.logger.elasticLogger)
+    implementation(projects.subprojects.logger.sentryLogger)
 }

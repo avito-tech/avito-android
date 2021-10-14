@@ -5,6 +5,6 @@ plugins {
 }
 
 dependencies {
-    api(projects.logger.logger)
+    api(projects.subprojects.logger.logger)
     api(libs.androidAnnotations)
 }

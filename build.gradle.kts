@@ -1,6 +1,12 @@
 plugins {
     id("convention.gradle-properties")
     id("convention.gradle-wrapper")
+    id("convention.lifecycle")
+    // accessing version catalog here is blocked by IDE false-postive error
+    // https://youtrack.jetbrains.com/issue/KTIJ-19369
+    id("com.autonomousapps.dependency-analysis") version "0.78.0"
+    id("convention.dependency-updates")
+    id("convention.detekt")
 }
 
 buildscript {
@@ -36,54 +42,19 @@ project.gradle.startParameter.setTaskNames(initialTaskNames + listOf("installGit
 
 // Register lifecycle tasks in this umbrella build.
 // A user/CI usually only needs these.
-val detektAllTask = tasks.register("detektAll") {
-    group = taskGroup
-    description = "Run detekt in all included builds"
 
-    dependsOn(includedBuildTasks(":detektAll"))
-}
-
-val compileAll = tasks.register("compileAll") {
-    group = taskGroup
-    description = "Compiles all available modules in all variants + test/androidTest sources"
-
-    dependsOn(includedBuildTasks(":compileAll"))
-}
-
-val assembleAll = tasks.register("assembleAll") {
-    group = taskGroup
-    description = "Assemble all components"
-
-    dependsOn(includedBuildTasks(":assembleAll"))
-}
-
-tasks.register("resolveAndLockAll") {
-    group = taskGroup
-    description = "Resolve all dependencies and write locks"
-
-    dependsOn(includedBuildTasks(":resolveAndLockAll"))
-}
-
-val checkAll = tasks.register("checkAll") {
+val checkAll = tasks.named("checkAll") {
     group = taskGroup
     description = "Run all tests and static analysis tools"
 
-    dependsOn(includedBuildTasks(":checkAll"))
-
-    dependsOn(detektAllTask)
+    dependsOn(tasks.named("detektAll"))
     dependsOn(tasks.named("checkGradleWrappers"))
     dependsOn(tasks.named("checkCommonProperties"))
 }
 
-tasks.register("build") {
+tasks.named("build") {
     group = taskGroup
     description = "Build and run all tests (without publishing)"
 
-    dependsOn(assembleAll, checkAll)
-}
-
-fun includedBuildTasks(path: String): List<TaskReference> {
-    return gradle.includedBuilds
-        .filter { !it.name.startsWith("build-logic") }
-        .map { it.task(path) }
+    dependsOn(tasks.named("assembleAll"), checkAll)
 }

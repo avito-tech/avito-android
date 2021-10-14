@@ -7,24 +7,24 @@ plugins {
 
 dependencies {
     implementation(libs.okhttp)
-    implementation(projects.common.httpClient)
-    implementation(projects.common.math)
-    implementation(projects.common.problem)
-    implementation(projects.common.time)
-    implementation(projects.gradle.gradleExtensions)
-    implementation(projects.gradle.slack)
-    implementation(projects.gradle.statsdConfig)
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.testRunner.reportViewer) {
+    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.math)
+    implementation(projects.subprojects.common.problem)
+    implementation(projects.subprojects.common.time)
+    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.slack)
+    implementation(projects.subprojects.gradle.statsdConfig)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.testRunner.reportViewer) {
         because("API to fetch reports; ReportCoordinates model")
     }
 
-    testImplementation(projects.common.truthExtensions)
-    testImplementation(testFixtures(projects.testRunner.reportViewer))
+    testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(testFixtures(projects.subprojects.testRunner.reportViewer))
 
-    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
 
-    testFixturesImplementation(testFixtures(projects.testRunner.testModel))
+    testFixturesImplementation(testFixtures(projects.subprojects.testRunner.testModel))
 }
 
 gradlePlugin {

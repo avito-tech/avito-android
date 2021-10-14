@@ -27,7 +27,7 @@ val detektAll = tasks.register<Detekt>("detektAll") {
      * yaml is a copy of https://github.com/detekt/detekt/blob/master/detekt-core/src/main/resources/default-detekt-config.yml
      * all rules are disabled by default, enabled one by one
      */
-    config.setFrom(files(project.rootDir.resolve("../conf/detekt.yml")))
+    config.setFrom(files(project.rootDir.resolve("conf/detekt.yml")))
     buildUponDefaultConfig = false
 
     include("**/*.kt")

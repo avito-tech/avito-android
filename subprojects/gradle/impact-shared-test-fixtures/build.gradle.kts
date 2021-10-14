@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    api(projects.common.result)
+    api(projects.subprojects.common.result)
 
     implementation(gradleApi())
-    implementation(projects.gradle.impactShared)
-    implementation(projects.gradle.testProject)
+    implementation(projects.subprojects.gradle.impactShared)
+    implementation(projects.subprojects.gradle.testProject)
     implementation(libs.truth)
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.common.junitUtils)
-    api(projects.androidLib.snackbarProxy)
-    implementation(projects.androidTest.uiTestingCore)
+    api(projects.subprojects.common.junitUtils)
+    api(projects.subprojects.androidLib.snackbarProxy)
+    implementation(projects.subprojects.androidTest.uiTestingCore)
 }

@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(gradleApi())
-    api(projects.common.problem)
+    api(projects.subprojects.common.problem)
 }

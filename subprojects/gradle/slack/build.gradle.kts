@@ -7,25 +7,25 @@ plugins {
 }
 
 dependencies {
-    api(projects.common.result)
+    api(projects.subprojects.common.result)
 
-    implementation(projects.logger.gradleLogger)
-    implementation(projects.common.time)
-    implementation(projects.common.httpClient)
-    implementation(projects.common.okhttp)
+    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.common.time)
+    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.okhttp)
     implementation(libs.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(libs.okhttp)
     implementation(libs.coroutinesCore)
 
-    integTestImplementation(projects.common.truthExtensions)
-    integTestImplementation(projects.gradle.gradleExtensions)
-    integTestImplementation(testFixtures(projects.common.httpClient))
+    integTestImplementation(projects.subprojects.common.truthExtensions)
+    integTestImplementation(projects.subprojects.gradle.gradleExtensions)
+    integTestImplementation(testFixtures(projects.subprojects.common.httpClient))
 
-    testImplementation(projects.gradle.testProject)
-    testImplementation(projects.gradle.slackTestFixtures)
-    testImplementation(testFixtures(projects.common.time))
-    testImplementation(testFixtures(projects.logger.logger))
-    testImplementation(testFixtures(projects.common.statsd))
+    testImplementation(projects.subprojects.gradle.testProject)
+    testImplementation(projects.subprojects.gradle.slackTestFixtures)
+    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
+    testImplementation(testFixtures(projects.subprojects.common.statsd))
 }
 
 tasks.named<Test>("integrationTest").configure {

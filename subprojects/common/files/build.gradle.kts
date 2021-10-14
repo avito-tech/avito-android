@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(projects.common.result)
+    api(projects.subprojects.common.result)
     api(libs.androidAnnotations)
 }

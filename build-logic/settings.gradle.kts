@@ -9,6 +9,14 @@ plugins {
     id("convention-dependencies")
 }
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+}
+
 include("kotlin")
 include("android")
 include("testing")
