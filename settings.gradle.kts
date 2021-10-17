@@ -104,6 +104,7 @@ include(":subprojects:android-test:rx3-idler")
 
 include(":subprojects:android-lib:proxy-toast")
 include(":subprojects:android-lib:snackbar-proxy")
+include(":subprojects:android-lib:sample-lib")
 
 include(":subprojects:test-runner:test-report-artifacts")
 include(":subprojects:test-runner:test-annotations")

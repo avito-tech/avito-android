@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.playServicesBase)
     implementation(libs.recyclerView)
+    // this module provides resources for a menu
+    implementation(projects.subprojects.androidLib.sampleLib)
 
     implementation(projects.subprojects.androidLib.proxyToast)
 

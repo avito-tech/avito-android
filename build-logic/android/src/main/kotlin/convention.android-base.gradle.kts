@@ -36,10 +36,10 @@ configure<BaseExtension> {
     with(buildFeatures) {
         aidl = false
         compose = false
-        buildConfig = false
+        buildConfig = true
         prefab = false
         renderScript = false
-        resValues = false
+        resValues = true
         shaders = false
         viewBinding = false
     }
