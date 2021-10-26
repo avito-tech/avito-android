@@ -111,8 +111,7 @@ internal class RunnerInputParamsTest {
 
         val configurationName = "functional"
 
-        val expectedOutputDir = "${projectDir.canonicalPath}/$appModuleName/" +
-            "outputs/stub.$commit.teamcity-buildType/functional"
+        val expectedOutputDir = "${projectDir.canonicalPath}/outputs/stub.$commit.teamcity-buildType/functional"
 
         val runnerInput: RunnerInputParams = RunnerInputDumper(File(expectedOutputDir)).readInput()
 
@@ -301,8 +300,7 @@ internal class RunnerInputParamsTest {
             Case("verdict file") {
                 assertThat(it.verdictFile.canonicalPath)
                     .isEqualTo(
-                        "${projectDir.canonicalPath}/$appModuleName/" +
-                            "outputs/stub.$commit.teamcity-buildType/functional/verdict.json"
+                        "${projectDir.canonicalPath}/outputs/stub.$commit.teamcity-buildType/functional/verdict.json"
                     )
             },
             Case("file storage url") {

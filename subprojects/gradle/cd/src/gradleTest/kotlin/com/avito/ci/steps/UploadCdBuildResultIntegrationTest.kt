@@ -397,7 +397,7 @@ class RealTest {
                     }
                 }
 
-                output = "./output"
+                output = rootProject.file("outputs").path
 
                 configurations {
                     $configurations

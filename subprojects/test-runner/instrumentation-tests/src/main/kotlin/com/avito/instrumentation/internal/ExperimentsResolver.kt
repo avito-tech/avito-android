@@ -1,14 +1,14 @@
 package com.avito.instrumentation.internal
 
 import com.avito.instrumentation.configuration.Experiments
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.kotlin.dsl.getBooleanProperty
 import org.gradle.api.Project
 
 internal class ExperimentsResolver(private val project: Project) {
 
     fun getExperiments(
-        extension: GradleInstrumentationPluginConfiguration
+        extension: InstrumentationTestsPluginExtension
     ): Experiments {
         return Experiments(
             saveTestArtifactsToOutputs = getSaveTestArtifactsToOutputs(extension),
@@ -19,23 +19,23 @@ internal class ExperimentsResolver(private val project: Project) {
         )
     }
 
-    private fun getSendPodsMetrics(extension: GradleInstrumentationPluginConfiguration): Boolean {
+    private fun getSendPodsMetrics(extension: InstrumentationTestsPluginExtension): Boolean {
         return extension.experimental.sendPodsMetrics.getOrElse(true)
     }
 
-    private fun getSaveTestArtifactsToOutputs(extension: GradleInstrumentationPluginConfiguration): Boolean {
+    private fun getSaveTestArtifactsToOutputs(extension: InstrumentationTestsPluginExtension): Boolean {
         return extension.experimental.saveTestArtifactsToOutputs.getOrElse(false)
     }
 
-    private fun getFetchLogcatForIncompleteTests(extension: GradleInstrumentationPluginConfiguration): Boolean {
+    private fun getFetchLogcatForIncompleteTests(extension: InstrumentationTestsPluginExtension): Boolean {
         return extension.experimental.fetchLogcatForIncompleteTests.getOrElse(false)
     }
 
-    private fun getUseLegacyExtensionsV1Beta(extension: GradleInstrumentationPluginConfiguration): Boolean {
+    private fun getUseLegacyExtensionsV1Beta(extension: InstrumentationTestsPluginExtension): Boolean {
         return extension.experimental.useLegacyExtensionsV1Beta.getOrElse(true)
     }
 
-    private fun getUploadArtifactsFromRunner(extension: GradleInstrumentationPluginConfiguration): Boolean {
+    private fun getUploadArtifactsFromRunner(extension: InstrumentationTestsPluginExtension): Boolean {
         return extension.experimental.uploadArtifactsFromRunner.getOrElse(
             project.getBooleanProperty("avito.report.fromRunner", default = false)
         )

@@ -14,7 +14,7 @@ internal val kotlinStubConfig = """
   |}
   |
   |instrumentation {
-  |    output = project.file("outputs").path
+  |    output = rootProject.file("outputs").path
   |    sentryDsn = "stub"
   |
   |    instrumentationParams = mapOf(
@@ -77,7 +77,7 @@ internal val groovyStubConfig = """
   |}
   |
   |instrumentation {
-  |    output = project.file("outputs").path
+  |    output = rootProject.file("outputs").path
   |    sentryDsn = "stub"
   |
   |    instrumentationParams = [

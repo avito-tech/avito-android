@@ -44,13 +44,17 @@ internal class RunnerInputDumper(private val dumpDir: File) {
      * used in tests for easier serialization
      */
     private fun getDumpFile(): File {
-        return File(dumpDir, "instrumentation-extension-dump.bin")
+        return File(dumpDir, "instrumentation-extension-dump.bin").apply {
+            parentFile.mkdirs()
+        }
     }
 
     /**
      * human readable
      */
     private fun getDumpJson(): File {
-        return File(dumpDir, "test-runner-args-dump.json")
+        return File(dumpDir, "test-runner-args-dump.json").apply {
+            parentFile.mkdirs()
+        }
     }
 }

@@ -45,7 +45,7 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
                 "jobSlug"       : "regress"
             ]
 
-            output = "/"
+            output = rootProject.file("outputs").path
 
             configurations {
                 $configurations
