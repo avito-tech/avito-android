@@ -49,7 +49,7 @@ internal class StrictOwnershipTest {
                                     |def speed = new Owner() { }
                                     |
                                     |ownership {
-                                    |    owners = [speed]
+                                    |    owners(speed)
                                     |}
                                 """.trimMargin()
                             } else ""
@@ -72,7 +72,7 @@ internal class StrictOwnershipTest {
                                     |def performance = new Owner() { }
                                     |
                                     |ownership {
-                                    |    owners = [speed, performance]
+                                    |    owners(speed, performance)
                                     |}
                                 """.trimMargin()
                             } else ""
@@ -88,7 +88,7 @@ internal class StrictOwnershipTest {
                                     |def mobileArchitecture = new Owner() { }
                                     |
                                     |ownership {
-                                    |    owners = [mobileArchitecture]
+                                    |    owners(mobileArchitecture)
                                     |}
                                 """.trimMargin()
                             } else ""

@@ -15,7 +15,12 @@ public open class CodeOwnershipExtension(
     @Deprecated("Modules visibility restriction is deprecated.")
     public var allowedDependencies: Set<String> = emptySet()
 ) {
-    public fun checkProjectOwnershipSettings(projectPath: String) {
+
+    public fun owners(vararg owners: Owner) {
+        this.owners = owners.toSet()
+    }
+
+    internal fun checkProjectOwnershipSettings(projectPath: String) {
         if (owners.isEmpty()) {
             throwInvalidOwnershipSettingsException(projectPath)
         }
@@ -24,11 +29,11 @@ public open class CodeOwnershipExtension(
     private fun throwInvalidOwnershipSettingsException(projectPath: String) {
         throw IllegalStateException(
             """
-                |Owners must be set for $projectPath
-                |Configure ownership settings in $projectPath `build.gradle` file. For example: 
+                |Owners must be set for the $projectPath project.
+                |Configure the ownership extension for $projectPath in the `build.gradle.kts` file. For example: 
                 |
                 |ownership {
-                |   owners = [OwnerImpl]
+                |   owners(Owner1, Owner2)
                 |}
             """.trimMargin()
         )
