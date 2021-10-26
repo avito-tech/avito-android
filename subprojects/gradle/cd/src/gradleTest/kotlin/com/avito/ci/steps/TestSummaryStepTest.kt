@@ -147,7 +147,6 @@ internal class TestSummaryStepTest {
                         }
                        
                         instrumentation {
-                            sentryDsn = "stub"
                             
                             output = rootProject.file("outputs").path
                             

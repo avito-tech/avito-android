@@ -130,8 +130,6 @@ internal class InstrumentationTestsPluginCIFalseTests {
 
                     instrumentation {
                     
-                        sentryDsn = "stub"
-                        
                         output = rootProject.file("outputs").path
 
                         configurations {

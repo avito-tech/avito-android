@@ -42,9 +42,6 @@ It can do the following:
     import com.avito.instrumentation.reservation.request.Device.LocalEmulator
     
     extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
-        // they are required for Avito app. We will make them optional in future.
-        sentryDsn = "http://stub-project@stub-host/0"
-
         testReport {
 
             // optional avito reporting
@@ -84,8 +81,6 @@ It can do the following:
     import com.avito.instrumentation.reservation.request.Device.LocalEmulator
     
     instrumentation {
-        // they are required for Avito app. We will make them optional in future.
-        sentryDsn = "http://stub-project@stub-host/0"
 
         testReport {
 

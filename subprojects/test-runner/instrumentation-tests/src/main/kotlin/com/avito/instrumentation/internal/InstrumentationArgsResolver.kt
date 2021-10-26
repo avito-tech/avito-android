@@ -42,7 +42,7 @@ internal class InstrumentationArgsResolver(
             reportResolver.getFileStorageUrl(extension)
         }
         args.resolveArg("sentryDsn", argsFromScript) {
-            sentryResolver.getSentryDsn().get()
+            sentryResolver.getSentryDsn().orNull
         }
         args.resolveArg("deviceName", argsFromScript) {
             "local"
@@ -68,7 +68,7 @@ internal class InstrumentationArgsResolver(
     private fun MutableMap<String, String>.resolveArg(
         key: String,
         argsFromScript: Map<String, String>,
-        valueFromExtension: () -> String
+        valueFromExtension: () -> String?
     ) {
         val finalValue = if (argsFromScript.containsKey(key)) {
             val valueFromScript = argsFromScript[key]
@@ -80,6 +80,8 @@ internal class InstrumentationArgsResolver(
         } else {
             valueFromExtension.invoke()
         }
-        put(key, finalValue)
+        if (!finalValue.isNullOrBlank()) {
+            put(key, finalValue)
+        }
     }
 }

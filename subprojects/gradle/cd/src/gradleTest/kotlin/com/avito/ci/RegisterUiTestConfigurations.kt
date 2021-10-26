@@ -30,8 +30,6 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
             testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
         }
         instrumentation {
-            sentryDsn = "stub"
-            
             testReport {
                 reportViewer {
                     reportApiUrl = "http://stub"

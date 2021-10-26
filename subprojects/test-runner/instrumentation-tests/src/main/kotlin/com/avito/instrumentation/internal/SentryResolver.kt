@@ -9,18 +9,16 @@ internal class SentryResolver(
     private val providers: ProviderFactory,
 ) {
 
-    private val stubValue = "http://stub-project@stub-host/0"
-
     fun getSentryDsn(): Provider<String> {
         return extension.sentryDsnUrl.convention(getDeprecatedSentryDsnValueIfSet())
     }
 
-    private fun getDeprecatedSentryDsnValueIfSet(): Provider<String> {
+    private fun getDeprecatedSentryDsnValueIfSet(): Provider<String?> {
         return providers.provider {
             @Suppress("DEPRECATION")
             val value = extension.sentryDsn
             if (value.isBlank()) {
-                stubValue
+                null
             } else {
                 value
             }

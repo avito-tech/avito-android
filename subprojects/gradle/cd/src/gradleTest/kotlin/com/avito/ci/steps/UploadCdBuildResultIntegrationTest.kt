@@ -381,7 +381,6 @@ class RealTest {
                 testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
             }
             instrumentation {
-                 sentryDsn = "stub"
                  
                  instrumentationParams = [
                     "deviceName"    : "regress",
