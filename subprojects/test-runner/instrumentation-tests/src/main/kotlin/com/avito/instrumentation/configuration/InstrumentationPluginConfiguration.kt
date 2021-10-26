@@ -10,17 +10,13 @@ public object InstrumentationPluginConfiguration {
         project: Project
     ) {
 
+        internal abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
+
         // todo make optional
         public var sentryDsn: String = ""
 
         @get:Nested
         public abstract val experimental: ExperimentalExtension
-
-        /**
-         * todo make internal
-         *  change "configurationsContainer.register" to "configurations { register ... }"
-         */
-        public abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
 
         public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
