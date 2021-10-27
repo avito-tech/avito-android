@@ -11,21 +11,22 @@ import com.avito.android.stats.statsdConfig
 import com.avito.android.withAndroidModule
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationFilter
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
-import com.avito.instrumentation.internal.AnalyticsResolver
 import com.avito.instrumentation.internal.AndroidInstrumentationArgsDumper
 import com.avito.instrumentation.internal.AndroidPluginInteractor
 import com.avito.instrumentation.internal.BuildEnvResolver
 import com.avito.instrumentation.internal.ExperimentsResolver
 import com.avito.instrumentation.internal.GitResolver
 import com.avito.instrumentation.internal.InstrumentationArgsResolver
+import com.avito.instrumentation.internal.OutputDirResolver
 import com.avito.instrumentation.internal.PlanSlugResolver
 import com.avito.instrumentation.internal.ReportResolver
 import com.avito.instrumentation.internal.RunIdResolver
+import com.avito.instrumentation.internal.SentryResolver
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
@@ -61,8 +62,15 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         val runIdResolver = RunIdResolver(timeProvider, project)
         val reportResolver = ReportResolver(runIdResolver)
         val experimentsResolver = ExperimentsResolver(project)
+        val outputDirResolver = OutputDirResolver(
+            extension = extension,
+            reportResolver = reportResolver,
+            rootProjectLayout = project.rootProject.layout,
+            providers = project.providers,
+            loggerFactory = loggerFactory,
+        )
         val instrumentationArgsResolver = InstrumentationArgsResolver(
-            analyticsResolver = AnalyticsResolver,
+            sentryResolver = SentryResolver(extension, project.providers),
             buildEnvResolver = BuildEnvResolver,
             reportResolver = reportResolver,
             planSlugResolver = PlanSlugResolver,
@@ -70,9 +78,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withAndroidModule { testedExtension ->
 
-            val dumpDir = File(extension.output, dumpDirName).apply {
-                mkdirs()
-            }
+            val dumpDir = outputDirResolver.resolveArgsDumpDir()
 
             val gradleTestKitRun = project.getBooleanProperty("isGradleTestKitRun")
 
@@ -142,10 +148,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                                 pluginLevelInstrumentationArgs = pluginLevelInstrumentationArgs
                             )
 
-                            val outputFolder = File(
-                                File(extension.output, reportResolver.getRunId(extension)),
-                                configuration.name
-                            )
+                            val outputDir = outputDirResolver.resolve(configuration)
 
                             this.instrumentationConfiguration.set(
                                 getInstrumentationConfiguration(
@@ -153,7 +156,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                                     configuration = configuration,
                                     parentInstrumentationParameters = instrumentationParameters,
                                     filters = extension.filters.map { getInstrumentationFilter(it) },
-                                    outputFolder = outputFolder,
+                                    outputFolder = outputDir.get().asFile,
                                 )
                             )
                             this.buildId.set(BuildEnvResolver.getBuildId(project))
@@ -161,22 +164,22 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                             this.experiments.set(experimentsResolver.getExperiments(extension))
                             this.gitBranch.set(GitResolver.getGitBranch(project))
                             this.gitCommit.set(GitResolver.getGitCommit(project))
-                            this.output.set(outputFolder)
+                            this.output.set(outputDir)
 
                             this.projectName.set(project.name)
-                        this.statsDConfig.set(project.statsdConfig)
-                        this.loggerFactory.set(
-                            GradleLoggerFactory.fromTask(
-                                project = project,
-                                taskName = this.name,
+                            this.statsDConfig.set(project.statsdConfig)
+                            this.loggerFactory.set(
+                                GradleLoggerFactory.fromTask(
+                                    project = project,
+                                    taskName = this.name,
+                                )
                             )
-                        )
-                        this.buildFailer.set(project.buildFailer)
+                            this.buildFailer.set(project.buildFailer)
 
-                        if (reportViewer != null) {
-                            this.reportViewerProperty.set(reportViewer)
-                        }
-                        this.kubernetesCredentials.set(project.kubernetesCredentials)
+                            if (reportViewer != null) {
+                                this.reportViewerProperty.set(reportViewer)
+                            }
+                            this.kubernetesCredentials.set(project.kubernetesCredentials)
 
                             val runOnlyChangedTests = configuration.runOnlyChangedTests
 
@@ -222,7 +225,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
     private fun getExecutionParameters(
         testedVariant: @Suppress("DEPRECATION") com.android.build.gradle.api.ApkVariant,
         testVariant: @Suppress("DEPRECATION") com.android.build.gradle.api.TestVariant,
-        extension: GradleInstrumentationPluginConfiguration,
+        extension: InstrumentationTestsPluginExtension,
         configuration: InstrumentationConfiguration,
         runner: String,
     ): ExecutionParameters {
@@ -260,12 +263,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             }
     }
 
-    private fun Project.createInstrumentationPluginExtension(): GradleInstrumentationPluginConfiguration {
-        val extension =
-            extensions.create<GradleInstrumentationPluginConfiguration>(
-                "instrumentation",
-                this
-            )
+    private fun Project.createInstrumentationPluginExtension(): InstrumentationTestsPluginExtension {
+        val extension = extensions.create<InstrumentationTestsPluginExtension>("instrumentation")
         extension.filters.register("default") {
             it.fromRunHistory.excludePreviousStatuses(
                 setOf(

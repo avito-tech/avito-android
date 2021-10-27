@@ -3,7 +3,7 @@ package com.avito.instrumentation.configuration
 import groovy.lang.Closure
 import org.gradle.api.Action
 
-public class InstrumentationTestReportExtension {
+public class InstrumentationTestsReportExtension {
 
     public class ReportViewer {
         public var reportApiUrl: String = ""

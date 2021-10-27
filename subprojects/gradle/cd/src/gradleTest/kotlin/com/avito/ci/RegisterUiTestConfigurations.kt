@@ -30,8 +30,6 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
             testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
         }
         instrumentation {
-            sentryDsn = "stub"
-            
             testReport {
                 reportViewer {
                     reportApiUrl = "http://stub"
@@ -45,7 +43,7 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
                 "jobSlug"       : "regress"
             ]
 
-            output = "/"
+            output = rootProject.file("outputs").path
 
             configurations {
                 $configurations

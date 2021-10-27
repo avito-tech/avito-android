@@ -381,7 +381,6 @@ class RealTest {
                 testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
             }
             instrumentation {
-                 sentryDsn = "stub"
                  
                  instrumentationParams = [
                     "deviceName"    : "regress",
@@ -397,7 +396,7 @@ class RealTest {
                     }
                 }
 
-                output = "./output"
+                output = rootProject.file("outputs").path
 
                 configurations {
                     $configurations
