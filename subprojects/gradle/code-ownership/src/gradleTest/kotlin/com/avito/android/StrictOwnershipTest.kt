@@ -20,7 +20,7 @@ internal class StrictOwnershipTest {
         Case.NegativeCase(
             isOwnershipConfigured = false,
             isForceOwnershipFlagEnabled = true,
-            errorMessage = "Owners must be set for :app"
+            errorMessage = "Owners must be set for the :app project."
         ),
         Case.PositiveCase(isOwnershipConfigured = false, isStrictOwnershipFlagEnabled = false),
     ).map { case ->
@@ -46,13 +46,14 @@ internal class StrictOwnershipTest {
                             ),
                             buildGradleExtra = if (case.isOwnershipConfigured) {
                                 """
-                                    |def speed = new Owner() { }
+                                    |object Speed : Owner
                                     |
                                     |ownership {
-                                    |    owners = [speed]
+                                    |    owners(Speed)
                                     |}
                                 """.trimMargin()
-                            } else ""
+                            } else "",
+                            useKts = true,
                         ),
                         AndroidLibModule(
                             name = "feature",
@@ -68,14 +69,15 @@ internal class StrictOwnershipTest {
                             ),
                             buildGradleExtra = if (case.isOwnershipConfigured) {
                                 """
-                                    |def speed = new Owner() { }
-                                    |def performance = new Owner() { }
+                                    |object Speed : Owner
+                                    |object Performance : Owner
                                     |
                                     |ownership {
-                                    |    owners = [speed, performance]
+                                    |    owners(Speed, Performance)
                                     |}
                                 """.trimMargin()
-                            } else ""
+                            } else "",
+                            useKts = true,
                         ),
                         AndroidLibModule(
                             name = "dependent_test_module",
@@ -85,13 +87,14 @@ internal class StrictOwnershipTest {
                             },
                             buildGradleExtra = if (case.isOwnershipConfigured) {
                                 """
-                                    |def mobileArchitecture = new Owner() { }
+                                    |object MobileArchitecture : Owner
                                     |
                                     |ownership {
-                                    |    owners = [mobileArchitecture]
+                                    |    owners(MobileArchitecture)
                                     |}
                                 """.trimMargin()
-                            } else ""
+                            } else "",
+                            useKts = true,
                         )
                     )
                 ).generateIn(projectDir)
