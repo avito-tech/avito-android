@@ -109,7 +109,6 @@ internal fun instrumentationConfiguration(): String = """
 
                         instrumentation {
                             output = project.file("outputs").path
-                            sentryDsn = "stub"
                             
                             instrumentationParams = [
                                 "jobSlug": "FunctionalTests"

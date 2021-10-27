@@ -73,7 +73,7 @@ internal class InstrumentationArgsTest {
             "-PisGradleTestKitRun=true",
         ).assertThat().buildSuccessful()
 
-        val dumpDir = projectDir.toPath() / appName / "build" / "test-runner" / dumpDirName
+        val dumpDir = projectDir.toPath() / "outputs" / dumpDirName
 
         val instrumentationArgs = AndroidInstrumentationArgsDumper(dumpDir.toFile()).readDump()
 

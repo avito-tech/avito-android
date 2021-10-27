@@ -71,8 +71,6 @@ instrumentation {
         }
     }
 
-    sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
-
     logcatTags = setOf(
         "UITestRunner:*",
         "ActivityManager:*",

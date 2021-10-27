@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal
 
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.reportviewer.model.RunId
 import com.avito.time.TimeProvider
 import org.gradle.api.Project
@@ -12,7 +12,7 @@ internal class RunIdResolver(
 ) {
 
     fun getCiRunId(
-        extension: InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+        extension: InstrumentationTestsPluginExtension
     ): RunId {
 
         val gitCommitHash = GitResolver.getGitCommit(project).orNull
