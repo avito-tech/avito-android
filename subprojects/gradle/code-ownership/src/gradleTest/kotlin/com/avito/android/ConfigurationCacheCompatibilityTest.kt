@@ -23,15 +23,13 @@ internal class ConfigurationCacheCompatibilityTest {
                     name = "lib",
                     imports = listOf("import com.avito.android.model.Owner"),
                     buildGradleExtra = """
-                        |class Speed implements Owner { 
-                        |   String toString() { return "Speed" }
-                        |}
-                        |def speed = new Speed() { }
+                        |object Speed : Owner { }
                         |
                         |ownership {
-                        |    owners = [speed]
+                        |    owners(Speed)
                         |}
-                    """.trimMargin()
+                    """.trimMargin(),
+                    useKts = true
                 )
             )
         ).generateIn(projectDir)
