@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal
 
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.runner.config.InstrumentationParameters
 import org.gradle.api.Project
@@ -11,7 +11,7 @@ import org.gradle.api.Project
  * TODO: Make stronger contract: MBS-7890
  */
 internal class InstrumentationArgsResolver(
-    private val analyticsResolver: AnalyticsResolver,
+    private val sentryResolver: SentryResolver,
     private val buildEnvResolver: BuildEnvResolver,
     private val reportResolver: ReportResolver,
     private val planSlugResolver: PlanSlugResolver,
@@ -20,7 +20,7 @@ internal class InstrumentationArgsResolver(
     fun resolvePluginLevelParams(
         argsFromScript: Map<String, String>,
         project: Project,
-        extension: InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration,
+        extension: InstrumentationTestsPluginExtension,
     ): Map<String, String> {
         val args = mutableMapOf<String, String>()
         args.resolveArg("planSlug", argsFromScript) {
@@ -42,7 +42,7 @@ internal class InstrumentationArgsResolver(
             reportResolver.getFileStorageUrl(extension)
         }
         args.resolveArg("sentryDsn", argsFromScript) {
-            analyticsResolver.getSentryDsn(extension)
+            sentryResolver.getSentryDsn().orNull
         }
         args.resolveArg("deviceName", argsFromScript) {
             "local"
@@ -57,7 +57,7 @@ internal class InstrumentationArgsResolver(
     }
 
     fun getInstrumentationParams(
-        extension: InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration,
+        extension: InstrumentationTestsPluginExtension,
         pluginLevelInstrumentationArgs: Map<String, String>,
     ): InstrumentationParameters {
         return InstrumentationParameters()
@@ -68,7 +68,7 @@ internal class InstrumentationArgsResolver(
     private fun MutableMap<String, String>.resolveArg(
         key: String,
         argsFromScript: Map<String, String>,
-        valueFromExtension: () -> String
+        valueFromExtension: () -> String?
     ) {
         val finalValue = if (argsFromScript.containsKey(key)) {
             val valueFromScript = argsFromScript[key]
@@ -80,6 +80,8 @@ internal class InstrumentationArgsResolver(
         } else {
             valueFromExtension.invoke()
         }
-        put(key, finalValue)
+        if (!finalValue.isNullOrBlank()) {
+            put(key, finalValue)
+        }
     }
 }
