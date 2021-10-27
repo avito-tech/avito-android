@@ -33,3 +33,5 @@ public fun TaskProvider<InstrumentationTestsTask>.extractReportViewerUrl(): Prov
 public const val instrumentationPluginId: String = "com.avito.android.instrumentation-tests"
 
 internal const val dumpDirName: String = "input-args-dump"
+
+internal const val CI_TASK_GROUP = "ci"

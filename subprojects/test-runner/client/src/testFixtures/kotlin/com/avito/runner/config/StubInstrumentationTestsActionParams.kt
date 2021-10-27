@@ -20,6 +20,7 @@ public fun RunnerInputParams.Companion.createStubInstance(
     executionParameters: ExecutionParameters = ExecutionParameters.createStubInstance(),
     buildId: String = "33456",
     buildType: String = "teamcity",
+    kubernetesNamespace: String = "kubernetesNamespace",
     kubernetesCredentials: KubernetesCredentials = KubernetesCredentials.Service(
         token = "empty",
         caCertData = "empty",
@@ -30,6 +31,7 @@ public fun RunnerInputParams.Companion.createStubInstance(
     suppressFlaky: Boolean = false,
     impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
     loggerFactory: LoggerFactory,
+    deviceDebug: Boolean = false,
     outputDir: File = createTempDirectory("runnerOutput").toFile(),
     verdictFile: File = File(outputDir, "verdict.json"),
     fileStorageUrl: String = "https://files",
@@ -46,6 +48,7 @@ public fun RunnerInputParams.Companion.createStubInstance(
     executionParameters = executionParameters,
     buildId = buildId,
     buildType = buildType,
+    kubernetesNamespace = kubernetesNamespace,
     kubernetesCredentials = kubernetesCredentials,
     projectName = projectName,
     suppressFailure = suppressFailure,
@@ -63,4 +66,5 @@ public fun RunnerInputParams.Companion.createStubInstance(
     fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
     useLegacyExtensionsV1Beta = useLegacyExtensionsV1Beta,
     sendPodsMetrics = sendPodsMetrics,
+    deviceDebug = deviceDebug
 )

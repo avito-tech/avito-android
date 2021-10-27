@@ -764,12 +764,14 @@ internal class RunnerIntegrationTest {
         devicesProvider: DevicesProvider = createDevicesProvider(),
         executionTimeout: Duration = InstrumentationConfigurationData.createStubInstance().testRunnerExecutionTimeout,
         dispatcher: CoroutineDispatcher = testCoroutineDispatcher,
+        deviceDebug: Boolean = false,
     ): TestRunner {
         val testRunRequestFactory = TestRunRequestFactory(
             application = File("stub"),
             testApplication = File("stub"),
             executionParameters = ExecutionParameters.Companion.createStubInstance(),
-            targets = targets.associateBy { it.deviceName }
+            targets = targets.associateBy { it.deviceName },
+            deviceDebug = deviceDebug
         )
         val scheduler = TestExecutionScheduler(
             dispatcher = dispatcher,

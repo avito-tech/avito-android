@@ -9,6 +9,7 @@ import java.io.File
 internal class TestRunRequestFactory(
     private val application: File?,
     private val testApplication: File,
+    private val deviceDebug: Boolean,
     private val executionParameters: ExecutionParameters,
     private val targets: Map<DeviceName, TargetConfigurationData>
 ) {
@@ -40,7 +41,7 @@ internal class TestRunRequestFactory(
             testRunner = executionParameters.testRunner,
             timeoutMinutes = TEST_TIMEOUT_MINUTES,
             instrumentationParameters = target.instrumentationParams,
-            enableDeviceDebug = executionParameters.enableDeviceDebug
+            enableDeviceDebug = deviceDebug
         )
     }
 }

@@ -13,6 +13,7 @@ import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
+import com.avito.test.gradle.git
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
@@ -166,7 +167,9 @@ class RealTest {
             ).tryParseRev("HEAD").getOrThrow()
         )
 
-        val runId = "runId"
+        val commit = projectDir.git("rev-parse HEAD").trim()
+
+        val runId = "$commit.teamcity-BT"
         val uiTestConfiguration = CdBuildResult.TestResultsLink(
             reportUrl = "$reportsApiUrl/report/AvitoAndroid/regress/$runId?q=eyJmaWx0ZXIiOnsic2tpcCI6MH19",
             reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
@@ -385,7 +388,6 @@ class RealTest {
                  instrumentationParams = [
                     "deviceName"    : "regress",
                     "jobSlug"       : "regress",
-                    "runId"         : "runId"
                 ]
                 
                 testReport {

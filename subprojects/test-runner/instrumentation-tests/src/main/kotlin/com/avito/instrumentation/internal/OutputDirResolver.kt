@@ -1,8 +1,6 @@
 package com.avito.instrumentation.internal
 
-import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
-import com.avito.instrumentation.dumpDirName
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import org.gradle.api.file.Directory
@@ -12,26 +10,17 @@ import org.gradle.api.provider.ProviderFactory
 
 internal class OutputDirResolver(
     private val extension: InstrumentationTestsPluginExtension,
-    private val reportResolver: ReportResolver,
     private val rootProjectLayout: ProjectLayout,
     private val providers: ProviderFactory,
-    loggerFactory: LoggerFactory,
+    loggerFactory: LoggerFactory
 ) {
 
-    private val logger = loggerFactory.create<OutputDirResolver>()
+    private val logger = loggerFactory.create<OutputDirConfigurator>()
 
-    fun resolve(configuration: InstrumentationConfiguration): Provider<Directory> {
-        return resolveWithDeprecatedProperty().map {
-            it.dir("${reportResolver.getRunId(extension)}/${configuration.name}")
+    fun resolveWithDeprecatedProperty(): Provider<Directory> {
+        return extension.outputDir.map {
+            getDeprecatedOutputValueIfSet().orNull ?: it
         }
-    }
-
-    fun resolveArgsDumpDir(): Provider<Directory> {
-        return resolveWithDeprecatedProperty().map { it.dir(dumpDirName) }
-    }
-
-    private fun resolveWithDeprecatedProperty(): Provider<Directory> {
-        return extension.outputDir.convention(getDeprecatedOutputValueIfSet())
     }
 
     private fun getDeprecatedOutputValueIfSet(): Provider<Directory> {

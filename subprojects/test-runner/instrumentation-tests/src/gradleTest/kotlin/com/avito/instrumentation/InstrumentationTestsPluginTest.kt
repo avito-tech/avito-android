@@ -7,6 +7,7 @@ import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.plugin.plugins
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -30,6 +31,47 @@ internal class InstrumentationTestsPluginTest {
         )
 
         gradlew(projectDir, "help", dryRun = true).assertThat().buildSuccessful()
+    }
+
+    @Test
+    fun `tasks resolution - ok - empty instrumentation block`(@TempDir projectDir: File) {
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                "app",
+                plugins = plugins {
+                    id(instrumentationPluginId)
+                },
+                buildGradleExtra = """
+                    instrumentation {
+                    }
+                """.trimIndent()
+            )
+        )
+
+        gradlew(projectDir, "tasks", dryRun = false).assertThat().buildSuccessful()
+    }
+
+    /**
+     * IDE will turn red resolving script with plugin applied, it uses tasks or some equivalent in process
+     *
+     * todo Parameter: teamcityBuildId is required (must be digit)
+     */
+    @Disabled
+    @Test
+    fun `tasks resolution - ok - with configurations set and no args`(@TempDir projectDir: File) {
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                "app",
+                plugins = plugins {
+                    id(instrumentationPluginId)
+                },
+                buildGradleExtra = instrumentationConfiguration()
+            )
+        )
+
+        gradlew(projectDir, "tasks", dryRun = false).assertThat().buildSuccessful()
     }
 
     @Test
@@ -105,74 +147,74 @@ internal class InstrumentationTestsPluginTest {
 }
 
 internal fun instrumentationConfiguration(): String = """
-                        import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
-
-                        instrumentation {
-                            output = project.file("outputs").path
-                            
-                            instrumentationParams = [
-                                "jobSlug": "FunctionalTests"
-                            ]
-                            
-                            experimental {
-                                useService = true
-                                useInMemoryReport = true
-                            }
-
-                            configurations {
-
-                                functional {
-                                    instrumentationParams = [
-                                        "deviceName": "api22"
-                                    ]
-
-                                    targets {
-                                        api22 {
-                                            deviceName = "api22"
-
-                                            scheduling {
-                                                quota {
-                                                    minimumSuccessCount = 1
-                                                }
-
-                                                staticDevicesReservation {
-                                                    device = LocalEmulator.device(27)
-                                                    count = 1
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                two {
-                                    instrumentationParams = [
-                                        "deviceName": "api22"
-                                    ]
-
-                                    targets {
-                                        api22 {
-                                            deviceName = "api22"
-
-                                            scheduling {
-                                                quota {
-                                                    minimumSuccessCount = 1
-                                                }
-
-                                                staticDevicesReservation {
-                                                    device = LocalEmulator.device(27)
-                                                    count = 1
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        android {
-                            defaultConfig {
-                                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-                                testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
-                            }
-                        }
-                """.trimIndent()
+    |import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
+    |
+    |instrumentation {
+    |    output = project.file("outputs").path
+    |    
+    |    instrumentationParams = [
+    |        "jobSlug": "FunctionalTests"
+    |    ]
+    |    
+    |    experimental {
+    |        useService = true
+    |        useInMemoryReport = true
+    |    }
+    |
+    |    configurations {
+    |
+    |        functional {
+    |            instrumentationParams = [
+    |                "deviceName": "api22"
+    |            ]
+    |
+    |            targets {
+    |                api22 {
+    |                    deviceName = "api22"
+    |
+    |                    scheduling {
+    |                        quota {
+    |                            minimumSuccessCount = 1
+    |                        }
+    |
+    |                        staticDevicesReservation {
+    |                            device = LocalEmulator.device(27)
+    |                            count = 1
+    |                        }
+    |                    }
+    |                }
+    |            }
+    |        }
+    |
+    |        two {
+    |            instrumentationParams = [
+    |                "deviceName": "api22"
+    |            ]
+    |
+    |            targets {
+    |                api22 {
+    |                    deviceName = "api22"
+    |
+    |                    scheduling {
+    |                        quota {
+    |                            minimumSuccessCount = 1
+    |                        }
+    |
+    |                        staticDevicesReservation {
+    |                            device = LocalEmulator.device(27)
+    |                            count = 1
+    |                        }
+    |                    }
+    |                }
+    |            }
+    |        }
+    |    }
+    |}
+    |
+    |android {
+    |    defaultConfig {
+    |        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    |        testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
+    |    }
+    |}
+    |""".trimMargin()

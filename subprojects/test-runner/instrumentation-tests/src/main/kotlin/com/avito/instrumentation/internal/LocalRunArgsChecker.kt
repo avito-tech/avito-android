@@ -1,16 +1,20 @@
 package com.avito.instrumentation.internal
 
+import com.avito.instrumentation.dumpDirName
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.gradle.api.file.Directory
-import org.gradle.api.provider.Provider
 import java.io.File
 
-internal class AndroidInstrumentationArgsDumper(private val dumpDir: File) {
+internal class LocalRunArgsChecker(private val dumpDir: () -> File) {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
-    constructor(dumpDir: Provider<Directory>) : this(dumpDir.get().asFile)
+    constructor(outputDirResolver: OutputDirResolver) : this(dumpDir = {
+        outputDirResolver.resolveWithDeprecatedProperty()
+            .map { it.dir(dumpDirName) }
+            .get()
+            .asFile
+    })
 
     fun dumpArgs(args: Map<String, String>) {
         getDumpFile().writer().use { gson.toJson(args, it) }
@@ -22,7 +26,7 @@ internal class AndroidInstrumentationArgsDumper(private val dumpDir: File) {
     }
 
     private fun getDumpFile(): File {
-        return File(dumpDir, "local-instrumentation-args-dump.json").apply {
+        return File(dumpDir.invoke(), "local-instrumentation-args-dump.json").apply {
             parentFile.mkdirs()
         }
     }

@@ -3,13 +3,13 @@ package com.avito.instrumentation.internal
 import com.avito.utils.gradle.envArgs
 import org.gradle.api.Project
 
-internal object BuildEnvResolver {
+internal class BuildEnvResolver(private val project: Project) {
 
-    fun getBuildId(project: Project): String {
+    fun getBuildId(): String {
         return project.envArgs.build.id.toString()
     }
 
-    fun getBuildType(project: Project): String {
+    fun getBuildType(): String {
         return project.envArgs.build.type
     }
 }
