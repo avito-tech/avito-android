@@ -30,7 +30,7 @@ public open class CodeOwnershipExtension(
         throw IllegalStateException(
             """
                 |Owners must be set for the $projectPath project.
-                |Configure the ownership extension for $projectPath in the `build.gradle.kts` file. For example: 
+                |Configure the ownership extension for $projectPath in the buildscript: 
                 |
                 |ownership {
                 |   owners(Owner1, Owner2)
