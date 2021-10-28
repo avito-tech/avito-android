@@ -98,6 +98,100 @@ internal class InstrumentationTestsPluginTest {
     }
 
     @Test
+    fun `run instrumentation by name - ok - in application project with flavors`(@TempDir projectDir: File) {
+        val moduleName = "app"
+
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                moduleName,
+                plugins = plugins {
+                    id(instrumentationPluginId)
+                },
+                buildGradleExtra = """
+                    |${instrumentationConfiguration()}
+                    |    
+                    |android {
+                    |   flavorDimensions "version"
+                    |    productFlavors {
+                    |       demo { 
+                    |           dimension "version"
+                    |       }
+                    |       full {
+                    |           dimension "version"
+                    |       }
+                    |    }
+                    |}
+                    |""".trimMargin()
+            )
+        )
+
+        runGradle(
+            projectDir,
+            ":$moduleName:instrumentationDemoTwo",
+            ":$moduleName:instrumentationFullTwo",
+            "-PrunOnlyFailedTests=false"
+        ).assertThat()
+            .run {
+                tasksShouldBeTriggered(
+                    ":$moduleName:instrumentationDemoTwo",
+                    ":$moduleName:instrumentationFullTwo"
+                ).inOrder()
+            }
+    }
+
+    @Test
+    fun `run instrumentation by name - ok - in application project with multidimensional flavors`(
+        @TempDir projectDir: File
+    ) {
+        val moduleName = "app"
+
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                moduleName,
+                plugins = plugins {
+                    id(instrumentationPluginId)
+                },
+                buildGradleExtra = """
+                    |${instrumentationConfiguration()}
+                    |    
+                    |android {
+                    |   flavorDimensions "version", "monetization"
+                    |    productFlavors {
+                    |       demo { 
+                    |           dimension "version"
+                    |       }
+                    |       full {
+                    |           dimension "version"
+                    |       }
+                    |       free {
+                    |           dimension "monetization"
+                    |       }
+                    |       paid {
+                    |           dimension "monetization"
+                    |       }
+                    |    }
+                    |}
+                    |""".trimMargin()
+            )
+        )
+
+        runGradle(
+            projectDir,
+            ":$moduleName:instrumentationDemoFreeTwo",
+            ":$moduleName:instrumentationFullPaidTwo",
+            "-PrunOnlyFailedTests=false"
+        ).assertThat()
+            .run {
+                tasksShouldBeTriggered(
+                    ":$moduleName:instrumentationDemoFreeTwo",
+                    ":$moduleName:instrumentationFullPaidTwo"
+                ).inOrder()
+            }
+    }
+
+    @Test
     fun `run instrumentation by name - ok - in library project`(@TempDir projectDir: File) {
         val moduleName = "lib"
 

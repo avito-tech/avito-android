@@ -42,7 +42,8 @@ public abstract class TestSummaryPluginBuildStep(context: String, name: String) 
 
         if (useImpactAnalysis && !project.internalModule.isModified()) return
 
-        val instrumentationTask = project.tasks.instrumentationTask(configuration)
+        // flavors not supported here
+        val instrumentationTask = project.tasks.instrumentationTask(configuration, null)
 
         val reportCoordinates = instrumentationTask.extractReportCoordinates()
 

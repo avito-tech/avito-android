@@ -7,14 +7,23 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 
-internal fun instrumentationTaskName(configuration: String): String =
-    "instrumentation${configuration.capitalize()}"
+internal fun instrumentationTaskName(configuration: String, flavor: String?): String {
+    return buildString {
+        append("instrumentation")
+        if (!flavor.isNullOrBlank()) {
+            append(flavor.capitalize())
+        }
+        append(configuration.capitalize())
+    }
+}
 
 /**
  * Available only afterEvaluate MBS-6926
  */
-public fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
-    typedNamed(instrumentationTaskName(configuration))
+public fun TaskContainer.instrumentationTask(
+    configuration: String,
+    flavor: String?
+): TaskProvider<InstrumentationTestsTask> = typedNamed(instrumentationTaskName(configuration, flavor))
 
 public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
     flatMap { task ->
