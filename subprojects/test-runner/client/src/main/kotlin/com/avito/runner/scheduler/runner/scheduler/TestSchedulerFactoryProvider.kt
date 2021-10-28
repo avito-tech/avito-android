@@ -97,7 +97,7 @@ public class TestSchedulerFactoryProvider {
                             kubernetesClientFactory = KubernetesClientFactory(
                                 httpClientProvider = httpClientProvider,
                                 kubernetesCredentials = params.kubernetesCredentials,
-                                namespace = params.executionParameters.namespace
+                                namespace = params.kubernetesNamespace,
                             ),
                             loggerFactory = params.loggerFactory,
                         ),

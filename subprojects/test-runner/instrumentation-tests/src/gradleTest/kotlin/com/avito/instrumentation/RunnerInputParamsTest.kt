@@ -19,7 +19,6 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 
 internal class RunnerInputParamsTest {
 
@@ -79,7 +78,6 @@ internal class RunnerInputParamsTest {
         return cases(projectDir, "groovy")
     }
 
-    @OptIn(ExperimentalPathApi::class)
     private fun cases(
         projectDir: File,
         lang: String,
@@ -161,8 +159,7 @@ internal class RunnerInputParamsTest {
                     .isEqualTo(false)
             },
             Case("kubernetes namespace") {
-                // todo remove duplicate
-                assertThat(it.instrumentationConfiguration.kubernetesNamespace)
+                assertThat(it.kubernetesNamespace)
                     .isEqualTo("default")
             },
             Case("target device name") {
@@ -219,8 +216,7 @@ internal class RunnerInputParamsTest {
                     )
             },
             Case("instrumentation enableDeviceDebug") {
-                // todo remove duplicate
-                assertThat(it.instrumentationConfiguration.enableDeviceDebug)
+                assertThat(it.deviceDebug)
                     .isFalse()
             },
             Case("execution params app package") {
@@ -235,19 +231,9 @@ internal class RunnerInputParamsTest {
                 assertThat(it.executionParameters.testRunner)
                     .isEqualTo("androidx.test.runner.AndroidJUnitRunner")
             },
-            Case("execution params test runner") {
-                // todo remove duplicate
-                assertThat(it.executionParameters.namespace)
-                    .isEqualTo("default")
-            },
             Case("execution params logcat tags") {
                 assertThat(it.executionParameters.logcatTags)
                     .isEmpty()
-            },
-            Case("execution params enable device debug") {
-                // todo remove duplicate
-                assertThat(it.executionParameters.enableDeviceDebug)
-                    .isFalse()
             },
             Case("build id") {
                 assertThat(it.buildId)

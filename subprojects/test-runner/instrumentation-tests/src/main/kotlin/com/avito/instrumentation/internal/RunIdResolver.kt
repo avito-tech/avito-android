@@ -3,32 +3,30 @@ package com.avito.instrumentation.internal
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.reportviewer.model.RunId
 import com.avito.time.TimeProvider
-import org.gradle.api.Project
 import java.util.concurrent.TimeUnit
 
 internal class RunIdResolver(
     private val timeProvider: TimeProvider,
-    private val project: Project,
+    private val gitResolver: GitResolver,
+    private val buildEnvResolver: BuildEnvResolver,
 ) {
 
-    fun getCiRunId(
-        extension: InstrumentationTestsPluginExtension
-    ): RunId {
+    fun getCiRunId(extension: InstrumentationTestsPluginExtension): RunId {
 
-        val gitCommitHash = GitResolver.getGitCommit(project).orNull
+        val gitCommitHash = gitResolver.getGitCommit().orNull
 
         return if (gitCommitHash != null) {
             RunId(
                 prefix = extension.testReport.reportViewer?.reportRunIdPrefix,
-                identifier = GitResolver.getGitCommit(project).getOrElse("local"),
-                buildTypeId = BuildEnvResolver.getBuildType(project)
+                identifier = gitResolver.getGitCommit().getOrElse("local"),
+                buildTypeId = buildEnvResolver.getBuildType()
             )
         } else {
-            getLocalRunId(timeProvider)
+            getLocalRunId()
         }
     }
 
-    private fun getLocalRunId(timeProvider: TimeProvider): RunId {
+    fun getLocalRunId(): RunId {
         return RunId(
             prefix = null,
             identifier = TimeUnit.MILLISECONDS.toDays(timeProvider.nowInMillis()).toString(),

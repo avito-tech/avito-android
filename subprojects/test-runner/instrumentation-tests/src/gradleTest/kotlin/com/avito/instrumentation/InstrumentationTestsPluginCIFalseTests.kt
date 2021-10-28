@@ -21,18 +21,18 @@ internal class InstrumentationTestsPluginCIFalseTests {
         createProject(
             projectDir = projectDir,
             device = """
-                            new CloudEmulator(
-                                "api22",
-                                22,
-                                "Android_SDK_built_for_x86",
-                                "stub",
-                                false,
-                                "1",
-                                "1.3",
-                                "3.5Gi",
-                                "3Gi"
-                            )
-                        """.trimIndent()
+                |new CloudEmulator(
+                |    "api22",
+                |    22,
+                |    "Android_SDK_built_for_x86",
+                |    "stub",
+                |    false,
+                |    "1",
+                |    "1.3",
+                |    "3.5Gi",
+                |    "3Gi"
+                |)
+                |""".trimMargin()
         )
 
         executeInstrumentationTask(
@@ -51,18 +51,18 @@ internal class InstrumentationTestsPluginCIFalseTests {
         createProject(
             projectDir = projectDir,
             device = """
-                            new CloudEmulator(
-                                "api22",
-                                22,
-                                "Android_SDK_built_for_x86",
-                                "stub",
-                                false,
-                                "1",
-                                "1.3",
-                                "3.5Gi",
-                                "3Gi"
-                            )
-                        """.trimIndent()
+                |new CloudEmulator(
+                |    "api22",
+                |    22,
+                |    "Android_SDK_built_for_x86",
+                |    "stub",
+                |    false,
+                |    "1",
+                |    "1.3",
+                |    "3.5Gi",
+                |    "3Gi"
+                |)
+                |""".trimMargin()
         )
         executeInstrumentationTask(
             task = instrumentationTask,
@@ -122,42 +122,40 @@ internal class InstrumentationTestsPluginCIFalseTests {
         ).generateIn(projectDir)
     }
 
-    private fun instrumentationConfiguration(
-        device: String
-    ): String = """
-                    import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
-                    import com.avito.instrumentation.reservation.request.Device.CloudEmulator
-
-                    instrumentation {
-                    
-                        output = rootProject.file("outputs").path
-
-                        configurations {
-
-                            api22 {
-                                targets {
-                                    api22 {
-                                        deviceName = "api22"
-
-                                        scheduling {
-                                            quota {
-                                                minimumSuccessCount = 1
-                                            }
-
-                                            staticDevicesReservation {
-                                                device = $device
-                                                count = 1
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    android {
-                        defaultConfig {
-                            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-                        }
-                    }
-            """.trimIndent()
+    private fun instrumentationConfiguration(device: String): String = """
+    |import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
+    |import com.avito.instrumentation.reservation.request.Device.CloudEmulator
+    |
+    |instrumentation {
+    |
+    |    output = rootProject.file("outputs").path
+    |
+    |    configurations {
+    |
+    |        api22 {
+    |            targets {
+    |                api22 {
+    |                    deviceName = "api22"
+    |
+    |                    scheduling {
+    |                        quota {
+    |                            minimumSuccessCount = 1
+    |                        }
+    |
+    |                        staticDevicesReservation {
+    |                            device = $device
+    |                            count = 1
+    |                        }
+    |                    }
+    |                }
+    |            }
+    |        }
+    |    }
+    |}
+    |android {
+    |    defaultConfig {
+    |        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    |    }
+    |}
+    |""".trimMargin()
 }

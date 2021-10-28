@@ -1,12 +1,7 @@
 package com.avito.android
 
-import com.android.build.gradle.tasks.PackageAndroidArtifact
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import java.io.File
-
-// TODO: Use Artifacts API
-public fun PackageAndroidArtifact.apkDirectory(): DirectoryProperty = outputDirectory
 
 public fun Directory.getApk(): File? {
     val dir = asFile

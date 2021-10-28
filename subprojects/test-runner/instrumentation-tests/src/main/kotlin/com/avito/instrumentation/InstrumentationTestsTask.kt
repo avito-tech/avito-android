@@ -29,6 +29,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
@@ -50,8 +51,15 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:InputDirectory
     public abstract val application: DirectoryProperty
 
+    @get:Optional
+    @get:Input
+    public abstract val applicationPackageName: Property<String>
+
     @get:InputDirectory
     public abstract val testApplication: DirectoryProperty
+
+    @get:Input
+    public abstract val testApplicationPackageName: Property<String>
 
     @get:Input
     public abstract val runOnlyChangedTests: Property<Boolean>
@@ -95,7 +103,16 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val instrumentationConfiguration: Property<InstrumentationConfigurationData>
 
     @get:Input
-    public abstract val parameters: Property<ExecutionParameters>
+    public abstract val instrumentationRunner: Property<String>
+
+    @get:Input
+    public abstract val kubernetesNamespace: Property<String>
+
+    @get:Input
+    public abstract val logcatTags: SetProperty<String>
+
+    @get:Input
+    public abstract val enableDeviceDebug: Property<Boolean>
 
     @get:Input
     @get:Optional
@@ -165,12 +182,19 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             mainApk = application.orNull?.getApk(),
             testApk = testApplication.get().getApkOrThrow(),
             instrumentationConfiguration = configuration,
-            executionParameters = parameters.get(),
+            executionParameters = ExecutionParameters(
+                applicationPackageName.get(),
+                testApplicationPackageName.get(),
+                instrumentationRunner.get(),
+                logcatTags.get(),
+            ),
             buildId = buildId.get(),
             buildType = buildType.get(),
+            kubernetesNamespace = kubernetesNamespace.get(),
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
             },
+            deviceDebug = enableDeviceDebug.get(),
             projectName = projectName.get(),
             suppressFailure = suppressFailure.getOrElse(false),
             suppressFlaky = suppressFlaky.getOrElse(false),

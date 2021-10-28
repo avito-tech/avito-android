@@ -1,15 +1,21 @@
 package com.avito.instrumentation.internal
 
+import com.avito.instrumentation.InstrumentationTestsTask
 import com.avito.instrumentation.configuration.Experiments
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.kotlin.dsl.getBooleanProperty
 import org.gradle.api.Project
 
-internal class ExperimentsResolver(private val project: Project) {
+internal class ExperimentsConfigurator(
+    private val project: Project,
+    private val extension: InstrumentationTestsPluginExtension
+) : InstrumentationTaskConfigurator {
 
-    fun getExperiments(
-        extension: InstrumentationTestsPluginExtension
-    ): Experiments {
+    override fun configure(task: InstrumentationTestsTask) {
+        task.experiments.set(getExperiments())
+    }
+
+    private fun getExperiments(): Experiments {
         return Experiments(
             saveTestArtifactsToOutputs = getSaveTestArtifactsToOutputs(extension),
             fetchLogcatForIncompleteTests = getFetchLogcatForIncompleteTests(extension),

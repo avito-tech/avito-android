@@ -57,10 +57,6 @@ sealed class TestRunEnvironment {
         internal val statsDConfig: StatsDConfig,
         internal val fileStorageUrl: HttpUrl
     ) : TestRunEnvironment()
-
-    companion object {
-        internal const val LOCAL_STUDIO_RUN_ID = -1
-    }
 }
 
 @Deprecated("Use parseEnvironment, fun will be deleted", replaceWith = ReplaceWith("parseEnvironment"))

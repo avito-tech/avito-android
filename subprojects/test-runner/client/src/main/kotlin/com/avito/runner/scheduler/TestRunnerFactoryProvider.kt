@@ -86,6 +86,7 @@ public class TestRunnerFactoryProvider(
         return TestRunRequestFactory(
             application = params.mainApk,
             testApplication = params.testApk,
+            deviceDebug = params.deviceDebug,
             executionParameters = params.executionParameters,
             targets = params.instrumentationConfiguration.targets.associateBy { it.deviceName }
         )

@@ -3,34 +3,35 @@ package com.avito.instrumentation.internal
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.instrumentation.configuration.ReportViewer
 
-internal class ReportResolver(private val runIdResolver: RunIdResolver) {
+internal class ReportResolver(
+    private val extension: InstrumentationTestsPluginExtension,
+    private val runIdResolver: RunIdResolver
+) {
 
-    fun getReportApiUrl(extension: InstrumentationTestsPluginExtension): String {
+    fun getReportApiUrl(): String {
         return extension.testReport.reportViewer?.reportApiUrl ?: "http://stub"
     }
 
-    fun getReportViewerUrl(extension: InstrumentationTestsPluginExtension): String {
+    fun getReportViewerUrl(): String {
         return extension.testReport.reportViewer?.reportViewerUrl ?: "http://stub"
     }
 
-    fun getRunId(extension: InstrumentationTestsPluginExtension): String {
+    fun getRunId(): String {
         return runIdResolver.getCiRunId(extension).toReportViewerFormat()
     }
 
-    fun getFileStorageUrl(extension: InstrumentationTestsPluginExtension): String {
+    fun getFileStorageUrl(): String {
         return extension.testReport.reportViewer?.fileStorageUrl ?: "http://stub"
     }
 
-    fun getReportViewer(
-        extension: InstrumentationTestsPluginExtension
-    ): ReportViewer? {
+    fun getReportViewer(): ReportViewer? {
         val reportViewer = extension.testReport.reportViewer
         return if (reportViewer != null) {
             ReportViewer(
-                reportApiUrl = getReportApiUrl(extension),
-                reportViewerUrl = getReportViewerUrl(extension),
+                reportApiUrl = getReportApiUrl(),
+                reportViewerUrl = getReportViewerUrl(),
                 reportRunIdPrefix = reportViewer.reportRunIdPrefix,
-                fileStorageUrl = getFileStorageUrl(extension)
+                fileStorageUrl = getFileStorageUrl()
             )
         } else {
             null
