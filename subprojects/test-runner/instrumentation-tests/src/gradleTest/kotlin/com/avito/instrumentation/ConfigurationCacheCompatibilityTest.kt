@@ -12,7 +12,26 @@ import java.io.File
 internal class ConfigurationCacheCompatibilityTest {
 
     @Test
-    fun `configuration with applied plugin - ok`(@TempDir projectDir: File) {
+    fun `configuration with applied plugin - reuses configuration cache`(@TempDir projectDir: File) {
+        TestProjectGenerator(
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app",
+                    plugins = plugins {
+                        id(instrumentationPluginId)
+                    },
+                    buildGradleExtra = instrumentationConfiguration()
+                )
+            )
+        ).generateIn(projectDir)
+
+        runHelp(projectDir).assertThat().buildSuccessful()
+
+        runHelp(projectDir).assertThat().buildSuccessful().configurationCachedReused()
+    }
+
+    @Test
+    fun `instrumentationTask run - reuses configuration cache`(@TempDir projectDir: File) {
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
@@ -30,7 +49,7 @@ internal class ConfigurationCacheCompatibilityTest {
         runTask(projectDir).assertThat().buildSuccessful().configurationCachedReused()
     }
 
-    private fun runTask(projectDir: File): TestResult {
+    private fun runHelp(projectDir: File): TestResult {
         return gradlew(
             projectDir,
             "help",
@@ -40,6 +59,21 @@ internal class ConfigurationCacheCompatibilityTest {
             "-PgitBranch=xxx",
             "-PteamcityBuildType=BT",
             dryRun = true,
+            configurationCache = true
+        )
+    }
+
+    private fun runTask(projectDir: File): TestResult {
+        return gradlew(
+            projectDir,
+            ":app:instrumentationFunctional",
+            "-PteamcityBuildId=0",
+            "-PbuildNumber=100",
+            "-PteamcityUrl=xxx",
+            "-PgitBranch=xxx",
+            "-PteamcityBuildType=BT",
+            "-PisGradleTestKitRun=true",
+            dryRun = false,
             configurationCache = true
         )
     }
