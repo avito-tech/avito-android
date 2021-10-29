@@ -16,7 +16,6 @@ public data class RunnerInputParams(
     val executionParameters: ExecutionParameters,
     val buildId: String,
     val buildType: String,
-    val kubernetesNamespace: String,
     val kubernetesCredentials: KubernetesCredentials,
     val deviceDebug: Boolean,
     val projectName: String,

@@ -66,7 +66,7 @@ internal class ConfigurationCacheCompatibilityTest {
     private fun runTask(projectDir: File): TestResult {
         return gradlew(
             projectDir,
-            ":app:instrumentationFunctional",
+            ":app:instrumentationFunctionalLocal",
             "-PteamcityBuildId=0",
             "-PbuildNumber=100",
             "-PteamcityUrl=xxx",

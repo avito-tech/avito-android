@@ -4,7 +4,7 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.android.stats.statsdConfig
 import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.extractReportCoordinates
-import com.avito.instrumentation.instrumentationTask
+import com.avito.instrumentation.instrumentationTaskDefaultEnvironment
 import com.avito.logger.GradleLoggerFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.TestSummaryExtension
@@ -43,7 +43,7 @@ public abstract class TestSummaryPluginBuildStep(context: String, name: String) 
         if (useImpactAnalysis && !project.internalModule.isModified()) return
 
         // flavors not supported here
-        val instrumentationTask = project.tasks.instrumentationTask(configuration, null)
+        val instrumentationTask = project.tasks.instrumentationTaskDefaultEnvironment(configuration, null)
 
         val reportCoordinates = instrumentationTask.extractReportCoordinates()
 

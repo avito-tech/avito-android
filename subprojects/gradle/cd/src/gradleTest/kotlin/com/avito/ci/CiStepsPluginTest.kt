@@ -131,7 +131,7 @@ internal class CiStepsPluginTest : BaseCiStepsPluginTest() {
         val result = runTask(":appA:release")
 
         return listOf(
-            ":appA:instrumentationRegress"
+            ":appA:instrumentationRegressDefault"
         ).map { task ->
             dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)

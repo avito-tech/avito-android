@@ -6,13 +6,18 @@ import com.avito.android.stats.statsdConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
+import com.avito.instrumentation.configuration.KubernetesViaContext
+import com.avito.instrumentation.configuration.KubernetesViaCredentials
+import com.avito.instrumentation.configuration.LocalAdb
 import com.avito.instrumentation.internal.ConfiguratorsFactory
 import com.avito.instrumentation.internal.InstrumentationTaskConfigurator
+import com.avito.instrumentation.internal.TaskValidatorsFactory
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.logger.GradleLoggerFactory
 import com.avito.utils.buildFailer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
@@ -25,6 +30,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
 
         val factory = ConfiguratorsFactory(project, extension, loggerFactory)
+
+        val filtersFactory = TaskValidatorsFactory()
 
         project.plugins.withType<BasePlugin> {
 
@@ -45,20 +52,41 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
             extension.configurationsContainer.all { configuration ->
 
-                // todo how to write "only testBuildType" selector?
-                androidComponents.onVariants { variant ->
+                registerDefaultEnvironment(
+                    providers = project.providers,
+                    extension = extension,
+                    configuration = configuration
+                )
 
-                    val configurators = factory.createTaskConfigurators(configuration, variant)
+                extension.environmentsContainer.all { environment ->
 
-                    if (configurators != null) {
-                        project.tasks.register(
-                            instrumentationTaskName(configuration.name, variant.flavorName),
-                            configureInstrumentationTask(
-                                configurators = configurators,
-                                configuration = configuration,
-                                extension = extension,
-                            )
+                    // todo how to write "only testBuildType" selector?
+
+                    androidComponents.onVariants { variant ->
+
+                        val configurators = factory.createTaskConfigurators(
+                            configuration = configuration,
+                            environment = environment,
+                            variant = variant
                         )
+
+                        val filters = filtersFactory.create()
+
+                        if (configurators != null && filters.all { it.filter(configuration, environment) }) {
+
+                            project.tasks.register(
+                                instrumentationTaskName(
+                                    configuration = configuration.name,
+                                    environment = environment.name,
+                                    flavor = variant.flavorName
+                                ),
+                                configureInstrumentationTask(
+                                    configurators = configurators,
+                                    configuration = configuration,
+                                    extension = extension,
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -95,6 +123,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
     private fun Project.createInstrumentationPluginExtension(): InstrumentationTestsPluginExtension {
         val extension = extensions.create<InstrumentationTestsPluginExtension>("instrumentation")
+
         extension.filters.register("default") {
             it.fromRunHistory.excludePreviousStatuses(
                 setOf(
@@ -103,6 +132,38 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                 )
             )
         }
+
+        extension.environmentsContainer.registerFactory(KubernetesViaCredentials::class.java) {
+            project.objects.newInstance(KubernetesViaCredentials::class.java, it)
+        }
+        extension.environmentsContainer.registerFactory(KubernetesViaContext::class.java) {
+            project.objects.newInstance(KubernetesViaContext::class.java, it)
+        }
+        extension.environmentsContainer.registerFactory(LocalAdb::class.java) {
+            project.objects.newInstance(LocalAdb::class.java, it)
+        }
+
+        extension.environmentsContainer.register<LocalAdb>("local")
+
         return extension
+    }
+
+    /**
+     * todo remove (registered for backward compatibility)
+     */
+    private fun registerDefaultEnvironment(
+        providers: ProviderFactory,
+        extension: InstrumentationTestsPluginExtension,
+        configuration: InstrumentationConfiguration
+    ) {
+        if (extension.environmentsContainer.findByName(ENVIRONMENT_DEFAULT) == null) {
+            extension.environmentsContainer.register<KubernetesViaCredentials>(ENVIRONMENT_DEFAULT) {
+                url.set(providers.gradleProperty("kubernetesUrl").forUseAtConfigurationTime())
+                token.set(providers.gradleProperty("kubernetesToken").forUseAtConfigurationTime())
+                caCertData.set(providers.gradleProperty("kubernetesCaCertData").forUseAtConfigurationTime())
+                @Suppress("DEPRECATION")
+                namespace.set(configuration.kubernetesNamespace)
+            }
+        }
     }
 }

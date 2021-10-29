@@ -32,13 +32,13 @@ internal class TestSummaryStepTest {
             .assertThat()
             .buildSuccessful().run {
                 tasksShouldBeTriggered(
-                    ":app1:instrumentationUi",
+                    ":app1:instrumentationUiDefault",
                     ":testSummarySomePlanSomeJob",
                     ":app1:fullCheck"
                 ).inOrder()
 
                 tasksShouldBeTriggered(
-                    ":app2:instrumentationUi",
+                    ":app2:instrumentationUiDefault",
                     ":testSummarySomePlanSomeJob",
                     ":app2:fullCheck"
                 ).inOrder()
@@ -64,13 +64,13 @@ internal class TestSummaryStepTest {
             .assertThat()
             .buildSuccessful().run {
                 tasksShouldBeTriggered(
-                    ":app1:instrumentationUi",
+                    ":app1:instrumentationUiDefault",
                     ":flakyReportSomePlanSomeJob",
                     ":app1:fullCheck"
                 ).inOrder()
 
                 tasksShouldBeTriggered(
-                    ":app2:instrumentationUi",
+                    ":app2:instrumentationUiDefault",
                     ":flakyReportSomePlanSomeJob",
                     ":app2:fullCheck"
                 ).inOrder()
@@ -96,13 +96,13 @@ internal class TestSummaryStepTest {
             .assertThat()
             .buildSuccessful().run {
                 tasksShouldBeTriggered(
-                    ":app1:instrumentationUi",
+                    ":app1:instrumentationUiDefault",
                     ":markReportForTmsSomePlanSomeJob",
                     ":app1:fullCheck"
                 ).inOrder()
 
                 tasksShouldBeTriggered(
-                    ":app2:instrumentationUi",
+                    ":app2:instrumentationUiDefault",
                     ":markReportForTmsSomePlanSomeJob",
                     ":app2:fullCheck"
                 ).inOrder()

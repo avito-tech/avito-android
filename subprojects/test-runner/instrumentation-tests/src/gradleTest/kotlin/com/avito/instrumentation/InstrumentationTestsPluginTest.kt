@@ -7,6 +7,7 @@ import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.plugin.plugins
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -89,11 +90,9 @@ internal class InstrumentationTestsPluginTest {
             )
         )
 
-        runGradle(projectDir, ":$moduleName:instrumentationTwo", "-PrunOnlyFailedTests=false").assertThat()
+        runGradle(projectDir, ":$moduleName:instrumentationTwoDefault", "-PrunOnlyFailedTests=false").assertThat()
             .run {
-                tasksShouldBeTriggered(
-                    ":$moduleName:instrumentationTwo"
-                ).inOrder()
+                tasksShouldBeTriggered(":$moduleName:instrumentationTwoDefault")
             }
     }
 
@@ -128,14 +127,14 @@ internal class InstrumentationTestsPluginTest {
 
         runGradle(
             projectDir,
-            ":$moduleName:instrumentationDemoTwo",
-            ":$moduleName:instrumentationFullTwo",
+            ":$moduleName:instrumentationDemoTwoDefault",
+            ":$moduleName:instrumentationFullTwoDefault",
             "-PrunOnlyFailedTests=false"
         ).assertThat()
             .run {
                 tasksShouldBeTriggered(
-                    ":$moduleName:instrumentationDemoTwo",
-                    ":$moduleName:instrumentationFullTwo"
+                    ":$moduleName:instrumentationDemoTwoDefault",
+                    ":$moduleName:instrumentationFullTwoDefault"
                 ).inOrder()
             }
     }
@@ -179,14 +178,14 @@ internal class InstrumentationTestsPluginTest {
 
         runGradle(
             projectDir,
-            ":$moduleName:instrumentationDemoFreeTwo",
-            ":$moduleName:instrumentationFullPaidTwo",
+            ":$moduleName:instrumentationDemoFreeTwoDefault",
+            ":$moduleName:instrumentationFullPaidTwoDefault",
             "-PrunOnlyFailedTests=false"
         ).assertThat()
             .run {
                 tasksShouldBeTriggered(
-                    ":$moduleName:instrumentationDemoFreeTwo",
-                    ":$moduleName:instrumentationFullPaidTwo"
+                    ":$moduleName:instrumentationDemoFreeTwoDefault",
+                    ":$moduleName:instrumentationFullPaidTwoDefault"
                 ).inOrder()
             }
     }
@@ -206,11 +205,9 @@ internal class InstrumentationTestsPluginTest {
             )
         )
 
-        runGradle(projectDir, ":$moduleName:instrumentationTwo", "-PrunOnlyFailedTests=false").assertThat()
+        runGradle(projectDir, ":$moduleName:instrumentationTwoDefault", "-PrunOnlyFailedTests=false").assertThat()
             .run {
-                tasksShouldBeTriggered(
-                    ":$moduleName:instrumentationTwo"
-                ).inOrder()
+                tasksShouldBeTriggered(":$moduleName:instrumentationTwoDefault")
             }
     }
 
@@ -233,13 +230,11 @@ internal class InstrumentationTestsPluginTest {
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
-            "-PkubernetesToken=stub",
-            "-PkubernetesUrl=stub",
-            "-PkubernetesCaCertData=stub",
             dryRun = true
         )
 }
 
+@Language("groovy")
 internal fun instrumentationConfiguration(): String = """
     |import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
     |

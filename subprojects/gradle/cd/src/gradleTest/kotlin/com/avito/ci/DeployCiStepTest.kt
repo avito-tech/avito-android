@@ -29,7 +29,7 @@ internal class DeployCiStepTest : BaseCiStepsPluginTest() {
         result
             .assertThat().apply {
                 tasksShouldBeTriggered(
-                    ":appA:instrumentationRegress",
+                    ":appA:instrumentationRegressDefault",
                     ":appA:$artifactoryAppBackupTaskName",
                     ":appA:$deployTaskName",
                     ":appA:$uploadCdBuildResultTaskName"
@@ -59,7 +59,7 @@ internal class DeployCiStepTest : BaseCiStepsPluginTest() {
         result
             .assertThat().apply {
                 tasksShouldBeTriggered(
-                    ":appA:instrumentationRegress",
+                    ":appA:instrumentationRegressDefault",
                     ":appA:$artifactoryAppBackupTaskName",
                     ":appA:$uploadCdBuildResultTaskName"
                 ).inOrder()

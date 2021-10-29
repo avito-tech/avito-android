@@ -1,7 +1,9 @@
 package com.avito.instrumentation.configuration
 
 import org.gradle.api.Action
+import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.PolymorphicDomainObjectContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
@@ -18,6 +20,9 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
 
     internal abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
 
+    internal val environmentsContainer: ExtensiblePolymorphicDomainObjectContainer<ExecutionEnvironment> =
+        objects.polymorphicDomainObjectContainer(ExecutionEnvironment::class.java)
+
     @Deprecated("use sentryDsnUrl", replaceWith = ReplaceWith("sentryDsnUrl"))
     public var sentryDsn: String = ""
 
@@ -26,13 +31,17 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
     @get:Nested
     public abstract val experimental: ExperimentalExtension
 
+    // todo internal
     public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
+    // todo nested
     public val testReport: InstrumentationTestsReportExtension = InstrumentationTestsReportExtension()
 
+    // todo remove
     public val configurations: List<InstrumentationConfiguration>
         get() = configurationsContainer.toList()
 
+    // todo MapProperty
     public var instrumentationParams: Map<String, String> = emptyMap()
 
     // https://developer.android.com/studio/command-line/logcat#filteringOutput
@@ -57,5 +66,9 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
 
     public fun testReport(action: Action<InstrumentationTestsReportExtension>) {
         action.execute(testReport)
+    }
+
+    public fun environments(action: Action<PolymorphicDomainObjectContainer<ExecutionEnvironment>>) {
+        action.execute(environmentsContainer)
     }
 }

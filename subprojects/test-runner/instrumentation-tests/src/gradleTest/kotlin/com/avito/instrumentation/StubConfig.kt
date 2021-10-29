@@ -14,6 +14,7 @@ internal val kotlinStubConfig = """
   |}
   |
   |instrumentation {
+  |  
   |    output = rootProject.file("outputs").path
   |    sentryDsn = "stub"
   |
@@ -65,7 +66,20 @@ internal val kotlinStubConfig = """
   |            }
   |        }
   |    }
-  |}    
+  |    
+  |    environments {
+  |       register<com.avito.instrumentation.configuration.KubernetesViaContext>("k8sContext") {
+  |         context.set("beta")
+  |         namespace.set("default")
+  |       }
+  |       register<com.avito.instrumentation.configuration.KubernetesViaCredentials>("k8sCredentials") {
+  |         token.set("q1w2e3")
+  |         caCertData.set("12345")
+  |         url.set("myk8s.com")
+  |         namespace.set("default")
+  |       }
+  |    }
+  |}
   |""".trimMargin()
 
 internal val groovyStubConfig = """
@@ -129,6 +143,19 @@ internal val groovyStubConfig = """
   |                    }
   |                }
   |            }
+  |        }
+  |    }
+  |    
+  |    environments {
+  |        register("k8sContext", com.avito.instrumentation.configuration.KubernetesViaContext) {
+  |            context.set("beta")
+  |            namespace.set("default")
+  |        }
+  |        register("k8sCredentials", com.avito.instrumentation.configuration.KubernetesViaCredentials) {
+  |            token.set("q1w2e3")
+  |            caCertData.set("12345")
+  |            url.set("myk8s.com")
+  |            namespace.set("default")
   |        }
   |    }
   |}

@@ -14,7 +14,8 @@ public sealed class KubernetesCredentials : Serializable {
     public class Service(
         public val token: String,
         public val caCertData: String,
-        public val url: String
+        public val url: String,
+        public val namespace: String,
     ) : KubernetesCredentials() {
 
         override fun toString(): String = "KubernetesCredentials.Service"
@@ -22,6 +23,7 @@ public sealed class KubernetesCredentials : Serializable {
 
     public class Config(
         public val context: String,
+        public val namespace: String,
         public val caCertFile: File? = kubeDefaultCaCertFile,
         public val configFile: File = kubeConfigDefaultPath
     ) : KubernetesCredentials() {
