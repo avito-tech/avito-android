@@ -45,8 +45,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask(), BuildVerdictTask {
 
-    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-
     @get:Optional
     @get:InputDirectory
     public abstract val application: DirectoryProperty
@@ -142,6 +140,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:Internal
     override val verdict: SpannedString
         get() {
+            val gson: Gson = GsonBuilder().setPrettyPrinting().create()
             val verdictRaw = verdictFile.asFile.get().reader()
             val verdict = gson.fromJson(verdictRaw, InstrumentationTestsTaskVerdict::class.java)
             return multiline(
