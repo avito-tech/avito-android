@@ -38,6 +38,9 @@ internal val kotlinStubConfig = """
   |                "override" to "overrideInConfiguration"
   |            )
   |
+  |            suppressFlaky.set(true)
+  |            suppressFailure.set(true)
+  |            
   |            targets {
   |                register("api22") {
   |                    instrumentationParams = mapOf(
@@ -100,6 +103,9 @@ internal val groovyStubConfig = """
   |                "configuration": "functional",
   |                "override": "overrideInConfiguration"
   |            ]
+  |            
+  |            suppressFlaky.set(true)
+  |            suppressFailure.set(true)
   |
   |            targets {
   |                api22 {

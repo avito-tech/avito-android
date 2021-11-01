@@ -45,6 +45,9 @@ internal class InstrumentationConfigurator(
                 outputFolder = outputDir.get().asFile,
             )
         )
+
+        task.suppressFailure.set(configuration.suppressFailure)
+        task.suppressFlaky.set(configuration.suppressFlaky)
     }
 
     private fun getInstrumentationConfiguration(

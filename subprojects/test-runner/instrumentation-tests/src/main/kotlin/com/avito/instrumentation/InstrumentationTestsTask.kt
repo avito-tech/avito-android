@@ -90,11 +90,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val experiments: Property<Experiments>
 
     @get:Input
-    @get:Optional
     public abstract val suppressFailure: Property<Boolean>
 
     @get:Input
-    @get:Optional
     public abstract val suppressFlaky: Property<Boolean>
 
     @get:Input
@@ -195,8 +193,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             },
             deviceDebug = enableDeviceDebug.get(),
             projectName = projectName.get(),
-            suppressFailure = suppressFailure.getOrElse(false),
-            suppressFlaky = suppressFlaky.getOrElse(false),
+            suppressFailure = suppressFailure.get(),
+            suppressFlaky = suppressFlaky.get(),
             impactAnalysisResult = ImpactAnalysisResult.create(
                 runOnlyChangedTests = runOnlyChangedTests.get(),
                 changedTestsFile = changedTests.asFile.orNull

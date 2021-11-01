@@ -265,11 +265,11 @@ internal class RunnerInputParamsTest {
             },
             Case("suppress failure") {
                 assertThat(it.suppressFailure)
-                    .isFalse()
+                    .isTrue()
             },
             Case("suppress flaky") {
                 assertThat(it.suppressFlaky)
-                    .isFalse()
+                    .isTrue()
             },
             Case("impact analysis result runOnlyChangedTests flag") {
                 assertThat(it.impactAnalysisResult.runOnlyChangedTests)
