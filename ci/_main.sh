@@ -88,6 +88,8 @@ GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
 GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "
 GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
 
+GRADLE_ARGS+="-Pavito.gradle.enterprise.url=$GRADLE_ENTERPRISE_URL "
+
 function runInBuilder() {
     COMMANDS=$@
 
@@ -101,7 +103,6 @@ function runInBuilder() {
         --env TZ="Europe/Moscow" \
         --env LOCAL_USER_ID="$USER_ID" \
         --env GRADLE_USER_HOME=/gradle \
-        --env GRADLE_CACHE_NODE_HOST="$GRADLE_CACHE_NODE_HOST" \
         "${IMAGE_ANDROID_BUILDER}" \
         bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }
