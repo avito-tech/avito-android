@@ -1,6 +1,6 @@
 package com.avito.android
 
 internal data class Inconsistency(
-    val projectPath: String,
+    val file: String,
     val reason: String
 )

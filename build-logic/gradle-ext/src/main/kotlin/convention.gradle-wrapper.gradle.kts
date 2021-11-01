@@ -19,7 +19,8 @@ val includedProjectDirs = provider {
         .map { project.resolveDir(it) }
 }
 
-val allProjectDirsProvider: Provider<List<Directory>> = includedProjectDirs.map { it + layout.projectDirectory }
+val allProjectsWrapperProperties: Provider<List<RegularFile>> = includedProjectDirs.map { it + layout.projectDirectory }
+    .map { it.map { it.file("gradle/wrapper/gradle-wrapper.properties") } }
 
 val gradleVer = "7.2"
 val distribution = Wrapper.DistributionType.BIN
@@ -41,7 +42,7 @@ tasks.register<CheckWrapper>("checkGradleWrappers") {
 
     expectedGradleVersion.set(gradleVer)
     expectedDistributionType.set(distribution)
-    projectDirs.set(allProjectDirsProvider)
+    wrapperPropertiesFiles.set(allProjectsWrapperProperties)
 }
 
 fun makeProjectNameSuitableForTaskNameSlug(projectName: String): String {

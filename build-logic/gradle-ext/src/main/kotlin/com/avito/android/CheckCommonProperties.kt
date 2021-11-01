@@ -2,21 +2,20 @@ package com.avito.android
 
 import org.apache.commons.configuration.PropertiesConfiguration
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputDirectories
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 abstract class CheckCommonProperties : DefaultTask() {
 
     @get:InputFile
     abstract val commonPropertiesFile: RegularFileProperty
 
-    @get:OutputDirectories
-    abstract val projectDirs: SetProperty<Directory>
+    @get:InputFiles
+    abstract val gradlePropertiesFiles: SetProperty<RegularFile>
 
     @TaskAction
     fun doWork() {
@@ -24,19 +23,15 @@ abstract class CheckCommonProperties : DefaultTask() {
 
         val inconsistencies = mutableListOf<Inconsistency>()
 
-        projectDirs.get().forEach { projectDir ->
-
-            val projectPath = project.projectDir.toRelativeString(projectDir.asFile)
-
-            val gradlePropertiesFile = File(projectDir.asFile, "gradle.properties")
+        gradlePropertiesFiles.get().map { it.asFile }.forEach { gradlePropertiesFile ->
 
             val properties = if (gradlePropertiesFile.exists()) {
                 PropertiesConfiguration(gradlePropertiesFile)
             } else {
                 inconsistencies.add(
                     Inconsistency(
-                        projectPath = projectPath,
-                        reason = "gradle.properties for project $projectDir not found"
+                        file = gradlePropertiesFile.path,
+                        reason = "File not found"
                     )
                 )
                 return@forEach
@@ -46,7 +41,7 @@ abstract class CheckCommonProperties : DefaultTask() {
                 if (!properties.containsKey(key)) {
                     inconsistencies.add(
                         Inconsistency(
-                            projectPath = projectPath,
+                            file = gradlePropertiesFile.path,
                             reason = "missing property: $key"
                         )
                     )
@@ -56,7 +51,7 @@ abstract class CheckCommonProperties : DefaultTask() {
                     if (value != commonValue) {
                         inconsistencies.add(
                             Inconsistency(
-                                projectPath = projectPath,
+                                file = gradlePropertiesFile.path,
                                 reason = "different value for property: $key\n" +
                                     "     expected: $commonValue\n" +
                                     "     actual  : $value"
@@ -71,7 +66,7 @@ abstract class CheckCommonProperties : DefaultTask() {
                     if (comment != expectedComment) {
                         inconsistencies.add(
                             Inconsistency(
-                                projectPath,
+                                gradlePropertiesFile.path,
                                 "different comments for property: $key;\n" +
                                     "     expected: $expectedComment\n" +
                                     "     actual  : $comment"
@@ -92,7 +87,7 @@ abstract class CheckCommonProperties : DefaultTask() {
             appendLine("Common gradle properties inconsistency found")
             appendLine("Run :generateCommonProperties task to fix it")
 
-            val map = inconsistencies.groupBy { it.projectPath }
+            val map = inconsistencies.groupBy { it.file }
 
             map.keys.forEach { project: String ->
                 appendLine(" - project: $project")
