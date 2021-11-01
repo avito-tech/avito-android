@@ -4,9 +4,8 @@ import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationVariant
 import com.avito.instrumentation.InstrumentationTestsTask
 
-internal class ApplicationVariantConfigurator(
-    override val variant: ApplicationVariant
-) : AndroidVariantConfigurator<ApplicationVariant> {
+internal class ApplicationVariantConfigurator(variant: ApplicationVariant) :
+    AndroidVariantConfigurator<ApplicationVariant>(variant) {
 
     override fun configure(task: InstrumentationTestsTask) {
         val androidTestVariant = variant.androidTest

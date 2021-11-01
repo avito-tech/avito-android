@@ -3,9 +3,16 @@ package com.avito.instrumentation.configuration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.property
 import java.time.Duration
+import javax.inject.Inject
 
-public abstract class InstrumentationConfiguration(public val name: String) {
+public abstract class InstrumentationConfiguration @Inject constructor(
+    public val name: String,
+    private val objects: ObjectFactory
+) {
 
     internal abstract val targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
 
@@ -27,6 +34,18 @@ public abstract class InstrumentationConfiguration(public val name: String) {
     public var enableDeviceDebug: Boolean = false
 
     public var filter: String = "default"
+
+    /**
+     * failures of tests with @Flaky annotation will not impact run verdict
+     *
+     * https://avito-tech.github.io/avito-android/test/FlakyAnnotation/
+     */
+    public val suppressFlaky: Property<Boolean> = objects.property<Boolean>().convention(false)
+
+    /**
+     * any test failures will not impact run verdict
+     */
+    public val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     public fun targets(action: Action<NamedDomainObjectContainer<TargetConfiguration>>) {
         action.execute(targetsContainer)
