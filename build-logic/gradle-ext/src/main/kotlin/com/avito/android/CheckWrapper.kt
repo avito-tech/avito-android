@@ -2,12 +2,12 @@ package com.avito.android
 
 import org.apache.commons.configuration.PropertiesConfiguration
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.wrapper.Wrapper
 import java.util.Locale
@@ -26,8 +26,8 @@ abstract class CheckWrapper : DefaultTask() {
     @get:Optional
     abstract val expectedDistributionUrl: Property<String>
 
-    @get:OutputDirectories
-    abstract val projectDirs: SetProperty<Directory>
+    @get:InputFiles
+    abstract val wrapperPropertiesFiles: SetProperty<RegularFile>
 
     @TaskAction
     fun doWork() {
@@ -37,49 +37,59 @@ abstract class CheckWrapper : DefaultTask() {
 
         val inconsistencies = mutableListOf<Inconsistency>()
 
-        projectDirs.get().forEach { projectDir ->
-            val projectPath = projectDir.asFile.toRelativeString(project.projectDir)
+        wrapperPropertiesFiles.get().map { it.asFile }.forEach { wrapperPropertiesFile ->
 
-            val wrapperPropertiesFile = projectDir.file("gradle/wrapper/gradle-wrapper.properties").asFile
+            val filePath = wrapperPropertiesFile.toRelativeString(project.projectDir)
+
             val wrapperProperties = PropertiesConfiguration(wrapperPropertiesFile)
             val distributionUrl = wrapperProperties.getString("distributionUrl", "")
 
-            if (expectedGradleVersion != null) {
-                if (!distributionUrl.contains(expectedGradleVersion)) {
-                    inconsistencies.add(
-                        Inconsistency(
-                            projectPath = projectPath,
-                            reason = "project gradle version is '$expectedGradleVersion', " +
-                                "but ${project.relativePath(wrapperPropertiesFile)} " +
-                                "points to another version: $distributionUrl"
-                        )
+            if (!wrapperPropertiesFile.exists()) {
+                inconsistencies.add(
+                    Inconsistency(
+                        file = filePath,
+                        reason = "file doesn't exists"
                     )
-                }
-            }
+                )
+            } else {
 
-            if (!expectedDistributionType.isNullOrBlank()) {
-                if (!distributionUrl.contains("-$expectedDistributionType.")) {
-                    inconsistencies.add(
-                        Inconsistency(
-                            projectPath = projectPath,
-                            reason = "gradle distribution type is '$expectedDistributionType', " +
-                                "but ${project.relativePath(wrapperPropertiesFile)} " +
-                                "specifies another type: $distributionUrl"
+                if (expectedGradleVersion != null) {
+                    if (!distributionUrl.contains(expectedGradleVersion)) {
+                        inconsistencies.add(
+                            Inconsistency(
+                                file = filePath,
+                                reason = "project gradle version is '$expectedGradleVersion', " +
+                                    "but ${project.relativePath(wrapperPropertiesFile)} " +
+                                    "points to another version: $distributionUrl"
+                            )
                         )
-                    )
+                    }
                 }
-            }
 
-            if (!expectedDistributionUrl.isNullOrBlank()) {
-                if (distributionUrl != expectedDistributionUrl) {
-                    inconsistencies.add(
-                        Inconsistency(
-                            projectPath = projectPath,
-                            reason = "Expected gradle distribution url is '$expectedDistributionUrl', " +
-                                "but ${project.relativePath(wrapperPropertiesFile)} " +
-                                "specifies different one: $distributionUrl"
+                if (!expectedDistributionType.isNullOrBlank()) {
+                    if (!distributionUrl.contains("-$expectedDistributionType.")) {
+                        inconsistencies.add(
+                            Inconsistency(
+                                file = filePath,
+                                reason = "gradle distribution type is '$expectedDistributionType', " +
+                                    "but ${project.relativePath(wrapperPropertiesFile)} " +
+                                    "specifies another type: $distributionUrl"
+                            )
                         )
-                    )
+                    }
+                }
+
+                if (!expectedDistributionUrl.isNullOrBlank()) {
+                    if (distributionUrl != expectedDistributionUrl) {
+                        inconsistencies.add(
+                            Inconsistency(
+                                file = filePath,
+                                reason = "Expected gradle distribution url is '$expectedDistributionUrl', " +
+                                    "but ${project.relativePath(wrapperPropertiesFile)} " +
+                                    "specifies different one: $distributionUrl"
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -94,11 +104,11 @@ abstract class CheckWrapper : DefaultTask() {
             appendLine("Gradle wrappers inconsistency found")
             appendLine("Run :wrapper task to fix it")
 
-            val map = inconsistencies.groupBy { it.projectPath }
+            val map = inconsistencies.groupBy { it.file }
 
-            map.keys.forEach { project: String ->
-                appendLine(" - project: $project")
-                map[project]?.forEach { inconsistency: Inconsistency ->
+            map.keys.forEach { file: String ->
+                appendLine(" - file: $file")
+                map[file]?.forEach { inconsistency: Inconsistency ->
                     appendLine("   - ${inconsistency.reason}")
                 }
             }

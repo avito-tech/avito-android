@@ -25,5 +25,5 @@ tasks.register<CheckCommonProperties>("checkCommonProperties") {
     description = "Checks consistency for common gradle.properties for all included builds"
 
     commonPropertiesFile.set(commonPropertiesFileProvider)
-    projectDirs.set(allProjectDirsProvider)
+    gradlePropertiesFiles.set(allProjectDirsProvider.map { it.map { it.file("gradle.properties") } })
 }
