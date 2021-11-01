@@ -9,7 +9,7 @@ import com.avito.cd.isCdBuildConfigPresent
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.instrumentation.extractReportCoordinates
 import com.avito.instrumentation.extractReportViewerUrl
-import com.avito.instrumentation.instrumentationTask
+import com.avito.instrumentation.instrumentationTaskDefaultEnvironment
 import com.avito.kotlin.dsl.namedOrNull
 import com.avito.logger.GradleLoggerFactory
 import com.avito.report.ReportLinksGenerator
@@ -36,7 +36,7 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
             }
 
             // flavors not supported here
-            val instrumentationTask = project.tasks.instrumentationTask(uiTestConfiguration, null)
+            val instrumentationTask = project.tasks.instrumentationTaskDefaultEnvironment(uiTestConfiguration, null)
 
             val reportCoordinates = instrumentationTask.extractReportCoordinates().get()
             val reportViewerUrl = instrumentationTask.extractReportViewerUrl().get()

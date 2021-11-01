@@ -43,7 +43,7 @@ internal class RunnerInputParamsTest {
                         },
                         useKts = true,
                         imports = listOf(
-                            "import com.avito.instrumentation.reservation.request.Device"
+                            "import com.avito.instrumentation.reservation.request.Device",
                         ),
                         buildGradleExtra = kotlinStubConfig
                     )
@@ -67,7 +67,7 @@ internal class RunnerInputParamsTest {
                             id(instrumentationPluginId)
                         },
                         imports = listOf(
-                            "import static com.avito.instrumentation.reservation.request.Device.LocalEmulator"
+                            "import static com.avito.instrumentation.reservation.request.Device.LocalEmulator",
                         ),
                         buildGradleExtra = groovyStubConfig
                     )
@@ -91,7 +91,7 @@ internal class RunnerInputParamsTest {
 
         val buildResult = ciRun(
             projectDir,
-            "app:instrumentationFunctional",
+            "app:instrumentationFunctionalK8sCredentials",
             "-PteamcityBuildId=0",
             "-Pavito.git.state=env",
             "-PisGradleTestKitRun=true",
@@ -157,10 +157,6 @@ internal class RunnerInputParamsTest {
             Case("report skipped tests") {
                 assertThat(it.instrumentationConfiguration.reportSkippedTests)
                     .isEqualTo(false)
-            },
-            Case("kubernetes namespace") {
-                assertThat(it.kubernetesNamespace)
-                    .isEqualTo("default")
             },
             Case("target device name") {
                 assertThat(it.instrumentationConfiguration.targets[0].deviceName)
@@ -249,15 +245,19 @@ internal class RunnerInputParamsTest {
             },
             Case("kubernetes credentials url") {
                 assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).url)
-                    .isEqualTo("xxx")
+                    .isEqualTo("myk8s.com")
             },
             Case("kubernetes credentials token") {
                 assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).token)
-                    .isEqualTo("xxx")
+                    .isEqualTo("q1w2e3")
             },
             Case("kubernetes credentials ca cert data") {
                 assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).caCertData)
-                    .isEqualTo("xxx")
+                    .isEqualTo("12345")
+            },
+            Case("kubernetes credentials ca cert data") {
+                assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).namespace)
+                    .isEqualTo("default")
             },
             Case("project name") {
                 assertThat(it.projectName)

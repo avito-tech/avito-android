@@ -20,11 +20,11 @@ public fun RunnerInputParams.Companion.createStubInstance(
     executionParameters: ExecutionParameters = ExecutionParameters.createStubInstance(),
     buildId: String = "33456",
     buildType: String = "teamcity",
-    kubernetesNamespace: String = "kubernetesNamespace",
     kubernetesCredentials: KubernetesCredentials = KubernetesCredentials.Service(
         token = "empty",
         caCertData = "empty",
-        url = "empty"
+        url = "empty",
+        namespace = "kubernetesNamespace",
     ),
     projectName: String = "testProject",
     suppressFailure: Boolean = false,
@@ -48,7 +48,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     executionParameters = executionParameters,
     buildId = buildId,
     buildType = buildType,
-    kubernetesNamespace = kubernetesNamespace,
     kubernetesCredentials = kubernetesCredentials,
     projectName = projectName,
     suppressFailure = suppressFailure,

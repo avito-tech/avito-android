@@ -15,7 +15,6 @@ import java.io.File
 public class KubernetesClientFactory(
     private val httpClientProvider: HttpClientProvider,
     private val kubernetesCredentials: KubernetesCredentials,
-    private val namespace: String,
 ) {
 
     public fun create(): KubernetesClient {
@@ -24,7 +23,7 @@ public class KubernetesClientFactory(
                 .withCaCertData(kubernetesCredentials.caCertData)
                 .withMasterUrl(kubernetesCredentials.url)
                 .withOauthToken(kubernetesCredentials.token)
-                .withNamespace(namespace)
+                .withNamespace(kubernetesCredentials.namespace)
                 .build()
             is KubernetesCredentials.Config -> {
                 // todo move validation to configuration phase
@@ -46,7 +45,8 @@ public class KubernetesClientFactory(
                     val namespaceFromKubeConfig = getNamespace()
 
                     val namespaceDiffErrorMessage = {
-                        "kubernetes.context.namespace should be $namespace, but was $namespaceFromKubeConfig. " +
+                        "kubernetes.context.namespace should be ${kubernetesCredentials.namespace}, " +
+                            "but was $namespaceFromKubeConfig. " +
                             "Namespace hardcoded in plugin, and this check only prevents from using wrong context"
                     }
 

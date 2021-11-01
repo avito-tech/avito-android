@@ -102,9 +102,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val instrumentationRunner: Property<String>
 
     @get:Input
-    public abstract val kubernetesNamespace: Property<String>
-
-    @get:Input
     public abstract val logcatTags: SetProperty<String>
 
     @get:Input
@@ -187,7 +184,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             ),
             buildId = buildId.get(),
             buildType = buildType.get(),
-            kubernetesNamespace = kubernetesNamespace.get(),
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
             },

@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal
 
 import com.android.build.api.variant.Variant
 import com.avito.git.gitState
+import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.logger.LoggerFactory
@@ -68,6 +69,7 @@ internal class ConfiguratorsFactory(
 
     fun createTaskConfigurators(
         configuration: InstrumentationConfiguration,
+        environment: ExecutionEnvironment,
         variant: Variant
     ): List<InstrumentationTaskConfigurator>? {
 
@@ -90,7 +92,6 @@ internal class ConfiguratorsFactory(
             val outputDir = outputDirConfigurator.resolve(configuration)
 
             val instrumentationConfigurator = InstrumentationConfigurator(
-                project = project,
                 extension = extension,
                 configuration = configuration,
                 instrumentationArgsResolver = instrumentationArgsResolver,
@@ -103,7 +104,7 @@ internal class ConfiguratorsFactory(
                 instrumentationConfigurator,
                 experimentsConfigurator,
                 outputDirConfigurator,
-                KubernetesConfigurator(project, configuration),
+                EnvironmentConfigurator(environment),
                 GitConfigurator(gitResolver),
                 ReportViewerConfigurator(reportResolver),
                 CIArgsConfigurator(buildEnvResolver),

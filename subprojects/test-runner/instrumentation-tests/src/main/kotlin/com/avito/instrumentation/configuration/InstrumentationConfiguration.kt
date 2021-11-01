@@ -22,6 +22,7 @@ public abstract class InstrumentationConfiguration @Inject constructor(
 
     public var runOnlyChangedTests: Boolean = false
 
+    @Deprecated("Setup instrumentation.environment")
     public var kubernetesNamespace: String = "default"
 
     @Deprecated("Use testRunnerExecutionTimeout and instrumentationTaskTimeout properties instead")

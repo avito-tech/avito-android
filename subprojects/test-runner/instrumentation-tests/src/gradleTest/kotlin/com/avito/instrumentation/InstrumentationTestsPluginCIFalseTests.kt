@@ -14,7 +14,7 @@ internal class InstrumentationTestsPluginCIFalseTests {
     @field:TempDir
     lateinit var projectDir: File
 
-    private val instrumentationTask = ":app:instrumentationApi22"
+    private val instrumentationTask = ":app:instrumentationApi22Default"
 
     @Test
     fun `k8s emulator target task is available with credentials`() {
@@ -69,7 +69,7 @@ internal class InstrumentationTestsPluginCIFalseTests {
             expectFailure = true
         ).assertThat()
             .buildFailed()
-            .outputContains("Configuration api22 error: has kubernetes device target without kubernetes credentials")
+            .outputContains("Cannot query the value of property")
     }
 
     @Test
@@ -80,11 +80,11 @@ internal class InstrumentationTestsPluginCIFalseTests {
         )
 
         executeInstrumentationTask(
-            task = instrumentationTask,
+            task = ":app:instrumentationApi22Local",
             expectFailure = false
         ).assertThat()
             .buildSuccessful()
-            .tasksShouldBeTriggered(instrumentationTask)
+            .tasksShouldBeTriggered(":app:instrumentationApi22Local")
     }
 
     private fun executeInstrumentationTask(

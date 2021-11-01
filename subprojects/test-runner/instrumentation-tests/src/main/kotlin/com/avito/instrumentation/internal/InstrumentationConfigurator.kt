@@ -1,6 +1,5 @@
 package com.avito.instrumentation.internal
 
-import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.InstrumentationTestsTask
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationFilter
@@ -17,15 +16,11 @@ import com.avito.runner.config.SchedulingConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.scheduler.suite.filter.Filter
 import com.avito.test.model.DeviceName
-import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.gradle.kubernetesCredentials
-import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import java.io.File
 
 internal class InstrumentationConfigurator(
-    private val project: Project,
     private val extension: InstrumentationTestsPluginExtension,
     private val configuration: InstrumentationConfiguration,
     private val instrumentationArgsResolver: InstrumentationArgsResolver,
@@ -38,7 +33,6 @@ internal class InstrumentationConfigurator(
 
         task.instrumentationConfiguration.set(
             getInstrumentationConfiguration(
-                project = project,
                 configuration = configuration,
                 parentInstrumentationParameters = instrumentationParameters,
                 filters = extension.filters.map { getInstrumentationFilter(it) },
@@ -51,7 +45,6 @@ internal class InstrumentationConfigurator(
     }
 
     private fun getInstrumentationConfiguration(
-        project: Project,
         configuration: InstrumentationConfiguration,
         parentInstrumentationParameters: InstrumentationParameters,
         filters: List<InstrumentationFilterData>,
@@ -62,7 +55,7 @@ internal class InstrumentationConfigurator(
             parentInstrumentationParameters
                 .applyParameters(configuration.instrumentationParams)
 
-        val result = InstrumentationConfigurationData(
+        return InstrumentationConfigurationData(
             name = configuration.name,
             instrumentationParams = mergedInstrumentationParameters,
             reportSkippedTests = configuration.reportSkippedTests,
@@ -73,21 +66,6 @@ internal class InstrumentationConfigurator(
                 ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
             outputFolder = outputFolder
         )
-
-        validate(result, project)
-
-        return result
-    }
-
-    private fun validate(instrumentationConfigurationData: InstrumentationConfigurationData, project: Project) {
-        if (instrumentationConfigurationData.requestedDeviceType == DeviceType.CLOUD
-            && project.kubernetesCredentials is KubernetesCredentials.Empty
-        ) {
-            throw IllegalStateException(
-                "Configuration ${instrumentationConfigurationData.name} error: " +
-                    "has kubernetes device target without kubernetes credentials"
-            )
-        }
     }
 
     private fun validate(targetConfiguration: TargetConfiguration) {

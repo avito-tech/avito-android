@@ -2,7 +2,7 @@ package com.avito.ci.steps
 
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.impact.configuration.internalModule
-import com.avito.instrumentation.instrumentationTask
+import com.avito.instrumentation.instrumentationTaskDefaultEnvironment
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
@@ -31,7 +31,7 @@ public open class UiTestCheck(context: String, name: String) : SuppressibleBuild
             configurations.forEach { configuration ->
 
                 // flavors not supported here
-                val uiTestTask = project.tasks.instrumentationTask(configuration, null)
+                val uiTestTask = project.tasks.instrumentationTaskDefaultEnvironment(configuration, null)
 
                 // it is safe to call get() here because task instrumentationXXX must be ready here
                 // can't configure task in registration of another

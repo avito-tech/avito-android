@@ -7,23 +7,27 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 
-internal fun instrumentationTaskName(configuration: String, flavor: String?): String {
-    return buildString {
+internal fun instrumentationTaskName(
+    configuration: String,
+    environment: String,
+    flavor: String?
+): String =
+    buildString {
         append("instrumentation")
         if (!flavor.isNullOrBlank()) {
             append(flavor.capitalize())
         }
         append(configuration.capitalize())
+        if (environment.isNotBlank()) {
+            append(environment.capitalize())
+        }
     }
-}
 
-/**
- * Available only afterEvaluate MBS-6926
- */
-public fun TaskContainer.instrumentationTask(
+public fun TaskContainer.instrumentationTaskDefaultEnvironment(
     configuration: String,
     flavor: String?
-): TaskProvider<InstrumentationTestsTask> = typedNamed(instrumentationTaskName(configuration, flavor))
+): TaskProvider<InstrumentationTestsTask> =
+    typedNamed(instrumentationTaskName(configuration, ENVIRONMENT_DEFAULT, flavor))
 
 public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
     flatMap { task ->
@@ -44,3 +48,5 @@ public const val instrumentationPluginId: String = "com.avito.android.instrument
 internal const val dumpDirName: String = "input-args-dump"
 
 internal const val CI_TASK_GROUP = "ci"
+
+internal const val ENVIRONMENT_DEFAULT: String = "default"
