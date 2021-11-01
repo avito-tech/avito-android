@@ -35,7 +35,8 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
                 "uploadBuildResult.uiTestConfiguration parameter must be set"
             }
 
-            val instrumentationTask = project.tasks.instrumentationTask(uiTestConfiguration)
+            // flavors not supported here
+            val instrumentationTask = project.tasks.instrumentationTask(uiTestConfiguration, null)
 
             val reportCoordinates = instrumentationTask.extractReportCoordinates().get()
             val reportViewerUrl = instrumentationTask.extractReportViewerUrl().get()

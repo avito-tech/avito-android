@@ -30,7 +30,8 @@ public open class UiTestCheck(context: String, name: String) : SuppressibleBuild
 
             configurations.forEach { configuration ->
 
-                val uiTestTask = project.tasks.instrumentationTask(configuration)
+                // flavors not supported here
+                val uiTestTask = project.tasks.instrumentationTask(configuration, null)
 
                 // it is safe to call get() here because task instrumentationXXX must be ready here
                 // can't configure task in registration of another

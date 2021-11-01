@@ -46,14 +46,13 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             extension.configurationsContainer.all { configuration ->
 
                 // todo how to write "only testBuildType" selector?
-                // todo support flavors
                 androidComponents.onVariants { variant ->
 
                     val configurators = factory.createTaskConfigurators(configuration, variant)
 
                     if (configurators != null) {
                         project.tasks.register(
-                            instrumentationTaskName(configuration.name),
+                            instrumentationTaskName(configuration.name, variant.flavorName),
                             configureInstrumentationTask(
                                 configurators = configurators,
                                 configuration = configuration,
