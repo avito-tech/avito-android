@@ -1,11 +1,13 @@
 package com.avito.instrumentation.internal
 
 import com.android.build.api.variant.Variant
+import com.avito.git.gitState
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.logger.LoggerFactory
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import com.avito.utils.gradle.envArgs
 import org.gradle.api.Project
 
 internal class ConfiguratorsFactory(
@@ -16,9 +18,10 @@ internal class ConfiguratorsFactory(
 
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 
-    private val gitResolver = GitResolver(project)
+    private val gitResolver = GitResolver(project.gitState())
 
-    private val buildEnvResolver = BuildEnvResolver(project)
+    // todo envArgs should be lazy, see [com.avito.kotlin.dsl.ProjectProperty]
+    private val buildEnvResolver = BuildEnvResolver(project.provider { project.envArgs })
 
     private val runIdResolver = RunIdResolver(
         timeProvider = timeProvider,
