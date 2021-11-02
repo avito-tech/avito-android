@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 public abstract class InstrumentationConfiguration @Inject constructor(
     public val name: String,
-    private val objects: ObjectFactory
+    objects: ObjectFactory
 ) {
 
     internal abstract val targetsContainer: NamedDomainObjectContainer<TargetConfiguration>

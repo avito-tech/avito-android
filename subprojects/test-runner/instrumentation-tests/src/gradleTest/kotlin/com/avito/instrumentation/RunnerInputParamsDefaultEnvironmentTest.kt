@@ -7,8 +7,8 @@ import com.avito.reportviewer.model.RunId
 import com.avito.runner.config.Reservation
 import com.avito.runner.config.RunnerInputParams
 import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.git
+import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
 import com.avito.test.model.DeviceName
@@ -20,9 +20,14 @@ import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class RunnerInputParamsTest {
+internal class RunnerInputParamsDefaultEnvironmentTest {
 
     private val buildType = "buildType"
+
+    private val kubernetesToken = "ktoken"
+    private val kubernetesCaCertData = "kcacertdata"
+    private val kubernetesUrl = "kurl"
+    private val kubernetesNamespace = "knamespace"
 
     private val targetBranch = "another"
 
@@ -31,7 +36,7 @@ internal class RunnerInputParamsTest {
     private val appPackageName = "com.avito.app"
 
     @TestFactory
-    fun `runner parameters - passed correctly - kotlin`(@TempDir projectDir: File): List<DynamicTest> {
+    fun `runner parameters - passed correctly - default environment`(@TempDir projectDir: File): List<DynamicTest> {
         projectDir.apply {
             TestProjectGenerator(
                 modules = listOf(
@@ -52,51 +57,26 @@ internal class RunnerInputParamsTest {
             ).generateIn(this)
         }
 
-        return cases(projectDir, "kts")
-    }
-
-    @TestFactory
-    fun `runner parameters - passed correctly - groovy`(@TempDir projectDir: File): List<DynamicTest> {
-        projectDir.apply {
-            TestProjectGenerator(
-                modules = listOf(
-                    AndroidAppModule(
-                        name = appModuleName,
-                        packageName = appPackageName,
-                        plugins = plugins {
-                            id(instrumentationPluginId)
-                        },
-                        imports = listOf(
-                            "import static com.avito.instrumentation.reservation.request.Device.LocalEmulator",
-                        ),
-                        buildGradleExtra = groovyStubConfig
-                    )
-                )
-            ).generateIn(this)
-        }
-
-        return cases(projectDir, "groovy")
-    }
-
-    private fun cases(
-        projectDir: File,
-        lang: String,
-    ): List<DynamicTest> {
-
         with(projectDir) {
             git("branch $targetBranch")
         }
 
         val commit = projectDir.git("rev-parse HEAD").trim()
 
-        val buildResult = ciRun(
+        val buildResult = gradlew(
             projectDir,
-            "app:instrumentationFunctionalK8sCredentials",
+            "app:instrumentationFunctionalDefault",
             "-PteamcityBuildId=0", // todo remove MBS-12057
-            "-Pavito.git.state=env",
+            "-PteamcityUrl=xxx", // todo remove MBS-12057
+            "-PbuildNumber=123", // todo remove MBS-12057
+            "-PteamcityBuildType=$buildType", // todo remove MBS-12057
             "-PisGradleTestKitRun=true",
-            buildType = buildType,
-            targetBranch = targetBranch
+
+            // todo remove alongside with this test and default env MBS-12283
+            "-PkubernetesToken=$kubernetesToken",
+            "-PkubernetesCaCertData=$kubernetesCaCertData",
+            "-PkubernetesUrl=$kubernetesUrl",
+            "-PkubernetesNamespace=$kubernetesNamespace",
         )
 
         buildResult.assertThat().buildSuccessful()
@@ -245,19 +225,19 @@ internal class RunnerInputParamsTest {
             },
             Case("kubernetes credentials url") {
                 assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).url)
-                    .isEqualTo("myk8s.com")
+                    .isEqualTo(kubernetesUrl)
             },
             Case("kubernetes credentials token") {
                 assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).token)
-                    .isEqualTo("q1w2e3")
+                    .isEqualTo(kubernetesToken)
             },
             Case("kubernetes credentials ca cert data") {
                 assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).caCertData)
-                    .isEqualTo("12345")
+                    .isEqualTo(kubernetesCaCertData)
             },
             Case("kubernetes credentials ca cert data") {
                 assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).namespace)
-                    .isEqualTo("default")
+                    .isEqualTo(kubernetesNamespace)
             },
             Case("project name") {
                 assertThat(it.projectName)
@@ -338,7 +318,7 @@ internal class RunnerInputParamsTest {
                     .isTrue()
             },
         ).map { case ->
-            DynamicTest.dynamicTest("[$lang] ${case.name}") {
+            DynamicTest.dynamicTest(case.name) {
                 case.assertion.invoke(runnerInput)
             }
         }

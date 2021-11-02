@@ -1,5 +1,8 @@
 package com.avito.instrumentation
 
+import org.intellij.lang.annotations.Language
+
+@Language("kotlin")
 internal val kotlinStubConfig = """
   |android {
   |    defaultConfig {
@@ -14,7 +17,7 @@ internal val kotlinStubConfig = """
   |}
   |
   |instrumentation {
-  |  
+  |
   |    output = rootProject.file("outputs").path
   |    sentryDsn = "stub"
   |
@@ -22,7 +25,7 @@ internal val kotlinStubConfig = """
   |        "jobSlug" to "FunctionalTests",
   |        "override" to "overrideInPlugin"
   |    )
-  |                             
+  |
   |    testReport {
   |        reportViewer {
   |            reportApiUrl = "http://stub"
@@ -42,6 +45,8 @@ internal val kotlinStubConfig = """
   |            suppressFlaky.set(true)
   |            suppressFailure.set(true)
   |            
+  |            kubernetesNamespace = "emulators"
+  |
   |            targets {
   |                register("api22") {
   |                    instrumentationParams = mapOf(
@@ -66,29 +71,30 @@ internal val kotlinStubConfig = """
   |            }
   |        }
   |    }
-  |    
+  |
   |    environments {
-  |       register<com.avito.instrumentation.configuration.KubernetesViaContext>("k8sContext") {
-  |         context.set("beta")
-  |         namespace.set("default")
-  |       }
-  |       register<com.avito.instrumentation.configuration.KubernetesViaCredentials>("k8sCredentials") {
-  |         token.set("q1w2e3")
-  |         caCertData.set("12345")
-  |         url.set("myk8s.com")
-  |         namespace.set("default")
-  |       }
+  |        register<com.avito.instrumentation.configuration.KubernetesViaContext>("k8sContext") {
+  |            context.set("beta")
+  |            namespace.set("default")
+  |        }
+  |        register<com.avito.instrumentation.configuration.KubernetesViaCredentials>("k8sCredentials") {
+  |            token.set("q1w2e3")
+  |            caCertData.set("12345")
+  |            url.set("myk8s.com")
+  |            namespace.set("default")
+  |        }
   |    }
   |}
   |""".trimMargin()
 
+@Language("groovy")
 internal val groovyStubConfig = """
   |android {
   |    defaultConfig {
   |        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   |        testInstrumentationRunnerArguments([
-  |            "planSlug" : "AppAndroid",
-  |            "override": "createdInInstrumentationRunnerArguments"
+  |                "planSlug": "AppAndroid",
+  |                "override": "createdInInstrumentationRunnerArguments"
   |        ])
   |    }
   |}
@@ -98,10 +104,10 @@ internal val groovyStubConfig = """
   |    sentryDsn = "stub"
   |
   |    instrumentationParams = [
-  |        "jobSlug": "FunctionalTests",
-  |        "override": "overrideInPlugin"
+  |            "jobSlug" : "FunctionalTests",
+  |            "override": "overrideInPlugin"
   |    ]
-  |     
+  |
   |    testReport {
   |        reportViewer {
   |            reportApiUrl = "http://stub"
@@ -114,19 +120,21 @@ internal val groovyStubConfig = """
   |    configurations {
   |        functional {
   |            instrumentationParams = [
-  |                "configuration": "functional",
-  |                "override": "overrideInConfiguration"
+  |                    "configuration": "functional",
+  |                    "override"     : "overrideInConfiguration"
   |            ]
-  |            
+  |
   |            suppressFlaky.set(true)
   |            suppressFailure.set(true)
+  |
+  |            kubernetesNamespace = "emulators"
   |
   |            targets {
   |                api22 {
   |                    instrumentationParams = [
-  |                        "deviceName": "invalid",
-  |                        "target": "yes",
-  |                        "override": "overrideInTarget"
+  |                            "deviceName": "invalid",
+  |                            "target"    : "yes",
+  |                            "override"  : "overrideInTarget"
   |                    ]
   |
   |                    deviceName = "api22"
@@ -145,7 +153,7 @@ internal val groovyStubConfig = """
   |            }
   |        }
   |    }
-  |    
+  |
   |    environments {
   |        register("k8sContext", com.avito.instrumentation.configuration.KubernetesViaContext) {
   |            context.set("beta")
