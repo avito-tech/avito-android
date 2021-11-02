@@ -9,7 +9,7 @@ set -uex
 
 function publish() {
     # PGP_KEY is a large 4kb key with unescaped symbols
-    local readonly gradle_properties_path="subprojects/gradle.properties"
+    local readonly gradle_properties_path="gradle.properties"
     if [[ -f ${gradle_properties_path} ]]; then
         echo "avito.pgp.key=$PGP_KEY" >> ${gradle_properties_path}
     else
