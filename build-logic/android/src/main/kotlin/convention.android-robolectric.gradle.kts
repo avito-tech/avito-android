@@ -1,6 +1,5 @@
 import com.android.build.gradle.BaseExtension
 import com.avito.android.withVersionCatalog
-import gradle.kotlin.dsl.accessors._952aaa10a15315a4fb47c4ae90ef5b7c.testImplementation
 
 plugins {
     id("convention.android-base")
@@ -31,7 +30,8 @@ configure<BaseExtension> {
 
 project.withVersionCatalog { libs ->
     dependencies {
-        testImplementation(libs.robolectric)
-        sharedTestImplementation(libs.androidXTestExtJunit)
+        add("testImplementation", libs.robolectric)
+        add("testImplementation", libs.androidXTestExtJunit)
+        add("androidTestImplementation", libs.androidXTestExtJunit)
     }
 }
