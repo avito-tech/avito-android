@@ -1,34 +1,34 @@
+import com.avito.booleanProperty
+import com.avito.stringProperty
+
 plugins {
     id("com.gradle.enterprise")
 }
 
-val isCI = booleanProperty("ci", false)
-val buildId = stringProperty("teamcityBuildId", nullIfBlank = true)
+val isCi = booleanProperty("ci", false)
+val publishBuildScan = booleanProperty("avito.gradle.buildScan.publishAlways", false)
+
+val enterpriseUrl = stringProperty("avito.gradle.enterprise.url", nullIfBlank = true)
 
 gradleEnterprise {
+    if (!enterpriseUrl.isNullOrBlank()) {
+        server = enterpriseUrl
+        allowUntrustedServer = true
+
+        buildScan {
+            publishAlways()
+        }
+    } else {
+        buildScan {
+            termsOfServiceUrl = "https://gradle.com/terms-of-service"
+            termsOfServiceAgree = "yes"
+            publishAlwaysIf(publishBuildScan)
+        }
+    }
+
     buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-        // Lost scans due to upload interruptions after build finishes
-        isUploadInBackground = false
-        publishAlwaysIf(isCI)
-        if (buildId != null) value("buildId", buildId)
-    }
-}
-
-fun booleanProperty(name: String, defaultValue: Boolean): Boolean {
-    return if (settings.extra.has(name)) {
-        settings.extra[name]?.toString()?.toBoolean() ?: defaultValue
-    } else {
-        defaultValue
-    }
-}
-
-fun stringProperty(name: String, nullIfBlank: Boolean = false): String? {
-    return if (settings.extra.has(name)) {
-        val string = settings.extra[name]?.toString()
-        if (nullIfBlank && string.isNullOrBlank()) null else string
-    } else {
-        null
+        // Unstable in CI for unknown reasons
+        // https://docs.gradle.com/enterprise/gradle-plugin/#failed_background_build_scan_uploads
+        isUploadInBackground = !isCi
     }
 }
