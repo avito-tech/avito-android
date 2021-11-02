@@ -54,8 +54,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
                 registerDefaultEnvironment(
                     providers = project.providers,
-                    extension = extension,
-                    configuration = configuration
+                    extension = extension
                 )
 
                 extension.environmentsContainer.all { environment ->
@@ -150,19 +149,18 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
     /**
      * todo remove (registered for backward compatibility)
+     * see MBS-12283
      */
     private fun registerDefaultEnvironment(
         providers: ProviderFactory,
-        extension: InstrumentationTestsPluginExtension,
-        configuration: InstrumentationConfiguration
+        extension: InstrumentationTestsPluginExtension
     ) {
         if (extension.environmentsContainer.findByName(ENVIRONMENT_DEFAULT) == null) {
             extension.environmentsContainer.register<KubernetesViaCredentials>(ENVIRONMENT_DEFAULT) {
                 url.set(providers.gradleProperty("kubernetesUrl").forUseAtConfigurationTime())
                 token.set(providers.gradleProperty("kubernetesToken").forUseAtConfigurationTime())
                 caCertData.set(providers.gradleProperty("kubernetesCaCertData").forUseAtConfigurationTime())
-                @Suppress("DEPRECATION")
-                namespace.set(configuration.kubernetesNamespace)
+                namespace.set(providers.gradleProperty("kubernetesNamespace").forUseAtConfigurationTime())
             }
         }
     }
