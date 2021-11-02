@@ -1,12 +1,15 @@
 package com.avito.android.ui.test
 
 import android.content.Intent
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.StatefulRecyclerViewAdapterActivity
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
 @Suppress("MaxLineLength")
+@RunWith(AndroidJUnit4::class)
 class StatefulRecyclerViewAdapterTest {
 
     @get:Rule

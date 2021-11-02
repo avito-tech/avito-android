@@ -151,6 +151,7 @@ org.junit.platform:junit-platform-launcher:1.8.0=integTestRuntimeClasspath,testR
 org.junit.platform:junit-platform-runner:1.8.0=integTestRuntimeClasspath,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.junit.platform:junit-platform-suite-api:1.8.0=integTestRuntimeClasspath,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.junit.platform:junit-platform-suite-commons:1.8.0=integTestRuntimeClasspath,testRuntimeClasspath
+org.junit.vintage:junit-vintage-engine:5.8.0=integTestRuntimeClasspath,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.junit:junit-bom:5.8.0=integTestCompileClasspath,integTestRuntimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.jvnet.staxex:stax-ex:1.8.1=integTestRuntimeClasspath,testRuntimeClasspath
 org.opentest4j:opentest4j:1.2.0=integTestCompileClasspath,integTestRuntimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata

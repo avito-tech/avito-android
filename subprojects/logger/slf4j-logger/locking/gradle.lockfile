@@ -40,6 +40,7 @@ org.junit.platform:junit-platform-launcher:1.8.0=testRuntimeClasspath,testRuntim
 org.junit.platform:junit-platform-runner:1.8.0=testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.junit.platform:junit-platform-suite-api:1.8.0=testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.junit.platform:junit-platform-suite-commons:1.8.0=testRuntimeClasspath
+org.junit.vintage:junit-vintage-engine:5.8.0=testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.junit:junit-bom:5.8.0=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.opentest4j:opentest4j:1.2.0=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 org.slf4j:slf4j-api:1.7.28=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath

@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
@@ -8,7 +9,9 @@ import com.avito.android.ui.VisibilityActivity
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class InterceptorTest {
 
     @get:Rule

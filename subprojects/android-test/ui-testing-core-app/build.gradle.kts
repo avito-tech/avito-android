@@ -7,6 +7,7 @@ import com.avito.utils.gradle.kubernetesCredentials
 
 plugins {
     id("convention.kotlin-android-app")
+    id("convention.android-robolectric")
     id("com.avito.android.instrumentation-tests")
 }
 
@@ -17,7 +18,7 @@ android {
         versionCode = 1
         testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
 
-        val instrumentationArgs = mapOf<String, String>(
+        val instrumentationArgs = mapOf(
             "planSlug" to "AndroidTestApp",
             "jobSlug" to "FunctionalTests",
             "fileStorageUrl" to (getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"),
@@ -42,19 +43,17 @@ dependencies {
     implementation(libs.material)
     implementation(libs.playServicesBase)
     implementation(libs.recyclerView)
+    implementation(libs.swipeRefreshLayout)
 
     implementation(projects.subprojects.androidLib.proxyToast)
 
-    androidTestImplementation(projects.subprojects.testRunner.testInhouseRunner)
-    androidTestImplementation(projects.subprojects.testRunner.testReport)
-    androidTestImplementation(projects.subprojects.testRunner.testAnnotations)
-    androidTestImplementation(projects.subprojects.testRunner.reportViewer) {
-        because("Priority/Behavior test annotations still there")
-    }
-
-    androidTestImplementation(projects.subprojects.androidTest.uiTestingCore)
-    androidTestImplementation(projects.subprojects.androidTest.toastRule)
-    androidTestImplementation(projects.subprojects.common.truthExtensions)
+    sharedTestImplementation(projects.subprojects.testRunner.testInhouseRunner)
+    sharedTestImplementation(projects.subprojects.testRunner.testReport)
+    sharedTestImplementation(projects.subprojects.testRunner.testAnnotations)
+    sharedTestImplementation(projects.subprojects.testRunner.reportViewer)
+    sharedTestImplementation(projects.subprojects.androidTest.uiTestingCore)
+    sharedTestImplementation(projects.subprojects.androidTest.toastRule)
+    sharedTestImplementation(projects.subprojects.common.truthExtensions)
 
     androidTestUtil(libs.testOrchestrator)
 }

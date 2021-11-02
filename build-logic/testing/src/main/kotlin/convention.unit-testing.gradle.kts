@@ -59,6 +59,7 @@ project.withVersionCatalog { libs ->
 
             add("testRuntimeOnly", libs.junitJupiterEngine)
             add("testRuntimeOnly", libs.junitPlatformRunner)
+            add("testRuntimeOnly", libs.junitVintageEngine)
             add("testRuntimeOnly", libs.junitPlatformLauncher)
         }
     }

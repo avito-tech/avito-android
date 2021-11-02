@@ -1,13 +1,16 @@
 package com.avito.android.ui.test
 
 import androidx.test.espresso.action.SwipeDirections
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.ButtonsOverRecyclerActivity
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.greaterThan
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class ButtonsOverRecyclerTest {
 
     @get:Rule

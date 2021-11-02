@@ -1,11 +1,14 @@
 package com.avito.android.ui.test
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avito.android.rule.SimpleRule
 import org.hamcrest.Matchers.isA
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class SimpleRuleTest {
 
     @get:Rule
