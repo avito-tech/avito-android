@@ -22,7 +22,6 @@ configure<BaseExtension> {
 
     testOptions {
         unitTests {
-            isReturnDefaultValues = true
             isIncludeAndroidResources = true
         }
     }
