@@ -33,5 +33,6 @@ project.withVersionCatalog { libs ->
         add("testImplementation", libs.robolectric)
         add("testImplementation", libs.androidXTestExtJunit)
         add("androidTestImplementation", libs.androidXTestExtJunit)
+        add("testRuntimeOnly", libs.junitVintageEngine)
     }
 }

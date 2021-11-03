@@ -235,7 +235,6 @@ org.junit.platform:junit-platform-launcher:1.8.0=releaseUnitTestRuntimeClasspath
 org.junit.platform:junit-platform-runner:1.8.0=releaseUnitTestRuntimeClasspath,releaseUnitTestRuntimeOnlyDependenciesMetadata,testRuntimeOnlyDependenciesMetadata
 org.junit.platform:junit-platform-suite-api:1.8.0=releaseUnitTestRuntimeClasspath,releaseUnitTestRuntimeOnlyDependenciesMetadata,testRuntimeOnlyDependenciesMetadata
 org.junit.platform:junit-platform-suite-commons:1.8.0=releaseUnitTestRuntimeClasspath
-org.junit.vintage:junit-vintage-engine:5.8.0=releaseUnitTestRuntimeClasspath,releaseUnitTestRuntimeOnlyDependenciesMetadata,testRuntimeOnlyDependenciesMetadata
 org.junit:junit-bom:5.7.0=lintClassPath
 org.junit:junit-bom:5.8.0=releaseUnitTestCompileClasspath,releaseUnitTestImplementationDependenciesMetadata,releaseUnitTestRuntimeClasspath,releaseUnitTestRuntimeOnlyDependenciesMetadata,testImplementationDependenciesMetadata,testRuntimeOnlyDependenciesMetadata
 org.jvnet.staxex:stax-ex:1.8.1=lintClassPath
