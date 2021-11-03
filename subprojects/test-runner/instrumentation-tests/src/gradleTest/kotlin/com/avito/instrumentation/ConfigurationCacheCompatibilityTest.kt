@@ -14,6 +14,9 @@ internal class ConfigurationCacheCompatibilityTest {
     @Test
     fun `configuration with applied plugin - reuses configuration cache`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -33,6 +36,9 @@ internal class ConfigurationCacheCompatibilityTest {
     @Test
     fun `instrumentationTask run - reuses configuration cache`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

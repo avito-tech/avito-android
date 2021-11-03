@@ -13,7 +13,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class ModuleTypesPluginTest {
+internal class ModuleTypesPluginTest {
 
     private lateinit var projectDir: File
 
@@ -27,6 +27,7 @@ class ModuleTypesPluginTest {
     fun `android application - having library dependencies in implementation configuration in library module - has checkProjectDependenciesTypeTask scheduled`() {
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class FastCheckChangesInAndroidTestInAppA {
+internal class FastCheckChangesInAndroidTestInAppA {
 
     private lateinit var projectDir: File
 

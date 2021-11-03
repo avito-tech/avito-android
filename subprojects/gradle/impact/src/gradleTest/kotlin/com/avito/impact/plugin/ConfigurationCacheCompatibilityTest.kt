@@ -14,6 +14,7 @@ internal class ConfigurationCacheCompatibilityTest {
     fun `configuration with applied plugin`(@TempDir projectDir: File) {
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             }
         ).generateIn(projectDir)

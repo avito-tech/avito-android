@@ -53,7 +53,7 @@ val enterpriseUrl = stringProperty("avito.gradle.enterprise.url", nullIfBlank = 
 
 buildCache {
     local {
-        isEnabled = booleanProperty("avito.gradle.buildCache.local.enabled", true)
+        isEnabled = booleanProperty("avito.gradle.buildCache.local.enabled", false)
         isPush = true
         removeUnusedEntriesAfterDays = 30
     }

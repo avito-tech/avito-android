@@ -30,10 +30,7 @@ public class ProsectorPlugin : Plugin<Project> {
                                 commit = config.commitHash
                             )
                         )
-
-                        loggerFactory.set(
-                        GradleLoggerPlugin.getLoggerFactory(this)
-                    )
+                        loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
 
                     dependsOn(packageTask)
                 }

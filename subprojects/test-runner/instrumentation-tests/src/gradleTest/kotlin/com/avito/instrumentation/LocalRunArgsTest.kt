@@ -24,6 +24,9 @@ internal class LocalRunArgsTest {
     @TestFactory
     fun `instrumentation args - passed correctly - kotlin`(@TempDir projectDir: File): List<DynamicTest> {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = appName,
@@ -46,6 +49,9 @@ internal class LocalRunArgsTest {
     @TestFactory
     fun `instrumentation args - passed correctly - groovy`(@TempDir projectDir: File): List<DynamicTest> {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = appName,

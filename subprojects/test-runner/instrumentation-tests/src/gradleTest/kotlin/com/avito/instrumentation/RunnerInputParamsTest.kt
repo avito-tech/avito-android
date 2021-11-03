@@ -34,6 +34,9 @@ internal class RunnerInputParamsTest {
     fun `runner parameters - passed correctly - kotlin`(@TempDir projectDir: File): List<DynamicTest> {
         projectDir.apply {
             TestProjectGenerator(
+                plugins = plugins {
+                    id("com.avito.android.gradle-logger")
+                },
                 modules = listOf(
                     AndroidAppModule(
                         name = appModuleName,
@@ -59,6 +62,9 @@ internal class RunnerInputParamsTest {
     fun `runner parameters - passed correctly - groovy`(@TempDir projectDir: File): List<DynamicTest> {
         projectDir.apply {
             TestProjectGenerator(
+                plugins = plugins {
+                    id("com.avito.android.gradle-logger")
+                },
                 modules = listOf(
                     AndroidAppModule(
                         name = appModuleName,

@@ -1,17 +1,14 @@
 package com.avito.runner.config
 
-import com.avito.logger.PrintlnLoggerFactory
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 
 internal class TestsActionParamsSerializationTest {
 
-    private val loggerFactory = PrintlnLoggerFactory
-
     @Test
     fun `params is serializable`() {
-        val params = RunnerInputParams.createStubInstance(loggerFactory = loggerFactory)
+        val params = RunnerInputParams.createStubInstance()
 
         assertSerializable(params)
     }

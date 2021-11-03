@@ -212,7 +212,12 @@ internal class InstrumentationTestsPluginTest {
     }
 
     private fun createProject(projectDir: File, module: Module) {
-        TestProjectGenerator(modules = listOf(module)).generateIn(projectDir)
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
+            modules = listOf(module)
+        ).generateIn(projectDir)
     }
 
     private fun runGradle(projectDir: File, vararg args: String) =

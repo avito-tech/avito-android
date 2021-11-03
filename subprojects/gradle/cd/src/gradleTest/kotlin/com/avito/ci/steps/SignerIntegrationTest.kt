@@ -21,7 +21,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class SignerIntegrationTest {
+internal class SignerIntegrationTest {
 
     private lateinit var projectDir: File
 
@@ -37,6 +37,7 @@ class SignerIntegrationTest {
 
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(

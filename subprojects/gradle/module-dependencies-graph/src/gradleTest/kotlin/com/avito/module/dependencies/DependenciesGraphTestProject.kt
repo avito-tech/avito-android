@@ -12,7 +12,10 @@ internal object DependenciesGraphTestProject {
 
     fun generate(dir: File) {
         TestProjectGenerator(
-            plugins = plugins { id("com.avito.android.module-dependencies-graph") },
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+                id("com.avito.android.module-dependencies-graph")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "RootA",

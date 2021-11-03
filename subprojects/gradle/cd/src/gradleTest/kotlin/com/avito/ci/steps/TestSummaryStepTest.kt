@@ -112,6 +112,7 @@ internal class TestSummaryStepTest {
     private fun generateProject(projectDir: File, step: String) {
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
                 id(testSummaryPluginId)
             },

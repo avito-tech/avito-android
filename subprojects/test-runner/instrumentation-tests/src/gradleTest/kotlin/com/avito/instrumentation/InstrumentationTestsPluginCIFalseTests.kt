@@ -107,6 +107,9 @@ internal class InstrumentationTestsPluginCIFalseTests {
         device: String
     ) {
         TestProjectGenerator(
+            plugins = plugins {
+                  id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     "app",

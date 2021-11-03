@@ -11,7 +11,7 @@ import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
 import com.avito.instrumentation.configuration.ReportViewer
 import com.avito.instrumentation.internal.RunnerInputDumper
-import com.avito.logger.LoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
@@ -121,9 +121,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val kubernetesCredentials: Property<KubernetesCredentials>
 
     @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
-    @get:Internal
     public abstract val buildFailer: Property<BuildFailer>
 
     @get:Internal
@@ -155,7 +152,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public fun doWork() {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
-        val loggerFactory = loggerFactory.get()
 
         val reportViewerData = reportViewerProperty.orNull
         val reportViewerConfig = if (reportViewerData != null) {
@@ -195,7 +191,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 runOnlyChangedTests = runOnlyChangedTests.get(),
                 changedTestsFile = changedTests.asFile.orNull
             ),
-            loggerFactory = loggerFactory,
             outputDir = output,
             verdictFile = verdictFile.get().asFile,
             fileStorageUrl = getFileStorageUrl(),
@@ -220,9 +215,10 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         )
 
         if (!isGradleTestKitRun) {
+            val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
             workerExecutor.inMemoryWork {
                 when (
-                    val result = TestSchedulerFactoryProvider()
+                    val result = TestSchedulerFactoryProvider(loggerFactory)
                         .provide(testRunParams)
                         .create()
                         .schedule()

@@ -12,6 +12,7 @@ import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
 import com.avito.k8s.KubernetesApiFactory
 import com.avito.k8s.KubernetesClientFactory
+import com.avito.logger.LoggerFactory
 import com.avito.report.ReportFactory
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.FinalizerFactoryImpl
@@ -25,7 +26,7 @@ import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.ProcessRunner
 
-public class TestSchedulerFactoryProvider {
+public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFactory) {
 
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 
@@ -34,10 +35,10 @@ public class TestSchedulerFactoryProvider {
         val httpClientProvider = HttpClientProvider(
             statsDSender = StatsDSender.create(
                 config = params.statsDConfig,
-                loggerFactory = params.loggerFactory
+                loggerFactory = loggerFactory
             ),
             timeProvider = timeProvider,
-            loggerFactory = params.loggerFactory
+            loggerFactory = loggerFactory
         )
 
         val metricsConfig = createRunnerMetricsConfig(params)
@@ -50,7 +51,7 @@ public class TestSchedulerFactoryProvider {
 
         val report = reportFactory.createReport()
         val processRunner = ProcessRunner.create(null)
-        val androidDebugBridgeProvider = AndroidDebugBridgeProvider(params.loggerFactory, processRunner)
+        val androidDebugBridgeProvider = AndroidDebugBridgeProvider(loggerFactory, processRunner)
 
         val emulatorsLogsReporterProvider = EmulatorsLogsReporterProvider(
             logcatTags = params.executionParameters.logcatTags,
@@ -62,7 +63,7 @@ public class TestSchedulerFactoryProvider {
                 report = report,
                 metricsConfig = metricsConfig,
                 timeProvider = timeProvider,
-                loggerFactory = params.loggerFactory,
+                loggerFactory = loggerFactory,
                 reportViewerConfig = params.reportViewerConfig,
                 suppressFailure = params.suppressFailure,
                 suppressFlaky = params.suppressFlaky,
@@ -78,7 +79,7 @@ public class TestSchedulerFactoryProvider {
                     filterData = params.instrumentationConfiguration.filter,
                     impactAnalysisResult = params.impactAnalysisResult,
                     report = report,
-                    loggerFactory = params.loggerFactory
+                    loggerFactory = loggerFactory
                 )
             ),
             testRunnerFactoryProvider = TestRunnerFactoryProvider(
@@ -86,19 +87,20 @@ public class TestSchedulerFactoryProvider {
                 timeProvider = timeProvider,
                 httpClientProvider = httpClientProvider,
                 report = report,
+                loggerFactory = loggerFactory,
                 devicesProviderFactory = DeviceProviderFactoryProvider(
-                    loggerFactory = params.loggerFactory,
+                    loggerFactory = loggerFactory,
                     timeProvider = timeProvider,
                     deviceType = params.instrumentationConfiguration.requestedDeviceType,
                     processRunner = processRunner,
                     kubernetesReservationClientProvider = KubernetesReservationClientProvider(
-                        loggerFactory = params.loggerFactory,
+                        loggerFactory = loggerFactory,
                         kubernetesApiFactory = KubernetesApiFactory(
                             kubernetesClientFactory = KubernetesClientFactory(
                                 httpClientProvider = httpClientProvider,
                                 kubernetesCredentials = params.kubernetesCredentials,
                             ),
-                            loggerFactory = params.loggerFactory,
+                            loggerFactory = loggerFactory,
                         ),
                         androidDebugBridgeProvider = androidDebugBridgeProvider,
                         reservationDeploymentFactoryProvider = ReservationDeploymentFactoryProvider(
@@ -106,14 +108,14 @@ public class TestSchedulerFactoryProvider {
                             projectName = params.projectName,
                             buildId = params.buildId,
                             buildType = params.buildType,
-                            loggerFactory = params.loggerFactory,
+                            loggerFactory = loggerFactory,
                             useLegacyExtensionsV1Beta = params.useLegacyExtensionsV1Beta,
                         ),
                         emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
                         kubernetesReservationListenerProvider = KubernetesReservationListenerProvider(
                             timeProvider = timeProvider,
                             runnerMetricsConfig = metricsConfig,
-                            loggerFactory = params.loggerFactory,
+                            loggerFactory = loggerFactory,
                             sendPodsMetrics = params.sendPodsMetrics,
                         )
                     ),
@@ -124,7 +126,7 @@ public class TestSchedulerFactoryProvider {
                 metricsConfig = metricsConfig
             ),
             testSuiteLoader = TestSuiteLoader.create(),
-            loggerFactory = params.loggerFactory,
+            loggerFactory = loggerFactory,
             fileInfoWriter = FilterInfoWriter.Impl(
                 outputDir = params.outputDir,
             ),
@@ -153,7 +155,7 @@ public class TestSchedulerFactoryProvider {
         return ReportFactoryImpl(
             timeProvider = timeProvider,
             buildId = params.buildId,
-            loggerFactory = params.loggerFactory,
+            loggerFactory = loggerFactory,
             httpClientProvider = httpClientProvider,
             reportViewerConfig = params.reportViewerConfig
         )

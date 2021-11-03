@@ -1,7 +1,6 @@
 package com.avito.runner.config
 
 import com.avito.android.stats.StatsDConfig
-import com.avito.logger.LoggerFactory
 import com.avito.runner.scheduler.runner.createStubInstance
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
@@ -30,7 +29,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     suppressFailure: Boolean = false,
     suppressFlaky: Boolean = false,
     impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
-    loggerFactory: LoggerFactory,
     deviceDebug: Boolean = false,
     outputDir: File = createTempDirectory("runnerOutput").toFile(),
     verdictFile: File = File(outputDir, "verdict.json"),
@@ -53,7 +51,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     suppressFailure = suppressFailure,
     suppressFlaky = suppressFlaky,
     impactAnalysisResult = impactAnalysisResult,
-    loggerFactory = loggerFactory,
     outputDir = outputDir,
     verdictFile = verdictFile,
     fileStorageUrl = fileStorageUrl,
