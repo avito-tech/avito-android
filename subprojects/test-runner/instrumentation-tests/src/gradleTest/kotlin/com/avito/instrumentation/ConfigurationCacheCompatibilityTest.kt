@@ -73,7 +73,7 @@ internal class ConfigurationCacheCompatibilityTest {
             "-PgitBranch=xxx",
             "-PteamcityBuildType=BT",
             "-PisGradleTestKitRun=true",
-            dryRun = false,
+            dryRun = true,
             configurationCache = true
         )
     }
