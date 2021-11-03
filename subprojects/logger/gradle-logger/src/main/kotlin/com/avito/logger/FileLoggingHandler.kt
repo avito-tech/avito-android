@@ -28,6 +28,7 @@ internal class FileLoggingHandler(
             error.printStackTrace(stackTraceWriter)
             fileWriter.newLine()
         }
+        // TODO remove that flush. Could be done by adding `close` fun. Where we will close fileWriter
         fileWriter.flush()
     }
 }
