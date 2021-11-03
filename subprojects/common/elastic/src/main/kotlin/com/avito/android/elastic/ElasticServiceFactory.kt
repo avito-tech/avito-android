@@ -1,6 +1,5 @@
 package com.avito.android.elastic
 
-import com.avito.logger.LoggerFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
@@ -25,7 +24,6 @@ internal interface ElasticServiceFactory {
 
         fun create(
             endpoints: List<HttpUrl>,
-            loggerFactory: LoggerFactory
         ): ElasticServiceFactory {
             return when (endpoints.size) {
                 0 -> error("Elastic service endpoints has not been provided")
@@ -38,7 +36,6 @@ internal interface ElasticServiceFactory {
                     endpoints = endpoints,
                     okHttpClientBuilder = okHttpClientBuilder,
                     gson = gson,
-                    loggerFactory = loggerFactory
                 )
             }
         }

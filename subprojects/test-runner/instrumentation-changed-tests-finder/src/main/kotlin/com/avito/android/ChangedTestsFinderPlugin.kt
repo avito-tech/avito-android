@@ -2,7 +2,7 @@ package com.avito.android
 
 import com.avito.android.InstrumentationChangedTestsFinderApi.changedTestsFinderExtensionName
 import com.avito.android.InstrumentationChangedTestsFinderApi.changedTestsFinderTaskName
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -18,12 +18,7 @@ public class ChangedTestsFinderPlugin : Plugin<Project> {
 
             targetCommit.set(extension.targetCommit)
 
-            loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = target,
-                    taskName = this.name,
-                )
-            )
+            loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
         }
     }
 }

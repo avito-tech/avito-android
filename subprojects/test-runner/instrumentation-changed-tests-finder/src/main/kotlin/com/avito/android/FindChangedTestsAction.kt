@@ -33,7 +33,6 @@ public abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction
             gitRootDir = parameters.rootDir.get().asFile,
             targetCommit = parameters.targetCommit.get(),
             ignoreSettings = IgnoreSettings(emptySet()),
-            loggerFactory = parameters.loggerFactory.get()
         )
 
         val androidTestDir = parameters.androidTestDir.get().asFile

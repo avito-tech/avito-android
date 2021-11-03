@@ -8,7 +8,6 @@ dependencies {
 
     implementation(projects.subprojects.common.time)
     implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.logger.slf4jLogger)
 
     implementation(libs.gson)
     implementation(libs.retrofit)

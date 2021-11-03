@@ -15,8 +15,7 @@ import com.avito.android.build_checks.internal.unique_app_res.UniqueAppResources
 import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreator
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.LoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.create
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -55,14 +54,12 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         val extension = project.extensions.create<RootProjectChecksExtension>(extensionName)
 
         if (!project.pluginIsEnabled) return
-
-        val loggerFactory = GradleLoggerFactory.fromProject(project)
-        val logger = loggerFactory.create<BuildParamCheckPlugin>()
         val envInfo = BuildEnvironmentInfo(project.providers)
 
-        BuildEnvLogger(project, logger, envInfo).log()
-
         project.afterEvaluate {
+            val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project).get()
+            val logger = loggerFactory.create<BuildParamCheckPlugin>()
+            BuildEnvLogger(project, logger, envInfo).log()
             val checks = extension.enabledChecks()
 
             checks.filterIsInstance<RequireValidation>()
@@ -74,7 +71,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 project = project,
                 checks = checks,
                 envInfo = envInfo,
-                loggerFactory = loggerFactory,
             )
 
             if (checks.hasInstance<RootProjectCheck.JavaVersion>()) {
@@ -123,7 +119,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         project: Project,
         checks: List<Check>,
         envInfo: BuildEnvironmentInfo,
-        loggerFactory: LoggerFactory,
     ) {
         val rootTask = RootTaskCreator(project).getOrCreate()
 
@@ -138,7 +133,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 platformDir.set(
                     AndroidSdk.fromProject(
                         rootDir = project.rootDir,
-                        loggerFactory = loggerFactory
                     ).platform(check.compileSdkVersion)
                 )
                 compileSdkVersion.set(check.compileSdkVersion)

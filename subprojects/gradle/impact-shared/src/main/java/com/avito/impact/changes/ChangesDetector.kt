@@ -1,8 +1,6 @@
 package com.avito.impact.changes
 
 import com.avito.android.Result
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.utils.ProcessRunner
 import java.io.File
 import java.time.Duration
@@ -30,11 +28,9 @@ internal class ChangesDetectorStub(private val reason: String) : ChangesDetector
 public class GitChangesDetector(
     private val gitRootDir: File,
     private val targetCommit: String,
-    private val ignoreSettings: IgnoreSettings,
-    loggerFactory: LoggerFactory
+    private val ignoreSettings: IgnoreSettings
 ) : ChangesDetector {
 
-    private val logger = loggerFactory.create<GitChangesDetector>()
     private val cache: MutableMap<Key, Result<List<ChangedFile>>> = mutableMapOf()
     private val gitDiffWithTargetBranch by lazy { gitDiffWith() }
     private val processRunner = ProcessRunner.create(gitRootDir)
@@ -93,11 +89,7 @@ public class GitChangesDetector(
                 }
                 .filterNot { changedFile ->
                     val pattern = ignoreSettings.match(changedFile.relativePath)
-                    val isPathIgnored = pattern != null
-                    if (isPathIgnored) {
-                        logger.debug("File ${changedFile.relativePath} is ignored due to pattern $pattern")
-                    }
-                    isPathIgnored
+                    pattern != null
                 }
                 .toList()
         }
@@ -109,7 +101,6 @@ public class GitChangesDetector(
 public fun newChangesDetector(
     rootDir: File,
     targetCommit: String?,
-    loggerFactory: LoggerFactory
 ): ChangesDetector {
     val ignoreFile = File(rootDir, ".tia_ignore")
     val settings = readIgnoreSettings(ignoreFile)
@@ -121,7 +112,6 @@ public fun newChangesDetector(
             gitRootDir = rootDir,
             targetCommit = targetCommit,
             ignoreSettings = settings,
-            loggerFactory = loggerFactory
         )
     }
 }

@@ -6,8 +6,6 @@ import com.avito.cd.cdBuildConfig
 import com.avito.cd.isCdBuildConfigPresent
 import com.avito.ci.steps.SuppressibleBuildStep
 import com.avito.ci.steps.verifyTaskName
-import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.create
 import com.avito.upload_to_googleplay.GooglePlayDeploy
 import com.avito.upload_to_googleplay.registerDeployToGooglePlayTask
 import org.gradle.api.Project
@@ -47,9 +45,7 @@ public class DeployStep internal constructor(
                 rootTask
             )
         } else {
-            val loggerFactory = GradleLoggerFactory.fromProject(project)
-            val logger = loggerFactory.create<DeployStep>()
-            logger.debug("Configure deploy step without cd build config")
+            project.logger.lifecycle("Configure deploy step without cd build config")
         }
     }
 
@@ -61,7 +57,6 @@ public class DeployStep internal constructor(
         val googlePlayDeploys = mapDeploymentsToGooglePlayDeploys(deployments)
         if (googlePlayDeploys.isNotEmpty()) {
             val uploadToPlayMarketTask = project.tasks.registerDeployToGooglePlayTask(
-                project = project,
                 deploys = googlePlayDeploys
             ) {
                 dependsOn(verifyTaskName(context))

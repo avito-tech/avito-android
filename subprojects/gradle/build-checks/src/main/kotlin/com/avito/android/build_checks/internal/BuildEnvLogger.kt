@@ -3,7 +3,6 @@ package com.avito.android.build_checks.internal
 import com.avito.android.AndroidSdk
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
@@ -29,7 +28,7 @@ BuildEnvironment: ${project.buildEnvironment}
 ${startParametersDescription(project.gradle)}
 java=${envInfo.javaInfo}
 JAVA_HOME=${envInfo.javaHome}
-ANDROID_HOME=${AndroidSdk.fromProject(project.rootDir, GradleLoggerFactory.fromProject(project)).androidHome}
+ANDROID_HOME=${AndroidSdk.fromProject(project.rootDir).androidHome}
 org.gradle.caching=$isBuildCachingEnabled
 android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
 android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}

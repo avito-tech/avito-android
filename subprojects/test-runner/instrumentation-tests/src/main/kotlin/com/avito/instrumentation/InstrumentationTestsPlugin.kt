@@ -13,7 +13,7 @@ import com.avito.instrumentation.internal.ConfiguratorsFactory
 import com.avito.instrumentation.internal.InstrumentationTaskConfigurator
 import com.avito.instrumentation.internal.TaskValidatorsFactory
 import com.avito.kotlin.dsl.getBooleanProperty
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.utils.buildFailer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,9 +27,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.createInstrumentationPluginExtension()
 
-        val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
-
-        val factory = ConfiguratorsFactory(project, extension, loggerFactory)
+        val factory = ConfiguratorsFactory(project, extension)
 
         val filtersFactory = TaskValidatorsFactory()
 
@@ -105,10 +103,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             projectName.set(project.name)
             statsDConfig.set(project.statsdConfig)
             loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = project,
-                    taskName = this.name,
-                )
+                GradleLoggerPlugin.getLoggerFactory(this)
             )
             buildFailer.set(project.buildFailer)
             gradleTestKitRun.set(project.getBooleanProperty("isGradleTestKitRun"))

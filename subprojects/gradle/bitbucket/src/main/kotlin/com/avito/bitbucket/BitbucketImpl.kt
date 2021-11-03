@@ -4,7 +4,6 @@ import com.avito.android.Result
 import com.avito.http.BasicAuthenticator
 import com.avito.http.HttpClientProvider
 import com.avito.impact.changes.newChangesDetector
-import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import retrofit2.Retrofit
@@ -14,7 +13,6 @@ import java.io.File
 internal class BitbucketImpl(
     private val config: BitbucketConfig,
     private val pullRequestId: Int?,
-    private val loggerFactory: LoggerFactory,
     httpClientProvider: HttpClientProvider
 ) : Bitbucket {
 
@@ -75,8 +73,7 @@ internal class BitbucketImpl(
         // todo extract
         newChangesDetector(
             rootDir = rootDir,
-            targetCommit = targetCommitHash,
-            loggerFactory = loggerFactory
+            targetCommit = targetCommitHash
         )
             .computeChanges(rootDir)
             .map { changes ->

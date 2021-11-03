@@ -8,7 +8,7 @@ import com.avito.impact.platformModules
 import com.avito.impact.plugin.ImpactAnalysisExtension
 import com.avito.impact.supportedByImpactAnalysisProjects
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import org.gradle.api.Project
@@ -20,10 +20,12 @@ internal class ImpactFallbackDetectorImplementation(
     private val configuration: ImpactAnalysisExtension,
     private val project: Project,
     private val gitState: Provider<GitState>,
-    private val loggerFactory: LoggerFactory
+    private val loggerFactory: Provider<LoggerFactory>
 ) : ImpactFallbackDetector {
 
-    private val logger = loggerFactory.create<ImpactFallbackDetectorImplementation>()
+    private val logger by lazy {
+        loggerFactory.get().create<ImpactFallbackDetectorImplementation>()
+    }
 
     override val isFallback: ImpactFallbackDetector.Result by lazy {
 
@@ -54,7 +56,6 @@ internal class ImpactFallbackDetectorImplementation(
             changesDetector = newChangesDetector(
                 rootDir = project.rootDir,
                 targetCommit = gitState.orNull?.targetBranch?.commit,
-                loggerFactory = loggerFactory
             )
         )
 
@@ -116,7 +117,7 @@ internal class ImpactFallbackDetectorImplementation(
                 configuration,
                 project = project,
                 gitState = project.gitState(),
-                loggerFactory = GradleLoggerFactory.fromProject(project)
+                loggerFactory = GradleLoggerPlugin.getLoggerFactory(project)
             )
         }
     }

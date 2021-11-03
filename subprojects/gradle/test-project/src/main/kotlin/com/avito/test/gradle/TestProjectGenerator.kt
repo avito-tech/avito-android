@@ -2,9 +2,6 @@ package com.avito.test.gradle
 
 import com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
 import com.avito.android.androidHomeFromLocalPropertiesFallback
-import com.avito.logger.Logger
-import com.avito.logger.PrintlnLoggerFactory
-import com.avito.logger.create
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.files.build_gradle
@@ -76,8 +73,6 @@ public class TestProjectGenerator(
         "org.gradle.jvmargs" to "-Xmx1g -XX:MaxMetaspaceSize=512m"
     )
 ) : Module {
-
-    private val logger: Logger = PrintlnLoggerFactory.create<TestProjectGenerator>()
 
     override val dependencies: Set<GradleDependency> = emptySet()
 
@@ -158,7 +153,7 @@ buildCache {
 
             FileOutputStream(file("local.properties")).use { file ->
                 Properties().run {
-                    setProperty("sdk.dir", androidHome ?: androidHomeFromLocalPropertiesFallback(logger))
+                    setProperty("sdk.dir", androidHome ?: androidHomeFromLocalPropertiesFallback())
                     store(file, null)
                 }
             }

@@ -6,7 +6,6 @@ import com.avito.impact.configuration.InternalModule
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.impactFallbackDetector
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -27,12 +26,9 @@ public class ImpactAnalysisPlugin : Plugin<Project> {
 
         val gitState = rootProject.gitState()
 
-        val loggerFactory = GradleLoggerFactory.fromPlugin(this, rootProject)
-
         val changesDetector = newChangesDetector(
             rootDir = rootProject.rootDir,
             targetCommit = gitState.orNull?.targetBranch?.commit,
-            loggerFactory = loggerFactory
         )
 
         rootProject.subprojects.forEach { subProject ->

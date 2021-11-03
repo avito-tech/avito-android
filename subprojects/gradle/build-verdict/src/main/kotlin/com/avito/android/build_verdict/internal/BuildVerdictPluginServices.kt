@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder
 import org.gradle.BuildListener
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.execution.TaskExecutionListener
+import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.util.Path
@@ -22,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class BuildVerdictPluginServices(
     private val extension: BuildVerdictPluginExtension,
-    logger: Logger
+    logger: Provider<Logger>
 ) {
 
     private val listeners = ConcurrentHashMap<OperationIdentifier, LogMessageListener>()

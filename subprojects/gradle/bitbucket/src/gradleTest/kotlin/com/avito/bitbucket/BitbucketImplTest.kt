@@ -108,7 +108,6 @@ internal class BitbucketImplTest {
             credentials = AtlassianCredentials("", "")
         ),
         pullRequestId = null,
-        loggerFactory = loggerFactory,
         httpClientProvider = HttpClientProvider.createStubInstance()
     )
 

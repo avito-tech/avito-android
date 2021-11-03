@@ -16,7 +16,6 @@ dependencies {
     implementation(projects.subprojects.gradle.buildEnvironment)
     implementation(projects.subprojects.gradle.buildMetricsTracker)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.sentryConfig)
     implementation(projects.subprojects.gradle.statsdConfig)
 
     implementation(libs.antPattern)

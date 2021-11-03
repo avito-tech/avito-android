@@ -5,7 +5,7 @@ import com.avito.git.gitState
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
-import com.avito.logger.LoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.envArgs
@@ -14,8 +14,8 @@ import org.gradle.api.Project
 internal class ConfiguratorsFactory(
     private val project: Project,
     private val extension: InstrumentationTestsPluginExtension,
-    loggerFactory: LoggerFactory,
 ) {
+    private val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project).get()
 
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 

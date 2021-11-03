@@ -43,6 +43,7 @@ internal class BuildChecksTestProjectRunner(
         }
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.build-checks")
             },
             modules = listOf(

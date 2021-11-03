@@ -26,6 +26,7 @@ internal class UniqueAppResourcesTest {
     fun `success - unique resources`() {
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(

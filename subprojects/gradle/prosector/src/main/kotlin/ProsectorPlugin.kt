@@ -1,5 +1,5 @@
 import com.avito.android.withAndroidApp
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -32,10 +32,7 @@ public class ProsectorPlugin : Plugin<Project> {
                         )
 
                         loggerFactory.set(
-                        GradleLoggerFactory.fromTask(
-                            project = project,
-                            taskName = this.name,
-                        )
+                        GradleLoggerPlugin.getLoggerFactory(this)
                     )
 
                     dependsOn(packageTask)
