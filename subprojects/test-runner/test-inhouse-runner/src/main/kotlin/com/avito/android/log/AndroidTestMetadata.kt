@@ -7,7 +7,6 @@ internal data class AndroidTestMetadata(
     val testName: String
 ) : LoggerMetadata {
 
-    override val logFileName: String = testName
     override fun asString(): String = tag
     override fun asMap(): Map<String, String> {
         return mapOf(

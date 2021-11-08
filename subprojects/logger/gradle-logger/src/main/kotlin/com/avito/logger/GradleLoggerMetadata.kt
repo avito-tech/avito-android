@@ -1,9 +1,11 @@
 package com.avito.logger
 
+import java.nio.file.Path
+
 public data class GradleLoggerMetadata(
     public override val tag: String,
     public val coordinates: GradleLoggerCoordinates
-) : LoggerMetadata {
+) : FileHandledLoggerMetadata {
 
     private val asString by lazy {
         buildString {
@@ -21,12 +23,15 @@ public data class GradleLoggerMetadata(
         }
     }
 
-    override val logFileName: String = buildString {
+    override val logFilePath: Path
+
+    init {
         with(coordinates) {
-            append(projectPath)
-            if (!taskName.isNullOrBlank()) {
-                append(':')
-                append(taskName)
+            val dir = Path.of(projectPath)
+            logFilePath = if (taskName != null) {
+                dir.relativize(Path.of("$projectPath:$taskName.logs"))
+            } else {
+                dir.relativize(Path.of("$projectPath.logs"))
             }
         }
     }
