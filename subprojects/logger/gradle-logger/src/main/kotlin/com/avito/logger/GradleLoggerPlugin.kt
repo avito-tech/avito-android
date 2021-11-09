@@ -13,6 +13,7 @@ public class GradleLoggerPlugin : Plugin<Project> {
         checkProjectIsRoot(target)
         val extension = target.extensions.create("gradleLogger", GradleLoggerExtension::class.java)
         extension.fileHandlerRootDir.set(target.layout.buildDirectory.dir("logs"))
+        extension.appendMetadata.set(true)
         target.afterEvaluate {
             /**
              * The problem is some plugins could start use LoggerService before build script evaluated
