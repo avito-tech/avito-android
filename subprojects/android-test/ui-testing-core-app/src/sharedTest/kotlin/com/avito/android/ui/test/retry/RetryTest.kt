@@ -1,13 +1,16 @@
 package com.avito.android.ui.test.retry
 
 import androidx.test.espresso.EspressoException
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.RetryActivity
 import com.avito.android.ui.test.Screen
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class RetryTest {
 
     @get:Rule

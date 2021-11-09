@@ -12,6 +12,7 @@ dependencies {
     api(libs.espressoDescendantActions)
     api(libs.appcompat)
     api(libs.recyclerView)
+    api(libs.swipeRefreshLayout)
     api(libs.material)
 
     // todo implementation, waitForAssertion used in app

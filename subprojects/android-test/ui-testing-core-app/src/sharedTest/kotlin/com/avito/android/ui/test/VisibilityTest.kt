@@ -2,13 +2,16 @@ package com.avito.android.ui.test
 
 import android.view.View
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.R
 import com.avito.android.ui.VisibilityActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class VisibilityTest {
 
     @get:Rule

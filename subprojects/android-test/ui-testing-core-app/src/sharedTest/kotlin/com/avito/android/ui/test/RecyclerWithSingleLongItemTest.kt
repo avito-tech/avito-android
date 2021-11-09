@@ -3,13 +3,16 @@ package com.avito.android.ui.test
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.R
 import com.avito.android.ui.RecyclerWithLongItemsActivity
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class RecyclerWithSingleLongItemTest {
 
     @get:Rule
