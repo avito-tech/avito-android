@@ -3,8 +3,9 @@ package com.avito.logger
 import com.avito.logger.handler.LoggingHandler
 import com.avito.logger.handler.LoggingHandlerProvider
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 internal class FileLoggingHandlerProvider(
     private val acceptedLogLevel: LogLevel,
@@ -15,9 +16,22 @@ internal class FileLoggingHandlerProvider(
         require(metadata is FileHandledLoggerMetadata) {
             "The metadata must be instanced of ${FileHandledLoggerMetadata::class.java} but was ${metadata::class.java}"
         }
-        if (!rootDir.exists()) {
-            Files.createDirectories(rootDir.toPath())
+        val rootDirPath = rootDir.toPath()
+        if (!rootDirPath.exists()) rootDirPath.createDirectories()
+        require(rootDirPath.isDirectory()) {
+            "Must be a dir but was $rootDir"
         }
-        return FileLoggingHandler(acceptedLogLevel, Path.of(rootDir.absolutePath).relativize(metadata.logFilePath))
+
+        val relativeLogFilePath = metadata.logFilePath
+        val absoluteLogFilePath = rootDirPath.resolve(relativeLogFilePath)
+        require(absoluteLogFilePath.isAbsolute) {
+            "Must be absolute but was $absoluteLogFilePath"
+        }
+        val absoluteLogDirPath = absoluteLogFilePath.parent
+        if (!absoluteLogDirPath.exists()) absoluteLogDirPath.createDirectories()
+        require(absoluteLogDirPath.isDirectory()) {
+            "Must be dir but was $absoluteLogDirPath"
+        }
+        return FileLoggingHandler(acceptedLogLevel, absoluteLogFilePath)
     }
 }

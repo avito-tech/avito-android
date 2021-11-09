@@ -29,9 +29,9 @@ public data class GradleLoggerMetadata(
         with(coordinates) {
             val dir = Path.of(projectPath)
             logFilePath = if (taskName != null) {
-                dir.relativize(Path.of("$projectPath:$taskName.logs"))
+                dir.resolve(Path.of("$projectPath:$taskName.logs"))
             } else {
-                dir.relativize(Path.of("$projectPath.logs"))
+                dir.resolve(Path.of("$projectPath.logs"))
             }
         }
     }
