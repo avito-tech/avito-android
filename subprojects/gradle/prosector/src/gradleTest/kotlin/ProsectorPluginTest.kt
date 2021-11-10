@@ -15,7 +15,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class ProsectorPluginTest {
+internal class ProsectorPluginTest {
 
     private val server = MockWebServerFactory.create()
     private val jsonRegex = Regex("(\\{.+})")
@@ -109,6 +109,9 @@ class ProsectorPluginTest {
         versionName: String
     ) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     appModuleName,

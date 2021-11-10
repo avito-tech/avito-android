@@ -1,6 +1,5 @@
 package com.avito.impact.changes
 
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -14,9 +13,8 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class ChangesDetectorTest {
+internal class ChangesDetectorTest {
 
-    private val loggerFactory = PrintlnLoggerFactory
     private lateinit var rootDir: File
     private lateinit var targetCommit: String
 
@@ -122,7 +120,6 @@ class ChangesDetectorTest {
             gitRootDir = rootDir,
             targetCommit = targetCommit,
             ignoreSettings = IgnoreSettings(ignorePatterns),
-            loggerFactory = loggerFactory
         )
             .computeChanges(targetDir, excludedDirectories)
             .fold(

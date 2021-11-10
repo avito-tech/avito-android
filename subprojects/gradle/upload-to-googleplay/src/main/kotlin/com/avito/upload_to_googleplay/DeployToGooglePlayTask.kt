@@ -1,10 +1,9 @@
 package com.avito.upload_to_googleplay
 
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
@@ -16,7 +15,6 @@ import javax.inject.Inject
 public const val deployTaskName: String = "deployToGooglePlay"
 
 public fun TaskContainer.registerDeployToGooglePlayTask(
-    project: Project,
     deploys: List<GooglePlayDeploy>,
     configuration: Task.() -> Unit
 ): TaskProvider<out DefaultTask> {
@@ -26,10 +24,7 @@ public fun TaskContainer.registerDeployToGooglePlayTask(
             it.group = "Google play"
 
             it.loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = project,
-                    taskName = it.name,
-                )
+                GradleLoggerPlugin.getLoggerFactory(task = it)
             )
         }
         configure(configuration)

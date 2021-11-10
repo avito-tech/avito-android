@@ -8,14 +8,14 @@ import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
+import com.avito.android.plugin.build_metrics.internal.LazyBuildEventsListener
 import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.tasks.CriticalPathMetricsTracker
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.create
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.teamcity.teamcityCredentials
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -28,45 +28,50 @@ public open class BuildMetricsPlugin : Plugin<Project> {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
 
-        val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
-        val logger = loggerFactory.create<BuildMetricsPlugin>()
-
         if (!project.pluginIsEnabled) {
-            logger.debug("Build metrics plugin is disabled")
+            project.logger.lifecycle("Build metrics plugin is disabled")
             return
         }
 
         project.tasks.register<CollectTeamcityMetricsTask>("collectTeamcityMetrics") {
             buildId.set(project.getOptionalStringProperty("avito.build.metrics.teamcityBuildId"))
             this.loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = project,
-                    taskName = this.name,
-                )
+                GradleLoggerPlugin.getLoggerFactory(this)
             )
             this.teamcityCredentials.set(project.teamcityCredentials)
             this.graphiteConfig.set(project.graphiteConfig)
         }
 
-        val buildOperationsListener = BuildOperationsResultProvider.register(project)
+        /**
+         * Laziness because of LoggerService
+         */
+        val lazyMetricTracker = lazy {
+            BuildMetricTracker(
+                project.environmentInfo().get(),
+                project.statsd.get()
+            )
+        }
 
-        val metricTracker = BuildMetricTracker(
-            project.environmentInfo().get(),
-            project.statsd.get()
-        )
-        val criticalPathTracker = CriticalPathMetricsTracker(metricTracker)
-        CriticalPathRegistry.addListener(project, criticalPathTracker)
-
-        val buildListeners = listOf(
-            ConfigurationTimeListener(metricTracker),
-            TotalBuildTimeListener(metricTracker),
-            AppBuildTimeListener.from(project, metricTracker)
-        )
+        val buildOperationsListener = BuildOperationsResultProvider.register(project, lazyMetricTracker)
 
         val eventsListeners = listOf(
-            CompositeBuildMetricsListener(
-                listeners = buildListeners,
-            ),
+            /**
+             * Laziness because of LoggerService
+             */
+            LazyBuildEventsListener(lazy {
+                val metricTracker = lazyMetricTracker.value
+                val criticalPathTracker = CriticalPathMetricsTracker(metricTracker)
+                CriticalPathRegistry.addListener(project, criticalPathTracker)
+
+                val buildListeners = listOf(
+                    ConfigurationTimeListener(metricTracker),
+                    TotalBuildTimeListener(metricTracker),
+                    AppBuildTimeListener.from(project, metricTracker)
+                )
+                CompositeBuildMetricsListener(
+                    listeners = buildListeners,
+                )
+            }),
             buildOperationsListener
         )
         GradleCollector.initialize(

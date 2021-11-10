@@ -5,7 +5,7 @@ import com.avito.android.packageTaskProvider
 import com.avito.ci.VerifyOutputsTask
 import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.typedNamed
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.create
 import com.avito.plugin.signedApkTaskProvider
 import com.avito.plugin.signedBundleTaskProvider
@@ -56,12 +56,7 @@ public open class VerifyArtifactsStep(
             destinationDir.set(File("${project.rootProject.rootDir}/outputs"))
             entries.set(project.files(artifactsConfig.outputs.values.map { it.path }))
 
-            val loggerFactory = GradleLoggerFactory.fromTask(
-                project = project,
-                taskName = this.name,
-            )
-
-            val logger = loggerFactory.create<VerifyArtifactsStep>()
+            val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this)
 
             this.loggerFactory.set(loggerFactory)
 
@@ -69,7 +64,8 @@ public open class VerifyArtifactsStep(
                 if (!didWork) {
                     // Copy artifacts that managed to be generated.
                     // Do not verify them because it is last resort to save anything.
-                    logger.debug("Build failed. Trying to copy artifacts that managed to be generated.")
+                    val logger = loggerFactory.get().create<VerifyArtifactsStep>()
+                    logger.info("Build failed. Trying to copy artifacts that managed to be generated.")
                     doAction()
                 }
             }
@@ -81,12 +77,7 @@ public open class VerifyArtifactsStep(
             config.set(artifactsConfig)
             checkSignatures.set(artifactsConfig.failOnSignatureError)
 
-            loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = project,
-                    taskName = this.name,
-                )
-            )
+            loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
 
             dependsOn(copyTask)
         }

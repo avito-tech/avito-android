@@ -1,6 +1,6 @@
 package com.avito.module.dependencies
 
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.module.metrics.CollectAppsMetricsTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -14,18 +14,12 @@ public class ModuleDependenciesGraphPlugin : Plugin<Project> {
         }
         target.tasks.register<FindAndroidAppTask>("findAndroidApp") {
             loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = target,
-                    taskName = this.name,
-                )
+                GradleLoggerPlugin.getLoggerFactory(this)
             )
         }
         target.tasks.register<CollectAppsMetricsTask>("collectAppsMetrics") {
             loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = target,
-                    taskName = this.name,
-                )
+                GradleLoggerPlugin.getLoggerFactory(this)
             )
 
             outputs.upToDateWhen {

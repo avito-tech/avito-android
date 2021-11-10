@@ -35,7 +35,7 @@ import java.nio.file.Path
  *   testUtils/kotlin/SharedTestUtils.kt
  * }
  */
-class SourceSetsImpactTest {
+internal class SourceSetsImpactTest {
 
     private lateinit var projectDir: File
 
@@ -45,6 +45,7 @@ class SourceSetsImpactTest {
 
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(

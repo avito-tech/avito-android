@@ -4,7 +4,6 @@ import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.android.build_checks.pluginId
 import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.sentry.environmentInfo
-import com.avito.android.sentry.sentry
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.statsd
@@ -18,7 +17,6 @@ internal class GradlePropertiesChecker(
     fun check() {
         project.afterEvaluate {
             val tracker = buildTracker(project)
-            val sentry = project.sentry
             val propertiesChecks = listOf(
                 GradlePropertiesCheck(project, envInfo) // TODO: extract to a task
             )
@@ -43,7 +41,6 @@ internal class GradlePropertiesChecker(
                         tracker.track(
                             CountMetric(SeriesName.create("configuration", "mismatch", "failed", checkerName))
                         )
-                        sentry.get().sendException(ParamMismatchFailure(it))
                     }
             }
         }

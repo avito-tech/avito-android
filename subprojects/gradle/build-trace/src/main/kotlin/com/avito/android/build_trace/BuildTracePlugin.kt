@@ -4,7 +4,7 @@ import com.avito.android.build_trace.internal.BuildTraceListener
 import com.avito.android.critical_path.CriticalPathRegistry
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -29,7 +29,7 @@ public abstract class BuildTracePlugin : Plugin<Project> {
             project.layout.buildDirectory.dir("reports/build-trace")
         )
 
-        val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
+        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project).get()
 
         val buildTraceListener = BuildTraceListener(
             output = outputDir.file("build.trace").get().asFile,

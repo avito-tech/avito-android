@@ -3,6 +3,7 @@ package com.avito.runner.scheduler
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
+import com.avito.logger.LoggerFactory
 import com.avito.report.Report
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.listener.TestListenerFactory
@@ -22,10 +23,10 @@ public class TestRunnerFactoryProvider(
     private val httpClientProvider: HttpClientProvider,
     private val report: Report,
     private val devicesProviderFactory: DevicesProviderFactory,
+    private val loggerFactory: LoggerFactory,
     metricsConfig: RunnerMetricsConfig,
 ) {
 
-    private val loggerFactory = params.loggerFactory
     private val outputDir = params.outputDir
     private val tempLogcatDir = Files.createTempDirectory(null).toFile()
     private val testRunnerExecutionState = TestRunnerExecutionState()

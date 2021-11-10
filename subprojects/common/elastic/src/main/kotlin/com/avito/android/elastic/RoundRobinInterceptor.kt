@@ -1,14 +1,12 @@
 package com.avito.android.elastic
 
-import com.avito.logger.Logger
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
 internal class RoundRobinInterceptor(
-    val roundRobin: ThreadLocal<RoundRobinIterable<HttpUrl>>,
-    val logger: Logger
+    private val roundRobin: ThreadLocal<RoundRobinIterable<HttpUrl>>,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {

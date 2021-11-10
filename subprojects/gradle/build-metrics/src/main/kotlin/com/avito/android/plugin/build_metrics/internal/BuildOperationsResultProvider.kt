@@ -2,12 +2,9 @@ package com.avito.android.plugin.build_metrics.internal
 
 import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.gradle.metric.BuildEventsListener
-import com.avito.android.plugin.build_metrics.BuildMetricsPlugin
 import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksMetricsTracker
-import com.avito.android.sentry.environmentInfo
-import com.avito.android.stats.statsd
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
@@ -190,32 +187,33 @@ internal class BuildOperationsResultProvider(
 
     companion object {
 
-        fun register(project: Project): BuildEventsListener {
-            val loggerFactory = GradleLoggerFactory.fromProject(project, BuildMetricsPlugin::class.java.simpleName)
-
-            val metricsTracker = BuildMetricTracker(
-                project.environmentInfo().get(),
-                project.statsd.get()
-            )
-
-            val listeners = mutableListOf<BuildOperationsResultListener>()
-            if (canTrackRemoteCache(project)) {
-                listeners.add(
-                    BuildCacheMetricsTracker(
-                        metricsTracker = metricsTracker,
-                        loggerFactory = loggerFactory
-                    )
-                )
-            }
-            listeners.add(
-                SlowTasksMetricsTracker(
-                    metricsTracker = metricsTracker,
-                )
-            )
-
-            val resultListener = CompositeBuildOperationsResultListener(listeners)
+        fun register(
+            project: Project,
+            metricsTracker: Lazy<BuildMetricTracker>
+        ): BuildEventsListener {
             val buildOperationListener = BuildOperationsResultProvider(
-                resultListener = resultListener,
+                /**
+                 * Laziness because of LoggerService
+                 */
+                resultListener = LazyBuildOperationsResultListener(
+                    lazy {
+                        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project)
+                        val listeners = mutableListOf<BuildOperationsResultListener>()
+                        if (canTrackRemoteCache(project)) {
+                            listeners.add(
+                                BuildCacheMetricsTracker(
+                                    metricsTracker = metricsTracker.value,
+                                    loggerFactory = loggerFactory.get()
+                                )
+                            )
+                        }
+                        listeners.add(
+                            SlowTasksMetricsTracker(
+                                metricsTracker = metricsTracker.value,
+                            )
+                        )
+                        CompositeBuildOperationsResultListener(listeners)
+                    }),
             )
             project.gradle.buildOperationListenerManager().addListener(buildOperationListener)
 

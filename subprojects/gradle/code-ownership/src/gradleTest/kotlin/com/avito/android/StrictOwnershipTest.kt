@@ -28,6 +28,7 @@ internal class StrictOwnershipTest {
             ManualTempFolder.runIn { projectDir ->
                 TestProjectGenerator(
                     plugins = plugins {
+                        id("com.avito.android.gradle-logger")
                         id("com.avito.android.impact")
                         id("com.avito.android.code-ownership")
                     },

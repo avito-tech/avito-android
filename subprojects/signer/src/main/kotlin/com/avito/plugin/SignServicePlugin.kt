@@ -7,7 +7,7 @@ import com.android.build.api.variant.Variant
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.android.withAndroidApp
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
@@ -122,10 +122,7 @@ public class SignServicePlugin : Plugin<Project> {
             readWriteTimeoutSec.set(extension.readWriteTimeoutSec.convention(DEFAULT_TIMEOUT_SEC))
 
             loggerFactory.set(
-                GradleLoggerFactory.fromTask(
-                    project = project,
-                    taskName = this.name,
-                )
+                GradleLoggerPlugin.getLoggerFactory(this)
             )
 
             onlyIf { signingResolver.isCustomSigningEnabled }

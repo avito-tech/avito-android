@@ -22,7 +22,6 @@ dependencies {
     implementation(projects.subprojects.common.result)
     implementation(projects.subprojects.testRunner.testAnnotations)
     implementation(projects.subprojects.common.throwableUtils)
-    implementation(projects.subprojects.logger.androidLog)
     implementation(projects.subprojects.androidTest.instrumentation)
     implementation(projects.subprojects.androidTest.resourceManagerExceptions)
     implementation(projects.subprojects.androidTest.websocketReporter)

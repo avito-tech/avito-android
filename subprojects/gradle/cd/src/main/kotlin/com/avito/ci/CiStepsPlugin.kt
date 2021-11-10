@@ -1,7 +1,5 @@
 package com.avito.ci
 
-import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.create
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
@@ -14,9 +12,6 @@ public class CiStepsPlugin : Plugin<Project> {
     private val taskGroup = "ci"
 
     override fun apply(project: Project) {
-        val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
-        val logger = loggerFactory.create<CiStepsPlugin>()
-
         val buildContainer = project.container(BuildStepListExtension::class.java) { name ->
             BuildStepListExtension(
                 buildStepListName = name,
@@ -27,7 +22,7 @@ public class CiStepsPlugin : Plugin<Project> {
         project.extensions.add("builds", buildContainer)
 
         if (project.buildEnvironment !is BuildEnvironment.CI) {
-            logger.info("The plugin is applied but it's disabled. Add -Pci=true to enable the plugin")
+            project.logger.lifecycle("The plugin is applied but it's disabled. Add -Pci=true to enable the plugin")
             return
         }
 

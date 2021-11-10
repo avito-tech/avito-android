@@ -16,7 +16,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class UploadToQappsTest {
+internal class UploadToQappsTest {
 
     private lateinit var projectDir: File
     private val mockWebServer = MockWebServerFactory.create()
@@ -79,6 +79,9 @@ class UploadToQappsTest {
     @Suppress("MaxLineLength")
     private fun generateProject() {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

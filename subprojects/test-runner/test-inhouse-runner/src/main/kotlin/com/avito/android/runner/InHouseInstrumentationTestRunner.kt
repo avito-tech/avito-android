@@ -4,11 +4,12 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.elastic.ElasticClientFactory
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.instrumentation.ActivityProvider
 import com.avito.android.instrumentation.ActivityProviderFactory
 import com.avito.android.internal.RuntimeApplicationDirProvider
-import com.avito.android.log.AndroidLoggerFactory
+import com.avito.android.log.AndroidTestLoggerMetadataProvider
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.runner.annotation.resolver.TestMethodOrClass
@@ -17,6 +18,7 @@ import com.avito.android.runner.annotation.validation.CompositeTestMetadataValid
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
+import com.avito.android.sentry.sentryClient
 import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
@@ -42,7 +44,11 @@ import com.avito.android.util.DeviceSettingsChecker
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
+import com.avito.logger.LogLevel
+import com.avito.logger.LoggerFactoryBuilder
 import com.avito.logger.create
+import com.avito.logger.destination.ElasticLoggingHandlerProvider
+import com.avito.logger.destination.SentryLoggingHandlerProvider
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Kind
@@ -106,6 +112,23 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
+    private val baseLoggerFactoryBuilder: LoggerFactoryBuilder by lazy {
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+        val testName = runEnvironment.testMetadata.name.toString()
+        val builder = LoggerFactoryBuilder()
+            .metadataProvider(AndroidTestLoggerMetadataProvider(testName))
+
+        if (sentryConfig is SentryConfig.Enabled) {
+            builder.addLoggingHandlerProvider(
+                SentryLoggingHandlerProvider(
+                    LogLevel.WARNING,
+                    sentryClient(sentryConfig)
+                )
+            )
+        }
+        builder
+    }
+
     // Public for *TestApp to skip on orchestrator runs
     @Suppress("MemberVisibilityCanBePrivate")
     val testRunEnvironment: TestRunEnvironment by lazy {
@@ -123,12 +146,16 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override val loggerFactory by lazy {
-        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
-        AndroidLoggerFactory(
-            elasticConfig = elasticConfig,
-            sentryConfig = sentryConfig,
-            testName = runEnvironment.testMetadata.name.toString()
-        )
+        val builder = baseLoggerFactoryBuilder.newBuilder()
+        if (elasticConfig is ElasticConfig.Enabled) {
+            builder.addLoggingHandlerProvider(
+                ElasticLoggingHandlerProvider(
+                    LogLevel.DEBUG,
+                    ElasticClientFactory.provide(elasticConfig)
+                ),
+            )
+        }
+        builder.build()
     }
 
     override val remoteStorage: RemoteStorage by lazy {
@@ -186,10 +213,7 @@ abstract class InHouseInstrumentationTestRunner :
     override fun getDelegates(arguments: Bundle): List<InstrumentationTestRunnerDelegate> {
         return listOf(
             ReportLifecycleEventsDelegate(
-                loggerFactory.newFactory(
-                    // Because LifecycleEvents logs are needed only for test reports
-                    newElasticConfig = ElasticConfig.Disabled
-                ),
+                baseLoggerFactoryBuilder.newBuilder().build(),
                 report
             ),
         )

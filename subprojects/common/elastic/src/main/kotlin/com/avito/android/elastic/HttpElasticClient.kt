@@ -33,8 +33,7 @@ internal class HttpElasticClient(
     private val elasticServiceFactory = ElasticServiceFactory
 
     private val elasticApi = elasticServiceFactory.create(
-        endpoints = endpoints.toHttpUrls(),
-        loggerFactory = loggerFactory
+        endpoints = endpoints.toHttpUrls()
     ).provide()
 
     private val timestampFormatter = utcFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")

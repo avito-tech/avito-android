@@ -1,8 +1,6 @@
 package com.avito.android.elastic
 
 import com.avito.http.RetryInterceptor
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.google.gson.Gson
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -13,11 +11,8 @@ import retrofit2.create
 internal class ElasticRoundRobinHttpServiceFactory(
     private val endpoints: List<HttpUrl>,
     private val okHttpClientBuilder: OkHttpClient.Builder,
-    private val gson: Gson,
-    loggerFactory: LoggerFactory
+    private val gson: Gson
 ) : ElasticServiceFactory {
-
-    private val logger = loggerFactory.create<ElasticRoundRobinHttpServiceFactory>()
 
     private val roundRobin = object : ThreadLocal<RoundRobinIterable<HttpUrl>>() {
 
@@ -32,7 +27,6 @@ internal class ElasticRoundRobinHttpServiceFactory(
                     .addInterceptor(
                         RoundRobinInterceptor(
                             roundRobin = roundRobin,
-                            logger = logger
                         )
                     )
                     .addInterceptor(

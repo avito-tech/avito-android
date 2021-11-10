@@ -16,6 +16,9 @@ internal class LocalEnvironmentTest {
         val moduleName = "app"
 
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     moduleName,
