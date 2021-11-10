@@ -22,7 +22,7 @@ val includedProjectDirs = provider {
 val allProjectsWrapperProperties: Provider<List<RegularFile>> = includedProjectDirs.map { it + layout.projectDirectory }
     .map { it.map { it.file("gradle/wrapper/gradle-wrapper.properties") } }
 
-val gradleVer = "7.2"
+val gradleVer = "7.3"
 val distribution = Wrapper.DistributionType.BIN
 
 /**

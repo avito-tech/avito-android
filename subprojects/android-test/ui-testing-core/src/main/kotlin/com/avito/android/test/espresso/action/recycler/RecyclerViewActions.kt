@@ -38,14 +38,15 @@ private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> 
                     match
                 )
             when (matchResult) {
-                is RecyclerItemsMatcher.Result.Found
-                -> throw AssertionError(
+                is RecyclerItemsMatcher.Result.Found -> throw AssertionError(
                     "We need item doesn't exist, but: ${matchResult.description}"
                 )
-                is RecyclerItemsMatcher.Result.IndexOutOfBound
-                -> throw AssertionError(
+                is RecyclerItemsMatcher.Result.IndexOutOfBound -> throw AssertionError(
                     matchResult.description
                 )
+                else -> {
+                    // do nothing
+                }
             }
 
             uiController.loopMainThreadUntilIdle()

@@ -24,7 +24,7 @@ internal class FakeDevicesProvider(
     private val devices: Channel<Device>
 ) : DevicesProvider {
 
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun provideFor(
         reservations: Collection<ReservationData>
     ): DeviceWorkerPool {

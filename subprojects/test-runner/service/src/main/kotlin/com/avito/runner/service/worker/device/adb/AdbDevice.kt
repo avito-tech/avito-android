@@ -28,7 +28,6 @@ import java.io.File
 import java.nio.file.Path
 import java.time.Duration
 import java.util.concurrent.TimeUnit
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.div
 
 public data class AdbDevice(
@@ -282,7 +281,6 @@ public data class AdbDevice(
         validator = AlwaysSuccessPullValidator
     )
 
-    @ExperimentalPathApi
     override fun pullDir(deviceDir: Path, hostDir: Path, validator: PullValidator): Result<File> {
         // last /. means to adb to copy recursively, and do not copy the last
         // example:

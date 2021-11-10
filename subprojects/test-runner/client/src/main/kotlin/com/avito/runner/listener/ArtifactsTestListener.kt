@@ -16,7 +16,6 @@ import com.avito.test.model.TestCase
 import com.avito.utils.deleteRecursively
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
 internal class ArtifactsTestListener(
@@ -43,7 +42,6 @@ internal class ArtifactsTestListener(
         )
     }
 
-    @ExperimentalPathApi
     override fun finished(
         device: Device,
         test: TestCase,
