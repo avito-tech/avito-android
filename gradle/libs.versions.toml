@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.5.21"
+kotlin = "1.5.31"
 agp = "7.0.2"
 # formula: 23 + agp version
 androidTools = "30.0.2"

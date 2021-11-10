@@ -37,7 +37,7 @@ internal class LocalDevicesProvider(
 
     private val adbQueryIntervalMs = 5000L
 
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun provideFor(
         reservations: Collection<ReservationData>,
     ): DeviceWorkerPool {

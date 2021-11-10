@@ -11,7 +11,6 @@ internal fun <T> AndroidPublisherRequest<T>.trackUploadProgress(
     mediaHttpUploader?.apply {
         chunkSize = CHUNK_SIZE
         setProgressListener {
-            @Suppress("NON_EXHAUSTIVE_WHEN")
             when (it.uploadState) {
                 MediaHttpUploader.UploadState.INITIATION_STARTED ->
                     println("Starting $thing upload")
@@ -19,6 +18,9 @@ internal fun <T> AndroidPublisherRequest<T>.trackUploadProgress(
                     println("Uploading $thing: ${it.progress.fromZeroToOnePercent().roundToInt()}% complete")
                 MediaHttpUploader.UploadState.MEDIA_COMPLETE ->
                     println("${thing.capitalize()} upload complete")
+                else -> {
+                    // do nothing
+                }
             }
         }
     }

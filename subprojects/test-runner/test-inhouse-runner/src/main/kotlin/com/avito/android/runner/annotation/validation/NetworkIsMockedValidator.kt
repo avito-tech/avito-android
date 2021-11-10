@@ -16,6 +16,9 @@ class NetworkIsMockedValidator : TestMetadataValidator {
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (TestKindExtractor.extract(test)) {
             Kind.UI_COMPONENT -> validateNoRealNetwork(test.testClass)
+            else -> {
+                // do nothing
+            }
         }
     }
 
