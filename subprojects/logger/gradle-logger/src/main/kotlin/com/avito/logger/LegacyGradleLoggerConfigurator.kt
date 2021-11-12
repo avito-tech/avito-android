@@ -2,6 +2,10 @@ package com.avito.logger
 
 import org.gradle.api.Project
 import org.gradle.api.logging.configuration.ShowStacktrace
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Deprecated("Remove after 2021.38 release")
@@ -15,7 +19,10 @@ internal class LegacyGradleLoggerConfigurator(
             val verbosity = getVerbosity() ?: LogLevel.INFO
             printlnHandler.set(GradleLoggerExtension.PrintlnMode(verbosity, doPrintStackTrace()))
             fileHandler.set(LogLevel.INFO)
-            fileHandlerRootDir.set(project.layout.buildDirectory.dir("logs"))
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")
+                .withZone(ZoneId.from(ZoneOffset.UTC))
+            val instant = Instant.now()
+            fileHandlerRootDir.set(project.layout.buildDirectory.dir("logs").map { it.dir(formatter.format(instant)) })
             finalized.set(true)
         }
     }

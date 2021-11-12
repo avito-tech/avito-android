@@ -6,6 +6,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 public class GradleLoggerPlugin : Plugin<Project> {
 
@@ -85,11 +89,14 @@ public class GradleLoggerPlugin : Plugin<Project> {
                 LoggerService::javaClass.name,
                 LoggerService::class.java
             ) {
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")
+                    .withZone(ZoneId.from(ZoneOffset.UTC))
+                val instant = Instant.now()
                 it.parameters {
                     it.appendMetadata.set(extension.appendMetadata)
                     it.printlnHandler.set(extension.printlnHandler)
                     it.fileHandler.set(extension.fileHandler)
-                    it.fileHandlerRootDir.set(extension.fileHandlerRootDir)
+                    it.fileHandlerRootDir.set(extension.fileHandlerRootDir.map { it.dir(formatter.format(instant)) })
                     it.elasticHandler.set(extension.elasticHandler)
                     it.sentryHandler.set(extension.sentryHandler)
                     it.finalized.set(extension.finalized)
