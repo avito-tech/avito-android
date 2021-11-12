@@ -114,7 +114,7 @@ jdgraphtCore = "org.jgrapht:jgrapht-core:1.5.1"
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
-robolectric = "org.robolectric:robolectric:4.6.1"
+robolectric = "org.robolectric:robolectric:4.7"
 
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]
