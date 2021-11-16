@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.android.getApkOrThrow
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
@@ -8,11 +9,11 @@ import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.buildFailer
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
@@ -51,12 +52,12 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
     @get:Internal
     public abstract val loggerFactory: Property<LoggerFactory>
 
-    @InputFile
-    public abstract fun getApk(): RegularFileProperty // setup in ci build step
+    @get:InputDirectory
+    public abstract val apkDirectory: DirectoryProperty
 
     @TaskAction
     public fun upload() {
-        val apk = getApk().asFile.get()
+        val apk = apkDirectory.get().getApkOrThrow()
 
         val loggerFactory = loggerFactory.get()
         val timeProvider: TimeProvider = DefaultTimeProvider()

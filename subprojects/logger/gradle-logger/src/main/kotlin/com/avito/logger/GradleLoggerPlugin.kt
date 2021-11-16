@@ -54,7 +54,16 @@ public class GradleLoggerPlugin : Plugin<Project> {
             }
         }
 
-        private fun getLoggerFactory(
+        /**
+         * Inlined to skip anonymous class creation for map lambda
+         * Breaks configuration cache with:
+         *  > Could not load the value of field `transformer` of
+         *  `org.gradle.api.internal.provider.TransformBackedProvider`
+         *  > bean found in field `provider` of `org.gradle.api.internal.provider.MappingProvider`
+         *  bean found in field `__loggerFactory__`
+         */
+        @Suppress("NOTHING_TO_INLINE")
+        private inline fun getLoggerFactory(
             project: Project,
             coordinates: GradleLoggerCoordinates
         ): Provider<LoggerFactory> {

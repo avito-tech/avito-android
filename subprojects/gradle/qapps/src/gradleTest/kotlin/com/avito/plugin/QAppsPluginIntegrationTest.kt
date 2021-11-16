@@ -101,7 +101,7 @@ internal class QAppsPluginIntegrationTest {
                          }
                          afterEvaluate {
                             qappsUploadDebug {
-                                apk = file("${'$'}buildDir/outputs/apk/debug/app-debug.apk")
+                                apkDirectory = file("${'$'}buildDir/outputs/apk/debug")
                             }
                          }
                     """.trimIndent()

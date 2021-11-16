@@ -33,7 +33,7 @@ internal class ConfigurationCacheCompatibilityTest {
     private fun runTask(projectDir: File): TestResult {
         return gradlew(
             projectDir,
-            "help",
+            "qappsUploadUnsignedDebug",
             dryRun = true,
             configurationCache = true
         )

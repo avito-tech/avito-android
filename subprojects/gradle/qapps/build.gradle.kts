@@ -5,6 +5,10 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.subprojects.signer) {
+        because("Creates qappsUploadSigned<Variant> tasks which is directly depends on corresponding signer task")
+    }
+
     implementation(projects.subprojects.logger.logger)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.common.httpClient)
