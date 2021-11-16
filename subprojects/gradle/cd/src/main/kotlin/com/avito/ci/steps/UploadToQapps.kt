@@ -3,7 +3,7 @@ package com.avito.ci.steps
 import com.avito.cd.CdBuildConfig
 import com.avito.cd.CdBuildConfig.Deployment
 import com.avito.cd.cdBuildConfig
-import com.avito.plugin.qappsTaskProvider
+import com.avito.plugin.legacyQappsTaskProvider
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
@@ -29,10 +29,10 @@ public class UploadToQapps(
         return artifactsMap.map { (_, output) ->
             when (output) {
                 is Output.ApkOutput ->
-                    project.tasks.qappsTaskProvider(output.variantName)
+                    project.tasks.legacyQappsTaskProvider(output.variantName)
                         .apply {
                             configure {
-                                it.getApk().set(File(output.path))
+                                it.apkDirectory.set(File(output.path).parentFile)
                                 it.releaseChain.set(uploadCondition.isReleaseChain())
                                 it.onlyIf {
                                     uploadCondition.canUpload()

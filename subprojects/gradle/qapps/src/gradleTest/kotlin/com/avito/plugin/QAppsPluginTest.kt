@@ -78,7 +78,7 @@ internal class QAppsPluginTest {
                         // simulate CI-steps plugin
                         afterEvaluate {
                             qappsUploadDebug {
-                                apk = file("$stubApk")
+                                apkDirectory = file("${stubApk.parentFile}")
                             }
                         }
                     """.trimIndent()
