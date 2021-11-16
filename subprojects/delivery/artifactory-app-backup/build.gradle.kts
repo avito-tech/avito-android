@@ -2,21 +2,21 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
+    id("convention.test-fixtures")
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.signer)
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.uploadCdBuildResult)
     implementation(projects.subprojects.common.problem)
-
-    testImplementation(projects.subprojects.gradle.artifactoryAppBackupTestFixtures)
+    implementation(projects.subprojects.delivery.signer)
+    implementation(projects.subprojects.delivery.uploadCdBuildResult)
+    implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.gradle.gradleExtensions)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
-    gradleTestImplementation(projects.subprojects.gradle.artifactoryAppBackupTestFixtures)
     gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
+
+    testFixturesApi(libs.okhttpMockWebServer)
 }
 
 gradlePlugin {
