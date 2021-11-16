@@ -4,6 +4,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     id("convention.integration-testing")
+    id("convention.test-fixtures")
 }
 
 dependencies {
@@ -22,10 +23,10 @@ dependencies {
     integTestImplementation(testFixtures(projects.subprojects.common.httpClient))
 
     testImplementation(projects.subprojects.gradle.testProject)
-    testImplementation(projects.subprojects.gradle.slackTestFixtures)
-    testImplementation(testFixtures(projects.subprojects.common.time))
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
     testImplementation(testFixtures(projects.subprojects.common.statsd))
+    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(testFixtures(projects.subprojects.gradle.slack))
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
 }
 
 tasks.named<Test>("integrationTest").configure {

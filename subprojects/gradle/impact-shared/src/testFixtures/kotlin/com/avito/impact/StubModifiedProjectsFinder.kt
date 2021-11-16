@@ -3,16 +3,16 @@ package com.avito.impact
 import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
 
-class StubModifiedProjectsFinder : ModifiedProjectsFinder {
+public class StubModifiedProjectsFinder : ModifiedProjectsFinder {
 
     private val projects = mutableSetOf<Project>()
     private val modifiedProjects = mutableMapOf<ConfigurationType, MutableSet<ModifiedProject>>()
 
-    fun addProjects(vararg project: Project) {
+    public fun addProjects(vararg project: Project) {
         projects.addAll(project)
     }
 
-    fun addModifiedProject(project: Project, changeType: ConfigurationType) {
+    public fun addModifiedProject(project: Project, changeType: ConfigurationType) {
         projects.add(project)
         val modified = modifiedProjects.getOrPut(changeType) { mutableSetOf() }
         modified.add(

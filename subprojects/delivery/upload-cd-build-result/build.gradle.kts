@@ -17,7 +17,7 @@ dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
 
     testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
-    testImplementation(projects.subprojects.gradle.gitTestFixtures)
     testImplementation(projects.subprojects.gradle.testProject)
+    testImplementation(testFixtures(projects.subprojects.gradle.git))
+    testImplementation(testFixtures(projects.subprojects.logger.logger))
 }
