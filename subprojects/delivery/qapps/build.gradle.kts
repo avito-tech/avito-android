@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.signer) {
+    implementation(projects.subprojects.delivery.signer) {
         because("Creates qappsUploadSigned<Variant> tasks which is directly depends on corresponding signer task")
     }
 

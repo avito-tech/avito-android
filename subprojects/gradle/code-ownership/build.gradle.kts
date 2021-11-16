@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.cd)
+    implementation(projects.subprojects.delivery.cd)
     implementation(projects.subprojects.gradle.impactShared)
     implementation(projects.subprojects.gradle.moduleTypes)
     implementation(projects.subprojects.gradle.preBuild)
