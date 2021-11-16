@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @Suppress("MagicNumber")
-class ImpactMetricsSenderTest {
+internal class ImpactMetricsSenderTest {
 
     private lateinit var projectsFinder: StubModifiedProjectsFinder
     private lateinit var statsdSender: StubStatsdSender

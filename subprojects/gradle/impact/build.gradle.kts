@@ -21,11 +21,11 @@ dependencies {
     implementation(libs.antPattern)
     implementation(libs.kotlinGradle)
 
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(testFixtures(projects.subprojects.common.statsd))
     gradleTestImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
     gradleTestImplementation(testFixtures(projects.subprojects.gradle.impactShared))
-    gradleTestImplementation(testFixtures(projects.subprojects.common.statsd))
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(projects.subprojects.gradle.impactSharedTestFixtures)
+    gradleTestImplementation(testFixtures(projects.subprojects.gradle.impactShared))
 }
 
 gradlePlugin {
