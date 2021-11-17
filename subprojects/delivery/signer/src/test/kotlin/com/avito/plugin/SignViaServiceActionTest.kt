@@ -3,6 +3,7 @@ package com.avito.plugin
 import com.avito.android.Result
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
+import com.avito.plugin.internal.SignViaServiceAction
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf

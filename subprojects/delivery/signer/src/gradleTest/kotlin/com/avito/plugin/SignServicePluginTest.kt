@@ -35,7 +35,7 @@ internal class SignServicePluginTest {
 
         ciRun(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
             "-PsignToken=12345",
             dryRun = true,
             expectFailure = true
@@ -52,7 +52,7 @@ internal class SignServicePluginTest {
 
         ciRun(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
             "-PsignToken=12345",
             dryRun = true,
             expectFailure = true
@@ -67,7 +67,7 @@ internal class SignServicePluginTest {
 
         ciRun(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
             expectFailure = true
         ).assertThat()
             .buildFailed()
@@ -80,7 +80,7 @@ internal class SignServicePluginTest {
 
         ciRun(
             testProjectDir,
-            ":app:signApkViaServiceDebug", // mind that only release is registered in extension
+            ":app:legacySignApkViaServiceDebug", // mind that only release is registered in extension
         ).assertThat().buildSuccessful()
     }
 
@@ -102,7 +102,7 @@ internal class SignServicePluginTest {
 
         gradlew(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
             "-PsignToken=12345"
         ).assertThat().buildSuccessful()
     }
@@ -115,7 +115,7 @@ internal class SignServicePluginTest {
 
         gradlew(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
         ).assertThat().buildSuccessful()
     }
 
@@ -129,7 +129,7 @@ internal class SignServicePluginTest {
 
         val result = gradlew(
             testProjectDir,
-            ":app:signBundleViaServiceRelease",
+            ":app:legacySignBundleViaServiceRelease",
             "-PsignToken=12345"
         )
 
@@ -148,14 +148,14 @@ internal class SignServicePluginTest {
 
         gradlew(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
             "-PsignToken=12345",
             dryRun = true
         ).assertThat()
             .buildSuccessful()
             .tasksShouldBeTriggered(
                 ":app:packageRelease",
-                ":app:signApkViaServiceRelease"
+                ":app:legacySignApkViaServiceRelease"
             ).inOrder()
     }
 
@@ -166,7 +166,7 @@ internal class SignServicePluginTest {
 
         gradlew(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
             "-PsignToken=12345"
         ).assertThat()
             .buildSuccessful()
@@ -188,7 +188,7 @@ internal class SignServicePluginTest {
 
         gradlew(
             testProjectDir,
-            ":app:signBundleViaServiceRelease",
+            ":app:legacySignBundleViaServiceRelease",
             "-PsignToken=12345"
         ).assertThat().buildSuccessful()
 
@@ -205,7 +205,7 @@ internal class SignServicePluginTest {
 
         gradlew(
             testProjectDir,
-            ":app:signApkViaServiceRelease",
+            ":app:legacySignApkViaServiceRelease",
             "-PsignToken=12345",
             expectFailure = true
         ).assertThat().buildFailed()

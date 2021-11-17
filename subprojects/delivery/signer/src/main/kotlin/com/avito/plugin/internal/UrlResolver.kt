@@ -1,5 +1,6 @@
-package com.avito.plugin
+package com.avito.plugin.internal
 
+import com.avito.plugin.SignExtension
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 internal class UrlResolver(

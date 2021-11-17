@@ -46,7 +46,7 @@ public class QAppsPlugin : Plugin<Project> {
                     configure(extension, variant)
 
                     if (project.plugins.hasPlugin(SignServicePlugin::class.java)) {
-                        val signTaskProvider = project.tasks.signedApkTaskProvider(variant.name)
+                        val signTaskProvider = project.tasks.legacySignedApkTaskProvider(variant.name)
 
                         val apkProvider = signTaskProvider.flatMap { it.signedDirProperty }
 
@@ -55,7 +55,7 @@ public class QAppsPlugin : Plugin<Project> {
                         // todo remove, somehow implicit dependency not working
                         dependsOn(signTaskProvider)
                     } else {
-                        logger.info(
+                        logger.warn(
                             Problem(
                                 shortDescription = "Task $path configuration failure",
                                 context = "QAppsPlugin",

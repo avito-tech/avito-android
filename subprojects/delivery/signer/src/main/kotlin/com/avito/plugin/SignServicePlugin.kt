@@ -8,6 +8,8 @@ import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.android.withAndroidApp
 import com.avito.logger.GradleLoggerPlugin
+import com.avito.plugin.internal.LegacyTokensResolver
+import com.avito.plugin.internal.UrlResolver
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
@@ -22,15 +24,15 @@ public class SignServicePlugin : Plugin<Project> {
 
         val extension = target.extensions.create<SignExtension>("signService")
 
+        // todo remove after migration to new tasks
         target.withAndroidApp { appExtension ->
 
-            // todo rewrite signer to use new api
             @Suppress("DEPRECATION")
             appExtension.applicationVariants.all { variant: com.android.build.gradle.api.ApplicationVariant ->
 
                 val buildTypeName = variant.buildType.name
-                val apkToken: String? = extension.apkSignTokens[buildTypeName]
-                val bundleToken: String? = extension.bundleSignTokens[buildTypeName]
+                val apkToken: String? = extension.apkSignTokens[buildTypeName]?.orNull
+                val bundleToken: String? = extension.bundleSignTokens[buildTypeName]?.orNull
 
                 variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
             }
@@ -42,14 +44,34 @@ public class SignServicePlugin : Plugin<Project> {
 
                 val urlResolver = UrlResolver(extension)
 
+                if (extension.apkSignTokens.containsKey(variant.name)) {
+                    target.tasks.register<SignApkTask>(signApkTaskName(variant.name)) {
+                        description = "Signs ${variant.name} apk with in-house service"
+                        apkDirectory.set(variant.artifacts.get(SingleArtifact.APK))
+                        tokenProperty.set(extension.apkSignTokens[variant.name]!!)
+                        configure(urlResolver, extension)
+                    }
+                }
+
+                if (extension.bundleSignTokens.containsKey(variant.name)) {
+                    target.tasks.register<SignBundleTask>(signBundleTaskName(variant.name)) {
+                        description = "Signs ${variant.name} bundle with in-house service"
+                        bundleFile.set(variant.artifacts.get(SingleArtifact.BUNDLE))
+                        tokenProperty.set(extension.bundleSignTokens[variant.name]!!)
+                        configure(urlResolver, extension)
+                    }
+                }
+
                 val buildTypeName = variant.buildType
 
-                registerTask<SignApkTask>(
+                val apkToken = extension.apkSignTokens[buildTypeName]?.orNull
+
+                registerTask<LegacySignApkTask>(
                     tasks = target.tasks,
                     variant = variant,
-                    taskName = signApkTaskName(variant.name),
+                    taskName = legacySignApkTaskName(variant.name),
                     extension = extension,
-                    signingResolver = SigningResolver(
+                    signingResolver = LegacyTokensResolver(
                         extension = extension,
                         variant = variant,
                         signTokensMap = extension.apkSignTokens
@@ -57,23 +79,23 @@ public class SignServicePlugin : Plugin<Project> {
                     urlResolver = urlResolver
                 )
 
-                val apkToken: String? = extension.apkSignTokens[buildTypeName]
-
                 if (apkToken.hasContent()) {
-                    variant.artifacts.use(target.tasks.signedApkTaskProvider(variant))
+                    variant.artifacts.use(target.tasks.legacySignedApkTaskProvider(variant))
                         .wiredWithDirectories(
-                            taskInput = SignApkTask::unsignedDirProperty,
-                            taskOutput = SignApkTask::signedDirProperty
+                            taskInput = LegacySignApkTask::unsignedDirProperty,
+                            taskOutput = LegacySignApkTask::signedDirProperty
                         )
                         .toTransform(SingleArtifact.APK)
                 }
 
-                registerTask<SignBundleTask>(
+                val bundleToken = extension.bundleSignTokens[buildTypeName]?.orNull
+
+                registerTask<LegacySignBundleTask>(
                     tasks = target.tasks,
                     variant = variant,
-                    taskName = signBundleTaskName(variant.name),
+                    taskName = legacySignBundleTaskName(variant.name),
                     extension = extension,
-                    signingResolver = SigningResolver(
+                    signingResolver = LegacyTokensResolver(
                         extension = extension,
                         variant = variant,
                         signTokensMap = extension.bundleSignTokens
@@ -81,13 +103,11 @@ public class SignServicePlugin : Plugin<Project> {
                     urlResolver = urlResolver
                 )
 
-                val bundleToken: String? = extension.bundleSignTokens[buildTypeName]
-
                 if (bundleToken.hasContent()) {
-                    variant.artifacts.use(target.tasks.signedBundleTaskProvider(variant))
+                    variant.artifacts.use(target.tasks.legacySignedBundleTaskProvider(variant))
                         .wiredWithFiles(
-                            taskInput = SignBundleTask::unsignedFileProperty,
-                            taskOutput = SignBundleTask::signedFileProperty
+                            taskInput = LegacySignBundleTask::unsignedFileProperty,
+                            taskOutput = LegacySignBundleTask::signedFileProperty
                         )
                         .toTransform(SingleArtifact.BUNDLE)
                 }
@@ -95,12 +115,12 @@ public class SignServicePlugin : Plugin<Project> {
         }
     }
 
-    private inline fun <reified T : SignArtifactTask> registerTask(
+    private inline fun <reified T : LegacySignArtifactTask> registerTask(
         tasks: TaskContainer,
         variant: Variant,
         taskName: String,
         extension: SignExtension,
-        signingResolver: SigningResolver,
+        signingResolver: LegacyTokensResolver,
         urlResolver: UrlResolver,
     ): TaskProvider<T> {
         return tasks.register<T>(taskName) {
@@ -127,6 +147,24 @@ public class SignServicePlugin : Plugin<Project> {
 
             onlyIf { signingResolver.isCustomSigningEnabled }
         }
+    }
+
+    private fun AbstractSignTask.configure(
+        urlResolver: UrlResolver,
+        extension: SignExtension,
+    ) {
+        group = CI_TASK_GROUP
+
+        serviceUrl.set(urlResolver.resolveServiceUrl { throwable ->
+            failOnConfiguration(
+                taskName = name,
+                throwable = throwable
+            )
+        })
+
+        readWriteTimeoutSec.set(extension.readWriteTimeoutSec.convention(DEFAULT_TIMEOUT_SEC))
+
+        loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
     }
 
     private fun failOnConfiguration(taskName: String, throwable: Throwable): Nothing {

@@ -7,8 +7,8 @@ import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.create
-import com.avito.plugin.signedApkTaskProvider
-import com.avito.plugin.signedBundleTaskProvider
+import com.avito.plugin.legacySignedApkTaskProvider
+import com.avito.plugin.legacySignedBundleTaskProvider
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
@@ -31,12 +31,12 @@ public open class VerifyArtifactsStep(
             artifactsConfig.outputs.forEach { (_, output) ->
                 when (output) {
                     is Output.ApkOutput -> if (output.signature != null) {
-                        task.dependsOn(project.tasks.signedApkTaskProvider(output.variantName))
+                        task.dependsOn(project.tasks.legacySignedApkTaskProvider(output.variantName))
                     } else {
                         task.dependsOn(project.tasks.packageTaskProvider(output.variantName))
                     }
                     is Output.BundleOutput -> if (output.signature != null) {
-                        task.dependsOn(project.tasks.signedBundleTaskProvider(output.variantName))
+                        task.dependsOn(project.tasks.legacySignedBundleTaskProvider(output.variantName))
                     } else {
                         task.dependsOn(project.tasks.bundleTaskProvider(output.variantName))
                     }
