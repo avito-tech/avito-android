@@ -23,8 +23,10 @@ dependencies {
         because("com.android.ide.common.symbols.SymbolTable")
     }
 
-    // for test
-    implementation(projects.subprojects.gradle.moduleTypes)
+    // for Gradle tests
+    // TODO: find a way to provide external plugins only to Gradle tests.
+    //      One probable workaround to avoid this dependency at all: MBS-12338
+    implementation(projects.subprojects.gradle.impact)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 }

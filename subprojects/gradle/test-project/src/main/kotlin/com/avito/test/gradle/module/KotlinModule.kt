@@ -14,6 +14,7 @@ import java.io.File
 public class KotlinModule(
     override val name: String,
     public val packageName: String = "com.$name",
+    public override val imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
@@ -26,6 +27,7 @@ public class KotlinModule(
         file.module(name) {
 
             val buildGradleContent = """
+                |${imports()}
                 |${plugins()}
                 |
                 |$buildGradleExtra
