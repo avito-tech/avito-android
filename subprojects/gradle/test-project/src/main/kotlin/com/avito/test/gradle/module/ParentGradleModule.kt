@@ -18,6 +18,7 @@ public class ParentGradleModule(
     override val useKts: Boolean = false,
 ) : Module {
 
+    override val imports: List<String> = emptyList()
     override val dependencies: Set<GradleDependency> = emptySet()
 
     override fun generateIn(file: File) {

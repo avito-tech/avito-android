@@ -40,7 +40,7 @@ tasks.named<Test>("integrationTest").configure {
         require(missing.isEmpty()) {
             "$path:integrationTest requires additional properties to be applied\n" +
                 "missing values are: $missing\n" +
-                "It should be added to ~/.gradle/gradle.properties"
+                "It should be added to <GRADLE_USER_HOME>/gradle.properties"
         }
     }
 }
