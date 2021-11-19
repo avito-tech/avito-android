@@ -125,7 +125,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
   <body>
     <h2>FAILURE: Build failed with an exception</h2>
     <h3>What went wrong:</h3>
-    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 8
+    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 9
 A problem occurred evaluating project ':app'.
 	&gt; A problem occurred evaluating project ':app'.
 		&gt; Project with path ':not-existed' could not be found in project ':app'.

@@ -15,6 +15,7 @@ public class PlatformModule(
     override val useKts: Boolean = false,
 ) : Module {
 
+    override val imports: List<String> = emptyList()
     override val modules: List<Module> = emptyList()
     override val dependencies: Set<GradleDependency> = emptySet()
 

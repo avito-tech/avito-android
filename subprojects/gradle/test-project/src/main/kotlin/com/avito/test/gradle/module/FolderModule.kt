@@ -13,6 +13,7 @@ public class FolderModule(
     override val name: String,
     override val modules: List<Module>
 ) : Module {
+    override val imports: List<String> = emptyList()
     override val dependencies: Set<GradleDependency> = emptySet()
     override val plugins: PluginsSpec = PluginsSpec()
     override val buildGradleExtra: String = ""

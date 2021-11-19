@@ -76,7 +76,7 @@ internal object PlainTextVerdictCases {
 |FAILURE: Build failed with an exception.
 |
 |* What went wrong:
-|Build file '${dir.canonicalPath}/app/build.gradle' line: 8
+|Build file '${dir.canonicalPath}/app/build.gradle' line: 9
 |A problem occurred evaluating project ':app'.
 |	> A problem occurred evaluating project ':app'.
 |		> Project with path ':not-existed' could not be found in project ':app'.

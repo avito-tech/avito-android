@@ -25,4 +25,4 @@ You can also override it per command: `make command CONFIG_CACHE=false`.
 ### Avito employees only
 
 - [Gradle remote cache](internal/RemoteCache.md) for local builds <Avito only>
-- `artifactoryUrl` property in `~/.gradle/gradle.properties` to download dependencies from in-house proxy
+- `artifactoryUrl` property in `<GRADLE_USER_HOME>/gradle.properties` to download dependencies from in-house proxy

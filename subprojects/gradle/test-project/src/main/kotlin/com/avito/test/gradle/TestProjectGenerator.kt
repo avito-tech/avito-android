@@ -9,6 +9,7 @@ import com.avito.test.gradle.files.build_gradle_kts
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
+import com.avito.test.gradle.module.imports
 import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import java.io.File
@@ -51,6 +52,7 @@ public interface Generator {
  */
 public class TestProjectGenerator(
     override val name: String = "test-project",
+    override val imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     // TODO: don't share complex default values in common test fixtures. Plugin must define them implicitly!
@@ -81,6 +83,7 @@ public class TestProjectGenerator(
             modules.forEach { it.generateIn(file) }
 
             val buildGradleContent = """
+                    |${imports()}
                     |${plugins()}
                     |
                     |subprojects {
