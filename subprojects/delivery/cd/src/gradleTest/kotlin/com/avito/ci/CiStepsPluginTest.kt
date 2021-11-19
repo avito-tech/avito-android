@@ -158,7 +158,7 @@ internal class CiStepsPluginTest : BaseCiStepsPluginTest() {
 
         return listOf(
             ":appA:packageReleaseBundle",
-            ":appA:signBundleViaServiceRelease"
+            ":appA:legacySignBundleViaServiceRelease"
         ).map { task ->
             dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)
@@ -171,7 +171,7 @@ internal class CiStepsPluginTest : BaseCiStepsPluginTest() {
         val result = runTask(":appA:release")
 
         return listOf(
-            ":appA:signApkViaServiceRelease"
+            ":appA:legacySignApkViaServiceRelease"
         ).map { task ->
             dynamicTest("$task should be triggered by :appA:release") {
                 result.assertThat().tasksShouldBeTriggered(task)

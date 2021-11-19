@@ -16,6 +16,7 @@ internal class UrlResolver(
     }
 }
 
+// used in tests
 internal fun validateUrl(url: String, onFailure: (Throwable) -> Nothing): String {
     return try {
         url.toHttpUrl()
