@@ -27,11 +27,12 @@ public data class GradleLoggerMetadata(
 
     init {
         with(coordinates) {
-            val dir = Path.of(projectPath)
+            val windowsCompatible = replaceWindowsPathIncompatibleChars(projectPath)
+            val dir = Path.of(windowsCompatible)
             logFilePath = if (taskName != null) {
-                dir.resolve(Path.of("$projectPath:$taskName.logs"))
+                dir.resolve(Path.of("$taskName.logs"))
             } else {
-                dir.resolve(Path.of("$projectPath.logs"))
+                dir.resolve(Path.of("$windowsCompatible.logs"))
             }
         }
     }
@@ -49,5 +50,18 @@ public data class GradleLoggerMetadata(
         }
 
         return result
+    }
+
+    private companion object {
+
+        /**
+         * ':' is illegal for using in Windows files paths
+         */
+        fun replaceWindowsPathIncompatibleChars(projectPath: String): String {
+            return when (projectPath) {
+                ":" -> "root"
+                else -> projectPath.removePrefix(":").replace(':', '_')
+            }
+        }
     }
 }
