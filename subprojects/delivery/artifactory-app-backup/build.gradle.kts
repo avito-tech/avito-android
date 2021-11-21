@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(projects.subprojects.common.problem)
-    implementation(projects.subprojects.delivery.signer)
+    implementation(projects.subprojects.delivery.legacySigner)
     implementation(projects.subprojects.delivery.uploadCdBuildResult)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.gradleExtensions)

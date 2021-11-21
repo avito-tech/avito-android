@@ -104,7 +104,7 @@ internal class UploadToQappsTest {
                                 release {
                                     useImpactAnalysis = false
                                     artifacts {
-                                        apk("debug", com.avito.cd.BuildVariant.DEBUG, "com.app", "${'$'}buildDir/outputs/apk/debug/app-debug.apk") {}
+                                        apk("debug", com.avito.cd.BuildVariant.DEBUG, "com.app.debug", "${'$'}buildDir/outputs/apk/debug/app-debug.apk") {}
                                     }
                                     uploadToQapps {
                                         artifacts = ["debug"]
