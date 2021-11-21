@@ -1,4 +1,4 @@
-package com.avito.plugin
+package com.avito.plugin.internal
 
 import com.avito.android.Result
 import com.avito.http.internal.RequestMetadata

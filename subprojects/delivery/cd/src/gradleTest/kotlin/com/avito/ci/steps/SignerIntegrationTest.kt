@@ -98,7 +98,7 @@ internal class SignerIntegrationTest {
 
         val result = fullCheck(expectFailure = true)
         result.assertThat().run {
-            taskWithOutcome(":app:signApkViaServiceRelease", TaskOutcome.FAILED)
+            taskWithOutcome(":app:legacySignApkViaServiceRelease", TaskOutcome.FAILED)
         }
     }
 

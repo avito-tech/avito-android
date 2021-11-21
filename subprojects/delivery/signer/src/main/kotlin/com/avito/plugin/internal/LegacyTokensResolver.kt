@@ -1,14 +1,16 @@
-package com.avito.plugin
+package com.avito.plugin.internal
 
 import com.android.build.api.variant.ApplicationVariant
 import com.avito.android.Result
+import com.avito.plugin.SignExtension
+import com.avito.plugin.hasContent
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
-internal class SigningResolver(
+internal class LegacyTokensResolver(
     private val extension: SignExtension,
     private val variant: ApplicationVariant,
-    private val signTokensMap: Map<String, String?>,
+    private val signTokensMap: Map<String, Provider<String>>,
 ) {
 
     private val buildTypeName: String
@@ -19,7 +21,7 @@ internal class SigningResolver(
     private val hasTokenRegistered: Boolean = signTokensMap.containsKey(buildTypeName)
 
     private val token: Result<String> by lazy {
-        val token: String? = signTokensMap[buildTypeName]
+        val token: String? = signTokensMap[buildTypeName]?.orNull
 
         if (token.hasContent()) {
             Result.Success(token)

@@ -7,23 +7,24 @@ import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.plugin.internal.SignViaServiceAction
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.buildFailer
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-public abstract class SignArtifactTask constructor(
-    private val workerExecutor: WorkerExecutor
-) : DefaultTask() {
+public abstract class AbstractSignTask(private val workerExecutor: WorkerExecutor) : DefaultTask() {
 
     @get:Input
     public abstract val tokenProperty: Property<String>
@@ -37,23 +38,16 @@ public abstract class SignArtifactTask constructor(
     @get:Internal
     public abstract val loggerFactory: Property<LoggerFactory>
 
+    @get:OutputFile
+    public abstract val signedArtifact: Property<RegularFile>
+
     protected abstract fun unsignedFile(): File
 
-    protected abstract fun signedFile(): File
-
-    /**
-     * TODO: find a better way to provide a final artifact to CI
-     * Results of transformations are stored in build/intermediates/bundle/release/<task name>/out
-     * It's accessible by Artifacts API programmatically but we need a final one file.
-     * We rewrite an original file to preserve legacy behaviour.
-     */
-    protected abstract fun hackForArtifactsApi()
-
     @TaskAction
-    public fun run() {
+    public fun doWork() {
         val loggerFactory = loggerFactory.get()
         val unsignedFile = unsignedFile()
-        val signedFile = signedFile()
+        val signedFile = signedArtifact.get().asFile
         val timeProvider: TimeProvider = DefaultTimeProvider()
         val serviceUrl: HttpUrl = serviceUrl.map { it.toHttpUrl() }.get()
 
@@ -74,7 +68,7 @@ public abstract class SignArtifactTask constructor(
             )
             .build()
 
-        val logger = loggerFactory.create<SignArtifactTask>()
+        val logger = loggerFactory.create<LegacySignArtifactTask>()
 
         workerExecutor.inMemoryWork {
             SignViaServiceAction(
@@ -85,16 +79,12 @@ public abstract class SignArtifactTask constructor(
                 signedFile = signedFile,
             )
                 .sign()
-                .map { file ->
-                    hackForArtifactsApi()
-                    file
-                }
                 .fold(
                     { file -> logger.info("signed successfully: ${file.file.path}") },
                     { throwable ->
                         project.buildFailer.failBuild(
                             problem = describeSingingError(
-                                signedFile = signedFile(),
+                                signedFile = signedFile,
                                 throwable = throwable
                             )
                         )
