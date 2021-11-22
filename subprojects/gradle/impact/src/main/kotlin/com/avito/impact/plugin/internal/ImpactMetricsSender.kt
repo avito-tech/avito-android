@@ -24,7 +24,7 @@ internal class ImpactMetricsSender(
         }
     }
 
-    private val ConfigurationType.name: String
+    private val ConfigurationType.metricName: String
         get() {
             return when (this) {
                 ConfigurationType.AndroidTests -> "androidtests"
@@ -51,7 +51,7 @@ internal class ImpactMetricsSender(
         modified: Set<ModifiedProject>
     ) {
         val metric = GaugeLongMetric(
-            name = SeriesName.create("impact", "modules", configurationType.name.lowercase(), "modified"),
+            name = SeriesName.create("impact", "modules", configurationType.metricName.lowercase(), "modified"),
             gauge = modified.size.percentOf(projects.size).roundToLong()
         )
         metricTracker.track(metric)
@@ -66,7 +66,7 @@ internal class ImpactMetricsSender(
         val modifiedApps = modified.count { it.project.isAndroidApp() }
 
         val metric = GaugeLongMetric(
-            name = SeriesName.create("impact", "apps", configurationType.name.lowercase(), "modified"),
+            name = SeriesName.create("impact", "apps", configurationType.metricName.lowercase(), "modified"),
             gauge = modifiedApps.percentOf(apps).roundToLong()
         )
         metricTracker.track(metric)

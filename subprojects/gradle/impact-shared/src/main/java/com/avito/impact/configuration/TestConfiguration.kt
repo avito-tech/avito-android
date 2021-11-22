@@ -3,7 +3,7 @@ package com.avito.impact.configuration
 import com.avito.impact.configuration.sets.isTest
 import com.avito.module.configurations.ConfigurationType.UnitTests
 
-public class TestConfiguration(module: InternalModule) : BaseConfiguration(module, UnitTests::class.java) {
+public class TestConfiguration(module: InternalModule) : BaseConfiguration(module, UnitTests) {
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }

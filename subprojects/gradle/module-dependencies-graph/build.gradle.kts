@@ -7,6 +7,7 @@ plugins {
 dependencies {
     compileOnly(gradleApi())
 
+    implementation(projects.subprojects.gradle.moduleDependenciesShared)
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.gradle.gradleExtensions)

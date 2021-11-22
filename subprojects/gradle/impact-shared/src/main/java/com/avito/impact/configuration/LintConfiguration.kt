@@ -2,7 +2,7 @@ package com.avito.impact.configuration
 
 import com.avito.module.configurations.ConfigurationType.Lint
 
-internal class LintConfiguration(module: InternalModule) : BaseConfiguration(module, Lint::class.java) {
+internal class LintConfiguration(module: InternalModule) : BaseConfiguration(module, Lint) {
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }

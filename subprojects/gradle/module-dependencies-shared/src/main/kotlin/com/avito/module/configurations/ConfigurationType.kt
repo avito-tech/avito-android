@@ -2,31 +2,31 @@ package com.avito.module.configurations
 
 import org.gradle.api.artifacts.Configuration
 
-public sealed class ConfigurationType {
+public enum class ConfigurationType {
 
-    public object Main : ConfigurationType() {
+    Main {
         override fun toString(): String {
             return "ConfigurationType.Main"
         }
-    }
+    },
 
-    public object UnitTests : ConfigurationType() {
+    UnitTests {
         override fun toString(): String {
             return "ConfigurationType.UnitTests"
         }
-    }
+    },
 
-    public object AndroidTests : ConfigurationType() {
+    AndroidTests {
         override fun toString(): String {
             return "ConfigurationType.AndroidTests"
         }
-    }
+    },
 
-    public object Lint : ConfigurationType() {
+    Lint {
         override fun toString(): String {
             return "ConfigurationType.Lint"
         }
-    }
+    };
 
     public companion object {
 
@@ -41,10 +41,6 @@ public sealed class ConfigurationType {
                  */
                 else -> Main
             }
-        }
-
-        public fun values(): Set<ConfigurationType> {
-            return setOf(Main, UnitTests, AndroidTests, Lint)
         }
 
         private fun Configuration.isTest() = name.startsWith("test")
