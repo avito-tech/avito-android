@@ -7,7 +7,7 @@ import com.avito.impact.changes.ChangedFile
 import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.util.Equality
 import com.avito.module.configurations.ConfigurationType
-import com.avito.module.dependencies.dependenciesOnProjects
+import com.avito.module.dependencies.directDependenciesOnProjects
 import org.gradle.api.Project
 import java.io.File
 
@@ -16,7 +16,7 @@ import java.io.File
  */
 public abstract class BaseConfiguration(
     public val module: InternalModule,
-    public val type: Class<out ConfigurationType>
+    public val type: ConfigurationType
 ) : Equality {
 
     public abstract val isModified: Boolean
@@ -34,11 +34,11 @@ public abstract class BaseConfiguration(
     }
 
     public open val dependencies: Set<MainConfiguration> by lazy {
-        module.project.dependenciesOnProjects(setOf(type))
+        module.project.directDependenciesOnProjects(setOf(type))
+            .values
+            .flatten()
             .map {
-                it.dependencyProject
-                    .internalModule
-                    .mainConfiguration
+                it.internalModule.mainConfiguration
             }
             .toSet()
     }

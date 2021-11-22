@@ -8,7 +8,7 @@ import com.avito.module.configurations.ConfigurationType.Main
 
 public class MainConfiguration(module: InternalModule) : BaseConfiguration(
     module,
-    Main::class.java
+    Main
 ) {
 
     override val isModified: Boolean by lazy {

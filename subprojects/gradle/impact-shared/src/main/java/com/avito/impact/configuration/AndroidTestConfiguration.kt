@@ -4,7 +4,7 @@ import com.avito.impact.configuration.sets.isAndroidTest
 import com.avito.module.configurations.ConfigurationType.AndroidTests
 
 public class AndroidTestConfiguration(module: InternalModule) :
-    BaseConfiguration(module, AndroidTests::class.java) {
+    BaseConfiguration(module, AndroidTests) {
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }

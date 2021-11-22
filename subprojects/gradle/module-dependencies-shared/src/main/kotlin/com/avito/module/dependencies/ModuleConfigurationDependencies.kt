@@ -4,20 +4,21 @@ import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 
-public fun Project.dependenciesOnProjects(
-    types: Set<Class<out ConfigurationType>>
-): Set<ProjectDependency> {
+public fun Project.directDependenciesOnProjects(
+    types: Set<ConfigurationType>
+): Map<ConfigurationType, Set<Project>> {
     return configurations
         .associateWith {
             it.dependencies
                 .matching { it is ProjectDependency }
-                .map { it as ProjectDependency }
+                .map { (it as ProjectDependency).dependencyProject }
                 // project has dependency to itself in a default configuration
-                .filter { it.dependencyProject != this }
+                .filter { it != this }
+                .toSet()
         }
         .filterValues { it.isNotEmpty() }
-        .filterKeys { ConfigurationType.of(it).let { type -> types.any { it.isInstance(type) } } }
-        .values
-        .flatten()
-        .toSet()
+        .mapKeys { ConfigurationType.of(it.key) }
+        .filterKeys { type ->
+            types.contains(type)
+        }
 }
