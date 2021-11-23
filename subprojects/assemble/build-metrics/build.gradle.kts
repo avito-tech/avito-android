@@ -8,7 +8,7 @@ dependencies {
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.gradle.buildEnvironment)
     implementation(projects.subprojects.logger.gradleLogger)
-    implementation(projects.subprojects.gradle.gradleProfile)
+    implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.assemble.criticalPath.api)
     implementation(projects.subprojects.assemble.buildMetricsTracker)
     implementation(projects.subprojects.gradle.android)

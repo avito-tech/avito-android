@@ -9,7 +9,7 @@ dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.assemble.criticalPath.api)
     implementation(projects.subprojects.common.traceEvent)
-    implementation(projects.subprojects.gradle.gradleProfile)
+    implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.common.compositeException)
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.common.result)

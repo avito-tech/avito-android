@@ -13,7 +13,7 @@ dependencies {
 
     implementation(gradleApi())
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.gradleProfile)
+    implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.common.compositeException)
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.logger.gradleLogger)
