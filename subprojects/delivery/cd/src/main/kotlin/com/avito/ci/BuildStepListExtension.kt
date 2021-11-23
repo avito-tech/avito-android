@@ -6,7 +6,6 @@ import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.CustomTaskStep
-import com.avito.ci.steps.DependencyAnalysisStep
 import com.avito.ci.steps.FlakyReportStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.ImpactMetrics
@@ -58,9 +57,6 @@ public open class BuildStepListExtension(
         }
         registerFactory(FlakyReportStep::class.java) { name ->
             FlakyReportStep(buildStepListName, name)
-        }
-        registerFactory(DependencyAnalysisStep::class.java) { name ->
-            DependencyAnalysisStep(buildStepListName, name)
         }
         registerFactory(UploadToQapps::class.java) { name ->
             UploadToQapps(buildStepListName, artifactsConfig, name)
@@ -127,14 +123,6 @@ public open class BuildStepListExtension(
 
     public fun unitTests(action: Action<UnitTestCheck>) {
         configureAndAdd("unitTests", action)
-    }
-
-    public fun dependencyAnalysis(closure: Closure<DependencyAnalysisStep>) {
-        configureAndAdd("dependencyAnalysis", closure)
-    }
-
-    public fun dependencyAnalysis(action: Action<DependencyAnalysisStep>) {
-        configureAndAdd("dependencyAnalysis", action)
     }
 
     public fun markReportAsSourceForTMS(closure: Closure<MarkReportAsSourceForTMSStep>) {
