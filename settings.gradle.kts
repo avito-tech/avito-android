@@ -18,7 +18,6 @@ includeBuild("build-logic")
 
 include(":subprojects:gradle:android")
 include(":subprojects:gradle:bitbucket")
-include(":subprojects:gradle:build-checks")
 include(":subprojects:gradle:build-environment")
 include(":subprojects:gradle:build-failer")
 include(":subprojects:gradle:build-metrics")
@@ -51,6 +50,8 @@ include(":subprojects:gradle:test-summary")
 include(":subprojects:gradle:trace-event")
 include(":subprojects:gradle:ui-test-bytecode-analyzer")
 include(":subprojects:gradle:worker")
+
+include(":subprojects:assemble:build-checks")
 
 include(":subprojects:common:build-metadata")
 include(":subprojects:common:resources")
