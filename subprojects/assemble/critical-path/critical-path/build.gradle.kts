@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(projects.subprojects.gradle.criticalPath.api)
+    implementation(projects.subprojects.assemble.criticalPath.api)
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(libs.gson)
     implementation(projects.subprojects.gradle.gradleExtensions)

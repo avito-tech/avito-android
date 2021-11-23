@@ -9,7 +9,7 @@ dependencies {
     implementation(projects.subprojects.gradle.buildEnvironment)
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleProfile)
-    implementation(projects.subprojects.gradle.criticalPath.api)
+    implementation(projects.subprojects.assemble.criticalPath.api)
     implementation(projects.subprojects.assemble.buildMetricsTracker)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.graphiteConfig)
