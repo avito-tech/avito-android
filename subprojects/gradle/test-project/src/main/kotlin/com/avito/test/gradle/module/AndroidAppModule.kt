@@ -164,9 +164,12 @@ public class AndroidAppModule(
             |       versionName = "$versionName"
             |   }
             |   buildTypes {
-            |       val debug = getByName("debug")
+            |       val debug = getByName("debug") {
+            |           applicationIdSuffix = ".debug"
+            |       }
             |       register("staging") {
             |           initWith(debug)
+            |           applicationIdSuffix = ".staging"
             |           matchingFallbacks += listOf("debug")
             |       }
             |   }
@@ -186,9 +189,12 @@ public class AndroidAppModule(
             |   }
             |   buildTypes {
             |       release {}
-            |       debug {}
+            |       debug {
+            |           applicationIdSuffix = ".debug"
+            |       }
             |       staging {
             |           initWith(debug)
+            |           applicationIdSuffix = ".staging"
             |           matchingFallbacks = ["debug"]
             |       }
             |   }

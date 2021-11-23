@@ -91,7 +91,7 @@ internal class ProsectorPluginTest {
         val meta = Gson().fromJson(found?.get(1), ReleaseAnalysisMeta::class.java)
 
         assertThat(meta.taskType).isEqualTo(TaskType.RELEASE_ANALYSIS)
-        assertThat(meta.appPackage).isEqualTo("test.pkg")
+        assertThat(meta.appPackage).isEqualTo("test.pkg.debug")
         assertThat(meta.buildInfo.branchName).isEqualTo("MBS-2222")
         assertThat(meta.buildInfo.commit).isEqualTo("356c1ad1dfb24e30fd0ffc4974892a34ff208859")
         assertThat(meta.buildInfo.versionName).isEqualTo("13.1")

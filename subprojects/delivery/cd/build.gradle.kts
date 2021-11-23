@@ -10,7 +10,7 @@ dependencies {
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.delivery.artifactoryAppBackup)
     implementation(projects.subprojects.delivery.qapps)
-    implementation(projects.subprojects.delivery.signer)
+    implementation(projects.subprojects.delivery.legacySigner)
     implementation(projects.subprojects.delivery.uploadCdBuildResult)
     implementation(projects.subprojects.delivery.uploadToGoogleplay)
     implementation(projects.subprojects.gradle.android)

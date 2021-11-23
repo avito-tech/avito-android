@@ -1,7 +1,7 @@
 package com.avito.plugin
 
-import com.avito.android.Problem
-import com.avito.android.asPlainText
+import com.avito.android.signer.SignServicePlugin
+import com.avito.android.signer.signedApkDir
 import com.avito.android.withAndroidApp
 import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
@@ -41,28 +41,16 @@ public class QAppsPlugin : Plugin<Project> {
                     dependsOn(packageTaskProvider)
                 }
 
-                project.tasks.register<QAppsUploadTask>(qappsUploadSignedTaskName(variant.name)) {
-                    description = "Upload signed ${variant.name} to qapps"
-                    configure(extension, variant)
+                if (project.plugins.hasPlugin(SignServicePlugin::class.java)) {
 
-                    if (project.plugins.hasPlugin(SignServicePlugin::class.java)) {
-                        val signTaskProvider = project.tasks.legacySignedApkTaskProvider(variant.name)
+                    val signedApkDir = project.tasks.signedApkDir(variant.name)
 
-                        val apkProvider = signTaskProvider.flatMap { it.signedDirProperty }
-
-                        apkDirectory.set(apkProvider)
-
-                        // todo remove, somehow implicit dependency not working
-                        dependsOn(signTaskProvider)
-                    } else {
-                        logger.warn(
-                            Problem(
-                                shortDescription = "Task $path configuration failure",
-                                context = "QAppsPlugin",
-                                because = "SignServicePlugin should be configured to be able to upload signed APK's",
-                                documentedAt = "https://avito-tech.github.io/avito-android/projects/internal/Signer/"
-                            ).asPlainText()
-                        )
+                    if (signedApkDir.isPresent) {
+                        project.tasks.register<QAppsUploadTask>(qappsUploadSignedTaskName(variant.name)) {
+                            description = "Upload signed ${variant.name} to qapps"
+                            configure(extension, variant)
+                            apkDirectory.set(signedApkDir)
+                        }
                     }
                 }
             }

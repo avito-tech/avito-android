@@ -223,11 +223,11 @@ internal class RunnerInputParamsTest {
             },
             Case("execution params app package") {
                 assertThat(it.executionParameters.applicationPackageName)
-                    .isEqualTo(appPackageName)
+                    .isEqualTo("$appPackageName.debug")
             },
             Case("execution params test app package") {
                 assertThat(it.executionParameters.applicationTestPackageName)
-                    .isEqualTo("$appPackageName.test")
+                    .isEqualTo("$appPackageName.debug.test")
             },
             Case("execution params test runner") {
                 assertThat(it.executionParameters.testRunner)

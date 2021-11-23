@@ -13,6 +13,21 @@ gradlePlugin {
 
 val pluginPrefix = group.toString()
 
+val moduleNamingExceptions = setOf(
+    "legacy-signer", // will be removed in favor of new signer plugin
+)
+
+fun checkModuleToPluginNameConsistency(pluginName: String, pluginDeclaration: PluginDeclaration) {
+    if (project.name !in moduleNamingExceptions) {
+        require(project.name == pluginName) {
+            // See isAutomatedPublishing comments above
+            "Gradle plugin '${pluginDeclaration.id}' (${pluginDeclaration.name}) " +
+                "must have id '$pluginPrefix.${project.name}'. " +
+                "This is due to a publication issue: MBS-10660"
+        }
+    }
+}
+
 publishing {
     publications {
         afterEvaluate {
@@ -29,12 +44,7 @@ publishing {
 
                     val pluginName = pluginDeclaration.id.substringAfter("$pluginPrefix.")
 
-                    require(project.name == pluginName) {
-                        // See isAutomatedPublishing comments above
-                        "Gradle plugin '${pluginDeclaration.id}' (${pluginDeclaration.name}) " +
-                            "must have id '$pluginPrefix.${project.name}'. " +
-                            "This is due to a publication issue: MBS-10660"
-                    }
+                    checkModuleToPluginNameConsistency(pluginName, pluginDeclaration)
 
                     artifactId = pluginName
                 }
