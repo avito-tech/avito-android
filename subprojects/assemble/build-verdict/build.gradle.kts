@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.buildVerdictTasksApi)
+    api(projects.subprojects.assemble.buildVerdictTasksApi)
 
     implementation(gradleApi())
     implementation(projects.subprojects.common.throwableUtils)
