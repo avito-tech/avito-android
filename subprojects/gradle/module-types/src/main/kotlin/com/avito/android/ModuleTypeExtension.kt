@@ -1,10 +1,7 @@
 package com.avito.android
 
-import org.gradle.api.plugins.ExtensionContainer
-
+// TODO: delete after migrating clients in MBS-12266
+@Suppress("DEPRECATION")
 public open class ModuleTypeExtension(
     public var type: ModuleType = ModuleType.IMPLEMENTATION
 )
-
-public inline val ExtensionContainer.moduleType: ModuleTypeExtension?
-    get() = findByType(ModuleTypeExtension::class.java)

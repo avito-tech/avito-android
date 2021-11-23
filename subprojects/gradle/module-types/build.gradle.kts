@@ -2,13 +2,15 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
+    id("convention.test-fixtures")
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.impactShared)
-    implementation(projects.subprojects.gradle.preBuild)
+    api(projects.subprojects.gradle.moduleDependenciesShared)
+
+    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.impact)
+    implementation(projects.subprojects.common.problem)
     implementation(libs.kotlinGradle)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
@@ -18,7 +20,7 @@ gradlePlugin {
     plugins {
         create("moduleTypes") {
             id = "com.avito.android.module-types"
-            implementationClass = "com.avito.android.ModuleTypesPlugin"
+            implementationClass = "com.avito.android.module_type.ModuleTypesPlugin"
             displayName = "Module types"
         }
     }
