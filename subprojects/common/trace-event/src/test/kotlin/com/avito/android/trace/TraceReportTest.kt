@@ -8,7 +8,7 @@ import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempFile
 
-class TraceReportTest {
+internal class TraceReportTest {
 
     private lateinit var tempDir: Path
 
