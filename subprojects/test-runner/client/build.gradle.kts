@@ -22,7 +22,7 @@ dependencies {
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.common.result)
     implementation(projects.subprojects.gradle.process)
-    implementation(projects.subprojects.gradle.traceEvent)
+    implementation(projects.subprojects.common.traceEvent)
     implementation(projects.subprojects.testRunner.deviceProvider.api)
     implementation(projects.subprojects.testRunner.deviceProvider.impl)
     implementation(projects.subprojects.testRunner.instrumentationTestsDexLoader)

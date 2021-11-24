@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.buildVerdictTasksApi)
+    api(projects.subprojects.assemble.buildVerdictTasksApi)
     api(projects.subprojects.testRunner.kubernetes)
 
     implementation(libs.gson)

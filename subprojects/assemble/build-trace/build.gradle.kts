@@ -7,9 +7,9 @@ plugins {
 dependencies {
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.criticalPath.api)
-    implementation(projects.subprojects.gradle.traceEvent)
-    implementation(projects.subprojects.gradle.gradleProfile)
+    implementation(projects.subprojects.assemble.criticalPath.api)
+    implementation(projects.subprojects.common.traceEvent)
+    implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.common.compositeException)
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.common.result)
