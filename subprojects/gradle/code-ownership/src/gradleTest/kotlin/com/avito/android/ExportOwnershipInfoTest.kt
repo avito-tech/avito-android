@@ -27,9 +27,6 @@ internal class ExportOwnershipInfoTest {
                 AndroidAppModule(
                     "app",
                     imports = listOf("import com.avito.android.model.Owner"),
-                    plugins = plugins {
-                        id("com.avito.android.module-types")
-                    },
                     dependencies = setOf(
                         project(
                             path = ":feature",
@@ -54,9 +51,6 @@ internal class ExportOwnershipInfoTest {
                 AndroidLibModule(
                     name = "feature",
                     imports = listOf("import com.avito.android.model.Owner"),
-                    plugins = plugins {
-                        id("com.avito.android.module-types")
-                    },
                     buildGradleExtra = """
                         |object Speed : Owner {
                         |   override fun toString(): String = "Speed"
