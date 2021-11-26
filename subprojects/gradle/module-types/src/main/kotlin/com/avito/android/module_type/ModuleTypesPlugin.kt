@@ -9,7 +9,6 @@ import com.avito.module.configurations.ConfigurationType
 import com.avito.module.dependencies.directDependenciesOnProjects
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import com.avito.android.ModuleTypeExtension as LegacyModuleTypeExtension
 
 public class ModuleTypesPlugin : Plugin<Project> {
 
@@ -17,11 +16,7 @@ public class ModuleTypesPlugin : Plugin<Project> {
         if (project.isRoot()) {
             configureRootProject(project)
         } else {
-            if (project.useCustomTypes) {
-                configureNonRootProject(project)
-            } else {
-                configureLegacyNonRootProject(project)
-            }
+            configureNonRootProject(project)
         }
     }
 
@@ -75,21 +70,6 @@ public class ModuleTypesPlugin : Plugin<Project> {
             task.directDependencies.set(directDependencies)
         }
     }
-
-    private fun configureLegacyNonRootProject(project: Project) {
-        project.extensions.create(
-            "module",
-            LegacyModuleTypeExtension::class.java,
-        )
-    }
 }
 
 internal const val pluginId = "com.avito.android.module-types"
-
-// TODO: delete after migrating clients in MBS-12266
-private val Project.useCustomTypes: Boolean
-    get() = providers
-        .gradleProperty("avito.module_type.useCustomTypes")
-        .forUseAtConfigurationTime()
-        .map { it.toBoolean() }
-        .getOrElse(false)

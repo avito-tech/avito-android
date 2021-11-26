@@ -27,8 +27,8 @@ internal class ModuleTypesProjectGenerator(
     )
 
     class Constraint(
-        val from: StubModuleType,
-        val to: StubModuleType,
+        val module: StubModuleType,
+        val dependency: StubModuleType,
         val configuration: ConfigurationType = ConfigurationType.Main,
     )
 
@@ -89,12 +89,11 @@ internal class ModuleTypesProjectGenerator(
                     restrictions.add(
                         DependencyRestriction(
                             matcher = BetweenModuleTypes(
-                                from = ${constraint.from.classReference}, 
-                                to = ${constraint.to.classReference},
+                                module = ${constraint.module.classReference}, 
+                                dependency = ${constraint.dependency.classReference},
                                 configuration = ${constraint.configuration.classReference}
                             ), 
                             exclusions = setOf($exclusionsDeclaration),
-                            description = "<reason>",
                         )
                     )
                 }

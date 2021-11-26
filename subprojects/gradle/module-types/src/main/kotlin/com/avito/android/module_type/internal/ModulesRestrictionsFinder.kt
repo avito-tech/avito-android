@@ -36,8 +36,8 @@ internal class ModulesRestrictionsFinder(
                         if (restriction.isViolated(moduleDescription.module, dependentModule, configuration)) {
                             violations.add(
                                 RestrictionViolation(
-                                    from = moduleDescription.module,
-                                    to = dependentModule,
+                                    module = moduleDescription.module,
+                                    dependency = dependentModule,
                                     restriction = restriction
                                 )
                             )
@@ -81,7 +81,7 @@ internal class ModulesRestrictionsFinder(
 }
 
 internal class RestrictionViolation(
-    val from: ModuleWithType,
-    val to: ModuleWithType,
+    val module: ModuleWithType,
+    val dependency: ModuleWithType,
     val restriction: DependencyRestriction
 )

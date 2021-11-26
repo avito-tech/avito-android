@@ -67,14 +67,13 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
     }
 
     private fun buildProblem(violations: List<RestrictionViolation>): Problem {
-        val modulesWithErrors = violations.map { it.from.path }.toSet()
+        val modulesWithErrors = violations.map { it.module.path }.toSet()
 
         val errorsDescription = buildString {
             violations.forEach { violation ->
                 appendLine()
-                appendLine("${violation.from.description()} depends on ${violation.to.description()}")
+                appendLine("${violation.module.description()} depends on ${violation.dependency.description()}")
                 appendLine("It violates a constraint: ${violation.restriction.matcher.description()}")
-                appendLine(violation.restriction.description)
             }
         }
         @Suppress("MaxLineLength")

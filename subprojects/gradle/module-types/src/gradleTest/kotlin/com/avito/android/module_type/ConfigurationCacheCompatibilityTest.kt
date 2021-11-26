@@ -13,7 +13,7 @@ internal class ConfigurationCacheCompatibilityTest : BaseModuleTypesTest() {
         givenProject(
             moduleType = LibraryModule,
             dependency = Dependency(LibraryModule),
-            constraint = Constraint(from = LibraryModule, to = FeatureModule)
+            constraint = Constraint(module = LibraryModule, dependency = FeatureModule)
         )
 
         runCheck(projectDir, configurationCache = true).assertThat().buildSuccessful()
