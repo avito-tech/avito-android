@@ -17,7 +17,7 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
         givenProject(
             moduleType = LibraryModule,
             dependency = Dependency(LibraryModule),
-            constraint = Constraint(from = LibraryModule, to = FeatureModule)
+            constraint = Constraint(module = LibraryModule, dependency = FeatureModule)
         )
 
         val result = runCheck(projectDir)
@@ -30,7 +30,7 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
         givenProject(
             moduleType = LibraryModule,
             dependency = Dependency(FeatureModule),
-            constraint = Constraint(from = LibraryModule, to = FeatureModule)
+            constraint = Constraint(module = LibraryModule, dependency = FeatureModule)
         )
 
         val result = runCheck(projectDir, expectFailure = true)
@@ -40,7 +40,6 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
             """
             module :A (LibraryModule) depends on module :B (FeatureModule)
             It violates a constraint: module of type LibraryModule depends on a module of type FeatureModule
-            <reason>
             """.trimIndent()
         )
     }
@@ -51,8 +50,8 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
             moduleType = LibraryModule,
             dependency = Dependency(TestModule, IMPLEMENTATION),
             constraint = Constraint(
-                from = LibraryModule,
-                to = TestModule,
+                module = LibraryModule,
+                dependency = TestModule,
                 configuration = ConfigurationType.Main
             )
         )
@@ -68,8 +67,8 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
             moduleType = LibraryModule,
             dependency = Dependency(TestModule, TEST_IMPLEMENTATION),
             constraint = Constraint(
-                from = LibraryModule,
-                to = TestModule,
+                module = LibraryModule,
+                dependency = TestModule,
                 configuration = ConfigurationType.Main
             )
         )
@@ -84,7 +83,7 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
         givenProject(
             moduleType = LibraryModule,
             dependency = Dependency(FeatureModule),
-            constraint = Constraint(from = LibraryModule, to = FeatureModule),
+            constraint = Constraint(module = LibraryModule, dependency = FeatureModule),
             exclusions = setOf(":B")
         )
 
@@ -99,7 +98,7 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
             severity = Severity.ignore,
             moduleType = LibraryModule,
             dependency = Dependency(FeatureModule),
-            constraint = Constraint(from = LibraryModule, to = FeatureModule)
+            constraint = Constraint(module = LibraryModule, dependency = FeatureModule)
         )
 
         val result = runCheck(projectDir, expectFailure = false)

@@ -33,8 +33,7 @@ internal class ModulesRestrictionsFinderTest {
             )
         )
         val restriction = DependencyRestriction(
-            matcher = BetweenModuleTypes(from = LibraryModule, to = FeatureModule),
-            description = "..."
+            matcher = BetweenModuleTypes(module = LibraryModule, dependency = FeatureModule),
         )
         val restrictions = listOf(restriction)
 
@@ -45,8 +44,8 @@ internal class ModulesRestrictionsFinderTest {
 
         val violation = violations.first()
 
-        assertThat(violation.from).isEqualTo(ModuleWithType(":A", LibraryModule))
-        assertThat(violation.to).isEqualTo(ModuleWithType(":C", FeatureModule))
+        assertThat(violation.module).isEqualTo(ModuleWithType(":A", LibraryModule))
+        assertThat(violation.dependency).isEqualTo(ModuleWithType(":C", FeatureModule))
         assertThat(violation.restriction).isEqualTo(restriction)
     }
 
@@ -62,10 +61,7 @@ internal class ModulesRestrictionsFinderTest {
                 directDependencies = emptyMap()
             ),
         )
-        val restriction = DependencyRestriction(
-            matcher = ToTestModule(),
-            description = "..."
-        )
+        val restriction = DependencyRestriction(ToTestModule())
         val restrictions = listOf(restriction)
 
         val violations = violations(modules, restrictions)
@@ -75,8 +71,8 @@ internal class ModulesRestrictionsFinderTest {
 
         val violation = violations.first()
 
-        assertThat(violation.from).isEqualTo(ModuleWithType(":lib", LibraryModule))
-        assertThat(violation.to).isEqualTo(ModuleWithType(":test-fixtures", TestModule))
+        assertThat(violation.module).isEqualTo(ModuleWithType(":lib", LibraryModule))
+        assertThat(violation.dependency).isEqualTo(ModuleWithType(":test-fixtures", TestModule))
         assertThat(violation.restriction).isEqualTo(restriction)
     }
 
@@ -93,8 +89,7 @@ internal class ModulesRestrictionsFinderTest {
             )
         )
         val restriction = DependencyRestriction(
-            matcher = BetweenModuleTypes(from = LibraryModule, to = LibraryModule),
-            description = "...",
+            matcher = BetweenModuleTypes(module = LibraryModule, dependency = LibraryModule),
             exclusions = setOf(DependentModule(":B"))
         )
         val restrictions = listOf(restriction)

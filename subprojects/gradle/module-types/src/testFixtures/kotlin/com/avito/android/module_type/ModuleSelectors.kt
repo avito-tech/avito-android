@@ -3,32 +3,40 @@ import com.avito.android.module_type.ModuleWithType
 import com.avito.module.configurations.ConfigurationType
 
 public class BetweenModuleTypes(
-    private val from: StubModuleType,
-    private val to: StubModuleType,
+    private val module: StubModuleType,
+    private val dependency: StubModuleType,
     private val configuration: ConfigurationType = ConfigurationType.Main
 ) : DependencyMatcher {
 
-    override fun match(from: ModuleWithType, to: ModuleWithType, configuration: ConfigurationType): Boolean {
-        val fromType = from.type ?: return false
-        val toType = to.type ?: return false
+    override fun matches(
+        module: ModuleWithType,
+        dependency: ModuleWithType,
+        configuration: ConfigurationType
+    ): Boolean {
+        val moduleType = module.type ?: return false
+        val dependencyType = dependency.type ?: return false
 
-        return this.from.isEqualTo(fromType)
-            && this.to.isEqualTo(toType)
+        return this.module.isEqualTo(moduleType)
+            && this.dependency.isEqualTo(dependencyType)
             && this.configuration == configuration
     }
 
     override fun description(): String =
-        "module of type ${from.description()} depends on a module of type ${to.description()}"
+        "module of type ${module.description()} depends on a module of type ${dependency.description()}"
 }
 
 public class ToTestModule : DependencyMatcher {
 
-    override fun match(from: ModuleWithType, to: ModuleWithType, configuration: ConfigurationType): Boolean {
-        val fromType = from.type ?: return false
-        val toType = to.type ?: return false
+    override fun matches(
+        module: ModuleWithType,
+        dependency: ModuleWithType,
+        configuration: ConfigurationType
+    ): Boolean {
+        val moduleType = module.type ?: return false
+        val dependencyType = dependency.type ?: return false
 
-        return !fromType.isEqualTo(TestModule)
-            && toType.isEqualTo(TestModule)
+        return !moduleType.isEqualTo(TestModule)
+            && dependencyType.isEqualTo(TestModule)
             && configuration == ConfigurationType.Main
     }
 
@@ -40,8 +48,12 @@ public class DependentModule(
     public val path: String
 ) : DependencyMatcher {
 
-    override fun match(from: ModuleWithType, to: ModuleWithType, configuration: ConfigurationType): Boolean =
-        path == to.path
+    override fun matches(
+        module: ModuleWithType,
+        dependency: ModuleWithType,
+        configuration: ConfigurationType
+    ): Boolean =
+        path == dependency.path
 
     override fun description(): String =
         "dependent module $path"

@@ -36,7 +36,6 @@ internal abstract class BaseModuleTypesTest {
     ) = gradlew(
         projectDir,
         "checkModuleDependencies",
-        "-Pavito.module_type.useCustomTypes=true",
         expectFailure = expectFailure,
         configurationCache = configurationCache,
         useTestFixturesClasspath = true
