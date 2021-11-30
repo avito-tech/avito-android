@@ -1,8 +1,11 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.android.graphite.GraphiteConfig
-import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsWorkerAction
+import com.avito.android.graphite.GraphiteSender
+import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsAction
+import com.avito.gradle.worker.inMemoryWork
 import com.avito.logger.LoggerFactory
+import com.avito.teamcity.TeamcityApi
 import com.avito.teamcity.TeamcityCredentials
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
@@ -30,11 +33,27 @@ public abstract class CollectTeamcityMetricsTask @Inject constructor(
 
     @TaskAction
     public fun action() {
-        workerExecutor.noIsolation().submit(CollectTeamcityMetricsWorkerAction::class.java) { parameters ->
-            parameters.getBuildId().set(buildId)
-            parameters.getLoggerFactory().set(loggerFactory)
-            parameters.getGraphiteConfig().set(graphiteConfig)
-            parameters.getTeamcityCredentials().set(teamcityCredentials)
+        val buildId: String? = buildId.orNull
+        require(!buildId.isNullOrBlank()) {
+            "teamcity buildId property must be set"
         }
+        val graphite = graphiteSender()
+        val teamcity = TeamcityApi.create(teamcityCredentials.get())
+        val action = CollectTeamcityMetricsAction(
+            buildId = buildId,
+            teamcityApi = teamcity,
+            graphite = graphite
+        )
+
+        workerExecutor.inMemoryWork {
+            action.execute()
+        }
+    }
+
+    private fun graphiteSender(): GraphiteSender {
+        return GraphiteSender.create(
+            config = graphiteConfig.get(),
+            loggerFactory = loggerFactory.get()
+        )
     }
 }
