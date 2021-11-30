@@ -51,7 +51,7 @@ public class ModuleTypesPlugin : Plugin<Project> {
             it.dependsOn("${project.path}:${ExtractModuleDescriptionTask.name}")
             // Workaround for project isolation to wire tasks
             // - We can't read task's dependencies in execution phase
-            // - We can't wire them through output/input because to get task provider we need to get a project
+            // - We can't wire them through output/input because we need a project to get task provider
             it.dependentProjects.set(
                 mutableSetOf(project.path) + it.dependentProjects.get()
             )
@@ -69,7 +69,20 @@ public class ModuleTypesPlugin : Plugin<Project> {
                 .mapValues { it.value.map { it.path }.toSet() }
             task.directDependencies.set(directDependencies)
         }
+        if (project.mandatoryType) {
+            project.afterEvaluate {
+                extension.ensureHasType(projectPath = it.path)
+            }
+        }
     }
 }
 
 internal const val pluginId = "com.avito.android.module-types"
+
+// TODO: delete after migrating clients in MBS-12266
+private val Project.mandatoryType: Boolean
+    get() = providers
+        .gradleProperty("avito.module_type.mandatoryType")
+        .forUseAtConfigurationTime()
+        .map { it.toBoolean() }
+        .getOrElse(false)
