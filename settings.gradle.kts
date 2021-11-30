@@ -124,6 +124,7 @@ include(":subprojects:logger:gradle-logger")
 include(":subprojects:logger:logger")
 include(":subprojects:logger:sentry-logger")
 include(":subprojects:logger:elastic-logger")
+include(":subprojects:logger:android-logger")
 
 include(":subprojects:delivery:artifactory-app-backup")
 include(":subprojects:delivery:cd")

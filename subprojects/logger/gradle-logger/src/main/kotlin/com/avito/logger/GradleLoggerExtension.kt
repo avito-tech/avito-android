@@ -23,7 +23,6 @@ public abstract class GradleLoggerExtension {
         val config: ElasticConfig
     ) : Serializable
 
-    public abstract val appendMetadata: Property<Boolean>
     public abstract val fileHandler: Property<LogLevel>
     public abstract val fileHandlerRootDir: DirectoryProperty
     internal abstract val printlnHandler: Property<PrintlnMode>
@@ -44,7 +43,6 @@ public abstract class GradleLoggerExtension {
     }
 
     internal fun finalizeValues() {
-        appendMetadata.finalizeValue()
         fileHandler.finalizeValue()
         fileHandlerRootDir.finalizeValue()
         printlnHandler.finalizeValue()

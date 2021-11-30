@@ -1,5 +1,8 @@
 package com.avito.logger
 
+import com.avito.logger.metadata.LoggerMetadata
+import com.avito.logger.metadata.LoggerMetadataProvider
+
 internal class GradleMetadataProvider(
     private val coordinates: GradleLoggerCoordinates
 ) : LoggerMetadataProvider {

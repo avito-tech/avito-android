@@ -6,7 +6,7 @@ import com.avito.android.elastic.ElasticClientFactory
 import com.avito.android.sentry.sentryClient
 import com.avito.logger.destination.ElasticLoggingHandlerProvider
 import com.avito.logger.destination.SentryLoggingHandlerProvider
-import com.avito.logger.formatter.AppendMetadataFormatter
+import com.avito.logger.handler.FileLoggingHandlerProvider
 import com.avito.logger.handler.LoggingHandlerProvider
 import com.avito.logger.handler.PrintlnLoggingHandlerProvider
 import org.gradle.api.file.DirectoryProperty
@@ -17,7 +17,6 @@ import org.gradle.api.services.BuildServiceParameters
 public abstract class LoggerService : BuildService<LoggerService.Params> {
 
     public interface Params : BuildServiceParameters {
-        public val appendMetadata: Property<Boolean>
         public val fileHandler: Property<LogLevel>
         public val fileHandlerRootDir: DirectoryProperty
         public val printlnHandler: Property<GradleLoggerExtension.PrintlnMode>
@@ -31,8 +30,6 @@ public abstract class LoggerService : BuildService<LoggerService.Params> {
             "gradleLogger extension must be finalized. You trying to use it too early"
         }
     }
-
-    private val appendMetadata: Boolean = parameters.appendMetadata.getOrElse(false)
 
     private val handlerProviders: List<LoggingHandlerProvider> by lazy {
         val providers = mutableListOf<LoggingHandlerProvider>()
@@ -66,9 +63,6 @@ public abstract class LoggerService : BuildService<LoggerService.Params> {
     public fun createLoggerFactory(coordinates: GradleLoggerCoordinates): LoggerFactory {
         val builder = LoggerFactoryBuilder()
         with(builder) {
-            if (appendMetadata) {
-                formatter(AppendMetadataFormatter)
-            }
             metadataProvider(GradleMetadataProvider(coordinates))
             handlerProviders.forEach { addLoggingHandlerProvider(it) }
         }

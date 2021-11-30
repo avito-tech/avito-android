@@ -15,7 +15,6 @@ internal class LegacyGradleLoggerConfigurator(
 
     fun configure(parameters: LoggerService.Params) {
         with(parameters) {
-            appendMetadata.set(true)
             val verbosity = getVerbosity() ?: LogLevel.INFO
             printlnHandler.set(GradleLoggerExtension.PrintlnMode(verbosity, doPrintStackTrace()))
             fileHandler.set(LogLevel.INFO)

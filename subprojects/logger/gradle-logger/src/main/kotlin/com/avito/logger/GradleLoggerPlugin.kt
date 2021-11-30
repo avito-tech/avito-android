@@ -17,7 +17,6 @@ public class GradleLoggerPlugin : Plugin<Project> {
         checkProjectIsRoot(target)
         val extension = target.extensions.create("gradleLogger", GradleLoggerExtension::class.java)
         extension.fileHandlerRootDir.set(target.layout.buildDirectory.dir("logs"))
-        extension.appendMetadata.set(true)
         target.afterEvaluate {
             /**
              * The problem is some plugins could start use LoggerService before build script evaluated
@@ -102,7 +101,6 @@ public class GradleLoggerPlugin : Plugin<Project> {
                     .withZone(ZoneId.from(ZoneOffset.UTC))
                 val instant = Instant.now()
                 it.parameters {
-                    it.appendMetadata.set(extension.appendMetadata)
                     it.printlnHandler.set(extension.printlnHandler)
                     it.fileHandler.set(extension.fileHandler)
                     it.fileHandlerRootDir.set(extension.fileHandlerRootDir.map { it.dir(formatter.format(instant)) })

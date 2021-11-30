@@ -1,11 +1,12 @@
-package com.avito.logger
+package com.avito.logger.handler
 
-import com.avito.logger.handler.LogLevelLoggingHandler
+import com.avito.logger.LogLevel
 import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Path
 
 internal class FileLoggingHandler(
+    private val messagePrefix: String,
     acceptedLogLevel: LogLevel,
     logFile: Path
 ) : LogLevelLoggingHandler(acceptedLogLevel) {
@@ -17,7 +18,7 @@ internal class FileLoggingHandler(
     private val stackTraceWriter by lazy { PrintWriter(fileWriter) }
 
     override fun handleIfAcceptLogLevel(level: LogLevel, message: String, error: Throwable?) {
-        fileWriter.write("[$level] $message")
+        fileWriter.write("$messagePrefix [$level] $message")
         fileWriter.newLine()
         if (error != null) {
             val errorMessage = error.message

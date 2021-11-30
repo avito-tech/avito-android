@@ -64,7 +64,6 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 id("com.avito.android.build-metrics")
             }
             gradleLogger {
-                appendMetadata.set(true)
                 printlnHandler(false, com.avito.logger.LogLevel.DEBUG)
             }
             

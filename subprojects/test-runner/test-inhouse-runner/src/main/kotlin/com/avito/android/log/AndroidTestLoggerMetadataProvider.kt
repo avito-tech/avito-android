@@ -1,7 +1,7 @@
 package com.avito.android.log
 
-import com.avito.logger.LoggerMetadata
-import com.avito.logger.LoggerMetadataProvider
+import com.avito.logger.metadata.LoggerMetadata
+import com.avito.logger.metadata.LoggerMetadataProvider
 
 class AndroidTestLoggerMetadataProvider(
     private val testName: String

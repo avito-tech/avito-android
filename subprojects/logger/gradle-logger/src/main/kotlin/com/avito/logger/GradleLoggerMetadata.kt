@@ -2,12 +2,12 @@ package com.avito.logger
 
 import java.nio.file.Path
 
-public data class GradleLoggerMetadata(
-    public override val tag: String,
-    public val coordinates: GradleLoggerCoordinates
+internal class GradleLoggerMetadata(
+    private val tag: String,
+    private val coordinates: GradleLoggerCoordinates
 ) : FileHandledLoggerMetadata {
 
-    private val asString by lazy {
+    override val asMessagePrefix: String by lazy {
         buildString {
             append('[')
             append(tag)
@@ -36,8 +36,6 @@ public data class GradleLoggerMetadata(
             }
         }
     }
-
-    override fun asString(): String = asString
 
     override fun asMap(): Map<String, String> {
         val result = mutableMapOf(
