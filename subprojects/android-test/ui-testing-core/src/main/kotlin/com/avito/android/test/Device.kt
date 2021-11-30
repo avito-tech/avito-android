@@ -34,7 +34,7 @@ import org.junit.Assert.assertTrue
  */
 object Device {
 
-    private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val uiDevice by lazy { UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()) }
 
     val keyboard = KeyboardElement()
 
