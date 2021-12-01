@@ -1,5 +1,6 @@
 package com.avito.logger
 
+import com.avito.logger.metadata.LoggerMetadata
 import java.nio.file.Path
 
 /**

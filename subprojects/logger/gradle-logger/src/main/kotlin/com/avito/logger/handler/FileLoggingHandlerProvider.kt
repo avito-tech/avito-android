@@ -1,7 +1,8 @@
-package com.avito.logger
+package com.avito.logger.handler
 
-import com.avito.logger.handler.LoggingHandler
-import com.avito.logger.handler.LoggingHandlerProvider
+import com.avito.logger.FileHandledLoggerMetadata
+import com.avito.logger.LogLevel
+import com.avito.logger.metadata.LoggerMetadata
 import java.io.File
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
@@ -32,6 +33,6 @@ internal class FileLoggingHandlerProvider(
         require(absoluteLogDirPath.isDirectory()) {
             "Must be dir but was $absoluteLogDirPath"
         }
-        return FileLoggingHandler(acceptedLogLevel, absoluteLogFilePath)
+        return FileLoggingHandler(metadata.asMessagePrefix, acceptedLogLevel, absoluteLogFilePath)
     }
 }

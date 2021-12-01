@@ -25,7 +25,6 @@ internal class TasksMetricsTest {
             },
             buildGradleExtra = """
                 |gradleLogger {
-                |   appendMetadata.set(true)
                 |   printlnHandler(false, com.avito.logger.LogLevel.DEBUG)
                 |}
             """.trimMargin(),

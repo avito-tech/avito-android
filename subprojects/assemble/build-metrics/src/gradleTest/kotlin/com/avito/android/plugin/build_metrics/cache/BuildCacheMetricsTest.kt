@@ -19,7 +19,6 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             }
             
             gradleLogger {
-                appendMetadata.set(true)
                 printlnHandler(false, com.avito.logger.LogLevel.DEBUG)
             }
             

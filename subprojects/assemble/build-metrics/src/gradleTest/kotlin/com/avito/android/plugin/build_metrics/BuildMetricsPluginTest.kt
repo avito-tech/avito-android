@@ -32,7 +32,6 @@ internal class BuildMetricsPluginTest {
             ),
             buildGradleExtra = """
                 |gradleLogger {
-                |   appendMetadata.set(true)
                 |   printlnHandler(false, com.avito.logger.LogLevel.DEBUG)
                 |}
             """.trimMargin()

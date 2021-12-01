@@ -1,7 +1,7 @@
 package com.avito.logger.handler
 
 import com.avito.logger.LogLevel
-import com.avito.logger.LoggerMetadata
+import com.avito.logger.metadata.LoggerMetadata
 
 public class PrintlnLoggingHandlerProvider(
     private val acceptedLogLevel: LogLevel,
@@ -9,17 +9,18 @@ public class PrintlnLoggingHandlerProvider(
 ) : LoggingHandlerProvider {
 
     override fun provide(metadata: LoggerMetadata): LoggingHandler {
-        return PrintlnLoggingHandler(acceptedLogLevel, printStackTrace)
+        return PrintlnLoggingHandler(acceptedLogLevel, printStackTrace, metadata.asMessagePrefix)
     }
 }
 
 internal class PrintlnLoggingHandler(
     acceptedLogLevel: LogLevel,
-    private val printStackTrace: Boolean
+    private val printStackTrace: Boolean,
+    private val messagePrefix: String
 ) : LogLevelLoggingHandler(acceptedLogLevel) {
 
     override fun handleIfAcceptLogLevel(level: LogLevel, message: String, error: Throwable?) {
-        println(message)
+        println("$messagePrefix $message")
         if (printStackTrace && error != null) {
             error.printStackTrace()
         }
