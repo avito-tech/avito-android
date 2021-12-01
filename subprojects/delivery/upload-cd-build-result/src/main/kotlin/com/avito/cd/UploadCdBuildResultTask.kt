@@ -11,10 +11,10 @@ import org.gradle.api.tasks.TaskAction
 public abstract class UploadCdBuildResultTask : DefaultTask() {
 
     @get:Input
-    public abstract val user: Property<String>
+    public abstract val artifactoryUser: Property<String>
 
     @get:Input
-    public abstract val password: Property<String>
+    public abstract val artifactoryPassword: Property<String>
 
     @get:Input
     public abstract val suppressErrors: Property<Boolean>
@@ -23,25 +23,15 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
     public abstract val reportUrl: Property<String>
 
     @get:Input
-    public abstract val planSlug: Property<String>
-
-    @get:Input
-    public abstract val jobSlug: Property<String>
-
-    @get:Input
-    public abstract val runId: Property<String>
+    public abstract val reportCoordinates: Property<CdBuildResult.TestResultsLink.ReportCoordinates>
 
     @TaskAction
     public fun sendCdBuildResult() {
         val gitState = project.gitState()
         createUploadAction().send(
             testResults = CdBuildResult.TestResultsLink(
-                reportUrl.get(),
-                CdBuildResult.TestResultsLink.ReportCoordinates(
-                    planSlug = planSlug.get(),
-                    jobSlug = jobSlug.get(),
-                    runId = runId.get()
-                )
+                reportUrl = reportUrl.get(),
+                reportCoordinates = reportCoordinates.get()
             ),
             buildOutput = project.buildOutput.get(),
             cdBuildConfig = project.cdBuildConfig.get(),
@@ -55,8 +45,8 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
         return UploadCdBuildResultTaskAction(
             gson = uploadCdGson,
             client = Providers.client(
-                user = user.get(),
-                password = password.get(),
+                user = artifactoryUser.get(),
+                password = artifactoryPassword.get(),
             ),
             suppressErrors = suppressErrors.get()
         )
