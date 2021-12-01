@@ -45,7 +45,6 @@ internal class DeviceProviderFactoryImpl(
                     androidDebugBridge = androidDebugBridgeProvider.provide(),
                     emulatorsLogsReporter = emulatorsLogsReporterProvider.provide(tempLogcatDir),
                     devicesManager = AdbDevicesManager(
-                        loggerFactory = loggerFactory,
                         adb = Adb()
                     ),
                     adbDeviceFactory = AdbDeviceFactory(
@@ -70,7 +69,6 @@ internal class DeviceProviderFactoryImpl(
                         processRunner = processRunner
                     ),
                     devicesManager = AdbDevicesManager(
-                        loggerFactory = loggerFactory,
                         adb = Adb()
                     ),
                     deviceWorkerPoolProvider = deviceWorkerPoolProvider

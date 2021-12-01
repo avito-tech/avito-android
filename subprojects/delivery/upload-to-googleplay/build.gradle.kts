@@ -6,7 +6,6 @@ plugins {
 dependencies {
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(gradleApi())
     implementation(libs.googlePublish)
 }

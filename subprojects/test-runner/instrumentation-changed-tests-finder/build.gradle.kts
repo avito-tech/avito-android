@@ -10,7 +10,6 @@ dependencies {
         because("Need to know all classes in files")
     }
     implementation(projects.subprojects.common.files)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.impactShared) {
         because("ChangesDetector reuse")

@@ -7,7 +7,6 @@ plugins {
 dependencies {
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.gradle.buildEnvironment)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.assemble.criticalPath.api)
     implementation(projects.subprojects.assemble.buildMetricsTracker)
@@ -22,7 +21,6 @@ dependencies {
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(testFixtures(projects.subprojects.common.graphite))
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
     testImplementation(testFixtures(projects.subprojects.common.statsd))
     testImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
 
@@ -30,7 +28,6 @@ dependencies {
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.gradle.git)
-    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
 }
 
 gradlePlugin {

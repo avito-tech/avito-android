@@ -20,14 +20,8 @@ internal class TasksMetricsTest {
         this.projectDir = tempDir
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.build-metrics")
             },
-            buildGradleExtra = """
-                |gradleLogger {
-                |   printlnHandler(false, com.avito.logger.LogLevel.DEBUG)
-                |}
-            """.trimMargin(),
             modules = listOf(
                 KotlinModule(name = "lib")
             )

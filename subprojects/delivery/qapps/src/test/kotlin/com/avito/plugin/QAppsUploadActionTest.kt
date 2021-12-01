@@ -19,13 +19,11 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class QAppsUploadActionTest {
+internal class QAppsUploadActionTest {
 
     private lateinit var testProjectDir: File
 
     private val server = MockWebServerFactory.create()
-
-    private val loggerFactory = PrintlnLoggerFactory
 
     private val apk: File
         get() {
@@ -46,7 +44,7 @@ class QAppsUploadActionTest {
             packageName = "com.avito.android",
             releaseChain = false,
             httpClientProvider = HttpClientProvider.createStubInstance(),
-            loggerFactory = loggerFactory
+            loggerFactory = PrintlnLoggerFactory
         )
 
     private val failedResponse = MockResponse()

@@ -1,10 +1,9 @@
 package com.avito.plugin
 
+import Slf4jGradleLoggerFactory
 import com.avito.android.getApkOrThrow
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.buildFailer
@@ -14,7 +13,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
@@ -49,9 +47,6 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
     @Input
     public val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
 
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
     @get:InputDirectory
     public abstract val apkDirectory: DirectoryProperty
 
@@ -59,13 +54,12 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
     public fun upload() {
         val apk = apkDirectory.get().getApkOrThrow()
 
-        val loggerFactory = loggerFactory.get()
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         val httpClientProvider = HttpClientProvider(
             statsDSender = project.statsd.get(),
             timeProvider = timeProvider,
-            loggerFactory = loggerFactory
+            loggerFactory = Slf4jGradleLoggerFactory
         )
 
         val uploadResult = QAppsUploadAction(
@@ -78,10 +72,8 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
             packageName = packageName.get(),
             releaseChain = releaseChain.get(),
             httpClientProvider = httpClientProvider,
-            loggerFactory = loggerFactory
+            loggerFactory = Slf4jGradleLoggerFactory
         ).upload()
-
-        val logger = loggerFactory.create<QAppsUploadTask>()
 
         uploadResult.fold(
             { logger.info("Upload to qapps was successful: ${apk.path}") },

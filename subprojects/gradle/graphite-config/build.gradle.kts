@@ -7,6 +7,5 @@ dependencies {
     api(projects.subprojects.common.graphite)
 
     implementation(gradleApi())
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
 }

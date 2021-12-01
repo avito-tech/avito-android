@@ -13,9 +13,6 @@ internal class QAppsSignedTest {
     @Test
     fun `qappsUploadSigned - depends on signer task`(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.gradle-logger")
-            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

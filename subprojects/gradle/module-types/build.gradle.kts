@@ -8,7 +8,6 @@ plugins {
 dependencies {
     api(projects.subprojects.gradle.moduleDependenciesShared)
 
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.common.problem)
     implementation(libs.kotlinGradle)

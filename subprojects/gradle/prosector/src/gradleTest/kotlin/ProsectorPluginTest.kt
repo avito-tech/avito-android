@@ -109,9 +109,6 @@ internal class ProsectorPluginTest {
         versionName: String
     ) {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.gradle-logger")
-            },
             modules = listOf(
                 AndroidAppModule(
                     appModuleName,

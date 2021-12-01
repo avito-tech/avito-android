@@ -58,9 +58,6 @@ internal class QAppsPluginTest {
         ).apply { createNewFile() }
 
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.gradle-logger")
-            },
             modules = listOf(
                 AndroidAppModule(
                     "app",

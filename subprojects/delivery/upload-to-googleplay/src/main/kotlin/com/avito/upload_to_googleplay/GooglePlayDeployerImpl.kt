@@ -1,6 +1,5 @@
 package com.avito.upload_to_googleplay
 
-import com.avito.logger.Logger
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.FileContent
@@ -9,6 +8,7 @@ import com.google.api.services.androidpublisher.AndroidPublisher
 import com.google.api.services.androidpublisher.AndroidPublisherScopes
 import com.google.api.services.androidpublisher.model.Track
 import com.google.api.services.androidpublisher.model.TrackRelease
+import org.slf4j.Logger
 import java.io.File
 import java.util.concurrent.TimeUnit
 

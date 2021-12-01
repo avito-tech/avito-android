@@ -1,18 +1,13 @@
 package com.avito.android.plugin
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import java.time.LocalDate
 
 internal typealias Team = String
 internal typealias DeveloperEmail = String
 
 internal class SuspiciousTogglesCollector(
-    loggerFactory: LoggerFactory,
     private val developerToTeam: Map<DeveloperEmail, Team>
 ) {
-
-    private val logger = loggerFactory.create<SuspiciousTogglesCollector>()
 
     private val excludedToggles = listOf(
         "stetho",
@@ -38,7 +33,7 @@ internal class SuspiciousTogglesCollector(
                     .find { it.codeLine.contains("defaultValue") }
 
                 if (lastChangeCodeItem == null) {
-                    logger.critical("Error: ${jsonToggle.key}", NoSuchElementException(jsonToggle.key))
+                    // TODO handle lastChangeCodeItem == null
                     null
                 } else {
                     Toggle(

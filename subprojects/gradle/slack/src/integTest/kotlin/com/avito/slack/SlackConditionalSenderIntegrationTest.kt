@@ -4,7 +4,6 @@ import com.avito.android.Result
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
 import com.avito.kotlin.dsl.getSystemProperty
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
-
-    private val loggerFactory = PrintlnLoggerFactory
 
     private val testChannelId = SlackChannel(
         id = getSystemProperty("avito.slack.test.channelId"),
@@ -28,7 +25,7 @@ internal class SlackConditionalSenderIntegrationTest {
         serviceName = "slack-integration-tests",
         token = testToken,
         workspace = getSystemProperty("avito.slack.test.workspace"),
-        httpClientProvider = HttpClientProvider.createStubInstance(loggerFactory = loggerFactory)
+        httpClientProvider = HttpClientProvider.createStubInstance()
     )
 
     @Test
@@ -41,11 +38,9 @@ internal class SlackConditionalSenderIntegrationTest {
             slackClient = slackClient,
             updater = SlackMessageUpdaterWithThreadMark(
                 slackClient = slackClient,
-                loggerFactory = loggerFactory,
                 threadMessage = "Updated"
             ),
             condition = condition,
-            loggerFactory = loggerFactory
         )
 
         sender.sendMessage("$uniqueId first message")
@@ -69,10 +64,8 @@ internal class SlackConditionalSenderIntegrationTest {
             slackClient = slackClient,
             updater = SlackMessageUpdaterDirectlyToThread(
                 slackClient = slackClient,
-                loggerFactory = loggerFactory
             ),
             condition = condition,
-            loggerFactory = loggerFactory
         )
 
         val firstMessageTry = sender.sendMessage("first message", author = author)

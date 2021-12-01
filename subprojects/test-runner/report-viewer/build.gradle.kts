@@ -14,7 +14,6 @@ dependencies {
 
     implementation(libs.kotson)
     implementation(projects.subprojects.common.httpClient)
-    implementation(projects.subprojects.logger.logger)
     implementation(projects.subprojects.testRunner.testModel)
 
     testImplementation(libs.jsonPathAssert)
@@ -23,10 +22,8 @@ dependencies {
     testImplementation(projects.subprojects.common.resources)
     testImplementation(projects.subprojects.common.testOkhttp)
     testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
     testImplementation(testFixtures(projects.subprojects.testRunner.report))
     testImplementation(testFixtures(projects.subprojects.testRunner.reportViewer))
 
     testFixturesImplementation(testFixtures(projects.subprojects.common.httpClient))
-    testFixturesImplementation(testFixtures(projects.subprojects.logger.logger))
 }

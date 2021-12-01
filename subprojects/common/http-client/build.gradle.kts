@@ -5,10 +5,11 @@ plugins {
 }
 
 dependencies {
+    api(projects.subprojects.common.time)
+    api(projects.subprojects.common.statsd)
+    api(projects.subprojects.logger.logger)
+
     implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.statsd)
-    implementation(projects.subprojects.common.time)
-    implementation(projects.subprojects.logger.logger)
 
     testImplementation(projects.subprojects.common.testOkhttp)
     testImplementation(projects.subprojects.common.truthExtensions)
@@ -17,6 +18,6 @@ dependencies {
     testImplementation(testFixtures(projects.subprojects.logger.logger))
 
     testFixturesApi(testFixtures(projects.subprojects.common.statsd))
-    testFixturesApi(testFixtures(projects.subprojects.logger.logger))
     testFixturesApi(testFixtures(projects.subprojects.common.time))
+    testFixturesImplementation(testFixtures(projects.subprojects.logger.logger))
 }

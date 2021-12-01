@@ -1,23 +1,20 @@
 package com.avito.android.plugin
 
-import com.avito.logger.PrintlnLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class SuspiciousTogglesCollectorTest {
+internal class SuspiciousTogglesCollectorTest {
 
     private lateinit var collector: SuspiciousTogglesCollector
-
-    private val loggerFactory = PrintlnLoggerFactory
 
     private val monthAgo = LocalDate.parse("2018-05-20")
     private val quarterAgo = LocalDate.parse("2018-03-20")
 
     @BeforeEach
     fun setUp() {
-        collector = SuspiciousTogglesCollector(loggerFactory, developerToTeam = mapOf())
+        collector = SuspiciousTogglesCollector(developerToTeam = mapOf())
     }
 
     @Test

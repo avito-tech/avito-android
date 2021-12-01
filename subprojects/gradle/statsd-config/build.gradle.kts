@@ -7,6 +7,6 @@ dependencies {
     api(projects.subprojects.common.statsd)
 
     implementation(gradleApi())
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.logger.slf4jGradleLogger)
 }

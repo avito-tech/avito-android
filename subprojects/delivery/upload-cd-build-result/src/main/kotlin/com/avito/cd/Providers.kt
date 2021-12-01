@@ -13,7 +13,6 @@ internal object Providers {
     internal fun client(
         user: String,
         password: String,
-        logger: HttpLoggingInterceptor.Logger = HttpLoggingInterceptor.Logger.DEFAULT
     ): OkHttpClient {
         return clientBuilder
             .addInterceptor { chain ->
@@ -25,7 +24,7 @@ internal object Providers {
                 )
             }
             .addInterceptor(
-                HttpLoggingInterceptor(logger).apply {
+                HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )

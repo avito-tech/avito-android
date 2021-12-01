@@ -13,7 +13,6 @@ dependencies {
     implementation(gradleApi())
     implementation(projects.subprojects.common.files)
     implementation(projects.subprojects.gradle.process)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
 
     testImplementation(projects.subprojects.common.truthExtensions)

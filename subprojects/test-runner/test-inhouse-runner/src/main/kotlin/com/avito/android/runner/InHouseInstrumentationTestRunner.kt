@@ -194,7 +194,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
 
-    val mockDispatcher by lazy { MockDispatcher(loggerFactory = loggerFactory) }
+    val mockDispatcher = MockDispatcher()
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 

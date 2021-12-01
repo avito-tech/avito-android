@@ -49,7 +49,6 @@ class ReportTransportFactory(
                 loggerFactory = loggerFactory,
                 reportsApi = ReportsApiFactory.create(
                     host = reportDestination.reportApiUrl,
-                    loggerFactory = loggerFactory,
                     httpClientProvider = httpClientProvider
                 ),
                 remoteStorageTransport = uploadFromDevice

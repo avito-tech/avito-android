@@ -2,7 +2,6 @@ package com.avito.reportviewer
 
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.test.model.TestName
@@ -17,8 +16,6 @@ import org.junit.jupiter.api.Test
 internal class ReportsApiTest {
 
     private val mockWebServer = MockWebServerFactory.create()
-
-    private val loggerFactory = PrintlnLoggerFactory
 
     @Test
     fun `getReport - returns NotFound - when throws exception with no data`() {
@@ -105,7 +102,6 @@ internal class ReportsApiTest {
 
     private fun createNoRetriesReportsApi(): ReportsApi = ReportsApiFactory.create(
         host = mockWebServer.url("/").toString(),
-        loggerFactory = loggerFactory,
         httpClientProvider = HttpClientProvider.createStubInstance(),
         retryRequests = false
     )

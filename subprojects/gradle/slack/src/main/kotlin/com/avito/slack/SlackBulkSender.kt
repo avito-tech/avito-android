@@ -1,7 +1,5 @@
 package com.avito.slack
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.slack.model.SlackSendMessageRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -24,10 +22,7 @@ public interface SlackBulkSender {
 @OptIn(ObsoleteCoroutinesApi::class)
 public class CoroutinesSlackBulkSender(
     private val sender: SlackMessageSender,
-    loggerFactory: LoggerFactory
 ) : SlackBulkSender {
-
-    private val logger = loggerFactory.create<SlackBulkSender>()
 
     private val requestQueue = Channel<SlackSendMessageRequest>(Channel.UNLIMITED)
 
@@ -43,8 +38,8 @@ public class CoroutinesSlackBulkSender(
         GlobalScope.launch {
             for (request in tickedQueue) {
                 sender.sendMessage(request)
-                    .onFailure { throwable ->
-                        logger.critical("Can't send slack report to ${request.channel}", throwable)
+                    .onFailure {
+                    // TODO handle failure
                     }
                 executedRequests.send(request)
             }

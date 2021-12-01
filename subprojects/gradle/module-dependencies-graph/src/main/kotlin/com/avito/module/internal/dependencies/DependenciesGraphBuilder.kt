@@ -1,7 +1,5 @@
 package com.avito.module.internal.dependencies
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.internal.configurations.ConfigurationCoordinate
 import com.avito.module.internal.dependencies.ProjectConfigurationNode.ConfigurationNode
@@ -10,7 +8,6 @@ import org.gradle.api.artifacts.ProjectDependency
 
 internal class DependenciesGraphBuilder(
     private val root: Project,
-    loggerFactory: LoggerFactory
 ) {
 
     init {
@@ -19,7 +16,7 @@ internal class DependenciesGraphBuilder(
         }
     }
 
-    private val logger = loggerFactory.create<DependenciesGraphBuilder>()
+    private val logger = root.logger
 
     private val visited = mutableMapOf<ProjectConfigurationCoordinate, ProjectConfigurationNode>()
 

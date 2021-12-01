@@ -1,7 +1,6 @@
 package com.avito.android.plugin.artifactory
 
 import com.avito.http.HttpCodes
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
@@ -20,8 +19,6 @@ import java.nio.file.Paths
 private typealias Artifact = Pair<String, String>
 
 internal class ArtifactoryAppBackupPluginTest {
-
-    private val loggerFactory = PrintlnLoggerFactory
 
     private val mockWebServer = MockWebServerFactory.create()
 
@@ -122,7 +119,6 @@ internal class ArtifactoryAppBackupPluginTest {
 
         val dispatcher = MockDispatcher(
             unmockedResponse = MockResponse().setResponseCode(HttpCodes.OK),
-            loggerFactory = loggerFactory
         )
             .also { mockWebServer.dispatcher = it }
 
@@ -208,7 +204,6 @@ internal class ArtifactoryAppBackupPluginTest {
 
         val dispatcher = MockDispatcher(
             unmockedResponse = MockResponse().setResponseCode(HttpCodes.OK),
-            loggerFactory = loggerFactory
         )
             .also { mockWebServer.dispatcher = it }
 

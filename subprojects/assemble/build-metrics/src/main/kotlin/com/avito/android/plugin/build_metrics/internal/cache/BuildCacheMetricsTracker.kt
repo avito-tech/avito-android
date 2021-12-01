@@ -10,14 +10,12 @@ import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
-import com.avito.logger.LoggerFactory
+import org.slf4j.Logger
 
 internal class BuildCacheMetricsTracker(
     private val metricsTracker: BuildMetricTracker,
-    loggerFactory: LoggerFactory
+    private val logger: Logger,
 ) : BuildOperationsResultListener {
-
-    private val logger = loggerFactory.create(BuildCacheMetricsTracker::class.java.simpleName)
 
     override fun onBuildFinished(result: BuildOperationsResult) {
         trackCacheErrors(result.cacheOperations)
@@ -31,6 +29,7 @@ internal class BuildCacheMetricsTracker(
                 STORE -> "store"
             }
             if (error.httpStatus == null) {
+                // TODO handle httpStatus null
                 logger.warn("Unknown cache $operationType error", error.cause)
             }
             val metricName = if (error.httpStatus != null) {

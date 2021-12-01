@@ -1,8 +1,6 @@
 package com.avito.test.http
 
 import com.avito.android.Result
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.utils.ResourcesReader
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -14,10 +12,7 @@ import java.util.Collections
 
 public class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
-    loggerFactory: LoggerFactory
 ) : Dispatcher() {
-
-    private val logger = loggerFactory.create<MockDispatcher>()
 
     private val mocks = Collections.synchronizedList(mutableListOf<Mock>())
 
@@ -40,7 +35,6 @@ public class MockDispatcher(
         synchronized(capturers) {
             capturers.find { it.requestMatcher.invoke(requestData) }?.run {
                 capture(request)
-                logger.debug("request captured: $request")
             }
         }
 
@@ -55,8 +49,6 @@ public class MockDispatcher(
         val response = matchedMock?.response ?: unmockedResponse
 
         if (matchedMock?.removeAfterMatched == true) mocks.remove(matchedMock)
-
-        logger.debug("got request: ${request.path}, response will be: $response")
 
         return response
     }

@@ -204,14 +204,6 @@ internal class LegacySignServicePluginTest {
         signServiceExtension: String = configureExtension(),
     ) {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.gradle-logger")
-            },
-            buildGradleExtra = """
-                |gradleLogger {
-                |   printlnHandler(false, com.avito.logger.LogLevel.DEBUG)
-                |}
-            """.trimMargin(),
             modules = listOf(
                 AndroidAppModule(
                     "app",

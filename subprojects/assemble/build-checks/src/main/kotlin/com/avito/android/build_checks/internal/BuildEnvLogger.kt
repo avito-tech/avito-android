@@ -3,7 +3,6 @@ package com.avito.android.build_checks.internal
 import com.avito.android.AndroidSdk
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.logger.Logger
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
@@ -11,7 +10,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 internal class BuildEnvLogger(
     private val project: Project,
-    private val logger: Logger,
     private val envInfo: BuildEnvironmentInfo,
 ) {
 
@@ -22,7 +20,7 @@ internal class BuildEnvLogger(
         val kaptMapDiagnosticLocations = project.getBooleanProperty("kaptMapDiagnosticLocations")
         val javaIncrementalCompilation = project.getBooleanProperty("javaIncrementalCompilation")
 
-        logger.info(
+        project.logger.info(
             """Config information for project: ${project.displayName}:
 BuildEnvironment: ${project.buildEnvironment}
 ${startParametersDescription(project.gradle)}

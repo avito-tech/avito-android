@@ -11,7 +11,6 @@ import com.avito.instrumentation.extractReportCoordinates
 import com.avito.instrumentation.extractReportViewerUrl
 import com.avito.instrumentation.instrumentationTaskDefaultEnvironment
 import com.avito.kotlin.dsl.namedOrNull
-import com.avito.logger.GradleLoggerPlugin
 import com.avito.report.ReportLinksGenerator
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportViewerQuery
@@ -59,8 +58,6 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
                 this.planSlug.set(reportCoordinates.planSlug)
                 this.jobSlug.set(reportCoordinates.jobSlug)
                 this.runId.set(reportCoordinates.runId)
-
-                loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
 
                 project.tasks.namedOrNull(deployTaskName)?.also { deployTask -> dependsOn(deployTask) }
 

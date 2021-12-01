@@ -9,7 +9,6 @@ import com.avito.ci.runTask
 import com.avito.git.Git
 import com.avito.http.HttpCodes
 import com.avito.instrumentation.instrumentationPluginId
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -31,7 +30,6 @@ import java.nio.file.Path
 
 internal class UploadCdBuildResultIntegrationTest {
 
-    private val loggerFactory = PrintlnLoggerFactory
     private lateinit var projectDir: File
     private val server = MockWebServerFactory.create()
     private val mockUrl = server.url("").toString().removeSuffix("/")
@@ -44,7 +42,6 @@ internal class UploadCdBuildResultIntegrationTest {
     private val reportsApiUrl = "https://reports"
     private val dispatcher = MockDispatcher(
         unmockedResponse = MockResponse().setResponseCode(200),
-        loggerFactory = loggerFactory
     )
         .also { dispatcher -> server.dispatcher = dispatcher }
 
@@ -111,7 +108,6 @@ internal class UploadCdBuildResultIntegrationTest {
 
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(androidAppModule)

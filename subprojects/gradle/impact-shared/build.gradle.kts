@@ -13,7 +13,6 @@ dependencies {
     implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.process)
-    implementation(projects.subprojects.logger.gradleLogger)
 
     implementation(libs.antPattern)
     implementation(libs.kotlinGradle)

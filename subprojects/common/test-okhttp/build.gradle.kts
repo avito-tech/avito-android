@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     api(libs.okhttpMockWebServer)
-    api(projects.subprojects.logger.logger)
     api(projects.subprojects.common.okhttp)
 
     implementation(libs.bundles.hamcrest)
@@ -17,6 +16,4 @@ dependencies {
     implementation(projects.subprojects.common.resources)
     implementation(projects.subprojects.common.waiter)
     implementation(projects.subprojects.common.result)
-
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
 }

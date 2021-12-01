@@ -1,6 +1,5 @@
 package com.avito.module.dependencies
 
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
@@ -18,7 +17,7 @@ import org.junit.jupiter.api.Test
 public class FindAndroidAppTaskActionTest {
 
     private val root = rootProject()
-    private val graphBuilder = AndroidAppsGraphBuilder(DependenciesGraphBuilder(root, PrintlnLoggerFactory))
+    private val graphBuilder = AndroidAppsGraphBuilder(DependenciesGraphBuilder(root))
     private val action = FindAndroidAppTaskAction(graphBuilder)
 
     @Test

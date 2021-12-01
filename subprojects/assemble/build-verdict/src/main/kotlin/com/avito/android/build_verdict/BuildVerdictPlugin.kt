@@ -2,8 +2,6 @@ package com.avito.android.build_verdict
 
 import com.avito.android.build_verdict.internal.BuildVerdictPluginServices
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerPlugin
-import com.avito.logger.create
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.GradleInternal
@@ -30,8 +28,7 @@ public class BuildVerdictPlugin : Plugin<ProjectInternal> {
         val extension = project.extensions.create<BuildVerdictPluginExtension>("buildVerdict")
 
         if (project.pluginIsEnabled) {
-            val logger = GradleLoggerPlugin.getLoggerFactory(project).map { it.create<BuildVerdictPlugin>() }
-            val services = BuildVerdictPluginServices(extension, logger)
+            val services = BuildVerdictPluginServices(extension, project.logger)
             project.gradle.addListener(services.gradleTaskExecutionListener())
             project.gradle.addLogEventListener(services.gradleLogEventListener())
             val configurationListener = services.gradleConfigurationListener()

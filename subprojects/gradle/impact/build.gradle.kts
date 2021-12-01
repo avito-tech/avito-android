@@ -9,7 +9,6 @@ dependencies {
 
     implementation(gradleApi())
     implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.common.files)
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.gradle.git)

@@ -10,7 +10,6 @@ plugins {
 dependencies {
     api(projects.subprojects.common.result)
 
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.common.time)
     implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.okhttp)
@@ -26,7 +25,6 @@ dependencies {
     testImplementation(testFixtures(projects.subprojects.common.statsd))
     testImplementation(testFixtures(projects.subprojects.common.time))
     testImplementation(testFixtures(projects.subprojects.gradle.slack))
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
 }
 
 tasks.named<Test>("integrationTest").configure {

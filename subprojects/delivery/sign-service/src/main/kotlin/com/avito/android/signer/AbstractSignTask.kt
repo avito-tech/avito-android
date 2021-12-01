@@ -1,13 +1,12 @@
 package com.avito.android.signer
 
+import Slf4jGradleLoggerFactory
 import com.avito.android.Problem
 import com.avito.android.signer.internal.SignViaServiceAction
 import com.avito.android.stats.statsd
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.buildFailer
@@ -18,7 +17,6 @@ import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
@@ -39,9 +37,6 @@ public abstract class AbstractSignTask(
     @get:Input
     public abstract val readWriteTimeoutSec: Property<Long>
 
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
     @get:OutputDirectory
     public val signedArtifactDirectory: Property<Directory> = objects.directoryProperty()
 
@@ -51,7 +46,6 @@ public abstract class AbstractSignTask(
 
     @TaskAction
     public fun doWork() {
-        val loggerFactory = loggerFactory.get()
         val unsignedFile = unsignedFile()
         val timeProvider: TimeProvider = DefaultTimeProvider()
         val serviceUrl: HttpUrl = serviceUrl.map { it.toHttpUrl() }.get()
@@ -61,7 +55,7 @@ public abstract class AbstractSignTask(
         val httpClient = HttpClientProvider(
             statsDSender = project.statsd.get(),
             timeProvider = timeProvider,
-            loggerFactory = loggerFactory
+            loggerFactory = Slf4jGradleLoggerFactory
         ).provide()
             .writeTimeout(timeout, TimeUnit.SECONDS)
             .readTimeout(timeout, TimeUnit.SECONDS)
@@ -72,8 +66,6 @@ public abstract class AbstractSignTask(
                 )
             )
             .build()
-
-        val logger = loggerFactory.create<AbstractSignTask>()
 
         val signedDirectory = signedArtifactDirectory.get().asFile.also {
             it.mkdirs()

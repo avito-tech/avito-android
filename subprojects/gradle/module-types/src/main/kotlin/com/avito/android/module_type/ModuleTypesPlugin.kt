@@ -4,7 +4,6 @@ import com.avito.android.module_type.internal.CheckModuleDependenciesTask
 import com.avito.android.module_type.internal.ExtractModuleDescriptionTask
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamedOrNull
-import com.avito.logger.GradleLoggerPlugin
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.dependencies.directDependenciesOnProjects
 import org.gradle.api.Plugin
@@ -32,7 +31,6 @@ public class ModuleTypesPlugin : Plugin<Project> {
             task.group = "verification"
             task.severity.set(extension.severity)
             task.restrictions.set(extension.restrictions)
-            task.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(task))
         }
     }
 

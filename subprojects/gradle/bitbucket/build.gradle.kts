@@ -13,7 +13,6 @@ dependencies {
     implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.impactShared)
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
@@ -24,6 +23,5 @@ dependencies {
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
     gradleTestImplementation(projects.subprojects.common.truthExtensions)
-    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
     gradleTestImplementation(testFixtures(projects.subprojects.common.httpClient))
 }

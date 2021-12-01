@@ -59,7 +59,6 @@ internal abstract class BaseBuildVerdictTest {
     ) {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.build-verdict")
             },
             modules = listOf(module),

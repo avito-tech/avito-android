@@ -1,8 +1,6 @@
 package com.avito.plugin
 
-import com.avito.logger.Logger
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
+import Slf4jGradleLoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDeviceFactory
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
@@ -11,7 +9,6 @@ import com.avito.utils.ProcessRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.nio.file.Paths
@@ -21,21 +18,15 @@ public abstract class PullScreenshotsTask : DefaultTask() {
     @get:Input
     public abstract val applicationIdProperty: Property<String>
 
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
     @TaskAction
     public fun pullScreenshots() {
-        val loggerFactory = loggerFactory.get()
-        val logger = loggerFactory.create<PullScreenshotsTask>()
-
         val applicationId = applicationIdProperty.get()
         val adb = Adb()
-        val adbDevicesManager = AdbDevicesManager(loggerFactory = loggerFactory, adb = adb)
+        val adbDevicesManager = AdbDevicesManager(adb = adb)
         val currentDevice = DeviceProviderLocal(
             adbDevicesManager = adbDevicesManager,
             adbDeviceFactory = AdbDeviceFactory(
-                loggerFactory = loggerFactory,
+                loggerFactory = Slf4jGradleLoggerFactory,
                 adb = adb,
                 timeProvider = DefaultTimeProvider(),
                 metricsConfig = null,
@@ -60,7 +51,7 @@ public abstract class PullScreenshotsTask : DefaultTask() {
                         }
                     }
                 logger.debug("Screenshots are pulled to $referencePath")
-                clearOutputFiles(logger)
+                clearOutputFiles()
             },
             onFailure = {
                 logger.warn("Cannot list screenshot directory", it)
@@ -68,7 +59,7 @@ public abstract class PullScreenshotsTask : DefaultTask() {
         )
     }
 
-    private fun clearOutputFiles(logger: Logger) {
+    private fun clearOutputFiles() {
         File(project.rootDir.path).listFiles()?.forEach { file ->
             if (!file.isDirectory && file.name.endsWith(".output")) {
                 file.delete()

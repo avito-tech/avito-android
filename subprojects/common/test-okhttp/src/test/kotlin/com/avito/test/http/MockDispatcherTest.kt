@@ -1,6 +1,5 @@
 package com.avito.test.http
 
-import com.avito.logger.PrintlnLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.Headers
 import okhttp3.mockwebserver.MockResponse
@@ -13,9 +12,7 @@ import java.nio.charset.Charset
 
 internal class MockDispatcherTest {
 
-    private val loggerFactory = PrintlnLoggerFactory
-
-    private val dispatcher = MockDispatcher(loggerFactory = loggerFactory)
+    private val dispatcher = MockDispatcher()
 
     @Test
     fun `dispatcher - dispatch last matching response - if multiple registered conditions matches`() {

@@ -18,7 +18,6 @@ internal class HttpElasticClientTest {
 
     private val dispatcher = MockDispatcher(
         unmockedResponse = MockResponse().setResponseCode(200),
-        loggerFactory = loggerFactory
     )
         .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
 
