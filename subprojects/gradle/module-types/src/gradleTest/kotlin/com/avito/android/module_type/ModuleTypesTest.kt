@@ -45,6 +45,20 @@ internal class ModuleTypesTest : BaseModuleTypesTest() {
     }
 
     @Test
+    fun `forbidden dependency in implementation - success - warning severity`() {
+        givenProject(
+            severity = Severity.warning,
+            moduleType = LibraryModule,
+            dependency = Dependency(FeatureModule),
+            constraint = Constraint(module = LibraryModule, dependency = FeatureModule)
+        )
+
+        val result = runCheck(projectDir, expectFailure = false)
+
+        result.assertThat().outputContains(briefErrorMessage)
+    }
+
+    @Test
     fun `forbidden test dependency in implementation - failure`() {
         givenProject(
             moduleType = LibraryModule,

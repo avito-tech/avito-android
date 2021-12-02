@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.moduleDependenciesShared)
+    api(projects.subprojects.gradle.moduleDependencies)
 
     implementation(gradleApi())
 
