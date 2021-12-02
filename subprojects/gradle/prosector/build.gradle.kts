@@ -5,12 +5,12 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.statsdConfig)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.okhttp)
+    implementation(projects.subprojects.logger.slf4jGradleLogger)
 
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)

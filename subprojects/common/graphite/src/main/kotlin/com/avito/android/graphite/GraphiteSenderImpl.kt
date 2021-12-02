@@ -1,17 +1,13 @@
 package com.avito.android.graphite
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import java.io.DataOutputStream
 import java.net.Socket
 
 internal class GraphiteSenderImpl(
-    private val config: GraphiteConfig,
-    loggerFactory: LoggerFactory
+    private val config: GraphiteConfig
 ) : GraphiteSender {
 
-    private val logger = loggerFactory.create<GraphiteSender>()
-
+    @Throws(Exception::class)
     override fun send(metric: GraphiteMetric) {
         if (!config.isEnabled) return
 
@@ -19,14 +15,11 @@ internal class GraphiteSenderImpl(
         send(message)
     }
 
+    @Throws(Exception::class)
     private fun send(message: String) {
-        try {
-            socket().use { socket ->
-                val dos = DataOutputStream(socket.getOutputStream())
-                dos.writeBytes(message)
-            }
-        } catch (e: Exception) {
-            logger.warn(message, e)
+        socket().use { socket ->
+            val dos = DataOutputStream(socket.getOutputStream())
+            dos.writeBytes(message)
         }
     }
 

@@ -7,7 +7,6 @@ plugins {
 dependencies {
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.preBuild)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)

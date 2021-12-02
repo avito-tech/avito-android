@@ -9,7 +9,7 @@ import com.avito.android.stats.TimeMetric
 import com.avito.test.gradle.TestResult
 import com.google.common.truth.Truth.assertWithMessage
 
-private const val loggerPrefix = "[StatsDSender@:] "
+private const val loggerPrefix = "[StatsDSender] "
 
 internal inline fun <reified T : StatsMetric> TestResult.assertHasMetric(path: String): T {
     val type = T::class.java

@@ -1,8 +1,5 @@
 package com.avito.android.plugin
 
-import com.avito.logger.Logger
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.utils.ProcessRunner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -11,7 +8,6 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.net.HttpURLConnection
@@ -42,20 +38,15 @@ public abstract class FeatureTogglesReportTask : DefaultTask() {
     @get:Input
     public abstract val projectDir: Property<String>
 
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
     @TaskAction
     public fun doWork() {
         val jsonToggles = readJsonReport()
-        val loggerFactory = loggerFactory.get()
 
         val processRunner = ProcessRunner.create(
             workingDirectory = File(projectDir.get())
         )
         val blameCodeLines = readBlameCodeLines(processRunner)
         val suspiciousToggles: List<Toggle> = SuspiciousTogglesCollector(
-            loggerFactory = loggerFactory,
             developerToTeam = developersToTeam.get()
         ).collectSuspiciousToggles(
             jsonTogglesList = jsonToggles,
@@ -70,11 +61,10 @@ public abstract class FeatureTogglesReportTask : DefaultTask() {
         sendReport(
             slackHook = slackHook.get(),
             reportText = reportText,
-            logger = loggerFactory.create<FeatureTogglesReportTask>()
         )
     }
 
-    private fun sendReport(slackHook: String, reportText: String, logger: Logger) {
+    private fun sendReport(slackHook: String, reportText: String) {
         val connection = URL(slackHook).openConnection() as HttpURLConnection
         try {
             with(connection) {

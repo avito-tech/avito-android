@@ -2,7 +2,6 @@ package com.avito.android.signer.internal
 
 import com.avito.android.signer.AbstractSignTask
 import com.avito.android.signer.SignExtension
-import com.avito.logger.GradleLoggerPlugin
 
 internal class TaskConfigurator(
     private val extension: SignExtension,
@@ -24,10 +23,6 @@ internal class TaskConfigurator(
 
         task.readWriteTimeoutSec.set(
             extension.readWriteTimeoutSec.convention(defaultTimeoutSec)
-        )
-
-        task.loggerFactory.set(
-            GradleLoggerPlugin.getLoggerFactory(task)
         )
     }
 }

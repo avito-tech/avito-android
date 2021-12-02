@@ -10,7 +10,6 @@ dependencies {
     implementation(gradleApi())
     implementation(projects.subprojects.common.throwableUtils)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(libs.gson)
     implementation(libs.kotlinHtml)
 

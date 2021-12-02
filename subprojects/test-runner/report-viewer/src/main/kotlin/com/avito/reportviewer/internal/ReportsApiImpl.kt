@@ -3,7 +3,6 @@ package com.avito.reportviewer.internal
 import com.avito.android.Result
 import com.avito.jsonrpc.JsonRpcClient
 import com.avito.jsonrpc.RfcRpcRequest
-import com.avito.logger.LoggerFactory
 import com.avito.reportviewer.ReportsAddApi
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.ReportsFetchApi
@@ -12,11 +11,10 @@ import com.avito.reportviewer.model.ReportCoordinates
 import com.google.gson.JsonElement
 
 internal class ReportsApiImpl(
-    private val loggerFactory: LoggerFactory,
     private val client: JsonRpcClient,
 ) : ReportsApi,
     ReportsAddApi by ReportsAddApiImpl(client),
-    ReportsFetchApi by ReportsFetchApiImpl(client, loggerFactory) {
+    ReportsFetchApi by ReportsFetchApiImpl(client) {
 
     override fun setFinished(reportCoordinates: ReportCoordinates): Result<Unit> {
         return getReport(reportCoordinates).fold(

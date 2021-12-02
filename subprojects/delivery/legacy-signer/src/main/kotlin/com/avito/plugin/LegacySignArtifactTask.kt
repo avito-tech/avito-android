@@ -1,12 +1,11 @@
 package com.avito.plugin
 
+import Slf4jGradleLoggerFactory
 import com.avito.android.Problem
 import com.avito.android.stats.statsd
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.plugin.internal.SignViaServiceAction
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -16,7 +15,6 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import java.io.File
@@ -35,9 +33,6 @@ public abstract class LegacySignArtifactTask constructor(
     @get:Input
     public abstract val readWriteTimeoutSec: Property<Long>
 
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
     protected abstract fun unsignedFile(): File
 
     protected abstract fun signedFile(): File
@@ -52,7 +47,6 @@ public abstract class LegacySignArtifactTask constructor(
 
     @TaskAction
     public fun run() {
-        val loggerFactory = loggerFactory.get()
         val unsignedFile = unsignedFile()
         val signedFile = signedFile()
         val timeProvider: TimeProvider = DefaultTimeProvider()
@@ -63,7 +57,7 @@ public abstract class LegacySignArtifactTask constructor(
         val httpClient = HttpClientProvider(
             statsDSender = project.statsd.get(),
             timeProvider = timeProvider,
-            loggerFactory = loggerFactory
+            loggerFactory = Slf4jGradleLoggerFactory
         ).provide()
             .writeTimeout(timeout, TimeUnit.SECONDS)
             .readTimeout(timeout, TimeUnit.SECONDS)
@@ -74,8 +68,6 @@ public abstract class LegacySignArtifactTask constructor(
                 )
             )
             .build()
-
-        val logger = loggerFactory.create<LegacySignArtifactTask>()
 
         workerExecutor.inMemoryWork {
             SignViaServiceAction(

@@ -5,7 +5,6 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.assemble.criticalPath.api)
     implementation(projects.subprojects.common.traceEvent)
@@ -16,7 +15,6 @@ dependencies {
     implementation(gradleApi())
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
 }
 
 gradlePlugin {

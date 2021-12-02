@@ -3,7 +3,6 @@ package com.avito.plugin
 import com.avito.android.signer.SignServicePlugin
 import com.avito.android.signer.signedApkDir
 import com.avito.android.withAndroidApp
-import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -71,7 +70,5 @@ public class QAppsPlugin : Plugin<Project> {
         host.set(extension.serviceUrl)
         comment.set(extension.comment)
         branch.set(extension.branchName)
-
-        loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
     }
 }

@@ -32,9 +32,6 @@ internal class FindChangedTestsActionTest {
         git = Git.create(projectDir)
 
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.gradle-logger")
-            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

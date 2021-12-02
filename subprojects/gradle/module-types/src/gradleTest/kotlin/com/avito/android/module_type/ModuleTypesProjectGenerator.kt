@@ -48,7 +48,6 @@ internal class ModuleTypesProjectGenerator(
         TestProjectGenerator(
             imports = listOf("import com.avito.android.module_type.*"),
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id(pluginId)
             },
             modules = listOf(

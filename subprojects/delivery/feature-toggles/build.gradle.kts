@@ -7,10 +7,7 @@ plugins {
 dependencies {
     implementation(projects.subprojects.gradle.process)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(libs.gson)
-
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 }

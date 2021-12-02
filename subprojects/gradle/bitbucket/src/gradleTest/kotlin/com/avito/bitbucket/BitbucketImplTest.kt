@@ -2,7 +2,6 @@ package com.avito.bitbucket
 
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
@@ -22,13 +21,10 @@ import java.io.File
 
 internal class BitbucketImplTest {
 
-    private val loggerFactory = PrintlnLoggerFactory
-
     private val mockWebServer = MockWebServerFactory.create()
 
     private val dispatcher = MockDispatcher(
         unmockedResponse = MockResponse().setResponseCode(200),
-        loggerFactory = loggerFactory
     )
         .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
 

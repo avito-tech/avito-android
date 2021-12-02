@@ -5,7 +5,6 @@ import com.avito.android.stats.statsdConfig
 import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.extractReportCoordinates
 import com.avito.instrumentation.instrumentationTaskDefaultEnvironment
-import com.avito.logger.GradleLoggerPlugin
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.TestSummaryExtension
 import com.avito.test.summary.TestSummaryFactory
@@ -52,7 +51,6 @@ public abstract class TestSummaryPluginBuildStep(context: String, name: String) 
             extension = project.rootProject.extensions.getByType(),
             reportCoordinates = reportCoordinates.get(),
             testSummaryFactory = TestSummaryFactory(
-                loggerFactory = GradleLoggerPlugin.getLoggerFactory(project).get(),
                 statsDConfig = project.statsdConfig,
             )
         )

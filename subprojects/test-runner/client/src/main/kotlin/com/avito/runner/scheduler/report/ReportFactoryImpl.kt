@@ -34,7 +34,6 @@ public class ReportFactoryImpl(
         return AvitoReport(
             reportsApi = ReportsApiFactory.create(
                 host = reportViewerConfig.apiUrl,
-                loggerFactory = loggerFactory,
                 httpClientProvider = httpClientProvider
             ),
             reportViewerUrl = reportViewerConfig.viewerUrl,

@@ -15,8 +15,6 @@ import com.avito.android.build_checks.internal.unique_app_res.UniqueAppResources
 import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreator
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerPlugin
-import com.avito.logger.create
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -57,9 +55,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         val envInfo = BuildEnvironmentInfo(project.providers)
 
         project.afterEvaluate {
-            val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project).get()
-            val logger = loggerFactory.create<BuildParamCheckPlugin>()
-            BuildEnvLogger(project, logger, envInfo).log()
+            BuildEnvLogger(project, envInfo).log()
             val checks = extension.enabledChecks()
 
             checks.filterIsInstance<RequireValidation>()

@@ -1,12 +1,7 @@
 package com.avito.upload_to_googleplay
 
-import com.avito.logger.GradleLoggerPlugin
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
@@ -22,10 +17,6 @@ public fun TaskContainer.registerDeployToGooglePlayTask(
         configure {
             it.description = "Upload binary to google play"
             it.group = "Google play"
-
-            it.loggerFactory.set(
-                GradleLoggerPlugin.getLoggerFactory(task = it)
-            )
         }
         configure(configuration)
     }
@@ -37,17 +28,11 @@ internal abstract class DeployToGooglePlayTask @Inject constructor(
 
     private val jsonKey = project.playConsoleJsonKey
 
-    @get:Internal
-    abstract val loggerFactory: Property<LoggerFactory>
-
     @TaskAction
     fun upload() {
-        val logger = loggerFactory.get().create<DeployToGooglePlayTask>()
 
         val googlePlayKey = jsonKey.orNull
-            ?: throw IllegalStateException("google play key must present in ${project.name}").apply {
-                logger.critical("google play key was empty", this)
-            }
+            ?: throw IllegalStateException("google play key must present in ${project.name}")
         val deployer = GooglePlayDeployerImpl(googlePlayKey, logger)
         deployer.deploy(deploys)
     }

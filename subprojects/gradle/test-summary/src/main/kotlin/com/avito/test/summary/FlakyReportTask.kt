@@ -1,6 +1,5 @@
 package com.avito.test.summary
 
-import com.avito.logger.LoggerFactory
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.ReportsApi
@@ -49,16 +48,12 @@ public abstract class FlakyReportTask : DefaultTask() {
     @get:Internal
     public abstract val reportViewerUrl: Property<String>
 
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
     @TaskAction
     public fun doWork() {
         val flakyTestInfo = FlakyTestInfo()
 
         flakyTestInfo.addReport(reportsApi.get().getTestsForRunId(reportCoordinates.get()))
 
-        val loggerFactory: LoggerFactory = loggerFactory.get()
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         createFlakyTestReporter(
@@ -68,7 +63,6 @@ public abstract class FlakyReportTask : DefaultTask() {
             reportViewerUrl = reportViewerUrl.get(),
             buildUrl = buildUrl.get(),
             currentBranch = currentBranch.get(),
-            loggerFactory = loggerFactory,
             timeProvider = timeProvider
         ).reportSummary(flakyTestInfo.getInfo())
     }
@@ -80,7 +74,6 @@ public abstract class FlakyReportTask : DefaultTask() {
         reportViewerUrl: String,
         buildUrl: String,
         currentBranch: String,
-        loggerFactory: LoggerFactory,
         timeProvider: TimeProvider
     ): FlakyTestReporterImpl {
         val reportViewerLinksGenerator = ReportViewerLinksGeneratorImpl(
@@ -91,14 +84,13 @@ public abstract class FlakyReportTask : DefaultTask() {
         return FlakyTestReporterImpl(
             slackClient = SlackConditionalSender(
                 slackClient = slackClient.get(),
-                updater = SlackMessageUpdaterDirectlyToThread(slackClient.get(), loggerFactory),
+                updater = SlackMessageUpdaterDirectlyToThread(slackClient.get()),
                 condition = ConjunctionMessagePredicate(
                     listOf(
                         SameAuthorPredicate(slackUsername),
                         TodayMessageCondition(timeProvider)
                     )
                 ),
-                loggerFactory = loggerFactory
             ),
             summaryChannel = summaryChannel,
             messageAuthor = slackUsername,

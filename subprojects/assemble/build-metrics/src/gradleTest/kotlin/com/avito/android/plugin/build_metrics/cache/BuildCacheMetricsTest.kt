@@ -14,12 +14,7 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
         File(projectDir, "build.gradle.kts").writeText(
             """
             plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.build-metrics")
-            }
-            
-            gradleLogger {
-                printlnHandler(false, com.avito.logger.LogLevel.DEBUG)
             }
             
             @CacheableTask

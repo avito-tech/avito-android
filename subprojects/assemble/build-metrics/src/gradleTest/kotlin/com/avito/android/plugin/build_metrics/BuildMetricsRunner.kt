@@ -14,6 +14,7 @@ internal class BuildMetricsRunner(
             *args.toTypedArray(),
             "-Pavito.build.metrics.enabled=true",
             "-Pavito.stats.enabled=false",
+            "-Pstatsd.test"
         )
     }
 }

@@ -1,7 +1,5 @@
 package com.avito.test.summary
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.report.model.Team
 import com.avito.report.model.TestStatus
 import com.avito.reportviewer.ReportsApi
@@ -26,7 +24,6 @@ import com.avito.test.summary.model.CrossDeviceSuite
 import com.avito.test.summary.model.FailureOnDevice
 
 internal interface TestSummarySender {
-
     fun send()
 }
 
@@ -34,7 +31,6 @@ internal class TestSummarySenderImpl(
     slackClient: SlackClient,
     reportViewerUrl: String,
     private val reportsApi: ReportsApi,
-    loggerFactory: LoggerFactory,
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val globalSummaryChannel: SlackChannel,
@@ -43,12 +39,9 @@ internal class TestSummarySenderImpl(
     private val slackUserName: String
 ) : TestSummarySender {
 
-    private val logger = loggerFactory.create<TestSummarySender>()
-
     private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewerUrl)
     private val slackMessageUpdater: SlackMessageUpdater = SlackMessageUpdaterWithThreadMark(
         slackClient = slackClient,
-        loggerFactory = loggerFactory,
         threadMessage = "Updated by: $buildUrl"
     )
     private val slackConditionalSender: SlackConditionalSender = SlackConditionalSender(
@@ -59,12 +52,10 @@ internal class TestSummarySenderImpl(
                 SameAuthorPredicate(slackUserName),
                 TextContainsStringCondition(reportCoordinates.runId)
             )
-        ),
-        loggerFactory = loggerFactory
+        )
     )
     private val slackBulkSender: SlackBulkSender = CoroutinesSlackBulkSender(
-        sender = slackConditionalSender,
-        loggerFactory = loggerFactory
+        sender = slackConditionalSender
     )
 
     private val slackEmojiProvider = SlackEmojiProvider()
@@ -74,7 +65,9 @@ internal class TestSummarySenderImpl(
             .map { toCrossDeviceTestData(it) }
             .fold(
                 { suite -> send(suite, requireNotNull(reportsApi.tryGetId(reportCoordinates))) },
-                { throwable -> logger.critical("Can't get suite report", throwable) }
+                {
+                    // TODO handle throwable
+                }
             )
     }
 
@@ -100,11 +93,8 @@ internal class TestSummarySenderImpl(
                                 emoji = slackEmojiProvider.emojiName(unitSuite.percentSuccessOfAutomated.roundToInt())
                             )
                         )
-                    }.onFailure { throwable ->
-                        logger.critical(
-                            "Can't compose slack message for unit ${team.name}; buildUrl=$buildUrl",
-                            throwable
-                        )
+                    }.onFailure {
+                        // TODO handle throwable
                     }
                 }
             }
@@ -125,8 +115,8 @@ internal class TestSummarySenderImpl(
                         emoji = slackEmojiProvider.emojiName(suite.percentSuccessOfAutomated.roundToInt())
                     )
                 )
-            }.onFailure { throwable ->
-                logger.warn("Can't compose slack message for summary: buildUrl=$buildUrl", throwable)
+            }.onFailure {
+                // TODO handle throwable
             }
         }
     }
@@ -136,8 +126,8 @@ internal class TestSummarySenderImpl(
             onSuccess = { report ->
                 report.id
             },
-            onFailure = { throwable ->
-                logger.warn("Can't find report for runId=${reportCoordinates.runId}", throwable)
+            onFailure = {
+                // TODO handle throwable
                 null
             }
         )

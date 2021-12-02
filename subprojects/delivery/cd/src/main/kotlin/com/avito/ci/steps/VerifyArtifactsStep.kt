@@ -5,8 +5,6 @@ import com.avito.android.packageTaskProvider
 import com.avito.ci.VerifyOutputsTask
 import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.typedNamed
-import com.avito.logger.GradleLoggerPlugin
-import com.avito.logger.create
 import com.avito.plugin.legacySignedApkTaskProvider
 import com.avito.plugin.legacySignedBundleTaskProvider
 import org.gradle.api.Project
@@ -56,16 +54,11 @@ public open class VerifyArtifactsStep(
             destinationDir.set(File("${project.rootProject.rootDir}/outputs"))
             entries.set(project.files(artifactsConfig.outputs.values.map { it.path }))
 
-            val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this)
-
-            this.loggerFactory.set(loggerFactory)
-
             project.gradle.onBuildFailed {
                 if (!didWork) {
                     // Copy artifacts that managed to be generated.
                     // Do not verify them because it is last resort to save anything.
-                    val logger = loggerFactory.get().create<VerifyArtifactsStep>()
-                    logger.info("Build failed. Trying to copy artifacts that managed to be generated.")
+                    logger.lifecycle("Build failed. Trying to copy artifacts that managed to be generated.")
                     doAction()
                 }
             }
@@ -76,8 +69,6 @@ public open class VerifyArtifactsStep(
             description = "Checks that all defined release artifacts are present"
             config.set(artifactsConfig)
             checkSignatures.set(artifactsConfig.failOnSignatureError)
-
-            loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
 
             dependsOn(copyTask)
         }

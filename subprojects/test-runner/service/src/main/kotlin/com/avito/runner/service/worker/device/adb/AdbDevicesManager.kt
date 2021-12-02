@@ -1,7 +1,5 @@
 package com.avito.runner.service.worker.device.adb
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.service.worker.device.DevicesManager
@@ -10,13 +8,10 @@ import rx.Single
 import java.util.Optional
 
 public class AdbDevicesManager(
-    loggerFactory: LoggerFactory,
     private val commandLine: CommandLineExecutor = CommandLineExecutor.create(),
     private val adbParser: AdbDeviceParser = AdbDeviceParser(),
     private val adb: Adb
 ) : DevicesManager {
-
-    private val logger = loggerFactory.create<AdbDevicesManager>()
 
     override fun findDevice(coordinate: Serial): Optional<AdbDeviceParams> {
         return adbDevices().map { output ->
@@ -34,9 +29,6 @@ public class AdbDevicesManager(
         adbDevices()
             .map { output ->
                 adbParser.parse(output)
-            }
-            .doOnError {
-                logger.warn("Error on getting adb devices", it)
             }
             .toBlocking()
             .value()
@@ -56,10 +48,6 @@ public class AdbDevicesManager(
             }
             .retry { retryCount, exception ->
                 val shouldRetry = retryCount < ADB_RETRY_COUNT && exception is IllegalStateException
-                if (shouldRetry) {
-                    logger.debug("runningEmulators: retrying $exception.")
-                }
-
                 shouldRetry
             }
             .toSingle()

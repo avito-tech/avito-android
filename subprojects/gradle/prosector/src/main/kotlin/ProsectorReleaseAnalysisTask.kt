@@ -1,7 +1,6 @@
+
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
@@ -9,7 +8,6 @@ import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.api.DefaultTask
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -37,19 +35,14 @@ public abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     @Internal
     public var debug: Boolean = false
 
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
-
     @TaskAction
     public fun doWork() {
-        val loggerFactory = loggerFactory.get()
-        val logger = loggerFactory.create<ProsectorReleaseAnalysisTask>()
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         val httpClientProvider = HttpClientProvider(
             statsDSender = project.statsd.get(),
             timeProvider = timeProvider,
-            loggerFactory = loggerFactory
+            loggerFactory = Slf4jGradleLoggerFactory
         )
 
         try {
@@ -73,7 +66,7 @@ public abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
                 }"
             )
         } catch (e: Throwable) {
-            logger.critical("Prosector upload failed", e)
+            logger.error("Prosector upload failed", e)
         }
     }
 

@@ -9,19 +9,17 @@ import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
 import com.avito.android.trace.TraceReportFileAdapter
 import com.avito.graph.OperationsPath
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import org.gradle.BuildResult
 import org.gradle.api.Task
+import org.slf4j.Logger
 import java.io.File
 import java.util.Collections
 
 internal class BuildTraceListener(
     private val output: File,
-    loggerFactory: LoggerFactory
+    private val logger: Logger
 ) : AbstractBuildEventsListener(), CriticalPathListener {
 
-    private val logger = loggerFactory.create<BuildTraceListener>()
     private val eventProvider = TraceEventProvider()
     private val events: MutableList<TraceEvent> = Collections.synchronizedList(mutableListOf())
 

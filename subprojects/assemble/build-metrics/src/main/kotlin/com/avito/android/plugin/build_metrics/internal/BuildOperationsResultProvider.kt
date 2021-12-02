@@ -4,7 +4,6 @@ import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.gradle.metric.BuildEventsListener
 import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksMetricsTracker
-import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
@@ -189,31 +188,24 @@ internal class BuildOperationsResultProvider(
 
         fun register(
             project: Project,
-            metricsTracker: Lazy<BuildMetricTracker>
+            metricsTracker: BuildMetricTracker
         ): BuildEventsListener {
+            val listeners = mutableListOf<BuildOperationsResultListener>()
+            if (canTrackRemoteCache(project)) {
+                listeners.add(
+                    BuildCacheMetricsTracker(
+                        metricsTracker = metricsTracker,
+                        logger = project.logger
+                    )
+                )
+            }
+            listeners.add(
+                SlowTasksMetricsTracker(
+                    metricsTracker = metricsTracker,
+                )
+            )
             val buildOperationListener = BuildOperationsResultProvider(
-                /**
-                 * Laziness because of LoggerService
-                 */
-                resultListener = LazyBuildOperationsResultListener(
-                    lazy {
-                        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project)
-                        val listeners = mutableListOf<BuildOperationsResultListener>()
-                        if (canTrackRemoteCache(project)) {
-                            listeners.add(
-                                BuildCacheMetricsTracker(
-                                    metricsTracker = metricsTracker.value,
-                                    loggerFactory = loggerFactory.get()
-                                )
-                            )
-                        }
-                        listeners.add(
-                            SlowTasksMetricsTracker(
-                                metricsTracker = metricsTracker.value,
-                            )
-                        )
-                        CompositeBuildOperationsResultListener(listeners)
-                    }),
+                resultListener = CompositeBuildOperationsResultListener(listeners),
             )
             project.gradle.buildOperationListenerManager().addListener(buildOperationListener)
 

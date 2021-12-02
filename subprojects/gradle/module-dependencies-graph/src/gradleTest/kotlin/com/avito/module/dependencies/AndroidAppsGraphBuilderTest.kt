@@ -1,6 +1,5 @@
 package com.avito.module.dependencies
 
-import com.avito.logger.PrintlnLoggerFactory
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
@@ -158,6 +157,6 @@ internal class AndroidAppsGraphBuilderTest {
     }
 
     private fun graphBuilder() = AndroidAppsGraphBuilder(
-        DependenciesGraphBuilder(root, PrintlnLoggerFactory)
+        DependenciesGraphBuilder(root)
     )
 }

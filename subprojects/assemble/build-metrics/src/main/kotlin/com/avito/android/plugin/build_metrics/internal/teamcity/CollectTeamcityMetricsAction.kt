@@ -43,12 +43,16 @@ internal class CollectTeamcityMetricsAction(
             "_"
         )
 
-        graphite.send(
-            GraphiteMetric(
-                path.toString(),
-                duration.seconds.toString(),
-                build.startDateTime!!.toEpochSecond()
+        try {
+            graphite.send(
+                GraphiteMetric(
+                    path.toString(),
+                    duration.seconds.toString(),
+                    build.startDateTime!!.toEpochSecond()
+                )
             )
-        )
+        } catch (e: Exception) {
+            // TODO send alert
+        }
     }
 }

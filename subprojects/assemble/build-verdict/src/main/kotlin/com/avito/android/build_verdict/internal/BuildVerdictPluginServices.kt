@@ -10,20 +10,19 @@ import com.avito.android.build_verdict.internal.writer.HtmlBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter
 import com.avito.android.build_verdict.span.SpannedStringBuilder
-import com.avito.logger.Logger
 import com.google.gson.GsonBuilder
 import org.gradle.BuildListener
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.execution.TaskExecutionListener
-import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.util.Path
+import org.slf4j.Logger
 import java.util.concurrent.ConcurrentHashMap
 
 internal class BuildVerdictPluginServices(
     private val extension: BuildVerdictPluginExtension,
-    logger: Provider<Logger>
+    private val logger: Logger
 ) {
 
     private val listeners = ConcurrentHashMap<OperationIdentifier, LogMessageListener>()

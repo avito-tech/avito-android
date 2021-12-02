@@ -4,13 +4,11 @@ import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.graphite.GraphiteSender
 import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsAction
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.logger.LoggerFactory
 import com.avito.teamcity.TeamcityApi
 import com.avito.teamcity.TeamcityCredentials
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
@@ -27,9 +25,6 @@ public abstract class CollectTeamcityMetricsTask @Inject constructor(
 
     @get:Input
     public abstract val teamcityCredentials: Property<TeamcityCredentials>
-
-    @get:Internal
-    public abstract val loggerFactory: Property<LoggerFactory>
 
     @TaskAction
     public fun action() {
@@ -52,8 +47,7 @@ public abstract class CollectTeamcityMetricsTask @Inject constructor(
 
     private fun graphiteSender(): GraphiteSender {
         return GraphiteSender.create(
-            config = graphiteConfig.get(),
-            loggerFactory = loggerFactory.get()
+            config = graphiteConfig.get()
         )
     }
 }

@@ -26,7 +26,6 @@ internal class UniqueAppResourcesTest {
     fun `success - unique resources`() {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(
@@ -77,7 +76,6 @@ internal class UniqueAppResourcesTest {
         }
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(
@@ -129,7 +127,6 @@ internal class UniqueAppResourcesTest {
         }
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(
@@ -182,7 +179,6 @@ internal class UniqueAppResourcesTest {
         }
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(
@@ -222,7 +218,6 @@ internal class UniqueAppResourcesTest {
     fun `fail - invalid resource type in a config`() {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(

@@ -3,7 +3,6 @@ package com.avito.test.summary
 import com.avito.android.Problem
 import com.avito.android.asPlainText
 import com.avito.kotlin.dsl.isRoot
-import com.avito.logger.GradleLoggerPlugin
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import org.gradle.api.Plugin
@@ -40,8 +39,6 @@ public class TestSummaryPlugin : Plugin<Project> {
                 this.timeProvider.set(timeProvider)
                 this.reportsApi.set(reportsApi)
                 this.reportViewerUrl.set(extension.reportViewerUrl)
-
-                this.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
             }
         }
     }

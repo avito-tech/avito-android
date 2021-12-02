@@ -7,8 +7,8 @@ plugins {
 dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.testRunner.service)
+    implementation(projects.subprojects.logger.slf4jGradleLogger)
 
     implementation(projects.subprojects.common.result)
 

@@ -6,7 +6,6 @@ import com.avito.android.module_type.DependencyRestriction
 import com.avito.android.module_type.ModuleTypeRootExtension
 import com.avito.android.module_type.ModuleWithType
 import com.avito.android.module_type.Severity
-import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
@@ -36,16 +35,11 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
     @get:Input
     abstract val restrictions: ListProperty<DependencyRestriction>
 
-    @get:Internal
-    abstract val loggerFactory: Property<LoggerFactory>
-
     @TaskAction
     fun checkDependencies() {
         val violations = ModulesRestrictionsFinder(readModules(), restrictions.get()).violations()
 
         if (violations.isNotEmpty()) {
-            val logger = loggerFactory.get().create("")
-
             val error = buildProblem(violations).asRuntimeException()
 
             @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")

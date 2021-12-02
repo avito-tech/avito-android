@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     implementation(projects.subprojects.gradle.buildFailer)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.impactShared)
     implementation(projects.subprojects.assemble.buildMetricsTracker)

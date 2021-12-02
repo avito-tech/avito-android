@@ -24,14 +24,12 @@ dependencies {
     implementation(projects.subprojects.gradle.statsdConfig)
     implementation(projects.subprojects.gradle.teamcity)
     implementation(projects.subprojects.gradle.testSummary)
-    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.testRunner.instrumentationTests)
     implementation(projects.subprojects.testRunner.reportViewer)
 
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(testFixtures(projects.subprojects.delivery.artifactoryAppBackup))
-    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
 }
 
 gradlePlugin {

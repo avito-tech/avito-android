@@ -2,7 +2,6 @@ package com.avito.ci.steps
 
 import com.avito.ci.internal.ReportKey
 import com.avito.kotlin.dsl.typedNamedOrNull
-import com.avito.logger.GradleLoggerPlugin
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.MarkReportAsSourceTask
 import com.avito.test.summary.TestSummaryExtension
@@ -34,8 +33,6 @@ public class MarkReportAsSourceForTMSStep(context: String, name: String) : TestS
                 this.reportCoordinates.set(reportCoordinates)
                 this.reportsApi.set(testSummaryFactory.createReportsApi(extension))
                 this.timeProvider.set(testSummaryFactory.timeProvider)
-
-                this.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(this))
             }
     }
 }
