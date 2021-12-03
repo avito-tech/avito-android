@@ -3,6 +3,7 @@ package com.avito.ci.steps
 import com.avito.android.plugin.artifactory.artifactoryAppBackupTask
 import com.avito.android.plugin.artifactory.artifactoryPassword
 import com.avito.android.plugin.artifactory.artifactoryUser
+import com.avito.cd.CdBuildResult
 import com.avito.cd.UploadCdBuildResultTask
 import com.avito.cd.cdBuildConfig
 import com.avito.cd.isCdBuildConfigPresent
@@ -51,13 +52,17 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
                 group = cdTaskGroup
                 description = "Task for send CD build result"
 
-                this.user.set(project.artifactoryUser)
-                this.password.set(project.artifactoryPassword)
+                this.artifactoryUser.set(project.artifactoryUser)
+                this.artifactoryPassword.set(project.artifactoryPassword)
                 this.suppressErrors.set(suppressFailures)
                 this.reportUrl.set(reportLinksGenerator.generateReportLink(filterOnlyFailures = false))
-                this.planSlug.set(reportCoordinates.planSlug)
-                this.jobSlug.set(reportCoordinates.jobSlug)
-                this.runId.set(reportCoordinates.runId)
+                this.reportCoordinates.set(
+                    CdBuildResult.TestResultsLink.ReportCoordinates(
+                        planSlug = reportCoordinates.planSlug,
+                        jobSlug = reportCoordinates.jobSlug,
+                        runId = reportCoordinates.runId
+                    )
+                )
 
                 project.tasks.namedOrNull(deployTaskName)?.also { deployTask -> dependsOn(deployTask) }
 
