@@ -4,7 +4,6 @@ import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.android.module_type.DependencyRestriction
 import com.avito.android.module_type.ModuleWithType
-import com.avito.android.module_type.isViolated
 import com.avito.android.module_type.pluginId
 import com.avito.module.configurations.ConfigurationType
 
