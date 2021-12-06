@@ -1,6 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
-    id("convention.publish-kotlin-library")
+    id("convention.publish-gradle-plugin")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -16,6 +17,17 @@ dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
 
     testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(projects.subprojects.gradle.testProject)
     testImplementation(testFixtures(projects.subprojects.gradle.git))
+
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
+}
+
+gradlePlugin {
+    plugins {
+        create("cdContract") {
+            id = "com.avito.android.upload-cd-build-result"
+            implementationClass = "com.avito.cd.UploadCdBuildResultPlugin"
+            displayName = "CD Contract Plugin"
+        }
+    }
 }
