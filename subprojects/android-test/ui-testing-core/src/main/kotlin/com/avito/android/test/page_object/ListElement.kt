@@ -53,6 +53,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
     override val actions = ListActions(interactionContext)
 
     // TODO: remove this constructor and use element fabric method to create an instance
+    @Deprecated("Use primary constructor with InteractionContext. This will be removed.")
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 
     /**
