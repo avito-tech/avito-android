@@ -5,8 +5,6 @@ import com.avito.module.configurations.ConfigurationType
 public class DependencyRestriction(
     public val matcher: DependencyMatcher,
     public val exclusions: Set<DependencyMatcher> = emptySet(),
-    @Deprecated("Use matcher's description instead. This property is not used and will be deleted.")
-    public val description: String = ""
 ) {
 
     internal fun isViolated(
