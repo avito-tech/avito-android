@@ -4,13 +4,6 @@ import com.avito.module.configurations.ConfigurationType
 
 public interface DependencyMatcher {
 
-    @Deprecated(
-        "Use matches function instead",
-        ReplaceWith("matches")
-    )
-    public fun match(from: ModuleWithType, to: ModuleWithType, configuration: ConfigurationType): Boolean =
-        false
-
     /**
      * @param module current module which has another module as `dependency`
      * @param dependency dependent module
@@ -20,7 +13,7 @@ public interface DependencyMatcher {
         module: ModuleWithType,
         dependency: ModuleWithType,
         configuration: ConfigurationType
-    ): Boolean = match(from = module, to = dependency, configuration)
+    ): Boolean
 
     public fun description(): String
 }
