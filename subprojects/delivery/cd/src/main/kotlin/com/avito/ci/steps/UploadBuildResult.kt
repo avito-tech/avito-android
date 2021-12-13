@@ -12,10 +12,8 @@ import com.avito.instrumentation.extractReportCoordinates
 import com.avito.instrumentation.extractReportViewerUrl
 import com.avito.instrumentation.instrumentationTaskDefaultEnvironment
 import com.avito.kotlin.dsl.namedOrNull
-import com.avito.report.ReportLinksGenerator
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportViewerQuery
-import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.upload_to_googleplay.deployTaskName
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -41,9 +39,10 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
             val reportCoordinates = instrumentationTask.extractReportCoordinates().get()
             val reportViewerUrl = instrumentationTask.extractReportViewerUrl().get()
 
-            val reportLinksGenerator = createReportLinksGenerator(
+            val reportLinksGenerator = ReportViewerLinksGeneratorImpl(
                 reportViewerUrl = reportViewerUrl,
-                reportCoordinates = reportCoordinates
+                reportCoordinates = reportCoordinates,
+                reportViewerQuery = ReportViewerQuery.createForJvm()
             )
 
             val uploadCdBuildResult = project.tasks.register<UploadCdBuildResultTask>(
@@ -76,13 +75,4 @@ public class UploadBuildResult(context: String, name: String) : SuppressibleBuil
             rootTask.configure { it.finalizedBy(uploadCdBuildResult) }
         }
     }
-
-    private fun createReportLinksGenerator(
-        reportViewerUrl: String,
-        reportCoordinates: ReportCoordinates
-    ): ReportLinksGenerator = ReportViewerLinksGeneratorImpl(
-        reportViewerUrl = reportViewerUrl,
-        reportCoordinates = reportCoordinates,
-        reportViewerQuery = ReportViewerQuery.createForJvm()
-    )
 }

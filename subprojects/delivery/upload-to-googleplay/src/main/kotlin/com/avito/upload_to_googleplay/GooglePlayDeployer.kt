@@ -1,5 +1,6 @@
 package com.avito.upload_to_googleplay
 
+import org.slf4j.Logger
 import java.io.File
 
 public data class GooglePlayDeploy(
@@ -18,7 +19,11 @@ public data class GooglePlayDeploy(
  * @see [com.avito.cd.getCdBuildConfig] валидация, которая гарантирует,
  * что с [GooglePlayDeploy.applicationId] ассоциирован один [GooglePlayDeploy]
  */
-internal interface GooglePlayDeployer {
+public interface GooglePlayDeployer {
 
-    fun deploy(deploys: List<GooglePlayDeploy>)
+    public fun deploy(deploys: List<GooglePlayDeploy>)
+}
+
+public fun createGooglePlayDeployer(jsonKey: File, logger: Logger): GooglePlayDeployer {
+   return GooglePlayDeployerImpl(jsonKey, logger)
 }
