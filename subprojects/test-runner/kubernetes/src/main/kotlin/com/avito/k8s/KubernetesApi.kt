@@ -8,6 +8,8 @@ public interface KubernetesApi {
 
     public val namespace: String
 
+    public val needForward: Boolean
+
     public suspend fun deletePod(podName: String): Boolean
 
     public suspend fun getPodLogs(podName: String): String

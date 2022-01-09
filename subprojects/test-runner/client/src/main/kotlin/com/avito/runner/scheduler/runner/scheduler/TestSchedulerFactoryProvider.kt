@@ -101,6 +101,7 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
                                 kubernetesCredentials = params.kubernetesCredentials,
                             ),
                             loggerFactory = loggerFactory,
+                            needForward = params.needForward,
                         ),
                         androidDebugBridgeProvider = androidDebugBridgeProvider,
                         reservationDeploymentFactoryProvider = ReservationDeploymentFactoryProvider(

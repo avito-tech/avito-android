@@ -13,6 +13,7 @@ import kotlinx.coroutines.delay
 internal class KubernetesApiImpl(
     private val kubernetesClient: KubernetesClient,
     loggerFactory: LoggerFactory,
+    override val needForward: Boolean,
 ) : KubernetesApi {
 
     private val logger = loggerFactory.create<KubernetesApi>()
@@ -99,7 +100,12 @@ internal class KubernetesApiImpl(
                 .withLabel("deploymentName", deploymentName)
                 .list()
                 .items
-                .map { KubePod(it) }
+                .map {
+                    KubePod(
+                        pod = it,
+                        portForward = kubernetesClient.pods().withName(it.metadata.name).portForward(5555)
+                    )
+                }
                 .onEach { pod ->
                     val phase = pod.container.phase
                     if (phase is KubeContainer.ContainerPhase.Waiting) {

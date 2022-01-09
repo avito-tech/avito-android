@@ -3,11 +3,12 @@ package com.avito.k8s.model
 import io.fabric8.kubernetes.api.model.ContainerStatus
 import io.fabric8.kubernetes.api.model.Pod
 import io.fabric8.kubernetes.api.model.PodStatus
+import io.fabric8.kubernetes.client.LocalPortForward
 
 /**
  * Wrapper to deal with nullability and abstract from fabric8io API changes
  */
-public class KubePod(private val pod: Pod) {
+public class KubePod(private val pod: Pod, public val portForward: LocalPortForward? = null) {
 
     private val podStatus: PodStatus?
         get() = pod.status

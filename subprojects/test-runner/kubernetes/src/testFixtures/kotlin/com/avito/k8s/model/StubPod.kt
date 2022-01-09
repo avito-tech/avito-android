@@ -17,5 +17,6 @@ public fun KubePod.Companion.createStubInstance(
             this.phase = phase
             podIP = ip
         }
-    }
+    },
+    portForward = kubernetesClient.pods().withName(it.metadata.name).portForward(5555)
 )

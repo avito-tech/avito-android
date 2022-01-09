@@ -65,7 +65,11 @@ internal class RemoteDeviceProviderImpl(
             val podIp = ip
             requireNotNull(podIp) { "Pod: $name must have an IP" }
 
-            val serial = emulatorSerialName(name = podIp)
+            val name = portForward?.let { portForward ->
+                "0.0.0.0:${portForward.localPort}"
+            } ?: "$podIp:$ADB_DEFAULT_PORT"
+
+            val serial = emulatorSerialName(name = name)
 
             androidDebugBridge.getRemoteDevice(
                 serial = serial
@@ -73,7 +77,7 @@ internal class RemoteDeviceProviderImpl(
         }
     }
 
-    private fun emulatorSerialName(name: String): Serial.Remote = Serial.Remote("$name:$ADB_DEFAULT_PORT")
+    private fun emulatorSerialName(name: String): Serial.Remote = Serial.Remote(name)
 }
 
 private const val ADB_DEFAULT_PORT = 5555
