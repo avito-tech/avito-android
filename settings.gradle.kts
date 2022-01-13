@@ -128,6 +128,7 @@ include(":subprojects:logger:android-logger")
 include(":subprojects:logger:slf4j-gradle-logger")
 
 include(":subprojects:delivery:artifactory-app-backup")
+include(":subprojects:delivery:nupokati")
 include(":subprojects:delivery:cd")
 include(":subprojects:delivery:feature-toggles")
 include(":subprojects:delivery:qapps")

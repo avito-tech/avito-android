@@ -1,6 +1,4 @@
-package com.avito.cd
-
-import com.google.gson.annotations.SerializedName
+package com.avito.android.model
 
 public data class CdBuildConfig(
     val schemaVersion: Long,
@@ -30,7 +28,7 @@ public data class CdBuildConfig(
         public data class Qapps(
             /**
              * Send artifacts as release versions.
-             * Non-release artifacts stored limited time.
+             * Non-release artifacts are stored for a limited time.
              */
             val isRelease: Boolean
         ) : Deployment()
@@ -38,18 +36,10 @@ public data class CdBuildConfig(
         public data class Unknown(val type: String) : Deployment()
 
         public enum class Track {
-
-            @SerializedName("alpha")
-            ALPHA,
-
-            @SerializedName("internal")
-            INTERNAL,
-
-            @SerializedName("beta")
-            BETA,
-
-            @SerializedName("production")
-            PRODUCTION
+            alpha,
+            internal,
+            beta,
+            production
         }
     }
 }

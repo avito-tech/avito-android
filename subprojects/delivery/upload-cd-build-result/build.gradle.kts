@@ -12,8 +12,8 @@ dependencies {
 
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.buildEnvironment)
+    implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.gradleExtensions)
 
     testImplementation(projects.subprojects.common.testOkhttp)

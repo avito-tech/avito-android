@@ -1,6 +1,5 @@
 package com.avito.android.plugin.artifactory
 
-import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.cd.buildOutput
@@ -30,14 +29,17 @@ public class ArtifactoryAppBackupPlugin : Plugin<Project> {
         project.plugins.withType<MavenPublishPlugin> {
             configureMavenPublishPlugin(project)
 
+            val backupTask = project.tasks.register(artifactoryAppBackupTaskName)
+
             project.extensions.configure<DefaultArtifactoryAppBackupExtension>(artifactoryBackupExtensionName) {
                 it.backups.all { backup ->
                     project.createBackupPublication(backup)
                     val publishTask = project.findMavenPublishTask(backup)
                     if (publishTask != null) {
                         publishTask.addSetArtifactsBuildOutputAction()
-                        @Suppress("DEPRECATION")
-                        project.tasks.artifactoryAppBackupTask().dependsOn(publishTask)
+                        backupTask.configure {
+                            it.dependsOn(publishTask)
+                        }
                     } else {
                         throw Problem(
                             shortDescription = "Can't apply `com.avito.android.artifactory-app-backup` plugin",
@@ -103,7 +105,6 @@ public class ArtifactoryAppBackupPlugin : Plugin<Project> {
             repo.credentials.password = project.artifactoryPassword
             repo.isAllowInsecureProtocol = true
         }
-        project.tasks.register(artifactoryAppBackupTaskName)
     }
 
     private fun PublishToMavenRepository.addSetArtifactsBuildOutputAction() {
