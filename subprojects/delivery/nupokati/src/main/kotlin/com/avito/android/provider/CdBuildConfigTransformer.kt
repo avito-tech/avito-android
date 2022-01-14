@@ -5,16 +5,15 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.gradle.api.Transformer
-import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import java.io.File
 
 internal class CdBuildConfigTransformer(
-    private val rootProjectLayout: ProjectLayout,
-    private val validator: CdBuildConfigValidator,
-) : Transformer<CdBuildConfig, String> {
+    private val validator: CdBuildConfigValidator
+) : Transformer<CdBuildConfig, RegularFile> {
 
-    override fun transform(configFilePath: String): CdBuildConfig {
-        val configFile = rootProjectLayout.projectDirectory.file(configFilePath).asFile
+    override fun transform(configFilePath: RegularFile): CdBuildConfig {
+        val configFile = configFilePath.asFile
 
         return deserializeToCdBuildConfig(configFile).also {
             // todo test on failed validation

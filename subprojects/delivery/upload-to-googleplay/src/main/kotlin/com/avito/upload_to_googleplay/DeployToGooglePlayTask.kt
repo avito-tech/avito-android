@@ -30,10 +30,11 @@ internal abstract class DeployToGooglePlayTask @Inject constructor(
 
     @TaskAction
     fun upload() {
-
         val googlePlayKey = jsonKey.orNull
             ?: throw IllegalStateException("google play key must present in ${project.name}")
-        val deployer = GooglePlayDeployerImpl(googlePlayKey, logger)
+
+        val deployer = GooglePlayDeployerFactoryProducer.create(googlePlayKey, mockWebServerUrl = null).create(logger)
+
         deployer.deploy(deploys)
     }
 }

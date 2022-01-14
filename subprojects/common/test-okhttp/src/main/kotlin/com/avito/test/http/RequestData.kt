@@ -24,4 +24,8 @@ public class RequestData(
     public fun bodyContains(substring: CharSequence): Boolean {
         return this.body.contains(substring)
     }
+
+    override fun toString(): String {
+        return recordedRequest.toString()
+    }
 }

@@ -21,7 +21,7 @@ dependencies {
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.gradle.testProject)
     testImplementation(testFixtures(projects.subprojects.gradle.git))
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
+    testImplementation(projects.subprojects.logger.logger)
 
     testFixturesApi(projects.subprojects.common.result)
     testFixturesApi(projects.subprojects.gradle.testProject)

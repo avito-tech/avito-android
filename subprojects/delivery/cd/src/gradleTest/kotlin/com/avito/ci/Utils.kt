@@ -3,7 +3,7 @@ package com.avito.ci
 import com.avito.test.gradle.TestResult
 import com.google.common.truth.Truth.assertWithMessage
 
-fun TestResult.assertAffectedModules(taskName: String, expectedModules: Set<String>) {
+internal fun TestResult.assertAffectedModules(taskName: String, expectedModules: Set<String>) {
     assertThat().buildSuccessful()
 
     @Suppress("NAME_SHADOWING")

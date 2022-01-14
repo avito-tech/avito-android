@@ -13,5 +13,5 @@ dependencies {
 
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(projects.subprojects.gradle.testProject)
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
+    testImplementation(projects.subprojects.logger.logger)
 }

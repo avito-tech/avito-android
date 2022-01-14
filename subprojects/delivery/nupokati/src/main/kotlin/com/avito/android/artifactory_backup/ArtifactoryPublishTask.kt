@@ -2,6 +2,7 @@ package com.avito.android.artifactory_backup
 
 import com.avito.android.http.createArtifactoryHttpClient
 import com.avito.android.stats.StatsDConfig
+import com.avito.http.internal.RequestMetadata
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -16,25 +17,17 @@ import org.gradle.api.tasks.TaskAction
 public abstract class ArtifactoryPublishTask : DefaultTask() {
 
     @get:Input
-    public abstract val artifactoryUrl: Property<String>
-
-    @get:Input
     public abstract val artifactoryUser: Property<String>
 
     @get:Input
     public abstract val artifactoryPassword: Property<String>
 
+    /**
+     * full url to artifactory directory
+     * example: http://<artifactory-host>/artifactory/mobile-releases/avito_android/118.0_2/
+     */
     @get:Input
-    public abstract val repository: Property<String>
-
-    @get:Input
-    public abstract val projectName: Property<String>
-
-    @get:Input
-    public abstract val projectType: Property<String>
-
-    @get:Input
-    public abstract val version: Property<String>
+    public abstract val artifactoryUploadPath: Property<String>
 
     @get:InputFiles
     public abstract val files: Property<FileCollection>
@@ -50,22 +43,28 @@ public abstract class ArtifactoryPublishTask : DefaultTask() {
             statsDConfig = statsDConfig.get()
         )
 
-        val destinationFolder = artifactoryUrl.get()
+        val destinationFolder = artifactoryUploadPath.get()
             .toHttpUrl()
             .newBuilder()
-            .addEncodedPathSegment(repository.get())
-            .addEncodedPathSegment(projectName.get())
-            .addEncodedPathSegment(projectType.get())
-            .addEncodedPathSegment(version.get())
 
         files.get().forEach { file ->
 
+            val url = destinationFolder.addEncodedPathSegment(file.name).build()
+
+            logger.lifecycle("[ArtifactoryPublishTask] Uploading: ${file.path} to $url")
+
             val request = Request.Builder()
                 .put(file.asRequestBody())
-                .url(destinationFolder.addEncodedPathSegment(file.name).build())
+                .url(url)
+                .tag(
+                    RequestMetadata::class.java,
+                    RequestMetadata("artifactory-backup", "upload")
+                )
                 .build()
 
-            httpClient.newCall(request).execute()
+            val response = httpClient.newCall(request).execute()
+
+            logger.lifecycle("[ArtifactoryPublishTask] Uploading complete: ${response.code}")
         }
     }
 }

@@ -11,7 +11,7 @@ dependencies {
     implementation(projects.subprojects.gradle.process)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.common.truthExtensions)
-    implementation(testFixtures(projects.subprojects.logger.logger))
+    implementation(projects.subprojects.logger.logger)
 
     implementation(libs.androidToolsCommon)
     implementation(libs.kotlinReflect)

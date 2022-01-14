@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.kotson)
     implementation(libs.commonsLang)
 
+    implementation(projects.subprojects.logger.logger)
     implementation(projects.subprojects.common.junitUtils)
     implementation(projects.subprojects.common.resources)
     implementation(projects.subprojects.common.waiter)

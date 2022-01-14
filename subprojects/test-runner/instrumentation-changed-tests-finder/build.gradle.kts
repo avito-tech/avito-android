@@ -17,7 +17,7 @@ dependencies {
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.gradle.git)
-    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
+    gradleTestImplementation(projects.subprojects.logger.logger)
 }
 
 gradlePlugin {

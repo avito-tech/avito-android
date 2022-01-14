@@ -27,6 +27,5 @@ dependencies {
     }
 
     testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
     testImplementation(testFixtures(projects.subprojects.common.time))
 }

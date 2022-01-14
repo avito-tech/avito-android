@@ -1,7 +1,6 @@
 package com.avito.android
 
 import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
@@ -44,25 +43,22 @@ internal class NupokatiPluginTest {
                             pluginId = "com.google.firebase.crashlytics"
                         )
                     },
-                    dependencies = setOf(
-                        GradleDependency.Safe.external("com.google.firebase:firebase-crashlytics-ktx:29.0.3")
-                    ),
                     imports = listOf("import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension"),
                     useKts = true,
                     buildGradleExtra = """
-                    |android {
-                    |    buildTypes {
-                    |        getByName("release") {
-                    |            isMinifyEnabled = true
-                    |            proguardFile("proguard.pro")
-                    |            
-                    |            (this as ExtensionAware).configure<CrashlyticsExtension> {
-                    |                mappingFileUploadEnabled = true
-                    |            }
-                    |        }
-                    |    }
-                    |}
-                    |""".trimMargin()
+                        |android {
+                        |    buildTypes {
+                        |        getByName("release") {
+                        |            isMinifyEnabled = true
+                        |            proguardFile("proguard.pro")
+                        |            
+                        |            (this as ExtensionAware).configure<CrashlyticsExtension> {
+                        |                mappingFileUploadEnabled = true
+                        |            }
+                        |        }
+                        |    }
+                        |}
+                        |""".trimMargin()
                 )
             )
         ).generateIn(projectDir)
@@ -75,10 +71,12 @@ internal class NupokatiPluginTest {
             .assertThat()
             .buildSuccessful()
 
+        // todo assert that "deployToGooglePlayRelease" and "uploadCrashlyticsMappingFileRelease"
+        //  not called because no deployment
         return listOf(
             "artifactoryPublishRelease",
-            "deployToGooglePlayRelease",
-            "uploadCrashlyticsMappingFileRelease"
+
+            "packageReleaseBundle",
         ).map { taskName ->
 
             dynamicTest("$taskName is triggered") {

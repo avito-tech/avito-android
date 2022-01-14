@@ -14,7 +14,7 @@ dependencies {
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
-    gradleTestImplementation(testFixtures(projects.subprojects.logger.logger))
+    gradleTestImplementation(projects.subprojects.logger.logger)
 
     testFixturesApi(libs.okhttpMockWebServer)
 }
