@@ -52,6 +52,7 @@ public class NupokatiPlugin : Plugin<Project> {
 
                 val bundle = variant.artifacts.get(type = SingleArtifact.BUNDLE)
 
+                // will be removed in MBS-12535
                 val uploadToGooglePlayTask =
                     project.tasks.register<DeployBundleToGooglePlayTask>("deployToGooglePlay$variantSlug") {
                         group = CD_TASK_GROUP
@@ -61,6 +62,12 @@ public class NupokatiPlugin : Plugin<Project> {
                         this.mapping.set(variant.artifacts.get(type = SingleArtifact.OBFUSCATION_MAPPING_FILE))
                         this.applicationId.set(variant.applicationId)
                         this.track.set(extension.googlePlayTrack)
+
+                        /**
+                         * when I try to find task provider via project.tasks.named I get Exception that there is no task
+                         * That's because firebase-crashlytics-plugin creates task some how after we trying bind to it
+                         */
+                        dependsOn("${project.path}:uploadCrashlyticsMappingFile$variantSlug")
                     }
 
                 val publishArtifactsTask =
@@ -100,10 +107,7 @@ public class NupokatiPlugin : Plugin<Project> {
                     // todo depend on output with actually uploaded artifacts
                     dependsOn(publishArtifactsTask)
 
-                    // explicit dependency
                     dependsOn(uploadToGooglePlayTask)
-
-                    // todo instrumentation tasks dependencies shoule be wired manually for now
 
                     // todo firebase crashlytics task
                 }
