@@ -5,6 +5,13 @@ import androidx.test.internal.runner.RunnerArgsAccessor
 
 interface OrchestratorDelegate {
 
+    @Deprecated(
+        message = "Use isFakeOrchestratorRun(Bundle) instead",
+        replaceWith = ReplaceWith("!isFakeOrchestratorRun(arguments)")
+    )
     fun isRealRun(arguments: Bundle): Boolean =
-        !arguments.containsKey(RunnerArgsAccessor.ARGUMENT_ORCHESTRATOR_SERVICE)
+        !isFakeOrchestratorRun(arguments)
+
+    fun isFakeOrchestratorRun(arguments: Bundle): Boolean =
+        arguments.containsKey(RunnerArgsAccessor.ARGUMENT_ORCHESTRATOR_SERVICE)
 }

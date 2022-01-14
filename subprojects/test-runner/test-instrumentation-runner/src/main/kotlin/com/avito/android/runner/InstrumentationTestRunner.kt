@@ -22,7 +22,7 @@ abstract class InstrumentationTestRunner : AndroidJUnitRunner(), OrchestratorDel
      */
     final override fun onCreate(arguments: Bundle) {
         instrumentationArguments = arguments
-        val isRealRun = isRealRun(arguments)
+        val isRealRun = !isFakeOrchestratorRun(arguments)
         if (isRealRun) {
             beforeOnCreate(arguments)
             delegateRegistry = DelegatesRegistry(
