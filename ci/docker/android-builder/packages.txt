@@ -1,4 +1,5 @@
 build-tools;30.0.3
+build-tools;31.0.0
 platforms;android-30
 tools
 extras;google;google_play_services
