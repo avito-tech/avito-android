@@ -1,8 +1,7 @@
 package com.avito.instrumentation.internal
 
 import com.android.build.api.dsl.CommonExtension
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
+import org.slf4j.Logger
 
 /**
  * Local test runs with [AndroidJunitRunner](https://developer.android.com/training/testing/junit-runner)
@@ -12,12 +11,10 @@ import com.avito.logger.create
  * todo it should be extracted from AvitoTestRunner plugin
  */
 internal class LocalRunInteractor(
-    loggerFactory: LoggerFactory,
     private val argsTester: LocalRunArgsChecker,
     private val dslInteractor: AndroidDslInteractor,
+    private val logger: Logger
 ) {
-
-    private val logger = loggerFactory.create<LocalRunInteractor>()
 
     fun setupLocalRunInstrumentationArgs(androidExtension: CommonExtension<*, *, *, *>, args: Map<String, String>) {
         val filteredArgs = filterNotBlankValues(args) { key ->
