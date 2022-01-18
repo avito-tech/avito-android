@@ -1,21 +1,18 @@
 package com.avito.instrumentation.internal
 
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.slf4j.Logger
 
 internal class OutputDirResolver(
     private val extension: InstrumentationTestsPluginExtension,
     private val rootProjectLayout: ProjectLayout,
     private val providers: ProviderFactory,
-    loggerFactory: LoggerFactory
+    private val logger: Logger
 ) {
-
-    private val logger = loggerFactory.create<OutputDirConfigurator>()
 
     fun resolveWithDeprecatedProperty(): Provider<Directory> {
         return extension.outputDir.map {

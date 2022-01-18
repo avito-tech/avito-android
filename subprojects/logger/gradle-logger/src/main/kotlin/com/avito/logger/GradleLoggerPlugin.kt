@@ -43,14 +43,14 @@ public class GradleLoggerPlugin : Plugin<Project> {
 
         private fun getLoggerService(project: Project): Provider<LoggerService> {
             val rootProject = project.rootProject
-            return if (rootProject.plugins.hasPlugin(GradleLoggerPlugin::class.java)) {
-                val extension = rootProject.extensions.getByType(GradleLoggerExtension::class.java)
-                registerLoggerServiceIfAbsent(project, extension)
-            } else {
-                project.logger.warn(error)
-                @Suppress("DEPRECATION")
-                legacyRegisterLoggerServiceIfAbsent(rootProject)
+            if (!rootProject.plugins.hasPlugin(GradleLoggerPlugin::class.java)) {
+                throw IllegalStateException(
+                    "Failed to getLoggerService for project ${project.name}." +
+                        "Apply com.avito.android.gradle-logger plugin to the root project"
+                )
             }
+            val extension = rootProject.extensions.getByType(GradleLoggerExtension::class.java)
+            return registerLoggerServiceIfAbsent(project, extension)
         }
 
         /**
@@ -73,19 +73,6 @@ public class GradleLoggerPlugin : Plugin<Project> {
         private fun checkProjectIsRoot(target: Project) {
             require(target.rootProject == target) {
                 error
-            }
-        }
-
-        @Deprecated("remove after 2021.38 release", replaceWith = ReplaceWith("registerLoggerServiceIfAbsent"))
-        private fun legacyRegisterLoggerServiceIfAbsent(
-            target: Project,
-        ): Provider<LoggerService> {
-            return target.gradle.sharedServices.registerIfAbsent(
-                LoggerService::javaClass.name,
-                LoggerService::class.java
-            ) {
-                @Suppress("DEPRECATION")
-                LegacyGradleLoggerConfigurator(target).configure(it.parameters)
             }
         }
 

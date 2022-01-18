@@ -5,7 +5,6 @@ import com.avito.git.gitState
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
-import com.avito.logger.GradleLoggerPlugin
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.envArgs
@@ -15,8 +14,6 @@ internal class ConfiguratorsFactory(
     private val project: Project,
     private val extension: InstrumentationTestsPluginExtension,
 ) {
-    private val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project).get()
-
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 
     private val gitResolver = GitResolver(project.gitState())
@@ -42,7 +39,7 @@ internal class ConfiguratorsFactory(
         extension = extension,
         rootProjectLayout = project.rootProject.layout,
         providers = project.providers,
-        loggerFactory = loggerFactory,
+        logger = project.logger,
     )
 
     private val argsTester = LocalRunArgsChecker(outputDirResolver)
@@ -62,9 +59,9 @@ internal class ConfiguratorsFactory(
     )
 
     val localRunInteractor: LocalRunInteractor = LocalRunInteractor(
-        loggerFactory = loggerFactory,
         argsTester = argsTester,
-        dslInteractor = androidDslInteractor
+        dslInteractor = androidDslInteractor,
+        logger = project.logger
     )
 
     fun createTaskConfigurators(

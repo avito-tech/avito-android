@@ -108,6 +108,7 @@ internal class UploadCdBuildResultIntegrationTest {
 
         TestProjectGenerator(
             plugins = plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.impact")
             },
             modules = listOf(androidAppModule)
