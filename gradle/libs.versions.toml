@@ -17,6 +17,7 @@ minSdk = "21"
 junit5 = "5.8.0"
 junit5Platform = "1.8.0"
 hamcrest = "2.2"
+moshi = "1.13.0"
 
 [libraries]
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -116,6 +117,10 @@ detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", v
 
 # https://github.com/robolectric/robolectric/releases
 robolectric = "org.robolectric:robolectric:4.7.1"
+
+moshiKotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi"}
+moshiKapt = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi"}
+moshiRetrofit = "com.squareup.retrofit2:converter-moshi:2.9.0"
 
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]

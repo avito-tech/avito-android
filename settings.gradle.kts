@@ -136,3 +136,5 @@ include(":subprojects:delivery:sign-service")
 include(":subprojects:delivery:legacy-signer")
 include(":subprojects:delivery:upload-cd-build-result")
 include(":subprojects:delivery:upload-to-googleplay")
+
+include(":subprojects:emcee:queue-api")
