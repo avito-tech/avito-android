@@ -1,0 +1,6 @@
+# Include only app sources for build
+*
+!src/
+!gradle*
+!gradlew*
+!*.kts
