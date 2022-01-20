@@ -1,7 +1,7 @@
 package com.avito.android
 
-import com.avito.android.model.CdBuildConfig
-import com.avito.reportviewer.model.ReportCoordinates
+import org.gradle.api.Action
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 
@@ -10,15 +10,34 @@ public abstract class NupokatiExtension {
     @get:Nested
     public abstract val artifactory: ArtifactoryExtension
 
+    @get:Nested
+    public abstract val googlePlay: GooglePlayExtensions
+
+    @get:Nested
+    public abstract val reportViewer: ReportViewerExtension
+
+    public abstract val cdBuildConfigFile: RegularFileProperty
+
     public abstract val suppressFailures: Property<Boolean>
 
     public abstract val teamcityBuildUrl: Property<String>
 
     public abstract val releaseBuildVariantName: Property<String>
 
-    public abstract val googlePlayTrack: Property<CdBuildConfig.Deployment.Track>
+    /**
+     * disable manually for tests or uploading from service
+     */
+    public abstract val uploadCrashlyticsMapping: Property<Boolean>
 
-    public abstract val reportViewerUrl: Property<String>
+    public fun artifactory(action: Action<ArtifactoryExtension>) {
+        action.execute(artifactory)
+    }
 
-    public abstract val reportCoordinates: Property<ReportCoordinates>
+    public fun googlePlay(action: Action<GooglePlayExtensions>) {
+        action.execute(googlePlay)
+    }
+
+    public fun reportViewer(action: Action<ReportViewerExtension>) {
+        action.execute(reportViewer)
+    }
 }

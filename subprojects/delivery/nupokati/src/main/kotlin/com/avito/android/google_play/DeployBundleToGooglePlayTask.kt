@@ -2,26 +2,25 @@ package com.avito.android.google_play
 
 import com.avito.android.model.CdBuildConfig
 import com.avito.upload_to_googleplay.GooglePlayDeploy
-import com.avito.upload_to_googleplay.createGooglePlayDeployer
+import com.avito.upload_to_googleplay.GooglePlayDeployerFactoryProducer
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFile
-import org.gradle.api.model.ObjectFactory
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import javax.inject.Inject
 
-public abstract class DeployBundleToGooglePlayTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
-
-    @get:InputFile
-    public val googlePlayKeyFile: Property<RegularFile> = objects.fileProperty()
+public abstract class DeployBundleToGooglePlayTask : DefaultTask() {
 
     @get:InputFile
-    public val bundle: Property<RegularFile> = objects.fileProperty()
+    public abstract val googlePlayKeyFile: RegularFileProperty
 
     @get:InputFile
-    public val mapping: Property<RegularFile> = objects.fileProperty()
+    public abstract val bundle: RegularFileProperty
+
+    @get:InputFile
+    public abstract val mapping: RegularFileProperty
 
     @get:Input
     public abstract val track: Property<CdBuildConfig.Deployment.Track>
@@ -29,12 +28,17 @@ public abstract class DeployBundleToGooglePlayTask @Inject constructor(objects: 
     @get:Input
     public abstract val applicationId: Property<String>
 
+    @get:Optional
+    @get:Input
+    public abstract val mockGooglePlayUrl: Property<String>
+
     @TaskAction
     public fun doWork() {
-        val deployer = createGooglePlayDeployer(
+
+        val deployer = GooglePlayDeployerFactoryProducer.create(
             jsonKey = googlePlayKeyFile.get().asFile,
-            logger = logger
-        )
+            mockWebServerUrl = mockGooglePlayUrl.orNull,
+        ).create(logger = logger)
 
         deployer.deploy(
             listOf(

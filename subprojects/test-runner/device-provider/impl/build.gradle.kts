@@ -14,7 +14,6 @@ dependencies {
     implementation(projects.subprojects.common.result)
     implementation(projects.subprojects.common.waiter)
 
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
     testImplementation(libs.coroutinesTest)
 
     testFixturesApi(testFixtures(projects.subprojects.common.httpClient))

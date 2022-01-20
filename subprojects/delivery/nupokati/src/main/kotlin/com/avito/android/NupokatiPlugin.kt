@@ -7,7 +7,7 @@ import com.android.build.gradle.AppPlugin
 import com.avito.android.agp.getVersionCode
 import com.avito.android.artifactory_backup.ArtifactoryPublishTask
 import com.avito.android.contract_upload.UploadCdBuildResultTask
-import com.avito.android.google_play.DeployBundleToGooglePlayTask
+import com.avito.android.google_play.GooglePlayUploadTaskConfigurator
 import com.avito.android.model.BuildOutput
 import com.avito.android.model.CdBuildConfig
 import com.avito.android.provider.CdBuildConfigTransformer
@@ -16,6 +16,7 @@ import com.avito.android.stats.statsdConfig
 import com.avito.capitalize
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
@@ -28,15 +29,7 @@ public class NupokatiPlugin : Plugin<Project> {
 
         val extension = project.extensions.create<NupokatiExtension>("nupokati")
 
-        val cdBuildConfig: Provider<CdBuildConfig> = project.providers
-            .gradleProperty("cd.build.config.file")
-            .forUseAtConfigurationTime()
-            .map(
-                CdBuildConfigTransformer(
-                    rootProjectLayout = project.rootProject.layout,
-                    validator = CdBuildConfigValidator()
-                )
-            )
+        val googlePlayUploadTaskConfigurator = GooglePlayUploadTaskConfigurator(project, extension)
 
         val buildOutput = BuildOutput()
 
@@ -50,36 +43,33 @@ public class NupokatiPlugin : Plugin<Project> {
 
                 val variantSlug = variant.name.capitalize()
 
-                val bundle = variant.artifacts.get(type = SingleArtifact.BUNDLE)
+                val bundle: Provider<RegularFile> = variant.artifacts.get(type = SingleArtifact.BUNDLE)
 
-                val uploadToGooglePlayTask =
-                    project.tasks.register<DeployBundleToGooglePlayTask>("deployToGooglePlay$variantSlug") {
-                        group = CD_TASK_GROUP
-                        description = "Deploy bundle to GooglePlay"
+                val cdBuildConfig: Provider<CdBuildConfig> = extension.cdBuildConfigFile
+                    .map(CdBuildConfigTransformer(validator = CdBuildConfigValidator()))
 
-                        this.bundle.set(bundle)
-                        this.mapping.set(variant.artifacts.get(type = SingleArtifact.OBFUSCATION_MAPPING_FILE))
-                        this.applicationId.set(variant.applicationId)
-                        this.track.set(extension.googlePlayTrack)
-                    }
+                val uploadToGooglePlayTask = googlePlayUploadTaskConfigurator.configure(
+                    cdBuildConfig = cdBuildConfig,
+                    variant = variant,
+                    bundle = bundle
+                )
 
                 val publishArtifactsTask =
                     project.tasks.register<ArtifactoryPublishTask>("artifactoryPublish$variantSlug") {
                         group = CD_TASK_GROUP
                         description = "Publish release artifacts"
 
-                        this.artifactoryUrl.set(extension.artifactory.baseUrl)
                         this.artifactoryUser.set(extension.artifactory.login)
                         this.artifactoryPassword.set(extension.artifactory.password)
-                        this.repository.set(
-                            extension.artifactory.backupRepository.convention("apps-release-local")
+                        this.artifactoryUploadPath.set(
+                            cdBuildConfig.map {
+                                it.outputDescriptor.path.substringBeforeLast('/')
+                            }
                         )
-                        this.projectName.set(
-                            extension.artifactory.projectName.convention("${project.name}-android")
-                        )
-                        this.projectType.set(extension.artifactory.projectType)
-                        this.version.set(extension.artifactory.version)
+
+                        // todo need to check sign somehow, because it's completely possible to miss it here
                         this.files.set(project.files(bundle))
+                        this.statsDConfig.set(project.statsdConfig)
                     }
 
                 project.tasks.register<UploadCdBuildResultTask>(uploadCdBuildResultTaskName(variantSlug)) {
@@ -89,8 +79,8 @@ public class NupokatiPlugin : Plugin<Project> {
                     this.artifactoryUser.set(extension.artifactory.login)
                     this.artifactoryPassword.set(extension.artifactory.password)
                     this.suppressErrors.set(extension.suppressFailures)
-                    this.reportViewerUrl.set(extension.reportViewerUrl)
-                    this.reportCoordinates.set(extension.reportCoordinates)
+                    this.reportViewerUrl.set(extension.reportViewer.frontendUrl)
+                    this.reportCoordinates.set(extension.reportViewer.reportCoordinates)
                     this.teamcityBuildUrl.set(extension.teamcityBuildUrl)
                     this.cdBuildConfig.set(cdBuildConfig)
                     this.appVersionCode.set(variant.getVersionCode())
@@ -100,12 +90,9 @@ public class NupokatiPlugin : Plugin<Project> {
                     // todo depend on output with actually uploaded artifacts
                     dependsOn(publishArtifactsTask)
 
-                    // explicit dependency
-                    dependsOn(uploadToGooglePlayTask)
-
-                    // todo instrumentation tasks dependencies shoule be wired manually for now
-
-                    // todo firebase crashlytics task
+                    if (uploadToGooglePlayTask != null) {
+                        dependsOn(uploadToGooglePlayTask)
+                    }
                 }
             }
         }

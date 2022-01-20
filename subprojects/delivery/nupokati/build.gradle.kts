@@ -2,7 +2,6 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
-    id("convention.test-fixtures")
 }
 
 dependencies {
@@ -22,6 +21,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.reportViewer)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(projects.subprojects.common.testOkhttp)
 }
 
 gradlePlugin {

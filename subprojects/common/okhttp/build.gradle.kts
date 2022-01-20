@@ -13,7 +13,6 @@ dependencies {
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.common.testOkhttp)
     testImplementation(projects.subprojects.common.result)
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
     testImplementation(libs.retrofit)
     testImplementation(libs.retrofitConverterGson)
 }

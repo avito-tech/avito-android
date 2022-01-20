@@ -8,4 +8,5 @@ dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(gradleApi())
     implementation(libs.googlePublish)
+    implementation(libs.okhttp)
 }

@@ -23,7 +23,7 @@ dependencies {
 
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
+    testImplementation(projects.subprojects.logger.logger)
     testImplementation(testFixtures(projects.subprojects.common.httpClient))
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)

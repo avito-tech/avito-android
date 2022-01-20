@@ -29,11 +29,11 @@ dependencies {
         because("java.nio.file.Path extensions")
     }
 
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
-    testImplementation(testFixtures(projects.subprojects.common.time))
-    testImplementation(projects.subprojects.common.files)
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.common.resources)
     testImplementation(libs.coroutinesTest)
+    testImplementation(projects.subprojects.common.files)
+    testImplementation(projects.subprojects.common.resources)
+    testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(projects.subprojects.logger.logger)
+    testImplementation(testFixtures(projects.subprojects.common.time))
     testImplementation(testFixtures(projects.subprojects.testRunner.deviceProvider.model))
 }

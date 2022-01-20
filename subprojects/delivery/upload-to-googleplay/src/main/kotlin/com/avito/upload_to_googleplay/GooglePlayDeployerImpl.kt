@@ -1,25 +1,15 @@
 package com.avito.upload_to_googleplay
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.FileContent
-import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.androidpublisher.AndroidPublisher
-import com.google.api.services.androidpublisher.AndroidPublisherScopes
 import com.google.api.services.androidpublisher.model.Track
 import com.google.api.services.androidpublisher.model.TrackRelease
 import org.slf4j.Logger
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 internal class GooglePlayDeployerImpl(
-    jsonKey: File,
+    private val publisher: AndroidPublisher,
     private val logger: Logger
 ) : GooglePlayDeployer {
-
-    private val publisher by lazy {
-        createAndroidPublisher(jsonKey)
-    }
 
     private val edits by lazy {
         publisher.edits()
@@ -69,7 +59,8 @@ internal class GooglePlayDeployerImpl(
                 )
             )
             .trackUploadProgress("bundle")
-            .execute().versionCode
+            .execute()
+            .versionCode
     }
 
     private fun uploadApk(
@@ -87,7 +78,8 @@ internal class GooglePlayDeployerImpl(
                 )
             )
             .trackUploadProgress("apk")
-            .execute().versionCode
+            .execute()
+            .versionCode
     }
 
     private fun uploadProguard(
@@ -156,35 +148,6 @@ internal class GooglePlayDeployerImpl(
             }
         }
     }
-
-    companion object {
-
-        const val MIME_TYPE_STREAM = "application/octet-stream"
-
-        private val timeout = TimeUnit.MINUTES.toMillis(5).toInt()
-
-        private fun createAndroidPublisher(jsonKey: File): AndroidPublisher {
-            val transport = GoogleNetHttpTransport.newTrustedTransport()
-            val factory = JacksonFactory.getDefaultInstance()
-            val credential = GoogleCredential.fromStream(
-                jsonKey.inputStream(),
-                transport,
-                factory
-            ).createScoped(listOf(AndroidPublisherScopes.ANDROIDPUBLISHER))
-
-            return AndroidPublisher.Builder(
-                transport,
-                factory
-            ) { request ->
-                credential.initialize(
-                    request
-                        .setConnectTimeout(timeout)
-                        .setReadTimeout(timeout)
-                )
-            }.run {
-                applicationName = "avito-google-play-publisher"
-                build()
-            }
-        }
-    }
 }
+
+private const val MIME_TYPE_STREAM = "application/octet-stream"

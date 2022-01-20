@@ -15,9 +15,7 @@ dependencies {
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.common.junitUtils)
     testImplementation(testFixtures(projects.subprojects.common.statsd))
-    testImplementation(testFixtures(projects.subprojects.logger.logger))
 
     testFixturesApi(testFixtures(projects.subprojects.common.statsd))
     testFixturesApi(testFixtures(projects.subprojects.common.time))
-    testFixturesImplementation(testFixtures(projects.subprojects.logger.logger))
 }
