@@ -1,5 +1,6 @@
 package com.avito.android.ui
 
+import MinificationSample
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.LayoutRes
@@ -14,6 +15,9 @@ class PageObjectActivity : AppCompatActivity() {
         check(rootId != -1) { "$EXTRA_LAYOUT_ID is mandatory" }
 
         setContentView(rootId)
+
+        val sample = MinificationSample("sample usage to keep the class")
+        sample.valueChanges.subscribe()
     }
 
     companion object {

@@ -9,6 +9,7 @@ plugins {
     id("convention.kotlin-android-app")
     id("convention.android-robolectric")
     id("com.avito.android.instrumentation-tests")
+    id("org.jetbrains.kotlin.plugin.parcelize")
 }
 
 android {
@@ -36,11 +37,29 @@ android {
     packagingOptions {
         resources.pickFirsts.add("META-INF/okhttp.kotlin_module")
     }
+
+    variantFilter {
+        if (name == "release") {
+            ignore = false
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+//            proguardFile(getDefaultProguardFile("proguard-android-optimize.txt"))
+            proguardFile(file("proguard.pro"))
+        }
+    }
 }
 
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation(libs.gson)
+    implementation(libs.rxRelay3)
     implementation(libs.playServicesBase)
     implementation(libs.recyclerView)
     implementation(libs.swipeRefreshLayout)
