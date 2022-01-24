@@ -6,7 +6,7 @@ public data class Job(
     @Json(name = "jobId")
     val id: String,
     /**
-     * Uses to prioritize inside the group. Higher will schedule faster
+     * Uses to prioritize inside the group. Higher will schedule faster. Expected range [0..999]
      */
     @Json(name = "jobPriority")
     val priority: Int,
@@ -16,7 +16,7 @@ public data class Job(
     @Json(name = "jobGroupId")
     val groupId: String,
     /**
-     * Higher will schedule faster
+     * Higher will schedule faster. Expected range [0..999]
      */
     @Json(name = "jobGroupPriority")
     val groupPriority: Int,

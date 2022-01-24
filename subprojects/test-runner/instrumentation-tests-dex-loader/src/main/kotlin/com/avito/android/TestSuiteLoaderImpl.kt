@@ -64,8 +64,8 @@ internal class TestSuiteLoaderImpl(
                         }
                 }
 
-            if (tests.isEmpty()) {
-                throw IllegalStateException("No tests found in test apk: ${file.path}")
+            check(tests.isNotEmpty()) {
+                "No tests found in test apk: ${file.path}"
             }
 
             tests
