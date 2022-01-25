@@ -50,7 +50,7 @@ public class MockDispatcher(
             mocks.findLast { it.requestMatcher.invoke(requestData) }
         }
         val response = if (matchedMock?.response != null) {
-            logger.info("Request matched: [$requestData], answering: ${matchedMock.response}")
+            logger.debug("Request matched: [$requestData], answering: ${matchedMock.response}")
             matchedMock.response
         } else {
             logger.warn("Unmocked request captured: [$requestData], answering: [$unmockedResponse]")

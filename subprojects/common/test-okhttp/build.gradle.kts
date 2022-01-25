@@ -17,4 +17,6 @@ dependencies {
     implementation(projects.subprojects.common.resources)
     implementation(projects.subprojects.common.waiter)
     implementation(projects.subprojects.common.result)
+
+    implementation(libs.jsonAssert)
 }

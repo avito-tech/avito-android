@@ -1,5 +1,6 @@
 package com.avito.android.contract_upload
 
+import com.avito.android.http.ArtifactoryClient
 import com.avito.android.http.createArtifactoryHttpClient
 import com.avito.android.model.BuildOutput
 import com.avito.android.model.CdBuildConfig
@@ -75,10 +76,12 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
     private fun createUploadAction(): UploadCdBuildResultTaskAction {
         return UploadCdBuildResultTaskAction(
             gson = uploadCdGson,
-            client = createArtifactoryHttpClient(
-                user = artifactoryUser.get(),
-                password = artifactoryPassword.get(),
-                statsDConfig = statsDConfig.get()
+            client = ArtifactoryClient(
+                createArtifactoryHttpClient(
+                    user = artifactoryUser.get(),
+                    password = artifactoryPassword.get(),
+                    statsDConfig = statsDConfig.get()
+                )
             ),
             suppressErrors = suppressErrors.get()
         )

@@ -1,11 +1,9 @@
 package com.avito.android.artifactory_backup
 
+import com.avito.android.http.ArtifactoryClient
 import com.avito.android.http.createArtifactoryHttpClient
 import com.avito.android.stats.StatsDConfig
-import com.avito.http.internal.RequestMetadata
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
@@ -43,28 +41,15 @@ public abstract class ArtifactoryPublishTask : DefaultTask() {
             statsDConfig = statsDConfig.get()
         )
 
+        val artifactoryClient = ArtifactoryClient(httpClient)
+
         val destinationFolder = artifactoryUploadPath.get()
             .toHttpUrl()
             .newBuilder()
 
         files.get().forEach { file ->
-
             val url = destinationFolder.addEncodedPathSegment(file.name).build()
-
-            logger.lifecycle("[ArtifactoryPublishTask] Uploading: ${file.path} to $url")
-
-            val request = Request.Builder()
-                .put(file.asRequestBody())
-                .url(url)
-                .tag(
-                    RequestMetadata::class.java,
-                    RequestMetadata("artifactory-backup", "upload")
-                )
-                .build()
-
-            val response = httpClient.newCall(request).execute()
-
-            logger.lifecycle("[ArtifactoryPublishTask] Uploading complete: ${response.code}")
+            artifactoryClient.uploadFile(url, file)
         }
     }
 }
