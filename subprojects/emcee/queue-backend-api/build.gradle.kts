@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.retrofit)
+    api(projects.subprojects.emcee.shared)
+    api(libs.retrofit)
     implementation(libs.moshiKotlin)
     implementation(libs.moshiRetrofit)
     kapt(libs.moshiKapt)

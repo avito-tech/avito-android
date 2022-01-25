@@ -137,4 +137,7 @@ include(":subprojects:delivery:legacy-signer")
 include(":subprojects:delivery:upload-cd-build-result")
 include(":subprojects:delivery:upload-to-googleplay")
 
-include(":subprojects:emcee:queue-api")
+include(":subprojects:emcee:gradle-plugin")
+include(":subprojects:emcee:queue-backend-api")
+include(":subprojects:emcee:action")
+include(":subprojects:emcee:shared")
