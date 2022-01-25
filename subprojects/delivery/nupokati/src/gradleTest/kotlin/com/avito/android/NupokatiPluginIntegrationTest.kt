@@ -2,6 +2,7 @@ package com.avito.android
 
 import com.avito.http.HttpCodes
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
@@ -35,12 +36,14 @@ internal class NupokatiPluginIntegrationTest {
         val outputDescriptorPath =
             mockWebServer.url("/artifactory/mobile-releases/avito_android/118.0_2/release_info.json")
 
+        val releaseVersion = "118.0"
+
         @Language("json")
         val cdConfig = """
             |{
             |  "schema_version": 2,
             |  "project": "avito",
-            |  "release_version": "118.0",
+            |  "release_version": "$releaseVersion",
             |  "output_descriptor": {
             |    "path": "$outputDescriptorPath",
             |    "skip_upload": false
@@ -65,6 +68,13 @@ internal class NupokatiPluginIntegrationTest {
 
         val mockWebServerUrl = mockWebServer.url("/")
 
+        val reportViewerFrontendUrl = "http://stub.com"
+        val planSlug = "AvitoAndroid"
+        val jobSlug = "FunctionalTest"
+        val runId = "someId"
+        val teamcityUrl = "http://teamcity.ru"
+        val versionCode = 122
+
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
@@ -72,6 +82,7 @@ internal class NupokatiPluginIntegrationTest {
                     plugins = plugins {
                         id("com.avito.android.nupokati")
                     },
+                    versionCode = versionCode,
                     useKts = true,
                     imports = listOf("import com.avito.reportviewer.model.ReportCoordinates"),
                     buildGradleExtra = """
@@ -88,7 +99,7 @@ internal class NupokatiPluginIntegrationTest {
                         |   cdBuildConfigFile.set(rootProject.file("${cdConfigFile.name}"))
                         |   uploadCrashlyticsMapping.set(false)
                         |   suppressFailures.set(true)
-                        |   teamcityBuildUrl.set("http://teamcity.ru")
+                        |   teamcityBuildUrl.set("$teamcityUrl")
                         |   
                         |   artifactory {
                         |       login.set("user")
@@ -101,14 +112,18 @@ internal class NupokatiPluginIntegrationTest {
                         |   }
                         |   
                         |   reportViewer {
-                        |       frontendUrl.set("http://stub.com")
-                        |       reportCoordinates.set(ReportCoordinates("1", "2", "3"))
+                        |       frontendUrl.set("$reportViewerFrontendUrl")
+                        |       reportCoordinates.set(ReportCoordinates("$planSlug", "$jobSlug", "$runId"))
                         |   }
                         |}
                         |""".trimMargin()
                 )
             )
         ).generateIn(projectDir)
+
+        val branchName = "release_11"
+        projectDir.git("checkout -b $branchName")
+        val commit = projectDir.git("rev-parse HEAD").trim()
 
         mockDispatcher.registerMock(
             Mock(
@@ -122,6 +137,10 @@ internal class NupokatiPluginIntegrationTest {
 
         mockGooglePlay()
 
+        val contractJson = mockDispatcher.captureRequest {
+            method == "PUT" && path == "/artifactory/mobile-releases/avito_android/118.0_2/release_info.json"
+        }
+
         gradlew(
             projectDir,
             ":app:uploadCdBuildResultRelease",
@@ -130,7 +149,32 @@ internal class NupokatiPluginIntegrationTest {
             .assertThat()
             .buildSuccessful()
 
-        // todo assert requests
+        @Language("json")
+        val expectedContract = """
+        |{
+        |  "schema_version": 2,
+        |  "teamcity_build_url": "$teamcityUrl",
+        |  "build_number": "$versionCode",
+        |  "release_version": "$releaseVersion",
+        |  "git_branch": {
+        |    "name": "$branchName",
+        |    "commit_hash": "$commit"
+        |  },
+        |  "test_results": {
+        |    "report_url": "$reportViewerFrontendUrl/report/$planSlug/$jobSlug/$runId?q=eyJmaWx0ZXIiOnsic2tpcCI6MH19",
+        |    "report_coordinates": {
+        |      "plan_slug": "$planSlug",
+        |      "job_slug": "$jobSlug",
+        |      "run_id": "$runId"
+        |    }
+        |  },
+        |  "artifacts": []
+        |}
+        |""".trimMargin()
+
+        contractJson.checks.singleRequestCaptured().jsonEquals(expectedContract)
+
+        // todo where is artifacts?
     }
 
     private fun mockGooglePlay() {

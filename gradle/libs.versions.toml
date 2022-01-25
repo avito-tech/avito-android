@@ -86,6 +86,7 @@ truth = "com.google.truth:truth:1.0"
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 hamcrestLibrary = { module = "org.hamcrest:hamcrest-library", version.ref = "hamcrest" }
 jsonPathAssert = "com.jayway.jsonpath:json-path-assert:2.4.0"
+jsonAssert = "org.skyscreamer:jsonassert:1.5.0"
 kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.4.0"
 mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:3.3.3"

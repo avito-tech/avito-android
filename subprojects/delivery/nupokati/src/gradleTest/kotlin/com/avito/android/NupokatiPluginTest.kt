@@ -75,7 +75,6 @@ internal class NupokatiPluginTest {
         //  not called because no deployment
         return listOf(
             "artifactoryPublishRelease",
-
             "packageReleaseBundle",
         ).map { taskName ->
 
