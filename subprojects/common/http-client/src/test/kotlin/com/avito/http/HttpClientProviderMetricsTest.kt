@@ -25,6 +25,7 @@ import java.net.SocketTimeoutException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+@Flaky(reason = "MBS-11302")
 internal class HttpClientProviderMetricsTest {
 
     private val loggerFactory = PrintlnLoggerFactory
@@ -63,7 +64,6 @@ internal class HttpClientProviderMetricsTest {
         )
     }
 
-    @Flaky(reason = "MBS-11302")
     @Test
     fun `all metrics send - multiple parallel requests`() {
         val provider = createClientProvider()

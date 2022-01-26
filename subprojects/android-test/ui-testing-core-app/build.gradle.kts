@@ -1,9 +1,7 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.gradle.KubernetesCredentials.Service
-import com.avito.utils.gradle.kubernetesCredentials
 
 plugins {
     id("convention.kotlin-android-app")
@@ -93,76 +91,82 @@ instrumentation {
         fromSource.excludeFlaky = true
     }
 
-    val credentials = project.kubernetesCredentials
-    if (credentials !is Service && credentials !is KubernetesCredentials.Config) {
-        // todo fix this in MBS-11834
-        logger.warn("Instrumentation tasks are not created because kubernetes credentials not set")
-    } else {
-
-        afterEvaluate {
-            tasks.named("check").dependsOn(tasks.named("instrumentationUi"))
+    environments {
+        register<KubernetesViaCredentials>("kubernetes") {
+            token.set(getOptionalStringProperty("kubernetesToken"))
+            caCertData.set(getOptionalStringProperty("kubernetesCaCertData"))
+            url.set(getOptionalStringProperty("kubernetesUrl"))
+            namespace.set(getOptionalStringProperty("kubernetesNamespace"))
         }
+    }
 
-        val emulator22 = CloudEmulator(
-            name = "api22",
-            api = 22,
-            model = "Android_SDK_built_for_x86",
-            image = emulatorImage(22, "7bb4b0b720"),
-            cpuCoresRequest = "1",
-            cpuCoresLimit = "1.3",
-            memoryLimit = "4Gi"
-        )
+    experimental {
+        fetchLogcatForIncompleteTests.set(true)
+    }
 
-        val emulator29 = CloudEmulator(
-            name = "api29",
-            api = 29,
-            model = "Android_SDK_built_for_x86_64",
-            image = emulatorImage(29, "1927fb7cda"),
-            cpuCoresRequest = "1",
-            cpuCoresLimit = "1.3",
-            memoryLimit = "4Gi"
-        )
+    afterEvaluate {
+        tasks.named("check").dependsOn(tasks.named("instrumentationUiKubernetes"))
+    }
 
-        configurations {
-            register("ui") {
-                kubernetesNamespace = "android-emulator"
-                reportSkippedTests = true
-                filter = "ci"
+    val emulator22 = CloudEmulator(
+        name = "api22",
+        api = 22,
+        model = "Android_SDK_built_for_x86",
+        image = emulatorImage(22, "7bb4b0b720"),
+        cpuCoresRequest = "1",
+        cpuCoresLimit = "1.3",
+        memoryLimit = "4Gi"
+    )
 
-                targets {
-                    register("api22") {
-                        deviceName = "API22"
+    val emulator29 = CloudEmulator(
+        name = "api29",
+        api = 29,
+        model = "Android_SDK_built_for_x86_64",
+        image = emulatorImage(29, "1927fb7cda"),
+        cpuCoresRequest = "1",
+        cpuCoresLimit = "1.3",
+        memoryLimit = "4Gi"
+    )
 
-                        scheduling {
-                            quota {
-                                retryCount = 1
-                                minimumSuccessCount = 1
-                            }
+    configurations {
+        register("ui") {
+            kubernetesNamespace = "android-emulator"
+            reportSkippedTests = true
+            filter = "ci"
 
-                            testsCountBasedReservation {
-                                device = emulator22
-                                maximum = 50
-                                minimum = 2
-                                testsPerEmulator = 3
-                            }
+            targets {
+                register("api22") {
+                    deviceName = "API22"
+
+                    scheduling {
+                        quota {
+                            retryCount = 1
+                            minimumSuccessCount = 1
+                        }
+
+                        testsCountBasedReservation {
+                            device = emulator22
+                            maximum = 50
+                            minimum = 2
+                            testsPerEmulator = 3
                         }
                     }
+                }
 
-                    register("api29") {
-                        deviceName = "API29"
+                register("api29") {
+                    deviceName = "API29"
 
-                        scheduling {
-                            quota {
-                                retryCount = 1
-                                minimumSuccessCount = 1
-                            }
+                    scheduling {
+                        quota {
+                            retryCount = 1
+                            minimumSuccessCount = 1
+                        }
 
-                            testsCountBasedReservation {
-                                device = emulator29
-                                maximum = 50
-                                minimum = 2
-                                testsPerEmulator = 3
-                            }
+                        testsCountBasedReservation {
+                            device = emulator29
+                            maximum = 50
+                            minimum = 2
+                            testsPerEmulator = 3
                         }
                     }
                 }

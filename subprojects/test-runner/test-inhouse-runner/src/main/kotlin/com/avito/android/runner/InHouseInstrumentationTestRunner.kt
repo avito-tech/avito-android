@@ -49,6 +49,7 @@ import com.avito.logger.LoggerFactoryBuilder
 import com.avito.logger.create
 import com.avito.logger.destination.ElasticLoggingHandlerProvider
 import com.avito.logger.destination.SentryLoggingHandlerProvider
+import com.avito.logger.handler.AndroidLogcatLoggingHandlerProvider
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Kind
@@ -147,6 +148,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val loggerFactory by lazy {
         val builder = baseLoggerFactoryBuilder.newBuilder()
+            .addLoggingHandlerProvider(AndroidLogcatLoggingHandlerProvider(LogLevel.DEBUG))
         if (elasticConfig is ElasticConfig.Enabled) {
             builder.addLoggingHandlerProvider(
                 ElasticLoggingHandlerProvider(
