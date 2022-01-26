@@ -11,7 +11,6 @@ import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.google.common.net.HttpHeaders
 import okhttp3.mockwebserver.MockResponse
-import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -38,7 +37,6 @@ internal class NupokatiPluginIntegrationTest {
 
         val releaseVersion = "118.0"
 
-        @Language("json")
         val cdConfig = """
             |{
             |  "schema_version": 2,
@@ -98,7 +96,6 @@ internal class NupokatiPluginIntegrationTest {
                         |nupokati {
                         |   cdBuildConfigFile.set(rootProject.file("${cdConfigFile.name}"))
                         |   uploadCrashlyticsMapping.set(false)
-                        |   suppressFailures.set(true)
                         |   teamcityBuildUrl.set("$teamcityUrl")
                         |   
                         |   artifactory {
@@ -137,9 +134,14 @@ internal class NupokatiPluginIntegrationTest {
 
         mockGooglePlay()
 
-        val contractJson = mockDispatcher.captureRequest {
-            method == "PUT" && path == "/artifactory/mobile-releases/avito_android/118.0_2/release_info.json"
-        }
+        val contractJson = mockDispatcher.captureRequest(
+            Mock(
+                requestMatcher = {
+                    method == "PUT" && path == "/artifactory/mobile-releases/avito_android/118.0_2/release_info.json"
+                },
+                response = MockResponse().setResponseCode(200)
+            )
+        )
 
         gradlew(
             projectDir,
@@ -149,7 +151,6 @@ internal class NupokatiPluginIntegrationTest {
             .assertThat()
             .buildSuccessful()
 
-        @Language("json")
         val expectedContract = """
         |{
         |  "schema_version": 2,
@@ -168,19 +169,23 @@ internal class NupokatiPluginIntegrationTest {
         |      "run_id": "$runId"
         |    }
         |  },
-        |  "artifacts": []
+        |  "artifacts": [
+        |    {
+        |      "type": "bundle",
+        |      "name": "app-release.aab",
+        |      "uri": "${mockWebServerUrl}artifactory/mobile-releases/avito_android/118.0_2/app-release.aab",
+        |      "build_variant": "release"
+        |    }
+        |  ]
         |}
         |""".trimMargin()
 
         contractJson.checks.singleRequestCaptured().jsonEquals(expectedContract)
-
-        // todo where is artifacts?
     }
 
     private fun mockGooglePlay() {
         val editId = "12345"
 
-        @Language("json")
         val editsResponse = """
         |{
         |  "id": "$editId"
@@ -197,7 +202,6 @@ internal class NupokatiPluginIntegrationTest {
             )
         )
 
-        @Language("json")
         val uploadResponse = """
         |{
         |  "versionCode": 123
@@ -221,7 +225,6 @@ internal class NupokatiPluginIntegrationTest {
             )
         )
 
-        @Language("json")
         val setTrack = """
         |{
         |}
@@ -237,7 +240,6 @@ internal class NupokatiPluginIntegrationTest {
             )
         )
 
-        @Language("json")
         val commitAllResponse = """
         |{
         |}

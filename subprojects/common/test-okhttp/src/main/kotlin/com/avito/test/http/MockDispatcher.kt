@@ -32,6 +32,13 @@ public class MockDispatcher(
         return capturer
     }
 
+    public fun captureRequest(mock: Mock): RequestCapturer {
+        val capturer = RequestCapturer(mock.requestMatcher)
+        capturers.add(capturer)
+        mocks.add(mock)
+        return capturer
+    }
+
     override fun dispatch(request: RecordedRequest): MockResponse {
         val requestData = RequestData(request)
 
@@ -49,6 +56,7 @@ public class MockDispatcher(
         val matchedMock = synchronized(mocks) {
             mocks.findLast { it.requestMatcher.invoke(requestData) }
         }
+
         val response = if (matchedMock?.response != null) {
             logger.debug("Request matched: [$requestData], answering: ${matchedMock.response}")
             matchedMock.response

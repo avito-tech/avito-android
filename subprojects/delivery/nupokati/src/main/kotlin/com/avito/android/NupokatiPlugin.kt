@@ -5,10 +5,9 @@ import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.ApplicationVariant
 import com.android.build.gradle.AppPlugin
 import com.avito.android.agp.getVersionCode
-import com.avito.android.artifactory_backup.ArtifactoryPublishTask
+import com.avito.android.artifactory_backup.ArtifactoryBackupTask
 import com.avito.android.contract_upload.UploadCdBuildResultTask
 import com.avito.android.google_play.GooglePlayUploadTaskConfigurator
-import com.avito.android.model.BuildOutput
 import com.avito.android.model.CdBuildConfig
 import com.avito.android.provider.CdBuildConfigTransformer
 import com.avito.android.provider.CdBuildConfigValidator
@@ -30,8 +29,6 @@ public class NupokatiPlugin : Plugin<Project> {
         val extension = project.extensions.create<NupokatiExtension>("nupokati")
 
         val googlePlayUploadTaskConfigurator = GooglePlayUploadTaskConfigurator(project, extension)
-
-        val buildOutput = BuildOutput()
 
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -55,9 +52,9 @@ public class NupokatiPlugin : Plugin<Project> {
                 )
 
                 val publishArtifactsTask =
-                    project.tasks.register<ArtifactoryPublishTask>("artifactoryPublish$variantSlug") {
+                    project.tasks.register<ArtifactoryBackupTask>("artifactoryBackup$variantSlug") {
                         group = CD_TASK_GROUP
-                        description = "Publish release artifacts"
+                        description = "Backup ${variant.name} artifacts in artifactory bucket"
 
                         this.artifactoryUser.set(extension.artifactory.login)
                         this.artifactoryPassword.set(extension.artifactory.password)
@@ -66,10 +63,11 @@ public class NupokatiPlugin : Plugin<Project> {
                                 it.outputDescriptor.path.substringBeforeLast('/')
                             }
                         )
-
+                        this.buildVariant.set(variant.name)
                         // todo need to check sign somehow, because it's completely possible to miss it here
                         this.files.set(project.files(bundle))
                         this.statsDConfig.set(project.statsdConfig)
+                        this.buildOutput.set(project.layout.buildDirectory.file("nupokati/buildOutput.json"))
                     }
 
                 project.tasks.register<UploadCdBuildResultTask>(uploadCdBuildResultTaskName(variantSlug)) {
@@ -78,13 +76,12 @@ public class NupokatiPlugin : Plugin<Project> {
 
                     this.artifactoryUser.set(extension.artifactory.login)
                     this.artifactoryPassword.set(extension.artifactory.password)
-                    this.suppressErrors.set(extension.suppressFailures)
                     this.reportViewerUrl.set(extension.reportViewer.frontendUrl)
                     this.reportCoordinates.set(extension.reportViewer.reportCoordinates)
                     this.teamcityBuildUrl.set(extension.teamcityBuildUrl)
                     this.cdBuildConfig.set(cdBuildConfig)
                     this.appVersionCode.set(variant.getVersionCode())
-                    this.buildOutput.set(buildOutput)
+                    this.buildOutputFileProperty.set(publishArtifactsTask.flatMap { it.buildOutput })
                     this.statsDConfig.set(project.statsdConfig)
 
                     // todo depend on output with actually uploaded artifacts
