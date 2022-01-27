@@ -74,7 +74,7 @@ internal class NupokatiPluginTest {
         // todo assert that "deployToGooglePlayRelease" and "uploadCrashlyticsMappingFileRelease"
         //  not called because no deployment
         return listOf(
-            "artifactoryPublishRelease",
+            "artifactoryBackupRelease",
             "packageReleaseBundle",
         ).map { taskName ->
 

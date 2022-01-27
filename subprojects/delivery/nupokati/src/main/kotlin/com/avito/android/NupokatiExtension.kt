@@ -18,8 +18,6 @@ public abstract class NupokatiExtension {
 
     public abstract val cdBuildConfigFile: RegularFileProperty
 
-    public abstract val suppressFailures: Property<Boolean>
-
     public abstract val teamcityBuildUrl: Property<String>
 
     public abstract val releaseBuildVariantName: Property<String>

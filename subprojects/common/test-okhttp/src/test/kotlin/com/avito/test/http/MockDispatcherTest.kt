@@ -56,6 +56,21 @@ internal class MockDispatcherTest {
         assertThat(response.getBody()?.readUtf8()).isEqualTo("First registered")
     }
 
+    @Test
+    fun `dispatcher - captures request - also sending response`() {
+        val request = dispatcher.captureRequest(
+            Mock(
+                requestMatcher = { path.contains("xxx") },
+                response = MockResponse().setResponseCode(200).setBody("Capturer response")
+            )
+        )
+
+        val response = dispatcher.dispatch(buildRequest(path = "xxx", body = "2222"))
+
+        assertThat(response.getBody()?.readUtf8()).isEqualTo("Capturer response")
+        request.checks.singleRequestCaptured().bodyContains("2222")
+    }
+
     /**
      * Run with "Repeat: Until failure" option in IDEA run configuration
      * see MBS-7636

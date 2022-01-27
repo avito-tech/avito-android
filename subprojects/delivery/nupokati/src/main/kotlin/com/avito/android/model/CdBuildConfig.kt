@@ -17,7 +17,7 @@ public data class CdBuildConfig(
 
         public data class GooglePlay(
             val artifactType: AndroidArtifactType,
-            val buildVariant: BuildVariant,
+            val buildVariant: String,
             val track: Track
         ) : Deployment()
 
