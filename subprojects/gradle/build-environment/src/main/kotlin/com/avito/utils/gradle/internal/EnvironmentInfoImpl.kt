@@ -27,7 +27,6 @@ internal class EnvironmentInfoImpl(
     override val node: String? by lazy {
         when (environment) {
             is Environment.Local -> gitUserEmail ?: userName()
-            is Environment.Mirakle -> userName()
             is Environment.CI -> teamcityAgentName()
             is Environment.Unknown -> "unknown"
         }
@@ -40,7 +39,6 @@ internal class EnvironmentInfoImpl(
             userName() == "teamcity" || gitUserEmail == "teamcity" -> Environment.CI
             buildEnvironment is BuildEnvironment.Local || buildEnvironment is BuildEnvironment.IDE -> Environment.Local
             buildEnvironment is BuildEnvironment.CI -> Environment.CI
-            buildEnvironment is BuildEnvironment.Mirkale -> Environment.Mirakle
             else -> Environment.Unknown
         }
     }
