@@ -17,7 +17,7 @@ Project property `avito.build.metrics.enabled=false`
 All metrics can use common placeholders in prefix:
 
 - Namespace: statsd prefix from `avito.stats.namespace` property
-- Environment: `ci` | `local` | `mirakle` | `_` (unknown)
+- Environment: `ci` | `local` | `_` (unknown)
 - Node: git username for local builds, hostname for CI builds
 - Build status: `success` | `failure`
 
