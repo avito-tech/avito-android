@@ -38,7 +38,6 @@ public class BuildMetricTracker(
     private fun environment(): String {
         return when (environmentInfo.environment) {
             Environment.Local -> "local"
-            Environment.Mirakle -> "mirakle"
             Environment.CI -> "ci"
             Environment.Unknown -> "_"
         }

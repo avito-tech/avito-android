@@ -31,10 +31,6 @@ public val Project.buildEnvironment: BuildEnvironment by ProjectProperty.lazy(sc
             project.providers,
             "has 'ci' gradle property with true value"
         )
-        isRunViaMirakle(project) -> BuildEnvironment.Mirkale(
-            project.providers,
-            "has 'mirakle.build.on.remote' property"
-        )
         isRunFromIDE(project) -> BuildEnvironment.IDE(
             project.providers,
             "has 'android.injected.invoked.from.ide' start parameter"
@@ -64,10 +60,6 @@ internal fun isRunInGradleTestKit(providers: ProviderFactory): Boolean =
         .forUseAtConfigurationTime()
         .getOrElse("false")
         .toBoolean()
-
-private fun isRunViaMirakle(project: Project): Boolean {
-    return project.hasProperty("mirakle.build.on.remote")
-}
 
 private fun isRunInCI(project: Project): Boolean =
     project.hasProperty("ci") && project.property("ci") == "true"
