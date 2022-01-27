@@ -17,13 +17,14 @@ configure<LibraryExtension> {
     val allVariantNames = mutableListOf<String>()
     var registeredVariants = 0
 
+    // todo use new publishing: https://developer.android.com/studio/releases/gradle-plugin#build-variant-publishing
     libraryVariants
         .matching {
             allVariantNames += it.name
             it.name == publishExtension.variant.get()
         }
         .whenObjectAdded {
-            publishing {
+            configure<PublishingExtension> {
                 publications {
                     register<MavenPublication>("${publishExtension.variant.get()}AndroidLibrary") {
                         from(components.getAt(publishExtension.variant.get()))

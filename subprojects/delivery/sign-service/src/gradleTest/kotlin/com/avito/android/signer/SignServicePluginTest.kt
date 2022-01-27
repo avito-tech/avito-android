@@ -145,36 +145,6 @@ internal class SignServicePluginTest {
             }
     }
 
-    @Test
-    fun `run sign task - fails - incompatible signing config`(@TempDir testProjectDir: File) {
-        generateTestProject(
-            testProjectDir = testProjectDir,
-            buildGradleKtsExtra = """
-                |android {
-                |   buildTypes {
-                |       getByName("release") {
-                |           signingConfig = signingConfigs.getByName("debug")
-                |       }
-                |   }
-                |}
-                |
-                |signer {
-                |   serviceUrl.set("http://signer")
-                |   apkSignTokens.put("$applicationId", "12345")
-                |}
-                |""".trimMargin()
-        )
-
-        ciRun(
-            testProjectDir,
-            ":$moduleName:signApkViaServiceRelease",
-            dryRun = true,
-            expectFailure = true
-        ).assertThat()
-            .buildFailed()
-            .outputContains("AGP signingConfig configured. Custom signing via service is incompatible with AGP signing")
-    }
-
     /**
      * That's not an ideal behavior, should be a more meaningful message if possible
      */
