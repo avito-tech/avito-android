@@ -1,5 +1,7 @@
 package com.avito.android.model
 
+import com.squareup.moshi.JsonClass
+
 public data class CdBuildResult(
     val schemaVersion: Long,
     val teamcityBuildUrl: String,
@@ -31,13 +33,15 @@ public data class CdBuildResult(
         public abstract val name: String
         public abstract val uri: String
 
+        @JsonClass(generateAdapter = true)
         public data class AndroidBinary(
             override val type: String,
             override val name: String,
             override val uri: String,
-            val buildVariant: BuildVariant
+            val buildVariant: String
         ) : Artifact()
 
+        @JsonClass(generateAdapter = true)
         public data class FileArtifact(
             override val type: String,
             override val name: String,

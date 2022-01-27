@@ -43,10 +43,10 @@ internal class GooglePlayUploadTaskConfigurator(
 
         val googlePlayDeployment = googlePlayDeploymentProvider.get()
 
-        if (!googlePlayDeployment.buildVariant.name.equals(variant.name, ignoreCase = true)) {
+        if (!googlePlayDeployment.buildVariant.equals(variant.name, ignoreCase = true)) {
             project.logger.lifecycle(
                 "Google play upload skipped. " +
-                    "Reason: supported variant: ${variant.name}; requested: ${googlePlayDeployment.buildVariant.name}"
+                    "Reason: supported variant: ${variant.name}; requested: ${googlePlayDeployment.buildVariant}"
             )
             return null
         }

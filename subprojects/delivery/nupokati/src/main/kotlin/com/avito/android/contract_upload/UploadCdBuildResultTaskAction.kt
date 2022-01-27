@@ -6,11 +6,12 @@ import com.avito.android.model.CdBuildConfig
 import com.avito.android.model.CdBuildResult
 import com.avito.git.GitState
 import com.google.gson.Gson
+import org.gradle.api.logging.Logger
 
 internal class UploadCdBuildResultTaskAction(
     private val client: ArtifactoryClient,
     private val gson: Gson,
-    private val suppressErrors: Boolean
+    private val logger: Logger,
 ) {
 
     fun send(
@@ -35,10 +36,12 @@ internal class UploadCdBuildResultTaskAction(
         )
         val cdBuildResultRaw = gson.toJson(result)
 
+        logger.lifecycle("CONTENT = $cdBuildResultRaw")
+
         val response = client.uploadJson(cdBuildConfig.outputDescriptor.path, cdBuildResultRaw)
 
-        if (!suppressErrors && !response.isSuccessful) {
-            throw RuntimeException("Upload build result failed: ${response.code} ${response.body}")
+        if (!response.isSuccessful) {
+            throw RuntimeException("Upload build result failed: ${response.code} ${response.body?.string()}")
         }
     }
 }
