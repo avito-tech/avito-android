@@ -11,6 +11,10 @@ import org.jf.dexlib2.iface.value.IntEncodedValue
 import org.jf.dexlib2.iface.value.LongEncodedValue
 import org.jf.dexlib2.iface.value.StringEncodedValue
 
+/**
+ * The default annotation values parsing is broken
+ * implementation details https://source.android.com/devices/tech/dalvik/dex-format#dalvik-annotation-default
+ */
 internal object AnnotationExtractor {
 
     fun toAnnotationData(annotation: Annotation): AnnotationData {
