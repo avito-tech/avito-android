@@ -126,7 +126,6 @@ instrumentation {
 
     configurations {
         register("ui") {
-            kubernetesNamespace = "android-emulator"
             reportSkippedTests = true
             filter = "ci"
 
