@@ -1,4 +1,4 @@
-package com.avito.emcee.internal.com.avito.emcee
+package com.avito.emcee
 
 import com.avito.emcee.queue.Device
 import com.avito.emcee.queue.Job

@@ -2,6 +2,7 @@ package com.avito.emcee.queue
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.HttpUrl
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -21,7 +22,7 @@ public interface QueueApi {
 
     public companion object {
 
-        public fun Retrofit.Builder.create(): QueueApi {
+        public fun Retrofit.Builder.create(baseUrl: String): QueueApi {
             return addConverterFactory(
                 MoshiConverterFactory.create(
                     Moshi.Builder()
@@ -29,6 +30,7 @@ public interface QueueApi {
                         .build()
                 )
             )
+                .baseUrl(baseUrl)
                 .build()
                 .create()
         }
