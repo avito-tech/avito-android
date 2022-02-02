@@ -118,6 +118,7 @@ abstract class InHouseInstrumentationTestRunner :
         val testName = runEnvironment.testMetadata.name.toString()
         val builder = LoggerFactoryBuilder()
             .metadataProvider(AndroidTestLoggerMetadataProvider(testName))
+            .addLoggingHandlerProvider(AndroidLogcatLoggingHandlerProvider(LogLevel.DEBUG))
 
         if (sentryConfig is SentryConfig.Enabled) {
             builder.addLoggingHandlerProvider(
@@ -148,7 +149,6 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val loggerFactory by lazy {
         val builder = baseLoggerFactoryBuilder.newBuilder()
-            .addLoggingHandlerProvider(AndroidLogcatLoggingHandlerProvider(LogLevel.DEBUG))
         if (elasticConfig is ElasticConfig.Enabled) {
             builder.addLoggingHandlerProvider(
                 ElasticLoggingHandlerProvider(
