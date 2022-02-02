@@ -5,7 +5,7 @@ package com.avito.test
  * It's used for retry logic.
  */
 @Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.CLASS) // member functions are not supported by 'org.gradle.test-retry' plugin
+@Target(AnnotationTarget.CLASS)
 public annotation class Flaky(
     val reason: String
 )
