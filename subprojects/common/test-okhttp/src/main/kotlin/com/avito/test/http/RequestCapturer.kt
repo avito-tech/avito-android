@@ -24,8 +24,20 @@ public class RequestCapturer(
 
         public fun singleRequestCaptured(): RequestChecks = waitForAssertion {
             synchronized(this@RequestCapturer) {
-                assertThat("", requests.size == 1)
+                assertThat(
+                    "Single request should be captured, Currently matched: $requests",
+                    requests.size == 1
+                )
                 RequestChecks(RequestData(requests.first()))
+            }
+        }
+
+        public fun nothingCaptured() {
+            synchronized(this@RequestCapturer) {
+                assertThat(
+                    "No requests should be captured. Currently matched: $requests",
+                    requests.size == 0
+                )
             }
         }
     }

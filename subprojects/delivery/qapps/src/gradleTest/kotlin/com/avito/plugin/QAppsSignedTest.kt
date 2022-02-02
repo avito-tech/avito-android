@@ -28,6 +28,14 @@ internal class QAppsSignedTest {
                         |   serviceUrl.set("http://stub")
                         |   apkSignTokens.put("com.app", "12345")
                         |}
+                        |
+                        |android {
+                        |   buildTypes {
+                        |       getByName("release") {
+                        |           signingConfig = null
+                        |       }
+                        |   }
+                        |}
                         |""".trimMargin()
                 )
             )

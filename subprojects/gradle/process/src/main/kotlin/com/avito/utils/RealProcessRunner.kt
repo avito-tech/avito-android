@@ -70,13 +70,18 @@ internal class RealProcessRunner(
             )
         )
 
-        process.waitFor(timeout.toMillis(), TimeUnit.MILLISECONDS)
-        val output = outputFuture.get(timeout.toMillis(), TimeUnit.MILLISECONDS)
+        val timeoutMs = timeout.toMillis()
+        process.waitFor(timeoutMs, TimeUnit.MILLISECONDS)
+        val output = outputFuture.get(timeoutMs, TimeUnit.MILLISECONDS)
 
-        if (process.exitValue() != 0) {
-            Result.Failure(Throwable("Unknown error: exit code=[${process.exitValue()}]; output=$output"))
-        } else {
-            Result.Success(output)
+        try {
+            if (process.exitValue() != 0) {
+                Result.Failure(Throwable("Unknown error: exit code=[${process.exitValue()}]; output=$output"))
+            } else {
+                Result.Success(output)
+            }
+        } catch (e: IllegalThreadStateException) {
+            Result.Failure(Throwable("Process didn't exit in ${timeoutMs}ms; output=$output"))
         }
     } catch (t: Throwable) {
         Result.Failure(t)

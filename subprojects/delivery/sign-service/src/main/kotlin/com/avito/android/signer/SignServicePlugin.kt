@@ -3,8 +3,6 @@ package com.avito.android.signer
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.ApplicationVariant
-import com.avito.android.Problem
-import com.avito.android.asRuntimeException
 import com.avito.android.signer.internal.TaskConfigurator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -32,8 +30,6 @@ public class SignServicePlugin : Plugin<Project> {
 
                 if (!apkToken.isNullOrBlank()) {
 
-                    checkSigningConfig(variant)
-
                     target.tasks.register<SignApkTask>(signApkTaskName(variant.name)) {
                         description = "Signs ${variant.name} apk with in-house service"
                         apkDirectory.set(variant.artifacts.get(SingleArtifact.APK))
@@ -51,8 +47,6 @@ public class SignServicePlugin : Plugin<Project> {
 
                 if (!bundleToken.isNullOrBlank()) {
 
-                    checkSigningConfig(variant)
-
                     target.tasks.register<SignBundleTask>(signBundleTaskName(variant.name)) {
                         description = "Signs ${variant.name} bundle with in-house service"
                         bundleFile.set(variant.artifacts.get(SingleArtifact.BUNDLE))
@@ -66,22 +60,6 @@ public class SignServicePlugin : Plugin<Project> {
                     }
                 }
             }
-        }
-    }
-
-    private fun checkSigningConfig(variant: ApplicationVariant) {
-        require(variant.signingConfig == null) {
-            throw Problem(
-                shortDescription = "Can't create sign task for variant '${variant.name}'",
-                context = "Configuration of '$PLUGIN_ID' plugin",
-                because = "AGP signingConfig configured. Custom signing via service is incompatible with AGP signing",
-                possibleSolutions = listOf(
-                    "Set `signingConfig = null` for variant: '${variant.name}'",
-                    "Create new special variant for custom signing, " +
-                        "probably you want it to be inherited from '${variant.name}'"
-                ),
-                documentedAt = DOCUMENTATION_URL
-            ).asRuntimeException()
         }
     }
 }
