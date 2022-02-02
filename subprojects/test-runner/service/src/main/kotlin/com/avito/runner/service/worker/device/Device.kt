@@ -13,6 +13,8 @@ public interface Device {
 
     public sealed class Signal {
         public data class Died(val coordinate: DeviceCoordinate) : Signal()
+        public data class ReservationNotNeeded(val deviceName: String) : Signal()
+        public data class NewDeployment(val deploymentName: String, val deviceName: String) : Signal()
     }
 
     public val coordinate: DeviceCoordinate

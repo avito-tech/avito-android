@@ -7,6 +7,7 @@ import com.avito.k8s.KubernetesApi
 import com.avito.k8s.model.KubePod
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +32,8 @@ internal class KubernetesReservationClaimer(
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
     private val kubernetesReservationListener: KubernetesReservationListener,
     private val lock: Mutex,
-    loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory,
+    private val deviceSignals: Channel<Device.Signal>,
 ) {
 
     private val logger = loggerFactory.create<KubernetesReservationClaimer>()
@@ -68,6 +70,7 @@ internal class KubernetesReservationClaimer(
         val deploymentName = lock.withLock {
             val deploymentName = deployment.metadata.name
             deploymentsChannel.send(deploymentName)
+            deviceSignals.send(Device.Signal.NewDeployment(deploymentName, reservation.device.name))
             kubernetesApi.createDeployment(deployment)
             deploymentName
         }

@@ -16,6 +16,7 @@ import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.model.TestRunnerResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
+import com.avito.runner.service.worker.device.Device
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.time.millisecondsToHumanReadableTime
@@ -66,9 +67,27 @@ internal class TestRunnerImpl(
 
                     val expectedResultsCount = tests.count()
 
+                    val gottenResultsByDeviceName : MutableMap<String, MutableList<TestRunResult>> = mutableMapOf()
+                    val expectedResultsCountByDeviceName = tests
+                        .groupBy { it.deviceName.name }
+                        .map { (deviceName, tests) ->
+                            gottenResultsByDeviceName[deviceName] = mutableListOf()
+                            deviceName to tests.count()
+                        }
+
                     val gottenResults = mutableListOf<TestRunResult>()
                     for (result in state.results) {
                         gottenResults.add(result)
+                        gottenResultsByDeviceName[result.request.testCase.deviceName.name]?.add(result)
+
+                        expectedResultsCountByDeviceName.forEach { (deviceName, expectedCount) ->
+                            val actualCount = gottenResultsByDeviceName[deviceName]?.size ?: 0
+                            if (actualCount >= expectedCount) {
+                                result.result
+                                state.deviceSignals.send(Device.Signal.ReservationNotNeeded(deviceName))
+                            }
+                        }
+
                         val gottenCount = gottenResults.size
 
                         logger.debug(

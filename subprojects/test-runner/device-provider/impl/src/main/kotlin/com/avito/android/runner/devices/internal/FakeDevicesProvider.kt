@@ -55,6 +55,9 @@ internal class FakeDevicesProvider(
         // empty
     }
 
+    override suspend fun releaseReservation(name: String) {
+    }
+
     override suspend fun releaseDevices() {
         devices.close()
     }

@@ -3,8 +3,10 @@ package com.avito.android.runner.devices.internal.kubernetes
 import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
 import com.avito.k8s.KubernetesApi
 import com.avito.logger.LoggerFactory
+import com.avito.runner.service.worker.device.Device
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.sync.Mutex
 
 @ExperimentalCoroutinesApi
@@ -16,7 +18,8 @@ internal class KubernetesReservationClientFactory(
     private val listener: KubernetesReservationListener,
     private val loggerFactory: LoggerFactory,
     private val podsQueryIntervalMs: Long,
-    private val dispatcher: CoroutineDispatcher
+    private val dispatcher: CoroutineDispatcher,
+    private val deviceSignals: Channel<Device.Signal>
 ) {
 
     fun create(): KubernetesReservationClient {
@@ -41,7 +44,8 @@ internal class KubernetesReservationClientFactory(
             emulatorsLogsReporter,
             listener,
             lock,
-            loggerFactory
+            loggerFactory,
+            deviceSignals = deviceSignals,
         )
 
     private fun releaser(): KubernetesReservationReleaser =

@@ -80,6 +80,9 @@ internal class LocalDevicesProvider(
         // empty
     }
 
+    override suspend fun releaseReservation(name: String) {
+    }
+
     private fun findDevices(
         reservation: ReservationData,
         acquiredDevices: Set<DeviceCoordinate>

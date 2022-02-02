@@ -56,6 +56,10 @@ internal class KubernetesDevicesProvider(
         client.remove(coordinate.podName)
     }
 
+    override suspend fun releaseReservation(name: String) {
+        client.removeDeployment(name)
+    }
+
     override suspend fun releaseDevices() {
         client.release()
     }

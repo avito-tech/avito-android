@@ -21,10 +21,12 @@ import com.avito.runner.scheduler.report.ReportFactoryImpl
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
+import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.ProcessRunner
+import kotlinx.coroutines.channels.Channel
 
 public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFactory) {
 
@@ -58,6 +60,7 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
             outputDir = params.outputDir
         )
 
+        val deviceSignals: Channel<Device.Signal> = Channel(Channel.UNLIMITED)
         return TestSchedulerFactoryImpl(
             finalizerFactory = FinalizerFactoryImpl(
                 report = report,
@@ -117,13 +120,15 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
                             runnerMetricsConfig = metricsConfig,
                             loggerFactory = loggerFactory,
                             sendPodsMetrics = params.sendPodsMetrics,
-                        )
+                        ),
+                        deviceSignals = deviceSignals,
                     ),
                     androidDebugBridgeProvider = androidDebugBridgeProvider,
                     emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
                     metricsConfig = metricsConfig
                 ).provide(),
-                metricsConfig = metricsConfig
+                metricsConfig = metricsConfig,
+                deviceSignals = deviceSignals,
             ),
             testSuiteLoader = TestSuiteLoader.create(),
             loggerFactory = loggerFactory,

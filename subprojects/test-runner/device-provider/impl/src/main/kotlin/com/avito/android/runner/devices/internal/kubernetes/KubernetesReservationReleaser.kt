@@ -38,6 +38,19 @@ internal class KubernetesReservationReleaser(
         }
     }
 
+    suspend fun releaseDeployment(
+        deploymentName: String
+    ) {
+        with(CoroutineScope(coroutineContext + CoroutineName("delete-deployment-$deploymentName"))) {
+            launch {
+                kubernetesApi.getPods(deploymentName)
+                    .onSuccess { pods -> releasePods(deploymentName, pods) }
+                    .onFailure { error -> logger.warn("Can't get pods when release", error) }
+                kubernetesApi.deleteDeployment(deploymentName)
+            }
+        }
+    }
+
     private suspend fun releasePods(deploymentName: String, pods: List<KubePod>) {
         val runningPods = pods.filter { it.phase is KubePod.PodPhase.Running }
         if (runningPods.isNotEmpty()) {

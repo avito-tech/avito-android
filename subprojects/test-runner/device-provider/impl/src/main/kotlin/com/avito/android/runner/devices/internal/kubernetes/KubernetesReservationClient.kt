@@ -74,6 +74,10 @@ internal class KubernetesReservationClient(
         }
     }
 
+    override suspend fun removeDeployment(name: String) {
+        reservationReleaser.releaseDeployment(name)
+    }
+
     override suspend fun release() = withContext(dispatcher) {
         lock.withLock {
             val state = state

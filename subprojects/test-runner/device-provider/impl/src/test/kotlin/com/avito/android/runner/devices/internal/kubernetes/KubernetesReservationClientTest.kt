@@ -10,10 +10,12 @@ import com.avito.k8s.StubKubernetesApi
 import com.avito.k8s.model.KubePod
 import com.avito.k8s.model.createStubInstance
 import com.avito.logger.PrintlnLoggerFactory
+import com.avito.runner.service.worker.device.Device
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -36,6 +38,7 @@ internal class KubernetesReservationClientTest {
     private fun runBlockingTest(block: suspend TestCoroutineScope.() -> Unit) {
         dispatcher.runBlockingTest(block)
     }
+    private val deviceSignals: Channel<Device.Signal> = Channel(Channel.UNLIMITED)
 
     private fun client(
         dispatcher: CoroutineDispatcher = this.dispatcher,
@@ -53,7 +56,8 @@ internal class KubernetesReservationClientTest {
             reservationDeploymentFactory = FakeReservationDeploymentFactory(),
             dispatcher = dispatcher,
             podsQueryIntervalMs = podsQueryInterval,
-            listener = StubKubernetesReservationListener
+            listener = StubKubernetesReservationListener,
+            deviceSignals = deviceSignals,
         ).create()
     }
 

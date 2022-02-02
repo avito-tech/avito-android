@@ -16,5 +16,7 @@ internal interface ReservationClient {
         podName: String
     )
 
+    suspend fun removeDeployment(name: String)
+
     suspend fun release()
 }
