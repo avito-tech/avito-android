@@ -3,7 +3,7 @@ package com.avito.http
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
 import com.avito.test.Flaky
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -31,7 +31,7 @@ internal class FlakyHttpClientProviderMetricsTest : BaseHttpClientProviderMetric
 
         httpClient.blockingMultipleParallelCalls(count)
 
-        Truth.assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsExactly(
+        assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsExactly(
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "200"), doesNotMatter),
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "200"), doesNotMatter),
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "200"), doesNotMatter)
