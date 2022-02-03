@@ -10,6 +10,7 @@ import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.android.build_checks.internal.CheckAndroidSdkVersionTask
 import com.avito.android.build_checks.internal.MacOSLocalhostResolvingTask
 import com.avito.android.build_checks.internal.RootTaskCreator
+import com.avito.android.build_checks.internal.kotlin_daemon.KotlinDaemonFallbackDetector
 import com.avito.android.build_checks.internal.params.GradlePropertiesChecker
 import com.avito.android.build_checks.internal.unique_app_res.UniqueAppResourcesTaskCreator
 import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreator
@@ -74,6 +75,9 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             }
             if (checks.hasInstance<RootProjectCheck.GradleProperties>()) {
                 GradlePropertiesChecker(project, envInfo).check()
+            }
+            if (checks.hasInstance<RootProjectCheck.PreventKotlinDaemonFallback>()) {
+                KotlinDaemonFallbackDetector().register(project)
             }
         }
     }
