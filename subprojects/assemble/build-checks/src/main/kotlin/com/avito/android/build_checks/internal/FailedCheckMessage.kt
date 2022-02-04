@@ -20,10 +20,10 @@ ERROR: '$checkExtensionName' build check is failed.
 
 ${message.trimIndent()}
 
-This check can be disabled in an extension:
+This check can be skipped in an extension:
 $extensionName {
     $checkExtensionName {
-        enabled = false
+        enabled = ...
     }
 }
 See https://avito-tech.github.io/avito-android/projects/BuildChecks (search '$checkExtensionName')

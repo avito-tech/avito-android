@@ -26,6 +26,9 @@ internal class ConfigurationCacheCompatibilityTest {
                     javaVersion {
                         version = org.gradle.api.JavaVersion.VERSION_11
                     }
+                    preventKotlinDaemonFallback {
+                        enabled = true
+                    }
                  }
             """.trimIndent()
         ).generateIn(projectDir)
