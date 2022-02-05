@@ -1,6 +1,5 @@
 package com.avito.android.build_checks
 
-import com.avito.android.AndroidSdk
 import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck
 import com.avito.android.build_checks.BuildChecksExtension.Check
 import com.avito.android.build_checks.BuildChecksExtension.RequireValidation
@@ -128,17 +127,9 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
 
             val task = project.tasks.register<CheckAndroidSdkVersionTask>("checkAndroidSdkVersion") {
                 group = "verification"
-                description = "Checks sdk version in docker against local one to prevent build cache misses"
+                description = "Checks sdk versions with expected ones to prevent build cache misses"
 
-                platformDir.set(
-                    AndroidSdk.fromProject(
-                        rootDir = project.rootDir,
-                    ).platform(check.compileSdkVersion)
-                )
-                compileSdkVersion.set(check.compileSdkVersion)
-                platformRevision.set(check.revision)
-                // don't run task if it is already compared hashes and it's ok
-                // task will be executed next time if either local jar or docker jar(e.g. inputs) changed
+                versions.set(check.versions())
             }
             rootTask {
                 dependsOn(task)
