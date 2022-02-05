@@ -13,5 +13,7 @@ internal class ExtensionConfigurator(
         task.deviceApis.set(emceeExtension.deviceApis)
         task.testTimeout.set(emceeExtension.testTimeout)
         task.baseUrl.set(emceeExtension.queueBaseUrl)
+        task.configTestMode.set(emceeExtension.configTestMode)
+        task.outputDir.set(emceeExtension.outputDir)
     }
 }

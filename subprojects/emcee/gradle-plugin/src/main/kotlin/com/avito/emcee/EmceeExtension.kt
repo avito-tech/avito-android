@@ -1,5 +1,6 @@
 package com.avito.emcee
 
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
@@ -17,4 +18,8 @@ public interface EmceeExtension {
     public val testTimeout: Property<Duration>
 
     public val queueBaseUrl: Property<String>
+
+    public val configTestMode: Property<Boolean>
+
+    public val outputDir: DirectoryProperty
 }
