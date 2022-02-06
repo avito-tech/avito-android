@@ -9,6 +9,7 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.statsd
 import org.gradle.api.Project
 
+// TODO: Will be removed in MBS-12691
 internal class GradlePropertiesChecker(
     private val project: Project,
     private val envInfo: BuildEnvironmentInfo
