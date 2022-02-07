@@ -21,7 +21,7 @@ public interface QueueApi {
 
     public companion object {
 
-        public fun Retrofit.Builder.create(): QueueApi {
+        public fun Retrofit.Builder.create(baseUrl: String): QueueApi {
             return addConverterFactory(
                 MoshiConverterFactory.create(
                     Moshi.Builder()
@@ -29,6 +29,7 @@ public interface QueueApi {
                         .build()
                 )
             )
+                .baseUrl(baseUrl)
                 .build()
                 .create()
         }
