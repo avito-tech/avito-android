@@ -20,8 +20,10 @@ internal class ConfigurationCacheCompatibilityTest {
             buildGradleExtra = """
                  buildChecks {
                     androidSdk {
-                        compileSdkVersion = 30
-                        revision = 3
+                        version(
+                            compileSdkVersion = 30,
+                            revision = 3
+                        )
                     }
                     javaVersion {
                         version = org.gradle.api.JavaVersion.VERSION_11
@@ -30,7 +32,8 @@ internal class ConfigurationCacheCompatibilityTest {
                         enabled = true
                     }
                  }
-            """.trimIndent()
+            """.trimIndent(),
+            useKts = true
         ).generateIn(projectDir)
 
         runTask(projectDir).assertThat().buildSuccessful()

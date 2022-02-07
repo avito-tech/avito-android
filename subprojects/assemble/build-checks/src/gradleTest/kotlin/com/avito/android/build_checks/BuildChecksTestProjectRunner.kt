@@ -53,7 +53,8 @@ internal class BuildChecksTestProjectRunner(
                     $buildChecksExtension
                 }
             """.trimIndent(),
-            androidHome = androidHomePath
+            androidHome = androidHomePath,
+            useKts = true,
         ).generateIn(projectDir)
 
         if (androidHome is AndroidHomeLocation.Absent) {

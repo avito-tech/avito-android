@@ -6,6 +6,7 @@ import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectChec
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.MacOSLocalhost
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.PreventKotlinDaemonFallback
 import org.gradle.api.Action
+import java.io.Serializable
 import kotlin.reflect.full.createInstance
 
 public open class RootProjectChecksExtension : BuildChecksExtension() {
@@ -37,12 +38,57 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
 
         public open class AndroidSdk : RootProjectCheck(), RequireValidation {
 
-            public var compileSdkVersion: Int = -1
-            public var revision: Int = -1
+            public data class AndroidSdkVersion(
+                val compileSdkVersion: Int,
+                val revision: Int,
+            ) : Serializable
 
+            private val versions = mutableSetOf<AndroidSdkVersion>()
+
+            @Deprecated("Use version(compileSdkVersion, revision)")
+            public var compileSdkVersion: Int = INVALID_VERSION
+
+            @Deprecated("Use version(compileSdkVersion, revision)")
+            public var revision: Int = INVALID_VERSION
+
+            internal fun versions(): Set<AndroidSdkVersion> {
+                // mutual exclusivity of state are validated in validate()
+                // this will be simplified after removing deprecated properties
+                return if (versions.isEmpty()) {
+                    @Suppress("DEPRECATION")
+                    setOf(AndroidSdkVersion(compileSdkVersion, revision))
+                } else {
+                    versions
+                }
+            }
+
+            public fun version(compileSdkVersion: Int, revision: Int) {
+                versions.add(
+                    AndroidSdkVersion(compileSdkVersion, revision)
+                )
+            }
+
+            @Suppress("DEPRECATION")
             override fun validate() {
-                check(compileSdkVersion > 0) { "$extensionName.androidSdk.compileSdkVersion must be set" }
-                check(revision > 0) { "$extensionName.androidSdk.revision must be set" }
+                if (versions.isEmpty()) {
+                    check(compileSdkVersion != INVALID_VERSION) {
+                        "$extensionName.androidSdk.compileSdkVersion must be set"
+                    }
+                    check(revision != INVALID_VERSION) {
+                        "$extensionName.androidSdk.revision must be set"
+                    }
+                } else {
+                    check(compileSdkVersion == INVALID_VERSION) {
+                        "$extensionName.androidSdk.compileSdkVersion must be not set with version()"
+                    }
+                    check(revision == INVALID_VERSION) {
+                        "$extensionName.androidSdk.revision must be no set with version()"
+                    }
+                }
+            }
+
+            private companion object {
+                private const val INVALID_VERSION = -1
             }
         }
 
