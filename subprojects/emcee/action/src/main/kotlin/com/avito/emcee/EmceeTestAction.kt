@@ -2,7 +2,6 @@ package com.avito.emcee
 
 import com.avito.emcee.internal.FileUploader
 import com.avito.emcee.internal.TestsParser
-import com.avito.emcee.internal.com.avito.emcee.EmceeTestActionConfig
 import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.JobStatusBody
 import com.avito.emcee.queue.QueueApi

@@ -8,8 +8,8 @@ import com.avito.emcee.queue.QueueApi
 import com.avito.emcee.queue.QueueApi.Companion.create
 import retrofit2.Retrofit
 
-public class EmceeTestActionFactory {
-    private val queueApi: QueueApi = Retrofit.Builder().create()
+public class EmceeTestActionFactory(emceeQueueBaseUrl: String) {
+    private val queueApi: QueueApi = Retrofit.Builder().create(emceeQueueBaseUrl)
     private val uploader: FileUploader = ArtifactoryFileUploader()
     private val testsParser: TestsParser = TestsParser(TestSuiteLoader.create())
 

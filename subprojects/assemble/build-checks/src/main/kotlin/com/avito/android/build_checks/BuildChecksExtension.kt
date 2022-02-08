@@ -39,7 +39,7 @@ public abstract class BuildChecksExtension {
         @Suppress("UselessCallOnCollection")
         if (registeredChecks.filterIsInstance(check.javaClass).isNotEmpty()) {
             throw IllegalStateException(
-                "You can't use ${check.javaClass.simpleName} build check twice. " +
+                "You can't configure build check ${check.javaClass.simpleName} twice. " +
                     "See '$extensionName'."
             )
         }
