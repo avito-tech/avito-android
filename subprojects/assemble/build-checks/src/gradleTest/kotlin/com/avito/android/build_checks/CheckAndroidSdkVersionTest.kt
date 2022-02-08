@@ -71,7 +71,7 @@ internal class CheckAndroidSdkVersionTest {
         )
         result.assertThat()
             .buildFailed()
-            .outputContains("buildChecks.androidSdk.compileSdkVersion must be set")
+            .outputContains("At least one version must be configured in buildChecks.androidSdk")
     }
 
     @Test
@@ -143,19 +143,6 @@ internal class CheckAndroidSdkVersionTest {
                         compileSdkVersion = 30,
                         revision = 1
                     )
-                    """
-        )
-        result.assertThat().buildSuccessful()
-    }
-
-    @Test
-    fun `the same platform revision with legacy extension - success`() {
-        givenAndroidSdkPlatform(version = 29, revision = 5)
-
-        val result = runCheck(
-            extension = """
-                    compileSdkVersion = 29
-                    revision = 5
                     """
         )
         result.assertThat().buildSuccessful()

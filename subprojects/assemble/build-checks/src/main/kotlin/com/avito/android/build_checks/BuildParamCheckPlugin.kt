@@ -129,7 +129,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 group = "verification"
                 description = "Checks sdk versions with expected ones to prevent build cache misses"
 
-                versions.set(check.versions())
+                versions.set(check.versions)
             }
             rootTask {
                 dependsOn(task)
