@@ -36,7 +36,7 @@ android {
             isIncludeAndroidResources = true
 
             all {
-                it.systemProperty("android.junit.runner", "com.avito.android.test.app.core.RoboTestRunner")
+                it.systemProperty("android.junit.runner", "com.avito.android.test.app.core.AppRobolectricTestRunner")
                 it.systemProperty("robolectric.logging", "stdout")
                 it.systemProperty("robolectric.logging.enabled", "true")
             }
