@@ -31,6 +31,16 @@ android {
 
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
+
+        unitTests {
+            isIncludeAndroidResources = true
+
+            all {
+                it.systemProperty("android.junit.runner", "com.avito.android.test.app.core.RoboTestRunner")
+                it.systemProperty("robolectric.logging", "stdout")
+                it.systemProperty("robolectric.logging.enabled", "true")
+            }
+        }
     }
 
     packagingOptions {
@@ -54,6 +64,8 @@ dependencies {
     sharedTestImplementation(projects.subprojects.androidTest.uiTestingCore)
     sharedTestImplementation(projects.subprojects.androidTest.toastRule)
     sharedTestImplementation(projects.subprojects.common.truthExtensions)
+
+    testImplementation(projects.subprojects.testRunner.testRobolectricInhouseRunner)
 
     androidTestUtil(libs.testOrchestrator)
 }

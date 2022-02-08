@@ -21,6 +21,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.testReportArtifacts) {
         because("uses factory to create TestArtifactsProvider")
     }
+    implementation(projects.subprojects.testRunner.shared.loggerProviders)
     implementation(projects.subprojects.logger.logger)
     implementation(projects.subprojects.common.junitUtils)
     implementation(projects.subprojects.common.testOkhttp)
