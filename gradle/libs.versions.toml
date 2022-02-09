@@ -1,8 +1,8 @@
 [versions]
 kotlin = "1.5.31"
-agp = "7.1.0"
+agp = "7.1.1"
 # formula: 23 + agp version
-androidTools = "30.1.0"
+androidTools = "30.1.1"
 okhttp = "4.9.0"
 retrofit = "2.9.0"
 androidX = "1.3.0"
@@ -119,7 +119,7 @@ detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", v
 # https://github.com/robolectric/robolectric/releases
 robolectric = "org.robolectric:robolectric:4.7.1"
 
-moshiKotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
+moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshiKapt = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 moshiAdapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshi" }
 moshiRetrofit = "com.squareup.retrofit2:converter-moshi:2.9.0"

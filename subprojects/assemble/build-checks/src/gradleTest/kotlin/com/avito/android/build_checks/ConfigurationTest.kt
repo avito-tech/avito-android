@@ -16,8 +16,10 @@ internal class ConfigurationTest {
                     version = JavaVersion.VERSION_1_1
                 }
                 androidSdk {
-                    compileSdkVersion = -1
-                    revision = -1
+                    version(
+                        compileSdkVersion = -1,
+                        revision = -1
+                    )
                 }
             """
         ).runChecks(disablePlugin = true)

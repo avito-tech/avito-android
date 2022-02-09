@@ -43,24 +43,7 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
                 val revision: Int,
             ) : Serializable
 
-            private val versions = mutableSetOf<AndroidSdkVersion>()
-
-            @Deprecated("Use version(compileSdkVersion, revision)")
-            public var compileSdkVersion: Int = INVALID_VERSION
-
-            @Deprecated("Use version(compileSdkVersion, revision)")
-            public var revision: Int = INVALID_VERSION
-
-            internal fun versions(): Set<AndroidSdkVersion> {
-                // mutual exclusivity of state are validated in validate()
-                // this will be simplified after removing deprecated properties
-                return if (versions.isEmpty()) {
-                    @Suppress("DEPRECATION")
-                    setOf(AndroidSdkVersion(compileSdkVersion, revision))
-                } else {
-                    versions
-                }
-            }
+            internal val versions = mutableSetOf<AndroidSdkVersion>()
 
             public fun version(compileSdkVersion: Int, revision: Int) {
                 versions.add(
@@ -68,27 +51,10 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
                 )
             }
 
-            @Suppress("DEPRECATION")
             override fun validate() {
-                if (versions.isEmpty()) {
-                    check(compileSdkVersion != INVALID_VERSION) {
-                        "$extensionName.androidSdk.compileSdkVersion must be set"
-                    }
-                    check(revision != INVALID_VERSION) {
-                        "$extensionName.androidSdk.revision must be set"
-                    }
-                } else {
-                    check(compileSdkVersion == INVALID_VERSION) {
-                        "$extensionName.androidSdk.compileSdkVersion must be not set with version()"
-                    }
-                    check(revision == INVALID_VERSION) {
-                        "$extensionName.androidSdk.revision must be no set with version()"
-                    }
+                require(versions.isNotEmpty()) {
+                    "At least one version must be configured in buildChecks.androidSdk"
                 }
-            }
-
-            private companion object {
-                private const val INVALID_VERSION = -1
             }
         }
 
