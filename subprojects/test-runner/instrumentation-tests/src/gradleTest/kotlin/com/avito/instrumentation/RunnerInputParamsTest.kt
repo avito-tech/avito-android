@@ -339,9 +339,9 @@ internal class RunnerInputParamsTest {
                 assertThat(it.saveTestArtifactsToOutputs)
                     .isFalse()
             },
-            Case("useLegacyExtensionsV1Beta is enabled") {
+            Case("useLegacyExtensionsV1Beta is disabled") {
                 assertThat(it.useLegacyExtensionsV1Beta)
-                    .isTrue()
+                    .isFalse()
             },
         ).map { case ->
             DynamicTest.dynamicTest("[$lang] ${case.name}") {
