@@ -8,7 +8,6 @@ plugins {
 dependencies {
     implementation(libs.androidGradle)
     implementation(libs.gson)
-    implementation(libs.moshiKotlin)
     implementation(libs.moshiAdapters)
     implementation(libs.okhttp)
 
