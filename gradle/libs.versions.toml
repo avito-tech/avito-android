@@ -117,7 +117,7 @@ detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", ve
 detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 # https://github.com/robolectric/robolectric/releases
-robolectric = "org.robolectric:robolectric:4.7.1"
+robolectric = "org.robolectric:robolectric:4.7.3"
 
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshiKapt = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
