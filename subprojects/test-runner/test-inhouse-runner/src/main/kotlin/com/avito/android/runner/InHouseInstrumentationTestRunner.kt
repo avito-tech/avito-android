@@ -49,6 +49,7 @@ import com.avito.logger.LoggerFactoryBuilder
 import com.avito.logger.create
 import com.avito.logger.destination.ElasticLoggingHandlerProvider
 import com.avito.logger.destination.SentryLoggingHandlerProvider
+import com.avito.logger.handler.AndroidLogcatLoggingHandlerProvider
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Kind
@@ -117,6 +118,7 @@ abstract class InHouseInstrumentationTestRunner :
         val testName = runEnvironment.testMetadata.name.toString()
         val builder = LoggerFactoryBuilder()
             .metadataProvider(AndroidTestLoggerMetadataProvider(testName))
+            .addLoggingHandlerProvider(AndroidLogcatLoggingHandlerProvider(LogLevel.DEBUG))
 
         if (sentryConfig is SentryConfig.Enabled) {
             builder.addLoggingHandlerProvider(

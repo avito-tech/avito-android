@@ -7,6 +7,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis") version "0.78.0"
     id("convention.dependency-updates")
     id("convention.detekt")
+    id("com.avito.android.gradle-logger")
 }
 
 buildscript {
