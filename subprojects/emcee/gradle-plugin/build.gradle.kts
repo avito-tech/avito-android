@@ -7,11 +7,9 @@ plugins {
 dependencies {
     implementation(projects.subprojects.emcee.action)
     implementation(libs.androidGradle)
-    implementation(libs.moshiKotlin)
-    implementation(libs.kotlinReflect) {
-        because("moshi 1.12.0 depend on 1.4.x kotlin, and 1.13 on 1.6.x, we use 1.5")
+    implementation(libs.okio) {
+        "used for testing. Replace as soon as possible"
     }
-
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 }
 
