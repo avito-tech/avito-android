@@ -38,7 +38,7 @@ internal class ExperimentsConfigurator(
     }
 
     private fun getUseLegacyExtensionsV1Beta(extension: InstrumentationTestsPluginExtension): Boolean {
-        return extension.experimental.useLegacyExtensionsV1Beta.getOrElse(false)
+        return extension.experimental.useLegacyExtensionsV1Beta.getOrElse(true)
     }
 
     private fun getUploadArtifactsFromRunner(extension: InstrumentationTestsPluginExtension): Boolean {
