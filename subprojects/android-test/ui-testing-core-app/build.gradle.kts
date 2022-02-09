@@ -101,6 +101,7 @@ instrumentation {
 
     experimental {
         fetchLogcatForIncompleteTests.set(true)
+        useLegacyExtensionsV1Beta.set(false)
     }
 
     val emulator22 = CloudEmulator(
