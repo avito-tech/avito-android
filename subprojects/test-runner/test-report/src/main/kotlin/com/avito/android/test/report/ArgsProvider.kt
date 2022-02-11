@@ -1,52 +1,42 @@
 package com.avito.android.test.report
 
-import android.os.Bundle
 import java.io.Serializable
 
-// TODO: consider of using as a wrapper above "bundle" to protect from collisions, empty values, ...
-interface ArgsProvider {
+public interface ArgsProvider {
 
     /**
      * Blank strings also handled and will return null
      */
-    fun getOptionalArgument(name: String): String?
+    public fun getArgument(name: String): String?
 
-    fun getMandatoryArgument(name: String): String
+    public fun getArgumentOrThrow(name: String): String
 
-    fun <T : Serializable> getMandatorySerializableArgument(name: String): T
+    public fun <T : Serializable> getSerializableArgumentOrThrow(name: String): T
 
-    fun <T : Serializable> getOptionalSerializableArgument(name: String): T?
-}
+    public fun <T : Serializable> getSerializableArgument(name: String): T?
 
-class BundleArgsProvider(
-    private val bundle: Bundle
-) : ArgsProvider {
+    @Deprecated(
+        message = "getOptionalArgument is deprecated, use getArgument",
+        replaceWith = ReplaceWith("getArgument(name)")
+    )
+    public fun getOptionalArgument(name: String): String? = getArgument(name)
 
-    override fun <T : Serializable> getMandatorySerializableArgument(name: String): T {
-        val result: T? = getOptionalSerializableArgument(name)
+    @Deprecated(
+        message = "getMandatoryArgument is deprecated, use getArgumentOrThrow",
+        replaceWith = ReplaceWith("getArgumentOrThrow(name)")
+    )
+    public fun getMandatoryArgument(name: String): String? = getArgumentOrThrow(name)
 
-        if (result == null) {
-            throw IllegalStateException("$name is a mandatory serializable argument")
-        } else {
-            return result
-        }
-    }
+    @Deprecated(
+        message = "getMandatorySerializableArgument is deprecated, use getSerializableArgumentOrThrow",
+        replaceWith = ReplaceWith("getSerializableArgumentOrThrow(name)")
+    )
+    public fun <T : Serializable> getMandatorySerializableArgument(name: String): T =
+        getSerializableArgumentOrThrow(name)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Serializable> getOptionalSerializableArgument(name: String): T? =
-        bundle.getSerializable(name) as T?
-
-    override fun getOptionalArgument(name: String): String? =
-        bundle.getString(name)?.let { if (it.isBlank()) null else it }
-
-    override fun getMandatoryArgument(name: String): String {
-        val result: String? = bundle.getString(name)
-        if (result == null || result.isBlank()) {
-            throw IllegalStateException(
-                "$name is a mandatory argument; all values=$bundle"
-            )
-        } else {
-            return result
-        }
-    }
+    @Deprecated(
+        message = "getMandatorySerializableArgument is deprecated, use getSerializableArgument",
+        replaceWith = ReplaceWith("getSerializableArgument(name)")
+    )
+    public fun <T : Serializable> getOptionalSerializableArgument(name: String): T? = getSerializableArgument(name)
 }

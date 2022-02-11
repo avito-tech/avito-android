@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Intercepts http requests with side-effect: append log entry to current test step
  */
-class ReportViewerHttpInterceptor(
+public class ReportViewerHttpInterceptor(
     private val report: Report,
     private val remoteFileStorageEndpointHost: String
 ) : Interceptor {

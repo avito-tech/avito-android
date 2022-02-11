@@ -68,19 +68,19 @@ fun provideEnvironment(
 ): TestRunEnvironment {
     return try {
         val coordinates = ReportCoordinates(
-            planSlug = argumentsProvider.getMandatoryArgument("planSlug"),
-            jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
-            runId = argumentsProvider.getMandatoryArgument("runId")
+            planSlug = argumentsProvider.getArgumentOrThrow("planSlug"),
+            jobSlug = argumentsProvider.getArgumentOrThrow("jobSlug"),
+            runId = argumentsProvider.getArgumentOrThrow("runId")
         )
         TestRunEnvironment.RunEnvironment(
-            testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
+            testMetadata = argumentsProvider.getSerializableArgumentOrThrow(TEST_METADATA_KEY),
             videoRecordingFeature = provideVideoRecordingFeature(
                 argumentsProvider = argumentsProvider
             ),
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),
-            fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl").toHttpUrl(),
+            fileStorageUrl = argumentsProvider.getArgumentOrThrow("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
         )
@@ -94,19 +94,19 @@ fun parseEnvironment(
 ): TestRunEnvironment {
     return try {
         val coordinates = ReportCoordinates(
-            planSlug = argumentsProvider.getMandatoryArgument("planSlug"),
-            jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
-            runId = argumentsProvider.getMandatoryArgument("runId")
+            planSlug = argumentsProvider.getArgumentOrThrow("planSlug"),
+            jobSlug = argumentsProvider.getArgumentOrThrow("jobSlug"),
+            runId = argumentsProvider.getArgumentOrThrow("runId")
         )
         TestRunEnvironment.RunEnvironment(
-            testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
+            testMetadata = argumentsProvider.getSerializableArgumentOrThrow(TEST_METADATA_KEY),
             videoRecordingFeature = provideVideoRecordingFeature(
                 argumentsProvider = argumentsProvider
             ),
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),
-            fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl").toHttpUrl(),
+            fileStorageUrl = argumentsProvider.getArgumentOrThrow("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
         )
@@ -116,21 +116,21 @@ fun parseEnvironment(
 }
 
 internal fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDestination {
-    val deviceName = argumentsProvider.getMandatoryArgument("deviceName")
+    val deviceName = argumentsProvider.getArgumentOrThrow("deviceName")
     return if (deviceName.equals("local", ignoreCase = true)) {
-        val isReportEnabled = argumentsProvider.getOptionalArgument("avito.report.enabled")?.toBoolean() ?: false
+        val isReportEnabled = argumentsProvider.getArgument("avito.report.enabled")?.toBoolean() ?: false
         if (isReportEnabled) {
             ReportDestination.Backend(
-                reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
-                reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl"),
-                deviceName = argumentsProvider.getMandatoryArgument("deviceName")
+                reportApiUrl = argumentsProvider.getArgumentOrThrow("reportApiUrl"),
+                reportViewerUrl = argumentsProvider.getArgumentOrThrow("reportViewerUrl"),
+                deviceName = argumentsProvider.getArgumentOrThrow("deviceName")
             )
         } else {
             ReportDestination.NoOp
         }
     } else {
         val uploadFromRunner =
-            argumentsProvider.getOptionalArgument("avito.report.fromRunner")?.toBoolean() ?: false
+            argumentsProvider.getArgument("avito.report.fromRunner")?.toBoolean() ?: false
 
         if (uploadFromRunner) {
             ReportDestination.File
@@ -141,7 +141,7 @@ internal fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDest
 }
 
 private fun parseSentryConfig(argumentsProvider: ArgsProvider): SentryConfig {
-    val dsn = argumentsProvider.getOptionalArgument("sentryDsn")
+    val dsn = argumentsProvider.getArgument("sentryDsn")
     val tags = mapOf(
         "API" to Build.VERSION.SDK_INT.toString()
     )
@@ -161,9 +161,9 @@ private fun parseSentryConfig(argumentsProvider: ArgsProvider): SentryConfig {
 }
 
 internal fun parseStatsDConfig(argumentsProvider: ArgsProvider): StatsDConfig {
-    val host = argumentsProvider.getOptionalArgument("statsDHost")
-    val port = argumentsProvider.getOptionalArgument("statsDPort")
-    val namespace = argumentsProvider.getOptionalArgument("statsDNamespace")
+    val host = argumentsProvider.getArgument("statsDHost")
+    val port = argumentsProvider.getArgument("statsDPort")
+    val namespace = argumentsProvider.getArgument("statsDNamespace")
     return if (host.isNullOrBlank() || port.isNullOrBlank() || namespace.isNullOrBlank()) {
         StatsDConfig.Disabled
     } else {
@@ -182,9 +182,9 @@ internal fun parseStatsDConfig(argumentsProvider: ArgsProvider): StatsDConfig {
 }
 
 private fun provideVideoRecordingFeature(argumentsProvider: ArgsProvider): VideoFeatureValue {
-    val videoRecordingArgument = argumentsProvider.getOptionalArgument("videoRecording")
+    val videoRecordingArgument = argumentsProvider.getArgument("videoRecording")
 
-    return when (argumentsProvider.getOptionalArgument("videoRecording")) {
+    return when (argumentsProvider.getArgument("videoRecording")) {
         null, "disabled" -> VideoFeatureValue.Disabled
         "failed" -> VideoFeatureValue.Enabled.OnlyFailed
         "all" -> VideoFeatureValue.Enabled.All

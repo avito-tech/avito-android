@@ -12,6 +12,8 @@ import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.logger.LoggerFactory
 import com.avito.logger.PrintlnLoggerFactory
 import com.avito.report.model.Flakiness
+import com.avito.report.model.Incident
+import com.avito.report.model.IncidentTypeDeterminer
 import com.avito.report.model.Kind
 import com.avito.test.model.TestName
 import com.avito.time.TimeProvider
@@ -25,7 +27,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
 
-class ReportTestExtension(
+internal class ReportTestExtension(
     val timeProvider: TimeProvider = mock(),
     private val fileStorageUrl: String = "https://filestorage.com",
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
@@ -36,7 +38,8 @@ class ReportTestExtension(
         transport = NoOpTransport,
         screenshotCapturer = screenshotCapturer,
         timeProvider = timeProvider,
-        troubleshooter = NoOp
+        incidentTypeDeterminer = StubIncidentTypeDeterminer,
+        troubleshooter = Troubleshooter(emptySet())
     )
 ) : BeforeEachCallback,
     InternalReport by report {
@@ -55,7 +58,7 @@ class ReportTestExtension(
                 .respond(200)
                 .body(ResponseBody.run { "uri\":\"a\"".toResponseBody() })
         )
-        whenever(screenshotCapturer.captureAsFile(any(), any(), any()))
+        whenever(screenshotCapturer.captureAsFile(any()))
             .thenReturn(Result.Success(File("")))
     }
 
@@ -90,8 +93,9 @@ class ReportTestExtension(
     }
 }
 
-private object NoOp : Troubleshooter {
-    override fun troubleshootTo(report: Report) {
-        // no op
+private object StubIncidentTypeDeterminer : IncidentTypeDeterminer {
+    override fun determine(throwable: Throwable): Incident.Type = when (throwable) {
+        is AssertionError -> Incident.Type.ASSERTION_FAILED
+        else -> throwable.cause?.let { determine(it) } ?: Incident.Type.INFRASTRUCTURE_ERROR
     }
 }

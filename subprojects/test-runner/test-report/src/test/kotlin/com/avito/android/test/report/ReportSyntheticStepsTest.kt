@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.concurrent.TimeUnit
 
 @ExtendWith(StepDslExtension::class)
-class ReportSyntheticStepsTest {
+internal class ReportSyntheticStepsTest {
 
     private val timeMachine = TimeMachineProvider()
 

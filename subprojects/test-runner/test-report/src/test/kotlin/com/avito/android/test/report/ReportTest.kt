@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 
 @Suppress("MaxLineLength")
 @ExtendWith(StepDslExtension::class)
-class ReportTest {
+internal class ReportTest {
 
     @JvmField
     @RegisterExtension

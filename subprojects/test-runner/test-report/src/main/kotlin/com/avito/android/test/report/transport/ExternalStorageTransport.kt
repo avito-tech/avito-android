@@ -16,7 +16,7 @@ import java.io.File
  * Send all to device external storage
  * Test runner will read it and prepare reports
  */
-class ExternalStorageTransport(
+public class ExternalStorageTransport(
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory,
     private val testArtifactsProvider: TestArtifactsProvider,

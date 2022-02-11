@@ -6,18 +6,18 @@ import com.avito.filestorage.FutureValue
 import com.avito.report.model.Entry
 import java.io.File
 
-interface Transport {
+public interface Transport {
 
-    fun sendReport(state: Started)
+    public fun sendReport(state: Started)
 
-    fun sendContent(
+    public fun sendContent(
         test: TestMetadata,
         file: File,
         type: Entry.File.Type,
         comment: String
     ): FutureValue<Entry.File>
 
-    fun sendContent(
+    public fun sendContent(
         test: TestMetadata,
         content: String,
         type: Entry.File.Type,

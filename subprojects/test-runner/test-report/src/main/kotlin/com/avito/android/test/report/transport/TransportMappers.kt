@@ -14,9 +14,9 @@ import okhttp3.HttpUrl
 import java.lang.reflect.Field
 import java.util.Locale
 
-interface TransportMappers {
+public interface TransportMappers {
 
-    fun Entry.File.Type.toContentType(): ContentType {
+    public fun Entry.File.Type.toContentType(): ContentType {
         return when (this) {
             Entry.File.Type.html -> ContentType.HTML
             Entry.File.Type.img_png -> ContentType.PNG
@@ -25,7 +25,7 @@ interface TransportMappers {
         }
     }
 
-    fun Entry.File.Type.extension(): String {
+    public fun Entry.File.Type.extension(): String {
         return when (this) {
             Entry.File.Type.html -> "html"
             Entry.File.Type.img_png -> "png"
@@ -34,7 +34,7 @@ interface TransportMappers {
         }
     }
 
-    fun FutureValue<Result<HttpUrl>>.toEntry(
+    public fun FutureValue<Result<HttpUrl>>.toEntry(
         comment: String,
         timeProvider: TimeProvider,
         type: Entry.File.Type
@@ -54,7 +54,7 @@ interface TransportMappers {
         }
     }
 
-    fun transformStepList(stepList: List<StepResult>): List<Step> {
+    public fun transformStepList(stepList: List<StepResult>): List<Step> {
         return stepList.map { stepResult ->
             Step(
                 timestamp = stepResult.timestamp,
@@ -65,7 +65,7 @@ interface TransportMappers {
         }
     }
 
-    fun DataSet.serialize(): Map<String, String> {
+    public fun DataSet.serialize(): Map<String, String> {
         return javaClass.declaredFields
             .filter { it.name != "number" }
             .map { field ->

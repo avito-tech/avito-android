@@ -15,19 +15,19 @@ internal class StubArgsProvider : ArgsProvider {
         args[name] = value
     }
 
-    override fun getOptionalArgument(name: String): String? {
+    override fun getArgument(name: String): String? {
         return args[name] as? String
     }
 
-    override fun getMandatoryArgument(name: String): String {
+    override fun getArgumentOrThrow(name: String): String {
         return args[name] as String
     }
 
-    override fun <T : Serializable> getMandatorySerializableArgument(name: String): T {
+    override fun <T : Serializable> getSerializableArgumentOrThrow(name: String): T {
         TODO("Not yet implemented")
     }
 
-    override fun <T : Serializable> getOptionalSerializableArgument(name: String): T? {
+    override fun <T : Serializable> getSerializableArgument(name: String): T? {
         TODO("Not yet implemented")
     }
 }

@@ -7,6 +7,7 @@ dependencies {
     api(projects.subprojects.testRunner.testInstrumentationRunner)
     api(projects.subprojects.common.junitUtils)
     api(projects.subprojects.testRunner.testReportDslApi)
+    api(projects.subprojects.testRunner.testReportAndroid) // TODO: use as implementation
 
     implementation(projects.subprojects.common.buildMetadata)
     implementation(projects.subprojects.common.sentry)
@@ -23,6 +24,7 @@ dependencies {
         because("uses factory to create TestArtifactsProvider")
     }
     implementation(projects.subprojects.testRunner.shared.loggerProviders)
+    implementation(projects.subprojects.testRunner.transport)
     implementation(projects.subprojects.logger.logger)
     implementation(projects.subprojects.common.junitUtils)
     implementation(projects.subprojects.common.testOkhttp)
@@ -32,7 +34,6 @@ dependencies {
     implementation(projects.subprojects.androidTest.uiTestingCore)
     implementation(libs.playServicesBase)
     implementation(projects.subprojects.androidTest.instrumentation)
-    implementation(projects.subprojects.testRunner.testReport)
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)
