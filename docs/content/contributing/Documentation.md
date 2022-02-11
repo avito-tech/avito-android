@@ -341,4 +341,4 @@ Checklist for upgrades:
 - Search
 - [Markdown extensions](https://facelessuser.github.io/pymdown-extensions): mermaid, ... See settings in mkdocs.yml.
 
-[MkDocs troubleshooting](https://squidfunk.github.io/mkdocs-material/troubleshooting/)
+[MkDocs com.avito.android.test.report.troubleshooting](https://squidfunk.github.io/mkdocs-material/com.avito.android.test.report.troubleshooting/)

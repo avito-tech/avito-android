@@ -7,7 +7,7 @@ import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
-import com.avito.android.test.report.ArgsProvider
+import com.avito.android.test.report.arguments.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
 import com.avito.android.transport.ReportDestination

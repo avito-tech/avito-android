@@ -24,7 +24,7 @@ internal class RunnerInputDumper(private val dumpDir: File) {
             excludeSensitiveInfo(input)
         }
 
-        // write this file always, for troubleshooting purposes
+        // write this file always, for com.avito.android.test.report.troubleshooting purposes
         getDumpJson().writer().use {
             gson.toJson(safeInput, it)
         }

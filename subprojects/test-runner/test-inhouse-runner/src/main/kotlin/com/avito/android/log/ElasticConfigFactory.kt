@@ -1,7 +1,7 @@
 package com.avito.android.log
 
 import com.avito.android.elastic.ElasticConfig
-import com.avito.android.test.report.ArgsProvider
+import com.avito.android.test.report.arguments.ArgsProvider
 import java.net.URL
 
 // todo should be in :android-log,

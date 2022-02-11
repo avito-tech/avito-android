@@ -8,7 +8,7 @@ import com.avito.android.runner.annotation.resolver.AnnotationResolversBasedMeta
 import com.avito.android.runner.annotation.resolver.TestMetadataAnnotationResolver
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.runner.parseEnvironment
-import com.avito.android.test.report.BundleArgsProvider
+import com.avito.android.test.report.arguments.BundleArgsProvider
 
 class TestAppRunner : InHouseInstrumentationTestRunner() {
 

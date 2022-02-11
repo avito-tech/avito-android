@@ -1,6 +1,6 @@
 package com.avito.android.runner
 
-import com.avito.android.test.report.ArgsProvider
+import com.avito.android.test.report.arguments.ArgsProvider
 import java.io.Serializable
 
 internal class StubArgsProvider : ArgsProvider {

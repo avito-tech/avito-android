@@ -7,7 +7,7 @@ import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
 import java.io.File
 
-object NoOpTransport : Transport, TransportMappers {
+public object NoOpTransport : Transport, TransportMappers {
 
     override fun sendReport(state: Started) {
     }

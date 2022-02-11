@@ -55,7 +55,7 @@ dependencies {
     implementation(projects.subprojects.androidLib.proxyToast)
 
     sharedTestImplementation(projects.subprojects.testRunner.testInhouseRunner)
-    sharedTestImplementation(projects.subprojects.testRunner.testReport)
+    sharedTestImplementation(projects.subprojects.testRunner.testReportAndroidImpl)
     sharedTestImplementation(projects.subprojects.testRunner.testAnnotations)
     sharedTestImplementation(projects.subprojects.testRunner.reportViewer)
     sharedTestImplementation(projects.subprojects.androidTest.uiTestingCore)

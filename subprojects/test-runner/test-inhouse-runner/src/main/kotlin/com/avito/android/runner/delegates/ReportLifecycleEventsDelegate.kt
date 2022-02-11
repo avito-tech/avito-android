@@ -15,7 +15,8 @@ class ReportLifecycleEventsDelegate(
      * ActivityLifecycleMonitorRegistry wraps callbacks by WeakReference.
      * So we holding a reference to avoid the garbage collection
      */
-    private val listener = ReportActivityLifecycleListener(factory, report)
+    private val listener =
+        com.avito.android.test.report.lifecycle.ReportActivityLifecycleListener(factory, report)
 
     override fun afterOnCreate(arguments: Bundle) {
         ActivityLifecycleMonitorRegistry

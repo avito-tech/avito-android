@@ -1,6 +1,6 @@
 package com.avito.android.util
 
-interface StartupTimeProvider {
+public interface StartupTimeProvider {
 
-    val startupTimeMs: Long
+    public val startupTimeMs: Long
 }

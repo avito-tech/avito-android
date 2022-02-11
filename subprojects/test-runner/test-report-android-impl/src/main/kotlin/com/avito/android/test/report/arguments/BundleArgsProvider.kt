@@ -1,23 +1,9 @@
-package com.avito.android.test.report
+package com.avito.android.test.report.arguments
 
 import android.os.Bundle
 import java.io.Serializable
 
 // TODO: consider of using as a wrapper above "bundle" to protect from collisions, empty values, ...
-interface ArgsProvider {
-
-    /**
-     * Blank strings also handled and will return null
-     */
-    fun getOptionalArgument(name: String): String?
-
-    fun getMandatoryArgument(name: String): String
-
-    fun <T : Serializable> getMandatorySerializableArgument(name: String): T
-
-    fun <T : Serializable> getOptionalSerializableArgument(name: String): T?
-}
-
 class BundleArgsProvider(
     private val bundle: Bundle
 ) : ArgsProvider {

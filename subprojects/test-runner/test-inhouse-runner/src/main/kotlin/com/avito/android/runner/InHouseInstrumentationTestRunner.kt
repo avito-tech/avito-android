@@ -31,13 +31,13 @@ import com.avito.android.test.report.ReportTestListener
 import com.avito.android.test.report.ReportViewerHttpInterceptor
 import com.avito.android.test.report.ReportViewerWebsocketReporter
 import com.avito.android.test.report.StepDslProvider
+import com.avito.android.test.report.incident.EspressoBasedIncidentTypeDeterminer
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotCapturerFactory
 import com.avito.android.test.report.transport.Transport
-import com.avito.android.test.report.troubleshooting.Troubleshooter
-import com.avito.android.test.report.video.VideoCaptureTestListener
+import com.avito.android.test.report.troubleshooting.TroubleshooterFactory
 import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.android.transport.ReportTransportFactory
 import com.avito.android.util.DeviceSettingsChecker
@@ -174,7 +174,8 @@ abstract class InHouseInstrumentationTestRunner :
             reportTransport,
             screenshotCapturer,
             timeProvider,
-            Troubleshooter.Impl()
+            EspressoBasedIncidentTypeDeterminer(),
+            TroubleshooterFactory.create()
         )
     }
 
@@ -338,7 +339,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     private fun initListeners(runEnvironment: TestRunEnvironment.RunEnvironment) {
         TestLifecycleNotifier.addListener(
-            VideoCaptureTestListener(
+            com.avito.android.test.report.video.VideoCaptureTestListener(
                 videoFeatureValue = runEnvironment.videoRecordingFeature,
                 testArtifactsProvider = testArtifactsProvider,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),

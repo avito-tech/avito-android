@@ -32,7 +32,7 @@ dependencies {
     implementation(projects.subprojects.androidTest.uiTestingCore)
     implementation(libs.playServicesBase)
     implementation(projects.subprojects.androidTest.instrumentation)
-    implementation(projects.subprojects.testRunner.testReport)
+    implementation(projects.subprojects.testRunner.testReportAndroidImpl)
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)

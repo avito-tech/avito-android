@@ -6,7 +6,7 @@ import com.avito.truth.ResultSubject.Companion.assertThat
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class ResourceManagerIncidentTest {
+internal class ResourceManagerIncidentTest {
 
     private val presenter = ResourceManagerIncidentPresenter()
 

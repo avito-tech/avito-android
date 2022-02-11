@@ -86,7 +86,7 @@ Example:
 ```text
 Can't sign: /tmp/junit7019843706336345100/app/build/intermediates/apk/release/signApkViaServiceRelease/app-release.apk
 Where : Signing artifact via service
-You can learn more about this problem at https://avito-tech.github.io/avito-android/projects/internal/Signer/#troubleshooting
+You can learn more about this problem at https://avito-tech.github.io/avito-android/projects/internal/Signer/#com.avito.android.test.report.troubleshooting
 Cause exception message: Failed to sign /tmp/junit7019843706336345100/app/build/outputs/apk/release/app-release-unsigned.apk via service
 Request: POST http://localhost:54801/sign
 Request body size: 539997 bytes

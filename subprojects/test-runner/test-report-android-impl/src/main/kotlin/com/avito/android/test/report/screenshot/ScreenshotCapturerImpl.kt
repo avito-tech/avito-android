@@ -13,19 +13,16 @@ import android.graphics.Bitmap as AndroidBitmap
 
 internal class ScreenshotCapturerImpl(
     private val testArtifactsProvider: TestArtifactsProvider,
-    private val activityProvider: ActivityProvider
+    private val activityProvider: ActivityProvider,
+    private val compressFormat: AndroidBitmap.CompressFormat = AndroidBitmap.CompressFormat.PNG,
+    private val quality: Int = 100,
 ) : ScreenshotCapturer {
 
-    override fun captureBitmap(): Result<AndroidBitmap> {
-        return activityProvider.getCurrentActivity().map { activity ->
-            drawCanvas(activity)
-        }
-    }
-
+    /**
+     * @return null when no Activity in RESUMED state
+     */
     override fun captureAsFile(
-        filename: String,
-        compressFormat: Bitmap.CompressFormat,
-        quality: Int
+        filename: String
     ): Result<File> {
         return testArtifactsProvider.provideReportDir().flatMap { dir ->
             captureBitmap().map { capture ->
@@ -35,6 +32,12 @@ internal class ScreenshotCapturerImpl(
                     }
                 }
             }
+        }
+    }
+
+    private fun captureBitmap(): Result<AndroidBitmap> {
+        return activityProvider.getCurrentActivity().map { activity ->
+            drawCanvas(activity)
         }
     }
 

@@ -4,9 +4,11 @@ import radiography.Radiography
 import radiography.ScanScopes.AllWindowsScope
 import radiography.ViewStateRenderers
 
-object ViewHierarchyDumper {
+class ViewHierarchyDumper : Dumper {
 
-    fun getDump(): String {
+    override val label: String = "View hierarchy dump"
+
+    override fun dump(): String {
         return Radiography.scan(
             scanScope = AllWindowsScope,
             viewStateRenderers = ViewStateRenderers.DefaultsIncludingPii

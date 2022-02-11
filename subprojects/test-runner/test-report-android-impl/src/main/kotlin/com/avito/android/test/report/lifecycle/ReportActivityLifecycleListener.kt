@@ -5,9 +5,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.test.runner.lifecycle.ActivityLifecycleCallback
 import androidx.test.runner.lifecycle.Stage
 import com.avito.android.test.report.Report
+import com.avito.logger.LoggerFactory
 
 class ReportActivityLifecycleListener(
-    factory: com.avito.logger.LoggerFactory,
+    factory: LoggerFactory,
     private val report: Report
 ) : ActivityLifecycleCallback {
 

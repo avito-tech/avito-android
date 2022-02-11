@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExtendWith(StepDslExtension::class)
-class NestedStepsTest {
+internal class NestedStepsTest {
 
     @JvmField
     @RegisterExtension

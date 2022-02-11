@@ -7,7 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Test
 
-class IncidentChainTest {
+internal class IncidentChainTest {
 
     @Test
     fun `chain - contain three elements - two cause deep`() {
@@ -74,7 +74,7 @@ class IncidentChainTest {
     }
 }
 
-val incidentMessageCorrespondence: Correspondence<IncidentElement, IncidentElement> = Correspondence.from(
+private val incidentMessageCorrespondence: Correspondence<IncidentElement, IncidentElement> = Correspondence.from(
     { actual, expected ->
         if (actual != null && expected != null) {
             actual.message == expected.message && actual.data == expected.data

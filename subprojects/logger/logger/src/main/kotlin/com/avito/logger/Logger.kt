@@ -6,7 +6,7 @@ package com.avito.logger
 public interface Logger {
 
     /**
-     * additional information for troubleshooting
+     * additional information for com.avito.android.test.report.troubleshooting
      */
     public fun debug(msg: String)
 
