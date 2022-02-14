@@ -9,7 +9,7 @@ internal class KotlinDaemonFallbackDetector {
 
     fun register(project: Project) {
         if (isDaemonDisabled(project)) {
-            project.logger.debug("Kotlin daemon fallback detection is disabled due to absence of daemon")
+            project.logger.lifecycle("Kotlin daemon fallback detection is disabled due to absence of daemon")
             return
         }
         val fallbacksCounter = AtomicInteger(0)

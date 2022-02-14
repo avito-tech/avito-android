@@ -29,6 +29,16 @@ internal class PreventKotlinDaemonFallbackTest {
     }
 
     @Test
+    fun `disabled check without daemon strategy - no fallback strategy`() {
+        generateProject(enableCheck = false)
+        val result = build(":lib1:compileKotlin", "-Dkotlin.compiler.execution.strategy=in-process")
+
+        result.assertThat()
+            .buildSuccessful()
+            .outputDoesNotContain("Could not connect to kotlin daemon. Using fallback strategy.")
+    }
+
+    @Test
     fun `single fallback - success`() {
         generateProject(enableCheck = true)
         val result = build(":lib1:compileKotlin")
@@ -68,11 +78,11 @@ internal class PreventKotlinDaemonFallbackTest {
     }
 
     private fun build(
-        task: String,
+        vararg args: String,
         expectFailure: Boolean = false
     ) = gradlew(
         projectDir,
-        task,
+        *args,
         "-Dkotlin.daemon.jvm.options=invalid_jvm_argument_to_fail_process_startup",
         "--rerun-tasks",
         expectFailure = expectFailure
