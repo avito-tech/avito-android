@@ -10,7 +10,7 @@ outputs/
 gh-pages-generated/
 # idea
 *.iml
-.idea/*
+**/.idea/*
 !.idea/dictionaries/
 # Layout inspector captures
 captures/

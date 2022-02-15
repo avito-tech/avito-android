@@ -8,11 +8,6 @@ avito-disclaimer.md
 
 Все образы расположены в `ci/docker`.
 
-## Android SDK image
-
-This is the base image with Android Build Tools.  
-It's not ready yet, see MBS-7071.
-
 ## Android builder image
 
 This is the image for building and testing Android applications. It contains Android SDK.
@@ -27,48 +22,69 @@ This is the image for building and testing Android applications. It contains And
     You will see the tag in stdout:
     
     ```text
-    Image *******/android/builder:eb4a3b67e564 has been published successfully
+    Published the image <docker registry>/android/builder:<tag>
     ```
 
 === "Locally"
 
+    If you need to test locally before publishing:
+
     ```bash
-    export DOCKER_REGISTRY=<docker registry>
+    # Docker registry to further publishing
+    export DOCKER_REGISTRY=...
+    # DockerHub credentials
+    export DOCKER_HUB_USERNAME=...
+    export DOCKER_HUB_PASSWORD=...
+    cd ci/docker
+    ./build.sh <directory with Dockerfile>
+    ```
+
+    You will see in stdout:
+    ```
+    Image <image id> tagged as <docker registry>/android/image-builder:<tag>
+    ```
+
+    Continue to further publishing:
+
+    ```bash
+    # Docker registry to publish
+    export DOCKER_REGISTRY=...
+    export DOCKER_REGISTRY_USERNAME=...
+    export DOCKER_REGISTRY_PASSWORD=...
+    # DockerHub credentials
+    export DOCKER_HUB_USERNAME=...
+    export DOCKER_HUB_PASSWORD=...
     cd ci/docker
     ./publish.sh <directory with Dockerfile>
     ```
     
-    This script will build a new image. You will the tag in stdout:
+    You will see in stdout:
     
     ```text
-    Successfully built eb4a3b67e564
+    Published the image <docker registry>/android/builder:<tag>
     ```
-    
-    To push the image you must have registry credentials in these envs: `DOCKER_LOGIN`, `DOCKER_PASSWORD` .  
-    Without it the script will stop after building.
 
 1. [Upload the image to Docker Hub](#uploading-image-to-docker-hub)
 1. Update image hash in `IMAGE_ANDROID_BUILDER` variable in ci shell scripts:
-    - In github repo: `ci/_environment.sh` 
+    - In GitHub repo: `ci/_environment.sh` 
     - In internal avito repository: `ci/_main.sh`
 1. Check this images is working. At least, run `ci/local_check.sh`.
 1. Make PR with a new image.
 
-## Docker in docker image
+## Image builder
 
-Утилитарный образ с докером внутри.  
-Используем внутри скриптов для создания и публикации других образов, прежде всего эмулятора.
+Образ для сборки других docker образов.
 
-### How to update itself?
+### Как обновить
 
 Образ собирает сам себя с помощью предыдущей версии образа (bootstrapping):  
-`./publish.sh docker-in-docker-image`  
-`publish.sh` - использует текущую версию образа  
-`docker-in-docker-image` - содержит изменения
+`./publish.sh image-builder`  
+`publish.sh` - использует текущую версию образа.  
+Директория `image-builder` - содержит изменения.
 
 Если меняем контракт с окружением, то вносим правки поэтапно, чтобы прошлая версия образа могла собрать новую.
 
-[Build docker-in-docker (internal)](http://links.k.avito.ru/tmctAvitoAndroidDockerInDocker)
+Teamcity configuration: [Build docker-in-docker (internal)](http://links.k.avito.ru/tmctAvitoAndroidDockerInDocker)
 
 ## Android emulator images
 
@@ -174,7 +190,7 @@ This is the image for building and testing Android applications. It contains And
     
     ```bash
     cd ci/docker
-    ./publish_emulator android-emulator
+    ./publish_emulator.sh android-emulator
     ``` 
     
     Соберет образ, протестирует и запушит в docker registry.
@@ -189,9 +205,9 @@ This is the image for building and testing Android applications. It contains And
 
 ### Как проверить регрессию?
 
-- Прогони instrumentation dynamic чтобы выявить возможную утечку памяти.  
+- Прогони instrumentation dynamic, чтобы выявить возможную утечку памяти.  
 Для этого запусти компонентный тест с большим числом повторов.
-- Прогони fullCheck  
+- Прогони prCheck.  
 Сравни количество тестов по всем статусам, не стало ли больше упавших или потерянных.
 
 ### Как проверить сколько ресурсов тратит эмулятор?
