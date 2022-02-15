@@ -237,51 +237,39 @@ sudo docker run \
 
 Пока что заливаем вручную, задача на автоматизацию: MBS-8773.
 
-1. Залогинься в Docker hub
+1. Залогинься в Docker hub:
+    ```bash
+    docker login --username=avitotech --password=...
+    ```
+1. Скачай новый образ из приватного registry:
+    ```bash
+    docker pull <DOCKER_REGISTRY>/<repository>/<image>:<TAG>
+    ```
+    Пример:
+    ```bash
+    docker pull inhouse-registry/android/android-emulator-29:c0de63a4cd
+    ```
+1. Поставь образу такой-же тег, но имя для репозитория в DockerHub:
+    ```bash
+    docker tag <SOURCE IMAGE> avitotech/android-emulator-<API>:<TAG>
+    ```
+    Пример:
+    ```bash
+    docker tag inhouse-registry/repository/android-emulator-29:c0de63a4cd avitotech/android-emulator-29:c0de63a4cd`
+    ```
+    
+    ???+ info
+        Первоначальный уникальный tag получаем из digest. 
+        Проставляем его как tag, потому-что [digest в разных registry может не совпадать](https://github.com/docker/distribution/issues/1662#issuecomment-213079540).
 
-```bash
-docker login --username=avitotech --password=...
-```
-
-2. Скачай новый образ из приватного registry
-
-```bash
-docker pull <DOCKER_REGISTRY>/android/<image>:<DIGEST>
-```
-
-Пример: 
-
-```bash
-docker pull registry/android/android-emulator-29:c0de63a4cd
-```
-
-3. Поставь образу tag равный digest из приватного registry
-
-```bash
-docker tag <DIGEST> avitotech/android-emulator-<API>:<DIGEST>
-```
-
-Пример: 
-
-```bash
-docker tag c0de63a4cd avitotech/android-emulator-29:c0de63a4cd`
-```
-
-Tag нужен чтобы ссылаться на образ по одним и тем-же координатам. 
-Digest в разных registry может не совпадать 
-([images ID does not match registry manifest digest](https://github.com/docker/distribution/issues/1662#issuecomment-213079540)).
-
-4. Залей образ
-
-```bash
-docker push avitotech/android-emulator-<API>:<DIGEST>`
-```
-
-Пример: 
-
-```bash
-docker push avitotech/android-emulator-29:c0de63a4cd
-```
+1. Залей образ:
+    ```bash
+    docker push <IMAGE>:<TAG>
+    ```
+    Пример:
+    ```bash
+    docker push avitotech/android-emulator-29:c0de63a4cd
+    ```
 
 ## Best practices
 

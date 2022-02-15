@@ -1,5 +1,7 @@
 build-tools;30.0.3
+build-tools;31.0.0
 platforms;android-30
+platforms;android-31
 tools
 extras;google;google_play_services
 extras;google;m2repository
