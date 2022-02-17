@@ -40,7 +40,7 @@ internal class KubernetesReservationState(
     suspend fun podAcquired(): QueueTime = lock.withLock {
         checkState(CLAIMED)
         val request = checkNotNull(requests.poll()) {
-            "Pod requests queue is empty"
+            "Error while calculating acquired pods metrics: requests queue is empty"
         }
         val queueTime = Duration.between(request.requestTime, timeProvider.nowInstant())
         QueueTime(queueTime)
