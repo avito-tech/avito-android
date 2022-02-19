@@ -1,4 +1,6 @@
-# Include only app sources for build
+# https://docs.docker.com/engine/reference/builder/#dockerignore-file
+
+# Include only app sources to build jar file
 *
 !src/
 !gradle*

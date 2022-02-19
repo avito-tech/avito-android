@@ -10,6 +10,7 @@ repositories {
     mavenCentral()
 }
 
+// Implementation shouldn't depend on any other module in the repository to avoid chained changes!
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.3")
