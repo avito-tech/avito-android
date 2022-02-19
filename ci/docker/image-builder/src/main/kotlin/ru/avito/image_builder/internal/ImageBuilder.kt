@@ -9,7 +9,8 @@ internal class ImageBuilder(
     private val docker: Docker,
     private val buildDir: File,
     private val login: RegistryLogin,
-    private val registry: String
+    private val registry: String,
+    private val imageName: String,
 ) {
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
@@ -35,8 +36,7 @@ internal class ImageBuilder(
     }
 
     private fun tag(id: String): Image {
-        val properties = imageProperties()
-        val name = "$registry/${properties.name}"
+        val name = "$registry/$imageName"
         @Suppress("UnnecessaryVariable")
         val tag = id
 
@@ -45,7 +45,4 @@ internal class ImageBuilder(
         log.info("Image $id tagged as $name:$tag")
         return Image(id, name, tag)
     }
-
-    private fun imageProperties() =
-        ImageBuildProperties.readFromDir(buildDir)
 }

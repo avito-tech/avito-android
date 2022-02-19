@@ -4,12 +4,18 @@ set -e
 
 source $(dirname "$0")/../_environment.sh
 
-if test "$#" -ne 1; then
-    echo "ERROR: Missing arguments. You should pass a path to a directory with Dockerfile: ./publish.sh <directory>"
+if test "$#" -ne 2; then
+    echo "ERROR: Missing arguments.
+    You should pass a path to a directory with Dockerfile and image name to publish:
+    ./build.sh <directory> <image-name>
+
+    Example:
+    ./build.sh image-builder android/image-builder"
     exit 1
 fi
 
-BUILD_DIRECTORY=$(pwd)/$1
+readonly BUILD_DIRECTORY=$(pwd)/$1
+readonly IMAGE_NAME=$2
 
 docker run --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \
@@ -20,4 +26,5 @@ docker run --rm \
         --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
         --registryUsername "${DOCKER_REGISTRY_USERNAME}" \
         --registryPassword "${DOCKER_REGISTRY_PASSWORD}" \
-        --registry "${DOCKER_REGISTRY}"
+        --registry "${DOCKER_REGISTRY}" \
+        --imageName "${IMAGE_NAME}"

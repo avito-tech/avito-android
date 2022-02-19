@@ -40,6 +40,11 @@ public object Main {
             description = "Docker target registry"
         ).required()
 
+        protected val imageName: String by option(
+            type = ArgType.String,
+            description = "Image name. Usually, it's in format <repository>/<image-name> (e.g. 'android/image-builder')"
+        ).required()
+
         override fun execute() {
             imageBuilder().build()
         }
@@ -58,7 +63,8 @@ public object Main {
                         password = dockerHubPassword,
                     )
                 ),
-                registry = registry
+                registry = registry,
+                imageName = imageName,
             )
         }
     }
