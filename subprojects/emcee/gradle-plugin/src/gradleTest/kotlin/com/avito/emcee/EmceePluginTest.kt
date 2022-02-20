@@ -77,7 +77,7 @@ internal class EmceePluginTest {
             Case("job priority") { assertThat(job.priority).isEqualTo(100) },
             Case("job group priority") { assertThat(job.groupPriority).isEqualTo(100) },
             Case("retries") { assertThat(testExecutionBehavior.retries).isEqualTo(2) },
-            Case("devices") { assertThat(devices.map { it.runtime }).containsExactly("22", "30") },
+            Case("devices") { assertThat(devices.map { it.sdkVersion }).containsExactly(22, 30) },
             Case("single test timeout") { assertThat(timeoutConfiguration.singleTestMaximumDuration).isEqualTo(120) },
         ).map { case -> DynamicTest.dynamicTest(case.paramName) { case.assertion(config) } }
     }

@@ -70,7 +70,7 @@ public abstract class EmceeTestTask : DefaultTask() {
                 retries = retries.get()
             ),
             timeoutConfiguration = TestTimeoutConfiguration(testTimeoutInSec.toFloat(), testTimeoutInSec.toFloat()),
-            devices = deviceApis.get().map { api -> Device("", api.toString()) },
+            devices = deviceApis.get().map { api -> Device("", api) },
             apk = apk.get().getApkOrThrow(), // todo should be optional for libraries
             testApk = testApk.get().getApkOrThrow()
         )
