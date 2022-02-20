@@ -6,9 +6,11 @@ plugins {
 
 dependencies {
     api(projects.subprojects.emcee.queueApiModels)
-    implementation(libs.retrofit)
+    api(libs.retrofit)
+
     implementation(libs.moshi)
     implementation(libs.moshiSealedRuntime)
+    implementation(libs.moshiRetrofit)
 
     kapt(libs.moshiSealedCodegen)
     kapt(libs.moshiKapt)
