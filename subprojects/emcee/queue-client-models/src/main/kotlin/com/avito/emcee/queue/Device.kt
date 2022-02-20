@@ -13,5 +13,5 @@ public data class Device(
     /**
      * Representing an emulator API version: 21,22,29,30 etc.
      */
-    val runtime: String,
+    val sdkVersion: Int,
 )
