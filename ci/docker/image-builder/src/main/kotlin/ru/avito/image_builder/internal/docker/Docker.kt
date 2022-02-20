@@ -2,27 +2,24 @@ package ru.avito.image_builder.internal.docker
 
 import java.time.Duration
 
-interface Docker {
+internal interface Docker {
 
-    /**
-     * @return image ID
-     */
     fun build(
         vararg args: String,
-        timeout: Duration = DEFAULT_LONG_TIMEOUT
-    ): Result<String>
+        timeout: Duration = LONG_OPERATION_TIMEOUT
+    ): Result<ImageId>
 
     fun push(
         vararg args: String,
-        timeout: Duration = DEFAULT_LONG_TIMEOUT
+        timeout: Duration = LONG_OPERATION_TIMEOUT
     ): Result<Unit>
 
     /**
-     * @return container ID
+     * @return output
      */
     fun run(
         vararg args: String,
-        timeout: Duration = DEFAULT_LONG_TIMEOUT
+        timeout: Duration = LONG_OPERATION_TIMEOUT
     ): Result<String>
 
     /**
@@ -30,14 +27,14 @@ interface Docker {
      */
     fun exec(
         vararg args: String,
-        timeout: Duration = DEFAULT_LONG_TIMEOUT
+        timeout: Duration = LONG_OPERATION_TIMEOUT
     ): Result<String>
 
     fun login(
         username: String,
         password: String,
         registry: String? = null,
-        timeout: Duration = Duration.ofMinutes(1)
+        timeout: Duration = FAST_OPERATION_TIMEOUT
     ): Result<Unit>
 
     fun tag(
@@ -49,8 +46,24 @@ interface Docker {
          * TARGET_IMAGE[:TAG]
          */
         target: String,
-        timeout: Duration = Duration.ofMinutes(1)
+        timeout: Duration = FAST_OPERATION_TIMEOUT
+    ): Result<Unit>
+
+    fun commit(
+        /**
+         * Apply Dockerfile instruction to the created image
+         */
+        change: String,
+        container: String,
+        timeout: Duration = LONG_OPERATION_TIMEOUT
+    ): Result<ImageId>
+
+    fun remove(
+        vararg options: String,
+        container: String,
+        timeout: Duration = FAST_OPERATION_TIMEOUT
     ): Result<Unit>
 }
 
-private val DEFAULT_LONG_TIMEOUT = Duration.ofMinutes(10)
+private val FAST_OPERATION_TIMEOUT = Duration.ofSeconds(30)
+private val LONG_OPERATION_TIMEOUT = Duration.ofMinutes(10)

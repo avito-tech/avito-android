@@ -1,7 +1,0 @@
-#!/usr/bin/env python3
-import fire
-
-from publish_docker_image.command import Command
-
-if __name__ == '__main__':
-    fire.Fire(Command)

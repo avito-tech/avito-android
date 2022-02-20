@@ -84,7 +84,7 @@ This is the image for building and testing Android applications. It contains And
 
 Если меняем контракт с окружением, то вносим правки поэтапно, чтобы прошлая версия образа могла собрать новую.
 
-Teamcity configuration: [Build docker-in-docker (internal)](http://links.k.avito.ru/tmctAvitoAndroidDockerInDocker)
+Teamcity configuration: [Build image-builder (internal)](http://links.k.avito.ru/Bt2)
 
 ## Android emulator images
 
@@ -190,14 +190,14 @@ Teamcity configuration: [Build docker-in-docker (internal)](http://links.k.avito
     
     ```bash
     cd ci/docker
-    ./publish_emulator.sh android-emulator
+    ./publish_emulator.sh android-emulator 30
     ``` 
     
     Соберет образ, протестирует и запушит в docker registry.
     
     1. Найти новые теги образов.
-    См. stdout скрипта или файл `android-emulator/images.txt`
-    1. Обнови теги образов в build.gradle скриптах.
+    См. stdout: "Published the image ..."
+    1. Обнови теги образов в скриптах.
 
 #### 2. Залей образы в Docker hub
 

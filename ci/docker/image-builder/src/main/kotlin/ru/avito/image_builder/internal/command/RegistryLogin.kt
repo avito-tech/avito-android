@@ -1,6 +1,7 @@
-package ru.avito.image_builder.internal
+package ru.avito.image_builder.internal.command
 
 import ru.avito.image_builder.internal.docker.Docker
+import ru.avito.image_builder.internal.docker.RegistryCredentials
 import java.util.logging.Logger
 
 internal class RegistryLogin(

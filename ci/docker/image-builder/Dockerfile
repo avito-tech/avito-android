@@ -1,3 +1,5 @@
+# See also details in README.md
+
 FROM openjdk:11 as BUILD
 
 RUN mkdir /app

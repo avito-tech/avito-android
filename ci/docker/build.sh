@@ -10,7 +10,8 @@ if test "$#" -ne 2; then
     ./build.sh <directory> <image-name>
 
     Example:
-    ./build.sh image-builder android/image-builder"
+    ./build.sh image-builder android/image-builder
+    "
     exit 1
 fi
 

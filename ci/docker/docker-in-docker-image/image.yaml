@@ -1,2 +1,0 @@
-registry: DOCKER_REGISTRY
-image: android/docker-in-docker-image

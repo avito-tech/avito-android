@@ -11,7 +11,5 @@ else
     IMAGE_ANDROID_BUILDER=${DOCKER_REGISTRY}/android/builder:$ANDROID_BUILDER_TAG
 fi
 
-IMAGE_BUILDER=${DOCKER_REGISTRY}/android/image-builder:10b3d778082d
-# This image is deprecated and will be replaced by IMAGE_BUILDER in MBS-12582
-IMAGE_DOCKER_IN_DOCKER=${DOCKER_REGISTRY}/android/docker-in-docker-image:c2ecce3a3e
+IMAGE_BUILDER=${DOCKER_REGISTRY}/android/image-builder:e3ef3815ff20
 DOCUMENTATION_IMAGE=${DOCKER_REGISTRY}/android/documentation:802502572f

@@ -1,4 +1,4 @@
-package ru.avito.image_builder.internal
+package ru.avito.image_builder.internal.docker
 
 internal class RegistryCredentials(
     val registry: String?,

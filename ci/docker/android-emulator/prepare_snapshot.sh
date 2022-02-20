@@ -103,3 +103,5 @@ adb emu kill
 sleep 5
 
 adb kill-server
+
+echo "Emulator preparation finished"
