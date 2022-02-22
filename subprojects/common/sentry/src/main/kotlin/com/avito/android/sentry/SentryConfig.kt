@@ -27,7 +27,7 @@ public fun sentryClient(config: SentryConfig): SentryClient {
 }
 
 /**
- * Some payloads are bigger than default 400 symbols but helpful for com.avito.android.test.report.troubleshooting
+ * Some payloads are bigger than default 400 symbols but helpful for troubleshooting
  *
  * https://github.com/getsentry/sentry-java/issues/543
  */

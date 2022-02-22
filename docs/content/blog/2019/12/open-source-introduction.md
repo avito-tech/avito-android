@@ -85,7 +85,7 @@ And even if nobody uses the project code in its original form, developers will b
 ### Learn by teaching
 
 Just moving the code into open source is not enough. 
-Practices, approaches, methods of com.avito.android.test.report.troubleshooting, and making decisions — this is what is essential.
+Practices, approaches, methods of troubleshooting, and making decisions — this is what is essential.
 Sharing these, we verify whether our ideas and ready-made solutions work outside of Avito.
 
 ### Influencing third-party libraries and fixing their problems faster
