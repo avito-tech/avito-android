@@ -9,16 +9,18 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.serialize.ReportSerializer
+import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.ReportsApiFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.model.DeviceName
 import com.avito.time.TimeProvider
 
-class ReportTransportFactory(
+public class ReportTransportFactory(
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
     private val remoteStorage: RemoteStorage,
     private val httpClientProvider: HttpClientProvider,
+    private val reportViewerQuery: ReportViewerQuery,
     reportSerializer: ReportSerializer,
     testArtifactsProvider: TestArtifactsProvider
 ) {
@@ -32,7 +34,7 @@ class ReportTransportFactory(
         reportSerializer = reportSerializer
     )
 
-    fun create(
+    public fun create(
         testRunCoordinates: ReportCoordinates,
         reportDestination: ReportDestination
     ): Transport {
@@ -51,6 +53,7 @@ class ReportTransportFactory(
                     host = reportDestination.reportApiUrl,
                     httpClientProvider = httpClientProvider
                 ),
+                reportViewerQuery = reportViewerQuery,
                 remoteStorageTransport = uploadFromDevice
             )
             is ReportDestination.Legacy -> LegacyTransport(
