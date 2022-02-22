@@ -10,7 +10,7 @@ internal open class CliDocker(
     override fun build(
         vararg args: String,
         timeout: Duration
-    ): Result<String> {
+    ): Result<ImageId> {
         val successMessagePattern = "^Successfully built (.{12})$".toRegex(RegexOption.MULTILINE)
 
         return execute("docker", "build", *args, timeout = timeout)
@@ -22,7 +22,7 @@ internal open class CliDocker(
                         $output
                         """.trimIndent()
                 }
-                result.value
+                ImageId(result.value)
             }
     }
 
@@ -44,7 +44,7 @@ internal open class CliDocker(
         registry: String?,
         timeout: Duration
     ): Result<Unit> =
-        // not using --password-stdin because it requires interactive TTY that is unavailable in CI
+        // TODO: try --password-stdin. It might be a problem with non-interactive TTY in CI
         execute("docker", "login", "-u", username, "-p", password, registry.orEmpty(),
             timeout = timeout
         ).map { }
@@ -55,6 +55,29 @@ internal open class CliDocker(
 
     override fun push(vararg args: String, timeout: Duration): Result<Unit> =
         execute("docker", "push", *args, timeout = timeout)
+            .map { }
+
+    override fun commit(
+        change: String,
+        container: String,
+        timeout: Duration
+    ): Result<ImageId> =
+        execute("docker", "commit", "--change", change, container, timeout = timeout)
+            .mapCatching { output ->
+                check(output.trim().startsWith("sha256:")) {
+                    "Unexpected output of docker commit: $output"
+                }
+                ImageId(
+                    value = output.trim().substringAfter("sha256:")
+                )
+            }
+
+    override fun remove(
+        vararg options: String,
+        container: String,
+        timeout: Duration
+    ): Result<Unit> =
+        execute("docker", "rm", *options, container, timeout = timeout)
             .map { }
 
     private fun execute(

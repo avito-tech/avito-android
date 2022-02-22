@@ -24,6 +24,10 @@ application {
     mainClass.set("ru.avito.image_builder.Main")
 }
 
+kotlin {
+    explicitApi()
+}
+
 tasks {
     val fatJarTask = register<Jar>("fatJar") {
         manifest {

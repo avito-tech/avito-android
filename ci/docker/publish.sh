@@ -7,10 +7,11 @@ source $(dirname "$0")/../_environment.sh
 if test "$#" -ne 2; then
     echo "ERROR: Missing arguments.
     You should pass a path to a directory with Dockerfile and image name to publish:
-    ./build.sh <directory> <image-name>
+    ./publish.sh <directory> <image-name>
 
     Example:
-    ./build.sh image-builder android/image-builder"
+    ./publish.sh image-builder android/image-builder
+    "
     exit 1
 fi
 

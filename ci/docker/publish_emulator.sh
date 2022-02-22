@@ -1,21 +1,33 @@
 #!/usr/bin/env bash
 
-BUILD_DIRECTORY=$1
-API=$2
+set -e
 
-if [ -n "$BUILD_DIRECTORY" ] && [ -n "$API" ]; then
-    echo "building image for API=$API"
-else
-    echo "'BUILD_DIRECTORY' and 'API' parameters should be provided. Example: ./publish_emulator.sh android-emulator 22. See available API's in ./android-emulator/hardware/"
+source $(dirname "$0")/../_environment.sh
+
+if test "$#" -ne 2; then
+    echo "ERROR: Missing arguments.
+    You should pass a path to a directory with Dockerfile and image name to publish:
+    ./publish_emulator.sh <image-name> <api level>
+
+    Example:
+    ./publish_emulator.sh android/emulator 30
+    "
     exit 1
 fi
 
-source $(dirname $0)/../_environment.sh
+readonly BUILD_DIRECTORY=$(pwd)/android-emulator
+readonly IMAGE_NAME=$1
+readonly API=$2
 
 docker run --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \
-    --volume "$(pwd)/$BUILD_DIRECTORY":/build \
-    --env "DOCKER_REGISTRY=${DOCKER_REGISTRY}" \
-    --env DOCKER_LOGIN=${DOCKER_LOGIN} \
-    --env DOCKER_PASSWORD=${DOCKER_PASSWORD} \
-    ${IMAGE_DOCKER_IN_DOCKER} publish_docker_image publish_emulator /build "${API}"
+    --volume "${BUILD_DIRECTORY}":/build \
+    "${IMAGE_BUILDER}" publishEmulator \
+        --buildDir /build \
+        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
+        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
+        --registryUsername "${DOCKER_REGISTRY_USERNAME}" \
+        --registryPassword "${DOCKER_REGISTRY_PASSWORD}" \
+        --registry "${DOCKER_REGISTRY}" \
+        --imageName "${IMAGE_NAME}" \
+        --api "${API}"

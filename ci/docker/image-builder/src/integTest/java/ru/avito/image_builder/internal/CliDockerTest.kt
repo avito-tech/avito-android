@@ -7,11 +7,12 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import ru.avito.image_builder.internal.docker.CliDocker
 import ru.avito.image_builder.internal.docker.Docker
+import ru.avito.image_builder.internal.docker.ImageId
 import java.io.File
 import java.nio.file.Path
 import java.time.Duration
 
-class CliDockerTest {
+internal class CliDockerTest {
 
     private lateinit var tmpDir: File
     private lateinit var docker: Docker
@@ -41,7 +42,7 @@ class CliDockerTest {
     fun `run - success`() {
         val id = buildImage()
 
-        val result = docker.run(id, "echo", "message")
+        val result = docker.run(id.value, "echo", "message")
 
         assertTrue(result.isSuccess, result.toString())
         val output = result.getOrThrow()
@@ -52,11 +53,11 @@ class CliDockerTest {
     fun `exec - success`() {
         val imageId = buildImage()
 
-        val runResult = docker.run("-d", "--entrypoint", "sleep", imageId, "1m")
+        val runResult = docker.run("-d", "--entrypoint", "sleep", imageId.value, "1m")
         assertTrue(runResult.isSuccess, runResult.toString())
 
         val containerId = runResult.getOrThrow()
-        val execResult = docker.exec(containerId, "echo", "message")
+        val execResult = docker.exec(containerId, "sh", "-c", "echo message")
         assertTrue(execResult.isSuccess, execResult.toString())
 
         val output = execResult.getOrThrow()
@@ -65,7 +66,7 @@ class CliDockerTest {
 
     private fun buildImage(
         dockerfile: String = "FROM busybox:1.34.1"
-    ): String {
+    ): ImageId {
         givenDockerfile(tmpDir, dockerfile)
 
         val buildResult = docker.build(
