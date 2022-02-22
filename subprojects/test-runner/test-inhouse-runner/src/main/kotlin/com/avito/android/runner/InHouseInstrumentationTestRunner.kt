@@ -1,6 +1,7 @@
 package com.avito.android.runner
 
 import android.os.Bundle
+import android.util.Base64
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
@@ -38,6 +39,7 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotCapturerFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.TroubleshooterFactory
+import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.android.transport.ReportTransportFactory
 import com.avito.android.util.DeviceSettingsChecker
@@ -54,6 +56,7 @@ import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Kind
 import com.avito.report.serialize.ReportSerializer
+import com.avito.reportviewer.ReportViewerQuery
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -106,6 +109,7 @@ abstract class InHouseInstrumentationTestRunner :
             remoteStorage = remoteStorage,
             httpClientProvider = httpClientProvider,
             testArtifactsProvider = testArtifactsProvider,
+            reportViewerQuery = ReportViewerQuery { Base64.encodeToString(it, Base64.DEFAULT) },
             reportSerializer = ReportSerializer()
         ).create(
             testRunCoordinates = runEnvironment.testRunCoordinates,
@@ -339,7 +343,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     private fun initListeners(runEnvironment: TestRunEnvironment.RunEnvironment) {
         TestLifecycleNotifier.addListener(
-            com.avito.android.test.report.video.VideoCaptureTestListener(
+            VideoCaptureTestListener(
                 videoFeatureValue = runEnvironment.videoRecordingFeature,
                 testArtifactsProvider = testArtifactsProvider,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),

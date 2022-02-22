@@ -21,6 +21,16 @@ public object TestArtifactsProviderFactory {
         )
     }
 
+    public fun createForJavaRuntime(
+        provider: ReportDirProvider,
+        testName: String
+    ): TestArtifactsProvider {
+        return DirectTestArtifactsProvider(
+            provider = provider,
+            uniqueFileNameGenerator = { testName }
+        )
+    }
+
     public fun createForTempDir(tempDir: File): TestArtifactsProvider =
         create(SimpleDirProvider(tempDir))
 

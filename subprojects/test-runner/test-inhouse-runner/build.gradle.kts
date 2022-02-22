@@ -23,6 +23,7 @@ dependencies {
         because("uses factory to create TestArtifactsProvider")
     }
     implementation(projects.subprojects.testRunner.shared.loggerProviders)
+    implementation(projects.subprojects.testRunner.transport)
     implementation(projects.subprojects.logger.logger)
     implementation(projects.subprojects.common.junitUtils)
     implementation(projects.subprojects.common.testOkhttp)
@@ -32,7 +33,7 @@ dependencies {
     implementation(projects.subprojects.androidTest.uiTestingCore)
     implementation(libs.playServicesBase)
     implementation(projects.subprojects.androidTest.instrumentation)
-    implementation(projects.subprojects.testRunner.testReportAndroidImpl)
+    implementation(projects.subprojects.testRunner.testReportAndroid)
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)
