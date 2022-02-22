@@ -16,7 +16,7 @@ internal interface TaskPredicate {
         override fun accept(task: Task) = task.name == name
     }
 
-    class ByType(private val acceptedClass: Class<in Task>) : TaskPredicate {
+    class ByType<T : Task>(private val acceptedClass: Class<in T>) : TaskPredicate {
         override fun accept(task: Task) = acceptedClass.isInstance(task)
     }
 }

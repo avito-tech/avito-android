@@ -26,7 +26,7 @@ public abstract class BuildVerdictPluginExtension(
         )
     }
 
-    public fun onTaskFailure(acceptedType: Class<in Task>, verdictProducer: TaskVerdictProducer) {
+    public fun <T : Task> onTaskFailure(acceptedType: Class<in T>, verdictProducer: TaskVerdictProducer) {
         taskVerdictProviders.add(
             UserDefinedTaskVerdictProducer(
                 predicate = TaskPredicate.ByType(acceptedType),
@@ -39,7 +39,7 @@ public abstract class BuildVerdictPluginExtension(
         onTaskFailure(name, TaskVerdictProducer.create(producer))
     }
 
-    public fun onTaskFailure(acceptedClass: Class<in Task>, producer: (Task) -> SpannedString) {
+    public fun <T : Task> onTaskFailure(acceptedClass: Class<in T>, producer: (Task) -> SpannedString) {
         onTaskFailure(acceptedClass, TaskVerdictProducer.create(producer))
     }
 }

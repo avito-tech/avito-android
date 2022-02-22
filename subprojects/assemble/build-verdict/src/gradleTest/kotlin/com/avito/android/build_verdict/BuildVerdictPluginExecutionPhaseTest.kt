@@ -5,7 +5,6 @@ import com.avito.test.gradle.dir
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module.AndroidAppModule
-import com.avito.test.gradle.module.KotlinModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -189,13 +188,14 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
     fun `buildVerdictTask fails - build-verdict contains task's verdict info`() {
         //language=Groovy
         generateProject(
-            module = KotlinModule(
-                name = appName,
-                buildGradleExtra = """
-                import com.avito.android.build_verdict.BuildVerdictTask
-                import com.avito.android.build_verdict.span.SpannedString
-                import org.gradle.api.tasks.Input
-                
+            imports = listOf(
+                "import com.avito.android.build_verdict.BuildVerdictTask",
+                "import com.avito.android.build_verdict.TaskVerdictProducer",
+                "import com.avito.android.build_verdict.span.SpannedString",
+                "import org.gradle.api.tasks.Input",
+                "import org.gradle.api.Task",
+            ),
+            buildGradleExtra = """
                 class CustomTask extends DefaultTask implements BuildVerdictTask {
                 
                     private String verdict = ""
@@ -214,24 +214,18 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
                 }
                 
                 tasks.register("customTask", CustomTask)
-            """.trimIndent()
-            ),
-            buildGradleExtra = """
-import com.avito.android.build_verdict.TaskVerdictProducer
-import com.avito.android.build_verdict.span.SpannedString
-import org.gradle.api.Task
-
-buildVerdict {
-    onTaskFailure("customTask", { 
-        SpannedString.link("https://www.google.com/", "User added verdict")
-    } as TaskVerdictProducer)
-}
-""".trimIndent()
+                
+                buildVerdict {
+                    onTaskFailure("customTask", { 
+                        SpannedString.link("https://www.google.com/", "User added verdict")
+                    } as TaskVerdictProducer)
+                }
+                """.trimIndent()
         )
 
         val result = gradlew(
             temp,
-            ":app:customTask",
+            ":customTask",
             expectFailure = true
         )
 
@@ -240,9 +234,79 @@ buildVerdict {
             .buildFailed()
 
         assertBuildVerdict(
+            failedApp = "",
             failedTask = "customTask",
             expectedPlainTextVerdict = plainTextVerdicts.buildVerdictTaskFails(),
             expectedHtmlVerdict = htmlVerdicts.buildVerdictTaskFails(),
+            expectedErrorLogs = listOf(
+                "No error logs"
+            )
+        )
+    }
+
+    @Test
+    fun `custom task fails - build-verdict contains task's verdict info - task name matcher`() {
+        assertCustomTaskFailure(
+            buildVerdictExtras = """
+                onTaskFailure("customTask") { 
+                    SpannedString.link("https://www.google.com/", "User added verdict")
+                }
+                """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `custom task fails - build-verdict contains task's verdict info - task type matcher`() {
+        assertCustomTaskFailure(
+            buildVerdictExtras = """
+                onTaskFailure(CustomTask::class.java) { 
+                    SpannedString.link("https://www.google.com/", "User added verdict")
+                }
+                """.trimIndent()
+        )
+    }
+
+    private fun assertCustomTaskFailure(buildVerdictExtras: String) {
+        //language=Kotlin
+        generateProject(
+            imports = listOf(
+                "import com.avito.android.build_verdict.BuildVerdictTask",
+                "import com.avito.android.build_verdict.span.SpannedString",
+                "import org.gradle.api.DefaultTask",
+                "import org.gradle.api.tasks.TaskAction",
+            ),
+            buildGradleExtra = """
+                abstract class CustomTask : DefaultTask() {
+                
+                    @TaskAction 
+                    fun sayGreeting() {
+                        throw RuntimeException("Surprise") 
+                    }
+                }
+                tasks.register("customTask", CustomTask::class.java)
+                
+                buildVerdict {
+                    $buildVerdictExtras
+                }
+                """.trimIndent(),
+            useKts = true,
+        )
+
+        val result = gradlew(
+            temp,
+            ":customTask",
+            expectFailure = true
+        )
+
+        result
+            .assertThat()
+            .buildFailed()
+
+        assertBuildVerdict(
+            failedApp = "",
+            failedTask = "customTask",
+            expectedPlainTextVerdict = plainTextVerdicts.customTaskFails(),
+            expectedHtmlVerdict = htmlVerdicts.customTaskFails(),
             expectedErrorLogs = listOf(
                 "No error logs"
             )

@@ -8,6 +8,7 @@ import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertWithMessage
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -34,7 +35,7 @@ internal abstract class BaseBuildVerdictTest {
         File(temp, "outputs/build-verdict/$htmlVerdictFileName")
     }
 
-    protected val gson = GsonBuilder()
+    protected val gson: Gson = GsonBuilder()
         .registerTypeAdapter(
             Error::class.java,
             object : JsonDeserializer<Error> {
@@ -55,14 +56,18 @@ internal abstract class BaseBuildVerdictTest {
         module: Module = AndroidAppModule(
             name = appName
         ),
-        buildGradleExtra: String = ""
+        buildGradleExtra: String = "",
+        imports: List<String> = emptyList(),
+        useKts: Boolean = false,
     ) {
         TestProjectGenerator(
             plugins = plugins {
                 id("com.avito.android.build-verdict")
             },
             modules = listOf(module),
-            buildGradleExtra = buildGradleExtra
+            imports = imports,
+            buildGradleExtra = buildGradleExtra,
+            useKts = useKts
         ).generateIn(temp)
     }
 
