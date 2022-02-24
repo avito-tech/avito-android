@@ -22,9 +22,4 @@ public data class Job(
      */
     @Json(name = "jobGroupPriority")
     val groupPriority: Int,
-    /**
-     * Some analytics from queue about job
-     * Must be empty object to skip
-     */
-    val analyticsConfiguration: Any,
 )
