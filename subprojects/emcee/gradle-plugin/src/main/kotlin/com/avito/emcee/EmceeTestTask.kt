@@ -61,7 +61,6 @@ public abstract class EmceeTestTask : DefaultTask() {
                 groupId = job.groupId.get(),
                 priority = job.priority.get(),
                 groupPriority = job.groupPriority.get(),
-                analyticsConfiguration = Any()
             ),
             scheduleStrategy = ScheduleStrategy(testsSplitter = ScheduleStrategy.TestsSplitter.Individual),
             testExecutionBehavior = TestExecutionBehavior(
