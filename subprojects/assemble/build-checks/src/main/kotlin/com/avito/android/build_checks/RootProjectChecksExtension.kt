@@ -73,7 +73,7 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
         }
 
         public open class PreventKotlinDaemonFallback : RootProjectCheck() {
-            override var enabled: Boolean = false
+            override var enabled: Boolean = true
         }
 
         override fun equals(other: Any?): Boolean {

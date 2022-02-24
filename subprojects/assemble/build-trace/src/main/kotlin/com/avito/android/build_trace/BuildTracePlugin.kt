@@ -21,7 +21,7 @@ public abstract class BuildTracePlugin : Plugin<Project> {
     }
 
     private fun registerListeners(project: Project, extension: BuildTraceExtension) {
-        val isEnabled = extension.enabled.getOrElse(false)
+        val isEnabled = extension.enabled.getOrElse(true)
         if (!isEnabled) return
 
         val outputDir = extension.output.convention(
