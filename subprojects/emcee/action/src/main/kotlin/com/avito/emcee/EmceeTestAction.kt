@@ -58,7 +58,7 @@ public class EmceeTestAction internal constructor(
                             device = device,
                             testEntry = testEntry,
                             executionBehavior = config.testExecutionBehavior,
-                            timeoutConfiguration = config.timeoutConfiguration,
+                            testMaximumDurationSec = config.testMaximumDurationSec,
                             analyticsConfiguration = Any()
                         )
                     }

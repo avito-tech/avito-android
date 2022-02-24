@@ -11,8 +11,8 @@ public data class TestRequest(
     val testEntry: TestEntry,
     @Json(name = "testExecutionBehavior")
     val executionBehavior: TestExecutionBehavior,
-    @Json(name = "testTimeoutConfiguration")
-    val timeoutConfiguration: TestTimeoutConfiguration,
+    @Json(name = "testMaximumDuration")
+    val testMaximumDurationSec: Long,
     /**
      * Some analytics from queue about job
      * Must be empty object to skip

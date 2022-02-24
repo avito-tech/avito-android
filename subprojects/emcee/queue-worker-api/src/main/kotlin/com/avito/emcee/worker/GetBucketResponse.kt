@@ -4,7 +4,6 @@ import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.Device
 import com.avito.emcee.queue.TestEntry
 import com.avito.emcee.queue.TestExecutionBehavior
-import com.avito.emcee.queue.TestTimeoutConfiguration
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import dev.zacsweers.moshix.sealed.annotations.TypeLabel
@@ -26,6 +25,7 @@ public sealed class GetBucketResponse {
         val device: Device,
         val testEntries: List<TestEntry>,
         val testExecutionBehavior: TestExecutionBehavior,
-        val testTimeoutConfiguration: TestTimeoutConfiguration,
+        @Json(name = "testMaximumDuration")
+        val testMaximumDurationSec: Long,
     ) : GetBucketResponse()
 }

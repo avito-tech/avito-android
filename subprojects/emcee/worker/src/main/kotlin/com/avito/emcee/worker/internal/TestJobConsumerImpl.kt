@@ -4,7 +4,10 @@ import com.avito.emcee.queue.BuildArtifacts
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 internal class TestJobConsumerImpl(
     private val deviceProvider: TestExecutorProvider
 ) : TestJobConsumer {
@@ -30,7 +33,7 @@ internal class TestJobConsumerImpl(
                             testPackage = testPackage,
                             instrumentationRunnerClass = instrumentationRunnerClass,
                             testExecutionBehavior = testExecutionBehavior,
-                            testTimeoutConfiguration = testTimeoutConfiguration
+                            testMaximumDuration = Duration.seconds(testMaximumDurationSec)
                         )
                     )
                 }

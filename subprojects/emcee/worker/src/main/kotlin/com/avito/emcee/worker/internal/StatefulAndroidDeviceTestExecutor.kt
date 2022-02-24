@@ -2,7 +2,9 @@ package com.avito.emcee.worker.internal
 
 import com.avito.emcee.device.AndroidApplication
 import com.avito.emcee.device.AndroidDevice
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 internal class StatefulAndroidDeviceTestExecutor(
     private val device: AndroidDevice
 ) : TestExecutor {
