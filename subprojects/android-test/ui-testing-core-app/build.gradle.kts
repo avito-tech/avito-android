@@ -120,7 +120,7 @@ instrumentation {
         name = "api22",
         api = 22,
         model = "Android_SDK_built_for_x86",
-        image = emulatorImage(22, "7bb4b0b720"),
+        image = emulatorImage(22, "5429ee25fd2b"),
         cpuCoresRequest = "1",
         cpuCoresLimit = "1.3",
         memoryLimit = "4Gi"
@@ -130,7 +130,7 @@ instrumentation {
         name = "api29",
         api = 29,
         model = "Android_SDK_built_for_x86_64",
-        image = emulatorImage(29, "1927fb7cda"),
+        image = emulatorImage(29, "e8ce9edfc78d"),
         cpuCoresRequest = "1",
         cpuCoresLimit = "1.3",
         memoryLimit = "4Gi"
