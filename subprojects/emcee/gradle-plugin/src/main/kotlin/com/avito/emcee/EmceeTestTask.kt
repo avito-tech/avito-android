@@ -6,7 +6,6 @@ import com.avito.emcee.queue.Device
 import com.avito.emcee.queue.Job
 import com.avito.emcee.queue.ScheduleStrategy
 import com.avito.emcee.queue.TestExecutionBehavior
-import com.avito.emcee.queue.TestTimeoutConfiguration
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
@@ -69,7 +68,7 @@ public abstract class EmceeTestTask : DefaultTask() {
                 environment = emptyMap(),
                 retries = retries.get()
             ),
-            timeoutConfiguration = TestTimeoutConfiguration(testTimeoutInSec.toFloat(), testTimeoutInSec.toFloat()),
+            testMaximumDurationSec = testTimeoutInSec,
             devices = deviceApis.get().map { api -> Device("", api) },
             apk = apk.get().getApkOrThrow(), // todo should be optional for libraries
             testApk = testApk.get().getApkOrThrow()

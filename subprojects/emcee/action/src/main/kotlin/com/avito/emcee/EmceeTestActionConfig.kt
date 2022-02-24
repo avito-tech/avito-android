@@ -5,7 +5,6 @@ import com.avito.emcee.queue.Device
 import com.avito.emcee.queue.Job
 import com.avito.emcee.queue.ScheduleStrategy
 import com.avito.emcee.queue.TestExecutionBehavior
-import com.avito.emcee.queue.TestTimeoutConfiguration
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -17,7 +16,7 @@ public class EmceeTestActionConfig(
     public val job: Job,
     public val scheduleStrategy: ScheduleStrategy,
     public val testExecutionBehavior: TestExecutionBehavior,
-    public val timeoutConfiguration: TestTimeoutConfiguration,
+    public val testMaximumDurationSec: Long,
     public val devices: List<Device>,
     public val apk: File,
     public val testApk: File,
