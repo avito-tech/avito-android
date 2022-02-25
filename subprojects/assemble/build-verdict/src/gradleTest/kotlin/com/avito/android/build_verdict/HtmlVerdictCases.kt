@@ -27,6 +27,27 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
   </body>
 </html>""".trimIndent()
 
+        override fun customTaskFails() = """
+<html>
+  <head>
+    <title>BuildFailed</title>
+    <style>.logs {
+    color: red;
+}</style>
+  </head>
+  <body>
+    <h2>What went wrong:</h2>
+    <pre>Execution failed for task ':customTask'.
+	&gt; Surprise
+</pre>
+    <h3>Task verdict:</h3>
+    <pre><a href="https://www.google.com/" target="_blank">User added verdict</a></pre>
+    <h3>Error logs:</h3>
+    <pre class="logs">No error logs</pre>
+  </body>
+</html>
+""".trimIndent()
+
         override fun buildVerdictTaskFails() = """
 <html>
   <head>
@@ -37,7 +58,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
   </head>
   <body>
     <h2>What went wrong:</h2>
-    <pre>Execution failed for task ':app:customTask'.
+    <pre>Execution failed for task ':customTask'.
 	&gt; Surprise
 </pre>
     <h3>Task verdict:</h3>
