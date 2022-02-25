@@ -13,7 +13,7 @@ import java.io.File
 internal class ConfigurationCacheCompatibilityTest {
 
     /**
-     * TODO
+     * TODO: MBS-10424
      * 4 problems were found storing the configuration cache, 3 of which seem unique.
      *
      * Plugin 'com.avito.android.build-verdict':
