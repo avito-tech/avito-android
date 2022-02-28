@@ -94,5 +94,8 @@ internal class ReportTestExtension(
 }
 
 private object StubIncidentTypeDeterminer : IncidentTypeDeterminer {
-    override fun determine(throwable: Throwable): Incident.Type = Incident.Type.ASSERTION_FAILED
+    override fun determine(throwable: Throwable): Incident.Type = when (throwable) {
+        is AssertionError -> Incident.Type.ASSERTION_FAILED
+        else -> throwable.cause?.let { determine(it) } ?: Incident.Type.INFRASTRUCTURE_ERROR
+    }
 }
