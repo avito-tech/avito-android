@@ -48,6 +48,7 @@ internal class EmulatorImageBuilder(
 
         val buildResult = docker.build(
             buildDir.canonicalPath,
+            "--build-arg", "DOCKER_REGISTRY=$registry",
             "--build-arg", "SDK_VERSION=$api",
             "--build-arg", "EMULATOR_ARCH=$emulatorArch",
         )

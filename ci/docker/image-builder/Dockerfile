@@ -1,6 +1,6 @@
 # See also details in README.md
-
-FROM openjdk:11 as BUILD
+ARG DOCKER_REGISTRY
+FROM ${DOCKER_REGISTRY}/android/openjdk:11 as BUILD
 
 RUN mkdir /app
 COPY . /app
@@ -11,7 +11,7 @@ WORKDIR /app
 # We can't mount /var/run/docker.sock.
 RUN ./gradlew build -x integrationTest
 
-FROM openjdk:11
+FROM ${DOCKER_REGISTRY}/android/openjdk:11
 
 RUN mkdir /app
 WORKDIR /app

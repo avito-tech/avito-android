@@ -5,9 +5,12 @@ import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.ImageTagger
+import ru.avito.image_builder.internal.command.NoOpRegistryLogin
 import ru.avito.image_builder.internal.command.RegistryLogin
+import ru.avito.image_builder.internal.command.RegistryLoginImpl
 import ru.avito.image_builder.internal.command.SimpleImageBuilder
 import ru.avito.image_builder.internal.docker.CliDocker
+import ru.avito.image_builder.internal.docker.Docker
 import ru.avito.image_builder.internal.docker.RegistryCredentials
 import java.io.File
 
@@ -22,15 +25,15 @@ internal open class BuildImage(
         description = "Path to mounted directory with Dockerfile"
     ).required()
 
-    protected val dockerHubUsername: String by option(
+    protected val dockerHubUsername: String? by option(
         type = ArgType.String,
         description = "DockerHub username"
-    ).required()
+    )
 
-    protected val dockerHubPassword: String by option(
+    protected val dockerHubPassword: String? by option(
         type = ArgType.String,
         description = "DockerHub password"
-    ).required()
+    )
 
     protected val registry: String by option(
         type = ArgType.String,
@@ -52,17 +55,30 @@ internal open class BuildImage(
         return SimpleImageBuilder(
             docker = docker,
             buildDir = File(buildDir),
-            login = RegistryLogin(
-                docker = docker,
-                credentials = RegistryCredentials(
-                    registry = null,
-                    username = dockerHubUsername,
-                    password = dockerHubPassword,
-                )
-            ),
+            login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),
             registry = registry,
             imageName = imageName,
         )
+    }
+
+    protected fun dockerHubLogin(docker: Docker): RegistryLogin {
+        val username = dockerHubUsername
+        val password = dockerHubPassword
+
+        return if (!username.isNullOrEmpty() && !password.isNullOrEmpty()) {
+            RegistryLoginImpl(
+                docker = docker,
+                credentials = RegistryCredentials(
+                    registry = null,
+                    username = username,
+                    password = password,
+                )
+            )
+        } else {
+            NoOpRegistryLogin(
+                message = "No dockerHubUsername and dockerHubPassword setup."
+            )
+        }
     }
 }

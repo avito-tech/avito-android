@@ -1,4 +1,5 @@
-FROM python:3.9-slim
+ARG DOCKER_REGISTRY
+FROM ${DOCKER_REGISTRY}/android/python:3.9-slim
 
 COPY requirements.txt .
 

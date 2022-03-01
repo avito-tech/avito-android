@@ -23,7 +23,9 @@ docker run --rm \
     --volume "${BUILD_DIRECTORY}":/build \
     "${IMAGE_BUILDER}" build \
         --buildDir /build \
-        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
-        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
         --registry "${DOCKER_REGISTRY}" \
         --imageName "${IMAGE_NAME}"
+
+# DockerHub is disabled temporary to make builds more hermetic
+#        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
+#        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \

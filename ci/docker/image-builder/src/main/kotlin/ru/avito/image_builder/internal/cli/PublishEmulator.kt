@@ -5,7 +5,7 @@ import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.EmulatorImageBuilder
 import ru.avito.image_builder.internal.command.ImagePublisher
 import ru.avito.image_builder.internal.command.ImageTagger
-import ru.avito.image_builder.internal.command.RegistryLogin
+import ru.avito.image_builder.internal.command.RegistryLoginImpl
 import ru.avito.image_builder.internal.docker.CliDocker
 import ru.avito.image_builder.internal.docker.RegistryCredentials
 import java.io.File
@@ -39,20 +39,13 @@ internal class PublishEmulator(
             api = api,
             registry = registry,
             imageName = imageName,
-            login = RegistryLogin(
-                docker = docker,
-                credentials = RegistryCredentials(
-                    registry = null,
-                    username = dockerHubUsername,
-                    password = dockerHubPassword,
-                )
-            ),
+            login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),
         )
         ImagePublisher(
             docker = docker,
             builder = builder,
-            login = RegistryLogin(
+            login = RegistryLoginImpl(
                 docker = docker,
                 credentials = RegistryCredentials(
                     registry = registry,

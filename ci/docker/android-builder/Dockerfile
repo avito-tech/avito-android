@@ -1,4 +1,5 @@
-FROM ubuntu:20.04
+ARG DOCKER_REGISTRY
+FROM ${DOCKER_REGISTRY}/android/ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 

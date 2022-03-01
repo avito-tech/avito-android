@@ -28,7 +28,10 @@ internal class SimpleImageBuilder(
     private fun buildImage(): ImageId {
         log.info("Building an image ...")
 
-        val buildResult = docker.build(buildDir.canonicalPath)
+        val buildResult = docker.build(
+            buildDir.canonicalPath,
+            "--build-arg", "DOCKER_REGISTRY=$registry",
+        )
         check(buildResult.isSuccess) {
             "Failed to build the image: ${buildResult.exceptionOrNull()}"
         }

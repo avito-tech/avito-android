@@ -24,10 +24,12 @@ docker run --rm \
     --volume "${BUILD_DIRECTORY}":/build \
     "${IMAGE_BUILDER}" publishEmulator \
         --buildDir /build \
-        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
-        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
         --registryUsername "${DOCKER_REGISTRY_USERNAME}" \
         --registryPassword "${DOCKER_REGISTRY_PASSWORD}" \
         --registry "${DOCKER_REGISTRY}" \
         --imageName "${IMAGE_NAME}" \
         --api "${API}"
+
+# DockerHub is disabled temporary to make builds more hermetic
+#        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
+#        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
