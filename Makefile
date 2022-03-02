@@ -279,3 +279,5 @@ delete_avito_cache_node:
 
 write_locks:
 	./gradlew resolveAndLockAll --write-locks --no-configuration-cache --quiet > /dev/null
+
+# test pr change
