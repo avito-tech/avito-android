@@ -6,19 +6,16 @@ plugins {
 }
 
 val ossrhUsername: Provider<String> = providers.gradleProperty("avito.ossrh.user")
-    .forUseAtConfigurationTime()
 
 val ossrhPassword: Provider<String> = providers.gradleProperty("avito.ossrh.password")
-    .forUseAtConfigurationTime()
 
 val ossrhStagingProfileId: Provider<String> = providers.gradleProperty("avito.ossrh.stagingProfileId")
-    .forUseAtConfigurationTime()
 
 val sonatypeRepoName = "SonatypeReleases"
 
 val repositoryUrlOutputFilePath: Provider<RegularFile> = rootProject.layout.buildDirectory.file("sonatype-repo.id")
 
-val buildId: Provider<String> = providers.gradleProperty("teamcityBuildId").forUseAtConfigurationTime()
+val buildId: Provider<String> = providers.gradleProperty("teamcityBuildId")
 
 val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = with(rootProject.tasks) {
     val createStagingTaskName = "createSonatypeStagingRepository"
@@ -74,15 +71,9 @@ publishing {
 signing {
     sign(publishing.publications)
 
-    val signingKeyId = providers.gradleProperty("avito.pgp.keyid")
-        .forUseAtConfigurationTime()
-        .orNull
-    val signingKey = providers.gradleProperty("avito.pgp.key")
-        .forUseAtConfigurationTime()
-        .orNull
-    val signingPassword = providers.gradleProperty("avito.pgp.password")
-        .forUseAtConfigurationTime()
-        .orNull
+    val signingKeyId = providers.gradleProperty("avito.pgp.keyid").orNull
+    val signingKey = providers.gradleProperty("avito.pgp.key").orNull
+    val signingPassword = providers.gradleProperty("avito.pgp.password").orNull
 
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 }

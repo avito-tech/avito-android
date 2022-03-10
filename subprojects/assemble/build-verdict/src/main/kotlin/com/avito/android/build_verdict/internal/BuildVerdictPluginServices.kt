@@ -1,3 +1,6 @@
+// todo find a replace for TaskExecutionListener
+@file:Suppress("DEPRECATION")
+
 package com.avito.android.build_verdict.internal
 
 import com.avito.android.build_verdict.BuildVerdictPluginExtension

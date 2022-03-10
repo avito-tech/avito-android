@@ -30,7 +30,7 @@ val gradleTestJarTask = tasks.register<Jar>(gradleTest.jarTaskName) {
 
 val testTimeoutSeconds = 600
 
-val artifactoryUrl: Provider<String> = providers.gradleProperty("artifactoryUrl").forUseAtConfigurationTime()
+val artifactoryUrl: Provider<String> = providers.gradleProperty("artifactoryUrl")
 
 val gradleTestTask = tasks.register<Test>("gradleTest") {
     description = "Runs gradle test kit tests"

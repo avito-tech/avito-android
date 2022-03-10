@@ -143,7 +143,6 @@ open class MyPlugin : Plugin<Project> {
     private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty("avito.my_plugin.enabled")
-            .forUseAtConfigurationTime()
             .map { it.toBoolean() }
             .getOrElse(true)
 

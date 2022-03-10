@@ -33,7 +33,6 @@ internal class KotlinDaemonFallbackDetector {
      */
     private fun isDaemonDisabled(project: Project): Boolean {
         val strategy = project.providers.systemProperty("kotlin.compiler.execution.strategy")
-            .forUseAtConfigurationTime()
             .getOrElse("daemon")
         return strategy != "daemon" // "in-process", "out-of-process"
     }

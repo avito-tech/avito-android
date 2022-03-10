@@ -6,9 +6,7 @@ plugins {
     id("org.gradle.test-retry")
 }
 
-val isCi: Provider<Boolean> = providers.gradleProperty("ci")
-    .forUseAtConfigurationTime()
-    .map { it.toBoolean() }
+val isCi: Provider<Boolean> = providers.gradleProperty("ci").map { it.toBoolean() }
 
 tasks.withType<Test>().configureEach {
 

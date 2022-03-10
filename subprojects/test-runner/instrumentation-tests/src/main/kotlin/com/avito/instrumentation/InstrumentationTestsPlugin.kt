@@ -149,9 +149,9 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
     ) {
         if (extension.environmentsContainer.findByName(ENVIRONMENT_DEFAULT) == null) {
             extension.environmentsContainer.register<KubernetesViaCredentials>(ENVIRONMENT_DEFAULT) {
-                url.set(providers.gradleProperty("kubernetesUrl").forUseAtConfigurationTime())
-                token.set(providers.gradleProperty("kubernetesToken").forUseAtConfigurationTime())
-                caCertData.set(providers.gradleProperty("kubernetesCaCertData").forUseAtConfigurationTime())
+                url.set(providers.gradleProperty("kubernetesUrl"))
+                token.set(providers.gradleProperty("kubernetesToken"))
+                caCertData.set(providers.gradleProperty("kubernetesCaCertData"))
                 @Suppress("DEPRECATION")
                 namespace.set(configuration.kubernetesNamespace)
             }

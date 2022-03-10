@@ -57,7 +57,7 @@ pluginManagement {
         }
     }
 
-    val infraVersion = providers.systemProperty("infraVersion").forUseAtConfigurationTime()
+    val infraVersion = providers.systemProperty("infraVersion")
 
     resolutionStrategy {
         eachPlugin {

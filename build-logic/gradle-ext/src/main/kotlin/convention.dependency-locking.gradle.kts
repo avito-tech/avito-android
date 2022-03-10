@@ -1,7 +1,6 @@
 val taskGroup = "Avito Android build"
 
 val isLockingEnabled: Boolean = providers.gradleProperty("avito.dependencyLocking.enabled")
-    .forUseAtConfigurationTime()
     .getOrElse("true")
     .toBoolean()
 
