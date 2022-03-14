@@ -1,3 +1,4 @@
+import com.avito.android.artifactory.artifactoryUrl
 import com.avito.android.artifactory.setUrlOrProxy
 
 enableFeaturePreview("VERSION_CATALOGS")
@@ -11,16 +12,31 @@ dependencyResolutionManagement {
         maven {
             setUrlOrProxy(
                 artifactoryUrl = artifactoryUrl,
-                repositoryName = "mavenCentral",
+                artifactoryRepositoryName = "mavenCentral",
                 originalRepo = "https://repo1.maven.org/maven2"
             )
+        }
+        exclusiveContent {
+            forRepositories(
+                mavenLocal(),
+                maven {
+                    artifactoryUrl(
+                        artifactoryUrl = artifactoryUrl,
+                        artifactoryRepositoryName = "libs-release-local",
+                    )
+                }
+            )
+
+            filter {
+                includeModuleByRegex("com\\.avito\\.android", ".*")
+            }
         }
         exclusiveContent {
             forRepository {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "gradle-plugins",
+                        artifactoryRepositoryName = "gradle-plugins",
                         originalRepo = "https://plugins.gradle.org/m2/"
                     )
                 }
@@ -35,7 +51,7 @@ dependencyResolutionManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "google-android",
+                        artifactoryRepositoryName = "google-android",
                         originalRepo = "https://dl.google.com/dl/android/maven2/"
                     )
                 }
@@ -52,7 +68,7 @@ dependencyResolutionManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "jitpack.io",
+                        artifactoryRepositoryName = "jitpack.io",
                         originalRepo = "https://jitpack.io"
                     )
                 }
@@ -66,7 +82,7 @@ dependencyResolutionManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "jcenter",
+                        artifactoryRepositoryName = "jcenter",
                         originalRepo = "https://jcenter.bintray.com"
                     )
                 }
@@ -83,7 +99,7 @@ dependencyResolutionManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "r8-releases",
+                        artifactoryRepositoryName = "r8-releases",
                         originalRepo = "https://storage.googleapis.com/r8-releases/raw"
                     )
                 }

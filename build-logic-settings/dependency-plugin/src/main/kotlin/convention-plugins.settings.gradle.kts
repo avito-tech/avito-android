@@ -1,3 +1,4 @@
+import com.avito.android.artifactory.artifactoryUrl
 import com.avito.android.artifactory.avitoRepoPrefix
 import com.avito.android.artifactory.setUrlOrProxy
 
@@ -6,26 +7,25 @@ pluginManagement {
     val artifactoryUrl: String? by settings
 
     repositories {
-        maven {
-            setUrlOrProxy(
-                artifactoryUrl = artifactoryUrl,
-                repositoryName = "gradle-plugins",
-                originalRepo = "https://plugins.gradle.org/m2/"
-            )
-        }
         exclusiveContent {
-            forRepository {
-                mavenLocal()
-            }
-            forRepository {
+            forRepositories(
+                maven {
+                    name = "Artifactory libs-release-local"
+                    artifactoryUrl(
+                        artifactoryUrl = artifactoryUrl,
+                        artifactoryRepositoryName = "libs-release-local",
+                    )
+                },
+                mavenLocal(),
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "mavenCentral",
+                        artifactoryRepositoryName = "mavenCentral",
                         originalRepo = "https://repo1.maven.org/maven2"
                     )
                 }
-            }
+            )
+
             filter {
                 includeModuleByRegex("com\\.avito\\.android", ".*")
             }
@@ -35,7 +35,7 @@ pluginManagement {
                 maven {
                     setUrlOrProxy(
                         artifactoryUrl = artifactoryUrl,
-                        repositoryName = "google-android",
+                        artifactoryRepositoryName = "google-android",
                         originalRepo = "https://dl.google.com/dl/android/maven2/"
                     )
                 }
@@ -45,6 +45,13 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
                 includeGroup("com.google.testing.platform")
             }
+        }
+        maven {
+            setUrlOrProxy(
+                artifactoryUrl = artifactoryUrl,
+                artifactoryRepositoryName = "gradle-plugins",
+                originalRepo = "https://plugins.gradle.org/m2/"
+            )
         }
 
         /**
