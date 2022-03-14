@@ -11,7 +11,7 @@ dependencies {
     implementation(projects.subprojects.common.result)
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.worker)
+    implementation(projects.subprojects.gradle.workerExtensions)
     implementation(projects.subprojects.gradle.statsdConfig)
     implementation(projects.subprojects.gradle.buildFailer)
     implementation(projects.subprojects.gradle.gradleExtensions)

@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 plugins {
     id("kotlin")
-    id("java-gradle-plugin")
     idea
 }
 
@@ -99,8 +98,10 @@ dependencies {
     )
 }
 
-gradlePlugin {
-    testSourceSets(gradleTest)
+plugins.withId("java-gradle-plugin") {
+    extensions.getByType<GradlePluginDevelopmentExtension>().apply {
+        testSourceSets(gradleTest)
+    }
 }
 
 // make idea to treat gradleTest as test sources

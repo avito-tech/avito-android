@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.statsdConfig)
-    implementation(projects.subprojects.gradle.worker)
+    implementation(projects.subprojects.gradle.workerExtensions)
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.logger.logger)
     implementation(projects.subprojects.testRunner.client)
