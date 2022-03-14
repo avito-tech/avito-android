@@ -22,7 +22,7 @@ publishing {
             name = repoName
             val artifactoryUrl = artifactoryUrlProperty.orNull
             if (!artifactoryUrl.isNullOrBlank()) {
-                setUrl("$artifactoryUrl/libs-release-local")
+                setUrl("${artifactoryUrl}libs-release-local")
             }
             credentials {
                 username = artifactoryUser.orNull

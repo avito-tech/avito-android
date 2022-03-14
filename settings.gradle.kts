@@ -39,7 +39,7 @@ include(":subprojects:gradle:teamcity")
 include(":subprojects:gradle:test-project")
 include(":subprojects:gradle:test-summary")
 include(":subprojects:gradle:ui-test-bytecode-analyzer")
-include(":subprojects:gradle:worker")
+include(":subprojects:gradle:worker-extensions")
 
 include(":subprojects:assemble:build-checks")
 include(":subprojects:assemble:build-metrics")

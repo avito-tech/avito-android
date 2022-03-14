@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.common.throwableUtils)
     implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.worker)
+    implementation(projects.subprojects.gradle.workerExtensions)
     implementation(projects.subprojects.gradle.statsdConfig)
     implementation(projects.subprojects.gradle.buildFailer)
     implementation(projects.subprojects.gradle.gradleExtensions)

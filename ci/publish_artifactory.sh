@@ -13,7 +13,7 @@ function publish() {
 
     local readonly CREDENTIALS="${user} ${password}"
 
-    runInBuilder "./gradlew publishRelease ${GRADLE_ARGS} ${CREDENTIALS} --no-parallel --stacktrace"
+    runInBuilder "./gradlew publishToArtifactory ${GRADLE_ARGS} ${CREDENTIALS} --stacktrace"
 }
 
 readonly CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
