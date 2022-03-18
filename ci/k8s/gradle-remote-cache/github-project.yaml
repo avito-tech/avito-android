@@ -8,6 +8,10 @@ metadata:
         app: gradle-remote-cache-github
         service: gradle-remote-cache-github
 spec:
+    selector:
+        matchLabels:
+            app: gradle-remote-cache-github
+            service: gradle-remote-cache-github
     replicas: 1
     template:
         metadata:

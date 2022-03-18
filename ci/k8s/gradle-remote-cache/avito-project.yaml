@@ -8,6 +8,10 @@ metadata:
         app: gradle-remote-cache
         service: gradle-remote-cache
 spec:
+    selector:
+        matchLabels:
+            app: gradle-remote-cache
+            service: gradle-remote-cache
     replicas: 1
     template:
         metadata:
