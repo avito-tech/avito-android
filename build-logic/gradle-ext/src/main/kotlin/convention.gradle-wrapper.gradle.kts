@@ -22,16 +22,21 @@ val includedProjectDirs = provider {
 val allProjectsWrapperProperties: Provider<List<RegularFile>> = includedProjectDirs.map { it + layout.projectDirectory }
     .map { it.map { it.file("gradle/wrapper/gradle-wrapper.properties") } }
 
-val gradleVer = "7.4.1"
-val distribution = Wrapper.DistributionType.BIN
+val artifactoryUrl = providers.gradleProperty("artifactoryUrl").get()
+    .removeSuffix("/")
+
+val gradleVersion = "7.4.1"
+// Use ALL because IDE anyway tries to download sources while project sync
+val gradleDistribution = Wrapper.DistributionType.ALL
+val gradleDistributionSlug = gradleDistribution.name.toLowerCase()
+val gradleDistributionUrl = "$artifactoryUrl/gradle-distributions/gradle-$gradleVersion-$gradleDistributionSlug.zip"
 
 /**
  * Tests run from IDE in included builds can't recognize root wrapper
  * https://youtrack.jetbrains.com/issue/IDEA-262528
  */
 tasks.withType<Wrapper>().configureEach {
-    distributionType = distribution
-    gradleVersion = gradleVer
+    distributionUrl = "$artifactoryUrl/gradle-distributions/gradle-$gradleVersion-$gradleDistributionSlug.zip"
 
     finalizedBy(copyWrapperTasks)
 }
@@ -40,8 +45,9 @@ tasks.register<CheckWrapper>("checkGradleWrappers") {
     group = "Build setup"
     description = "Checks gradle-wrapper.properties consistency for all included builds"
 
-    expectedGradleVersion.set(gradleVer)
-    expectedDistributionType.set(distribution)
+    expectedGradleVersion.set(gradleVersion)
+    expectedDistributionType.set(gradleDistribution)
+    expectedDistributionUrl.set(gradleDistributionUrl)
     wrapperPropertiesFiles.set(allProjectsWrapperProperties)
 }
 
