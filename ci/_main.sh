@@ -87,8 +87,7 @@ GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
 GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
 GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "
 GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
-
-GRADLE_ARGS+="-Pavito.gradle.enterprise.url=$GRADLE_ENTERPRISE_URL "
+GRADLE_ARGS+="-Pgradle.buildCache.remote.url=$GRADLE_BUILD_CACHE_URL "
 
 function runInBuilder() {
     COMMANDS=$@

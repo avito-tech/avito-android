@@ -8,25 +8,17 @@ plugins {
 val isCi = booleanProperty("ci", false)
 val publishBuildScan = booleanProperty("avito.gradle.buildScan.publishAlways", false)
 
-val enterpriseUrl = stringProperty("avito.gradle.enterprise.url", nullIfBlank = true)
+val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
+    ?.removeSuffix("/")
+    ?.plus("/cache")
 
 gradleEnterprise {
-    if (!enterpriseUrl.isNullOrBlank()) {
-        server = enterpriseUrl
-        allowUntrustedServer = true
-
-        buildScan {
-            publishAlways()
-        }
-    } else {
-        buildScan {
-            termsOfServiceUrl = "https://gradle.com/terms-of-service"
-            termsOfServiceAgree = "yes"
-            publishAlwaysIf(publishBuildScan)
-        }
-    }
-
     buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+
+        publishAlwaysIf(publishBuildScan)
+
         // Unstable in CI for unknown reasons
         // https://docs.gradle.com/enterprise/gradle-plugin/#failed_background_build_scan_uploads
         isUploadInBackground = !isCi

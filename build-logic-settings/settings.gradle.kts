@@ -49,7 +49,9 @@ dependencyResolutionManagement {
 // Duplicated settings because they are not inherited from root project
 // as described in https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
 // https://github.com/gradle/gradle/issues/18511
-val enterpriseUrl = stringProperty("avito.gradle.enterprise.url", nullIfBlank = true)
+val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
+    ?.removeSuffix("/")
+    ?.plus("/cache")
 
 buildCache {
     local {
@@ -57,9 +59,9 @@ buildCache {
         isPush = true
         removeUnusedEntriesAfterDays = 30
     }
-    if (!enterpriseUrl.isNullOrBlank()) {
+    if (!buildCacheUrl.isNullOrBlank()) {
         remote<HttpBuildCache> {
-            setUrl("$enterpriseUrl/cache/")
+            setUrl(buildCacheUrl!!)
             isEnabled = true
             isPush = booleanProperty("avito.gradle.buildCache.remote.push", false)
             isAllowUntrustedServer = true
