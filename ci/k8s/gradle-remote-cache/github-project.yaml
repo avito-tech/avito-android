@@ -1,6 +1,6 @@
 ---
 kind: Deployment
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 metadata:
     name: gradle-remote-cache-github
     namespace: gradle-remote-cache
@@ -68,7 +68,7 @@ spec:
             targetPort: 5071
 ---
 kind: Ingress
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 metadata:
     name: gradle-remote-cache-github
     namespace: gradle-remote-cache
