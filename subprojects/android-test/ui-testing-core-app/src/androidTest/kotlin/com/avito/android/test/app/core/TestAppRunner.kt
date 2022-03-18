@@ -26,6 +26,7 @@ class TestAppRunner : InHouseInstrumentationTestRunner() {
 
     override fun onStart() {
         super.onStart()
+        @Suppress("DEPRECATION")
         targetContext.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
     }
 }

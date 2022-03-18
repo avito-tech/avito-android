@@ -36,6 +36,7 @@ internal class PublishImage(
             login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),
             registry = registry,
+            artifactoryUrl = artifactoryUrl,
             imageName = imageName,
         )
 

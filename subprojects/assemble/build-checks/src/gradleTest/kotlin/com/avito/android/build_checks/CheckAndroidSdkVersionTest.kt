@@ -131,7 +131,7 @@ internal class CheckAndroidSdkVersionTest {
     @Test
     fun `the same multiple versions - success`() {
         givenAndroidSdkPlatform(version = 29, revision = 5)
-        givenAndroidSdkPlatform(version = 30, revision = 1)
+        givenAndroidSdkPlatform(version = 31, revision = 1)
 
         val result = runCheck(
             extension = """
@@ -140,7 +140,7 @@ internal class CheckAndroidSdkVersionTest {
                         revision = 5
                     )
                     version(
-                        compileSdkVersion = 30,
+                        compileSdkVersion = 31,
                         revision = 1
                     )
                     """

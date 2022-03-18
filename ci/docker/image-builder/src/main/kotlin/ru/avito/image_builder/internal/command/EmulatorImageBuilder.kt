@@ -13,6 +13,7 @@ internal class EmulatorImageBuilder(
     private val api: Int,
     private val registry: String,
     private val imageName: String,
+    private val artifactoryUrl: String,
     private val login: RegistryLogin,
     private val tagger: ImageTagger,
 ) : ImageBuilder {
@@ -51,6 +52,7 @@ internal class EmulatorImageBuilder(
             "--build-arg", "DOCKER_REGISTRY=$registry",
             "--build-arg", "SDK_VERSION=$api",
             "--build-arg", "EMULATOR_ARCH=$emulatorArch",
+            "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
         )
         check(buildResult.isSuccess) {
             "Failed to build the image: ${buildResult.exceptionOrNull()}"

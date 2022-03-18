@@ -40,6 +40,11 @@ internal open class BuildImage(
         description = "Docker target registry"
     ).required()
 
+    protected val artifactoryUrl: String by option(
+        type = ArgType.String,
+        description = "Internal artifactory url"
+    ).required()
+
     protected val imageName: String by option(
         type = ArgType.String,
         description = "Image name. Usually, it's in format <repository>/<image-name> (e.g. 'android/image-builder')"
@@ -58,6 +63,7 @@ internal open class BuildImage(
             login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),
             registry = registry,
+            artifactoryUrl = artifactoryUrl,
             imageName = imageName,
         )
     }

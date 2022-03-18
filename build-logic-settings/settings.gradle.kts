@@ -4,17 +4,29 @@ rootProject.name = "build-logic-settings"
 
 pluginManagement {
 
-    val artifactoryUrl: String? by settings
+    fun Settings.booleanProperty(name: String, defaultValue: Boolean): Boolean {
+        return if (extra.has(name)) {
+            extra[name]?.toString()?.toBoolean() ?: defaultValue
+        } else {
+            defaultValue
+        }
+    }
+
+    val isInternalBuild = booleanProperty("avito.internalBuild", true)
 
     repositories {
         maven {
-            if (artifactoryUrl.isNullOrBlank()) {
-                name = "gradle-plugins"
-                setUrl("https://plugins.gradle.org/m2/")
-            } else {
+            if (isInternalBuild) {
+                val artifactoryUrl: String? by settings
+                require(!artifactoryUrl.isNullOrBlank()) {
+                    "artifactoryUrl should be set for avito.internalBuild=true"
+                }
                 name = "Proxy for gradle-plugins: https://plugins.gradle.org/m2/"
                 setUrl("$artifactoryUrl/gradle-plugins")
                 isAllowInsecureProtocol = true
+            } else {
+                name = "gradle-plugins"
+                setUrl("https://plugins.gradle.org/m2/")
             }
         }
     }
@@ -22,19 +34,20 @@ pluginManagement {
 
 dependencyResolutionManagement {
 
-    val artifactoryUrl: String? by settings
+    val isInternalBuild = booleanProperty("avito.internalBuild", true)
 
     repositories {
         exclusiveContent {
             forRepository {
                 maven {
-                    if (artifactoryUrl.isNullOrBlank()) {
-                        name = "gradle-plugins"
-                        setUrl("https://plugins.gradle.org/m2/")
-                    } else {
+                    if (isInternalBuild) {
+                        val artifactoryUrl: String by settings
                         name = "Proxy for gradle-plugins: https://plugins.gradle.org/m2/"
                         setUrl("$artifactoryUrl/gradle-plugins")
                         isAllowInsecureProtocol = true
+                    } else {
+                        name = "gradle-plugins"
+                        setUrl("https://plugins.gradle.org/m2/")
                     }
                 }
             }
@@ -61,7 +74,7 @@ buildCache {
     }
     if (!buildCacheUrl.isNullOrBlank()) {
         remote<HttpBuildCache> {
-            setUrl(buildCacheUrl!!)
+            setUrl(buildCacheUrl)
             isEnabled = true
             isPush = booleanProperty("avito.gradle.buildCache.remote.push", false)
             isAllowUntrustedServer = true
@@ -75,9 +88,9 @@ include("dependency-plugin")
 include("scan-plugin")
 include("extensions")
 
-fun booleanProperty(name: String, defaultValue: Boolean): Boolean {
-    return if (settings.extra.has(name)) {
-        settings.extra[name]?.toString()?.toBoolean() ?: defaultValue
+fun Settings.booleanProperty(name: String, defaultValue: Boolean): Boolean {
+    return if (extra.has(name)) {
+        extra[name]?.toString()?.toBoolean() ?: defaultValue
     } else {
         defaultValue
     }

@@ -1,5 +1,4 @@
-ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/android/ubuntu:20.04
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -26,7 +25,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/cmdline-tools/bin
 # https://developer.android.com/studio/index.html#command-tools
-ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
 ARG ANDROID_SDK_FILE_NAME=android-sdk.zip
 
 RUN curl $ANDROID_SDK_URL --progress-bar --location --output $ANDROID_SDK_FILE_NAME && \

@@ -39,6 +39,7 @@ internal class PublishEmulator(
             api = api,
             registry = registry,
             imageName = imageName,
+            artifactoryUrl = artifactoryUrl,
             login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),
         )

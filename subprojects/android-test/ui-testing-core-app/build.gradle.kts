@@ -133,6 +133,10 @@ instrumentation {
     experimental {
         fetchLogcatForIncompleteTests.set(true)
         useLegacyExtensionsV1Beta.set(false)
+
+        // Causes crashes in KubernetesReservationState.podAcquired state check (MBS-12768)
+        // Somehow it gets more pods than requested. Perhaps, because of recreated PODs by k8s.
+        sendPodsMetrics.set(false)
     }
 
     val emulator22 = CloudEmulator(

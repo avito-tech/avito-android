@@ -27,6 +27,7 @@ docker run --rm \
         --registryUsername "${DOCKER_REGISTRY_USERNAME}" \
         --registryPassword "${DOCKER_REGISTRY_PASSWORD}" \
         --registry "${DOCKER_REGISTRY}" \
+        --artifactoryUrl "${ARTIFACTORY_URL}" \
         --imageName "${IMAGE_NAME}" \
         --api "${API}"
 

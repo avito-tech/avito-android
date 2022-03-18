@@ -12,6 +12,7 @@ internal class SimpleImageBuilder(
     private val login: RegistryLogin,
     private val tagger: ImageTagger,
     private val registry: String,
+    private val artifactoryUrl: String,
     private val imageName: String,
 ) : ImageBuilder {
 
@@ -31,6 +32,7 @@ internal class SimpleImageBuilder(
         val buildResult = docker.build(
             buildDir.canonicalPath,
             "--build-arg", "DOCKER_REGISTRY=$registry",
+            "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
         )
         check(buildResult.isSuccess) {
             "Failed to build the image: ${buildResult.exceptionOrNull()}"

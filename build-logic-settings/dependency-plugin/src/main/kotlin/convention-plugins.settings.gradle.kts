@@ -4,6 +4,7 @@ import com.avito.android.artifactory.setUrlOrProxy
 
 pluginManagement {
 
+    // todo internal build here
     val artifactoryUrl: String? by settings
 
     repositories {
