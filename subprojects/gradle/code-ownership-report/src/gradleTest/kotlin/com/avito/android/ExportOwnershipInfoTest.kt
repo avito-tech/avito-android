@@ -22,6 +22,7 @@ internal class ExportOwnershipInfoTest {
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.code-ownership")
+                id("com.avito.android.code-ownership-report")
             },
             modules = listOf(
                 AndroidAppModule(
@@ -71,7 +72,7 @@ internal class ExportOwnershipInfoTest {
 
         gradlew(
             projectDir,
-            "exportCodeOwnershipInfo",
+            "reportCodeOwnershipInfo",
         ).assertThat().buildSuccessful()
 
         val file = File(projectDir, "ownership.csv")
