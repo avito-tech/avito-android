@@ -91,7 +91,7 @@ internal class StrictOwnershipTest {
                 ).generateIn(projectDir)
 
                 val args = mutableListOf(
-                    "exportCodeOwnershipInfo",
+                    "reportCodeOwnershipInfo",
                     "-PgitBranch=xxx"
                 )
                 if (case.isStrictOwnershipFlagEnabled) {

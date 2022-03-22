@@ -18,11 +18,10 @@ internal class FileOwnersDiffReporterTest {
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.code-ownership")
-                id("com.avito.android.code-ownership-report")
             },
             imports = listOf(
                 "import com.avito.android.model.Owner",
-                "import com.avito.android.diff.extractor.OwnersExtractor",
+                "import com.avito.android.diff.provider.OwnersProvider",
                 "import com.avito.android.diff.report.OwnersDiffReportDestination"
             ),
             buildGradleExtra = """
@@ -31,8 +30,8 @@ internal class FileOwnersDiffReporterTest {
                 object Performance : Owner { override fun toString() = "Performance" }
                 
                 codeOwnershipDiffReport { 
-                    expectedOwnersExtractor.set(OwnersExtractor { setOf(Speed) })
-                    actualOwnersExtractor.set(OwnersExtractor { setOf(Performance, MobileArchitecture) })
+                    expectedOwnersProvider.set(OwnersProvider { setOf(Speed) })
+                    actualOwnersProvider.set(OwnersProvider { setOf(Performance, MobileArchitecture) })
                     diffReportDestination.set(OwnersDiffReportDestination.File(project.projectDir)) 
                 } 
             """.trimIndent(),

@@ -1,12 +1,10 @@
 package com.avito.android.diff
 
-import com.avito.android.diff.comparator.EqualsOwnersComparator
 import com.avito.android.diff.comparator.OwnersComparator
 import com.avito.android.diff.counter.OwnersDiffCounter
 import com.avito.android.diff.counter.OwnersDiffCounterImpl
-import com.avito.android.diff.extractor.OwnersExtractor
 import com.avito.android.diff.formatter.OwnersDiffMessageFormatter
-import com.avito.android.diff.formatter.SimpleOwnersDiffMessageFormatter
+import com.avito.android.diff.provider.OwnersProvider
 import com.avito.android.diff.report.OwnersDiffReportDestination
 import com.avito.android.diff.report.OwnersDiffReporter
 import com.avito.android.diff.report.OwnersDiffReporterFactory
@@ -19,10 +17,10 @@ import org.gradle.api.tasks.TaskAction
 public abstract class ReportCodeOwnershipDiffTask : DefaultTask() {
 
     @get:Input
-    public abstract val expectedOwnersExtractor: Property<OwnersExtractor>
+    public abstract val expectedOwnersProvider: Property<OwnersProvider>
 
     @get:Input
-    public abstract val actualOwnersExtractor: Property<OwnersExtractor>
+    public abstract val actualOwnersProvider: Property<OwnersProvider>
 
     @get:Input
     public abstract val diffReportDestination: Property<OwnersDiffReportDestination>
@@ -38,25 +36,22 @@ public abstract class ReportCodeOwnershipDiffTask : DefaultTask() {
     @TaskAction
     public fun doWork() {
         makeOwnershipReport(
-            expectedOwnersExtractor = expectedOwnersExtractor.get(),
-            actualOwnersExtractor = actualOwnersExtractor.get(),
-            diffCounter = OwnersDiffCounterImpl(comparator.orNull ?: EqualsOwnersComparator()),
-            diffReporter = OwnersDiffReporterFactory(extractMessageFormatter()).create(diffReportDestination.get())
+            expectedOwnersProvider = expectedOwnersProvider.get(),
+            actualOwnersProvider = actualOwnersProvider.get(),
+            diffCounter = OwnersDiffCounterImpl(comparator.get()),
+            diffReporter = OwnersDiffReporterFactory(messageFormatter.get()).create(diffReportDestination.get())
         )
     }
 
     private fun makeOwnershipReport(
-        expectedOwnersExtractor: OwnersExtractor,
-        actualOwnersExtractor: OwnersExtractor,
+        expectedOwnersProvider: OwnersProvider,
+        actualOwnersProvider: OwnersProvider,
         diffCounter: OwnersDiffCounter,
         diffReporter: OwnersDiffReporter
     ) {
-        val expectedOwners = expectedOwnersExtractor.extractOwners()
-        val actualOwners = actualOwnersExtractor.extractOwners()
+        val expectedOwners = expectedOwnersProvider.get()
+        val actualOwners = actualOwnersProvider.get()
         val diff = diffCounter.countOwnersDiff(expectedOwners, actualOwners)
         diffReporter.reportDiffFound(diff)
     }
-
-    private fun extractMessageFormatter(): OwnersDiffMessageFormatter =
-        messageFormatter.orNull ?: SimpleOwnersDiffMessageFormatter()
 }

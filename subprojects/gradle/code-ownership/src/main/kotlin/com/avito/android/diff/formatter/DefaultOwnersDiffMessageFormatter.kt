@@ -2,7 +2,7 @@ package com.avito.android.diff.formatter
 
 import com.avito.android.diff.model.OwnersDiff
 
-internal class SimpleOwnersDiffMessageFormatter : OwnersDiffMessageFormatter {
+internal class DefaultOwnersDiffMessageFormatter : OwnersDiffMessageFormatter {
 
     override fun formatDiffMessage(diffs: OwnersDiff): String {
         return buildString {

@@ -22,7 +22,6 @@ internal class ExportOwnershipInfoTest {
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.code-ownership")
-                id("com.avito.android.code-ownership-report")
             },
             modules = listOf(
                 AndroidAppModule(
@@ -78,11 +77,13 @@ internal class ExportOwnershipInfoTest {
         val file = File(projectDir, "ownership.csv")
         assertTrue(file.exists())
 
-        assertEquals("""
+        assertEquals(
+            """
             |:app,"Speed"
             |:common,""
             |:feature,"Speed,Performance"
             |
-        """.trimMargin(), file.readText())
+        """.trimMargin(), file.readText()
+        )
     }
 }
