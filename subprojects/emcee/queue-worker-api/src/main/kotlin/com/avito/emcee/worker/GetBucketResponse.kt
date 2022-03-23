@@ -1,7 +1,7 @@
 package com.avito.emcee.worker
 
 import com.avito.emcee.queue.BuildArtifacts
-import com.avito.emcee.queue.Device
+import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.TestEntry
 import com.avito.emcee.queue.TestExecutionBehavior
 import com.squareup.moshi.Json
@@ -22,7 +22,7 @@ public sealed class GetBucketResponse {
         val bucketId: String,
         val buildArtifacts: BuildArtifacts,
         @Json(name = "testDestination")
-        val device: Device,
+        val device: DeviceConfiguration,
         val testEntries: List<TestEntry>,
         val testExecutionBehavior: TestExecutionBehavior,
         @Json(name = "testMaximumDuration")

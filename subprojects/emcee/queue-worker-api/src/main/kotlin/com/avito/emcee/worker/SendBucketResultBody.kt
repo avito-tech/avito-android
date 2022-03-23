@@ -1,6 +1,6 @@
 package com.avito.emcee.worker
 
-import com.avito.emcee.queue.Device
+import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.TestEntry
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -15,7 +15,7 @@ public data class SendBucketResultBody(
     @JsonClass(generateAdapter = true)
     public data class BucketResult(
         @Json(name = "testDestination")
-        val device: Device,
+        val device: DeviceConfiguration,
         val unfilteredResults: List<UnfilteredResult>
     ) {
         @JsonClass(generateAdapter = true)

@@ -1,10 +1,8 @@
 package com.avito.emcee.worker.internal
 
-import com.avito.emcee.queue.Device
-import kotlin.time.ExperimentalTime
+import com.avito.emcee.queue.DeviceConfiguration
 
-@ExperimentalTime
 internal interface TestExecutorProvider {
 
-    suspend fun provide(device: Device): TestExecutor
+    suspend fun provide(device: DeviceConfiguration): TestExecutor
 }

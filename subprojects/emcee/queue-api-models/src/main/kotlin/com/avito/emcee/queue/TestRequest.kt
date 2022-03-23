@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 public data class TestRequest(
     val buildArtifacts: BuildArtifacts,
     @Json(name = "testDestination")
-    val device: Device,
+    val device: DeviceConfiguration,
     val testEntry: TestEntry,
     @Json(name = "testExecutionBehavior")
     val executionBehavior: TestExecutionBehavior,

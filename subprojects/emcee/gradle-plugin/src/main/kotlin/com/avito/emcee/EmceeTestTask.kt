@@ -3,11 +3,8 @@ package com.avito.emcee
 import com.avito.emcee.internal.ArtifactorySettings
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.emcee.internal.getApkOrThrow
-import com.avito.emcee.queue.Device
-import com.avito.emcee.queue.Job
-import com.avito.emcee.queue.ScheduleStrategy
-import com.avito.emcee.queue.TestExecutionBehavior
 import org.gradle.api.DefaultTask
+import com.avito.emcee.queue.DeviceConfiguration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -87,7 +84,7 @@ public abstract class EmceeTestTask : DefaultTask() {
                 retries = retries.get()
             ),
             testMaximumDurationSec = testTimeoutInSec,
-            devices = deviceApis.get().map { api -> Device("", api) },
+            devices = deviceApis.get().map { api -> DeviceConfiguration("", api) },
             apk = apk.get().getApkOrThrow(), // todo should be optional for libraries
             testApk = testApk.get().getApkOrThrow()
         )

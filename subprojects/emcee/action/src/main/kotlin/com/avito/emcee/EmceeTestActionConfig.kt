@@ -2,7 +2,7 @@ package com.avito.emcee
 
 import com.avito.emcee.internal.ArtifactorySettings
 import com.avito.emcee.internal.FilePathAdapter
-import com.avito.emcee.queue.Device
+import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Job
 import com.avito.emcee.queue.ScheduleStrategy
 import com.avito.emcee.queue.TestExecutionBehavior
@@ -19,7 +19,7 @@ public class EmceeTestActionConfig(
     public val scheduleStrategy: ScheduleStrategy,
     public val testExecutionBehavior: TestExecutionBehavior,
     public val testMaximumDurationSec: Long,
-    public val devices: List<Device>,
+    public val devices: List<DeviceConfiguration>,
     public val apk: File,
     public val testApk: File,
 ) {
