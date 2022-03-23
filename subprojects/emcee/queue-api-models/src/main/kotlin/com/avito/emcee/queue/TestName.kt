@@ -6,4 +6,8 @@ import com.squareup.moshi.JsonClass
 public data class TestName(
     val className: String,
     val methodName: String
-)
+) {
+    public fun asString(): String {
+        return "$className.$methodName"
+    }
+}

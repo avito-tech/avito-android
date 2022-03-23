@@ -65,6 +65,7 @@ officialKubernetesClient = "io.kubernetes:client-java:8.0.0"
 kubernetesClient = "io.fabric8:kubernetes-client:4.9.0"
 kubernetesDsl = "com.fkorotkov:kubernetes-dsl:2.7.1"
 
+adam = "com.malinskiy.adam:adam:0.4.3"
 ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"
 uiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 testOrchestrator = { module = "androidx.test:orchestrator", version.ref = "androidXTest" }

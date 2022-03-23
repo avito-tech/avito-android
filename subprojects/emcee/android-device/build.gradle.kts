@@ -4,5 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(projects.subprojects.common.result)
     implementation(libs.coroutinesCore)
+    implementation(libs.adam)
 }

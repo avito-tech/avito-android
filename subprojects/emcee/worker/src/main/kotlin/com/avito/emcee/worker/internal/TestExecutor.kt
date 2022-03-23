@@ -9,7 +9,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 internal interface TestExecutor {
 
-    interface Result
+    data class Result(val success: Boolean)
 
     @ExperimentalTime
     data class Job(
