@@ -3,6 +3,10 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "avito-android-infra"
 
+if(gradle.startParameter.isOffline) {
+    logger.warn("You are in offline mode. If you add a new dependency you should run Gradle task without offline mode for cache dependency locally")
+}
+
 pluginManagement {
     includeBuild("build-logic-settings")
 }
