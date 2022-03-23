@@ -15,5 +15,6 @@ internal class ExtensionConfigurator(
         task.baseUrl.set(emceeExtension.queueBaseUrl)
         task.configTestMode.set(emceeExtension.configTestMode)
         task.outputDir.set(emceeExtension.outputDir)
+        task.artifactory.set(emceeExtension.artifactory)
     }
 }

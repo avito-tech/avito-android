@@ -46,13 +46,19 @@ internal class EmceePluginTest {
                         id("com.avito.android.emcee")
                     },
                     useKts = true,
-                    imports = listOf("import java.time.Duration"),
+                    imports = listOf(
+                        "import java.time.Duration",
+                    ),
                     buildGradleExtra = """
                     |emcee {
                     |   job.id.set("AvitoComponentTests#PR-2214")
                     |   job.groupId.set("PRTests#PR-2214")
                     |   job.priority.set(100)
                     |   job.groupPriority.set(100)
+                    |   artifactory.user.set("deployer")
+                    |   artifactory.password.set("12345")
+                    |   artifactory.baseUrl.set("http://artifactory/")
+                    |   artifactory.repository.set("android-emcee")
                     |   retries.set(2)
                     |   deviceApis.add(22)
                     |   deviceApis.add(30)

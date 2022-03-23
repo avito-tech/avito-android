@@ -10,10 +10,14 @@ dependencies {
         "used because EmceeConfig serialized to JSON for testing. Replace as soon as possible"
     }
 
+    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.emcee.queueClientApi)
+    implementation(projects.subprojects.logger.slf4jGradleLogger)
     implementation(projects.subprojects.testRunner.instrumentationTestsDexLoader)
     implementation(projects.subprojects.testRunner.testAnnotations)
     implementation(libs.coroutinesCore)
+    implementation(libs.okhttp)
 
     kapt(libs.moshiKapt)
 }

@@ -11,6 +11,9 @@ public interface EmceeExtension {
     @get:Nested
     public val job: JobConfiguration
 
+    @get:Nested
+    public val artifactory: ArtifactoryConfiguration
+
     public val retries: Property<Int>
 
     public val deviceApis: ListProperty<Int>

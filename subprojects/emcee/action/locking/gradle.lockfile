@@ -1,7 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-androidx.annotation:annotation:1.1.0=runtimeClasspath,testRuntimeClasspath
+androidx.annotation:annotation:1.1.0=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.github.salomonbrys.kotson:kotson:2.5.0=runtimeClasspath,testRuntimeClasspath
 com.google.auto.service:auto-service-annotations:1.0-rc7=kapt,kaptClasspath_kaptKotlin,kaptTest
 com.google.auto.value:auto-value-annotations:1.6.3=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
@@ -23,8 +23,7 @@ com.squareup.moshi:moshi-adapters:1.12.0=apiDependenciesMetadata,compileClasspat
 com.squareup.moshi:moshi-kotlin-codegen:1.12.0=kapt,kaptClasspath_kaptKotlin,kaptTest
 com.squareup.moshi:moshi:1.12.0=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,kapt,kaptClasspath_kaptKotlin,kaptTest,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.squareup.okhttp3:logging-interceptor:4.9.0=runtimeClasspath,testRuntimeClasspath
-com.squareup.okhttp3:okhttp:3.14.9=compileClasspath,implementationDependenciesMetadata,testCompileClasspath,testImplementationDependenciesMetadata
-com.squareup.okhttp3:okhttp:4.9.0=runtimeClasspath,testRuntimeClasspath
+com.squareup.okhttp3:okhttp:4.9.0=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.squareup.okio:okio-metadata:2.10.0=apiDependenciesMetadata,implementationDependenciesMetadata,testImplementationDependenciesMetadata
 com.squareup.okio:okio:2.10.0=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,kapt,kaptClasspath_kaptKotlin,kaptTest,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.squareup.retrofit2:converter-moshi:2.9.0=runtimeClasspath,testRuntimeClasspath

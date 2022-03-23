@@ -1,5 +1,6 @@
 package com.avito.emcee
 
+import com.avito.emcee.internal.ArtifactorySettings
 import com.avito.emcee.internal.FilePathAdapter
 import com.avito.emcee.queue.Device
 import com.avito.emcee.queue.Job
@@ -14,6 +15,7 @@ import java.io.File
 @JsonClass(generateAdapter = true)
 public class EmceeTestActionConfig(
     public val job: Job,
+    public val artifactory: ArtifactorySettings,
     public val scheduleStrategy: ScheduleStrategy,
     public val testExecutionBehavior: TestExecutionBehavior,
     public val testMaximumDurationSec: Long,

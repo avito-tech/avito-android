@@ -1,5 +1,6 @@
 package com.avito.emcee
 
+import com.avito.emcee.internal.ArtifactorySettings
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.emcee.internal.getApkOrThrow
 import com.avito.emcee.queue.Device
@@ -23,6 +24,9 @@ public abstract class EmceeTestTask : DefaultTask() {
 
     @get:Nested
     public abstract val job: Property<JobConfiguration>
+
+    @get:Nested
+    public abstract val artifactory: Property<ArtifactoryConfiguration>
 
     @get:Input
     public abstract val retries: Property<Int>
@@ -51,7 +55,21 @@ public abstract class EmceeTestTask : DefaultTask() {
     @ExperimentalTime
     @TaskAction
     public fun action() {
-        val emceeTestAction = EmceeTestActionFactory(baseUrl.get()).create()
+
+        val artifactory = artifactory.get()
+
+        val artifactorySettings = ArtifactorySettings(
+            baseUrl = artifactory.baseUrl.get(),
+            user = artifactory.user.get(),
+            password = artifactory.password.get(),
+            repository = artifactory.repository.get(),
+        )
+
+        val emceeTestAction = EmceeTestActionFactory(
+            emceeQueueBaseUrl = baseUrl.get(),
+            artifactorySettings = artifactorySettings
+        ).create()
+
         val job = job.get()
         val testTimeoutInSec = testTimeout.get().seconds
 
@@ -62,6 +80,7 @@ public abstract class EmceeTestTask : DefaultTask() {
                 priority = job.priority.get(),
                 groupPriority = job.groupPriority.get(),
             ),
+            artifactory = artifactorySettings,
             scheduleStrategy = ScheduleStrategy(testsSplitter = ScheduleStrategy.TestsSplitter.Individual),
             testExecutionBehavior = TestExecutionBehavior(
                 environment = emptyMap(),
