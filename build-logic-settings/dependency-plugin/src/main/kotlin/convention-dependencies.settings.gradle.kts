@@ -8,6 +8,9 @@ dependencyResolutionManagement {
     val artifactoryUrl: String? by settings
 
     repositories {
+
+        mavenLocal()
+
         maven {
             setUrlOrProxy(
                 artifactoryUrl = artifactoryUrl,
