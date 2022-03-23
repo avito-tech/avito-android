@@ -57,7 +57,6 @@ internal fun isRunFromGradleTestKit(project: Project): Boolean {
 
 internal fun isRunInGradleTestKit(providers: ProviderFactory): Boolean =
     providers.systemProperty("isTest")
-        .forUseAtConfigurationTime()
         .getOrElse("false")
         .toBoolean()
 

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.avito.android.build_verdict.internal
 
 import com.avito.android.build_verdict.BuildVerdictPluginExtension
@@ -64,6 +66,7 @@ internal class BuildVerdictPluginServices(
         )
     }
 
+    @Suppress("DEPRECATION")
     fun gradleTaskExecutionListener(): TaskExecutionListener {
         return TaskExecutionListenerBridge(
             listeners = listOf(

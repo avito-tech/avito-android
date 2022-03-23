@@ -28,7 +28,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty(enabledProp)
-            .forUseAtConfigurationTime()
             .map { it.toBoolean() }
             .getOrElse(true)
 

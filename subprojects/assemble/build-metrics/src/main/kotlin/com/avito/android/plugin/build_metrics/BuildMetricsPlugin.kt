@@ -69,7 +69,6 @@ public open class BuildMetricsPlugin : Plugin<Project> {
 internal val Project.pluginIsEnabled: Boolean
     get() = providers
         .gradleProperty(enabledProp)
-        .forUseAtConfigurationTime()
         .map { it.toBoolean() }
         .getOrElse(false)
 

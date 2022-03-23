@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.avito.android.build_verdict.internal.task.lifecycle
 
 import org.gradle.BuildAdapter

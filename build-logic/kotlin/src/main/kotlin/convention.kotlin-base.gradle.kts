@@ -20,7 +20,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
         jvmTarget = JavaVersion.VERSION_1_8.toString()
 
-        allWarningsAsErrors = true
+        allWarningsAsErrors = false
 
         languageVersion = kotlinLanguageVersion
         apiVersion = kotlinLanguageVersion

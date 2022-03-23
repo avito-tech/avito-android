@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.avito.android.gradle.profile
 
 import org.gradle.BuildListener
