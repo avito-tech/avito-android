@@ -1,4 +1,4 @@
-package com.avito.emcee.device
+package com.avito.android.device
 
 public data class InstrumentationCommand(
     val testName: String,

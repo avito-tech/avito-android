@@ -1,4 +1,4 @@
-package com.avito.emcee.device
+package com.avito.android.device
 
 import java.io.File
 

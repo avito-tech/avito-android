@@ -3,8 +3,11 @@ package com.avito.emcee
 import com.avito.emcee.internal.ArtifactorySettings
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.emcee.internal.getApkOrThrow
-import org.gradle.api.DefaultTask
 import com.avito.emcee.queue.DeviceConfiguration
+import com.avito.emcee.queue.Job
+import com.avito.emcee.queue.ScheduleStrategy
+import com.avito.emcee.queue.TestExecutionBehavior
+import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property

@@ -1,13 +1,18 @@
-package com.avito.emcee.device.internal
+package com.avito.android.device.internal
 
 import com.avito.android.Result
-import com.avito.emcee.device.AndroidApplication
-import com.avito.emcee.device.AndroidDevice
-import com.avito.emcee.device.InstrumentationCommand
+import com.avito.android.device.AndroidApplication
+import com.avito.android.device.AndroidDevice
+import com.avito.android.device.DeviceSerial
+import com.avito.android.device.InstrumentationCommand
 import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.request.pkg.StreamingPackageInstallRequest
 import com.malinskiy.adam.request.pkg.UninstallRemotePackageRequest
-import com.malinskiy.adam.request.testrunner.*
+import com.malinskiy.adam.request.testrunner.InstrumentOptions
+import com.malinskiy.adam.request.testrunner.TestAssumptionFailed
+import com.malinskiy.adam.request.testrunner.TestFailed
+import com.malinskiy.adam.request.testrunner.TestRunEnded
+import com.malinskiy.adam.request.testrunner.TestRunnerRequest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.receiveOrNull
 import kotlinx.coroutines.coroutineScope
@@ -15,8 +20,10 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration
 
 internal class AndroidDeviceImpl(
+    override val sdk: Int,
+    override val type: String,
+    override val serial: DeviceSerial,
     private val adb: AndroidDebugBridgeClient,
-    private val serial: DeviceSerial
 ) : AndroidDevice {
 
     override suspend fun install(application: AndroidApplication): Result<Unit> {
@@ -83,7 +90,7 @@ internal class AndroidDeviceImpl(
         execute(
             action = {
                 val (output, exitCode) = adb.execute(
-                    request = ClearPackageRequest(`package` = appPackage),
+                    request = ClearPackageRequest(appPackage = appPackage),
                     serial = serial.value
                 )
                 if (exitCode != 0) {

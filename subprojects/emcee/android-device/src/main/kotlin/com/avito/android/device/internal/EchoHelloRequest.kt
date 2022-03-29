@@ -1,4 +1,4 @@
-package com.avito.emcee.device.internal
+package com.avito.android.device.internal
 
 import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 

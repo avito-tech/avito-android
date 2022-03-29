@@ -5,6 +5,6 @@ plugins {
 
 dependencies {
     api(projects.subprojects.common.result)
-    implementation(libs.coroutinesCore)
+    implementation(projects.subprojects.common.commandLineCoroutines)
     implementation(libs.adam)
 }
