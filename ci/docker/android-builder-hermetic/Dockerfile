@@ -29,45 +29,15 @@ ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/cmdline-tools/bin
 
 ARG ANDROID_SDK_BASE_URL=${ARTIFACTORY_URL}android-build-env/android_sdk
-ARG CLI_TOOLS_URL=${ANDROID_SDK_BASE_URL}/commandlinetools/commandlinetools-linux-8092744_latest.zip
 
-ARG TEMP_ZIP_FILE=android-sdk.zip
+COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 
-RUN curl $CLI_TOOLS_URL --progress-bar --location --output $TEMP_ZIP_FILE && \
-  unzip $TEMP_ZIP_FILE -d $ANDROID_HOME && \
-  rm -f $TEMP_ZIP_FILE
-
-# TODO remove after full migration to 31
-# Build tools 30
-RUN curl ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux_30_0_3.zip --progress-bar --location --output $TEMP_ZIP_FILE && \
-  unzip $TEMP_ZIP_FILE -d $ANDROID_HOME && \
-  rm -f $TEMP_ZIP_FILE
-
-# Build tools 31
-RUN curl ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux_31_0_0.zip --progress-bar --location --output $TEMP_ZIP_FILE && \
-  unzip $TEMP_ZIP_FILE -d $ANDROID_HOME && \
-  rm -f $TEMP_ZIP_FILE
-
-# TODO remove after full migration to 31
-# platform 30
-RUN curl ${ANDROID_SDK_BASE_URL}/platforms/platforms_30_0_3.zip --progress-bar --location --output $TEMP_ZIP_FILE && \
-  unzip $TEMP_ZIP_FILE -d $ANDROID_HOME && \
-  rm -f $TEMP_ZIP_FILE
-
-# platform 31
-RUN curl ${ANDROID_SDK_BASE_URL}/platforms/platforms_31_0_1.zip --progress-bar --location --output $TEMP_ZIP_FILE && \
-  unzip $TEMP_ZIP_FILE -d $ANDROID_HOME && \
-  rm -f $TEMP_ZIP_FILE
-
-# platform-tools
-RUN curl ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools_linux_33_0_0.zip --progress-bar --location --output $TEMP_ZIP_FILE && \
-  unzip $TEMP_ZIP_FILE -d $ANDROID_HOME && \
-  rm -f $TEMP_ZIP_FILE
-
-# tools
-RUN curl ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip --progress-bar --location --output $TEMP_ZIP_FILE && \
-  unzip $TEMP_ZIP_FILE -d $ANDROID_HOME && \
-  rm -f $TEMP_ZIP_FILE
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/commandlinetools/commandlinetools-linux-8092744_latest.zip $ANDROID_HOME && \
+    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux_31_0_0.zip $ANDROID_HOME && \
+    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_31_0_1.zip $ANDROID_HOME && \
+    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools_linux_33_0_0.zip $ANDROID_HOME && \
+    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDROID_HOME && \
+    rm /usr/local/bin/unzip_from_url.sh
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
