@@ -1,14 +1,14 @@
 package com.avito.runner.service.worker.device.adb
 
-import com.avito.runner.CommandLineExecutor
-import com.avito.runner.ProcessNotification
+import com.avito.cli.CommandLine
+import com.avito.cli.CommandLine.Notification.Public
+import com.avito.cli.executeAsObservable
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.Serial
 import rx.Single
 import java.util.Optional
 
 public class AdbDevicesManager(
-    private val commandLine: CommandLineExecutor = CommandLineExecutor.create(),
     private val adbParser: AdbDeviceParser = AdbDeviceParser(),
     private val adb: Adb
 ) : DevicesManager {
@@ -34,11 +34,11 @@ public class AdbDevicesManager(
             .value()
 
     private fun adbDevices(): Single<String> {
-        return commandLine.executeProcess(
+        return CommandLine.create(
             command = adb.adbPath,
             args = listOf("devices", "-l")
-        )
-            .ofType(ProcessNotification.Exit::class.java)
+        ).executeAsObservable()
+            .ofType(Public.Exit::class.java)
             .map { it.output }
             .map {
                 when (it.contains("List of devices attached")) {

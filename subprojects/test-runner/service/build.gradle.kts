@@ -13,7 +13,7 @@ dependencies {
     api(projects.subprojects.common.statsd)
     api(projects.subprojects.common.time)
     api(projects.subprojects.gradle.process)
-    api(projects.subprojects.testRunner.commandLineExecutor)
+    api(projects.subprojects.common.commandLineRx)
     api(projects.subprojects.testRunner.deviceProvider.api)
     api(projects.subprojects.testRunner.testModel)
     api(projects.subprojects.testRunner.runnerApi)

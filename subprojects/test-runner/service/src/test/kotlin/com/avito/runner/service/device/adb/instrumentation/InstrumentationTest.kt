@@ -1,6 +1,6 @@
 package com.avito.runner.service.device.adb.instrumentation
 
-import com.avito.runner.ProcessNotification
+import com.avito.cli.CommandLine.Notification.Public.Output
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry
@@ -1002,7 +1002,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         }
     }
 
-    private fun getInstrumentationOutput(output: File): Observable<ProcessNotification.Output> {
+    private fun getInstrumentationOutput(output: File): Observable<Output> {
         return Observable.unsafeCreate {
             val reader = BufferedReader(
                 FileReader(output)
@@ -1011,7 +1011,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             var line: String? = reader.readLine()
             while (line != null) {
                 it.onNext(
-                    ProcessNotification.Output(line = line)
+                    Output(line = line)
                 )
                 line = reader.readLine()
             }

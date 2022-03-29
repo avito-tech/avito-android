@@ -5,9 +5,10 @@ import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
 import com.avito.android.Result
 import com.avito.android.asRuntimeException
+import com.avito.cli.CommandLine
+import com.avito.cli.CommandLine.Notification.Public
+import com.avito.cli.executeAsObservable
 import com.avito.logger.Logger
-import com.avito.runner.CommandLineExecutor
-import com.avito.runner.ProcessNotification
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -40,7 +41,6 @@ public data class AdbDevice(
     // MBS-8531: don't use "ADB" here to avoid possible recursion
     override val logger: Logger,
     private val eventsListener: AdbDeviceEventsListener,
-    private val commandLine: CommandLineExecutor = CommandLineExecutor.create(),
 ) : Device {
 
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
@@ -322,7 +322,7 @@ public data class AdbDevice(
                 durationMs = durationMs
             )
         },
-        onSuccess = { _: Int, result: ProcessNotification.Exit, durationMs: Long ->
+        onSuccess = { _: Int, result: Public.Exit, durationMs: Long ->
             eventsListener.onClearDirectorySuccess(
                 device = this,
                 remotePath = remotePath,
@@ -473,7 +473,7 @@ public data class AdbDevice(
                 "$testPackageName/$testRunnerClass"
             ),
             redirectOutputTo = File(logsDir, "instrumentation-${test.name}.txt")
-        ).ofType(ProcessNotification.Output::class.java)
+        ).ofType(Public.Output::class.java)
 
         return instrumentationParser
             .parse(output)
@@ -554,7 +554,7 @@ public data class AdbDevice(
     private fun executeBlockingShellCommand(
         command: List<String>,
         timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
-    ): ProcessNotification.Exit = executeBlockingCommand(
+    ): Public.Exit = executeBlockingCommand(
         command = listOf("shell") + command,
         timeoutSeconds = timeoutSeconds
     )
@@ -562,10 +562,10 @@ public data class AdbDevice(
     private fun executeBlockingCommand(
         command: List<String>,
         timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
-    ): ProcessNotification.Exit = executeCommand(
+    ): Public.Exit = executeCommand(
         command = command
     )
-        .ofType(ProcessNotification.Exit::class.java)
+        .ofType(Public.Exit::class.java)
         .timeout(
             timeoutSeconds,
             TimeUnit.SECONDS,
@@ -581,7 +581,7 @@ public data class AdbDevice(
     private fun executeShellCommand(
         command: List<String>,
         redirectOutputTo: File? = null
-    ): Observable<ProcessNotification> = executeCommand(
+    ): Observable<Public> = executeCommand(
         command = listOf("shell") + command,
         redirectOutputTo = redirectOutputTo
     )
@@ -589,12 +589,11 @@ public data class AdbDevice(
     private fun executeCommand(
         command: List<String>,
         redirectOutputTo: File? = null
-    ): Observable<ProcessNotification> =
-        commandLine.executeProcess(
+    ): Observable<Public> =
+        CommandLine.create(
             command = adb.adbPath,
             args = listOf("-s", coordinate.serial.value) + command,
-            output = redirectOutputTo
-        )
+        ).executeAsObservable(redirectOutputTo)
 
     override fun toString(): String = "Device ${coordinate.serial}"
 }
