@@ -4,7 +4,7 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 
 plugins {
     id("convention.kotlin-android-app")
-    id("convention.android-robolectric")
+    id("convention.shared-testing")
     id("com.avito.android.instrumentation-tests")
 }
 
@@ -33,27 +33,11 @@ android {
             isIncludeAndroidResources = true
 
             all {
-                // TODO: setup the following parameters automatically
                 val args = mapOf(
-                    // Replaces default runner with custom implementation
                     "android.junit.runner" to "com.avito.robolectric.runner.InHouseRobolectricTestRunner",
-                    // Enables logging
-                    "robolectric.logging.enabled" to "true",
-                    // Enables logging
-                    "robolectric.logging.enabled" to "true",
-                    // Always adds actual API version to the test names
-                    "robolectric.alwaysIncludeVariantMarkersInTestName" to "true",
-
-                    // Report Viewer
-                    "testResultsDir" to buildDir.resolve("report-viewer"),
                     "planSlug" to "AndroidTestApp",
                     "jobSlug" to "FunctionalTests",
-                    "runId" to "local", // TODO: pass correct value
-                    "reportApiUrl" to getOptionalStringProperty("avito.report.url", "http://stub"),
-                    "reportViewerUrl" to getOptionalStringProperty("avito.report.viewerUrl", "http://stub"),
-                    "fileStorageUrl" to getOptionalStringProperty("avito.fileStorage.url", "http://stub"),
                 )
-
                 it.systemProperties.putAll(args)
             }
         }

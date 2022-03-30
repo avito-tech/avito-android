@@ -1,23 +1,22 @@
-package com.avito.instrumentation.internal
+package com.avito.android.plugins.configuration
 
-import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.reportviewer.model.RunId
 import com.avito.time.TimeProvider
 import java.util.concurrent.TimeUnit
 
-internal class RunIdResolver(
+public class RunIdResolver(
     private val timeProvider: TimeProvider,
     private val gitResolver: GitResolver,
     private val buildEnvResolver: BuildEnvResolver,
 ) {
 
-    fun getCiRunId(extension: InstrumentationTestsPluginExtension): RunId {
+    public fun getCiRunId(reportRunIdPrefix: String?): RunId {
 
         val gitCommitHash = gitResolver.getGitCommit().orNull
 
         return if (gitCommitHash != null) {
             RunId(
-                prefix = extension.testReport.reportViewer?.reportRunIdPrefix,
+                prefix = reportRunIdPrefix,
                 identifier = gitResolver.getGitCommit().getOrElse("local"),
                 buildTypeId = buildEnvResolver.getBuildType()
             )
@@ -26,7 +25,7 @@ internal class RunIdResolver(
         }
     }
 
-    fun getLocalRunId(): RunId {
+    public fun getLocalRunId(): RunId {
         return RunId(
             prefix = null,
             identifier = TimeUnit.MILLISECONDS.toDays(timeProvider.nowInMillis()).toString(),

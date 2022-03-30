@@ -1,6 +1,8 @@
 package com.avito.instrumentation.internal
 
 import com.android.build.api.dsl.CommonExtension
+import com.avito.android.plugins.configuration.BuildEnvResolver
+import com.avito.android.plugins.configuration.RunIdResolver
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.runner.config.InstrumentationParameters

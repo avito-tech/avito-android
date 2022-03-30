@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.plugins.configuration.GitResolver
 import com.avito.instrumentation.InstrumentationTestsTask
 
 internal class GitConfigurator(
