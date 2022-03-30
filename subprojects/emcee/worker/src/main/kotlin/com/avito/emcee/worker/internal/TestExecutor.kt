@@ -11,7 +11,6 @@ internal interface TestExecutor {
 
     data class Result(val success: Boolean)
 
-    @ExperimentalTime
     data class Job(
         val apk: File,
         val testApk: File,

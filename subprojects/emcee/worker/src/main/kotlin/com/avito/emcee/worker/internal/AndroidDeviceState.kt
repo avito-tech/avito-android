@@ -1,7 +1,7 @@
 package com.avito.emcee.worker.internal
 
-import com.avito.emcee.device.AndroidApplication
-import com.avito.emcee.device.AndroidDevice
+import com.avito.android.device.AndroidApplication
+import com.avito.android.device.AndroidDevice
 
 internal sealed class AndroidDeviceState {
 

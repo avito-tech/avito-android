@@ -1,0 +1,9 @@
+{
+    "workerId": "stub-worker-id",
+    "restAddress": "stub-rest-address",
+    "queueUrl": "stub-queue-url",
+    "androidSdkPath": "/Users/john/androidSdk",
+    "avd": [
+        { "sdk": 21, "type": "default", "emulatorFileName": "stub-emulator-name", "sdCardFileName": "stub-sd-card-name" }
+    ]
+}

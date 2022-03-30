@@ -1,10 +1,9 @@
 package com.avito.emcee.worker.internal
 
-import com.avito.emcee.device.AndroidApplication
-import com.avito.emcee.device.AndroidDevice
-import com.avito.emcee.device.InstrumentationCommand
+import com.avito.android.device.AndroidApplication
+import com.avito.android.device.AndroidDevice
+import com.avito.android.device.InstrumentationCommand
 import kotlinx.coroutines.withTimeout
-import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -43,7 +42,7 @@ internal class StatefulAndroidDeviceTestExecutor(
     }
 
     private suspend fun executeTest(job: TestExecutor.Job): TestExecutor.Result {
-        return withTimeout(Duration.seconds(job.testTimeoutConfiguration.singleTestMaximumDuration.toDouble())) {
+        return withTimeout(job.testMaximumDuration) {
             val result = device.executeInstrumentation(
                 command = InstrumentationCommand(
                     testName = job.test.name.asString(),
