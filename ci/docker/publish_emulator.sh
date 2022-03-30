@@ -15,7 +15,7 @@ if test "$#" -ne 2; then
     exit 1
 fi
 
-readonly BUILD_DIRECTORY=$(pwd)/android-emulator
+readonly BUILD_DIRECTORY=$(pwd)/android-emulator-hermetic
 readonly IMAGE_NAME=$1
 readonly API=$2
 
