@@ -20,7 +20,8 @@ import com.avito.ci.steps.UploadToQapps
 import com.avito.ci.steps.VerifyArtifactsStep
 import com.avito.ci.steps.deploy.DeployStep
 import com.avito.ci.steps.deploy.ToGooglePlayDeploysTransformer
-import com.avito.ci.steps.deploy.UploadCrashlyticsProguardFileTasksProvider
+import com.avito.ci.steps.deploy.UploadCrashlyticsMappingFileTasksProvider
+import com.avito.ci.steps.deploy.UploadCrashlyticsNativeSymbolsTasksProvider
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Named
@@ -74,7 +75,8 @@ public open class BuildStepListExtension(
             DeployStep(
                 context = buildStepListName,
                 transformer = ToGooglePlayDeploysTransformer(artifactsConfig),
-                provider = UploadCrashlyticsProguardFileTasksProvider(),
+                mappingFileTaskProvider = UploadCrashlyticsMappingFileTasksProvider(),
+                nativeSymbolsTaskProvider = UploadCrashlyticsNativeSymbolsTasksProvider(),
                 name = name
             )
         }
