@@ -26,9 +26,36 @@ internal class MockDispatcherTest {
             )
         )
 
-        val response = dispatcher.dispatch(buildRequest(path = "xxx"))
+        val firstResponse = dispatcher.dispatch(buildRequest(path = "xxx"))
+        val secondResponse = dispatcher.dispatch(buildRequest(path = "xxx"))
 
-        assertThat(response.getBody()?.readUtf8()).isEqualTo("Second registered")
+        assertThat(firstResponse.getBody()?.readUtf8()).isEqualTo("Second registered")
+        assertThat(secondResponse.getBody()?.readUtf8()).isEqualTo("Second registered")
+    }
+
+    @Test
+    fun `dispatcher - remove response - if removeAfterMatched was set`() {
+        val sameRequest: RequestData.() -> Boolean = { path.contains("xxx") }
+
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = sameRequest,
+                response = MockResponse().setBody("First registered")
+            )
+        )
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = sameRequest,
+                response = MockResponse().setBody("Second registered"),
+                removeAfterMatched = true,
+            )
+        )
+
+        val firstResponse = dispatcher.dispatch(buildRequest(path = "xxx"))
+        val secondResponse = dispatcher.dispatch(buildRequest(path = "xxx"))
+
+        assertThat(firstResponse.getBody()?.readUtf8()).isEqualTo("Second registered")
+        assertThat(secondResponse.getBody()?.readUtf8()).isEqualTo("First registered")
     }
 
     @Test
