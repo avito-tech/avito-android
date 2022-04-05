@@ -108,8 +108,8 @@ internal class CheckAndroidSdkVersionTest {
         result.assertThat()
             .buildFailed()
             .outputContains(
-                "You have an old Android SDK Platform version.\n" +
-                    "API level: 29, \n(actual revision 4, expected revision: 5)"
+                "You have an old installed Android SDK Platform version.\n" +
+                    "API level: 29, \n(installed revision 4, expected revision: 5)"
             )
     }
 
