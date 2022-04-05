@@ -34,7 +34,7 @@ internal class ExperimentsConfigurator(
     }
 
     private fun getFetchLogcatForIncompleteTests(extension: InstrumentationTestsPluginExtension): Boolean {
-        return extension.experimental.fetchLogcatForIncompleteTests.getOrElse(false)
+        return extension.experimental.fetchLogcatForIncompleteTests.getOrElse(true)
     }
 
     private fun getUseLegacyExtensionsV1Beta(extension: InstrumentationTestsPluginExtension): Boolean {
