@@ -60,20 +60,18 @@ internal class AndroidDeviceImpl(
     ): Result<AndroidDevice.InstrumentationResult> {
         return Result.tryCatch {
             coroutineScope {
-                val result = withTimeoutOrNull(Duration.ZERO) {
-                    val instrumentationOutput = adb.execute(
-                        request = TestRunnerRequest(
-                            testPackage = command.testPackage,
-                            runnerClass = command.runnerClass,
-                            instrumentOptions = InstrumentOptions(
-                                clazz = listOf(command.testName)
-                            )
-                        ),
-                        scope = this,
-                        serial = serial.value
-                    )
-                    instrumentationOutput.receiveOrNull()
-                } ?: emptyList()
+                val instrumentationOutput = adb.execute(
+                    request = TestRunnerRequest(
+                        testPackage = command.testPackage,
+                        runnerClass = command.runnerClass,
+                        instrumentOptions = InstrumentOptions(
+                            clazz = listOf(command.testName)
+                        )
+                    ),
+                    scope = this,
+                    serial = serial.value
+                )
+                val result = instrumentationOutput.receiveOrNull() ?: emptyList()
                 // parsing copy-pasting from com.malinskiy.marathon.android.adam.AndroidDeviceTestRunner
                 AndroidDevice.InstrumentationResult(
                     success = result.none { testEvent ->
