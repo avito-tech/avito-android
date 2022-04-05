@@ -24,8 +24,6 @@ public abstract class ExperimentalExtension {
      */
     public abstract val saveTestArtifactsToOutputs: Property<Boolean>
 
-    public abstract val fetchLogcatForIncompleteTests: Property<Boolean>
-
     public abstract val uploadArtifactsFromRunner: Property<Boolean>
 
     public abstract val useLegacyExtensionsV1Beta: Property<Boolean>

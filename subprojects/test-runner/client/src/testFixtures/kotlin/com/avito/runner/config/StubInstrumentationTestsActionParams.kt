@@ -35,7 +35,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     fileStorageUrl: String = "https://files",
     statsDConfig: StatsDConfig = StatsDConfig.Disabled,
     uploadTestArtifacts: Boolean = false,
-    fetchLogcatForIncompleteTests: Boolean = false,
     saveTestArtifactsToOutputs: Boolean = false,
     useLegacyExtensionsV1Beta: Boolean = true,
     sendPodsMetrics: Boolean = true,
@@ -59,7 +58,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     uploadTestArtifacts = uploadTestArtifacts,
     reportViewerConfig = null,
     saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
-    fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
     useLegacyExtensionsV1Beta = useLegacyExtensionsV1Beta,
     sendPodsMetrics = sendPodsMetrics,
     deviceDebug = deviceDebug

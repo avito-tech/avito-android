@@ -28,7 +28,6 @@ public data class RunnerInputParams(
     val reportViewerConfig: ReportViewerConfig?,
     val proguardMappings: List<File>,
     val uploadTestArtifacts: Boolean,
-    val fetchLogcatForIncompleteTests: Boolean,
     val saveTestArtifactsToOutputs: Boolean,
     val useLegacyExtensionsV1Beta: Boolean,
     val sendPodsMetrics: Boolean,

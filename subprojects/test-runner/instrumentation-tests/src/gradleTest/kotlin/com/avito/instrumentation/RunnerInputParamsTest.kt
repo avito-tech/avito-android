@@ -331,10 +331,6 @@ internal class RunnerInputParamsTest {
                 assertThat(it.uploadTestArtifacts)
                     .isFalse()
             },
-            Case("fetchLogcatForIncompleteTests is disabled") {
-                assertThat(it.fetchLogcatForIncompleteTests)
-                    .isFalse()
-            },
             Case("saveTestArtifactsToOutputs is disabled") {
                 assertThat(it.saveTestArtifactsToOutputs)
                     .isFalse()
