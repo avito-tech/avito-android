@@ -1,5 +1,6 @@
 package com.avito.emcee.worker.internal
 
+import com.avito.android.Result
 import com.avito.android.device.AndroidApplication
 import com.avito.android.device.AndroidDevice
 import com.avito.android.device.InstrumentationCommand
@@ -42,17 +43,19 @@ internal class StatefulAndroidDeviceTestExecutor(
     }
 
     private suspend fun executeTest(job: TestExecutor.Job): TestExecutor.Result {
-        return withTimeout(job.testMaximumDuration) {
-            val result = device.executeInstrumentation(
-                command = InstrumentationCommand(
-                    testName = job.test.name.asString(),
-                    testPackage = job.testPackage,
-                    runnerClass = job.instrumentationRunnerClass
+        return Result.tryCatch {
+            val instrumentationResult = withTimeout(job.testMaximumDuration) {
+                device.executeInstrumentation(
+                    command = InstrumentationCommand(
+                        testName = job.test.name.asString(),
+                        testPackage = job.testPackage,
+                        runnerClass = job.instrumentationRunnerClass
+                    )
                 )
-            )
-            result
+            }
+            instrumentationResult
                 .map { TestExecutor.Result(it.success) }
-                .getOrElse { TestExecutor.Result(false) }
-        }
+                .getOrThrow()
+        }.getOrElse { TestExecutor.Result(false) }
     }
 }
