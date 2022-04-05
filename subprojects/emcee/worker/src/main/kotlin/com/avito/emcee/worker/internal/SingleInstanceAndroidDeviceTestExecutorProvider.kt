@@ -20,7 +20,7 @@ internal class SingleInstanceAndroidDeviceTestExecutorProvider(
 
     private suspend fun getDevice(configuration: DeviceConfiguration): AndroidDevice {
         val last = last
-        return if (last == null || last.sdk == configuration.sdkVersion || last.type == configuration.type) {
+        return if (last == null || last.sdk != configuration.sdkVersion || last.type != configuration.type) {
             if (last != null) {
                 manager.stop(last)
                 this.last = null

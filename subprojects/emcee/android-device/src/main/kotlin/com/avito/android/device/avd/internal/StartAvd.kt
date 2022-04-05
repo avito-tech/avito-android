@@ -26,6 +26,10 @@ internal class StartAvd(
                 "-avd ${avdConfig.emulatorFileName}",
                 "-sdcard ${avdConfig.sdCardFileName}",
                 "-no-window",
+                /**
+                 * Decreasing emulator start and stop time by disable snapshot saving and loading.
+                 * We could try to experiment with using snapshot for start optimizations
+                 */
                 "-no-snapshot",
                 "-no-boot-anim",
                 "-no-audio",
