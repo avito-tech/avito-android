@@ -11,7 +11,7 @@ public data class Config(
     /**
      * Helps Queue to interact with worker
      */
-    val restAddress: String,
+    val restUrl: String,
     /**
      * Url where worker will ask for test buckets
      */

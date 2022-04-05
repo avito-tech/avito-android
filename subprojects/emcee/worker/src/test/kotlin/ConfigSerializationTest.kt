@@ -20,7 +20,7 @@ internal class ConfigSerializationTest {
             .isEqualTo(
                 Config(
                     workerId = "stub-worker-id",
-                    restAddress = "stub-rest-address",
+                    restUrl = "stub-rest-url",
                     queueUrl = "stub-queue-url",
                     androidSdkPath = "/Users/john/androidSdk",
                     avd = setOf(

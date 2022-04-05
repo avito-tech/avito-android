@@ -44,7 +44,7 @@ internal class StartWorkerCommand(
         val producer = TestJobProducerImpl(
             api = Retrofit.Builder().create(config.queueUrl),
             workerId = config.workerId,
-            restAddress = config.restAddress
+            restUrl = config.restUrl
         )
         val consumer = TestJobConsumerImpl(
             SingleInstanceAndroidDeviceTestExecutorProvider(

@@ -14,7 +14,7 @@ import kotlin.time.ExperimentalTime
 internal class TestJobProducerImpl(
     private val api: WorkerQueueApi,
     private val workerId: String,
-    private val restAddress: String
+    private val restUrl: String
 ) : TestJobProducer {
 
     override fun getJobs(): Flow<TestJobProducer.Job> = flow {
@@ -22,7 +22,7 @@ internal class TestJobProducerImpl(
         val registerResponse = api.registerWorker(
             RegisterWorkerBody(
                 workerId = workerId,
-                workerRestAddress = restAddress
+                workerRestUrl = restUrl
             )
         )
 
