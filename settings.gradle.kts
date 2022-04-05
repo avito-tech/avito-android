@@ -6,7 +6,8 @@ rootProject.name = "avito-android-infra"
 if (gradle.startParameter.isOffline) {
     logger.warn(
         "You are in offline mode." +
-            " If you add a new dependency you should run Gradle task without offline mode for cache dependency locally"
+            " If you have issues with dependency resolution" +
+            " you should run Gradle task without offline mode for cache dependency locally"
     )
 }
 
