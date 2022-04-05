@@ -15,17 +15,17 @@ public class SharedTestsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val extension = target.extensions.create<SharedTestsExtension>("sharedTests")
-        target.configureTestTasks(extension)
+        configureTestTasks(target, extension)
     }
 
-    private fun Project.configureTestTasks(extension: SharedTestsExtension) {
+    private fun configureTestTasks(project: Project, extension: SharedTestsExtension) {
         val runIdResolver = RunIdResolver(
             timeProvider = DefaultTimeProvider(),
             buildEnvResolver = BuildEnvResolver(project.provider { project.envArgs }),
             gitResolver = GitResolver(project.gitState())
         )
 
-        tasks.withType(Test::class.java) {
+        project.tasks.withType(Test::class.java) {
             val mandatoryProperties = mapOf(
                 // Enables logging
                 "robolectric.logging.enabled" to "true",
