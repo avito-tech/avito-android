@@ -47,7 +47,7 @@ internal class StatefulAndroidDeviceTestExecutor(
             val instrumentationResult = withTimeout(job.testMaximumDuration) {
                 device.executeInstrumentation(
                     command = InstrumentationCommand(
-                        testName = job.test.name.asString(),
+                        testName = job.test.name.asInstrumentationArg(),
                         testPackage = job.testPackage,
                         runnerClass = job.instrumentationRunnerClass
                     )

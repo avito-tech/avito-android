@@ -7,7 +7,7 @@ public data class TestName(
     val className: String,
     val methodName: String
 ) {
-    public fun asString(): String {
+    public fun asInstrumentationArg(): String {
         return "$className.$methodName"
     }
 }
