@@ -45,11 +45,12 @@ internal class AndroidDeviceImpl(
     }
 
     override suspend fun isAlive(): Boolean {
+        val value = "hello"
         val result = adb.execute(
-            EchoHelloRequest,
+            EchoRequest(value),
             serial = serial.value
         )
-        return result.exitCode == 0 && result.output == "hello"
+        return result.exitCode == 0 && result.output == value
     }
 
     @OptIn(ExperimentalCoroutinesApi::class, kotlin.time.ExperimentalTime::class)
