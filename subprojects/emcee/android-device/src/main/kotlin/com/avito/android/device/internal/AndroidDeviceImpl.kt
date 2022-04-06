@@ -16,8 +16,6 @@ import com.malinskiy.adam.request.testrunner.TestRunnerRequest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.receiveOrNull
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withTimeoutOrNull
-import kotlin.time.Duration
 
 internal class AndroidDeviceImpl(
     override val sdk: Int,
