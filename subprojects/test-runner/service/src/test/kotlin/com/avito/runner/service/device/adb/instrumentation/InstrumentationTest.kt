@@ -1,6 +1,6 @@
 package com.avito.runner.service.device.adb.instrumentation
 
-import com.avito.cli.CommandLine.Notification.Public.Output
+import com.avito.cli.Notification.Output
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry

@@ -1,8 +1,8 @@
 package com.avito.android.device.avd.internal
 
 import com.avito.android.device.avd.internal.AvdConfigurationProvider.ConfigurationKey
-import com.avito.cli.CommandLine
-import com.avito.cli.executeAsFlow
+import com.avito.cli.FlowCommandLine
+import com.avito.cli.Notification
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import java.nio.file.Path
@@ -14,9 +14,9 @@ internal class StartAvd(
     private val androidSdk: Path
 ) {
 
-    fun execute(sdk: Int, type: String): Flow<CommandLine.Notification.Public> {
+    fun execute(sdk: Int, type: String): Flow<Notification> {
         val avdConfig = configurationProvider.provide(ConfigurationKey(sdk, type))
-        return CommandLine.create(
+        return FlowCommandLine(
             command = androidSdk.resolveSibling("emulator").absolutePathString(),
             /**
              * Official startup options documentation:
@@ -43,6 +43,6 @@ internal class StartAvd(
                 "-gpu swiftshader_indirect",
                 "-verbose"
             )
-        ).executeAsFlow()
+        ).start()
     }
 }

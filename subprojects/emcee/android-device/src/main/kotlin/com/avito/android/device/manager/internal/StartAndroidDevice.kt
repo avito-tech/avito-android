@@ -4,7 +4,7 @@ import com.avito.android.device.AndroidDevice
 import com.avito.android.device.DeviceSerial
 import com.avito.android.device.avd.internal.StartAvd
 import com.avito.android.device.internal.AndroidDeviceImpl
-import com.avito.cli.CommandLine.Notification.Public
+import com.avito.cli.Notification
 import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.request.device.AsyncDeviceMonitorRequest
 import com.malinskiy.adam.request.device.Device
@@ -41,8 +41,8 @@ internal class StartAndroidDevice(
                     startAvd.execute(sdk, type)
                         .collect { notification ->
                             when (notification) {
-                                is Public.Exit -> cancel()
-                                is Public.Output -> {
+                                is Notification.Exit -> cancel()
+                                is Notification.Output -> {
                                     // TODO add logging
                                 }
                             }

@@ -1,7 +1,7 @@
 package com.avito.runner.service.worker.device.adb.instrumentation
 
 import com.android.annotations.VisibleForTesting
-import com.avito.cli.CommandLine.Notification.Public
+import com.avito.cli.Notification
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.test.model.TestName
@@ -9,18 +9,18 @@ import rx.Observable
 
 internal interface InstrumentationTestCaseRunParser {
 
-    fun parse(output: Observable<Public.Output>): Observable<InstrumentationTestCaseRun>
+    fun parse(output: Observable<Notification.Output>): Observable<InstrumentationTestCaseRun>
 
     class Impl : InstrumentationTestCaseRunParser {
 
-        override fun parse(output: Observable<Public.Output>): Observable<InstrumentationTestCaseRun> {
+        override fun parse(output: Observable<Notification.Output>): Observable<InstrumentationTestCaseRun> {
             return readInstrumentationOutput(output)
                 .asTests()
         }
 
         @VisibleForTesting
         internal fun readInstrumentationOutput(
-            output: Observable<Public.Output>
+            output: Observable<Notification.Output>
         ): Observable<InstrumentationEntry> {
             data class Result(val buffer: String = "", val readyForProcessing: Boolean = false)
 
