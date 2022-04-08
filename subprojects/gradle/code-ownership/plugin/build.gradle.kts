@@ -6,6 +6,8 @@ plugins {
 }
 
 dependencies {
+    api(projects.subprojects.gradle.codeOwnership.api)
+
     implementation(projects.subprojects.delivery.cd)
     implementation(projects.subprojects.gradle.impactShared)
     implementation(projects.subprojects.gradle.preBuild)
