@@ -115,7 +115,6 @@ instrumentation {
     }
 
     experimental {
-        fetchLogcatForIncompleteTests.set(true)
         useLegacyExtensionsV1Beta.set(false)
 
         // Causes crashes in KubernetesReservationState.podAcquired state check (MBS-12768)
