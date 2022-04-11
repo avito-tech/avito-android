@@ -84,16 +84,6 @@ internal class SlackClientImpl(
             }
     }
 
-    override fun uploadHtml(channel: SlackChannel, message: String, file: File): Result<Unit> {
-        return methodsClient.filesUpload {
-            it.file(file)
-            it.channels(listOf(channel.id))
-            it.filename(file.name)
-            it.initialComment(message)
-            it.token(token)
-        }.toResult().map { }
-    }
-
     override fun updateMessage(
         channel: SlackChannel,
         text: String,

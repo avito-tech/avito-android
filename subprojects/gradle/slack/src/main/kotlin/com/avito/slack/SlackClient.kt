@@ -6,7 +6,7 @@ import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 
-public interface SlackClient : SlackMessageSender, SlackFileUploader {
+public interface SlackClient : SlackMessageSender {
 
     public fun updateMessage(
         channel: SlackChannel,

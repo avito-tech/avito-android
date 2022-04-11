@@ -61,12 +61,4 @@ public class StubSlackClient : SlackClient {
         updatedMessageTimestamp = messageTimestamp
         return Result.Success(SlackMessage.createStubInstance())
     }
-
-    override fun uploadHtml(
-        channel: SlackChannel,
-        message: String,
-        file: File
-    ): Result<Unit> {
-        TODO("Not yet implemented")
-    }
 }
