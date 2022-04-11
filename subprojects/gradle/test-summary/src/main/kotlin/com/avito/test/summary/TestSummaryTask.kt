@@ -1,9 +1,9 @@
 package com.avito.test.summary
 
+import com.avito.notification.NotificationClient
 import com.avito.report.model.Team
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
-import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.MapProperty
@@ -37,7 +37,7 @@ public abstract class TestSummaryTask : DefaultTask() {
     public abstract val slackUsername: Property<String>
 
     @get:Internal
-    public abstract val slackClient: Property<SlackClient>
+    public abstract val notificationClient: Property<NotificationClient>
 
     @get:Internal
     public abstract val reportsApi: Property<ReportsApi>
@@ -48,7 +48,7 @@ public abstract class TestSummaryTask : DefaultTask() {
     @TaskAction
     public fun doWork() {
         val testSummarySender: TestSummarySender = TestSummarySenderImpl(
-            slackClient = slackClient.get(),
+            notificationClient = notificationClient.get(),
             reportViewerUrl = reportViewerUrl.get(),
             reportsApi = reportsApi.get(),
             buildUrl = buildUrl.get(),

@@ -1,5 +1,7 @@
 package com.avito.slack.model
 
+import com.avito.notification.model.FoundMessage
+
 public fun FoundMessage.Companion.createStubInstance(
     text: String = "",
     botId: String? = null,

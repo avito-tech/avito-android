@@ -12,9 +12,10 @@ public class OwnersDiffReporterFactory(private val messageFormatter: OwnersDiffM
             is OwnersDiffReportDestination.Custom -> destination.reporter
             is OwnersDiffReportDestination.File -> FileOwnersDiffReporter(destination.parentDir, messageFormatter)
             is OwnersDiffReportDestination.Slack -> SlackOwnersDiffReporter(
-                slackClient = SlackClientFactory.create(destination.token, destination.workspace),
+                notificationClient = SlackClientFactory.create(destination.token, destination.workspace),
                 slackChannel = destination.channel,
                 slackUserName = destination.userName,
+
                 messageFormatter = messageFormatter
             )
         }

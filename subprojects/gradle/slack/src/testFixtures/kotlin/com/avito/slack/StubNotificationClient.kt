@@ -1,14 +1,15 @@
 package com.avito.slack
 
 import com.avito.android.Result
-import com.avito.slack.model.FoundMessage
+import com.avito.notification.NotificationClient
+import com.avito.notification.finder.NotificationPredicate
+import com.avito.notification.model.FoundMessage
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.slack.model.createStubInstance
-import java.io.File
 
-public class StubSlackClient : SlackClient {
+public class StubNotificationClient : NotificationClient {
 
     public var requestCount: Int = 0
 
@@ -40,7 +41,7 @@ public class StubSlackClient : SlackClient {
 
     override fun findMessage(
         channel: SlackChannel,
-        predicate: SlackMessagePredicate
+        predicate: NotificationPredicate
     ): Result<FoundMessage> {
         return if (previousMessageFailsWithException) {
             Result.Failure(Exception("no matter"))

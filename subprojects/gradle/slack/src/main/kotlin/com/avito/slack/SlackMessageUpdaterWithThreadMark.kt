@@ -1,7 +1,8 @@
 package com.avito.slack
 
 import com.avito.android.Result
-import com.avito.slack.model.FoundMessage
+import com.avito.notification.NotificationClient
+import com.avito.notification.model.FoundMessage
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 
@@ -10,7 +11,7 @@ import com.avito.slack.model.SlackSendMessageRequest
  * дополнительно пишем в тред к этому сообщению информацию об обновлении[threadMessage]
  */
 public class SlackMessageUpdaterWithThreadMark(
-    private val slackClient: SlackClient,
+    private val notificationClient: NotificationClient,
     private val threadMessage: String
 ) : SlackMessageUpdater {
 
@@ -18,7 +19,7 @@ public class SlackMessageUpdaterWithThreadMark(
         previousMessage: FoundMessage,
         newContent: String
     ): Result<SlackMessage> {
-        return slackClient.sendMessage(
+        return notificationClient.sendMessage(
             SlackSendMessageRequest(
                 channel = previousMessage.channel,
                 text = threadMessage,
@@ -27,7 +28,7 @@ public class SlackMessageUpdaterWithThreadMark(
                 threadId = previousMessage.timestamp
             )
         ).flatMap {
-            slackClient.updateMessage(
+            notificationClient.updateMessage(
                 channel = previousMessage.channel,
                 text = newContent,
                 messageTimestamp = previousMessage.timestamp

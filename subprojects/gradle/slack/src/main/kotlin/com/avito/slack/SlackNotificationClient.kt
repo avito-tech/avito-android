@@ -5,7 +5,9 @@ import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.http.internal.RequestMetadata
 import com.avito.http.internal.RequestMetadataProvider
-import com.avito.slack.model.FoundMessage
+import com.avito.notification.NotificationClient
+import com.avito.notification.finder.NotificationPredicate
+import com.avito.notification.model.FoundMessage
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
@@ -17,18 +19,17 @@ import com.github.seratch.jslack.api.methods.request.chat.ChatUpdateRequest
 import com.github.seratch.jslack.api.methods.request.conversations.ConversationsHistoryRequest
 import com.github.seratch.jslack.common.http.SlackHttpClient
 import okhttp3.Request
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
  * @param serviceName to separate services metrics; example: `lint-slack`, `test-summary-slack`
  */
-internal class SlackClientImpl(
+internal class SlackNotificationClient(
     serviceName: String,
     private val token: String,
     private val workspace: String,
     httpClientProvider: HttpClientProvider
-) : SlackClient {
+) : NotificationClient {
 
     private val timeoutSec = 30L
 
@@ -111,7 +112,7 @@ internal class SlackClientImpl(
 
     override fun findMessage(
         channel: SlackChannel,
-        predicate: SlackMessagePredicate
+        predicate: NotificationPredicate
     ): Result<FoundMessage> {
 
         val request = ConversationsHistoryRequest.builder()

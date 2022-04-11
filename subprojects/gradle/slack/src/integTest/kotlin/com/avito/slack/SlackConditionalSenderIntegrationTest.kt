@@ -4,6 +4,9 @@ import com.avito.android.Result
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
 import com.avito.kotlin.dsl.getSystemProperty
+import com.avito.notification.NotificationClient
+import com.avito.notification.finder.SameAuthorPredicate
+import com.avito.notification.finder.TextContainsStringPredicate
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
@@ -21,7 +24,7 @@ internal class SlackConditionalSenderIntegrationTest {
 
     private val testToken = getSystemProperty("avito.slack.test.token")
 
-    private val slackClient: SlackClient = SlackClientImpl(
+    private val notificationClient: NotificationClient = SlackNotificationClient(
         serviceName = "slack-integration-tests",
         token = testToken,
         workspace = getSystemProperty("avito.slack.test.workspace"),
@@ -32,12 +35,12 @@ internal class SlackConditionalSenderIntegrationTest {
     fun `second message - updates with thread message - if contains same unique string as first one`() {
         val uniqueId = UUID.randomUUID().toString()
 
-        val condition = TextContainsStringCondition(uniqueId)
+        val condition = TextContainsStringPredicate(uniqueId)
 
         val sender = SlackConditionalSender(
-            slackClient = slackClient,
+            notificationClient = notificationClient,
             updater = SlackMessageUpdaterWithThreadMark(
-                slackClient = slackClient,
+                notificationClient = notificationClient,
                 threadMessage = "Updated"
             ),
             condition = condition,
@@ -46,7 +49,7 @@ internal class SlackConditionalSenderIntegrationTest {
         sender.sendMessage("$uniqueId first message")
         sender.sendMessage("$uniqueId second message")
 
-        val message = slackClient.findMessage(testChannelId, condition)
+        val message = notificationClient.findMessage(testChannelId, condition)
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
         assertThat(message.getOrThrow().text).contains("second message")
@@ -61,9 +64,9 @@ internal class SlackConditionalSenderIntegrationTest {
         val condition = SameAuthorPredicate(author)
 
         val sender = SlackConditionalSender(
-            slackClient = slackClient,
+            notificationClient = notificationClient,
             updater = SlackMessageUpdaterDirectlyToThread(
-                slackClient = slackClient,
+                notificationClient = notificationClient,
             ),
             condition = condition,
         )

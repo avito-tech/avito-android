@@ -1,7 +1,7 @@
 package com.avito.slack
 
 import com.avito.android.Result
-import com.avito.slack.model.FoundMessage
+import com.avito.notification.model.FoundMessage
 import com.avito.slack.model.SlackMessage
 
 public interface SlackMessageUpdater {

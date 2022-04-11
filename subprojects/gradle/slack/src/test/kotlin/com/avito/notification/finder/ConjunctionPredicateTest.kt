@@ -1,13 +1,13 @@
-package com.avito.slack
+package com.avito.notification.finder
 
-import com.avito.slack.model.FoundMessage
+import com.avito.notification.model.FoundMessage
 import com.avito.slack.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ConjunctionMessageUpdateConditionTest {
+internal class ConjunctionPredicateTest {
 
-    private object TrueCondition : SlackMessagePredicate {
+    private object TrueCondition : NotificationPredicate {
         override fun matches(existingMessage: FoundMessage): Boolean = true
     }
 
@@ -15,7 +15,7 @@ internal class ConjunctionMessageUpdateConditionTest {
     fun `conjunction - returns true - for multiple true conditions`() {
         val irrelevantMessage = FoundMessage.createStubInstance()
 
-        val result = ConjunctionMessagePredicate(listOf(TrueCondition, TrueCondition, TrueCondition))
+        val result = ConjunctionPredicate(listOf(TrueCondition, TrueCondition, TrueCondition))
             .matches(irrelevantMessage)
 
         assertThat(result).isTrue()
