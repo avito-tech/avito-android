@@ -59,19 +59,22 @@ dependencyResolutionManagement {
     }
 }
 
-// Duplicated settings because they are not inherited from root project
-// as described in https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
-// https://github.com/gradle/gradle/issues/18511
-val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
-    ?.removeSuffix("/")
-    ?.plus("/cache")
-
+/**
+ *  Duplicated settings because they are not inherited from root project
+ *  as described in https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
+ *  https://github.com/gradle/gradle/issues/18511
+ */
 buildCache {
     local {
         isEnabled = booleanProperty("avito.gradle.buildCache.local.enabled", true)
         isPush = true
         removeUnusedEntriesAfterDays = 30
     }
+
+    val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
+        ?.removeSuffix("/")
+        ?.plus("/cache/")
+
     if (!buildCacheUrl.isNullOrBlank()) {
         remote<HttpBuildCache> {
             setUrl(buildCacheUrl)

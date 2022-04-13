@@ -1,24 +1,25 @@
-
 import com.avito.booleanProperty
 import com.avito.stringProperty
 
-// Can't use only one configuration for cache in the root project.
-// Included builds inside `pluginManagement` block can't reuse it,
-// because they are evaluated earlier than the build cache configuration in the root project.
-//
-// see https://github.com/gradle/gradle/issues/18511
-// Duplicated in settings in parent project
-
-val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
-    ?.removeSuffix("/")
-    ?.plus("/cache")
-
+/**
+ * Can't use only one configuration for cache in the root project.
+ * Included builds inside `pluginManagement` block can't reuse it,
+ * because they are evaluated earlier than the build cache configuration in the root project.
+ *
+ * see https://github.com/gradle/gradle/issues/18511
+ * Duplicated in settings in parent project
+ */
 buildCache {
     local {
         isEnabled = booleanProperty("avito.gradle.buildCache.local.enabled", true)
         isPush = true
         removeUnusedEntriesAfterDays = 30
     }
+
+    val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
+        ?.removeSuffix("/")
+        ?.plus("/cache/")
+
     if (!buildCacheUrl.isNullOrBlank()) {
         remote<HttpBuildCache> {
             setUrl(buildCacheUrl)
