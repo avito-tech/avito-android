@@ -38,13 +38,6 @@ resolveGradleArg "avito.report.url" "AVITO_REPORT_URL"
 resolveGradleArg "avito.report.viewerUrl" "AVITO_REPORT_VIEWER_URL"
 resolveGradleArg "avito.fileStorage.url" "AVITO_FILESTORAGE_URL"
 
-# Slack testing
-# todo should be optional
-resolveGradleArg "avito.slack.test.channelId" "SLACK_TEST_CHANNEL_ID"
-resolveGradleArg "avito.slack.test.channel" "SLACK_TEST_CHANNEL"
-resolveGradleArg "avito.slack.test.token" "SLACK_TEST_TOKEN"
-resolveGradleArg "avito.slack.test.workspace" "SLACK_TEST_WORKSPACE"
-
 # Instrumentation testing
 # todo should be optional
 resolveGradleArg "avito.registry" "AVITO_REGISTRY"

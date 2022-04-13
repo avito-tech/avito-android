@@ -96,7 +96,6 @@ antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
 okhttpMock = "com.github.gmazzo:okhttp-mock:1.4.0"
 kotlinTest = "io.kotlintest:kotlintest:2.0.7"
 coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-nebulaIntegTest = "com.netflix.nebula:nebula-project-plugin:9.1.1"
 testRetryGradle = "org.gradle:test-retry-gradle-plugin:1.3.1"
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }

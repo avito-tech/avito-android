@@ -52,7 +52,6 @@ GRADLE_ARGS+="-PbuildNumber "
 GRADLE_ARGS+="-PgitBranch=$BUILD_BRANCH "
 GRADLE_ARGS+="-PbuildCommit=$BUILD_COMMIT "
 GRADLE_ARGS+="-PteamcityBuildId=$BUILD_ID "
-GRADLE_ARGS+="-Pavito.slack.token=$AVITO_SLACK_TOKEN "
 GRADLE_ARGS+="-Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL "
 GRADLE_ARGS+="-Pavito.repo.ssh.url "
 GRADLE_ARGS+="-Pavito.report.url=$AVITO_REPORT_URL "
@@ -77,10 +76,6 @@ if [ -n "$ELASTIC_ENDPOINTS" ]; then
     GRADLE_ARGS+="-Pavito.elastic.indexpattern=speed-android "
 fi
 
-GRADLE_ARGS+="-Pavito.slack.test.channelId=$SLACK_TEST_CHANNEL_ID "
-GRADLE_ARGS+="-Pavito.slack.test.channel=$SLACK_TEST_CHANNEL "
-GRADLE_ARGS+="-Pavito.slack.test.token=$SLACK_TEST_TOKEN "
-GRADLE_ARGS+="-Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE "
 GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL "
 GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "
 GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "

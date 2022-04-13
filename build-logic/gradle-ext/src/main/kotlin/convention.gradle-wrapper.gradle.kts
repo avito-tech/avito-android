@@ -25,7 +25,7 @@ val allProjectsWrapperProperties: Provider<List<RegularFile>> = includedProjectD
 val artifactoryUrl = providers.gradleProperty("artifactoryUrl").get()
     .removeSuffix("/")
 
-val gradleVersion = "7.4.1"
+val gradleVersion = "7.4.2"
 // Use ALL because IDE anyway tries to download sources while project sync
 val gradleDistribution = Wrapper.DistributionType.ALL
 val gradleDistributionSlug = gradleDistribution.name.toLowerCase()
