@@ -3,33 +3,8 @@ enableFeaturePreview("VERSION_CATALOGS")
 rootProject.name = "build-logic-settings"
 
 pluginManagement {
-
-    fun Settings.booleanProperty(name: String, defaultValue: Boolean): Boolean {
-        return if (extra.has(name)) {
-            extra[name]?.toString()?.toBoolean() ?: defaultValue
-        } else {
-            defaultValue
-        }
-    }
-
-    val isInternalBuild = booleanProperty("avito.internalBuild", true)
-
-    repositories {
-        maven {
-            if (isInternalBuild) {
-                val artifactoryUrl: String? by settings
-                require(!artifactoryUrl.isNullOrBlank()) {
-                    "artifactoryUrl should be set for avito.internalBuild=true"
-                }
-                name = "Proxy for gradle-plugins: https://plugins.gradle.org/m2/"
-                setUrl("$artifactoryUrl/gradle-plugins")
-                isAllowInsecureProtocol = true
-            } else {
-                name = "gradle-plugins"
-                setUrl("https://plugins.gradle.org/m2/")
-            }
-        }
-    }
+    // See rationale inside this script
+    apply(from = "dependency-plugin/pluginManagement-shared.settings.gradle.kts")
 }
 
 dependencyResolutionManagement {

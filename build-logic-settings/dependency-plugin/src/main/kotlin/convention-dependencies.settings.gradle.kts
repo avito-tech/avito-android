@@ -1,11 +1,14 @@
 import com.avito.android.artifactory.artifactoryUrl
+import com.avito.android.artifactory.ensureUseOnlyProxies
 import com.avito.android.artifactory.setUrlOrProxy
+import com.avito.booleanProperty
 
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
 
+    val isInternalBuild = booleanProperty("avito.internalBuild", true)
     val artifactoryUrl: String? by settings
 
     repositories {
@@ -107,6 +110,9 @@ dependencyResolutionManagement {
             filter {
                 includeModule("com.android.tools", "r8")
             }
+        }
+        if (isInternalBuild) {
+            ensureUseOnlyProxies(artifactoryUrl!!)
         }
     }
 }
