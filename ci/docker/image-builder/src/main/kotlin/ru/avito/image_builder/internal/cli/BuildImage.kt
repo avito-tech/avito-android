@@ -3,6 +3,7 @@ package ru.avito.image_builder.internal.cli
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
+import kotlinx.cli.default
 import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.ImageTagger
 import ru.avito.image_builder.internal.command.NoOpRegistryLogin
@@ -19,6 +20,12 @@ internal open class BuildImage(
     name: String,
     description: String
 ) : Subcommand(name, description) {
+
+    protected val dockerfilePath: String by option(
+        type = ArgType.String,
+        description = "Relative path to Dockerfile inside context (buildDir)"
+    )
+        .default("Dockerfile")
 
     protected val buildDir: String by option(
         type = ArgType.String,
@@ -59,6 +66,7 @@ internal open class BuildImage(
 
         return SimpleImageBuilder(
             docker = docker,
+            dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
             login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),

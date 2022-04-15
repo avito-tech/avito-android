@@ -32,6 +32,7 @@ internal class PublishImage(
 
         val builder = SimpleImageBuilder(
             docker = docker,
+            dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
             login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),
