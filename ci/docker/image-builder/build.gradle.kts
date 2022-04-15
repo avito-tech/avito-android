@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("org.jetbrains.kotlin.jvm") version "1.6.20"
     id("nebula.integtest") version "9.5.2"
     application
 }
@@ -13,9 +13,9 @@ repositories {
 // Implementation shouldn't depend on any other module in the repository to avoid chained changes!
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 
     integTestImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
 }

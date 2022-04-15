@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-set -xe
+
+set -e
 
 if [[ -z "${DOCKER_REGISTRY+x}" ]]; then
-    echo "ERROR: DOCKER_REGISTRY env is not set. Images from DockerHub are not supported temporary."
+    echo "ERROR: DOCKER_REGISTRY env must be set"
     exit 1
 fi
 
