@@ -26,13 +26,12 @@ ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/cmdline-tools/bin
 # https://developer.android.com/studio/index.html#command-tools
 ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
-ARG ANDROID_SDK_FILE_NAME=android-sdk.zip
 
-RUN curl $ANDROID_SDK_URL --progress-bar --location --output $ANDROID_SDK_FILE_NAME && \
-  unzip $ANDROID_SDK_FILE_NAME -d $ANDROID_HOME && \
-  rm -f $ANDROID_SDK_FILE_NAME
+COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 
-COPY packages.txt $ANDROID_HOME/packages.txt
+RUN unzip_from_url.sh $ANDROID_SDK_URL $ANDROID_HOME
+
+COPY non-hermetic/packages.txt $ANDROID_HOME/packages.txt
 
 # Update sdk and install components
 RUN mkdir $HOME/.android && \

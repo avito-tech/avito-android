@@ -22,6 +22,7 @@ else
 
     Example:
     ./build.sh image-builder android/image-builder
+    ./build.sh android-builder hermetic/Dockerfile android/builder-hermetic
     "
     exit 1
 fi
