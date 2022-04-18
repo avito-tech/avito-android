@@ -35,6 +35,7 @@ internal class PublishEmulator(
 
         val builder = EmulatorImageBuilder(
             docker = docker,
+            dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
             api = api,
             registry = registry,

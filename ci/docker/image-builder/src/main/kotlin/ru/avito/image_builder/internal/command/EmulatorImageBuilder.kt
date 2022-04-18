@@ -9,6 +9,14 @@ import java.util.logging.Logger
 
 internal class EmulatorImageBuilder(
     private val docker: CliDocker,
+    /**
+     * Relative path to the Dockerfile inside context (buildDir)
+     */
+    private val dockerfilePath: String,
+    /**
+     * build path
+     * https://docs.docker.com/engine/reference/commandline/build/#build-with-path
+     */
     private val buildDir: File,
     private val api: Int,
     private val registry: String,
@@ -48,11 +56,12 @@ internal class EmulatorImageBuilder(
         val emulatorArch = if (api < 28) "x86" else "x86_64"
 
         val buildResult = docker.build(
-            buildDir.canonicalPath,
             "--build-arg", "DOCKER_REGISTRY=$registry",
             "--build-arg", "SDK_VERSION=$api",
             "--build-arg", "EMULATOR_ARCH=$emulatorArch",
             "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
+            "--file", File(buildDir, dockerfilePath).canonicalPath,
+            buildDir.canonicalPath,
         )
         check(buildResult.isSuccess) {
             "Failed to build the image: ${buildResult.exceptionOrNull()}"
