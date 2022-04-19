@@ -20,12 +20,7 @@ internal class ExperimentsConfigurator(
             saveTestArtifactsToOutputs = getSaveTestArtifactsToOutputs(extension),
             uploadArtifactsFromRunner = getUploadArtifactsFromRunner(extension),
             useLegacyExtensionsV1Beta = getUseLegacyExtensionsV1Beta(extension),
-            sendPodsMetrics = getSendPodsMetrics(extension)
         )
-    }
-
-    private fun getSendPodsMetrics(extension: InstrumentationTestsPluginExtension): Boolean {
-        return extension.experimental.sendPodsMetrics.getOrElse(true)
     }
 
     private fun getSaveTestArtifactsToOutputs(extension: InstrumentationTestsPluginExtension): Boolean {

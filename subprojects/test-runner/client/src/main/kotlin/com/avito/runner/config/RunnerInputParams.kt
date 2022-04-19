@@ -30,7 +30,6 @@ public data class RunnerInputParams(
     val uploadTestArtifacts: Boolean,
     val saveTestArtifactsToOutputs: Boolean,
     val useLegacyExtensionsV1Beta: Boolean,
-    val sendPodsMetrics: Boolean,
 ) : Serializable {
 
     public companion object

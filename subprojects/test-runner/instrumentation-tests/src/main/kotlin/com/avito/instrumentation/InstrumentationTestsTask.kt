@@ -203,7 +203,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportViewerConfig = reportViewerConfig,
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
             useLegacyExtensionsV1Beta = experiments.useLegacyExtensionsV1Beta,
-            sendPodsMetrics = experiments.sendPodsMetrics,
         )
 
         val isGradleTestKitRun = gradleTestKitRun.get()

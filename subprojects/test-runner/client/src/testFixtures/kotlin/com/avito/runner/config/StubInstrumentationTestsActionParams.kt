@@ -37,7 +37,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     uploadTestArtifacts: Boolean = false,
     saveTestArtifactsToOutputs: Boolean = false,
     useLegacyExtensionsV1Beta: Boolean = true,
-    sendPodsMetrics: Boolean = true,
 ): RunnerInputParams = RunnerInputParams(
     mainApk = mainApk,
     testApk = testApk,
@@ -59,6 +58,5 @@ public fun RunnerInputParams.Companion.createStubInstance(
     reportViewerConfig = null,
     saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
     useLegacyExtensionsV1Beta = useLegacyExtensionsV1Beta,
-    sendPodsMetrics = sendPodsMetrics,
     deviceDebug = deviceDebug
 )

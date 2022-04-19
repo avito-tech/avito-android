@@ -116,7 +116,6 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
                             timeProvider = timeProvider,
                             runnerMetricsConfig = metricsConfig,
                             loggerFactory = loggerFactory,
-                            sendPodsMetrics = params.sendPodsMetrics,
                         )
                     ),
                     androidDebugBridgeProvider = androidDebugBridgeProvider,
