@@ -5,7 +5,6 @@ import com.avito.android.test.annotations.E2ETest
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.ScreenshotTest
-import com.avito.android.test.annotations.SyntheticMonitoringTest
 import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.test.annotations.UnitTest
@@ -23,7 +22,6 @@ internal object TestKindExtractor {
             E2EStub::class.java,
             UnitTest::class.java,
             ScreenshotTest::class.java,
-            SyntheticMonitoringTest::class.java
         )
         val testAnnotations = Annotations.getAnnotationsSubset(test.testClass, test.testMethod, subset = testTypes)
 
@@ -35,7 +33,7 @@ internal object TestKindExtractor {
 
         return when (val testType = testAnnotations.first()) {
             is UIComponentTest, is ScreenshotTest -> Kind.UI_COMPONENT
-            is E2ETest, is SyntheticMonitoringTest -> Kind.E2E
+            is E2ETest -> Kind.E2E
             is IntegrationTest -> Kind.INTEGRATION
             is ManualTest -> Kind.MANUAL
             is UIComponentStub -> Kind.UI_COMPONENT_STUB

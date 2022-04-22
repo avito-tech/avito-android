@@ -14,7 +14,6 @@ import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.Priority
 import com.avito.android.test.annotations.ScreenshotTest
-import com.avito.android.test.annotations.SyntheticMonitoringTest
 import com.avito.android.test.annotations.TagId
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
@@ -60,7 +59,6 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             E2EStub::class.java,
             UnitTest::class.java,
             ScreenshotTest::class.java,
-            SyntheticMonitoringTest::class.java
         )
 
         val testAnnotations = Annotations.getAnnotationsSubset(test.testClass, test.testMethod, *annotationTypes)
