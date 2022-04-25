@@ -1,0 +1,61 @@
+{
+    "caseId": "bucketDequeued",
+    "bucket": {
+        "analyticsConfiguration": {},
+        "bucketId": "1F10555C-0D48-436F-B0A6-4D0ABF813493",
+        "payload": {
+            "buildMetadata": {
+                "artifacts": {
+                    "app": {
+                        "apkPath": "/path/to/apk.apk",
+                        "package": "com.avito.android"
+                    },
+                    "testApp": {
+                        "apkPath": "/path/to/testApk.apk",
+                        "package": "com.avito.android.test"
+                    }
+                },
+                "runnerClass": "com.avito.runner.InstrumentationRunner"
+            },
+            "developerDir": {
+                "kind": "current"
+            },
+            "pluginLocations": [],
+            "simulatorOperationTimeouts": {
+                "comment": "сокращено"
+            },
+            "simulatorSettings": {
+                "comment": "сокращено; iOS специфика"
+            },
+            "testDestination": {
+                "deviceType": "device",
+                "sdkVersion": "29"
+            },
+            "testEntries": [
+                {
+                    "tags": [],
+                    "testName": {
+                        "className": "SomeClassNameWithTests",
+                        "methodName": "testMethod"
+                    }
+                },
+                {
+                    "tags": [],
+                    "testName": {
+                        "className": "AnotherClass",
+                        "methodName": "test"
+                    }
+                }
+            ],
+            "testExecutionBehavior": {
+                "environment": {},
+                "numberOfRetries": 5
+            },
+            "testTimeoutConfiguration": {
+                "singleTestMaximumDuration": 180,
+                "testRunnerMaximumSilenceDuration": 60
+            }
+        },
+        "workerCapabilityRequirements": []
+    }
+}

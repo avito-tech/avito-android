@@ -17,13 +17,13 @@ internal class TestJobConsumerImpl(
     ): Flow<TestJobConsumer.Result> {
         return jobs.map { job ->
             with(job.bucket) {
-                val executor = deviceProvider.provide(device)
+                val executor = deviceProvider.provide(payload.device)
                 executor.beforeTestBucket()
                 val applicationPackage = "stub"
                 val testPackage = "stub"
                 val instrumentationRunnerClass = "stub"
-                val (apk, testApk) = downloadArtifacts(buildArtifacts)
-                val results = testEntries.map { testEntry ->
+                val (apk, testApk) = downloadArtifacts(payload.buildMetadata.artifacts)
+                val results = payload.testEntries.map { testEntry ->
                     executor.execute(
                         TestExecutor.Job(
                             apk = apk,
@@ -32,8 +32,10 @@ internal class TestJobConsumerImpl(
                             applicationPackage = applicationPackage,
                             testPackage = testPackage,
                             instrumentationRunnerClass = instrumentationRunnerClass,
-                            testExecutionBehavior = testExecutionBehavior,
-                            testMaximumDuration = Duration.seconds(testMaximumDurationSec)
+                            testExecutionBehavior = payload.testExecutionBehavior,
+                            testMaximumDuration = Duration.seconds(
+                                payload.testTimeoutConfiguration.testMaximumDurationSec
+                            )
                         )
                     )
                 }

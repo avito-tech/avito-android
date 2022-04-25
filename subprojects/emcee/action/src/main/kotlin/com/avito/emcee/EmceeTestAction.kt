@@ -2,6 +2,7 @@ package com.avito.emcee
 
 import com.avito.emcee.internal.FileUploader
 import com.avito.emcee.internal.TestsParser
+import com.avito.emcee.queue.BuildArtifact
 import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.JobStatusBody
 import com.avito.emcee.queue.QueueApi
@@ -47,13 +48,15 @@ public class EmceeTestAction internal constructor(
             val apkUrl = async { uploader.upload(config.apk) }
             val testApkUrl = async { uploader.upload(config.testApk) }
             val testsInApk = async { testsParser.parse(config.testApk) }
+            val apkPackage = "" // TODO: parse app package name
+            val testAppPackage = "" // TODO: parse test app package name
             testsInApk.await().getOrThrow()
                 .flatMap { testEntry ->
                     config.devices.map { device ->
                         TestRequest(
                             buildArtifacts = BuildArtifacts(
-                                appApkPath = apkUrl.await().toString(),
-                                testApkPath = testApkUrl.await().toString()
+                                app = BuildArtifact(apkUrl.await().toString(), apkPackage),
+                                testApp = BuildArtifact(testApkUrl.await().toString(), testAppPackage)
                             ),
                             device = device,
                             testEntry = testEntry,

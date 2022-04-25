@@ -1,12 +1,12 @@
 package com.avito.emcee.worker.internal
 
-import com.avito.emcee.worker.GetBucketResponse
+import com.avito.emcee.queue.Bucket
 import kotlinx.coroutines.flow.Flow
 
 internal interface TestJobProducer {
 
     data class Job(
-        val bucket: GetBucketResponse.Dequeued
+        val bucket: Bucket
     )
 
     fun getJobs(): Flow<Job>
