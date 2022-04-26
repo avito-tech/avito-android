@@ -27,10 +27,4 @@ public abstract class ExperimentalExtension {
     public abstract val uploadArtifactsFromRunner: Property<Boolean>
 
     public abstract val useLegacyExtensionsV1Beta: Property<Boolean>
-
-    /**
-     * TODO delete after infra 2022.5 release
-     */
-    @Deprecated("don't use. Flag do nothing")
-    public abstract val sendPodsMetrics: Property<Boolean>
 }
