@@ -1,6 +1,7 @@
 package com.avito.emcee.worker.internal
 
 import com.avito.emcee.queue.BuildArtifacts
+import com.avito.emcee.queue.DeviceConfiguration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
@@ -16,14 +17,19 @@ internal class TestJobConsumerImpl(
         jobs: Flow<TestJobProducer.Job>
     ): Flow<TestJobConsumer.Result> {
         return jobs.map { job ->
-            with(job.bucket) {
-                val executor = deviceProvider.provide(payload.device)
+            with(job.bucket.payloadContainer.payload) {
+                val executor = deviceProvider.provide(
+                    DeviceConfiguration(
+                        testConfiguration.deviceType,
+                        testConfiguration.sdkVersion
+                    )
+                )
                 executor.beforeTestBucket()
                 val applicationPackage = "stub"
                 val testPackage = "stub"
                 val instrumentationRunnerClass = "stub"
-                val (apk, testApk) = downloadArtifacts(payload.buildMetadata.artifacts)
-                val results = payload.testEntries.map { testEntry ->
+                val (apk, testApk) = downloadArtifacts(testConfiguration.buildArtifacts)
+                val results = testEntries.map { testEntry ->
                     executor.execute(
                         TestExecutor.Job(
                             apk = apk,
@@ -32,9 +38,9 @@ internal class TestJobConsumerImpl(
                             applicationPackage = applicationPackage,
                             testPackage = testPackage,
                             instrumentationRunnerClass = instrumentationRunnerClass,
-                            testExecutionBehavior = payload.testExecutionBehavior,
+                            testExecutionBehavior = testConfiguration.testExecutionBehavior,
                             testMaximumDuration = Duration.seconds(
-                                payload.testTimeoutConfiguration.testMaximumDurationSec
+                                testConfiguration.testMaximumDuration
                             )
                         )
                     )

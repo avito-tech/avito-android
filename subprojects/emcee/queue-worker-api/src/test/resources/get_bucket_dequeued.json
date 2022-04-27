@@ -3,58 +3,56 @@
     "bucket": {
         "analyticsConfiguration": {},
         "bucketId": "1F10555C-0D48-436F-B0A6-4D0ABF813493",
-        "payload": {
-            "buildMetadata": {
-                "artifacts": {
-                    "app": {
-                        "apkPath": "/path/to/apk.apk",
-                        "package": "com.avito.android"
+        "payloadContainer": {
+            "payload": {
+                "testConfiguration": {
+                    "buildArtifacts": {
+                        "appApk": {
+                            "location": {
+                                "url": "https://example.com/artifactory/repo/path/app.apk"
+                            },
+                            "package": "com.avito.android"
+                        },
+                        "runnerClass": "com.avito.android.InstrumentationRunner",
+                        "testApk": {
+                            "location": {
+                                "url": "https://example.com/artifactory/repo/path/test.apk"
+                            },
+                            "package": "com.avito.android.test"
+                        }
                     },
-                    "testApp": {
-                        "apkPath": "/path/to/testApk.apk",
-                        "package": "com.avito.android.test"
-                    }
+                    "deviceType": "Nexus 5",
+                    "sdkVersion": 30,
+                    "testExecutionBehavior": {
+                        "environment": {
+                            "SOME": "env values"
+                        },
+                        "logCapturingMode": "noLogs",
+                        "numberOfRetries": 5,
+                        "runnerWasteCleanupPolicy": "clean",
+                        "testRetryMode": "retryThroughQueue",
+                        "userInsertedLibraries": []
+                    },
+                    "testMaximumDuration": 30
                 },
-                "runnerClass": "com.avito.runner.InstrumentationRunner"
-            },
-            "developerDir": {
-                "kind": "current"
-            },
-            "pluginLocations": [],
-            "simulatorOperationTimeouts": {
-                "comment": "сокращено"
-            },
-            "simulatorSettings": {
-                "comment": "сокращено; iOS специфика"
-            },
-            "testDestination": {
-                "deviceType": "device",
-                "sdkVersion": "29"
-            },
-            "testEntries": [
-                {
-                    "tags": [],
-                    "testName": {
-                        "className": "SomeClassNameWithTests",
-                        "methodName": "testMethod"
+                "testEntries": [
+                    {
+                        "tags": [],
+                        "testName": {
+                            "className": "SomeClassNameWithTests",
+                            "methodName": "testMethod"
+                        }
+                    },
+                    {
+                        "tags": [],
+                        "testName": {
+                            "className": "AnotherClass",
+                            "methodName": "test"
+                        }
                     }
-                },
-                {
-                    "tags": [],
-                    "testName": {
-                        "className": "AnotherClass",
-                        "methodName": "test"
-                    }
-                }
-            ],
-            "testExecutionBehavior": {
-                "environment": {},
-                "numberOfRetries": 5
+                ]
             },
-            "testTimeoutConfiguration": {
-                "singleTestMaximumDuration": 180,
-                "testRunnerMaximumSilenceDuration": 60
-            }
+            "payloadType": "runAndroidTests"
         },
         "workerCapabilityRequirements": []
     }
