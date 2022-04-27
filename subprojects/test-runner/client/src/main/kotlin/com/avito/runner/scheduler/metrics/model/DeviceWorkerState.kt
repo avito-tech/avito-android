@@ -40,8 +40,9 @@ internal sealed class DeviceWorkerState {
     ) : DeviceWorkerState() {
 
         override fun testIntentionReceived(testKey: TestKey, time: Instant) {
-            check(testExecutionStates.singleOrNull { it.test == testKey } == null) {
-                "Intention $testKey already has been received"
+            val testState = testExecutionStates.singleOrNull { it.test == testKey }
+            check(testState == null) {
+                "Fail move $testKey to state IntentionReceived. Current state is $testState but should be null"
             }
             testExecutionStates.add(TestExecutionState.IntentionReceived(time, testKey))
         }
