@@ -73,6 +73,10 @@ public abstract class EmceeTestTask : DefaultTask() {
         val job = job.get()
         val testTimeoutInSec = testTimeout.get().seconds
 
+        val devices = deviceApis.get().map { api -> DeviceConfiguration("", api) }
+        require(devices.isNotEmpty()) {
+            "Failed to execute ${this.name}. Devices are empty"
+        }
         val config = EmceeTestActionConfig(
             job = Job(
                 id = job.id.get(),
@@ -87,7 +91,7 @@ public abstract class EmceeTestTask : DefaultTask() {
                 retries = retries.get()
             ),
             testMaximumDurationSec = testTimeoutInSec,
-            devices = deviceApis.get().map { api -> DeviceConfiguration("", api) },
+            devices = devices,
             apk = apk.get().getApkOrThrow(), // todo should be optional for libraries
             testApk = testApk.get().getApkOrThrow()
         )
