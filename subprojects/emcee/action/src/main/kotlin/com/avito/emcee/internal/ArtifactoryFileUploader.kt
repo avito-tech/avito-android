@@ -30,7 +30,10 @@ internal class ArtifactoryFileUploader(
             .addEncodedPathSegment(file.name)
             .build()
 
-        uploadApk(url, file)
+        val response = uploadApk(url, file)
+        require(response.isSuccessful) {
+            "Failed to upload $file. $response"
+        }
 
         return url
     }
