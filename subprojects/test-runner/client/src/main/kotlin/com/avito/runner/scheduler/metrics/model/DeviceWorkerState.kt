@@ -42,7 +42,7 @@ internal sealed class DeviceWorkerState {
         override fun testIntentionReceived(testKey: TestKey, time: Instant) {
             val testState = testExecutionStates.singleOrNull { it.test == testKey }
             check(testState == null) {
-                "Fail move $testKey to state IntentionReceived. Current state is $testState but should be null"
+                "Fail to move $testKey to state IntentionReceived. Current state is $testState but should be null"
             }
             testExecutionStates.add(TestExecutionState.IntentionReceived(time, testKey))
         }
