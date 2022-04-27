@@ -37,14 +37,15 @@ internal class DeviceWorkerCreatedStateTest {
 
     @Test
     fun `testIntentionReceived twice - IllegalStateException`() {
+        val testKey = TestKey.createStubInstance()
         val error = assertThrows<IllegalStateException> {
-            state.testIntentionReceived(TestKey.createStubInstance(), Instant.now())
-            state.testIntentionReceived(TestKey.createStubInstance(), Instant.now())
+            state.testIntentionReceived(testKey, Instant.now())
+            state.testIntentionReceived(testKey, Instant.now())
         }
 
         @Suppress("MaxLineLength")
         assertThat(error.message)
-            .isEqualTo("Intention TestKey(test=com.avito.Test.test.api22, executionNumber=0) already has been received")
+            .startsWith("Fail to move $testKey to state IntentionReceived")
     }
 
     @Test
