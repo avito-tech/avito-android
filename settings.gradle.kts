@@ -16,6 +16,7 @@ pluginManagement {
     apply(from = "build-logic-settings/scan-plugin/buildScan-disableAutoApplyFix.settings.gradle.kts")
     apply(from = "build-logic-settings/dependency-plugin/pluginManagement-shared.settings.gradle.kts")
 
+    @Suppress("UnstableApiUsage")
     includeBuild("build-logic-settings")
 }
 
@@ -153,7 +154,6 @@ include(":subprojects:logger:slf4j-gradle-logger")
 include(":subprojects:delivery:artifactory-app-backup")
 include(":subprojects:delivery:nupokati")
 include(":subprojects:delivery:cd")
-include(":subprojects:delivery:feature-toggles")
 include(":subprojects:delivery:qapps")
 include(":subprojects:delivery:sign-service")
 include(":subprojects:delivery:legacy-signer")
