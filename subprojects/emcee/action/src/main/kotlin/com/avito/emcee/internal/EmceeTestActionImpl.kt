@@ -45,7 +45,6 @@ internal class EmceeTestActionImpl(
                 } catch (e: Throwable) {
                     // TODO clean up succeed scheduled tests
                     throw e
-
                 }
                 waiter.wait(config.job, Duration.minutes(60))
             }
@@ -65,7 +64,6 @@ internal class EmceeTestActionImpl(
                 testEntries = tests
             )
         )
-
     }
 
     private suspend fun createFactory(

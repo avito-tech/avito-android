@@ -6,8 +6,8 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 public data class BuildArtifacts(
     @Json(name = "appApk")
-    val app: ApkDescription,
+    val app: RemoteApk,
     @Json(name = "testApk")
-    val testApp: ApkDescription,
+    val testApp: RemoteApk,
     val runnerClass: String,
 )

@@ -1,9 +1,9 @@
 package com.avito.emcee.internal
 
-import com.avito.emcee.queue.ApkDescription
 import com.avito.emcee.queue.ApkLocation
 import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.DeviceConfiguration
+import com.avito.emcee.queue.RemoteApk
 import com.avito.emcee.queue.TestConfiguration
 import com.avito.emcee.queue.TestExecutionBehavior
 import okhttp3.HttpUrl
@@ -20,8 +20,8 @@ internal class TestConfigurationFactory(
     fun create(device: DeviceConfiguration) =
         TestConfiguration(
             buildArtifacts = BuildArtifacts(
-                app = ApkDescription(ApkLocation(apkUrl.toString()), apkPackage),
-                testApp = ApkDescription(ApkLocation(testApkUrl.toString()), testAppPackage),
+                app = RemoteApk(ApkLocation(apkUrl.toString()), apkPackage),
+                testApp = RemoteApk(ApkLocation(testApkUrl.toString()), testAppPackage),
                 runnerClass = testRunnerClass
             ),
             deviceType = device.type,

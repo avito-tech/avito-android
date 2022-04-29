@@ -26,7 +26,6 @@ public class EmceeTestActionFactory internal constructor(
 
     private val fileUploader = fileUploaderProvider.provide(httpClientProvider.provide())
 
-
     public fun create(): EmceeTestAction {
         return EmceeTestActionImpl(queueApi, fileUploader, testsParser, JobWaiter(queueApi))
     }

@@ -1,11 +1,11 @@
 package com.avito.emcee.worker.model
 
-import com.avito.emcee.queue.ApkDescription
 import com.avito.emcee.queue.ApkLocation
 import com.avito.emcee.queue.Bucket
 import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.Payload
 import com.avito.emcee.queue.PayloadContainer
+import com.avito.emcee.queue.RemoteApk
 import com.avito.emcee.queue.TestConfiguration
 import com.avito.emcee.queue.TestEntry
 import com.avito.emcee.queue.TestExecutionBehavior
@@ -37,13 +37,13 @@ internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued 
                 ),
                 testConfiguration = TestConfiguration(
                     buildArtifacts = BuildArtifacts(
-                        app = ApkDescription(
+                        app = RemoteApk(
                             location = ApkLocation(url = "https://example.com/artifactory/repo/path/app.apk"),
-                            apkPackage = "com.avito.android"
+                            packageName = "com.avito.android"
                         ),
-                        testApp = ApkDescription(
+                        testApp = RemoteApk(
                             location = ApkLocation("https://example.com/artifactory/repo/path/test.apk"),
-                            apkPackage = "com.avito.android.test"
+                            packageName = "com.avito.android.test"
                         ),
                         runnerClass = "com.avito.android.InstrumentationRunner"
                     ),
