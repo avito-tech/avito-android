@@ -18,6 +18,9 @@ internal class EmceePluginTest {
     @Test
     fun `configuration - passes - without emcee extension configured`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+              id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -38,6 +41,9 @@ internal class EmceePluginTest {
         val outputDirName = "emcee"
 
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = appModuleName,
