@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.testAnnotations)
     implementation(libs.coroutinesCore)
     implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
 
     kapt(libs.moshiKapt)
 }

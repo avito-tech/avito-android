@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     implementation(projects.subprojects.emcee.action)
+    implementation(projects.subprojects.logger.gradleLogger)
     implementation(libs.androidGradle)
     implementation(libs.okio) {
         "used for testing. Replace as soon as possible"

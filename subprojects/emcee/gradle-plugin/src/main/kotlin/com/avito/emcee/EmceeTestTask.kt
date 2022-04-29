@@ -1,5 +1,6 @@
 package com.avito.emcee
 
+import com.avito.emcee.di.EmceeTestActionFactory
 import com.avito.emcee.internal.ArtifactorySettings
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.emcee.internal.getApkOrThrow
@@ -7,10 +8,13 @@ import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Job
 import com.avito.emcee.queue.ScheduleStrategy
 import com.avito.emcee.queue.TestExecutionBehavior
+import com.avito.logger.GradleLoggerPlugin
+import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
@@ -52,6 +56,8 @@ public abstract class EmceeTestTask : DefaultTask() {
     @get:OutputDirectory
     public abstract val outputDir: DirectoryProperty
 
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+
     @ExperimentalTime
     @TaskAction
     public fun action() {
@@ -65,10 +71,12 @@ public abstract class EmceeTestTask : DefaultTask() {
             repository = artifactory.repository.get(),
         )
 
-        val emceeTestAction = EmceeTestActionFactory(
-            emceeQueueBaseUrl = baseUrl.get(),
-            artifactorySettings = artifactorySettings
-        ).create()
+        val emceeTestAction = EmceeTestActionFactory
+            .create(
+                emceeQueueBaseUrl = baseUrl.get(),
+                artifactorySettings = artifactorySettings,
+                loggerFactory = loggerFactory.get()
+            ).create()
 
         val job = job.get()
         val testTimeoutInSec = testTimeout.get().seconds
