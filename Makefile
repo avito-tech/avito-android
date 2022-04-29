@@ -166,6 +166,10 @@ assemble:
 check:
 	$(docker_command) ./gradlew $(params) checkAll --no-configuration-cache
 
+# Configuration cache fails in instrumentation tasks: MBS-11856
+local_check:
+	$(docker_command) ./gradlew $(params) checkAll -x :subprojects:android-test:ui-testing-core-app:instrumentationUiKubernetes --no-configuration-cache
+
 .PHONY: build
 build:
 	$(docker_command) ./gradlew $(params) build
