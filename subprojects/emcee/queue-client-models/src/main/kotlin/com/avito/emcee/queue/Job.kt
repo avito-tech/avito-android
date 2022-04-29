@@ -22,4 +22,8 @@ public data class Job(
      */
     @Json(name = "jobGroupPriority")
     val groupPriority: Int,
+    /**
+     * Should be optional. Unused
+     */
+    val analyticsConfiguration: Any = Any()
 )

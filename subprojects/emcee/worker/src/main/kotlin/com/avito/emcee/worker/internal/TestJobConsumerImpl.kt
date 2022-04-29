@@ -40,7 +40,7 @@ internal class TestJobConsumerImpl(
                             instrumentationRunnerClass = instrumentationRunnerClass,
                             testExecutionBehavior = testConfiguration.testExecutionBehavior,
                             testMaximumDuration = Duration.seconds(
-                                testConfiguration.testMaximumDuration
+                                testConfiguration.testMaximumDurationSec
                             )
                         )
                     )

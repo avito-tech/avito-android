@@ -5,6 +5,8 @@ import com.avito.emcee.EmceeTestAction
 import com.avito.emcee.di.internal.FileUploaderProvider
 import com.avito.emcee.di.internal.HttpClientProvider
 import com.avito.emcee.internal.ArtifactorySettings
+import com.avito.emcee.internal.EmceeTestActionImpl
+import com.avito.emcee.internal.JobWaiter
 import com.avito.emcee.internal.TestsParser
 import com.avito.emcee.internal.UUIDBucketNameGenerator
 import com.avito.emcee.queue.QueueApi
@@ -26,7 +28,7 @@ public class EmceeTestActionFactory internal constructor(
 
 
     public fun create(): EmceeTestAction {
-        return EmceeTestAction(queueApi, fileUploader, testsParser)
+        return EmceeTestActionImpl(queueApi, fileUploader, testsParser, JobWaiter(queueApi))
     }
 
     public companion object {

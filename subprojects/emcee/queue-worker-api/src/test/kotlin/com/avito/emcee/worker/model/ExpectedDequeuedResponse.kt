@@ -53,7 +53,7 @@ internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued 
                         environment = mapOf("SOME" to "env values"),
                         retries = 5
                     ),
-                    testMaximumDuration = 30.0
+                    testMaximumDurationSec = 30
                 )
             )
         )
