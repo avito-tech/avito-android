@@ -83,7 +83,7 @@ public abstract class EmceeTestTask : DefaultTask() {
 
         val devices = deviceApis.get().map { api -> DeviceConfiguration("", api) }
         require(devices.isNotEmpty()) {
-            "Failed to execute ${this.name}. Devices are empty"
+            "Failed to execute ${this.name}. There are no configured devices in extension"
         }
         val config = EmceeTestActionConfig(
             job = Job(

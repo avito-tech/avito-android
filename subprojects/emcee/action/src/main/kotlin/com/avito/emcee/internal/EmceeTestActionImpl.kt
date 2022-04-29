@@ -43,7 +43,7 @@ internal class EmceeTestActionImpl(
                         it.await()
                     }
                 } catch (e: Throwable) {
-                    // TODO clean up succeed scheduled tests
+                    // TODO clean up successfully scheduled tests
                     throw e
                 }
                 waiter.wait(config.job, Duration.minutes(60))
