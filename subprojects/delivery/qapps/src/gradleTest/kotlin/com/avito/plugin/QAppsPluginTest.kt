@@ -34,7 +34,7 @@ internal class QAppsPluginTest {
             comment = null
         )
 
-        val result = gradlew(projectDir, ":app:qappsUploadDebug", expectFailure = true)
+        val result = gradlew(projectDir, ":app:qappsUploadUnsignedDebug", expectFailure = true)
 
         result.assertThat().apply {
             buildFailed()
@@ -62,25 +62,31 @@ internal class QAppsPluginTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
+                    imports = listOf(
+                        "import com.avito.plugin.qappsUploadUnsignedTaskProvider"
+                    ),
                     plugins = plugins {
                         id("com.avito.android.qapps")
                     },
                     buildGradleExtra = """
                         qapps {
-                            serviceUrl.set(${serviceUrl?.let { "\"$it\"" } ?: "null"})
-                            comment.set(${comment?.let { "\"$it\"" } ?: "null"})
-                            branchName.set(${branchName?.let { "\"$it\"" } ?: "null"})
+                            ${serviceUrl.asOptionalPropertySetter("serviceUrl")}
+                            ${comment.asOptionalPropertySetter("comment")}
+                            ${branchName.asOptionalPropertySetter("branchName")}
                         }
                         
-                        // simulate CI-steps plugin
                         afterEvaluate {
-                            qappsUploadDebug {
-                                apkDirectory = file("${stubApk.parentFile}")
+                            tasks.qappsUploadUnsignedTaskProvider("debug").configure {
+                                apkDirectory.set(file("${stubApk.parentFile}"))
                             }
                         }
-                    """.trimIndent()
+                    """.trimIndent(),
+                    useKts = true
                 )
             )
         ).generateIn(projectDir)
     }
+
+    private fun String?.asOptionalPropertySetter(name: String): String =
+        if (this == null) "" else "$name.set(\"$this\")"
 }

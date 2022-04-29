@@ -17,15 +17,6 @@ public class QAppsPlugin : Plugin<Project> {
         project.withAndroidApp { appExtension ->
             appExtension.applicationVariants.all { variant ->
 
-                /**
-                 * apk is set in UploadToQapps.kt build step
-                 * todo remove after migration to new tasks
-                 */
-                project.tasks.register<QAppsUploadTask>(legacyQappsUploadTaskName(variant.name)) {
-                    description = "Upload ${variant.name} to qapps, legacy variant, should not be used"
-                    configure(extension, variant)
-                }
-
                 project.tasks.register<QAppsUploadTask>(qappsUploadUnsignedTaskName(variant.name)) {
                     description = "Upload unsigned ${variant.name} to qapps"
                     configure(extension, variant)
@@ -63,6 +54,7 @@ public class QAppsPlugin : Plugin<Project> {
     ) {
         group = "ci"
 
+        variantName.set(variant.name)
         versionName.set(variant.versionName)
         versionCode.set(variant.versionCode.toString())
         packageName.set(variant.applicationId)

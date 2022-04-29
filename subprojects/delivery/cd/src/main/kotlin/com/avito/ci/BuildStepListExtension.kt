@@ -15,7 +15,6 @@ import com.avito.ci.steps.UnitTestCheck
 import com.avito.ci.steps.UploadBuildResult
 import com.avito.ci.steps.UploadToArtifactory
 import com.avito.ci.steps.UploadToProsector
-import com.avito.ci.steps.UploadToQapps
 import com.avito.ci.steps.VerifyArtifactsStep
 import com.avito.ci.steps.deploy.DeployStep
 import com.avito.ci.steps.deploy.ToGooglePlayDeploysTransformer
@@ -54,9 +53,6 @@ public open class BuildStepListExtension(
         }
         registerFactory(TestSummaryStep::class.java) { name ->
             TestSummaryStep(buildStepListName, name)
-        }
-        registerFactory(UploadToQapps::class.java) { name ->
-            UploadToQapps(buildStepListName, artifactsConfig, name)
         }
         registerFactory(UploadToArtifactory::class.java) { name ->
             UploadToArtifactory(buildStepListName, artifactsConfig, name)
@@ -137,14 +133,6 @@ public open class BuildStepListExtension(
 
     public fun testSummary(action: Action<TestSummaryStep>) {
         configureAndAdd("testSummary", action)
-    }
-
-    public fun uploadToQapps(closure: Closure<UploadToQapps>) {
-        configureAndAdd("uploadToQapps", closure)
-    }
-
-    public fun uploadToQapps(action: Action<UploadToQapps>) {
-        configureAndAdd("uploadToQapps", action)
     }
 
     public fun uploadToArtifactory(closure: Closure<UploadToArtifactory>) {

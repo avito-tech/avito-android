@@ -23,7 +23,6 @@ public data class CdBuildConfig(
 
         /**
          * Deploy artifacts to QApps.
-         * Uses UploadToQapps build step to find them.
          */
         public data class Qapps(
             /**

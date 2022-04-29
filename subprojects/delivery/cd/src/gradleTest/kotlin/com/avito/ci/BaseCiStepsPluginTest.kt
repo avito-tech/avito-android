@@ -99,9 +99,6 @@ internal abstract class BaseCiStepsPluginTest {
                                         file("nonExistedJson","${'$'}{project.buildDir}/reports/not-existed-file.json")
                                     }
 
-                                    uploadToQapps {
-                                        artifacts = ['releaseApk']
-                                    }
                                     uploadToProsector {
                                         artifacts = ['debugApk']
                                     }

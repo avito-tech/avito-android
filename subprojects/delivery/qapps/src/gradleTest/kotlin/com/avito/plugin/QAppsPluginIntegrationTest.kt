@@ -72,8 +72,7 @@ internal class QAppsPluginIntegrationTest {
             projectDir,
             "-Pavito.build=local",
             "-Pavito.git.state=local",
-            ":app:assembleDebug",
-            ":app:qappsUploadDebug",
+            ":app:qappsUploadUnsignedDebug",
             expectFailure = false
         )
     }
@@ -84,6 +83,9 @@ internal class QAppsPluginIntegrationTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
+                    imports = listOf(
+                        "import com.avito.plugin.qappsUploadUnsignedTaskProvider"
+                    ),
                     plugins = plugins {
                         id("com.avito.android.qapps")
                     },
@@ -97,11 +99,12 @@ internal class QAppsPluginIntegrationTest {
                             comment.set("my awesome apk")
                          }
                          afterEvaluate {
-                            qappsUploadDebug {
-                                apkDirectory = file("${'$'}buildDir/outputs/apk/debug")
+                            tasks.qappsUploadUnsignedTaskProvider("debug").configure {
+                                apkDirectory.set(file("${'$'}buildDir/outputs/apk/debug"))
                             }
                          }
-                    """.trimIndent()
+                    """.trimIndent(),
+                    useKts = true
                 )
             )
         ).generateIn(projectDir)

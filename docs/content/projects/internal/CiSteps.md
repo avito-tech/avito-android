@@ -155,36 +155,6 @@ Run unit tests.
     unitTests {}
     ```
 
-#### Upload to QApps
-
---8<--
-avito-disclaimer.md
---8<--
-
-Upload [artifacts](#collecting-artifacts) to QApps (internal system)
-
-=== "Kotlin"
-
-    ```kotlin
-    artifacts {
-        apk("debugApk", ...)
-    }
-    uploadToQapps {
-        artifacts = setOf("debugApk")
-    }
-    ```
-
-=== "Groovy"
-
-    ```groovy
-    artifacts {
-        apk("debugApk", ...)
-    }
-    uploadToQapps {
-        artifacts = ["debugApk"]
-    }
-    ```
-
 #### Upload to Artifactory
 
 Upload [artifacts](#collecting-artifacts) to Artifactory.
