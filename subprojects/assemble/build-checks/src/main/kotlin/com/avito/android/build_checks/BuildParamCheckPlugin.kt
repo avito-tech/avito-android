@@ -68,8 +68,9 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 envInfo = envInfo,
             )
 
+            @Suppress("DEPRECATION")
             if (checks.hasInstance<RootProjectCheck.JavaVersion>()) {
-                checkJavaVersion(checks.getInstance(), envInfo)
+                checkJavaVersion(project, checks.getInstance(), envInfo)
             }
             if (checks.hasInstance<RootProjectCheck.GradleProperties>()) {
                 GradlePropertiesChecker(project, envInfo).check()
@@ -106,11 +107,17 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    private fun checkJavaVersion(check: RootProjectCheck.JavaVersion, envInfo: BuildEnvironmentInfo) {
+    @Suppress("DEPRECATION")
+    private fun checkJavaVersion(
+        project: Project,
+        check: RootProjectCheck.JavaVersion,
+        envInfo: BuildEnvironmentInfo
+    ) {
         check(JavaVersion.current() == check.version) {
             "Only ${check.version} is supported for this project but was ${envInfo.javaInfo}. " +
                 "Please check java home property or install appropriate JDK."
         }
+        project.logger.warn(javaVersionCheckDeprecationMessage)
     }
 
     private fun registerRootTasks(

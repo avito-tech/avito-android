@@ -12,9 +12,6 @@ internal class ConfigurationTest {
             projectDir,
             buildChecksExtension = """
                 enableByDefault = true
-                javaVersion {
-                    version = JavaVersion.VERSION_1_1
-                }
                 androidSdk {
                     version(
                         compileSdkVersion = -1,

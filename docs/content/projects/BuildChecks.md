@@ -28,9 +28,6 @@ plugins-setup.md
                 revision = 5
             )
         }
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
-        }
     }
     ```
 
@@ -42,9 +39,6 @@ plugins-setup.md
     buildChecks {
         androidSdk {
             version(29, 5)
-        }
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
         }
         uniqueRClasses {
             enabled = false
@@ -153,6 +147,11 @@ These checks are available in a root project's buildscript.
 See also [Android application checks](#android-application-checks).
 
 #### Java version
+
+???+ warning
+    This check is deprecated and will be deleted.
+    It's too late to make it even in configuration phase.
+    You can check the Java version in your settings.gradle instead.
 
 The Java version can influence the output of the Java compiler. It leads to
 Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss)
