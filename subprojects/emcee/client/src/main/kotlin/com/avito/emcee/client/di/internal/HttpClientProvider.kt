@@ -1,4 +1,4 @@
-package com.avito.emcee.di.internal
+package com.avito.emcee.client.di.internal
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.android.stats.StatsDSender

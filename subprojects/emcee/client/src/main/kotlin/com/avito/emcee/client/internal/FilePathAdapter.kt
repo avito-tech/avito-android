@@ -1,4 +1,4 @@
-package com.avito.emcee.internal
+package com.avito.emcee.client.internal
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson

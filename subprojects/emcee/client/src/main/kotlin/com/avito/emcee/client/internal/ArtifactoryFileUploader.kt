@@ -1,4 +1,4 @@
-package com.avito.emcee.internal
+package com.avito.emcee.client.internal
 
 import com.avito.http.internal.RequestMetadata
 import okhttp3.HttpUrl

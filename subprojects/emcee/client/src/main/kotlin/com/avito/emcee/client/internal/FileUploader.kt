@@ -1,4 +1,4 @@
-package com.avito.emcee.internal
+package com.avito.emcee.client.internal
 
 import okhttp3.HttpUrl
 import java.io.File

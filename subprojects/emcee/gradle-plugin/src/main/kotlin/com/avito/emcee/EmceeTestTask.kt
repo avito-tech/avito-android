@@ -1,7 +1,8 @@
 package com.avito.emcee
 
-import com.avito.emcee.di.EmceeTestActionFactory
-import com.avito.emcee.internal.ArtifactorySettings
+import com.avito.emcee.client.EmceeTestClientConfig
+import com.avito.emcee.client.di.EmceeTestActionFactory
+import com.avito.emcee.client.internal.ArtifactorySettings
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.emcee.internal.getApkOrThrow
 import com.avito.emcee.queue.DeviceConfiguration
@@ -85,7 +86,7 @@ public abstract class EmceeTestTask : DefaultTask() {
         require(devices.isNotEmpty()) {
             "Failed to execute ${this.name}. There are no configured devices in extension"
         }
-        val config = EmceeTestActionConfig(
+        val config = EmceeTestClientConfig(
             job = Job(
                 id = job.id.get(),
                 groupId = job.groupId.get(),

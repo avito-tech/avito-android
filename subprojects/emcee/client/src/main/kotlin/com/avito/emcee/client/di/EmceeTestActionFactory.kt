@@ -1,14 +1,14 @@
-package com.avito.emcee.di
+package com.avito.emcee.client.di
 
 import com.avito.android.TestSuiteLoader
-import com.avito.emcee.EmceeTestAction
-import com.avito.emcee.di.internal.FileUploaderProvider
-import com.avito.emcee.di.internal.HttpClientProvider
-import com.avito.emcee.internal.ArtifactorySettings
-import com.avito.emcee.internal.EmceeTestActionImpl
-import com.avito.emcee.internal.JobWaiter
-import com.avito.emcee.internal.TestsParser
-import com.avito.emcee.internal.UUIDBucketNameGenerator
+import com.avito.emcee.client.EmceeTestClient
+import com.avito.emcee.client.di.internal.FileUploaderProvider
+import com.avito.emcee.client.di.internal.HttpClientProvider
+import com.avito.emcee.client.internal.ArtifactorySettings
+import com.avito.emcee.client.internal.EmceeTestClientImpl
+import com.avito.emcee.client.internal.JobWaiter
+import com.avito.emcee.client.internal.TestsParser
+import com.avito.emcee.client.internal.UUIDBucketNameGenerator
 import com.avito.emcee.queue.QueueApi
 import com.avito.emcee.queue.QueueApi.Companion.create
 import com.avito.logger.LoggerFactory
@@ -26,8 +26,8 @@ public class EmceeTestActionFactory internal constructor(
 
     private val fileUploader = fileUploaderProvider.provide(httpClientProvider.provide())
 
-    public fun create(): EmceeTestAction {
-        return EmceeTestActionImpl(queueApi, fileUploader, testsParser, JobWaiter(queueApi))
+    public fun create(): EmceeTestClient {
+        return EmceeTestClientImpl(queueApi, fileUploader, testsParser, JobWaiter(queueApi))
     }
 
     public companion object {

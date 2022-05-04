@@ -1,5 +1,6 @@
 package com.avito.emcee
 
+import com.avito.emcee.client.EmceeTestClientConfig
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
@@ -85,7 +86,7 @@ internal class EmceePluginTest {
         gradlew(projectDir, "emceeTestDebug").assertThat().buildSuccessful()
 
         val outputDir = Path(projectDir.path, appModuleName, "build", outputDirName).toFile()
-        val config: EmceeTestActionConfig = EmceeConfigTestHelper(outputDir).deserialize()
+        val config: EmceeTestClientConfig = EmceeConfigTestHelper(outputDir).deserialize()
 
         return listOf(
             Case("job id") { assertThat(job.id).isEqualTo("AvitoComponentTests#PR-2214") },
@@ -98,5 +99,5 @@ internal class EmceePluginTest {
         ).map { case -> DynamicTest.dynamicTest(case.paramName) { case.assertion(config) } }
     }
 
-    data class Case(val paramName: String, val assertion: EmceeTestActionConfig.() -> Unit)
+    data class Case(val paramName: String, val assertion: EmceeTestClientConfig.() -> Unit)
 }

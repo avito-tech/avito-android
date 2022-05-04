@@ -162,7 +162,7 @@ include(":subprojects:delivery:upload-to-googleplay")
 
 include(":subprojects:emcee:gradle-plugin")
 include(":subprojects:emcee:queue-client-api")
-include(":subprojects:emcee:action")
+include(":subprojects:emcee:client")
 include(":subprojects:emcee:queue-client-models")
 include(":subprojects:emcee:queue-api-models")
 include(":subprojects:emcee:queue-worker-api")

@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.emcee.action)
+    implementation(projects.subprojects.emcee.client)
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(libs.androidGradle)
     implementation(libs.okio) {

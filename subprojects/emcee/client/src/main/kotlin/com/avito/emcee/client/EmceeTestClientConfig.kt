@@ -1,7 +1,7 @@
-package com.avito.emcee
+package com.avito.emcee.client
 
-import com.avito.emcee.internal.ArtifactorySettings
-import com.avito.emcee.internal.FilePathAdapter
+import com.avito.emcee.client.internal.ArtifactorySettings
+import com.avito.emcee.client.internal.FilePathAdapter
 import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Job
 import com.avito.emcee.queue.ScheduleStrategy
@@ -13,7 +13,7 @@ import com.squareup.moshi.adapter
 import java.io.File
 
 @JsonClass(generateAdapter = true)
-public class EmceeTestActionConfig(
+public class EmceeTestClientConfig(
     public val job: Job,
     public val artifactory: ArtifactorySettings,
     public val scheduleStrategy: ScheduleStrategy,
@@ -27,7 +27,7 @@ public class EmceeTestActionConfig(
     public companion object {
 
         @OptIn(ExperimentalStdlibApi::class)
-        public fun createMoshiAdapter(): JsonAdapter<EmceeTestActionConfig> {
+        public fun createMoshiAdapter(): JsonAdapter<EmceeTestClientConfig> {
             val moshi = Moshi.Builder()
                 .add(FilePathAdapter())
                 .build()

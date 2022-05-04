@@ -1,4 +1,4 @@
-package com.avito.emcee.internal
+package com.avito.emcee.client.internal
 
 import com.avito.emcee.queue.ApkLocation
 import com.avito.emcee.queue.BuildArtifacts

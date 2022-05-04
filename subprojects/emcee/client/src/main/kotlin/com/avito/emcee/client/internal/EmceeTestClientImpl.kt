@@ -1,7 +1,7 @@
-package com.avito.emcee.internal
+package com.avito.emcee.client.internal
 
-import com.avito.emcee.EmceeTestAction
-import com.avito.emcee.EmceeTestActionConfig
+import com.avito.emcee.client.EmceeTestClient
+import com.avito.emcee.client.EmceeTestClientConfig
 import com.avito.emcee.queue.QueueApi
 import com.avito.emcee.queue.ScheduleTestsBody
 import com.avito.emcee.queue.ScheduledTests
@@ -14,15 +14,15 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-internal class EmceeTestActionImpl(
+internal class EmceeTestClientImpl(
     private val queueApi: QueueApi,
     private val uploader: FileUploader,
     private val testsParser: TestsParser,
     private val waiter: JobWaiter
-) : EmceeTestAction {
+) : EmceeTestClient {
 
     @ExperimentalTime
-    override fun execute(config: EmceeTestActionConfig) {
+    override fun execute(config: EmceeTestClientConfig) {
         runBlocking {
             withContext(Dispatchers.IO) {
                 val testConfigurationFactory = createFactory(config)
@@ -52,7 +52,7 @@ internal class EmceeTestActionImpl(
     }
 
     private fun createBody(
-        config: EmceeTestActionConfig,
+        config: EmceeTestClientConfig,
         configuration: TestConfiguration,
         tests: List<TestEntry>
     ): ScheduleTestsBody {
@@ -67,7 +67,7 @@ internal class EmceeTestActionImpl(
     }
 
     private suspend fun createFactory(
-        config: EmceeTestActionConfig
+        config: EmceeTestClientConfig
     ): TestConfigurationFactory =
         withContext(Dispatchers.IO) {
             val apkUrl = async { uploader.upload(config.apk) }

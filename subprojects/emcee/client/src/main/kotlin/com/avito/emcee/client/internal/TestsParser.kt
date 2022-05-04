@@ -1,4 +1,4 @@
-package com.avito.emcee.internal
+package com.avito.emcee.client.internal
 
 import com.avito.android.Result
 import com.avito.android.TestSuiteLoader
