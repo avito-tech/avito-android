@@ -13,14 +13,14 @@ internal class TestConfigurationFactory(
     private val testApkUrl: HttpUrl,
     private val testMaximumDurationSec: Long,
     private val testExecutionBehavior: TestExecutionBehavior,
-    private val apkPackage: String = "", // TODO: parse app package name
-    private val testAppPackage: String = "", // TODO: parse test app package name
-    private val testRunnerClass: String = "", // TODO: provide test runner class
+    private val appPackage: String,
+    private val testAppPackage: String,
+    private val testRunnerClass: String,
 ) {
     fun create(device: DeviceConfiguration) =
         TestConfiguration(
             buildArtifacts = BuildArtifacts(
-                app = RemoteApk(ApkLocation(apkUrl.toString()), apkPackage),
+                app = RemoteApk(ApkLocation(apkUrl.toString()), appPackage),
                 testApp = RemoteApk(ApkLocation(testApkUrl.toString()), testAppPackage),
                 runnerClass = testRunnerClass
             ),

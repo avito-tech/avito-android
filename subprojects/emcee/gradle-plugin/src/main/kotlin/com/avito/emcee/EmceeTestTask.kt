@@ -48,8 +48,17 @@ public abstract class EmceeTestTask : DefaultTask() {
     @get:InputDirectory
     public abstract val apk: DirectoryProperty
 
+    @get:Input
+    public abstract val appPackage: Property<String>
+
     @get:InputDirectory
     public abstract val testApk: DirectoryProperty
+
+    @get:Input
+    public abstract val testAppPackage: Property<String>
+
+    @get:Input
+    public abstract val testRunnerClass: Property<String>
 
     @get:Input
     public abstract val configTestMode: Property<Boolean>
@@ -102,7 +111,10 @@ public abstract class EmceeTestTask : DefaultTask() {
             testMaximumDurationSec = testTimeoutInSec,
             devices = devices,
             apk = apk.get().getApkOrThrow(), // todo should be optional for libraries
-            testApk = testApk.get().getApkOrThrow()
+            appPackage = appPackage.get(),
+            testApk = testApk.get().getApkOrThrow(),
+            testAppPackage = testAppPackage.get(),
+            testRunnerClass = testRunnerClass.get(),
         )
 
         // writing config dump every time for debug purposes

@@ -21,7 +21,10 @@ public class EmceeTestClientConfig(
     public val testMaximumDurationSec: Long,
     public val devices: List<DeviceConfiguration>,
     public val apk: File,
+    public val appPackage: String,
     public val testApk: File,
+    public val testAppPackage: String,
+    public val testRunnerClass: String,
 ) {
 
     public companion object {

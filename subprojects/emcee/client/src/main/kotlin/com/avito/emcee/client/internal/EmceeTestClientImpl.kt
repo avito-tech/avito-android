@@ -76,7 +76,10 @@ internal class EmceeTestClientImpl(
                 apkUrl = apkUrl.await(),
                 testApkUrl = testApkUrl.await(),
                 testMaximumDurationSec = config.testMaximumDurationSec,
-                testExecutionBehavior = config.testExecutionBehavior
+                testExecutionBehavior = config.testExecutionBehavior,
+                appPackage = config.appPackage,
+                testAppPackage = config.testAppPackage,
+                testRunnerClass = config.testRunnerClass,
             )
         }
 }

@@ -20,10 +20,12 @@ internal class ApplicationVariantConfigurator(variant: ApplicationVariant) :
         }
 
         task.apk.set(variant.artifacts.get(SingleArtifact.APK))
+        task.appPackage.set(variant.applicationId)
+
         task.testApk.set(androidTestVariant.artifacts.get(SingleArtifact.APK))
+        task.testAppPackage.set(androidTestVariant.applicationId)
+        task.testRunnerClass.set(androidTestVariant.instrumentationRunner.get())
 
         // todo need proguard mapping?
-        // todo need application package name?
-        // todo need instrumentationRunner name?
     }
 }
