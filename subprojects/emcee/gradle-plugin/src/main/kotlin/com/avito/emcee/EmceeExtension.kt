@@ -2,12 +2,13 @@ package com.avito.emcee
 
 import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 import java.time.Duration
 
-public abstract class EmceeExtension {
+public abstract class EmceeExtension(objects: ObjectFactory) {
 
     @get:Nested
     internal abstract val job: JobConfiguration
@@ -23,7 +24,7 @@ public abstract class EmceeExtension {
 
     public abstract val queueBaseUrl: Property<String>
 
-    public abstract val configTestMode: Property<Boolean>
+    public val configTestMode: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
 
     public abstract val outputDir: DirectoryProperty
 
