@@ -1,6 +1,7 @@
 package com.avito.emcee.worker
 
 import com.squareup.moshi.Moshi
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -19,12 +20,13 @@ public interface WorkerQueueApi {
 
     public companion object {
 
-        public fun Retrofit.Builder.create(baseUrl: String): WorkerQueueApi {
+        public fun Retrofit.Builder.createWorkerQueueApi(client: OkHttpClient, baseUrl: String): WorkerQueueApi {
             return addConverterFactory(
                 MoshiConverterFactory.create(
                     Moshi.Builder().build()
                 ).failOnUnknown()
             )
+                .client(client)
                 .baseUrl(baseUrl)
                 .build()
                 .create()

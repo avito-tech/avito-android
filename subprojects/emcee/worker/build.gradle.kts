@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.kotlinXCli)
     implementation(projects.subprojects.emcee.queueWorkerApi)
     implementation(projects.subprojects.emcee.androidDevice)
+    implementation(libs.okhttp)
     implementation(libs.coroutinesCore)
     implementation(libs.moshi)
     kapt(libs.moshiKapt)
