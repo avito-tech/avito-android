@@ -12,8 +12,6 @@ internal class RootProjectChecksExtensionTest {
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.MacOSLocalhost>(checks)
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.AndroidSdk>(checks)
 
-        @Suppress("DEPRECATION")
-        assertNoInstance<RootProjectChecksExtension.RootProjectCheck.JavaVersion>(checks)
         assertNoInstance<RootProjectChecksExtension.RootProjectCheck.GradleProperties>(checks)
     }
 }

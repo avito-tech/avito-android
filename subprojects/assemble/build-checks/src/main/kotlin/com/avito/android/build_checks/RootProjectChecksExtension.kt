@@ -16,11 +16,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
                 .map { it.createInstance() }
         }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(javaVersionCheckDeprecationMessage)
-    public fun javaVersion(action: Action<RootProjectCheck.JavaVersion>): Unit =
-        register(RootProjectCheck.JavaVersion(), action)
-
     public fun androidSdk(action: Action<AndroidSdk>): Unit =
         register(AndroidSdk(), action)
 
@@ -59,18 +54,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
             }
         }
 
-        @Deprecated(javaVersionCheckDeprecationMessage)
-        public open class JavaVersion : RootProjectCheck(), RequireValidation {
-
-            override var enabled: Boolean = false
-
-            public var version: org.gradle.api.JavaVersion? = null
-
-            override fun validate() {
-                checkNotNull(version) { "$extensionName.javaVersion.version must be set" }
-            }
-        }
-
         public open class MacOSLocalhost : RootProjectCheck()
 
         public open class GradleProperties : RootProjectCheck() {
@@ -86,9 +69,3 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
         }
     }
 }
-
-internal const val javaVersionCheckDeprecationMessage = """
-Java version build check is deprecated and will be deleted. 
-It's too late to make it even in configuration phase.
-You can check the Java version in your settings.gradle instead.
-"""

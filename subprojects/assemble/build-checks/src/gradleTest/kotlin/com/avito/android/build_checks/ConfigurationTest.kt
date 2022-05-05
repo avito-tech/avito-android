@@ -43,7 +43,6 @@ internal class ConfigurationTest {
             projectDir,
             buildChecksExtension = """
                 enableByDefault = true
-                javaVersion { enabled = false }
                 androidSdk { enabled = false }
                 macOSLocalhost { enabled = false }
                 gradleProperties { enabled = false }

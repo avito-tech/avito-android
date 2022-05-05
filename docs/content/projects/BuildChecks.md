@@ -146,41 +146,6 @@ avito.build-checks.enabled=false
 These checks are available in a root project's buildscript.  
 See also [Android application checks](#android-application-checks).
 
-#### Java version
-
-???+ warning
-    This check is deprecated and will be deleted.
-    It's too late to make it even in configuration phase.
-    You can check the Java version in your settings.gradle instead.
-
-The Java version can influence the output of the Java compiler. It leads to
-Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss)
-due
-to [Java version tracking](https://docs.gradle.org/nightly/userguide/common_caching_problems.html#java_version_tracking).  
-This check forces the same major version for all builds.
-
-=== "Kotlin"
-    `build.gradle.kts`
-
-    ```kotlin
-    buildChecks {
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
-        }   
-    }
-    ```
-
-=== "Groovy"
-    `build.gradle`
-
-    ```groovy
-    buildChecks {
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
-        }   
-    }
-    ```
-
 #### Android SDK version
 
 Android build tools uses android.jar (`$ANDROID_HOME/platforms/android-<compileSdkVersion>/android.jar`).  
