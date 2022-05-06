@@ -2,7 +2,7 @@ plugins {
     id("convention.gradle-properties")
     id("convention.gradle-wrapper")
     id("convention.lifecycle")
-    // accessing version catalog here is blocked by IDE false-postive error
+    // accessing version catalog here is blocked by IDE false-positive error
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
     id("com.autonomousapps.dependency-analysis") version "0.78.0"
     id("convention.dependency-updates")
