@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.gradle.android)
+    api(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.buildFailer)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.statsdConfig)
