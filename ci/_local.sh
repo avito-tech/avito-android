@@ -77,9 +77,9 @@ function clearGradleLockFiles() {
 # Перед сборкой не должно быть других контейнеров в любом случае
 function clearDockerContainers() {
     local containers=$(docker container ls -aq)
-    if [[ ! -z "$containers" ]]; then
+    if [[ -n "$containers" ]]; then
         echo "Stopping and removing containers: $containers"
-        docker container rm --force ${containers}
+        docker container rm --force "${containers}"
     fi
 }
 

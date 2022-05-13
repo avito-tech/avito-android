@@ -43,6 +43,7 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
             git config --global user.email 'builder@avito.ru';"
 
 GRADLE_ARGS="-Pci=true "
+GRADLE_ARGS="-Pavito.internalBuild=true "
 GRADLE_ARGS+="-PartifactoryUrl=$ARTIFACTORY_URL "
 GRADLE_ARGS+="-PteamcityUrl=${TEAMCITY_URL} "
 GRADLE_ARGS+="-PteamcityApiUser=${TEAMCITY_API_USER} "
@@ -82,7 +83,7 @@ GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
 GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
 GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "
 GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
-GRADLE_ARGS+="-Pgradle.buildCache.remote.url=$GRADLE_BUILD_CACHE_URL "
+GRADLE_ARGS+="-Pgradle.buildCache.remote.url=$GRADLE_GITHUB_BUILD_CACHE_URL "
 
 function runInBuilder() {
     COMMANDS=$@

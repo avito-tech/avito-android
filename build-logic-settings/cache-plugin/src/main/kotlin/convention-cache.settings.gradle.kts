@@ -1,13 +1,9 @@
-import com.avito.booleanProperty
-import com.avito.stringProperty
-
 /**
  * Can't use only one configuration for cache in the root project.
  * Included builds inside `pluginManagement` block can't reuse it,
  * because they are evaluated earlier than the build cache configuration in the root project.
  *
- * see https://github.com/gradle/gradle/issues/18511
- * Duplicated in settings in parent project
+ * See https://github.com/gradle/gradle/issues/18511
  */
 buildCache {
     local {
@@ -16,9 +12,20 @@ buildCache {
         removeUnusedEntriesAfterDays = 30
     }
 
-    val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
-        ?.removeSuffix("/")
-        ?.plus("/cache/")
+    val isInternalBuild = booleanProperty("avito.internalBuild", false)
+
+    val buildCacheUrl: String? = if (isInternalBuild) {
+        val remoteUrl = checkNotNull(stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)) {
+            """
+            Expected mandatory property `gradle.buildCache.remote.url` due to enabled `avito.internalBuild`.
+            
+            See https://avito-tech.github.io/avito-android/contributing/internal/RemoteCache
+            """.trimIndent()
+        }
+        remoteUrl.removeSuffix("/").plus("/")
+    } else {
+        null
+    }
 
     if (!buildCacheUrl.isNullOrBlank()) {
         remote<HttpBuildCache> {
@@ -28,17 +35,22 @@ buildCache {
             isAllowUntrustedServer = true
             isAllowInsecureProtocol = true
         }
+    }
+}
+
+fun Settings.booleanProperty(name: String, defaultValue: Boolean): Boolean {
+    return if (extra.has(name)) {
+        extra[name]?.toString()?.toBoolean() ?: defaultValue
     } else {
-        gradle.buildFinished {
-            logger.warn(
-                "" +
-                    "-----------------------------------------\n" +
-                    "| WARNING! (for Avito employees only)\n" +
-                    "| Gradle Remote Build cache is disabled\n" +
-                    "| Build performance could be much better\n" +
-                    "| See https://avito-tech.github.io/avito-android/contributing/internal/RemoteCache/\n" +
-                    "-----------------------------------------\n"
-            )
-        }
+        defaultValue
+    }
+}
+
+fun Settings.stringProperty(name: String, nullIfBlank: Boolean = false): String? {
+    return if (extra.has(name)) {
+        val string = extra[name]?.toString()
+        if (nullIfBlank && string.isNullOrBlank()) null else string
+    } else {
+        null
     }
 }

@@ -8,9 +8,10 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
 
-    val isInternalBuild = booleanProperty("avito.internalBuild", true)
+    val isInternalBuild = booleanProperty("avito.internalBuild", false)
     val artifactoryUrl: String? by settings
 
+    @Suppress("UnstableApiUsage")
     repositories {
         maven {
             setUrlOrProxy(

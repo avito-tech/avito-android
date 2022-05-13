@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# This is an entrypoint for CI build step, don't change it's relative path(name)
+# This is an entrypoint for CI build step, don't change it's relative path (name)
 
 set -e
 
-source $(dirname $0)/_main.sh
+source $(dirname "$0")/_main.sh
 
-bash $(dirname $0)/documentation/lint.sh
+bash $(dirname "$0")/documentation/lint.sh
 
 runInBuilder "set -e; ./gradlew build ${GRADLE_ARGS} --stacktrace"

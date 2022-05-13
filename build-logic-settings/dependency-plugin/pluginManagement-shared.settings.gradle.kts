@@ -19,7 +19,7 @@ pluginManagement {
         }
     }
 
-    val isInternalBuild = booleanProperty("avito.internalBuild", true)
+    val isInternalBuild = booleanProperty("avito.internalBuild", false)
     val artifactoryUrl: String? by settings
 
     fun artifactoryUrl(): String {

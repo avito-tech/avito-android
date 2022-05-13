@@ -7,10 +7,25 @@ pluginManagement {
     apply(from = "dependency-plugin/pluginManagement-shared.settings.gradle.kts")
 }
 
+val isInternalBuild = booleanProperty("avito.internalBuild", false)
+
+if (!isInternalBuild) {
+    logger.warn(
+        """
+        | -----------------------------------------
+        | WARNING! 
+        | This build doesn't use `avito.internalBuild`
+        | 
+        | For Avito employees only: it makes the build slower and less hermetic.
+        | For external contributors: some artifacts might be not published yet to Maven Central.
+        | -----------------------------------------
+        """.trimMargin()
+    )
+}
+
 dependencyResolutionManagement {
 
-    val isInternalBuild = booleanProperty("avito.internalBuild", true)
-
+    @Suppress("UnstableApiUsage")
     repositories {
         exclusiveContent {
             forRepository {
@@ -34,32 +49,13 @@ dependencyResolutionManagement {
     }
 }
 
-/**
- *  Duplicated settings because they are not inherited from root project
- *  as described in https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
- *  https://github.com/gradle/gradle/issues/18511
- */
-buildCache {
-    local {
-        isEnabled = booleanProperty("avito.gradle.buildCache.local.enabled", true)
-        isPush = true
-        removeUnusedEntriesAfterDays = 30
-    }
-
-    val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
-        ?.removeSuffix("/")
-        ?.plus("/cache/")
-
-    if (!buildCacheUrl.isNullOrBlank()) {
-        remote<HttpBuildCache> {
-            setUrl(buildCacheUrl)
-            isEnabled = true
-            isPush = booleanProperty("avito.gradle.buildCache.remote.push", false)
-            isAllowUntrustedServer = true
-            isAllowInsecureProtocol = true
-        }
-    }
-}
+// HACK:
+// We apply here the same settings as we provide by convention-cache plugin.
+// Conventional way is to inherit build cache configuration from the root project into all included builds.
+// The problem is - it doesn't work for included builds inside `pluginManagement`.
+// They applied before the cache configuration in the root project itself.
+// https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
+apply(from = "cache-plugin/src/main/kotlin/convention-cache.settings.gradle.kts")
 
 include("cache-plugin")
 include("dependency-plugin")
