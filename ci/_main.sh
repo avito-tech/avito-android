@@ -42,8 +42,8 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
 
-GRADLE_ARGS="-Pci=true "
-GRADLE_ARGS="-Pavito.internalBuild=true "
+GRADLE_ARGS+="-Pci=true "
+GRADLE_ARGS+="-Pavito.internalBuild=true "
 GRADLE_ARGS+="-PartifactoryUrl=$ARTIFACTORY_URL "
 GRADLE_ARGS+="-PteamcityUrl=${TEAMCITY_URL} "
 GRADLE_ARGS+="-PteamcityApiUser=${TEAMCITY_API_USER} "
