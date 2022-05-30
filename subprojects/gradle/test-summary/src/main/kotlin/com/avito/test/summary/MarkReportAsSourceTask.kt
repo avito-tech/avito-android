@@ -1,5 +1,6 @@
 package com.avito.test.summary
 
+import Slf4jGradleLoggerFactory
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.time.TimeProvider
@@ -25,6 +26,7 @@ public abstract class MarkReportAsSourceTask : DefaultTask() {
         MarkReportAsSourceAction(
             reportsApi = reportsApi.get(),
             timeProvider = timeProvider.get(),
+            loggerFactory = Slf4jGradleLoggerFactory
         ).mark(reportCoordinates = reportCoordinates.get())
     }
 }

@@ -13,6 +13,7 @@ dependencies {
     api(libs.androidAnnotations)
 
     implementation(libs.kotson)
+    implementation(libs.okhttpLogging)
     implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.testRunner.testModel)
 
