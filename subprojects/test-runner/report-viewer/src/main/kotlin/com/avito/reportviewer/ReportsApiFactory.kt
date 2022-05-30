@@ -5,7 +5,6 @@ import com.avito.http.RetryInterceptor
 import com.avito.jsonrpc.JsonRpcClient
 import com.avito.report.serialize.createReportGson
 import com.avito.reportviewer.internal.ReportsApiImpl
-import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
 public object ReportsApiFactory {
@@ -33,11 +32,6 @@ public object ReportsApiFactory {
                                 )
                             )
                         }
-                        addInterceptor(
-                            HttpLoggingInterceptor().apply {
-                                level = HttpLoggingInterceptor.Level.BODY
-                            }
-                        )
                     }
                     .build(),
                 gson = createReportGson()
