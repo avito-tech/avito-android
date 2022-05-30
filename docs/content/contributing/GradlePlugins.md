@@ -156,3 +156,7 @@ open class MyPlugin : Plugin<Project> {
 ```
 
 ### [Logging](Logging.md)
+
+### Properties naming
+
+Use `com.avito.android.tools.` prefix for any project specific properties to avoid collisions.

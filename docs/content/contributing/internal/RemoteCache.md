@@ -6,7 +6,9 @@
 Add to '[GRADLE_USER_HOME](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables)/gradle.properties':
 
 ```
-gradle.buildCache.remote.url=<CHECK VALUE IN AVITO PROJECT PROPERTIES>
+com.avito.android.tools.buildCache.remote.url=<VALUE>
 ```
+
+`VALUE` can be found in teamcity project parameter [`env.GRADLE_GITHUB_BUILD_CACHE_URL`](http://links.k.avito.ru/muW)
 
 [Official docs](https://docs.gradle.com/build-cache-node)

@@ -15,9 +15,12 @@ buildCache {
     val isInternalBuild = booleanProperty("avito.internalBuild", false)
 
     val buildCacheUrl: String? = if (isInternalBuild) {
-        val remoteUrl = checkNotNull(stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)) {
+        val remoteUrl = checkNotNull(
+            stringProperty("com.avito.android.tools.buildCache.remote.url", nullIfBlank = true)
+        ) {
             """
-            Expected mandatory property `gradle.buildCache.remote.url` due to enabled `avito.internalBuild`.
+            Property `com.avito.android.tools.buildCache.remote.url` should be set.
+            Because it's mandatory with `avito.internalBuild` enabled.
             
             See https://avito-tech.github.io/avito-android/contributing/internal/RemoteCache
             """.trimIndent()

@@ -8,7 +8,7 @@ plugins {
 val isCi = booleanProperty("ci", false)
 val publishBuildScan = booleanProperty("avito.gradle.buildScan.publish", false)
 
-val buildCacheUrl = stringProperty("gradle.buildCache.remote.url", nullIfBlank = true)
+val buildCacheUrl = stringProperty("com.avito.android.tools.buildCache.remote.url", nullIfBlank = true)
     ?.removeSuffix("/")
     ?.plus("/cache")
 
