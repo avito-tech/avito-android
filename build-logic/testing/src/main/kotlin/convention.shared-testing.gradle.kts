@@ -36,6 +36,20 @@ configure<BaseExtension> {
                 )
 
                 it.systemProperties.putAll(args)
+
+                /**
+                 * shared tests was failing due to "OOM loading robolectric.jar via nativeLoad"
+                 * analysis has shown that real memory consumption comes close to 1gb
+                 * default Xmx is `512Mb`, which was not enough and was leading to flaky runs
+                 */
+                it.maxHeapSize = "1024m"
+
+                /**
+                 * uncomment it and use with
+                 * `while ./gradlew :subprojects:android-test:ui-testing-core-app:testDebugUnitTest; do :; done`
+                 * to run test suites in loop until it fails if you need to make sure that config is stable enough
+                 */
+                 // it.outputs.upToDateWhen { false }
             }
         }
     }
