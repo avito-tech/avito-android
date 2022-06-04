@@ -9,7 +9,6 @@ import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
-import com.google.common.net.HttpHeaders
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -48,12 +47,6 @@ internal class NupokatiPluginIntegrationTest {
             |  },
             |  "deployments": [
             |    {
-            |      "type": "google-play",
-            |      "artifact_type": "bundle",
-            |      "build_variant": "release",
-            |      "track": "beta"
-            |    },
-            |    {
             |      "type": "qapps",
             |      "is_release": true
             |    }
@@ -61,8 +54,6 @@ internal class NupokatiPluginIntegrationTest {
             |}""".trimMargin()
 
         val cdConfigFile = File(projectDir, "cd-config.json").also { it.writeText(cdConfig) }
-
-        val keyFile = File(projectDir, "keyfile.json").also { it.writeText("SECRET") }
 
         val mockWebServerUrl = mockWebServer.url("/")
 
@@ -103,11 +94,6 @@ internal class NupokatiPluginIntegrationTest {
                         |       password.set("12345")
                         |   }
                         |   
-                        |   googlePlay {
-                        |       keyFile.set(rootProject.file("${keyFile.name}"))
-                        |       mockUrl.set("$mockWebServerUrl")
-                        |   }
-                        |   
                         |   reportViewer {
                         |       frontendUrl.set("$reportViewerFrontendUrl")
                         |       reportCoordinates.set(ReportCoordinates("$planSlug", "$jobSlug", "$runId"))
@@ -131,8 +117,6 @@ internal class NupokatiPluginIntegrationTest {
                 response = MockResponse().setResponseCode(HttpCodes.OK)
             )
         )
-
-        mockGooglePlay()
 
         val contractJson = mockDispatcher.captureRequest(
             Mock(
@@ -181,78 +165,5 @@ internal class NupokatiPluginIntegrationTest {
         |""".trimMargin()
 
         contractJson.checks.singleRequestCaptured().jsonEquals(expectedContract)
-    }
-
-    private fun mockGooglePlay() {
-        val editId = "12345"
-
-        val editsResponse = """
-        |{
-        |  "id": "$editId"
-        |}
-        """.trimMargin()
-
-        mockDispatcher.registerMock(
-            Mock(
-                requestMatcher = {
-                    method == "POST"
-                        && path == "/androidpublisher/v3/applications/com.app/edits"
-                },
-                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(editsResponse)
-            )
-        )
-
-        val uploadResponse = """
-        |{
-        |  "versionCode": 123
-        |}
-        """.trimMargin()
-
-        val uploadPath = "/upload/androidpublisher/v3/applications/com.app/edits/$editId/bundles?uploadType=resumable"
-
-        mockDispatcher.registerMock(
-            Mock(
-                requestMatcher = {
-                    (method == "POST" || method == "PUT") && path == uploadPath
-                },
-                response = MockResponse()
-                    .setResponseCode(HttpCodes.OK)
-                    .setBody(uploadResponse)
-                    .setHeader(
-                        HttpHeaders.LOCATION,
-                        mockWebServer.url(uploadPath)
-                    )
-            )
-        )
-
-        val setTrack = """
-        |{
-        |}
-        """.trimMargin()
-
-        mockDispatcher.registerMock(
-            Mock(
-                requestMatcher = {
-                    method == "PUT" &&
-                        path == "/androidpublisher/v3/applications/com.app/edits/$editId/tracks/beta"
-                },
-                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(setTrack)
-            )
-        )
-
-        val commitAllResponse = """
-        |{
-        |}
-        """.trimMargin()
-
-        mockDispatcher.registerMock(
-            Mock(
-                requestMatcher = {
-                    method == "POST" &&
-                        path == "/androidpublisher/v3/applications/com.app/edits/$editId:commit"
-                },
-                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(commitAllResponse)
-            )
-        )
     }
 }

@@ -11,9 +11,6 @@ public abstract class NupokatiExtension {
     public abstract val artifactory: ArtifactoryExtension
 
     @get:Nested
-    public abstract val googlePlay: GooglePlayExtensions
-
-    @get:Nested
     public abstract val reportViewer: ReportViewerExtension
 
     public abstract val cdBuildConfigFile: RegularFileProperty
@@ -29,10 +26,6 @@ public abstract class NupokatiExtension {
 
     public fun artifactory(action: Action<ArtifactoryExtension>) {
         action.execute(artifactory)
-    }
-
-    public fun googlePlay(action: Action<GooglePlayExtensions>) {
-        action.execute(googlePlay)
     }
 
     public fun reportViewer(action: Action<ReportViewerExtension>) {

@@ -11,7 +11,6 @@ internal class StrictCdBuildConfigValidator : CdBuildConfigValidator {
 
     override fun validate(config: CdBuildConfig) {
         checkUnsupportedDeployments(config)
-        checkUniqueGooglePlayDeployments(config)
         checkQappsDeployments(config)
     }
 
@@ -19,18 +18,6 @@ internal class StrictCdBuildConfigValidator : CdBuildConfigValidator {
         val unknownDeployments = config.deployments.filterIsInstance<CdBuildConfig.Deployment.Unknown>()
         require(unknownDeployments.isEmpty()) {
             "Unknown deployment types: $unknownDeployments"
-        }
-    }
-
-    private fun checkUniqueGooglePlayDeployments(config: CdBuildConfig) {
-        val googlePlayDeployments = config.deployments.filterIsInstance<CdBuildConfig.Deployment.GooglePlay>()
-
-        @Suppress("DEPRECATION")
-        val deploysByVariant = googlePlayDeployments.groupBy(CdBuildConfig.Deployment.GooglePlay::buildVariant)
-        deploysByVariant.forEach { (_, deploys) ->
-            require(deploys.size == 1) {
-                "Must be one deploy per variant, but was: $googlePlayDeployments"
-            }
         }
     }
 

@@ -7,7 +7,6 @@ import com.android.build.gradle.AppPlugin
 import com.avito.android.agp.getVersionCode
 import com.avito.android.artifactory_backup.ArtifactoryBackupTask
 import com.avito.android.contract_upload.UploadCdBuildResultTask
-import com.avito.android.google_play.GooglePlayUploadTaskConfigurator
 import com.avito.android.model.CdBuildConfig
 import com.avito.android.provider.CdBuildConfigTransformer
 import com.avito.android.provider.StrictCdBuildConfigValidator
@@ -28,8 +27,6 @@ public class NupokatiPlugin : Plugin<Project> {
 
         val extension = project.extensions.create<NupokatiExtension>("nupokati")
 
-        val googlePlayUploadTaskConfigurator = GooglePlayUploadTaskConfigurator(project, extension)
-
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
 
@@ -44,12 +41,6 @@ public class NupokatiPlugin : Plugin<Project> {
                 val variantSlug = variant.name.capitalize()
 
                 val bundle: Provider<RegularFile> = variant.artifacts.get(type = SingleArtifact.BUNDLE)
-
-                val uploadToGooglePlayTask = googlePlayUploadTaskConfigurator.configure(
-                    cdBuildConfig = cdBuildConfig,
-                    variant = variant,
-                    bundle = bundle
-                )
 
                 val publishArtifactsTask =
                     project.tasks.register<ArtifactoryBackupTask>("artifactoryBackup$variantSlug") {
@@ -86,10 +77,6 @@ public class NupokatiPlugin : Plugin<Project> {
 
                     // todo depend on output with actually uploaded artifacts
                     dependsOn(publishArtifactsTask)
-
-                    if (uploadToGooglePlayTask != null) {
-                        dependsOn(uploadToGooglePlayTask)
-                    }
                 }
             }
         }
