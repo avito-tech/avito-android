@@ -71,8 +71,6 @@ internal class NupokatiPluginTest {
             .assertThat()
             .buildSuccessful()
 
-        // todo assert that "deployToGooglePlayRelease" and "uploadCrashlyticsMappingFileRelease"
-        //  not called because no deployment
         return listOf(
             "artifactoryBackupRelease",
             "packageReleaseBundle",

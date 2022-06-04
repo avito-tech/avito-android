@@ -87,7 +87,7 @@ public abstract class AbstractSignTask(
                     { throwable ->
                         project.buildFailer.failBuild(
                             problem = describeSingingError(
-                                signedFile = signedFile,
+                                unsignedFile = unsignedFile,
                                 throwable = throwable
                             )
                         )
@@ -96,9 +96,9 @@ public abstract class AbstractSignTask(
         }
     }
 
-    private fun describeSingingError(signedFile: File, throwable: Throwable): Problem {
+    private fun describeSingingError(unsignedFile: File, throwable: Throwable): Problem {
         return Problem(
-            shortDescription = "Can't sign: ${signedFile.path}",
+            shortDescription = "Can't sign. Unsigned file path: ${unsignedFile.path}",
             context = "Signing artifact via service",
             documentedAt = "https://avito-tech.github.io/avito-android/projects/internal/Signer/#troubleshooting",
             throwable = throwable

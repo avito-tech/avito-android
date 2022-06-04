@@ -25,6 +25,9 @@ dependencies {
     kapt(libs.moshiKapt)
 
     testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(projects.subprojects.common.resources)
+    testImplementation(projects.subprojects.common.testOkhttp)
+    testImplementation(libs.jsonAssert)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)

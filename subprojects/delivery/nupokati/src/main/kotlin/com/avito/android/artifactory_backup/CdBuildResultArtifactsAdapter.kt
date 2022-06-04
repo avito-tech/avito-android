@@ -31,7 +31,7 @@ internal class CdBuildResultArtifactsAdapter {
             )
         } else {
             CdBuildResult.Artifact.FileArtifact(
-                type = file.type(),
+                type = file.extension,
                 name = file.name,
                 uri = url.toString()
             )
@@ -52,6 +52,6 @@ internal class CdBuildResultArtifactsAdapter {
     private fun File.type(): String = when (extension) {
         "aab" -> "bundle"
         "apk" -> "apk"
-        else -> throw IllegalArgumentException("Unknown file type with extension: $extension")
+        else -> throw IllegalArgumentException("Unknown file type with extension: '$extension', full path: $path")
     }
 }
