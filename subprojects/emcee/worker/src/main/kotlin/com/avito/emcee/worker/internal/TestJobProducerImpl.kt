@@ -4,6 +4,7 @@ import com.avito.emcee.worker.GetBucketBody
 import com.avito.emcee.worker.GetBucketResponse
 import com.avito.emcee.worker.RegisterWorkerBody
 import com.avito.emcee.worker.WorkerQueueApi
+import com.avito.emcee.worker.internal.networking.SocketAddress
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,7 +15,7 @@ import kotlin.time.ExperimentalTime
 internal class TestJobProducerImpl(
     private val api: WorkerQueueApi,
     private val workerId: String,
-    private val restUrl: String
+    private val workerAddress: SocketAddress
 ) : TestJobProducer {
 
     override fun getJobs(): Flow<TestJobProducer.Job> = flow {
@@ -22,7 +23,7 @@ internal class TestJobProducerImpl(
         val registerResponse = api.registerWorker(
             RegisterWorkerBody(
                 workerId = workerId,
-                workerRestUrl = restUrl
+                workerRestAddress = workerAddress.serialized()
             )
         )
 
@@ -31,7 +32,7 @@ internal class TestJobProducerImpl(
             val response = api.getBucket(
                 GetBucketBody(
                     workerId = workerId,
-                    payloadSignature = registerResponse.payloadSignature,
+                    payloadSignature = registerResponse.workerConfiguration.payloadSignature,
                     workerCapabilities = emptyList() // TODO do we have to pass something?
                 )
             )

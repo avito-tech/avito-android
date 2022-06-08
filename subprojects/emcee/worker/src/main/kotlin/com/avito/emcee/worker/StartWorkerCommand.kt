@@ -9,16 +9,19 @@ import com.avito.emcee.worker.internal.TestJobConsumerImpl
 import com.avito.emcee.worker.internal.TestJobProducerImpl
 import com.avito.emcee.worker.internal.artifacts.FileDownloader
 import com.avito.emcee.worker.internal.artifacts.FileDownloaderApi.Companion.createFileDownloaderApi
+import com.avito.emcee.worker.internal.networking.SocketAddressResolver
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
+import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.io.File
 import java.nio.file.Path
@@ -35,12 +38,26 @@ internal class StartWorkerCommand(
 
     private val configPath: String by option(
         type = ArgType.String,
+        fullName = "config",
+        shortName = "c",
         description = "Absolute path to worker config"
     ).required()
 
+    private val debugMode: Boolean by option(
+        type = ArgType.Boolean,
+        fullName = "debug",
+        shortName = "d",
+        description = "Enables verbose logging",
+    ).default(false)
+
     override fun execute() {
         val moshi = Moshi.Builder().build()
-        val okHttpClient = OkHttpClient.Builder().build()
+        val okHttpClient = OkHttpClient.Builder().apply {
+            if (debugMode) {
+                addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+            }
+        }.build()
+        val socketAddressResolver = SocketAddressResolver()
         val configAdapter = moshi.adapter<Config>()
         val config: Config = requireNotNull(
             configAdapter.fromJson(File(configPath).readText())
@@ -48,7 +65,7 @@ internal class StartWorkerCommand(
         val producer = TestJobProducerImpl(
             api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl),
             workerId = config.workerId,
-            restUrl = config.restUrl
+            workerAddress = socketAddressResolver.resolve(config.workerPort)
         )
         val fileDownloader = FileDownloader(
             api = Retrofit.Builder().createFileDownloaderApi(okHttpClient, config.queueUrl)

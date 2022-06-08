@@ -20,8 +20,8 @@ internal class ConfigSerializationTest {
             .isEqualTo(
                 Config(
                     workerId = "stub-worker-id",
-                    restUrl = "stub-rest-url",
-                    queueUrl = "stub-queue-url",
+                    workerPort = 80,
+                    queueUrl = "http://127.0.0.1:41000",
                     androidSdkPath = "/Users/john/androidSdk",
                     avd = setOf(
                         Config.Avd(21, "default", "stub-emulator-name", "stub-sd-card-name")

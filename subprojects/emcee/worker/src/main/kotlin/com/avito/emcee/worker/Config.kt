@@ -9,9 +9,9 @@ public data class Config(
      */
     val workerId: String,
     /**
-     * Helps Queue to interact with worker
+     * Worker starts a REST server on this port
      */
-    val restUrl: String,
+    val workerPort: Int,
     /**
      * Url where worker will ask for test buckets
      */
