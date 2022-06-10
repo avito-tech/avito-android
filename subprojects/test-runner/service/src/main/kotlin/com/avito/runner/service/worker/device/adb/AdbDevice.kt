@@ -461,6 +461,16 @@ public data class AdbDevice(
             .apply { mkdirs() }
         val started = timeProvider.nowInMillis()
 
+        val blankValues = instrumentationArguments.filterValues { it.isBlank() }
+        if (blankValues.isNotEmpty()) {
+            return Single.error(
+                IllegalArgumentException(
+                    "Instrumentation args contains blank values: $blankValues" +
+                        " it leads to adb args parsing problem. Filter it in configuration"
+                )
+            )
+        }
+
         val output = executeShellCommand(
             command = listOf(
                 "am",
