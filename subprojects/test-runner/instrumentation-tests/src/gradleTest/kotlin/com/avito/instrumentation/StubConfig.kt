@@ -7,7 +7,8 @@ internal val kotlinStubConfig = """
   |        testInstrumentationRunnerArguments(
   |            mapOf(
   |                "planSlug" to "AppAndroid",
-  |                "override" to "createdInInstrumentationRunnerArguments"
+  |                "override" to "createdInInstrumentationRunnerArguments",
+  |                "expectedCustomParam" to "value"
   |            )
   |        )
   |    }
@@ -88,7 +89,8 @@ internal val groovyStubConfig = """
   |        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   |        testInstrumentationRunnerArguments([
   |            "planSlug" : "AppAndroid",
-  |            "override": "createdInInstrumentationRunnerArguments"
+  |            "override": "createdInInstrumentationRunnerArguments",
+  |            "expectedCustomParam": "value"
   |        ])
   |    }
   |}

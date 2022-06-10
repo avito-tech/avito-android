@@ -132,6 +132,7 @@ internal class RunnerInputParamsTest {
             "fileStorageUrl" to "http://stub",
             "sentryDsn" to "stub",
             "avito.report.enabled" to "false", // todo
+            "expectedCustomParam" to "value"
         )
 
         return listOf(

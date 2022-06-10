@@ -4,6 +4,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.avito.android.plugins.configuration.BuildEnvResolver
 import com.avito.android.plugins.configuration.RunIdResolver
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
+import com.avito.kotlin.dsl.filterNotBlankValues
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.runner.config.InstrumentationParameters
 import org.gradle.api.Project
@@ -32,35 +33,41 @@ internal class InstrumentationArgsResolver(
      */
     fun resolvePluginLevelArgs(project: Project, androidExtension: CommonExtension<*, *, *, *>): Map<String, String> {
         if (pluginLevelInstrumentationArgs.isEmpty()) {
-            val argsFromDsl = androidDslInteractor.getInstrumentationArgs(androidExtension)
+            val argsFromDsl = mutableMapOf<String, String>()
 
-            pluginLevelInstrumentationArgs.resolveArg("planSlug", argsFromDsl) {
+            argsFromDsl.putAll(filterNotBlankValues(androidDslInteractor.getInstrumentationArgs(androidExtension)))
+
+            pluginLevelInstrumentationArgs.consumeArg("planSlug", argsFromDsl) {
                 planSlugResolver.generateDefaultPlanSlug(project.path)
             }
-            pluginLevelInstrumentationArgs.resolveArg("jobSlug", argsFromDsl) {
+            pluginLevelInstrumentationArgs.consumeArg("jobSlug", argsFromDsl) {
                 "LocalTests" // todo could be configuration name
             }
-            pluginLevelInstrumentationArgs.resolveArg("avito.report.enabled", argsFromDsl) {
+            pluginLevelInstrumentationArgs.consumeArg("avito.report.enabled", argsFromDsl) {
                 project.getBooleanProperty("avito.report.enabled", default = false).toString()
             }
-            pluginLevelInstrumentationArgs.resolveArg("fileStorageUrl", argsFromDsl) {
+            pluginLevelInstrumentationArgs.consumeArg("fileStorageUrl", argsFromDsl) {
                 reportResolver.getFileStorageUrl()
             }
-            pluginLevelInstrumentationArgs.resolveArg("sentryDsn", argsFromDsl) {
+            pluginLevelInstrumentationArgs.consumeArg("sentryDsn", argsFromDsl) {
                 sentryResolver.getSentryDsn().orNull
             }
-            pluginLevelInstrumentationArgs.resolveArg("deviceName", argsFromDsl) {
+            pluginLevelInstrumentationArgs.consumeArg("deviceName", argsFromDsl) {
                 "local"
             }
-            pluginLevelInstrumentationArgs.resolveArg("reportApiUrl", argsFromDsl) {
+            pluginLevelInstrumentationArgs.consumeArg("reportApiUrl", argsFromDsl) {
                 reportResolver.getReportApiUrl()
             }
-            pluginLevelInstrumentationArgs.resolveArg("reportViewerUrl", argsFromDsl) {
+            pluginLevelInstrumentationArgs.consumeArg("reportViewerUrl", argsFromDsl) {
                 reportResolver.getReportViewerUrl()
             }
 
             // runId from dsl will be ignored
             pluginLevelInstrumentationArgs["runId"] = runIdResolver.getLocalRunId().toReportViewerFormat()
+            argsFromDsl.remove("runId")
+
+            // put everything that left in args 'as is'
+            pluginLevelInstrumentationArgs.putAll(argsFromDsl)
         }
 
         return pluginLevelInstrumentationArgs
@@ -93,12 +100,12 @@ internal class InstrumentationArgsResolver(
         return args
     }
 
-    private fun MutableMap<String, String>.resolveArg(
+    private fun MutableMap<String, String>.consumeArg(
         key: String,
-        argsFromDsl: Map<String, String>,
+        argsFromDsl: MutableMap<String, String>,
         valueFromExtension: () -> String?
     ) {
-        val finalValue = if (argsFromDsl.containsKey(key)) {
+        val finalValue: String? = if (argsFromDsl.containsKey(key)) {
             val valueFromScript = argsFromDsl[key]
             if (valueFromScript.isNullOrBlank()) {
                 valueFromExtension.invoke()
@@ -111,5 +118,6 @@ internal class InstrumentationArgsResolver(
         if (!finalValue.isNullOrBlank()) {
             put(key, finalValue)
         }
+        argsFromDsl.remove(key)
     }
 }
