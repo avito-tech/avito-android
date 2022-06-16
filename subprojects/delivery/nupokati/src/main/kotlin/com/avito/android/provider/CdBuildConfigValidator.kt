@@ -2,9 +2,14 @@ package com.avito.android.provider
 
 import com.avito.android.model.CdBuildConfig
 
-internal class CdBuildConfigValidator {
+internal interface CdBuildConfigValidator {
 
-    fun validate(config: CdBuildConfig) {
+    fun validate(config: CdBuildConfig)
+}
+
+internal class StrictCdBuildConfigValidator : CdBuildConfigValidator {
+
+    override fun validate(config: CdBuildConfig) {
         checkUnsupportedDeployments(config)
         checkUniqueGooglePlayDeployments(config)
         checkQappsDeployments(config)
@@ -19,6 +24,8 @@ internal class CdBuildConfigValidator {
 
     private fun checkUniqueGooglePlayDeployments(config: CdBuildConfig) {
         val googlePlayDeployments = config.deployments.filterIsInstance<CdBuildConfig.Deployment.GooglePlay>()
+
+        @Suppress("DEPRECATION")
         val deploysByVariant = googlePlayDeployments.groupBy(CdBuildConfig.Deployment.GooglePlay::buildVariant)
         deploysByVariant.forEach { (_, deploys) ->
             require(deploys.size == 1) {

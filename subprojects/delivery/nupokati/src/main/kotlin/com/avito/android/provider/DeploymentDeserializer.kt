@@ -19,6 +19,11 @@ internal object DeploymentDeserializer : JsonDeserializer<CdBuildConfig.Deployme
                     json,
                     CdBuildConfig.Deployment.GooglePlay::class.java
                 )
+            "ru-store" ->
+                context.deserialize<CdBuildConfig.Deployment.RuStore>(
+                    json,
+                    CdBuildConfig.Deployment.RuStore::class.java
+                )
             "qapps" ->
                 context.deserialize<CdBuildConfig.Deployment.Qapps>(
                     json,

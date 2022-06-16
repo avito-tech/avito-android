@@ -32,6 +32,7 @@ public class DeployStep internal constructor(
      * This hack adds direct dependency
      * deployToGooglePlay -> uploadCrashlyticsProguardMapping<build variant>File
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     public var uploadCrashlyticsProguardMappingFile: Boolean = false
 
     /**
@@ -42,6 +43,7 @@ public class DeployStep internal constructor(
      * This hack adds direct dependency
      * deployToGooglePlay -> uploadCrashlyticsSymbolFile<build variant>
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     public var uploadCrashlyticsNativeSymbols: Boolean = false
 
     override fun registerTask(
@@ -56,7 +58,7 @@ public class DeployStep internal constructor(
                 rootTask
             )
         } else {
-            project.logger.lifecycle("Configure deploy step without cd build config")
+            project.logger.lifecycle("Skip deploy step due to no cd build config")
         }
     }
 

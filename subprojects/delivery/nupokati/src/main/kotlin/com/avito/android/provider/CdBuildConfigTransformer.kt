@@ -22,7 +22,9 @@ internal class CdBuildConfigTransformer(
     }
 
     private fun deserializeToCdBuildConfig(configFile: File): CdBuildConfig {
-        require(configFile.exists()) { "Can't find cd config file in $configFile" }
+        require(configFile.exists()) {
+            "Can't find cd config file in $configFile"
+        }
         return uploadCdGson.fromJson(configFile.reader(), CdBuildConfig::class.java)
     }
 }

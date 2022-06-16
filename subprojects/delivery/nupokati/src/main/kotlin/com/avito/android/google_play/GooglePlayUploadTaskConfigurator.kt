@@ -14,7 +14,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
 /**
- * will be removed in MBS-12535
+ * Will be removed in MBSA-32
  */
 internal class GooglePlayUploadTaskConfigurator(
     private val project: Project,
@@ -43,6 +43,7 @@ internal class GooglePlayUploadTaskConfigurator(
 
         val googlePlayDeployment = googlePlayDeploymentProvider.get()
 
+        @Suppress("DEPRECATION") // Will be deleted in MBSA-636
         if (!googlePlayDeployment.buildVariant.equals(variant.name, ignoreCase = true)) {
             project.logger.lifecycle(
                 "Google play upload skipped. " +
@@ -60,7 +61,7 @@ internal class GooglePlayUploadTaskConfigurator(
             return null
         }
 
-        project.logger.lifecycle("Google play upload initianted: $googlePlayDeployment")
+        project.logger.lifecycle("Google play upload initiated: $googlePlayDeployment")
 
         return project.tasks.register<DeployBundleToGooglePlayTask>("deployToGooglePlay$variantSlug") {
             group = CD_TASK_GROUP
@@ -76,7 +77,7 @@ internal class GooglePlayUploadTaskConfigurator(
             if (extension.uploadCrashlyticsMapping.convention(true).get()) {
                 /**
                  * when I try to find task provider via project.tasks.named I get Exception that there is no task
-                 * That's because firebase-crashlytics-plugin creates task some how after we trying bind to it
+                 * That's because firebase-crashlytics-plugin creates task somehow after we trying bind to it
                  */
                 dependsOn("${project.path}:uploadCrashlyticsMappingFile$variantSlug")
             }

@@ -17,8 +17,16 @@ public data class CdBuildConfig(
 
         public data class GooglePlay(
             val artifactType: AndroidArtifactType,
+            // TODO: decouple logic and move the mapping on client side MBSA-636
+            // Contract should show a declarative intention, but build variants are more implementation details.
+            // They tend to change and it's no use to couple Nupokati and apps in this point.
+            @Deprecated("Will be deleted. Try to avoid usage if possible.")
             val buildVariant: String,
             val track: Track
+        ) : Deployment()
+
+        public data class RuStore(
+            val artifactType: AndroidArtifactType,
         ) : Deployment()
 
         /**

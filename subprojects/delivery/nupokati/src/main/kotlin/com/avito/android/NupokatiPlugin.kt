@@ -10,7 +10,7 @@ import com.avito.android.contract_upload.UploadCdBuildResultTask
 import com.avito.android.google_play.GooglePlayUploadTaskConfigurator
 import com.avito.android.model.CdBuildConfig
 import com.avito.android.provider.CdBuildConfigTransformer
-import com.avito.android.provider.CdBuildConfigValidator
+import com.avito.android.provider.StrictCdBuildConfigValidator
 import com.avito.android.stats.statsdConfig
 import com.avito.capitalize
 import org.gradle.api.Plugin
@@ -36,14 +36,14 @@ public class NupokatiPlugin : Plugin<Project> {
             val releaseVariantSelector = androidComponents.selector()
                 .withName(extension.releaseBuildVariantName.convention(DEFAULT_RELEASE_VARIANT).get())
 
+            val cdBuildConfig: Provider<CdBuildConfig> = extension.cdBuildConfigFile
+                .map(CdBuildConfigTransformer(validator = StrictCdBuildConfigValidator()))
+
             androidComponents.onVariants(selector = releaseVariantSelector) { variant: ApplicationVariant ->
 
                 val variantSlug = variant.name.capitalize()
 
                 val bundle: Provider<RegularFile> = variant.artifacts.get(type = SingleArtifact.BUNDLE)
-
-                val cdBuildConfig: Provider<CdBuildConfig> = extension.cdBuildConfigFile
-                    .map(CdBuildConfigTransformer(validator = CdBuildConfigValidator()))
 
                 val uploadToGooglePlayTask = googlePlayUploadTaskConfigurator.configure(
                     cdBuildConfig = cdBuildConfig,
