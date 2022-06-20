@@ -1,5 +1,6 @@
 package com.avito.cd
 
+import com.avito.cd.model.BuildVariant
 import com.avito.git.Branch
 import com.avito.git.GitStateStub
 import com.avito.test.http.Mock
@@ -53,7 +54,7 @@ internal class UploadCdBuildResultTaskActionTest {
             "apk",
             "release.apk",
             "${mockWebServer.url("")}/apps-release-local/appA-android/appA/1-1-100/release.apk",
-            BuildVariant.RELEASE
+            BuildVariant("release")
         ),
         CdBuildResult.Artifact.FileArtifact(
             "featureToggles",

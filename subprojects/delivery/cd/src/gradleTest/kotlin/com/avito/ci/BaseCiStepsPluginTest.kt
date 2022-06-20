@@ -45,7 +45,8 @@ internal abstract class BaseCiStepsPluginTest {
                         id("maven-publish")
                     },
                     imports = listOf(
-                        "import com.avito.cd.BuildVariant"
+                        "import com.avito.cd.model.BuildVariant",
+                        "import com.avito.cd.BuildVariant as LegacyBuildVariant"
                     ),
                     buildGradleExtra = """
                             ${registerUiTestConfigurations("regress", "pr")}
@@ -88,14 +89,14 @@ internal abstract class BaseCiStepsPluginTest {
                                     lint { }
 
                                     artifacts {
-                                        apk("debugApk", BuildVariant.DEBUG, "com.appA", "${'$'}{project.buildDir}/outputs/apk/debug/appA-debug.apk") {}
-                                        apk("releaseApk", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/apk/release/appA-release.apk") {
+                                        apk("debugApk", LegacyBuildVariant.DEBUG, "com.appA", "${'$'}{project.buildDir}/outputs/apk/debug/appA-debug.apk") {}
+                                        apk("releaseApk", new BuildVariant("release"), "com.appA", "${'$'}{project.buildDir}/outputs/apk/release/appA-release.apk") {
                                             signature = "1221e21e21e"
                                         }
-                                        bundle("releaseBundle", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/release/debug/appA-release.aab") {
+                                        bundle("releaseBundle", new BuildVariant("release"), "com.appA", "${'$'}{project.buildDir}/outputs/release/debug/appA-release.aab") {
                                             signature = "12e23rrr34r"
                                         }
-                                        mapping("releaseMapping", BuildVariant.RELEASE, "${'$'}{project.buildDir}/reports/mapping.txt")
+                                        mapping("releaseMapping", new BuildVariant("release"), "${'$'}{project.buildDir}/reports/mapping.txt")
                                         file("nonExistedJson","${'$'}{project.buildDir}/reports/not-existed-file.json")
                                     }
 

@@ -1,7 +1,7 @@
 package com.avito.ci.steps.deploy
 
-import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildConfig
+import com.avito.cd.model.BuildVariant
 import org.gradle.api.Project
 
 internal abstract class CrashlyticsTaskProvider {

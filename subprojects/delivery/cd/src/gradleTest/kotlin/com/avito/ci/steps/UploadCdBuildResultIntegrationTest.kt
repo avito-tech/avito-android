@@ -1,8 +1,8 @@
 package com.avito.ci.steps
 
 import com.avito.android.plugin.artifactory.setStubMavenMetadataBody
-import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
+import com.avito.cd.model.BuildVariant
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.cd.uploadCdGson
 import com.avito.ci.runTask
@@ -182,7 +182,7 @@ class RealTest {
                 "$nupokatiProject-11-12-100-releaseApk.apk",
                 "$mockUrl/apps-release-local/app-android/" +
                     "$nupokatiProject/11-12-100/$nupokatiProject-11-12-100-releaseApk.apk",
-                BuildVariant.RELEASE
+                BuildVariant("release")
             )
         )
 

@@ -1,11 +1,12 @@
-package com.avito.cd
+package com.avito.cd.internal
 
+import com.avito.cd.CdBuildConfig
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import java.lang.reflect.Type
 
-internal object DeploymentDeserializer : JsonDeserializer<CdBuildConfig.Deployment> {
+internal class DeploymentDeserializer : JsonDeserializer<CdBuildConfig.Deployment> {
 
     override fun deserialize(
         json: JsonElement,
@@ -17,6 +18,11 @@ internal object DeploymentDeserializer : JsonDeserializer<CdBuildConfig.Deployme
                 context.deserialize<CdBuildConfig.Deployment.GooglePlay>(
                     json,
                     CdBuildConfig.Deployment.GooglePlay::class.java
+                )
+            "ru-store" ->
+                context.deserialize<CdBuildConfig.Deployment.RuStore>(
+                    json,
+                    CdBuildConfig.Deployment.RuStore::class.java
                 )
             "qapps" ->
                 context.deserialize<CdBuildConfig.Deployment.Qapps>(

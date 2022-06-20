@@ -94,7 +94,7 @@ internal class ArtifactoryAppBackupPluginTest {
                     imports = listOf(
                         "import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt." +
                             "getArtifactoryAndroidArtifactsBuildVariants",
-                        "import com.avito.cd.BuildVariant"
+                        "import com.avito.cd.model.BuildVariant"
                     ),
                     buildGradleExtra = """
                         $artifactoryBackupExtensionName {
@@ -109,7 +109,8 @@ internal class ArtifactoryAppBackupPluginTest {
                             }
                         }
                         
-                        getArtifactoryAndroidArtifactsBuildVariants(project).put("$classifier", BuildVariant.STAGING)
+                        getArtifactoryAndroidArtifactsBuildVariants(project)
+                            .put("$classifier", new BuildVariant("staging"))
                     """.trimIndent()
                 )
             )

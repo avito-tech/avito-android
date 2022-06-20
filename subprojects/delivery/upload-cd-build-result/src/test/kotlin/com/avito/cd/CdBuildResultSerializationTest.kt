@@ -1,9 +1,52 @@
 package com.avito.cd
 
-import com.google.common.truth.Truth.assertThat
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
+import com.avito.cd.model.BuildVariant
 import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
+
+internal class CdBuildResultSerializationTest {
+
+    @Test
+    fun `build result serialized correctly`() {
+        val serializedBuildResult = uploadCdGson.toJson(
+            CdBuildResult(
+                schemaVersion = 1,
+                teamcityBuildUrl = "https://teamcity/viewLog.html?buildId=6696546",
+                buildNumber = "323",
+                releaseVersion = "52.0",
+                testResults = CdBuildResult.TestResultsLink(
+                    reportUrl =
+                    "https://report/run/5cab53abc0c8b00001f03453?" +
+                        "q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxfX0%3D",
+                    reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
+                        planSlug = "AvitoAndroid",
+                        jobSlug = "Regress",
+                        runId = "1234"
+                    )
+                ),
+                gitBranch = CdBuildResult.GitBranch(
+                    name = "branchName",
+                    commitHash = "commitHash"
+                ),
+                artifacts = listOf(
+                    CdBuildResult.Artifact.AndroidBinary(
+                        type = "bundle",
+                        buildVariant = BuildVariant("release"),
+                        uri = "http://artifactory/путь к сборке",
+                        name = "Avito_release_52.0_323.aab"
+                    ),
+                    CdBuildResult.Artifact.FileArtifact(
+                        type = "feature_toggles",
+                        uri = "http://artifactory/file",
+                        name = "feature-toggles.json"
+                    )
+                )
+            )
+        )
+        JSONAssert.assertEquals(serializedBuildResult, expected, JSONCompareMode.STRICT)
+    }
+}
 
 @Suppress("MaxLineLength")
 private val expected = """
@@ -38,53 +81,3 @@ private val expected = """
         }
       ]
     }""".trimIndent()
-
-internal class CdBuildResultSerializationTest {
-
-    private val gson = GsonBuilder().run {
-        setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        setPrettyPrinting()
-        disableHtmlEscaping()
-        create()
-    }
-
-    @Test
-    fun `build result serialized correctly`() {
-        val serializedBuildResult = gson.toJson(
-            CdBuildResult(
-                schemaVersion = 1,
-                teamcityBuildUrl = "https://teamcity/viewLog.html?buildId=6696546",
-                buildNumber = "323",
-                releaseVersion = "52.0",
-                testResults = CdBuildResult.TestResultsLink(
-                    reportUrl =
-                    "https://report/run/5cab53abc0c8b00001f03453?" +
-                        "q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxfX0%3D",
-                    reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
-                        planSlug = "AvitoAndroid",
-                        jobSlug = "Regress",
-                        runId = "1234"
-                    )
-                ),
-                gitBranch = CdBuildResult.GitBranch(
-                    name = "branchName",
-                    commitHash = "commitHash"
-                ),
-                artifacts = listOf(
-                    CdBuildResult.Artifact.AndroidBinary(
-                        type = "bundle",
-                        buildVariant = BuildVariant.RELEASE,
-                        uri = "http://artifactory/путь к сборке",
-                        name = "Avito_release_52.0_323.aab"
-                    ),
-                    CdBuildResult.Artifact.FileArtifact(
-                        type = "feature_toggles",
-                        uri = "http://artifactory/file",
-                        name = "feature-toggles.json"
-                    )
-                )
-            )
-        )
-        assertThat(serializedBuildResult).isEqualTo(expected)
-    }
-}

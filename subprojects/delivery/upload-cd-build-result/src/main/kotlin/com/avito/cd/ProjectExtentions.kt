@@ -1,5 +1,8 @@
 package com.avito.cd
 
+import com.avito.cd.internal.BuildVariantAdapter
+import com.avito.cd.internal.DeploymentDeserializer
+import com.avito.cd.model.BuildVariant
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.utils.gradle.BuildEnvironment
@@ -49,11 +52,12 @@ public val Project.buildOutput: Provider<BuildOutput> by ProjectProperty.lazy<Pr
     Providers.of(BuildOutput())
 }
 
-// todo open for tests; create serializer
+// todo create serializer; opened for tests
 public val uploadCdGson: Gson by lazy {
     GsonBuilder()
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .disableHtmlEscaping()
-        .registerTypeAdapter(CdBuildConfig.Deployment::class.java, DeploymentDeserializer)
+        .registerTypeAdapter(CdBuildConfig.Deployment::class.java, DeploymentDeserializer())
+        .registerTypeAdapter(BuildVariant::class.java, BuildVariantAdapter())
         .create()
 }

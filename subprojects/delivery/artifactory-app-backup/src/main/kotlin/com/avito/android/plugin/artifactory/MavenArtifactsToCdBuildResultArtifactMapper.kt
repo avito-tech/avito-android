@@ -1,7 +1,7 @@
 package com.avito.android.plugin.artifactory
 
-import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
+import com.avito.cd.model.BuildVariant
 import org.gradle.api.publish.maven.MavenArtifact
 import java.net.URI
 
@@ -10,7 +10,7 @@ import java.net.URI
  * @param groupId e.g. ${project.name}-android
  * @param artifactId e.g. ${project.name}
  * @param version e.g. "${defaultConfig.versionName}-${defaultConfig.versionCode}-${envArgs.buildNumber}"
- * @param buildVariantByClassifier e.g. "releaseApk": [BuildVariant.RELEASE];
+ * @param buildVariantByClassifier e.g. "releaseApk": [BuildVariant("release")];
  */
 internal class MavenArtifactsToCdBuildResultArtifactMapper(
     artifactoryUri: URI,

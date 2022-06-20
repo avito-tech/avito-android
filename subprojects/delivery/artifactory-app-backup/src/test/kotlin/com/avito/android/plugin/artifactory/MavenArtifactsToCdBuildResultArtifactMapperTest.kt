@@ -1,7 +1,7 @@
 package com.avito.android.plugin.artifactory
 
-import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
+import com.avito.cd.model.BuildVariant
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -13,7 +13,7 @@ internal class MavenArtifactsToCdBuildResultArtifactMapperTest {
     @Test
     fun `maven artifacts to cd build result mapper - success apk mapping`(@TempDir dir: File) {
         val classifier = "releaseApk"
-        val buildVariant = BuildVariant.RELEASE
+        val buildVariant = BuildVariant("release")
         val artifactId = "artifactId"
         val version = "version"
         val artifactFile = File(dir, "test.apk")
@@ -48,7 +48,7 @@ internal class MavenArtifactsToCdBuildResultArtifactMapperTest {
     @Test
     fun `maven artifacts to cd build result mapper - success bundle mapping`(@TempDir dir: File) {
         val classifier = "releaseBundle"
-        val buildVariant = BuildVariant.RELEASE
+        val buildVariant = BuildVariant("release")
         val artifactId = "artifactId"
         val version = "version"
         val artifactFile = File(dir, "test.aab")
