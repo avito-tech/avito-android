@@ -43,7 +43,7 @@ internal class GroupingKeyTest {
             )
         )
             .singleRequestCaptured()
-            .bodyDoesntContain("grouping_key")
+            .bodyDoesNotContain("grouping_key")
     }
 
     @Test
@@ -60,6 +60,6 @@ internal class GroupingKeyTest {
             )
         )
             .singleRequestCaptured()
-            .bodyDoesntContain("grouping_key")
+            .bodyDoesNotContain("grouping_key")
     }
 }

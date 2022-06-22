@@ -1,5 +1,6 @@
 package com.avito.cd
 
+import com.avito.cd.internal.UploadCdBuildResultTaskAction
 import com.avito.cd.model.BuildVariant
 import com.avito.git.Branch
 import com.avito.git.GitStateStub
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 
 internal class UploadCdBuildResultTaskActionTest {
 
@@ -168,11 +170,12 @@ internal class UploadCdBuildResultTaskActionTest {
     }
 
     private fun action(suppressErrors: Boolean) = UploadCdBuildResultTaskAction(
-        gson = gson,
         client = Providers.client(
             user = user,
             password = password
         ),
-        suppressErrors = suppressErrors
+        gson = gson,
+        suppressErrors = suppressErrors,
+        logger = LoggerFactory.getLogger(UploadCdBuildResultTaskAction::class.java.name)
     )
 }

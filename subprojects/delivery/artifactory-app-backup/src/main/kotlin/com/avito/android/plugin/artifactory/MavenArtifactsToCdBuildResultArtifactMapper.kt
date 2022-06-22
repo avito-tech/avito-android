@@ -10,7 +10,7 @@ import java.net.URI
  * @param groupId e.g. ${project.name}-android
  * @param artifactId e.g. ${project.name}
  * @param version e.g. "${defaultConfig.versionName}-${defaultConfig.versionCode}-${envArgs.buildNumber}"
- * @param buildVariantByClassifier e.g. "releaseApk": [BuildVariant("release")];
+ * @param buildVariantByClassifier e.g. { "releaseApk" to BuildVariant("release") }
  */
 internal class MavenArtifactsToCdBuildResultArtifactMapper(
     artifactoryUri: URI,

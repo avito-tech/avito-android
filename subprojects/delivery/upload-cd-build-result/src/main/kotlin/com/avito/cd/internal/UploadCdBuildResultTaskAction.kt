@@ -1,15 +1,20 @@
-package com.avito.cd
+package com.avito.cd.internal
 
+import com.avito.cd.BuildOutput
+import com.avito.cd.CdBuildConfig
+import com.avito.cd.CdBuildResult
 import com.avito.git.GitState
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.slf4j.Logger
 
 internal class UploadCdBuildResultTaskAction(
     private val client: OkHttpClient,
     private val gson: Gson,
+    private val logger: Logger,
     private val suppressErrors: Boolean
 ) {
     fun send(
@@ -39,8 +44,13 @@ internal class UploadCdBuildResultTaskAction(
             .build()
 
         val response = client.newCall(request).execute()
-        if (!suppressErrors && !response.isSuccessful) {
-            throw RuntimeException("Upload build result failed: ${response.code} ${response.body}")
+
+        if (!response.isSuccessful) {
+            if (suppressErrors) {
+                logger.error("Upload build result failed: ${response.code} ${response.body}")
+            } else {
+                throw RuntimeException("Upload build result failed: ${response.code} ${response.body}")
+            }
         }
     }
 }

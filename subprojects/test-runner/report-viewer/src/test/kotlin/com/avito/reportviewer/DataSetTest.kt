@@ -24,7 +24,7 @@ internal class DataSetTest {
             )
         )
             .singleRequestCaptured()
-            .bodyDoesntContain("\"data_set\"")
+            .bodyDoesNotContain("\"data_set\"")
     }
 
     @Test

@@ -20,7 +20,7 @@ public sealed class Output(public val path: String) {
         public val packageName: String,
         path: String
     ) : Output(path) {
-        public val variantName: String = variant.name.lowercase()
+        public val variantName: String = variant.name
         public var signature: String? = null
 
         override fun toString(): String = "apk;variant=$variant;packageName=$packageName;path=$path"
@@ -31,7 +31,7 @@ public sealed class Output(public val path: String) {
         public val packageName: String,
         path: String
     ) : Output(path) {
-        public val variantName: String = variant.name.lowercase()
+        public val variantName: String = variant.name
         public var signature: String? = null
 
         override fun toString(): String = "bundle;variant=$variant;packageName=$packageName;path=$path"
