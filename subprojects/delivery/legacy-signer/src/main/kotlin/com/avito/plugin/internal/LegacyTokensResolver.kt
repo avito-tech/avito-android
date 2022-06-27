@@ -9,18 +9,16 @@ import org.gradle.api.provider.Provider
 internal class LegacyTokensResolver(
     private val extension: SignExtension,
     private val variant: ApplicationVariant,
-    private val signTokensMap: Map<String, Provider<String>>,
+    private val signTokens: Map<String, Provider<String>>,
 ) {
 
-    private val buildTypeName: String
-        get() = requireNotNull(variant.buildType) {
-            "${variant.name}.buildType is null, shouldn't happen"
-        }
-
-    private val hasTokenRegistered: Boolean = signTokensMap.containsKey(buildTypeName)
+    /**
+     * Check only key instead of value to distinguish registered but empty (missing) tokens
+     */
+    private val hasTokenRegistered: Boolean = signTokens.containsKey(variant.name)
 
     private val token: Result<String> by lazy {
-        val token: String? = signTokensMap[buildTypeName]?.orNull
+        val token: String? = signTokens[variant.name]?.orNull
 
         if (token.hasContent()) {
             Result.Success(token)
@@ -31,6 +29,7 @@ internal class LegacyTokensResolver(
 
     val isCustomSigningEnabled: Boolean by lazy {
         val isEnabled = extension.enabled.getOrElse(true)
+
         isEnabled && hasTokenRegistered
     }
 

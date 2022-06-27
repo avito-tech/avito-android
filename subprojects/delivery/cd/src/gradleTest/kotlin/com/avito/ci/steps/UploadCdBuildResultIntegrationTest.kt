@@ -78,13 +78,17 @@ internal class UploadCdBuildResultIntegrationTest {
                 id("maven-publish")
             },
             imports = listOf(
-                "import com.avito.cd.model.BuildVariant"
+                "import com.avito.cd.model.BuildVariant",
+                "import com.avito.ci.VerifyOutputsTask",
+                "import com.avito.instrumentation.reservation.request.Device.MockEmulator"
             ),
             buildGradleExtra = """
                     ${registerUiTestConfigurations("regress")}
+                    
                     signService {
-                        url.set("https://signer/")
-                        bundle("release", "no_matter")
+                        url.set("$mockUrl")
+                        bundle("release", "local_stub")
+                        apk("releaseRuStore", "local_stub")
                     }
                     android {
                         buildTypes {
@@ -102,8 +106,11 @@ internal class UploadCdBuildResultIntegrationTest {
                             }
 
                             artifacts {
+                                failOnSignatureError = false
                                 apk("releaseApk", BuildVariant("release"), "com.app", "${'$'}{project.buildDir}/outputs/apk/release/app-release-unsigned.apk") {}
-                                apk("releaseRuStoreApk", BuildVariant("releaseRuStore"), "com.app", "${'$'}{project.buildDir}/outputs/apk/releaseRuStore/app-releaseRuStore-unsigned.apk") {}
+                                apk("releaseRuStoreApk", BuildVariant("releaseRuStore"), "com.app", "${'$'}{project.buildDir}/outputs/apk/releaseRuStore/app-releaseRuStore.apk") {
+                                    signature = "stub" // implicitly enables signing
+                                }
                                 mapping("releaseMapping", BuildVariant("release"), "${'$'}{project.buildDir}/reports/mapping.txt")
                             }
 
@@ -114,6 +121,9 @@ internal class UploadCdBuildResultIntegrationTest {
                                 uiTestConfiguration = "$uiTestConfigurationName"
                             }
                         }
+                    }
+                    tasks.withType(VerifyOutputsTask::class.java) {
+                        checkPackageName.set(false) // for stubbed APK from sign service
                     }
                     """.trimIndent(),
             useKts = true,
@@ -143,10 +153,19 @@ internal class UploadCdBuildResultIntegrationTest {
                 }
             }
         }
+
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.endsWith("/sign") },
+                response = MockResponse()
+                    .setResponseCode(HttpCodes.OK)
+                    .setBody("stub apk content")
+            )
+        )
     }
 
     @Test
-    fun `upload cd build result - success send in integration`() {
+    fun `upload cd build result - successful sending in integration`() {
         val configFileName = "xxx"
         val outputPath = "path"
         val nupokatiProject = "avito"
@@ -201,7 +220,10 @@ internal class UploadCdBuildResultIntegrationTest {
                 "$mockUrl/apps-release-local/app-android/" +
                     "$nupokatiProject/11-12-100/$nupokatiProject-11-12-100-releaseApk.apk",
                 BuildVariant("release")
-            )
+            ),
+            // no releaseRuStore apk in the output
+            // nupokati has no data to distinguish binaries from different deployments
+            // This will be supported in the next version of the contract
         )
 
         val expected = CdBuildResult(
@@ -281,6 +303,10 @@ internal class UploadCdBuildResultIntegrationTest {
                     "artifact_type": "bundle",
                     "build_variant": "release",
                     "track": "alpha"
+                },
+                {
+                    "type": "ru-store",
+                    "artifact_type": "apk"
                 }
             ]
         }
@@ -393,8 +419,6 @@ internal class UploadCdBuildResultIntegrationTest {
                 """
         }
         return """
-            import com.avito.instrumentation.reservation.request.Device.MockEmulator
-
             android.defaultConfig {
                 testInstrumentationRunner = "no_matter"
                 testInstrumentationRunnerArguments.putAll(mapOf("planSlug" to "AvitoAndroid"))

@@ -1,5 +1,6 @@
 package com.avito.plugin.internal
 
+import androidx.annotation.VisibleForTesting
 import com.avito.plugin.SignExtension
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -16,7 +17,7 @@ internal class UrlResolver(
     }
 }
 
-// used in tests
+@VisibleForTesting
 internal fun validateUrl(url: String, onFailure: (Throwable) -> Nothing): String {
     return try {
         url.toHttpUrl()

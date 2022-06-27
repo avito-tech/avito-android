@@ -213,7 +213,8 @@ internal class LegacySignServicePluginTest {
                     plugins = plugins {
                         id("com.avito.android.signer")
                     },
-                    buildGradleExtra = signServiceExtension
+                    buildGradleExtra = signServiceExtension,
+                    useKts = true,
                 )
             ),
         ).generateIn(testProjectDir)
@@ -224,10 +225,10 @@ internal class LegacySignServicePluginTest {
         url: String = "${mockWebServer.url("/")}"
     ) = """
          signService {
-            enabled = $enabled
-            url = "$url"
-            apk(android.buildTypes.release, project.properties.get("signToken"))
-            bundle(android.buildTypes.release, project.properties.get("signToken"))
+            enabled.set($enabled)
+            url.set("$url")
+            apk("release", project.findProperty("signToken")?.toString())
+            bundle("release", project.findProperty("signToken")?.toString())
          }
     """.trimIndent()
 }

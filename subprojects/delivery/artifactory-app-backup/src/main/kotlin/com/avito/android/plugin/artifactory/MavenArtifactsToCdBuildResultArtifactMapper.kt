@@ -6,7 +6,7 @@ import org.gradle.api.publish.maven.MavenArtifact
 import java.net.URI
 
 /**
- * @param artifactoryUri e.g. ${-PartifactoryUrl}/apps-release-local
+ * @param artifactoryUri e.g. -P${artifactoryUrl}/apps-release-local
  * @param groupId e.g. ${project.name}-android
  * @param artifactId e.g. ${project.name}
  * @param version e.g. "${defaultConfig.versionName}-${defaultConfig.versionCode}-${envArgs.buildNumber}"
