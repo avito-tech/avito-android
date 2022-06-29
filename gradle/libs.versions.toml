@@ -47,7 +47,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofitConverterGson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
-gson = "com.google.code.gson:gson:2.8.5"
+gson = "com.google.code.gson:gson:2.8.9"
 kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
 
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
