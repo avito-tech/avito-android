@@ -88,7 +88,6 @@ internal class NupokatiPluginIntegrationTest {
                         |
                         |nupokati {
                         |    cdBuildConfigFile.set(rootProject.file("${cdConfigFile.name}"))
-                        |    uploadCrashlyticsMapping.set(false)
                         |    teamcityBuildUrl.set("$teamcityUrl")
                         |
                         |    artifactory {
