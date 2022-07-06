@@ -2,10 +2,13 @@ package com.avito.emcee.worker
 
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.time.ExperimentalTime
 
 public object WorkerMain {
 
+    @ExperimentalCoroutinesApi
+    @ExperimentalStdlibApi
     @ExperimentalCli
     @ExperimentalTime
     @JvmStatic

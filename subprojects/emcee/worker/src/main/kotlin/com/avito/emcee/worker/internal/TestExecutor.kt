@@ -2,12 +2,14 @@ package com.avito.emcee.worker.internal
 
 import com.avito.emcee.queue.TestEntry
 import com.avito.emcee.queue.TestExecutionBehavior
-import com.avito.emcee.queue.TestTimeoutConfiguration
 import java.io.File
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 internal interface TestExecutor {
 
-    interface Result
+    data class Result(val success: Boolean)
 
     data class Job(
         val apk: File,
@@ -17,7 +19,7 @@ internal interface TestExecutor {
         val testPackage: String,
         val instrumentationRunnerClass: String,
         val testExecutionBehavior: TestExecutionBehavior,
-        val testTimeoutConfiguration: TestTimeoutConfiguration
+        val testMaximumDuration: Duration
     )
 
     suspend fun beforeTestBucket()

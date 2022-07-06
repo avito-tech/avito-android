@@ -1,6 +1,9 @@
 package com.avito.instrumentation.internal
 
 import com.android.build.api.variant.Variant
+import com.avito.android.plugins.configuration.BuildEnvResolver
+import com.avito.android.plugins.configuration.GitResolver
+import com.avito.android.plugins.configuration.RunIdResolver
 import com.avito.git.gitState
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration

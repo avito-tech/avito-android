@@ -6,7 +6,7 @@ import com.avito.android.test.step.StepDslDelegate
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
-object StepDslExtension : BeforeAllCallback, StepDslDelegate {
+internal object StepDslExtension : BeforeAllCallback, StepDslDelegate {
 
     lateinit var delegate: StepDslDelegate
 

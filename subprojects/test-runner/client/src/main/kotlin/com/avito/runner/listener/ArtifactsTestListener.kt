@@ -22,7 +22,6 @@ internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
     private val outputDirectory: File,
     private val saveTestArtifactsToOutputs: Boolean,
-    private val fetchLogcatForIncompleteTests: Boolean,
     private val reportArtifactsPullValidator: PullValidator,
     loggerFactory: LoggerFactory,
 ) : TestListener {
@@ -134,21 +133,15 @@ internal class ArtifactsTestListener(
         device: Device,
         tempDirectory: File
     ): TestResult.Incomplete {
+        val logcatResult = device.logcat(null)
+        if (saveTestArtifactsToOutputs) {
+            logcatResult.onSuccess {
+                File(tempDirectory, "logcat.txt").writeText(it)
+            }
+        }
         return TestResult.Incomplete(
             infraError = result,
-            logcat = if (fetchLogcatForIncompleteTests) {
-                val logcatResult = device.logcat(null)
-                if (saveTestArtifactsToOutputs) {
-                    logcatResult.onSuccess {
-                        File(tempDirectory, "logcat.txt").writeText(it)
-                    }
-                }
-                logcatResult
-            } else {
-                Result.Failure(
-                    RuntimeException("fetchLogcatForIncompleteTests is disabled in config")
-                )
-            }
+            logcat = logcatResult
         )
     }
 }

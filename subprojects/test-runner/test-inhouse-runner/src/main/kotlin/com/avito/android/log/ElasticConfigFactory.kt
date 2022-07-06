@@ -9,12 +9,12 @@ import java.net.URL
 internal object ElasticConfigFactory {
 
     fun parse(argsProvider: ArgsProvider): ElasticConfig {
-        val isElasticEnabled = argsProvider.getOptionalArgument("elasticEnabled") == "true"
+        val isElasticEnabled = argsProvider.getArgument("elasticEnabled") == "true"
 
         return if (isElasticEnabled) {
-            val endpointsRawValue: String = argsProvider.getMandatoryArgument("elasticEndpoints")
-            val indexPattern: String = argsProvider.getMandatoryArgument("elasticIndexPattern")
-            val buildId = argsProvider.getMandatoryArgument("buildId")
+            val endpointsRawValue: String = argsProvider.getArgumentOrThrow("elasticEndpoints")
+            val indexPattern: String = argsProvider.getArgumentOrThrow("elasticIndexPattern")
+            val buildId = argsProvider.getArgumentOrThrow("buildId")
 
             ElasticConfig.Enabled(
                 endpoints = parseEndpoint(endpointsRawValue),

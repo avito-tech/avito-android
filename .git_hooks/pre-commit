@@ -12,10 +12,9 @@ INTERNAL_URLS=$(git diff --cached --no-color --no-prefix --unified=0 \
     | { grep -E --invert-match "links\.k\.avito\.ru" || test $? = 1; } )
 
 if [ -n "${INTERNAL_URLS}" ]; then
-  echo >&2 "ERROR: pre-commit git hook has been failed."
-  echo >&2 "Found forbidden internal links in changes:"
+  echo >&2 "WARNING: pre-commit git hook found forbidden internal links in changes:"
   echo >&2 "${INTERNAL_URLS}"
-  exit 1
+  # Do not fail because we currently don't publish to GitHub
 fi
 
 if [ "$COMMIT_CHECK" == "true" ]; then

@@ -1,11 +1,13 @@
 rootProject.name = "build-logic"
 
 pluginManagement {
+    // See rationale inside this script
+    apply(from = "../build-logic-settings/dependency-plugin/pluginManagement-shared.settings.gradle.kts")
+
     includeBuild("../build-logic-settings")
 }
 
 plugins {
-    id("convention-plugins")
     id("convention-dependencies")
 }
 

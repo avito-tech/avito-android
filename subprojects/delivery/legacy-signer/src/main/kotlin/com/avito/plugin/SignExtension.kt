@@ -24,12 +24,12 @@ public abstract class SignExtension @Inject constructor(private val objects: Obj
 
     @Deprecated("use fun with variant name", ReplaceWith("apk(variant, token)"))
     public fun apk(variant: BuildType, token: String?) {
-        apkSignTokens[variant.name] = objects.property<String>().value(token)
+        apk(variant.name, token)
     }
 
     @Deprecated("use fun with variant name", ReplaceWith("bundle(variant, token)"))
     public fun bundle(variant: BuildType, token: String?) {
-        bundleSignTokens[variant.name] = objects.property<String>().value(token)
+        bundle(variant.name, token)
     }
 
     // AGP 7.1 will introduce extensions for build variants
@@ -50,4 +50,10 @@ public abstract class SignExtension @Inject constructor(private val objects: Obj
     public fun bundle(variant: String, token: String?) {
         bundleSignTokens[variant] = objects.property<String>().value(token)
     }
+
+    internal fun apkSignToken(variant: String): String? =
+        apkSignTokens[variant]?.orNull
+
+    internal fun bundleSignToken(variant: String): String? =
+        bundleSignTokens[variant]?.orNull
 }

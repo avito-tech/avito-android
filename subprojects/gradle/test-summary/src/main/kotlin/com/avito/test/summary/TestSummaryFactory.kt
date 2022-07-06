@@ -4,9 +4,10 @@ import Slf4jGradleLoggerFactory
 import com.avito.android.stats.StatsDConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
+import com.avito.notification.NotificationClient
+import com.avito.notification.NotificationClientFactory
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.ReportsApiFactory
-import com.avito.slack.SlackClient
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import org.gradle.api.provider.Provider
@@ -20,8 +21,8 @@ public class TestSummaryFactory(
     public val timeProvider: TimeProvider
         get() = DefaultTimeProvider()
 
-    public fun createSlackClient(extension: TestSummaryExtension): SlackClient {
-        return SlackClient.create(
+    public fun createSlackClient(extension: TestSummaryExtension): NotificationClient {
+        return NotificationClientFactory.createSlackClient(
             serviceName = serviceName,
             token = extension.slackToken.get(),
             workspace = extension.slackWorkspace.get(),

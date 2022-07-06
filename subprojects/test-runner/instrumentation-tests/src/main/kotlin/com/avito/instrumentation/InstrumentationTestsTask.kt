@@ -201,10 +201,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             ).mapNotNull { it.orNull?.asFile },
             uploadTestArtifacts = experiments.uploadArtifactsFromRunner,
             reportViewerConfig = reportViewerConfig,
-            fetchLogcatForIncompleteTests = experiments.fetchLogcatForIncompleteTests,
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
             useLegacyExtensionsV1Beta = experiments.useLegacyExtensionsV1Beta,
-            sendPodsMetrics = experiments.sendPodsMetrics,
         )
 
         val isGradleTestKitRun = gradleTestKitRun.get()

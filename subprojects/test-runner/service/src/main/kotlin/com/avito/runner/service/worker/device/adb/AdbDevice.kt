@@ -5,9 +5,9 @@ import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
 import com.avito.android.Result
 import com.avito.android.asRuntimeException
+import com.avito.cli.Notification
+import com.avito.cli.RxCommandLine
 import com.avito.logger.Logger
-import com.avito.runner.CommandLineExecutor
-import com.avito.runner.ProcessNotification
 import com.avito.runner.model.TestCaseRun
 import com.avito.runner.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -40,7 +40,6 @@ public data class AdbDevice(
     // MBS-8531: don't use "ADB" here to avoid possible recursion
     override val logger: Logger,
     private val eventsListener: AdbDeviceEventsListener,
-    private val commandLine: CommandLineExecutor = CommandLineExecutor.create(),
 ) : Device {
 
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
@@ -322,7 +321,7 @@ public data class AdbDevice(
                 durationMs = durationMs
             )
         },
-        onSuccess = { _: Int, result: ProcessNotification.Exit, durationMs: Long ->
+        onSuccess = { _: Int, result: Notification.Exit, durationMs: Long ->
             eventsListener.onClearDirectorySuccess(
                 device = this,
                 remotePath = remotePath,
@@ -462,6 +461,16 @@ public data class AdbDevice(
             .apply { mkdirs() }
         val started = timeProvider.nowInMillis()
 
+        val blankValues = instrumentationArguments.filterValues { it.isBlank() }
+        if (blankValues.isNotEmpty()) {
+            return Single.error(
+                IllegalArgumentException(
+                    "Instrumentation args contains blank values: $blankValues" +
+                        " it leads to adb args parsing problem. Filter it in configuration"
+                )
+            )
+        }
+
         val output = executeShellCommand(
             command = listOf(
                 "am",
@@ -473,7 +482,7 @@ public data class AdbDevice(
                 "$testPackageName/$testRunnerClass"
             ),
             redirectOutputTo = File(logsDir, "instrumentation-${test.name}.txt")
-        ).ofType(ProcessNotification.Output::class.java)
+        ).ofType(Notification.Output::class.java)
 
         return instrumentationParser
             .parse(output)
@@ -554,7 +563,7 @@ public data class AdbDevice(
     private fun executeBlockingShellCommand(
         command: List<String>,
         timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
-    ): ProcessNotification.Exit = executeBlockingCommand(
+    ): Notification.Exit = executeBlockingCommand(
         command = listOf("shell") + command,
         timeoutSeconds = timeoutSeconds
     )
@@ -562,10 +571,10 @@ public data class AdbDevice(
     private fun executeBlockingCommand(
         command: List<String>,
         timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
-    ): ProcessNotification.Exit = executeCommand(
+    ): Notification.Exit = executeCommand(
         command = command
     )
-        .ofType(ProcessNotification.Exit::class.java)
+        .ofType(Notification.Exit::class.java)
         .timeout(
             timeoutSeconds,
             TimeUnit.SECONDS,
@@ -581,7 +590,7 @@ public data class AdbDevice(
     private fun executeShellCommand(
         command: List<String>,
         redirectOutputTo: File? = null
-    ): Observable<ProcessNotification> = executeCommand(
+    ): Observable<Notification> = executeCommand(
         command = listOf("shell") + command,
         redirectOutputTo = redirectOutputTo
     )
@@ -589,12 +598,11 @@ public data class AdbDevice(
     private fun executeCommand(
         command: List<String>,
         redirectOutputTo: File? = null
-    ): Observable<ProcessNotification> =
-        commandLine.executeProcess(
+    ): Observable<Notification> =
+        RxCommandLine(
             command = adb.adbPath,
             args = listOf("-s", coordinate.serial.value) + command,
-            output = redirectOutputTo
-        )
+        ).start(redirectOutputTo)
 
     override fun toString(): String = "Device ${coordinate.serial}"
 }

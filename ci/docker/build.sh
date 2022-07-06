@@ -4,26 +4,39 @@ set -e
 
 source $(dirname "$0")/../_environment.sh
 
-if test "$#" -ne 2; then
-    echo "ERROR: Missing arguments.
-    You should pass a path to a directory with Dockerfile and image name to publish:
+if [[ "$#" -eq 2 ]]
+then
+  readonly BUILD_DIRECTORY=$(pwd)/$1
+  readonly DOCKERFILE="Dockerfile"
+  readonly IMAGE_NAME=$2
+elif [[ "$#" -eq 3 ]]
+then
+  readonly BUILD_DIRECTORY=$(pwd)/$1
+  readonly DOCKERFILE=$2
+  readonly IMAGE_NAME=$3
+else
+    echo "ERROR: Wrong number of arguments. Expected ones:
     ./build.sh <directory> <image-name>
+    Or
+    ./build.sh <directory> <path to Dockerfile> <image-name>
 
     Example:
     ./build.sh image-builder android/image-builder
+    ./build.sh android-builder hermetic/Dockerfile android/builder-hermetic
     "
     exit 1
 fi
-
-readonly BUILD_DIRECTORY=$(pwd)/$1
-readonly IMAGE_NAME=$2
 
 docker run --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     --volume "${BUILD_DIRECTORY}":/build \
     "${IMAGE_BUILDER}" build \
+        --dockerfilePath "${DOCKERFILE}" \
         --buildDir /build \
-        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
-        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
+        --artifactoryUrl "${ARTIFACTORY_URL}" \
         --registry "${DOCKER_REGISTRY}" \
         --imageName "${IMAGE_NAME}"
+
+# DockerHub is disabled temporary to make builds more hermetic
+#        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
+#        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \

@@ -4,30 +4,43 @@
 avito-disclaimer.md
 --8<--
 
-We publish releases to Maven Central: [com.avito.android](https://search.maven.org/search?q=com.avito.android).
+Temporarily, the Github repository is a mirror.  
+We publish releases to Maven Central on demand.
 
-## Publishing a new release
+## Publishing to an in-house Artifactory
+
+1. Check if diff against the last release contains any changes for users.
+   If not, then probably there are no reasons to make a release.
+1. Check the current status of [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/1l).  
+   If it is `Failed` you could release from previous `Succeed` commits or fix problems.
+1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2022.9`.  
+   This branch must be persistent. It is used for automation.
+1. If the release branch is not on the commit from [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/1l), 
+   manually run it on the `release branch`.
+1. Manually run [Artifactory publish](http://links.k.avito.ru/dBk) on the `release branch`.
+   It will upload artifacts to an in-house Artifactory instance.
+1. Make a PR to an internal avito repository with the new version of infrastructure.
+1. Checkout a new branch and make a PR to the tools repository:
+    - Change `infraVersion` property in the `./gradle.properties` to the new version
+    - Bump up a `projectVersion` property in the `./gradle.properties` to the next version
+1. Publish [to Maven Central](#publishing-to-maven-central) if needed.
+
+
+## Publishing to Maven Central
+
+We publish releases to Maven Central on demand: 
+[com.avito.android](https://search.maven.org/search?q=com.avito.android).
 
 ??? info "If you release for the first time"
 
     - [Get an access to Sonatype](#getting-access-to-sonatype)
     - Install [Github CLI](https://cli.github.com)
 
-1. Check if [diff against the last release](https://github.com/avito-tech/avito-android/compare/2021.%3CINSERT_HERE_THE_LAST_RELEASE%3E...develop) contains any changes for users.
-If not, then probably there are no reasons to make a release.
-1. Check the current status of [Nightly Avito integration build](http://links.k.avito.ru/gZ).  
-If it is `Failed` you could release from previous `Succeed` commits or fix problems.
-1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2021.9`.  
-This branch must be persistent. It is used for automation.
-1. Manually run [Integration build](http://links.k.avito.ru/ZA) on the `release branch`.
-1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`. 
+1. Push `develop` and `release` branches to remote.
+1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the latest or needed `release branch`. 
 It will upload artifacts to a staging repository in [Sonatype](https://oss.sonatype.org/#stagingRepositories).
 So you can upload it in advance at any previous step and drop in case of problems.
 1. [Release staging repository](#making-a-release-in-sonatype)
-1. Make a PR to an internal avito repository with the new version of infrastructure.
-1. Checkout a new branch and make a PR to github repository:
-    - Change `infraVersion` property in the `./gradle.properties` to the new version 
-    - Bump up a `projectVersion` property in the `./gradle.properties` to the next version
 1. Publish a release in Github:  
    ```sh
    make draft_release version=<current release version> prev_version=<last release version>
@@ -69,50 +82,10 @@ Some additional info:
 
 - [Maven central publishing reference article](https://getstream.io/blog/publishing-libraries-to-mavencentral-2021/)
 
-### Known issues
-
-#### Can't find an artifact in an internal Artifactory
-
-How it looks:
-
-- Maven central has [expected artifacts](https://search.maven.org/search?q=com.avito.android): pom, jar/aar, sources.jar
-- Gradle can't find it in Artifactory Proxy
-
-```text
-> Could not resolve all artifacts for configuration ':classpath'.
-   > Could not find com.avito.android:runner-shared:2020.16.
-     Searched in the following locations:
-       - file:/home/user/.m2/repository/
-       - http://<artifactory>/
-```
-
-Probable reasons:
-
-- The file is not downloaded by Artifactory yet. 
-Such files look in web UI like empty references: `runner-shared-2020.16.jar->     -    -    -    -` (empty size)
-- When you use a partially uploaded release, Artifactory might cache the wrong state.
-It seems that Artifactory caches it for some time, but we don't know exactly and how to invalidate it.
-
-Actions:
-
-- Download this file manually in the browser or CLI.  
-If the file downloaded successfully, refresh a local cache via `--refresh-dependencies`.
-- If it didn't help, bump up a minor release version and make a new release. 
-
 ## Local integration tests against Avito
 
-### Using `mavenLocal`
-
 1. Run `make publish_to_maven_local` in github repository.
-1. Run integration tests of your choice in avito with specified test version
-
-### Using `compositeBuild`
-
-Run from Avito project directory 
-
-```shell
-./gradlew <task> -Pavito.useCompositeBuild=true -Pavito.compositeBuildPath=<avito-android-infra/subprojects dir on your local machine>
-```
+1. Run integration tests of your choice in avito with `local` version of infrastructure.
 
 ## CI integration tests against Avito
 

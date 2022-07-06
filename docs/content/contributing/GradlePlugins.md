@@ -143,7 +143,6 @@ open class MyPlugin : Plugin<Project> {
     private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty("avito.my_plugin.enabled")
-            .forUseAtConfigurationTime()
             .map { it.toBoolean() }
             .getOrElse(true)
 
@@ -157,3 +156,7 @@ open class MyPlugin : Plugin<Project> {
 ```
 
 ### [Logging](Logging.md)
+
+### Properties naming
+
+Use `com.avito.android.tools.` prefix for any project specific properties to avoid collisions.

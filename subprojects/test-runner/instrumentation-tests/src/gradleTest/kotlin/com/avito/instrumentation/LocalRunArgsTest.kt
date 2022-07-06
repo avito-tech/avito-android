@@ -95,6 +95,7 @@ internal class LocalRunArgsTest {
             Case("deviceName", "local"),
             Case("reportApiUrl", "http://stub"),
             Case("reportViewerUrl", "http://stub"),
+            Case("expectedCustomParam", "value"),
         ).map { case ->
             dynamicTest(case.param) {
                 assertThat(instrumentationArgs).containsEntry(case.param, case.expectedValue)

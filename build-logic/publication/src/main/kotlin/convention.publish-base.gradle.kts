@@ -4,9 +4,7 @@ plugins {
 
 group = "com.avito.android"
 
-version = providers.gradleProperty("projectVersion")
-    .forUseAtConfigurationTime()
-    .get()
+version = providers.gradleProperty("projectVersion").get()
 
 publishing.publications.withType<MavenPublication> {
     pom {

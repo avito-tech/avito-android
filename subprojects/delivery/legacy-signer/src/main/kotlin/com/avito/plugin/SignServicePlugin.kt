@@ -24,15 +24,15 @@ public class SignServicePlugin : Plugin<Project> {
 
         val extension = target.extensions.create<SignExtension>("signService")
 
-        // todo remove after migration to new tasks
+        // todo remove after migration to new tasks (sign-service?)
         target.withAndroidApp { appExtension ->
 
             @Suppress("DEPRECATION")
             appExtension.applicationVariants.all { variant: com.android.build.gradle.api.ApplicationVariant ->
 
-                val buildTypeName = variant.buildType.name
-                val apkToken: String? = extension.apkSignTokens[buildTypeName]?.orNull
-                val bundleToken: String? = extension.bundleSignTokens[buildTypeName]?.orNull
+                val buildVariantName = variant.name
+                val apkToken: String? = extension.apkSignToken(buildVariantName)
+                val bundleToken: String? = extension.bundleSignToken(buildVariantName)
 
                 variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
             }
@@ -44,9 +44,9 @@ public class SignServicePlugin : Plugin<Project> {
 
                 val urlResolver = UrlResolver(extension)
 
-                val buildTypeName = variant.buildType
+                val buildVariantName = variant.name
 
-                val apkToken = extension.apkSignTokens[buildTypeName]?.orNull
+                val apkToken = extension.apkSignToken(buildVariantName)
 
                 registerTask<LegacySignApkTask>(
                     tasks = target.tasks,
@@ -56,7 +56,7 @@ public class SignServicePlugin : Plugin<Project> {
                     signingResolver = LegacyTokensResolver(
                         extension = extension,
                         variant = variant,
-                        signTokensMap = extension.apkSignTokens
+                        signTokens = extension.apkSignTokens,
                     ),
                     urlResolver = urlResolver
                 )
@@ -70,7 +70,7 @@ public class SignServicePlugin : Plugin<Project> {
                         .toTransform(SingleArtifact.APK)
                 }
 
-                val bundleToken = extension.bundleSignTokens[buildTypeName]?.orNull
+                val bundleToken = extension.bundleSignToken(buildVariantName)
 
                 registerTask<LegacySignBundleTask>(
                     tasks = target.tasks,
@@ -80,7 +80,7 @@ public class SignServicePlugin : Plugin<Project> {
                     signingResolver = LegacyTokensResolver(
                         extension = extension,
                         variant = variant,
-                        signTokensMap = extension.bundleSignTokens
+                        signTokens = extension.bundleSignTokens,
                     ),
                     urlResolver = urlResolver
                 )

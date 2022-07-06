@@ -1,19 +1,19 @@
 package com.avito.test.summary
 
+import com.avito.notification.NotificationClient
+import com.avito.notification.finder.ConjunctionPredicate
+import com.avito.notification.finder.SameAuthorPredicate
+import com.avito.notification.finder.TextContainsStringPredicate
 import com.avito.report.model.Team
 import com.avito.report.model.TestStatus
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.reportviewer.model.SimpleRunTest
-import com.avito.slack.ConjunctionMessagePredicate
 import com.avito.slack.CoroutinesSlackBulkSender
-import com.avito.slack.SameAuthorPredicate
 import com.avito.slack.SlackBulkSender
-import com.avito.slack.SlackClient
 import com.avito.slack.SlackConditionalSender
 import com.avito.slack.SlackMessageUpdater
 import com.avito.slack.SlackMessageUpdaterWithThreadMark
-import com.avito.slack.TextContainsStringCondition
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.test.summary.compose.SlackSummaryComposer
@@ -28,7 +28,7 @@ internal interface TestSummarySender {
 }
 
 internal class TestSummarySenderImpl(
-    slackClient: SlackClient,
+    notificationClient: NotificationClient,
     reportViewerUrl: String,
     private val reportsApi: ReportsApi,
     private val buildUrl: String,
@@ -41,16 +41,16 @@ internal class TestSummarySenderImpl(
 
     private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewerUrl)
     private val slackMessageUpdater: SlackMessageUpdater = SlackMessageUpdaterWithThreadMark(
-        slackClient = slackClient,
+        notificationClient = notificationClient,
         threadMessage = "Updated by: $buildUrl"
     )
     private val slackConditionalSender: SlackConditionalSender = SlackConditionalSender(
-        slackClient = slackClient,
+        notificationClient = notificationClient,
         updater = slackMessageUpdater,
-        condition = ConjunctionMessagePredicate(
+        condition = ConjunctionPredicate(
             listOf(
                 SameAuthorPredicate(slackUserName),
-                TextContainsStringCondition(reportCoordinates.runId)
+                TextContainsStringPredicate(reportCoordinates.runId)
             )
         )
     )

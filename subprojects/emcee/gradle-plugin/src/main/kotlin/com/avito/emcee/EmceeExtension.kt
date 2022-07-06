@@ -1,25 +1,38 @@
 package com.avito.emcee
 
+import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 import java.time.Duration
 
-public interface EmceeExtension {
+public abstract class EmceeExtension(objects: ObjectFactory) {
 
     @get:Nested
-    public val job: JobConfiguration
+    internal abstract val job: JobConfiguration
 
-    public val retries: Property<Int>
+    @get:Nested
+    internal abstract val artifactory: ArtifactoryConfiguration
 
-    public val deviceApis: ListProperty<Int>
+    public abstract val retries: Property<Int>
 
-    public val testTimeout: Property<Duration>
+    public abstract val deviceApis: ListProperty<Int>
 
-    public val queueBaseUrl: Property<String>
+    public abstract val testTimeout: Property<Duration>
 
-    public val configTestMode: Property<Boolean>
+    public abstract val queueBaseUrl: Property<String>
 
-    public val outputDir: DirectoryProperty
+    public val configTestMode: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+
+    public abstract val outputDir: DirectoryProperty
+
+    public fun job(action: Action<JobConfiguration>) {
+        action.execute(job)
+    }
+
+    public fun artifactory(action: Action<ArtifactoryConfiguration>) {
+        action.execute(artifactory)
+    }
 }

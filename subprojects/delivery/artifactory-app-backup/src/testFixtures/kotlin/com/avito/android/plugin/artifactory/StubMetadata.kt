@@ -8,20 +8,22 @@ import okhttp3.mockwebserver.MockResponse
  */
 public fun MockResponse.setStubMavenMetadataBody(): MockResponse {
     setBody(
-        """<?xml version="1.0" encoding="UTF-8"?>
-<metadata>
-    <groupId>unspecified</groupId>
-    <artifactId>unspecified</artifactId>
-    <version>unspecified</version>
-    <versioning>
-        <latest>unspecified</latest>
-        <release>unspecified</release>
-        <versions>
+        """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <metadata>
+            <groupId>unspecified</groupId>
+            <artifactId>unspecified</artifactId>
             <version>unspecified</version>
-        </versions>
-        <lastUpdated>20170607140216</lastUpdated>
-    </versioning>
-</metadata>"""
+            <versioning>
+                <latest>unspecified</latest>
+                <release>unspecified</release>
+                <versions>
+                    <version>unspecified</version>
+                </versions>
+                <lastUpdated>20170607140216</lastUpdated>
+            </versioning>
+        </metadata>
+        """.trimIndent()
     )
     return this
 }

@@ -1,5 +1,6 @@
 package com.avito.emcee
 
+import com.avito.emcee.client.EmceeTestClientConfig
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
@@ -18,6 +19,9 @@ internal class EmceePluginTest {
     @Test
     fun `configuration - passes - without emcee extension configured`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+              id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -38,6 +42,9 @@ internal class EmceePluginTest {
         val outputDirName = "emcee"
 
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = appModuleName,
@@ -46,13 +53,23 @@ internal class EmceePluginTest {
                         id("com.avito.android.emcee")
                     },
                     useKts = true,
-                    imports = listOf("import java.time.Duration"),
+                    imports = listOf(
+                        "import java.time.Duration",
+                    ),
                     buildGradleExtra = """
                     |emcee {
-                    |   job.id.set("AvitoComponentTests#PR-2214")
-                    |   job.groupId.set("PRTests#PR-2214")
-                    |   job.priority.set(100)
-                    |   job.groupPriority.set(100)
+                    |   job {
+                    |       id.set("AvitoComponentTests#PR-2214")
+                    |       groupId.set("PRTests#PR-2214")
+                    |       priority.set(100)
+                    |       groupPriority.set(100)   
+                    |   }
+                    |   artifactory {
+                    |       user.set("deployer")
+                    |       password.set("12345")
+                    |       baseUrl.set("http://artifactory/")
+                    |       repository.set("android-emcee") 
+                    |   }
                     |   retries.set(2)
                     |   deviceApis.add(22)
                     |   deviceApis.add(30)
@@ -69,7 +86,7 @@ internal class EmceePluginTest {
         gradlew(projectDir, "emceeTestDebug").assertThat().buildSuccessful()
 
         val outputDir = Path(projectDir.path, appModuleName, "build", outputDirName).toFile()
-        val config: EmceeTestActionConfig = EmceeConfigTestHelper(outputDir).deserialize()
+        val config: EmceeTestClientConfig = EmceeConfigTestHelper(outputDir).deserialize()
 
         return listOf(
             Case("job id") { assertThat(job.id).isEqualTo("AvitoComponentTests#PR-2214") },
@@ -77,10 +94,10 @@ internal class EmceePluginTest {
             Case("job priority") { assertThat(job.priority).isEqualTo(100) },
             Case("job group priority") { assertThat(job.groupPriority).isEqualTo(100) },
             Case("retries") { assertThat(testExecutionBehavior.retries).isEqualTo(2) },
-            Case("devices") { assertThat(devices.map { it.runtime }).containsExactly("22", "30") },
-            Case("single test timeout") { assertThat(timeoutConfiguration.singleTestMaximumDuration).isEqualTo(120) },
+            Case("devices") { assertThat(devices.map { it.sdkVersion }).containsExactly(22, 30) },
+            Case("single test timeout") { assertThat(testMaximumDurationSec).isEqualTo(120) },
         ).map { case -> DynamicTest.dynamicTest(case.paramName) { case.assertion(config) } }
     }
 
-    data class Case(val paramName: String, val assertion: EmceeTestActionConfig.() -> Unit)
+    data class Case(val paramName: String, val assertion: EmceeTestClientConfig.() -> Unit)
 }

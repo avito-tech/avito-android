@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.plugins.configuration.BuildEnvResolver
 import com.avito.instrumentation.InstrumentationTestsTask
 
 internal class CIArgsConfigurator(

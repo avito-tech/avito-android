@@ -45,7 +45,7 @@ public class TestSummaryStep(context: String, name: String) : TestSummaryPluginB
                 this.mentionOnFailures.set(extension.mentionOnFailures.map { set -> set.map { Team(it) }.toSet() })
                 this.reserveSlackChannel.set(extension.reserveSlackChannel)
                 this.slackUsername.set(extension.slackUserName)
-                this.slackClient.set(testSummaryFactory.createSlackClient(extension))
+                this.notificationClient.set(testSummaryFactory.createSlackClient(extension))
                 this.reportsApi.set(testSummaryFactory.createReportsApi(extension))
                 this.reportViewerUrl.set(extension.reportViewerUrl)
             }

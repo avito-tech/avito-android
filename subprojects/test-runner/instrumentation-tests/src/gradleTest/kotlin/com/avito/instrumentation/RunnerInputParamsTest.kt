@@ -132,6 +132,7 @@ internal class RunnerInputParamsTest {
             "fileStorageUrl" to "http://stub",
             "sentryDsn" to "stub",
             "avito.report.enabled" to "false", // todo
+            "expectedCustomParam" to "value"
         )
 
         return listOf(
@@ -329,10 +330,6 @@ internal class RunnerInputParamsTest {
             },
             Case("uploadTestArtifacts is disabled") {
                 assertThat(it.uploadTestArtifacts)
-                    .isFalse()
-            },
-            Case("fetchLogcatForIncompleteTests is disabled") {
-                assertThat(it.fetchLogcatForIncompleteTests)
                     .isFalse()
             },
             Case("saveTestArtifactsToOutputs is disabled") {

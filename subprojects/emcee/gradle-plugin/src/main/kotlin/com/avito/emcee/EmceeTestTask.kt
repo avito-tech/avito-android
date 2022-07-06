@@ -1,16 +1,21 @@
 package com.avito.emcee
 
+import com.avito.emcee.client.EmceeTestClientConfig
+import com.avito.emcee.client.di.EmceeTestActionFactory
+import com.avito.emcee.client.internal.ArtifactorySettings
 import com.avito.emcee.internal.EmceeConfigTestHelper
 import com.avito.emcee.internal.getApkOrThrow
-import com.avito.emcee.queue.Device
+import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Job
 import com.avito.emcee.queue.ScheduleStrategy
 import com.avito.emcee.queue.TestExecutionBehavior
-import com.avito.emcee.queue.TestTimeoutConfiguration
+import com.avito.logger.GradleLoggerPlugin
+import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
@@ -24,6 +29,9 @@ public abstract class EmceeTestTask : DefaultTask() {
 
     @get:Nested
     public abstract val job: Property<JobConfiguration>
+
+    @get:Nested
+    public abstract val artifactory: Property<ArtifactoryConfiguration>
 
     @get:Input
     public abstract val retries: Property<Int>
@@ -40,8 +48,17 @@ public abstract class EmceeTestTask : DefaultTask() {
     @get:InputDirectory
     public abstract val apk: DirectoryProperty
 
+    @get:Input
+    public abstract val appPackage: Property<String>
+
     @get:InputDirectory
     public abstract val testApk: DirectoryProperty
+
+    @get:Input
+    public abstract val testAppPackage: Property<String>
+
+    @get:Input
+    public abstract val testRunnerClass: Property<String>
 
     @get:Input
     public abstract val configTestMode: Property<Boolean>
@@ -49,30 +66,55 @@ public abstract class EmceeTestTask : DefaultTask() {
     @get:OutputDirectory
     public abstract val outputDir: DirectoryProperty
 
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+
     @ExperimentalTime
     @TaskAction
     public fun action() {
-        val emceeTestAction = EmceeTestActionFactory(baseUrl.get()).create()
+
+        val artifactory = artifactory.get()
+
+        val artifactorySettings = ArtifactorySettings(
+            baseUrl = artifactory.baseUrl.get(),
+            user = artifactory.user.get(),
+            password = artifactory.password.get(),
+            repository = artifactory.repository.get(),
+        )
+
+        val emceeTestAction = EmceeTestActionFactory
+            .create(
+                emceeQueueBaseUrl = baseUrl.get(),
+                artifactorySettings = artifactorySettings,
+                loggerFactory = loggerFactory.get()
+            ).create()
+
         val job = job.get()
         val testTimeoutInSec = testTimeout.get().seconds
 
-        val config = EmceeTestActionConfig(
+        val devices = deviceApis.get().map { api -> DeviceConfiguration("", api) }
+        require(devices.isNotEmpty()) {
+            "Failed to execute ${this.name}. There are no configured devices in extension"
+        }
+        val config = EmceeTestClientConfig(
             job = Job(
                 id = job.id.get(),
                 groupId = job.groupId.get(),
                 priority = job.priority.get(),
                 groupPriority = job.groupPriority.get(),
-                analyticsConfiguration = Any()
             ),
+            artifactory = artifactorySettings,
             scheduleStrategy = ScheduleStrategy(testsSplitter = ScheduleStrategy.TestsSplitter.Individual),
             testExecutionBehavior = TestExecutionBehavior(
                 environment = emptyMap(),
                 retries = retries.get()
             ),
-            timeoutConfiguration = TestTimeoutConfiguration(testTimeoutInSec.toFloat(), testTimeoutInSec.toFloat()),
-            devices = deviceApis.get().map { api -> Device("", api.toString()) },
+            testMaximumDurationSec = testTimeoutInSec,
+            devices = devices,
             apk = apk.get().getApkOrThrow(), // todo should be optional for libraries
-            testApk = testApk.get().getApkOrThrow()
+            appPackage = appPackage.get(),
+            testApk = testApk.get().getApkOrThrow(),
+            testAppPackage = testAppPackage.get(),
+            testRunnerClass = testRunnerClass.get(),
         )
 
         // writing config dump every time for debug purposes

@@ -7,7 +7,7 @@ import com.google.gson.JsonPrimitive
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
-class RequestIncidentPresenterTest {
+internal class RequestIncidentPresenterTest {
 
     @Language("JSON")
     private val sampleJson = """{

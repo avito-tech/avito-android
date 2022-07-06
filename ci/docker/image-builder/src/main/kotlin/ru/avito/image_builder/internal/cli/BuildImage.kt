@@ -3,11 +3,15 @@ package ru.avito.image_builder.internal.cli
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
+import kotlinx.cli.default
 import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.ImageTagger
+import ru.avito.image_builder.internal.command.NoOpRegistryLogin
 import ru.avito.image_builder.internal.command.RegistryLogin
+import ru.avito.image_builder.internal.command.RegistryLoginImpl
 import ru.avito.image_builder.internal.command.SimpleImageBuilder
 import ru.avito.image_builder.internal.docker.CliDocker
+import ru.avito.image_builder.internal.docker.Docker
 import ru.avito.image_builder.internal.docker.RegistryCredentials
 import java.io.File
 
@@ -17,24 +21,35 @@ internal open class BuildImage(
     description: String
 ) : Subcommand(name, description) {
 
+    protected val dockerfilePath: String by option(
+        type = ArgType.String,
+        description = "Relative path to Dockerfile inside context (buildDir)"
+    )
+        .default("Dockerfile")
+
     protected val buildDir: String by option(
         type = ArgType.String,
         description = "Path to mounted directory with Dockerfile"
     ).required()
 
-    protected val dockerHubUsername: String by option(
+    protected val dockerHubUsername: String? by option(
         type = ArgType.String,
         description = "DockerHub username"
-    ).required()
+    )
 
-    protected val dockerHubPassword: String by option(
+    protected val dockerHubPassword: String? by option(
         type = ArgType.String,
         description = "DockerHub password"
-    ).required()
+    )
 
     protected val registry: String by option(
         type = ArgType.String,
         description = "Docker target registry"
+    ).required()
+
+    protected val artifactoryUrl: String by option(
+        type = ArgType.String,
+        description = "Internal artifactory url"
     ).required()
 
     protected val imageName: String by option(
@@ -51,18 +66,33 @@ internal open class BuildImage(
 
         return SimpleImageBuilder(
             docker = docker,
+            dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
-            login = RegistryLogin(
+            login = dockerHubLogin(docker),
+            tagger = ImageTagger(docker),
+            registry = registry,
+            artifactoryUrl = artifactoryUrl,
+            imageName = imageName,
+        )
+    }
+
+    protected fun dockerHubLogin(docker: Docker): RegistryLogin {
+        val username = dockerHubUsername
+        val password = dockerHubPassword
+
+        return if (!username.isNullOrEmpty() && !password.isNullOrEmpty()) {
+            RegistryLoginImpl(
                 docker = docker,
                 credentials = RegistryCredentials(
                     registry = null,
-                    username = dockerHubUsername,
-                    password = dockerHubPassword,
+                    username = username,
+                    password = password,
                 )
-            ),
-            tagger = ImageTagger(docker),
-            registry = registry,
-            imageName = imageName,
-        )
+            )
+        } else {
+            NoOpRegistryLogin(
+                message = "No dockerHubUsername and dockerHubPassword setup."
+            )
+        }
     }
 }

@@ -69,6 +69,9 @@ internal class KubernetesReservationClient(
 
     override suspend fun remove(podName: String) {
         withContext(CoroutineName("delete-pod-$podName") + dispatcher) {
+            /**
+             * TODO MBSA-542 replace with K8S Pod removed events
+             */
             kubernetesReservationListener.onPodRemoved()
             kubernetesApi.deletePod(podName)
         }

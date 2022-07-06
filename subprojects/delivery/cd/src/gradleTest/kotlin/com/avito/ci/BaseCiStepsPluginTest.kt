@@ -15,7 +15,8 @@ internal abstract class BaseCiStepsPluginTest {
 
     @Suppress("MaxLineLength")
     protected fun generateProjectWithConfiguredCiSteps(
-        uploadCrashlyticsMappingFileEnabled: Boolean = true
+        uploadCrashlyticsMappingFileEnabled: Boolean = false,
+        uploadCrashlyticsNativeSymbols: Boolean = false,
     ) {
         TestProjectGenerator(
             plugins = plugins {
@@ -31,7 +32,7 @@ internal abstract class BaseCiStepsPluginTest {
                             pluginId = "com.google.gms.google-services"
                         )
                         applyWithBuildscript(
-                            buildscriptClasspath = "com.google.firebase:firebase-crashlytics-gradle:2.7.1",
+                            buildscriptClasspath = "com.google.firebase:firebase-crashlytics-gradle:2.8.1",
                             pluginId = "com.google.firebase.crashlytics"
                         )
 
@@ -44,7 +45,8 @@ internal abstract class BaseCiStepsPluginTest {
                         id("maven-publish")
                     },
                     imports = listOf(
-                        "import com.avito.cd.BuildVariant"
+                        "import com.avito.cd.model.BuildVariant",
+                        "import com.avito.cd.BuildVariant as LegacyBuildVariant"
                     ),
                     buildGradleExtra = """
                             ${registerUiTestConfigurations("regress", "pr")}
@@ -66,7 +68,14 @@ internal abstract class BaseCiStepsPluginTest {
                                     release {
                                         minifyEnabled true
                                         proguardFile("proguard.pro")
-                                        firebaseCrashlytics.mappingFileUploadEnabled = true
+                                        firebaseCrashlytics {
+                                            mappingFileUploadEnabled = $uploadCrashlyticsMappingFileEnabled
+                                            nativeSymbolUploadEnabled = $uploadCrashlyticsNativeSymbols
+                                            // Hack for nativeSymbolUploadEnabled to simulate third party native libs
+                                            // https://firebase.google.com/docs/crashlytics/ndk-reports#upload-symbols-external-dependencies
+                                            unstrippedNativeLibsDir = "build/intermediates/merged_native_libs/release/out/lib"
+                                            strippedNativeLibsDir = "build/intermediates/stripped_native_libs/release/out/lib"
+                                        }
                                     }
                                 }
                             }
@@ -80,20 +89,17 @@ internal abstract class BaseCiStepsPluginTest {
                                     lint { }
 
                                     artifacts {
-                                        apk("debugApk", BuildVariant.DEBUG, "com.appA", "${'$'}{project.buildDir}/outputs/apk/debug/appA-debug.apk") {}
-                                        apk("releaseApk", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/apk/release/appA-release.apk") {
+                                        apk("debugApk", LegacyBuildVariant.DEBUG, "com.appA", "${'$'}{project.buildDir}/outputs/apk/debug/appA-debug.apk") {}
+                                        apk("releaseApk", new BuildVariant("release"), "com.appA", "${'$'}{project.buildDir}/outputs/apk/release/appA-release.apk") {
                                             signature = "1221e21e21e"
                                         }
-                                        bundle("releaseBundle", BuildVariant.RELEASE, "com.appA", "${'$'}{project.buildDir}/outputs/release/debug/appA-release.aab") {
+                                        bundle("releaseBundle", new BuildVariant("release"), "com.appA", "${'$'}{project.buildDir}/outputs/release/debug/appA-release.aab") {
                                             signature = "12e23rrr34r"
                                         }
-                                        mapping("releaseMapping", BuildVariant.RELEASE, "${'$'}{project.buildDir}/reports/mapping.txt")
+                                        mapping("releaseMapping", new BuildVariant("release"), "${'$'}{project.buildDir}/reports/mapping.txt")
                                         file("nonExistedJson","${'$'}{project.buildDir}/reports/not-existed-file.json")
                                     }
 
-                                    uploadToQapps {
-                                        artifacts = ['releaseApk']
-                                    }
                                     uploadToProsector {
                                         artifacts = ['debugApk']
                                     }
@@ -105,6 +111,7 @@ internal abstract class BaseCiStepsPluginTest {
                                     }
                                     deploy {
                                         uploadCrashlyticsProguardMappingFile = $uploadCrashlyticsMappingFileEnabled
+                                        uploadCrashlyticsNativeSymbols = $uploadCrashlyticsNativeSymbols
                                     }
                                 }
                             }

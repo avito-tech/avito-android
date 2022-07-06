@@ -101,7 +101,6 @@ internal class TestRunnerFactoryImpl(
                     outputDirectory = testRunnerOutputDir,
                     loggerFactory = loggerFactory,
                     saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
-                    fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
                     reportArtifactsPullValidator = ReportAwarePullValidator(
                         testArtifactsProviderFactory = TestArtifactsProviderFactory
                     )

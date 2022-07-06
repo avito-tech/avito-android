@@ -39,7 +39,7 @@ internal class NupokatiPluginTest {
                         id("com.avito.android.nupokati")
 
                         applyWithBuildscript(
-                            buildscriptClasspath = "com.google.firebase:firebase-crashlytics-gradle:2.7.1",
+                            buildscriptClasspath = "com.google.firebase:firebase-crashlytics-gradle:2.8.1",
                             pluginId = "com.google.firebase.crashlytics"
                         )
                     },
@@ -71,8 +71,6 @@ internal class NupokatiPluginTest {
             .assertThat()
             .buildSuccessful()
 
-        // todo assert that "deployToGooglePlayRelease" and "uploadCrashlyticsMappingFileRelease"
-        //  not called because no deployment
         return listOf(
             "artifactoryBackupRelease",
             "packageReleaseBundle",

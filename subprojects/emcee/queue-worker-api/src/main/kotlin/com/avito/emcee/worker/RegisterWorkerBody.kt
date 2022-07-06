@@ -6,6 +6,5 @@ import com.squareup.moshi.JsonClass
 public data class RegisterWorkerBody(
     val workerId: String,
     val workerRestAddress: String,
-) {
-    public val workerCapabilities: List<Nothing> = emptyList()
-}
+    val workerCapabilities: List<String> = emptyList()
+)

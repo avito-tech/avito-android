@@ -28,9 +28,6 @@ plugins-setup.md
                 revision = 5
             )
         }
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
-        }
     }
     ```
 
@@ -42,9 +39,6 @@ plugins-setup.md
     buildChecks {
         androidSdk {
             version(29, 5)
-        }
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
         }
         uniqueRClasses {
             enabled = false
@@ -151,36 +145,6 @@ avito.build-checks.enabled=false
 
 These checks are available in a root project's buildscript.  
 See also [Android application checks](#android-application-checks).
-
-#### Java version
-
-The Java version can influence the output of the Java compiler. It leads to
-Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss)
-due
-to [Java version tracking](https://docs.gradle.org/nightly/userguide/common_caching_problems.html#java_version_tracking).  
-This check forces the same major version for all builds.
-
-=== "Kotlin"
-    `build.gradle.kts`
-
-    ```kotlin
-    buildChecks {
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
-        }   
-    }
-    ```
-
-=== "Groovy"
-    `build.gradle`
-
-    ```groovy
-    buildChecks {
-        javaVersion {
-            version = JavaVersion.VERSION_1_8
-        }   
-    }
-    ```
 
 #### Android SDK version
 

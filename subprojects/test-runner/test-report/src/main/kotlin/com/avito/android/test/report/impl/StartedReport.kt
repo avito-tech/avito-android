@@ -1,6 +1,5 @@
 package com.avito.android.test.report.impl
 
-import androidx.test.espresso.EspressoException
 import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.ReportStepModelFactory
 import com.avito.android.test.report.StepException
@@ -25,6 +24,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
+import com.avito.report.model.IncidentTypeDeterminer
 import com.avito.time.TimeProvider
 import com.avito.utils.stackTraceToList
 
@@ -33,6 +33,7 @@ internal class StartedReport(
     transport: Transport,
     screenshotCapturer: ScreenshotCapturer,
     timeProvider: TimeProvider,
+    private val incidentTypeDeterminer: IncidentTypeDeterminer,
     private val troubleshooter: Troubleshooter,
     override val state: ReportState.NotFinished.Initialized.Started,
 ) : BaseInitializedReport(loggerFactory, transport, screenshotCapturer, timeProvider),
@@ -181,7 +182,7 @@ internal class StartedReport(
                 state.incidentScreenshot = screenshot
             }
 
-            val type = exception.determineIncidentType()
+            val type = incidentTypeDeterminer.determine(exception)
             val chainFactory = createIncidentChainFactory()
             val incidentToAdd = Incident(
                 type = type,
@@ -212,13 +213,4 @@ internal class StartedReport(
         ),
         fallbackPresenter = FallbackIncidentPresenter()
     )
-
-    private fun Throwable.determineIncidentType(): Incident.Type {
-        return when {
-            else -> when (this) {
-                is AssertionError, is EspressoException -> Incident.Type.ASSERTION_FAILED
-                else -> cause?.determineIncidentType() ?: Incident.Type.INFRASTRUCTURE_ERROR
-            }
-        }
-    }
 }

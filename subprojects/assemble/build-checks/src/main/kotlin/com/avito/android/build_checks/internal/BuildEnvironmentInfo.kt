@@ -32,7 +32,7 @@ internal class BuildEnvironmentInfo(private val providers: ProviderFactory) {
     }
 
     private fun Provider<String>.getSafe(): String? {
-        val result = forUseAtConfigurationTime().orNull
+        val result = orNull
         return if (result.isNullOrBlank()) {
             null
         } else {

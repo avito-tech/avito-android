@@ -52,7 +52,3 @@ public annotation class UnitTest
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 public annotation class ScreenshotTest
-
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-public annotation class SyntheticMonitoringTest

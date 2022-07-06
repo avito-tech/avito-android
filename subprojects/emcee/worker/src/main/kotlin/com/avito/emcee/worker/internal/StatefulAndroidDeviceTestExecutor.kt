@@ -1,8 +1,13 @@
 package com.avito.emcee.worker.internal
 
-import com.avito.emcee.device.AndroidApplication
-import com.avito.emcee.device.AndroidDevice
+import com.avito.android.Result
+import com.avito.android.device.AndroidApplication
+import com.avito.android.device.AndroidDevice
+import com.avito.android.device.InstrumentationCommand
+import kotlinx.coroutines.withTimeout
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 internal class StatefulAndroidDeviceTestExecutor(
     private val device: AndroidDevice
 ) : TestExecutor {
@@ -38,13 +43,19 @@ internal class StatefulAndroidDeviceTestExecutor(
     }
 
     private suspend fun executeTest(job: TestExecutor.Job): TestExecutor.Result {
-        // todo add timeout
-        device.executeInstrumentation(
-            // todo pass envs
-            listOf(
-                "${job.testPackage}/${job.instrumentationRunnerClass}"
-            )
-        )
-        TODO("Not yet implemented")
+        return Result.tryCatch {
+            val instrumentationResult = withTimeout(job.testMaximumDuration) {
+                device.executeInstrumentation(
+                    command = InstrumentationCommand(
+                        testName = job.test.name.asInstrumentationArg(),
+                        testPackage = job.testPackage,
+                        runnerClass = job.instrumentationRunnerClass
+                    )
+                )
+            }
+            instrumentationResult
+                .map { TestExecutor.Result(it.success) }
+                .getOrThrow()
+        }.getOrElse { TestExecutor.Result(false) }
     }
 }

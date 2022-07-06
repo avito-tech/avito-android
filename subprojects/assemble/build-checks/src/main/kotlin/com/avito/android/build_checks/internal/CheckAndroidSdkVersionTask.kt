@@ -50,10 +50,9 @@ internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
                 FailedCheckMessage(
                     RootProjectChecksExtension::androidSdk,
                     """
-                    You have an old Android SDK Platform version.
+                    You have an old installed Android SDK Platform version.
                     API level: ${version.compileSdkVersion}, 
-                    (actual revision $localRevision, expected revision: $expectedRevision).
-                    It breaks build caching (https://issuetracker.google.com/issues/117789774).
+                    (installed revision $localRevision, expected revision: $expectedRevision).
                     
                     How to fix: install or update Android SDK Platform in SDK Manager.
                     """.trimIndent()

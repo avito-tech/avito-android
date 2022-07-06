@@ -1,6 +1,6 @@
 package com.avito.android.plugin.artifactory
 
-import com.avito.cd.BuildVariant
+import com.avito.cd.model.BuildVariant
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import org.gradle.api.Project

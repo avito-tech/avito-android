@@ -18,7 +18,7 @@ This is the image for building and testing Android applications. It contains And
 
 === "In CI"
 
-    Run [Build android-builder (internal)](http://links.k.avito.ru/tmctAvitoAndroidBuilder) teamcity configuration.  
+    Run [Build android-builder (internal)](http://links.k.avito.ru/FO) teamcity configuration.  
     You will see the tag in stdout:
     
     ```text
@@ -32,7 +32,7 @@ This is the image for building and testing Android applications. It contains And
     ```bash
     # Docker registry to further publishing
     export DOCKER_REGISTRY=...
-    # DockerHub credentials
+    # DockerHub credentials (optional)
     export DOCKER_HUB_USERNAME=...
     export DOCKER_HUB_PASSWORD=...
     cd ci/docker
@@ -51,7 +51,7 @@ This is the image for building and testing Android applications. It contains And
     export DOCKER_REGISTRY=...
     export DOCKER_REGISTRY_USERNAME=...
     export DOCKER_REGISTRY_PASSWORD=...
-    # DockerHub credentials
+    # DockerHub credentials (optional)
     export DOCKER_HUB_USERNAME=...
     export DOCKER_HUB_PASSWORD=...
     cd ci/docker
@@ -64,7 +64,6 @@ This is the image for building and testing Android applications. It contains And
     Published the image <docker registry>/android/builder:<tag>
     ```
 
-1. [Upload the image to Docker Hub](#uploading-image-to-docker-hub)
 1. Update image hash in `IMAGE_ANDROID_BUILDER` variable in ci shell scripts:
     - In GitHub repo: `ci/_environment.sh` 
     - In internal avito repository: `ci/_main.sh`
@@ -84,7 +83,7 @@ This is the image for building and testing Android applications. It contains And
 
 Если меняем контракт с окружением, то вносим правки поэтапно, чтобы прошлая версия образа могла собрать новую.
 
-Teamcity configuration: [Build image-builder (internal)](http://links.k.avito.ru/Bt2)
+Teamcity configuration: [Build image-builder (internal)](http://links.k.avito.ru/FO)
 
 ## Android emulator images
 
@@ -169,11 +168,9 @@ Teamcity configuration: [Build image-builder (internal)](http://links.k.avito.ru
 
 Для эмулятора нужна более сложная подготовка, поэтому используем отдельные скрипты и образы.
 
-#### 1. Залей образы в приватный Docker registry
-
 === "CI"
 
-    1. Собери образ на ветке в Teamcity конфигурации [Build android-emulator (internal)](http://links.k.avito.ru/Y3).  
+    1. Собери образ на ветке в Teamcity конфигурации [Build android-emulator (internal)](http://links.k.avito.ru/FO).  
     Теги новых образов будут в артефактах сборки.
     1. Обнови теги в build.gradle скриптах.
     1. Запушь изменение в ветку.
@@ -198,10 +195,6 @@ Teamcity configuration: [Build image-builder (internal)](http://links.k.avito.ru
     1. Найти новые теги образов.
     См. stdout: "Published the image ..."
     1. Обнови теги образов в скриптах.
-
-#### 2. Залей образы в Docker hub
-
-[Uploading image to Docker Hub](#uploading-image-to-docker-hub)
 
 ### Как проверить регрессию?
 
@@ -231,7 +224,8 @@ sudo docker run \
 
 ## Docker Hub
 
-Образы публикуем в [hub.docker.com/u/avitotech](https://hub.docker.com/u/avitotech).
+Образы публиковали в [hub.docker.com/u/avitotech](https://hub.docker.com/u/avitotech).  
+Приостановили, чтобы сделать сборки более герметичными.
 
 ### Uploading image to Docker Hub
 

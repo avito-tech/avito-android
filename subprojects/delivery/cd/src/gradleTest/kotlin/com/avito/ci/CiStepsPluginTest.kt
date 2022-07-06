@@ -206,19 +206,6 @@ internal class CiStepsPluginTest : BaseCiStepsPluginTest() {
     }
 
     @TestFactory
-    fun `release uploads release apk to qapps`(): List<DynamicTest> {
-        val result = runTask(":appA:release")
-
-        return listOf(
-            ":appA:qappsUploadRelease"
-        ).map { task ->
-            dynamicTest("$task should be triggered by :appA:release") {
-                result.assertThat().tasksShouldBeTriggered(task)
-            }
-        }
-    }
-
-    @TestFactory
     fun `release does not upload apk for unnecessary build types`(): List<DynamicTest> {
         val result = runTask(":appA:release")
 

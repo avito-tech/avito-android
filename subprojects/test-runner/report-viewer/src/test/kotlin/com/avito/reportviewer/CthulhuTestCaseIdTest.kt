@@ -23,7 +23,7 @@ internal class CthulhuTestCaseIdTest {
             )
         )
             .singleRequestCaptured()
-            .bodyDoesntContain("\"test_case_id\"")
+            .bodyDoesNotContain("\"test_case_id\"")
     }
 
     @Test

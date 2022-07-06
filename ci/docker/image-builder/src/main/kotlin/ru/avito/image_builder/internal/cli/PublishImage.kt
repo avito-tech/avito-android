@@ -5,7 +5,7 @@ import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.ImagePublisher
 import ru.avito.image_builder.internal.command.ImageTagger
-import ru.avito.image_builder.internal.command.RegistryLogin
+import ru.avito.image_builder.internal.command.RegistryLoginImpl
 import ru.avito.image_builder.internal.command.SimpleImageBuilder
 import ru.avito.image_builder.internal.docker.CliDocker
 import ru.avito.image_builder.internal.docker.RegistryCredentials
@@ -32,24 +32,19 @@ internal class PublishImage(
 
         val builder = SimpleImageBuilder(
             docker = docker,
+            dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
-            login = RegistryLogin(
-                docker = docker,
-                credentials = RegistryCredentials(
-                    registry = null,
-                    username = dockerHubUsername,
-                    password = dockerHubPassword,
-                )
-            ),
+            login = dockerHubLogin(docker),
             tagger = ImageTagger(docker),
             registry = registry,
+            artifactoryUrl = artifactoryUrl,
             imageName = imageName,
         )
 
         val publisher = ImagePublisher(
             docker = docker,
             builder = builder,
-            login = RegistryLogin(
+            login = RegistryLoginImpl(
                 docker = docker,
                 credentials = RegistryCredentials(
                     registry = registry,

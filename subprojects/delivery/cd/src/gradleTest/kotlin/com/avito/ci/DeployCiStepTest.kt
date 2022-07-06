@@ -147,7 +147,9 @@ internal class DeployCiStepTest : BaseCiStepsPluginTest() {
 
     @Test
     fun `upload proguard to crashlytics enabled - uploadCrashlyticsProguardFile executed`() {
-        generateProjectWithConfiguredCiSteps()
+        generateProjectWithConfiguredCiSteps(
+            uploadCrashlyticsMappingFileEnabled = true
+        )
         val buildVariant = "release"
         val cdBuildConfig = cdBuildConfig(buildVariant)
         val configFileName = writeCdBuildConfigFile(cdBuildConfig)
@@ -155,6 +157,22 @@ internal class DeployCiStepTest : BaseCiStepsPluginTest() {
         val result = runTask(":appA:$buildVariant", "-Pcd.build.config.file=$configFileName")
         result.assertThat().apply {
             tasksShouldBeTriggered(":appA:uploadCrashlyticsMappingFileRelease")
+            buildSuccessful()
+        }
+    }
+
+    @Test
+    fun `upload native symbols to crashlytics enabled - uploadCrashlyticsProguardFile executed`() {
+        generateProjectWithConfiguredCiSteps(
+            uploadCrashlyticsNativeSymbols = true
+        )
+        val buildVariant = "release"
+        val cdBuildConfig = cdBuildConfig(buildVariant)
+        val configFileName = writeCdBuildConfigFile(cdBuildConfig)
+
+        val result = runTask(":appA:$buildVariant", "-Pcd.build.config.file=$configFileName")
+        result.assertThat().apply {
+            tasksShouldBeTriggered(":appA:uploadCrashlyticsSymbolFileRelease")
             buildSuccessful()
         }
     }

@@ -1,5 +1,7 @@
 package com.avito.test.summary
 
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.time.TimeProvider
@@ -16,7 +18,10 @@ import com.google.gson.JsonPrimitive
 internal class MarkReportAsSourceAction(
     private val reportsApi: ReportsApi,
     private val timeProvider: TimeProvider,
+    loggerFactory: LoggerFactory
 ) {
+
+    private val logger = loggerFactory.create<MarkReportAsSourceAction>()
 
     fun mark(reportCoordinates: ReportCoordinates) {
         val testSuiteVersion = timeProvider.nowInMillis()
@@ -38,8 +43,15 @@ internal class MarkReportAsSourceAction(
                 reportsApi.setFinished(reportCoordinates)
                 report
             }
-            .onFailure {
-                // TODO handle throwable
+            .onSuccess { report ->
+                logger.info(
+                    "Test suite for tms version $testSuiteVersion, " +
+                        "with id: ${report.id}, " +
+                        "coordinates: $reportCoordinates marked as source of truth for tms"
+                )
+            }
+            .onFailure { throwable ->
+                logger.critical("Can't mark test suite for tms; runId=${reportCoordinates.runId}", throwable)
             }
     }
 }

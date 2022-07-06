@@ -15,23 +15,36 @@ import org.gradle.api.tasks.TaskProvider
 public class DeployStep internal constructor(
     context: String,
     private val transformer: ToGooglePlayDeploysTransformer,
-    private val provider: UploadCrashlyticsProguardFileTasksProvider,
+    private val mappingFileTaskProvider: CrashlyticsTaskProvider,
+    private val nativeSymbolsTaskProvider: CrashlyticsTaskProvider,
     name: String
 ) : SuppressibleBuildStep(context, name) {
 
     /**
-     * Use to enable or disable sending proguard mapping to Firebase-crashlytics
-     *
+     * Upload proguard mapping to Firebase-crashlytics
+     * See CrashlyticsExtension.mappingFileUploadEnabled
      *
      * release -> signViaService -> packageRelease -> ...
      *
      * firebase-crashlytics-plugin
      * uploadCrashlyticsProguardMappingReleaseFile -> :avito:assembleRelease
      *
-     * This hack add direct dependency
-     * deployToGooglePlay -> uploadCrashlyticsProguardMappingReleaseFile
+     * This hack adds direct dependency
+     * deployToGooglePlay -> uploadCrashlyticsProguardMapping<build variant>File
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     public var uploadCrashlyticsProguardMappingFile: Boolean = false
+
+    /**
+     * Upload proguard mapping to Firebase-crashlytics
+     * See CrashlyticsExtension.nativeSymbolUploadEnabled
+     * https://firebase.google.com/docs/crashlytics/ndk-reports#alternative-options-symbol-uploading
+     *
+     * This hack adds direct dependency
+     * deployToGooglePlay -> uploadCrashlyticsSymbolFile<build variant>
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    public var uploadCrashlyticsNativeSymbols: Boolean = false
 
     override fun registerTask(
         project: Project,
@@ -45,7 +58,7 @@ public class DeployStep internal constructor(
                 rootTask
             )
         } else {
-            project.logger.lifecycle("Configure deploy step without cd build config")
+            project.logger.lifecycle("Skip deploy step due to no cd build config")
         }
     }
 
@@ -62,7 +75,10 @@ public class DeployStep internal constructor(
                 dependsOn(verifyTaskName(context))
                 dependsOn(project.tasks.artifactoryAppBackupTask())
                 if (uploadCrashlyticsProguardMappingFile) {
-                    dependsOn(*provider.provide(project, deployments).toTypedArray())
+                    dependsOn(*mappingFileTaskProvider.provide(project, deployments).toTypedArray())
+                }
+                if (uploadCrashlyticsNativeSymbols) {
+                    dependsOn(*nativeSymbolsTaskProvider.provide(project, deployments).toTypedArray())
                 }
             }
             rootTask.configure { it.finalizedBy(uploadToPlayMarketTask) }

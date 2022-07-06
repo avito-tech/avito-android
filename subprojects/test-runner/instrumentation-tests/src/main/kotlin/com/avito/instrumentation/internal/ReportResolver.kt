@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.plugins.configuration.RunIdResolver
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
 import com.avito.instrumentation.configuration.ReportViewer
 
@@ -17,7 +18,8 @@ internal class ReportResolver(
     }
 
     fun getRunId(): String {
-        return runIdResolver.getCiRunId(extension).toReportViewerFormat()
+        val reportRunIdPrefix = extension.testReport.reportViewer?.reportRunIdPrefix
+        return runIdResolver.getCiRunId(reportRunIdPrefix).toReportViewerFormat()
     }
 
     fun getFileStorageUrl(): String {
