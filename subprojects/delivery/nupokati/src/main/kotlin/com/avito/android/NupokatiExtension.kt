@@ -19,11 +19,6 @@ public abstract class NupokatiExtension {
 
     public abstract val releaseBuildVariantName: Property<String>
 
-    /**
-     * disable manually for tests or uploading from service
-     */
-    public abstract val uploadCrashlyticsMapping: Property<Boolean>
-
     public fun artifactory(action: Action<ArtifactoryExtension>) {
         action.execute(artifactory)
     }
