@@ -1,7 +1,7 @@
 import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
-    // accessing version catalog here is blocked by IDE false-postive error
+    // accessing version catalog here is blocked by IDE false-positive error
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
     id("io.gitlab.arturbosch.detekt") version "1.18.1"
 }
