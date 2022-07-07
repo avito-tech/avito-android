@@ -1,4 +1,5 @@
-import com.avito.emcee.worker.Config
+package com.avito.emcee.worker
+
 import com.google.common.truth.Truth
 import com.squareup.moshi.Moshi
 import org.junit.jupiter.api.Test

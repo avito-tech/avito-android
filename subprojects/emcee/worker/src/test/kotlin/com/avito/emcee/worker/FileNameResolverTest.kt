@@ -1,3 +1,5 @@
+package com.avito.emcee.worker
+
 import com.avito.emcee.worker.internal.artifacts.FileNameResolver
 import com.google.common.truth.Truth.assertThat
 import okhttp3.HttpUrl.Companion.toHttpUrl

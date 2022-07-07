@@ -10,6 +10,8 @@ import com.avito.emcee.worker.internal.TestJobProducerImpl
 import com.avito.emcee.worker.internal.artifacts.FileDownloader
 import com.avito.emcee.worker.internal.artifacts.FileDownloaderApi.Companion.createFileDownloaderApi
 import com.avito.emcee.worker.internal.networking.SocketAddressResolver
+import com.avito.emcee.worker.internal.rest.HttpServer
+import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import kotlinx.cli.ArgType
@@ -54,7 +56,9 @@ internal class StartWorkerCommand(
         val moshi = Moshi.Builder().build()
         val okHttpClient = OkHttpClient.Builder().apply {
             if (debugMode) {
-                addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+                addInterceptor(HttpLoggingInterceptor { message ->
+                    println(message)
+                }.apply { level = HttpLoggingInterceptor.Level.BODY })
             }
         }.build()
         val socketAddressResolver = SocketAddressResolver()
@@ -62,6 +66,13 @@ internal class StartWorkerCommand(
         val config: Config = requireNotNull(
             configAdapter.fromJson(File(configPath).readText())
         )
+
+        HttpServer.Builder()
+            .addHandler(ProcessingBucketsRequestHandler())
+            .debug(debugMode)
+            .build()
+            .start(config.workerPort)
+
         val producer = TestJobProducerImpl(
             api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl),
             workerId = config.workerId,

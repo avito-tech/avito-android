@@ -70,8 +70,9 @@ internal class AndroidDeviceImpl(
                     scope = this,
                     serial = serial.value
                 )
+                @Suppress("DEPRECATION")
                 val result = instrumentationOutput.receiveOrNull() ?: emptyList()
-                // parsing copy-pasting from com.malinskiy.marathon.android.adam.AndroidDeviceTestRunner
+                // parsing is copy-pasted from com.malinskiy.marathon.android.adam.AndroidDeviceTestRunner
                 AndroidDevice.InstrumentationResult(
                     success = result.none { testEvent ->
                         testEvent is TestFailed || testEvent is TestAssumptionFailed
