@@ -4,7 +4,7 @@ import com.avito.android.test.report.model.DataSet
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class DataSetSerializerKtTest : TransportMappers {
+internal class DataSetSerializerKtTest : TransportMappers {
 
     @Test
     fun `serialize() - produces null - for empty dataSet`() {

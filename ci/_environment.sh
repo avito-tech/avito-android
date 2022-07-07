@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
-set -xe
 
-ANDROID_BUILDER_TAG=253bbf0f7aa3
+set -e
 
 if [[ -z "${DOCKER_REGISTRY+x}" ]]; then
-    # using dockerhub for public availability
-    IMAGE_ANDROID_BUILDER=avitotech/android-builder:$ANDROID_BUILDER_TAG
-else
-    # using in-house proxy for performance
-    IMAGE_ANDROID_BUILDER=${DOCKER_REGISTRY}/android/builder:$ANDROID_BUILDER_TAG
+    echo "ERROR: DOCKER_REGISTRY env must be set"
+    exit 1
 fi
 
-IMAGE_BUILDER=${DOCKER_REGISTRY}/android/image-builder:e3ef3815ff20
+if [[ -z "${ARTIFACTORY_URL+x}" ]]; then
+    echo "WARN: ARTIFACTORY_URL env is not set. It's required for hermetic builds."
+fi
+
+IMAGE_ANDROID_BUILDER=${DOCKER_REGISTRY}/android/builder-hermetic:5c98c0aa0bb0
+IMAGE_BUILDER=${DOCKER_REGISTRY}/android/image-builder:3e873c9ee921
 DOCUMENTATION_IMAGE=${DOCKER_REGISTRY}/android/documentation:802502572f

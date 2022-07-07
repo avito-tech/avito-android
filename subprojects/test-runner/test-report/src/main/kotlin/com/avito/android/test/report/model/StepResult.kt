@@ -4,7 +4,7 @@ package com.avito.android.test.report.model
  * @param number step number; must be same as in test case
  * @param title in http://links.k.avito.ru/9O: "Step Action"; value must be the same (can be trimmed)
  */
-data class StepResult(
+public data class StepResult(
     /**
      * Synthetic step is created by the framework. It has simpler lifecycle then Step created by users
      * So we need that flag in the framework for making decisions:

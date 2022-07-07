@@ -46,38 +46,6 @@ internal class TestSummaryStepTest {
     }
 
     @Test
-    fun flakyReport(@TempDir projectDir: File) {
-        generateProject(
-            projectDir = projectDir,
-            step = """
-                |flakyReport {
-                |    configuration = "ui"
-                |}
-                |""".trimMargin()
-        )
-
-        ciRun(
-            projectDir,
-            "fullCheck",
-            dryRun = true
-        )
-            .assertThat()
-            .buildSuccessful().run {
-                tasksShouldBeTriggered(
-                    ":app1:instrumentationUiDefault",
-                    ":flakyReportSomePlanSomeJob",
-                    ":app1:fullCheck"
-                ).inOrder()
-
-                tasksShouldBeTriggered(
-                    ":app2:instrumentationUiDefault",
-                    ":flakyReportSomePlanSomeJob",
-                    ":app2:fullCheck"
-                ).inOrder()
-            }
-    }
-
-    @Test
     fun markReportAsSourceForTMS(@TempDir projectDir: File) {
         generateProject(
             projectDir = projectDir,

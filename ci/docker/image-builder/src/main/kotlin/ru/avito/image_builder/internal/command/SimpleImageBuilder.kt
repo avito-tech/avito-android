@@ -8,10 +8,19 @@ import java.util.logging.Logger
 
 internal class SimpleImageBuilder(
     private val docker: Docker,
+    /**
+     * Relative path to the Dockerfile inside context (buildDir)
+     */
+    private val dockerfilePath: String,
+    /**
+     * build path
+     * https://docs.docker.com/engine/reference/commandline/build/#build-with-path
+     */
     private val buildDir: File,
     private val login: RegistryLogin,
     private val tagger: ImageTagger,
     private val registry: String,
+    private val artifactoryUrl: String,
     private val imageName: String,
 ) : ImageBuilder {
 
@@ -28,7 +37,12 @@ internal class SimpleImageBuilder(
     private fun buildImage(): ImageId {
         log.info("Building an image ...")
 
-        val buildResult = docker.build(buildDir.canonicalPath)
+        val buildResult = docker.build(
+            "--build-arg", "DOCKER_REGISTRY=$registry",
+            "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
+            "--file", File(buildDir, dockerfilePath).canonicalPath,
+            buildDir.canonicalPath,
+        )
         check(buildResult.isSuccess) {
             "Failed to build the image: ${buildResult.exceptionOrNull()}"
         }

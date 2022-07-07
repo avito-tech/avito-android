@@ -1,5 +1,6 @@
 package com.avito.slack
 
+import com.avito.notification.NotificationSender
 import com.avito.slack.model.SlackSendMessageRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -21,7 +22,7 @@ public interface SlackBulkSender {
 // todo use Flow API
 @OptIn(ObsoleteCoroutinesApi::class)
 public class CoroutinesSlackBulkSender(
-    private val sender: SlackMessageSender,
+    private val sender: NotificationSender,
 ) : SlackBulkSender {
 
     private val requestQueue = Channel<SlackSendMessageRequest>(Channel.UNLIMITED)

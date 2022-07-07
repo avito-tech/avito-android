@@ -7,10 +7,9 @@ import com.android.build.gradle.AppPlugin
 import com.avito.android.agp.getVersionCode
 import com.avito.android.artifactory_backup.ArtifactoryBackupTask
 import com.avito.android.contract_upload.UploadCdBuildResultTask
-import com.avito.android.google_play.GooglePlayUploadTaskConfigurator
 import com.avito.android.model.CdBuildConfig
 import com.avito.android.provider.CdBuildConfigTransformer
-import com.avito.android.provider.CdBuildConfigValidator
+import com.avito.android.provider.StrictCdBuildConfigValidator
 import com.avito.android.stats.statsdConfig
 import com.avito.capitalize
 import org.gradle.api.Plugin
@@ -28,28 +27,20 @@ public class NupokatiPlugin : Plugin<Project> {
 
         val extension = project.extensions.create<NupokatiExtension>("nupokati")
 
-        val googlePlayUploadTaskConfigurator = GooglePlayUploadTaskConfigurator(project, extension)
-
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
 
             val releaseVariantSelector = androidComponents.selector()
                 .withName(extension.releaseBuildVariantName.convention(DEFAULT_RELEASE_VARIANT).get())
 
+            val cdBuildConfig: Provider<CdBuildConfig> = extension.cdBuildConfigFile
+                .map(CdBuildConfigTransformer(validator = StrictCdBuildConfigValidator()))
+
             androidComponents.onVariants(selector = releaseVariantSelector) { variant: ApplicationVariant ->
 
                 val variantSlug = variant.name.capitalize()
 
                 val bundle: Provider<RegularFile> = variant.artifacts.get(type = SingleArtifact.BUNDLE)
-
-                val cdBuildConfig: Provider<CdBuildConfig> = extension.cdBuildConfigFile
-                    .map(CdBuildConfigTransformer(validator = CdBuildConfigValidator()))
-
-                val uploadToGooglePlayTask = googlePlayUploadTaskConfigurator.configure(
-                    cdBuildConfig = cdBuildConfig,
-                    variant = variant,
-                    bundle = bundle
-                )
 
                 val publishArtifactsTask =
                     project.tasks.register<ArtifactoryBackupTask>("artifactoryBackup$variantSlug") {
@@ -64,7 +55,6 @@ public class NupokatiPlugin : Plugin<Project> {
                             }
                         )
                         this.buildVariant.set(variant.name)
-                        // todo need to check sign somehow, because it's completely possible to miss it here
                         this.files.set(project.files(bundle))
                         this.statsDConfig.set(project.statsdConfig)
                         this.buildOutput.set(project.layout.buildDirectory.file("nupokati/buildOutput.json"))
@@ -86,10 +76,6 @@ public class NupokatiPlugin : Plugin<Project> {
 
                     // todo depend on output with actually uploaded artifacts
                     dependsOn(publishArtifactsTask)
-
-                    if (uploadToGooglePlayTask != null) {
-                        dependsOn(uploadToGooglePlayTask)
-                    }
                 }
             }
         }

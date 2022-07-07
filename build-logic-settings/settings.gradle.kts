@@ -3,38 +3,41 @@ enableFeaturePreview("VERSION_CATALOGS")
 rootProject.name = "build-logic-settings"
 
 pluginManagement {
+    // See rationale inside this script
+    apply(from = "dependency-plugin/pluginManagement-shared.settings.gradle.kts")
+}
 
-    val artifactoryUrl: String? by settings
+val isInternalBuild = booleanProperty("avito.internalBuild", false)
 
-    repositories {
-        maven {
-            if (artifactoryUrl.isNullOrBlank()) {
-                name = "gradle-plugins"
-                setUrl("https://plugins.gradle.org/m2/")
-            } else {
-                name = "Proxy for gradle-plugins: https://plugins.gradle.org/m2/"
-                setUrl("$artifactoryUrl/gradle-plugins")
-                isAllowInsecureProtocol = true
-            }
-        }
-    }
+if (!isInternalBuild) {
+    logger.warn(
+        """
+        | -----------------------------------------
+        | WARNING! 
+        | This build doesn't use `avito.internalBuild`
+        | 
+        | For Avito employees only: it makes the build slower and less hermetic.
+        | For external contributors: some artifacts might be not published yet to Maven Central.
+        | -----------------------------------------
+        """.trimMargin()
+    )
 }
 
 dependencyResolutionManagement {
 
-    val artifactoryUrl: String? by settings
-
+    @Suppress("UnstableApiUsage")
     repositories {
         exclusiveContent {
             forRepository {
                 maven {
-                    if (artifactoryUrl.isNullOrBlank()) {
-                        name = "gradle-plugins"
-                        setUrl("https://plugins.gradle.org/m2/")
-                    } else {
+                    if (isInternalBuild) {
+                        val artifactoryUrl: String by settings
                         name = "Proxy for gradle-plugins: https://plugins.gradle.org/m2/"
                         setUrl("$artifactoryUrl/gradle-plugins")
                         isAllowInsecureProtocol = true
+                    } else {
+                        name = "gradle-plugins"
+                        setUrl("https://plugins.gradle.org/m2/")
                     }
                 }
             }
@@ -46,36 +49,22 @@ dependencyResolutionManagement {
     }
 }
 
-// Duplicated settings because they are not inherited from root project
-// as described in https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
-// https://github.com/gradle/gradle/issues/18511
-val enterpriseUrl = stringProperty("avito.gradle.enterprise.url", nullIfBlank = true)
-
-buildCache {
-    local {
-        isEnabled = booleanProperty("avito.gradle.buildCache.local.enabled", true)
-        isPush = true
-        removeUnusedEntriesAfterDays = 30
-    }
-    if (!enterpriseUrl.isNullOrBlank()) {
-        remote<HttpBuildCache> {
-            setUrl("$enterpriseUrl/cache/")
-            isEnabled = true
-            isPush = booleanProperty("avito.gradle.buildCache.remote.push", false)
-            isAllowUntrustedServer = true
-            isAllowInsecureProtocol = true
-        }
-    }
-}
+// HACK:
+// We apply here the same settings as we provide by convention-cache plugin.
+// Conventional way is to inherit build cache configuration from the root project into all included builds.
+// The problem is - it doesn't work for included builds inside `pluginManagement`.
+// They applied before the cache configuration in the root project itself.
+// https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_composite
+apply(from = "cache-plugin/src/main/kotlin/convention-cache.settings.gradle.kts")
 
 include("cache-plugin")
 include("dependency-plugin")
 include("scan-plugin")
 include("extensions")
 
-fun booleanProperty(name: String, defaultValue: Boolean): Boolean {
-    return if (settings.extra.has(name)) {
-        settings.extra[name]?.toString()?.toBoolean() ?: defaultValue
+fun Settings.booleanProperty(name: String, defaultValue: Boolean): Boolean {
+    return if (extra.has(name)) {
+        extra[name]?.toString()?.toBoolean() ?: defaultValue
     } else {
         defaultValue
     }

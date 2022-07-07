@@ -2,19 +2,19 @@ package com.avito.http
 
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
-import com.avito.test.Flaky
 import com.google.common.truth.Truth.assertThat
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.mockwebserver.MockResponse
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-@Flaky(reason = "MBS-11302") // TODO: merge with HttpClientProviderMetricsTest after fixing the bug
+@Disabled("https://github.com/gradle/test-retry-gradle-plugin/issues/128")
 internal class FlakyHttpClientProviderMetricsTest : BaseHttpClientProviderMetricsTest() {
 
     @Test

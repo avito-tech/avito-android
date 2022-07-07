@@ -1,4 +1,4 @@
-.gradle/
+**/.gradle/
 build/
 local.properties
 .pytest_cache

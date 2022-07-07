@@ -2,6 +2,7 @@ plugins {
     id("convention.publish-base")
     id("convention.teamcity")
     id("convention.sonatype")
+    id("convention.artifactory")
 }
 
 /**

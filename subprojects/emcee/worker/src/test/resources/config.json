@@ -1,0 +1,9 @@
+{
+    "workerId": "stub-worker-id",
+    "workerPort": 80,
+    "queueUrl": "http://127.0.0.1:41000",
+    "androidSdkPath": "/Users/john/androidSdk",
+    "avd": [
+        { "sdk": 21, "type": "default", "emulatorFileName": "stub-emulator-name", "sdCardFileName": "stub-sd-card-name" }
+    ]
+}

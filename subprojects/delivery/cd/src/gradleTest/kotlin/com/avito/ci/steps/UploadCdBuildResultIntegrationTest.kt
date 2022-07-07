@@ -1,8 +1,8 @@
 package com.avito.ci.steps
 
 import com.avito.android.plugin.artifactory.setStubMavenMetadataBody
-import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
+import com.avito.cd.model.BuildVariant
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.cd.uploadCdGson
 import com.avito.ci.runTask
@@ -78,32 +78,55 @@ internal class UploadCdBuildResultIntegrationTest {
                 id("maven-publish")
             },
             imports = listOf(
-                "import com.avito.cd.BuildVariant"
+                "import com.avito.cd.model.BuildVariant",
+                "import com.avito.ci.VerifyOutputsTask",
+                "import com.avito.instrumentation.reservation.request.Device.MockEmulator"
             ),
             buildGradleExtra = """
-                        ${registerUiTestConfigurations("regress")}
-                        signService {
-                            url.set("https://signer/")
-                            bundle(android.buildTypes.release, "no_matter")
-                        }
-                        builds {
-                            release {
-                                uiTests { configurations "$uiTestConfigurationName" }
-
-                                artifacts {
-                                    apk("releaseApk", BuildVariant.RELEASE, "com.app", "${'$'}{project.buildDir}/outputs/apk/release/app-release-unsigned.apk") {}
-                                    mapping("releaseMapping", BuildVariant.RELEASE, "${'$'}{project.buildDir}/reports/mapping.txt")
-                                }
-
-                                uploadToArtifactory {
-                                    artifacts = ['releaseApk']
-                                }
-                                uploadBuildResult {
-                                    uiTestConfiguration = "$uiTestConfigurationName"
-                                }
+                    ${registerUiTestConfigurations("regress")}
+                    
+                    signService {
+                        url.set("$mockUrl")
+                        bundle("release", "local_stub")
+                        apk("releaseRuStore", "local_stub")
+                    }
+                    android {
+                        buildTypes {
+                            val release = getByName("release")
+                            
+                            register("releaseRuStore") {
+                                initWith(release)
                             }
                         }
-                        """.trimIndent()
+                    }
+                    builds {
+                        register("release") {
+                            uiTests { 
+                                configurations = mutableListOf("$uiTestConfigurationName") 
+                            }
+
+                            artifacts {
+                                failOnSignatureError = false
+                                apk("releaseApk", BuildVariant("release"), "com.app", "${'$'}{project.buildDir}/outputs/apk/release/app-release-unsigned.apk") {}
+                                apk("releaseRuStoreApk", BuildVariant("releaseRuStore"), "com.app", "${'$'}{project.buildDir}/outputs/apk/releaseRuStore/app-releaseRuStore.apk") {
+                                    signature = "stub" // implicitly enables signing
+                                }
+                                mapping("releaseMapping", BuildVariant("release"), "${'$'}{project.buildDir}/reports/mapping.txt")
+                            }
+
+                            uploadToArtifactory {
+                                artifacts = setOf("releaseApk")
+                            }
+                            uploadBuildResult {
+                                uiTestConfiguration = "$uiTestConfigurationName"
+                            }
+                        }
+                    }
+                    tasks.withType(VerifyOutputsTask::class.java) {
+                        checkPackageName.set(false) // for stubbed APK from sign service
+                    }
+                    """.trimIndent(),
+            useKts = true,
         )
 
         TestProjectGenerator(
@@ -118,22 +141,31 @@ internal class UploadCdBuildResultIntegrationTest {
             dir("${androidAppModule.name}/src/androidTest/kotlin/test") {
                 kotlinClass("RealTest") {
                     """
-package ${androidAppModule.packageName}
-
-class RealTest {
-    
-    @org.junit.Test
-    fun test() {
-    }
-}
-                                """.trimIndent()
+                    package ${androidAppModule.packageName}
+                    
+                    class RealTest {
+                        
+                        @org.junit.Test
+                        fun test() {
+                        }
+                    }
+                    """.trimIndent()
                 }
             }
         }
+
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.endsWith("/sign") },
+                response = MockResponse()
+                    .setResponseCode(HttpCodes.OK)
+                    .setBody("stub apk content")
+            )
+        )
     }
 
     @Test
-    fun `upload cd build result - success send in integration`() {
+    fun `upload cd build result - successful sending in integration`() {
         val configFileName = "xxx"
         val outputPath = "path"
         val nupokatiProject = "avito"
@@ -154,10 +186,15 @@ class RealTest {
                     "artifact_type": "bundle",
                     "build_variant": "release",
                     "track": "alpha"
+                },
+                {
+                    "type": "ru-store",
+                    "artifact_type": "apk"
                 }
             ]
         }
-        """
+        """.trimIndent()
+
         val gitBranch = CdBuildResult.GitBranch(
             name = "branchName",
             commitHash = Git.create(
@@ -182,8 +219,11 @@ class RealTest {
                 "$nupokatiProject-11-12-100-releaseApk.apk",
                 "$mockUrl/apps-release-local/app-android/" +
                     "$nupokatiProject/11-12-100/$nupokatiProject-11-12-100-releaseApk.apk",
-                BuildVariant.RELEASE
-            )
+                BuildVariant("release")
+            ),
+            // no releaseRuStore apk in the output
+            // nupokati has no data to distinguish binaries from different deployments
+            // This will be supported in the next version of the contract
         )
 
         val expected = CdBuildResult(
@@ -263,6 +303,10 @@ class RealTest {
                     "artifact_type": "bundle",
                     "build_variant": "release",
                     "track": "alpha"
+                },
+                {
+                    "type": "ru-store",
+                    "artifact_type": "apk"
                 }
             ]
         }
@@ -353,10 +397,10 @@ class RealTest {
     }
 
     private fun registerUiTestConfigurations(vararg names: String): String {
-        val configurations = names.map { name ->
-            """$name {
+        val configurations = names.joinToString(separator = "") { name ->
+            """register("$name") {
                     targets {
-                        api22 {
+                        register("api22") {
                             deviceName = "api22"
 
                             scheduling {
@@ -375,18 +419,16 @@ class RealTest {
                 """
         }
         return """
-            import static com.avito.instrumentation.reservation.request.Device.MockEmulator
-
             android.defaultConfig {
                 testInstrumentationRunner = "no_matter"
-                testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
+                testInstrumentationRunnerArguments.putAll(mapOf("planSlug" to "AvitoAndroid"))
             }
             instrumentation {
                  
-                 instrumentationParams = [
-                    "deviceName"    : "regress",
-                    "jobSlug"       : "regress",
-                ]
+                 instrumentationParams = mapOf(
+                    "deviceName"    to "regress",
+                    "jobSlug"       to "regress",
+                )
                 
                 testReport {
                     reportViewer {

@@ -7,7 +7,7 @@ import com.avito.report.model.Kind
 import com.avito.test.model.TestName
 import java.io.Serializable
 
-data class TestMetadata(
+public data class TestMetadata(
     val caseId: Int?,
     val description: String?,
     val name: TestName,
@@ -20,5 +20,5 @@ data class TestMetadata(
     val tagIds: List<Int>,
     val flakiness: Flakiness
 ) : Serializable {
-    companion object
+    internal companion object
 }

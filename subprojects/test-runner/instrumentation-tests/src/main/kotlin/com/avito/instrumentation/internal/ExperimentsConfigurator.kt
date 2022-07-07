@@ -18,23 +18,13 @@ internal class ExperimentsConfigurator(
     private fun getExperiments(): Experiments {
         return Experiments(
             saveTestArtifactsToOutputs = getSaveTestArtifactsToOutputs(extension),
-            fetchLogcatForIncompleteTests = getFetchLogcatForIncompleteTests(extension),
             uploadArtifactsFromRunner = getUploadArtifactsFromRunner(extension),
             useLegacyExtensionsV1Beta = getUseLegacyExtensionsV1Beta(extension),
-            sendPodsMetrics = getSendPodsMetrics(extension)
         )
-    }
-
-    private fun getSendPodsMetrics(extension: InstrumentationTestsPluginExtension): Boolean {
-        return extension.experimental.sendPodsMetrics.getOrElse(true)
     }
 
     private fun getSaveTestArtifactsToOutputs(extension: InstrumentationTestsPluginExtension): Boolean {
         return extension.experimental.saveTestArtifactsToOutputs.getOrElse(false)
-    }
-
-    private fun getFetchLogcatForIncompleteTests(extension: InstrumentationTestsPluginExtension): Boolean {
-        return extension.experimental.fetchLogcatForIncompleteTests.getOrElse(false)
     }
 
     private fun getUseLegacyExtensionsV1Beta(extension: InstrumentationTestsPluginExtension): Boolean {

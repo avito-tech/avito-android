@@ -1,0 +1,5 @@
+<manifest package="com.avito.android.test.report"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-sdk tools:overrideLibrary="com.avito.android.test.ui, com.forkingcode.espresso.contrib" />
+</manifest>

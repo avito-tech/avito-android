@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
 
     testImplementation(projects.subprojects.common.testOkhttp)
+    testImplementation(libs.jsonAssert)
     testImplementation(testFixtures(projects.subprojects.gradle.git))
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)

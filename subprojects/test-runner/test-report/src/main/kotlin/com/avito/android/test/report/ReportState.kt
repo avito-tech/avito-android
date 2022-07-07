@@ -10,19 +10,19 @@ import com.avito.report.model.Incident
 import com.avito.report.model.Video
 import java.util.concurrent.CopyOnWriteArrayList
 
-sealed class ReportState {
+public sealed class ReportState {
 
-    sealed class NotFinished : ReportState() {
+    public sealed class NotFinished : ReportState() {
 
-        object NotInitialized : NotFinished()
+        public object NotInitialized : NotFinished()
 
-        sealed class Initialized : NotFinished() {
-            abstract val testMetadata: TestMetadata
-            abstract var incident: Incident?
-            abstract var incidentScreenshot: FutureValue<Entry.File>?
-            abstract val attachmentsBeforeSteps: StepAttachments
+        public sealed class Initialized : NotFinished() {
+            public abstract val testMetadata: TestMetadata
+            public abstract var incident: Incident?
+            public abstract var incidentScreenshot: FutureValue<Entry.File>?
+            public abstract val attachmentsBeforeSteps: StepAttachments
 
-            class NotStarted(
+            public class NotStarted(
                 override val attachmentsBeforeSteps: StepAttachments = StepAttachments(),
                 override val testMetadata: TestMetadata,
                 override var incident: Incident? = null,
@@ -34,23 +34,23 @@ sealed class ReportState {
              * [preconditionStepList] and [testCaseStepList] are modified from StepsDsl and when creating synthetic step
              * All collections must be thread-safe
              */
-            class Started(
+            public class Started(
                 override val attachmentsBeforeSteps: StepAttachments = StepAttachments(),
                 override val testMetadata: TestMetadata,
                 override var incident: Incident? = null,
                 override var incidentScreenshot: FutureValue<Entry.File>? = null,
-                var currentStep: StepResult? = null,
-                var stepNumber: Int = 0,
-                var preconditionNumber: Int = 0,
-                var video: Video? = null,
-                var dataSet: DataSet? = null,
-                var startTime: Long,
-                var endTime: Long = 0,
-                var preconditionStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList(),
-                var testCaseStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList()
+                public var currentStep: StepResult? = null,
+                public var stepNumber: Int = 0,
+                public var preconditionNumber: Int = 0,
+                public var video: Video? = null,
+                public var dataSet: DataSet? = null,
+                public var startTime: Long,
+                public var endTime: Long = 0,
+                public var preconditionStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList(),
+                public var testCaseStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList()
             ) : Initialized() {
 
-                val isFirstStepOrPrecondition: Boolean
+                public val isFirstStepOrPrecondition: Boolean
                     get() = preconditionNumber == 1 || preconditionNumber == 0 && stepNumber == 1
 
                 internal fun getCurrentStepOrCreate(factory: () -> StepResult): StepResult {
@@ -161,10 +161,10 @@ sealed class ReportState {
                         }
                     } as List<T>
 
-                companion object
+                internal companion object
             }
         }
     }
 
-    object Finished : ReportState()
+    public object Finished : ReportState()
 }

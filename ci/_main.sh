@@ -42,7 +42,8 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
 
-GRADLE_ARGS="-Pci=true "
+GRADLE_ARGS+="-Pci=true "
+GRADLE_ARGS+="-Pavito.internalBuild=true "
 GRADLE_ARGS+="-PartifactoryUrl=$ARTIFACTORY_URL "
 GRADLE_ARGS+="-PteamcityUrl=${TEAMCITY_URL} "
 GRADLE_ARGS+="-PteamcityApiUser=${TEAMCITY_API_USER} "
@@ -52,7 +53,6 @@ GRADLE_ARGS+="-PbuildNumber "
 GRADLE_ARGS+="-PgitBranch=$BUILD_BRANCH "
 GRADLE_ARGS+="-PbuildCommit=$BUILD_COMMIT "
 GRADLE_ARGS+="-PteamcityBuildId=$BUILD_ID "
-GRADLE_ARGS+="-Pavito.slack.token=$AVITO_SLACK_TOKEN "
 GRADLE_ARGS+="-Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL "
 GRADLE_ARGS+="-Pavito.repo.ssh.url "
 GRADLE_ARGS+="-Pavito.report.url=$AVITO_REPORT_URL "
@@ -77,18 +77,13 @@ if [ -n "$ELASTIC_ENDPOINTS" ]; then
     GRADLE_ARGS+="-Pavito.elastic.indexpattern=speed-android "
 fi
 
-GRADLE_ARGS+="-Pavito.slack.test.channelId=$SLACK_TEST_CHANNEL_ID "
-GRADLE_ARGS+="-Pavito.slack.test.channel=$SLACK_TEST_CHANNEL "
-GRADLE_ARGS+="-Pavito.slack.test.token=$SLACK_TEST_TOKEN "
-GRADLE_ARGS+="-Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE "
 GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL "
 GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "
 GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
 GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
 GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "
 GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
-
-GRADLE_ARGS+="-Pavito.gradle.enterprise.url=$GRADLE_ENTERPRISE_URL "
+GRADLE_ARGS+="-Pcom.avito.android.tools.buildCache.remote.url=$GRADLE_GITHUB_BUILD_CACHE_URL "
 
 function runInBuilder() {
     COMMANDS=$@

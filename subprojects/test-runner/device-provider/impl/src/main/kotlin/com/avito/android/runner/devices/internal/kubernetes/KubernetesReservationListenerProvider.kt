@@ -9,8 +9,9 @@ public class KubernetesReservationListenerProvider(
     private val timeProvider: TimeProvider,
     private val runnerMetricsConfig: RunnerMetricsConfig,
     private val loggerFactory: LoggerFactory,
-    private val sendPodsMetrics: Boolean,
 ) {
+
+    private val sendPodsMetrics: Boolean = false
 
     internal fun provide(): KubernetesReservationListener {
         return if (sendPodsMetrics) {

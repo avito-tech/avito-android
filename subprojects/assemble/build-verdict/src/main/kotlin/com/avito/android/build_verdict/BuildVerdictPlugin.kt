@@ -16,7 +16,6 @@ public class BuildVerdictPlugin : Plugin<ProjectInternal> {
     private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty(enabledProp)
-            .forUseAtConfigurationTime()
             .map { it.toBoolean() }
             .getOrElse(true)
 
@@ -47,7 +46,8 @@ public class BuildVerdictPlugin : Plugin<ProjectInternal> {
     ) {
         val loggingManager = serviceOf<LoggingManagerInternal>()
         loggingManager.addOutputEventListener(gradleLogEventListener)
-        buildFinished { _ ->
+        @Suppress("DEPRECATION")
+        buildFinished {
             loggingManager.removeOutputEventListener(gradleLogEventListener)
         }
     }

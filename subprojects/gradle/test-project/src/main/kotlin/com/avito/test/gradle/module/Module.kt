@@ -14,5 +14,10 @@ public interface Module : Generator {
     public val useKts: Boolean
 }
 
-internal fun Module.imports(): String =
-    imports.joinToString(separator = "\n")
+internal fun Module.imports(): String {
+    return if (imports.isEmpty()) {
+        ""
+    } else {
+        imports.joinToString(separator = "\n", postfix = "\n")
+    }
+}

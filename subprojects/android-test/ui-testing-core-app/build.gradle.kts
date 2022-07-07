@@ -4,7 +4,7 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 
 plugins {
     id("convention.kotlin-android-app")
-    id("convention.android-robolectric")
+    id("convention.shared-testing")
     id("com.avito.android.instrumentation-tests")
 }
 
@@ -33,9 +33,12 @@ android {
             isIncludeAndroidResources = true
 
             all {
-                it.systemProperty("android.junit.runner", "com.avito.robolectric.runner.InHouseRobolectricTestRunner")
-                it.systemProperty("robolectric.logging", "stdout")
-                it.systemProperty("robolectric.logging.enabled", "true")
+                val args = mapOf(
+                    "android.junit.runner" to "com.avito.robolectric.runner.InHouseRobolectricTestRunner",
+                    "planSlug" to "AndroidTestApp",
+                    "jobSlug" to "FunctionalTests",
+                )
+                it.systemProperties.putAll(args)
             }
         }
     }
@@ -55,14 +58,14 @@ dependencies {
     implementation(projects.subprojects.androidLib.proxyToast)
 
     sharedTestImplementation(projects.subprojects.testRunner.testInhouseRunner)
-    sharedTestImplementation(projects.subprojects.testRunner.testReport)
+    sharedTestImplementation(projects.subprojects.testRunner.testReportAndroid)
     sharedTestImplementation(projects.subprojects.testRunner.testAnnotations)
     sharedTestImplementation(projects.subprojects.testRunner.reportViewer)
     sharedTestImplementation(projects.subprojects.androidTest.uiTestingCore)
     sharedTestImplementation(projects.subprojects.androidTest.toastRule)
     sharedTestImplementation(projects.subprojects.common.truthExtensions)
 
-    testImplementation(projects.subprojects.testRunner.testRobolectricInhouseRunner)
+    testImplementation(projects.subprojects.testRunner.robolectricInhouseRunner)
 
     androidTestUtil(libs.testOrchestrator)
 }
@@ -112,7 +115,6 @@ instrumentation {
     }
 
     experimental {
-        fetchLogcatForIncompleteTests.set(true)
         useLegacyExtensionsV1Beta.set(false)
     }
 

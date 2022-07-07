@@ -1,6 +1,9 @@
 package com.avito.slack
 
 import com.avito.android.Result
+import com.avito.notification.NotificationClient
+import com.avito.notification.NotificationSender
+import com.avito.notification.finder.NotificationPredicate
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 
@@ -9,20 +12,20 @@ import com.avito.slack.model.SlackSendMessageRequest
  * Обновлять или писать новое решает[condition]
  */
 public class SlackConditionalSender(
-    private val slackClient: SlackClient,
+    private val notificationClient: NotificationClient,
     private val updater: SlackMessageUpdater,
-    private val condition: SlackMessagePredicate,
-) : SlackMessageSender {
+    private val condition: NotificationPredicate,
+) : NotificationSender {
 
     override fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage> {
-        return slackClient.findMessage(message.channel, condition)
+        return notificationClient.findMessage(message.channel, condition)
             .fold(
                 { previousMessage ->
                     updater.updateMessage(previousMessage, message.text)
                 },
                 {
                     // TODO handle throwable
-                    slackClient.sendMessage(message)
+                    notificationClient.sendMessage(message)
                 }
             )
     }

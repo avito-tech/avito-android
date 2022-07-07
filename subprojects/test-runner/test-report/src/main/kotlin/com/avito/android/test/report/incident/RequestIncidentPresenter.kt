@@ -38,10 +38,10 @@ internal class RequestIncidentPresenter : IncidentPresenter {
     }
 }
 
-class RequestIncidentException(
+internal class RequestIncidentException(
     override val message: String,
     val body: String,
     override val cause: Throwable?
 ) : Exception(message, cause)
 
-const val DELIMITER = "|requestBody="
+private const val DELIMITER = "|requestBody="

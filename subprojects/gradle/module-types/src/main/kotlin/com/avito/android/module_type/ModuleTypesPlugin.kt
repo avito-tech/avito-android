@@ -81,6 +81,5 @@ internal const val pluginId = "com.avito.android.module-types"
 private val Project.mandatoryType: Boolean
     get() = providers
         .gradleProperty("avito.module_type.mandatoryType")
-        .forUseAtConfigurationTime()
         .map { it.toBoolean() }
         .getOrElse(false)

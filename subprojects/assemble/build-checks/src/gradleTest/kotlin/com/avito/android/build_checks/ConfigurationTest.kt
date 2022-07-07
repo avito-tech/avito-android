@@ -12,9 +12,6 @@ internal class ConfigurationTest {
             projectDir,
             buildChecksExtension = """
                 enableByDefault = true
-                javaVersion {
-                    version = JavaVersion.VERSION_1_1
-                }
                 androidSdk {
                     version(
                         compileSdkVersion = -1,
@@ -46,7 +43,6 @@ internal class ConfigurationTest {
             projectDir,
             buildChecksExtension = """
                 enableByDefault = true
-                javaVersion { enabled = false }
                 androidSdk { enabled = false }
                 macOSLocalhost { enabled = false }
                 gradleProperties { enabled = false }

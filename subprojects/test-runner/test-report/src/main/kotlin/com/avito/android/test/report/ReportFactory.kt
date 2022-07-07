@@ -7,14 +7,16 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.logger.LoggerFactory
+import com.avito.report.model.IncidentTypeDeterminer
 import com.avito.time.TimeProvider
 
-object ReportFactory {
-    fun createReport(
+public object ReportFactory {
+    public fun createReport(
         loggerFactory: LoggerFactory,
         transport: Transport,
         screenshotCapturer: ScreenshotCapturer,
         timeProvider: TimeProvider,
+        incidentTypeDeterminer: IncidentTypeDeterminer,
         troubleshooter: Troubleshooter
     ): InternalReport {
         return LoggerReport(
@@ -25,6 +27,7 @@ object ReportFactory {
                     transport = transport,
                     screenshotCapturer = screenshotCapturer,
                     timeProvider = timeProvider,
+                    incidentTypeDeterminer = incidentTypeDeterminer,
                     troubleshooter = troubleshooter
                 )
             )

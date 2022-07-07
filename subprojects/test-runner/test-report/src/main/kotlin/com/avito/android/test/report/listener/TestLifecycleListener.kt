@@ -3,29 +3,31 @@ package com.avito.android.test.report.listener
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.report.model.Incident
 
-interface TestLifecycleListener {
+public interface TestLifecycleListener {
 
-    fun beforeTestStart(state: Started) {
+    public fun beforeTestStart(state: Started) {
         // do nothing
     }
 
-    fun beforeTestFinished(state: Started) {
+    public fun beforeTestFinished(state: Started) {
         // do nothing
     }
 
-    fun afterTestFinished(state: Started) {
+    public fun afterTestFinished(state: Started) {
         // do nothing
     }
 
-    fun afterIncident(incident: Incident) {
+    public fun afterIncident(incident: Incident) {
         // do nothing
     }
 }
 
-object TestLifecycleNotifier : TestLifecycleListener {
+public object TestLifecycleNotifier : TestLifecycleListener {
     private val listeners = mutableListOf<TestLifecycleListener>()
 
-    fun addListener(listener: TestLifecycleListener) = listeners.add(listener)
+    public fun addListener(listener: TestLifecycleListener) {
+        listeners.add(listener)
+    }
 
     override fun beforeTestStart(state: Started) {
         listeners.forEach { it.beforeTestStart(state) }

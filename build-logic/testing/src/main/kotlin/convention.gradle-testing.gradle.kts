@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 plugins {
     id("kotlin")
-    id("java-gradle-plugin")
     idea
 }
 
@@ -30,7 +29,7 @@ val gradleTestJarTask = tasks.register<Jar>(gradleTest.jarTaskName) {
 
 val testTimeoutSeconds = 600
 
-val artifactoryUrl: Provider<String> = providers.gradleProperty("artifactoryUrl").forUseAtConfigurationTime()
+val artifactoryUrl: Provider<String> = providers.gradleProperty("artifactoryUrl")
 
 val gradleTestTask = tasks.register<Test>("gradleTest") {
     description = "Runs gradle test kit tests"
@@ -99,8 +98,10 @@ dependencies {
     )
 }
 
-gradlePlugin {
-    testSourceSets(gradleTest)
+plugins.withId("java-gradle-plugin") {
+    extensions.getByType<GradlePluginDevelopmentExtension>().apply {
+        testSourceSets(gradleTest)
+    }
 }
 
 // make idea to treat gradleTest as test sources

@@ -55,6 +55,7 @@ public class MockDispatcher(
          */
         val matchedMock = synchronized(mocks) {
             mocks.findLast { it.requestMatcher.invoke(requestData) }
+                ?.also { mock -> if (mock.removeAfterMatched) mocks.remove(mock) }
         }
 
         val response = if (matchedMock?.response != null) {
@@ -64,8 +65,6 @@ public class MockDispatcher(
             logger.warn("Unmocked request captured: [$requestData], answering: [$unmockedResponse]")
             unmockedResponse
         }
-
-        if (matchedMock?.removeAfterMatched == true) mocks.remove(matchedMock)
 
         return response
     }

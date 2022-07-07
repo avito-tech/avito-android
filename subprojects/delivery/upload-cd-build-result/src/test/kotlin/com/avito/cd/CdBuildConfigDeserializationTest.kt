@@ -4,18 +4,11 @@ import com.avito.cd.CdBuildConfig.Deployment.GooglePlay
 import com.avito.cd.CdBuildConfig.Deployment.Qapps
 import com.avito.cd.CdBuildConfig.Deployment.Track
 import com.avito.cd.CdBuildConfig.Deployment.Unknown
+import com.avito.cd.model.BuildVariant
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 
 internal class CdBuildConfigDeserializationTest {
-
-    private val gson = GsonBuilder().run {
-        setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        registerTypeAdapter(CdBuildConfig.Deployment::class.java, DeploymentDeserializer)
-        create()
-    }
 
     @Test
     fun `build config deserialized correctly`() {
@@ -51,7 +44,8 @@ internal class CdBuildConfigDeserializationTest {
             ]
         }
         """
-        val deserialized = gson.fromJson(config, CdBuildConfig::class.java)
+        val deserialized = uploadCdGson.fromJson(config, CdBuildConfig::class.java)
+
         assertThat(deserialized).isEqualTo(
             CdBuildConfig(
                 schemaVersion = 1,
@@ -64,12 +58,12 @@ internal class CdBuildConfigDeserializationTest {
                 deployments = listOf(
                     GooglePlay(
                         AndroidArtifactType.BUNDLE,
-                        BuildVariant.RELEASE,
+                        BuildVariant("release"),
                         Track.ALPHA
                     ),
                     GooglePlay(
                         AndroidArtifactType.APK,
-                        BuildVariant.DEBUG,
+                        BuildVariant("debug"),
                         Track.INTERNAL
                     ),
                     Qapps(

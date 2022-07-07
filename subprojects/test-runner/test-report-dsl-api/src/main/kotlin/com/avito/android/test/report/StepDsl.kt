@@ -25,6 +25,13 @@ public object StepDslProvider {
             "StepExecutor must be initialized. Best place is your Instrumentation before any test execution"
         }
     }
+
+    public fun reset() {
+        require(stepDslDelegate != null) {
+            "Step executor is not initialized"
+        }
+        stepDslDelegate = null
+    }
 }
 
 /**

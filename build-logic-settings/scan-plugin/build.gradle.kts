@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     implementation(project(":extensions"))
-    implementation("com.gradle.enterprise:com.gradle.enterprise.gradle.plugin:3.7.2")
+    implementation("com.gradle.enterprise:com.gradle.enterprise.gradle.plugin:3.9")
 }

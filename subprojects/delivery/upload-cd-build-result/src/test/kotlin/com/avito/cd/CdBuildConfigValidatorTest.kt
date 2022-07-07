@@ -1,5 +1,6 @@
 package com.avito.cd
 
+import com.avito.cd.model.BuildVariant
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,7 +20,7 @@ internal class CdBuildConfigValidatorTest {
             deployments = listOf(
                 CdBuildConfig.Deployment.GooglePlay(
                     AndroidArtifactType.BUNDLE,
-                    BuildVariant.RELEASE,
+                    BuildVariant("release"),
                     CdBuildConfig.Deployment.Track.ALPHA
                 ),
                 CdBuildConfig.Deployment.Qapps(
@@ -67,12 +68,12 @@ internal class CdBuildConfigValidatorTest {
             deployments = listOf(
                 CdBuildConfig.Deployment.GooglePlay(
                     AndroidArtifactType.BUNDLE,
-                    BuildVariant.RELEASE,
+                    BuildVariant("release"),
                     CdBuildConfig.Deployment.Track.ALPHA
                 ),
                 CdBuildConfig.Deployment.GooglePlay(
                     AndroidArtifactType.APK,
-                    BuildVariant.RELEASE,
+                    BuildVariant("release"),
                     CdBuildConfig.Deployment.Track.ALPHA
                 )
             )

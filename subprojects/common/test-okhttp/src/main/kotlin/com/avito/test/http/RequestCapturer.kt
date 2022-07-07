@@ -63,7 +63,7 @@ public class RequestCapturer(
             return this
         }
 
-        public fun bodyDoesntContain(substring: String): RequestChecks {
+        public fun bodyDoesNotContain(substring: String): RequestChecks {
             assertThat(requestData.body).doesNotContain(substring)
             return this
         }

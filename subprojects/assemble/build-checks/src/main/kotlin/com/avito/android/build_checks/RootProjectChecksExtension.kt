@@ -2,7 +2,6 @@ package com.avito.android.build_checks
 
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.AndroidSdk
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.GradleProperties
-import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.JavaVersion
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.MacOSLocalhost
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.PreventKotlinDaemonFallback
 import org.gradle.api.Action
@@ -16,9 +15,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
             return RootProjectCheck::class.sealedSubclasses
                 .map { it.createInstance() }
         }
-
-    public fun javaVersion(action: Action<JavaVersion>): Unit =
-        register(JavaVersion(), action)
 
     public fun androidSdk(action: Action<AndroidSdk>): Unit =
         register(AndroidSdk(), action)
@@ -55,14 +51,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
                 require(versions.isNotEmpty()) {
                     "At least one version must be configured in buildChecks.androidSdk"
                 }
-            }
-        }
-
-        public open class JavaVersion : RootProjectCheck(), RequireValidation {
-            public var version: org.gradle.api.JavaVersion? = null
-
-            override fun validate() {
-                checkNotNull(version) { "$extensionName.javaVersion.version must be set" }
             }
         }
 

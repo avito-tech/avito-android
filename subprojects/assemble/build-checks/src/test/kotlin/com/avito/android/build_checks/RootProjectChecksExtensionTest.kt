@@ -10,7 +10,6 @@ internal class RootProjectChecksExtensionTest {
         val checks = extension.enabledChecks()
 
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.MacOSLocalhost>(checks)
-        assertHasInstance<RootProjectChecksExtension.RootProjectCheck.JavaVersion>(checks)
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.AndroidSdk>(checks)
 
         assertNoInstance<RootProjectChecksExtension.RootProjectCheck.GradleProperties>(checks)

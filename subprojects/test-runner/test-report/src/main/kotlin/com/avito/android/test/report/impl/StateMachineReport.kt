@@ -10,6 +10,7 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.logger.LoggerFactory
+import com.avito.report.model.IncidentTypeDeterminer
 import com.avito.time.TimeProvider
 
 internal class StateMachineReport(
@@ -17,7 +18,8 @@ internal class StateMachineReport(
     private val transport: Transport,
     private val screenshotCapturer: ScreenshotCapturer,
     private val timeProvider: TimeProvider,
-    private val troubleshooter: Troubleshooter
+    private val troubleshooter: Troubleshooter,
+    private val incidentTypeDeterminer: IncidentTypeDeterminer
 ) : InternalReport {
 
     @Volatile
@@ -49,6 +51,7 @@ internal class StateMachineReport(
             transport = transport,
             screenshotCapturer = screenshotCapturer,
             timeProvider = timeProvider,
+            incidentTypeDeterminer = incidentTypeDeterminer,
             troubleshooter = troubleshooter,
             state = ReportState.NotFinished.Initialized.Started(
                 attachmentsBeforeSteps = report.state.attachmentsBeforeSteps,

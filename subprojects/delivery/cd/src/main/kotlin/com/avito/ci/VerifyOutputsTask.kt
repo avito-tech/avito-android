@@ -35,6 +35,9 @@ public abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFacto
     @Input
     public val checkSignatures: Property<Boolean> = objects.property()
 
+    @Input
+    public val checkPackageName: Property<Boolean> = objects.property<Boolean>().convention(true)
+
     @TaskAction
     public fun doWork() {
         val signVerifier: SignVerifier = SignVerifierImpl(project.androidSdk)
@@ -45,7 +48,7 @@ public abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFacto
         )
 
         config.get().outputs.forEach { (_: String, output: Output) ->
-            // Check file that have already been copied to outputs folder
+            // Check that file has already been copied to outputs folder
             val originalArtifact = File(output.path)
                 .relativeTo(project.rootProject.projectDir)
 
@@ -59,7 +62,9 @@ public abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFacto
                     if (checkSignatures.get() && output.signature != null) {
                         outputsVerifier.checkApkSignature(it, output.signature!!)
                     }
-                    outputsVerifier.checkPackageName(artifactPath, output.packageName)
+                    if (checkPackageName.get()) {
+                        outputsVerifier.checkPackageName(artifactPath, output.packageName)
+                    }
                 }
                 is Output.BundleOutput -> outputsVerifier.requireFile(artifactPath) {
                     if (checkSignatures.get() && output.signature != null) {

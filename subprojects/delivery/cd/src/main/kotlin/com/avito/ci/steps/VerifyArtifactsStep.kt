@@ -84,6 +84,7 @@ internal fun verifyTaskName(context: String) = "${context}VerifyArtifacts"
 internal fun TaskContainer.verifyTaskProvider(context: String) = typedNamed<VerifyOutputsTask>(verifyTaskName(context))
 
 private fun Gradle.onBuildFailed(block: () -> Unit) {
+    @Suppress("DEPRECATION")
     buildFinished { buildResult ->
         if (buildResult.failure != null && buildResult.action == ACTION_BUILD) {
             block()

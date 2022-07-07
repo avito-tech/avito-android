@@ -600,7 +600,7 @@ internal class RunnerIntegrationTest {
         val runner = provideRunner(
             targets = targets,
             devicesProvider = devicesProvider,
-            executionTimeout = Duration.ofHours(3),
+            executionTimeout = Duration.ofSeconds(5),
             dispatcher = kotlinx.coroutines.Dispatchers.Default,
         )
         val device = StubDevice(

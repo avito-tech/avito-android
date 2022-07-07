@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import ru.avito.reporter.WebSocketReporter
 
-class ReportViewerWebsocketReporter(
+public class ReportViewerWebsocketReporter(
     private val report: Report
 ) : WebSocketReporter {
 

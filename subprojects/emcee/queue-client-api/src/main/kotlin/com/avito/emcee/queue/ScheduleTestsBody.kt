@@ -7,6 +7,6 @@ import com.squareup.moshi.JsonClass
 public data class ScheduleTestsBody(
     val prioritizedJob: Job,
     val scheduleStrategy: ScheduleStrategy,
-    @Json(name = "testEntryConfigurations")
-    val tests: List<TestRequest>
+    @Json(name = "similarlyConfiguredTestEntries")
+    val tests: ScheduledTests
 )

@@ -34,7 +34,7 @@ public class TraceReportFileAdapter(
         override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): TraceEvent {
             val jsonObject = json.asJsonObject
 
-            return when (val phase = jsonObject.get("ph").asCharacter) {
+            return when (val phase = jsonObject.get("ph").asString.first()) {
                 DurationEvent.PHASE_BEGIN, DurationEvent.PHASE_END -> context.deserialize<DurationEvent>(
                     json,
                     DurationEvent::class.java

@@ -1,0 +1,59 @@
+{
+    "caseId": "bucketDequeued",
+    "bucket": {
+        "analyticsConfiguration": {},
+        "bucketId": "1F10555C-0D48-436F-B0A6-4D0ABF813493",
+        "payloadContainer": {
+            "payload": {
+                "testConfiguration": {
+                    "buildArtifacts": {
+                        "appApk": {
+                            "location": {
+                                "url": "https://example.com/artifactory/repo/path/app.apk"
+                            },
+                            "package": "com.avito.android"
+                        },
+                        "runnerClass": "com.avito.android.InstrumentationRunner",
+                        "testApk": {
+                            "location": {
+                                "url": "https://example.com/artifactory/repo/path/test.apk"
+                            },
+                            "package": "com.avito.android.test"
+                        }
+                    },
+                    "deviceType": "Nexus 5",
+                    "sdkVersion": 30,
+                    "testExecutionBehavior": {
+                        "environment": {
+                            "SOME": "env values"
+                        },
+                        "logCapturingMode": "noLogs",
+                        "numberOfRetries": 5,
+                        "runnerWasteCleanupPolicy": "clean",
+                        "testRetryMode": "retryThroughQueue",
+                        "userInsertedLibraries": []
+                    },
+                    "testMaximumDuration": 30
+                },
+                "testEntries": [
+                    {
+                        "tags": [],
+                        "testName": {
+                            "className": "SomeClassNameWithTests",
+                            "methodName": "testMethod"
+                        }
+                    },
+                    {
+                        "tags": [],
+                        "testName": {
+                            "className": "AnotherClass",
+                            "methodName": "test"
+                        }
+                    }
+                ]
+            },
+            "payloadType": "runAndroidTests"
+        },
+        "workerCapabilityRequirements": []
+    }
+}

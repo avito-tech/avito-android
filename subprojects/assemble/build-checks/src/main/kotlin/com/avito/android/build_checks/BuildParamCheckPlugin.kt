@@ -15,7 +15,6 @@ import com.avito.android.build_checks.internal.unique_app_res.UniqueAppResources
 import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreator
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -28,7 +27,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty(enabledProp)
-            .forUseAtConfigurationTime()
             .map { it.toBoolean() }
             .getOrElse(true)
 
@@ -69,9 +67,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 envInfo = envInfo,
             )
 
-            if (checks.hasInstance<RootProjectCheck.JavaVersion>()) {
-                checkJavaVersion(checks.getInstance(), envInfo)
-            }
             if (checks.hasInstance<RootProjectCheck.GradleProperties>()) {
                 GradlePropertiesChecker(project, envInfo).check()
             }
@@ -104,13 +99,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 UniqueAppResourcesTaskCreator(project, checks.getInstance())
                     .addTask(rootTask)
             }
-        }
-    }
-
-    private fun checkJavaVersion(check: RootProjectCheck.JavaVersion, envInfo: BuildEnvironmentInfo) {
-        check(JavaVersion.current() == check.version) {
-            "Only ${check.version} is supported for this project but was ${envInfo.javaInfo}. " +
-                "Please check java home property or install appropriate JDK."
         }
     }
 

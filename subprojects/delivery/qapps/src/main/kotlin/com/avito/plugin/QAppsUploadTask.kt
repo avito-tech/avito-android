@@ -1,6 +1,7 @@
 package com.avito.plugin
 
 import Slf4jGradleLoggerFactory
+import com.avito.android.VariantAwareTask
 import com.avito.android.getApkOrThrow
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
@@ -19,9 +20,14 @@ import javax.inject.Inject
 
 /**
  * TODO specify outputs: write a file after success upload (with link for example)
- * TODO check caching
+ * TODO test caching
  */
-public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+public abstract class QAppsUploadTask @Inject constructor(
+    objects: ObjectFactory
+) : VariantAwareTask, DefaultTask() {
+
+    @Input
+    public override val variantName: Property<String> = objects.property()
 
     @Input
     public val comment: Property<String> = objects.property()
@@ -41,9 +47,6 @@ public abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory
     @Input
     public val packageName: Property<String> = objects.property()
 
-    /**
-     * modified by [com.avito.ci.steps.UploadToQapps] in release pipeline
-     */
     @Input
     public val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
 

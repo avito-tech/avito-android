@@ -1,8 +1,10 @@
 package com.avito.android.test.report.troubleshooting.dump
 
-object ThreadDumper {
+public class ThreadDumper : Dumper {
 
-    fun getThreadDump(): String {
+    override val label: String = "Threads dump"
+
+    override fun dump(): String {
         return buildString {
             Thread.getAllStackTraces().forEach { (thread, stackTrace) ->
                 appendLine("$thread, ${thread.state}")
