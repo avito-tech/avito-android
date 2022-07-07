@@ -14,9 +14,10 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -65,11 +66,11 @@ internal class StartAndroidDevice(
         type: String
     ): AndroidDeviceImpl {
         @Suppress("DEPRECATION")
-        val activeDevice = deviceEventsChannel.first { currentDeviceList ->
+        val activeDevice = deviceEventsChannel.receiveAsFlow().first { currentDeviceList ->
             require(currentDeviceList.size <= maximumRunningDevices) {
                 "Must be maximum $maximumRunningDevices running devices per worker"
             }
-            currentDeviceList.singleOrNull() { it.state == DeviceState.DEVICE } != null
+            currentDeviceList.singleOrNull { it.state == DeviceState.DEVICE } != null
         }[0]
         return AndroidDeviceImpl(
             sdk = sdk,

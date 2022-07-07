@@ -13,6 +13,7 @@ import com.avito.emcee.queue.TestName
 import com.avito.emcee.worker.GetBucketResponse
 
 internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued = GetBucketResponse.Dequeued(
+    caseId = "bucketDequeued",
     bucket = Bucket(
         bucketId = "1F10555C-0D48-436F-B0A6-4D0ABF813493",
         payloadContainer = PayloadContainer(
@@ -60,4 +61,5 @@ internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued 
     )
 )
 
-internal fun GetBucketResponse.Companion.noBucket() = GetBucketResponse.NoBucket(checkAfter = 30)
+internal fun GetBucketResponse.Companion.noBucket() =
+    GetBucketResponse.NoBucket(caseId = "checkAgainLater", checkAfter = 30)
