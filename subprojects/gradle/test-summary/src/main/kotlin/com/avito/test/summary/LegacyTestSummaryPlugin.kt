@@ -7,10 +7,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 
-public class TestSummaryPlugin : Plugin<Project> {
+public class LegacyTestSummaryPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        target.extensions.create<TestSummaryExtension>(testSummaryExtensionName)
+        target.extensions.create<TestSummaryExtension>(legacyTestSummaryExtensionName)
 
         if (!target.isRoot()) {
             val problem = Problem(

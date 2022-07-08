@@ -1,6 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
+    id("convention.gradle-testing")
     id("convention.test-fixtures")
 }
 
@@ -21,15 +22,17 @@ dependencies {
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(testFixtures(projects.subprojects.testRunner.reportViewer))
 
+    gradleTestImplementation(projects.subprojects.gradle.testProject)
+
     testFixturesImplementation(testFixtures(projects.subprojects.testRunner.testModel))
 }
 
 gradlePlugin {
     plugins {
-        create("testSummaryLegacy") {
-            id = "com.avito.android.test-summary"
-            implementationClass = "com.avito.test.summary.LegacyTestSummaryPlugin"
-            displayName = "Instrumentation tests summary (legacy plugin)"
+        create("testSummary") {
+            id = "com.avito.android.tests-summary"
+            implementationClass = "com.avito.test.summary.TestSummaryPlugin"
+            displayName = "Instrumentation tests summary"
         }
     }
 }
