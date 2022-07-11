@@ -5,8 +5,8 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import com.avito.test.summary.testSummaryExtensionName
-import com.avito.test.summary.testSummaryPluginId
+import com.avito.test.summary.legacyTestSummaryExtensionName
+import com.avito.test.summary.legacyTestSummaryPluginId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -81,10 +81,10 @@ internal class TestSummaryStepTest {
         TestProjectGenerator(
             plugins = plugins {
                 id("com.avito.android.impact")
-                id(testSummaryPluginId)
+                id(legacyTestSummaryPluginId)
             },
             buildGradleExtra = """
-                |$testSummaryExtensionName {
+                |$legacyTestSummaryExtensionName {
                 |   reportsHost = "http://stub"
                 |   slackToken = "xxx"
                 |   slackWorkspace = "xxx"
