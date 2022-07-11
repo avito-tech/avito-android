@@ -14,8 +14,10 @@ import com.avito.android.stats.statsdConfig
 import com.avito.capitalize
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
+import org.gradle.api.specs.Spec
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
@@ -35,6 +37,16 @@ public class NupokatiPlugin : Plugin<Project> {
 
             val cdBuildConfig: Provider<CdBuildConfig> = extension.cdBuildConfigFile
                 .map(CdBuildConfigTransformer(validator = StrictCdBuildConfigValidator()))
+
+            val skipUploadSpec = Spec<Task> {
+                val skipUpload = cdBuildConfig.get().outputDescriptor.skipUpload
+                project.logger.lifecycle(
+                    "Skip uploading artifacts and contract json, " +
+                        "because skipUpload=true is called"
+                )
+                val shouldRunTask = !skipUpload
+                shouldRunTask
+            }
 
             androidComponents.onVariants(selector = releaseVariantSelector) { variant: ApplicationVariant ->
 
@@ -58,6 +70,8 @@ public class NupokatiPlugin : Plugin<Project> {
                         this.files.set(project.files(bundle))
                         this.statsDConfig.set(project.statsdConfig)
                         this.buildOutput.set(project.layout.buildDirectory.file("nupokati/buildOutput.json"))
+
+                        onlyIf(skipUploadSpec)
                     }
 
                 project.tasks.register<UploadCdBuildResultTask>(uploadCdBuildResultTaskName(variantSlug)) {
@@ -76,6 +90,8 @@ public class NupokatiPlugin : Plugin<Project> {
 
                     // todo depend on output with actually uploaded artifacts
                     dependsOn(publishArtifactsTask)
+
+                    onlyIf(skipUploadSpec)
                 }
             }
         }
