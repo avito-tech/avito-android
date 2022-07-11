@@ -8,7 +8,7 @@ import com.avito.instrumentation.instrumentationTaskDefaultEnvironment
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.TestSummaryExtension
 import com.avito.test.summary.TestSummaryFactory
-import com.avito.test.summary.testSummaryPluginId
+import com.avito.test.summary.legacyTestSummaryPluginId
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskContainer
@@ -31,8 +31,8 @@ public abstract class TestSummaryPluginBuildStep(context: String, name: String) 
     ): TaskProvider<out Task>
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
-        require(project.rootProject.pluginManager.hasPlugin(testSummaryPluginId)) {
-            "$stepName step can't be initialized without $testSummaryPluginId plugin applied to root project"
+        require(project.rootProject.pluginManager.hasPlugin(legacyTestSummaryPluginId)) {
+            "$stepName step can't be initialized without $legacyTestSummaryPluginId plugin applied to root project"
         }
 
         require(configuration.isNotBlank()) {
