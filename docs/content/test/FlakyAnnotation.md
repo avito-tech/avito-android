@@ -51,5 +51,6 @@ class MyAwesomeTests {
 
 By default `@Flaky` only adds flaky sign to ReportViewer.
 There are two options for changing `@Flaky` tests behavior:
-- [Add `suppressFlaky = true` to the `uiTests` step to suppress step failure because of `@Flaky` tests](../projects/internal/CiSteps.md#ui-tests)
+
+- [Set `suppressFlaky = true` to the instrumentationTestTask](../test_runner/TestRunner.md)
 - [Add `excludeFlaky = true` to the filter for excluding `@Flaky` tests from execution](md#filter-flaky-tests)
