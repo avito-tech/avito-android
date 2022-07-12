@@ -9,29 +9,30 @@ Sign APK's and AAB's(bundles) using in-house service.
 ```kotlin
 plugins {
     id("com.android.application")
-    id("com.avito.android.signer")
+    id("com.avito.android.sign-service")
 }
 ```
 
 ### Specify service host
 
 ```kotlin
-signService {
-    host.set("https://my-inhouse-signer-service.service/path")
+signer {
+    serviceUrl.set("https://my-inhouse-signer-service.service/path")
+    readWriteTimeoutSec.set(90)
 }
 ```
 
-### Register which buildVariants to sign
+### Register which packages to sign
 
 ```kotlin
-signService {
-    apk(
-        variant = android.buildTypes.release,
-        token = project.properties.get("avitoSignToken")
+signer {
+    apkSignTokens.put(
+        "com.avito.android",
+        project.properties.get("appApkToken")
     )
-    bundle(
-        variant = android.buildTypes.release,
-        token = project.properties.get("avitoSignBundleToken")
+    bundleSignTokens.put(
+        "com.avito.android",
+        project.properties.get("appBundleToken")
     )
 }
 ```
@@ -54,25 +55,14 @@ Can be useful to disable signing in different builds by some condition
 - `signApkViaService<Variant>`
 - `signBundleViaService<Variant>`
 
-Tasks will not be wired by the plugin to assemble. User should do it manually, configuring corresponding dependencies,
-e.g. `dependsOn(signApkViaService<Variant>)`
-
 ## Local development behavior
 
 By default local development not impacted at all:  
 Typical `assemble`, `install` tasks won't add signer tasks as dependencies.
 
-Signer tasks can be called locally, just don't forget to specify token as gradle property, like `-PavitoSignToken=XXX`
-
-## Relations with CiSteps plugin
-
-Signer tasks dependency implicitly wired
-in [Artifacts collection steps of CiSteps plugin](../CiSteps/#collecting-artifacts)
-
-See: `com.avito.ci.steps.VerifyArtifactsStep`
+Signer tasks can be called locally, just don't forget to specify tokens
 
 ## Metrics ([Internal Grafana](http://links.k.avito.ru/AndroidExternalServicesGrafana))
-
 
 Signer service http calls data available under `<namespace>.signer.sign.*`.
 
@@ -84,7 +74,7 @@ It should be sent to service owners for investigation
 Example: 
 
 ```text
-Can't sign: /tmp/junit7019843706336345100/app/build/intermediates/apk/release/signApkViaServiceRelease/app-release.apk
+Can't sign: /tmp/junit7019843706336345100/app/build/outputs/signService/apk/release/app-release.apk
 Where : Signing artifact via service
 You can learn more about this problem at https://avito-tech.github.io/avito-android/projects/internal/Signer/#troubleshooting
 Cause exception message: Failed to sign /tmp/junit7019843706336345100/app/build/outputs/apk/release/app-release-unsigned.apk via service
