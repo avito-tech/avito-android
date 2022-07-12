@@ -34,10 +34,10 @@ internal class BuildCacheMetricsTracker(
             }
             val metricName = if (error.httpStatus != null) {
                 SeriesName
-                    .create("cache", "errors", operationType, error.httpStatus.toString())
+                    .create("build", "cache", "errors", operationType, error.httpStatus.toString())
             } else {
                 SeriesName
-                    .create("cache", "errors", operationType, "unknown")
+                    .create("build", "cache", "errors", operationType, "unknown")
             }
             metricsTracker.track(CountMetric(metricName))
         }
@@ -52,13 +52,13 @@ internal class BuildCacheMetricsTracker(
 
         metricsTracker.track(
             CountMetric(
-                SeriesName.create("cache", "remote", "hit"),
+                SeriesName.create("build", "cache", "remote", "hit"),
                 remoteHits.toLong()
             )
         )
         metricsTracker.track(
             CountMetric(
-                SeriesName.create("cache", "remote", "miss"),
+                SeriesName.create("build", "cache", "remote", "miss"),
                 remoteMisses.toLong()
             )
         )

@@ -9,12 +9,18 @@ import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProv
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
 import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
+import com.avito.android.plugin.build_metrics.internal.jvm.Jcmd
+import com.avito.android.plugin.build_metrics.internal.jvm.Jps
+import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsCollector
+import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsListener
+import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsSender
+import com.avito.android.plugin.build_metrics.internal.jvm.VmResolver
 import com.avito.android.plugin.build_metrics.internal.tasks.CriticalPathMetricsTracker
-import com.avito.android.sentry.environmentInfo
-import com.avito.android.stats.statsd
+import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsTask
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.teamcity.teamcityCredentials
+import com.avito.utils.ProcessRunner
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
@@ -37,17 +43,27 @@ public open class BuildMetricsPlugin : Plugin<Project> {
             this.graphiteConfig.set(project.graphiteConfig)
         }
 
-        val buildMetricTracker = BuildMetricTracker(
-            project.environmentInfo().get(),
-            project.statsd.get()
-        )
+        val buildMetricTracker = BuildMetricTracker.from(project)
 
         val buildOperationsListener = BuildOperationsResultProvider.register(project, buildMetricTracker)
 
         val criticalPathTracker = CriticalPathMetricsTracker(buildMetricTracker)
         CriticalPathRegistry.addListener(project, criticalPathTracker)
 
+        val processRunner = ProcessRunner.create(workingDirectory = null)
+
+        val jvmMetricsListener = JvmMetricsListener(
+            collector = JvmMetricsCollector(
+                vmResolver = VmResolver(
+                    jps = Jps(processRunner)
+                ),
+                jcmd = Jcmd(processRunner)
+            ),
+            sender = JvmMetricsSender(buildMetricTracker)
+        )
+
         val buildListeners = listOf(
+            jvmMetricsListener,
             ConfigurationTimeListener(buildMetricTracker),
             TotalBuildTimeListener(buildMetricTracker),
             AppBuildTimeListener.from(project, buildMetricTracker)

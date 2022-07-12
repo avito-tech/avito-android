@@ -3,10 +3,8 @@ package com.avito.android.build_checks.internal.params
 import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.android.build_checks.pluginId
 import com.avito.android.build_metrics.BuildMetricTracker
-import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
-import com.avito.android.stats.statsd
 import org.gradle.api.Project
 
 // TODO: Will be removed in MBS-12691
@@ -17,7 +15,7 @@ internal class GradlePropertiesChecker(
 
     fun check() {
         project.afterEvaluate {
-            val tracker = buildTracker(project)
+            val tracker = BuildMetricTracker.from(project)
             val propertiesChecks = listOf(
                 GradlePropertiesCheck(project, envInfo) // TODO: extract to a task
             )
@@ -32,7 +30,7 @@ internal class GradlePropertiesChecker(
                             )
                             val safeParamName = mismatch.name.replace(".", "-")
                             tracker.track(
-                                CountMetric(SeriesName.create("configuration", "mismatch", safeParamName))
+                                CountMetric(SeriesName.create("build", "configuration", "mismatch", safeParamName))
                             )
                         }
                     }
@@ -40,14 +38,10 @@ internal class GradlePropertiesChecker(
                         project.logger.error("[$pluginId] can't check project", it)
                         val checkerName = checker.javaClass.simpleName
                         tracker.track(
-                            CountMetric(SeriesName.create("configuration", "mismatch", "failed", checkerName))
+                            CountMetric(SeriesName.create("build", "configuration", "mismatch", "failed", checkerName))
                         )
                     }
             }
         }
-    }
-
-    private fun buildTracker(project: Project): BuildMetricTracker {
-        return BuildMetricTracker(project.environmentInfo().get(), project.statsd.get())
     }
 }

@@ -53,6 +53,8 @@ public fun gradlew(
              * WARNING! it breaks classpath and causes failures in AGP's tasks
              * see. MBS-5462
              * https://github.com/gradle/gradle/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+withDebug
+             *
+             * Also, can't pass org.gradle properties through gradle.properties
              */
             withDebug(false)
 

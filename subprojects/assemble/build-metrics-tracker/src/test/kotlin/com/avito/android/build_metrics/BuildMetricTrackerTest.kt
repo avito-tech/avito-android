@@ -19,7 +19,7 @@ internal class BuildMetricTrackerTest {
             environment = Environment.Local,
             node = "user"
         )
-        tracker.track(TimeMetric(SeriesName.create("metric"), 1))
+        tracker.track(TimeMetric(SeriesName.create("build", "metric"), 1))
 
         val metrics = statsd.getSentMetrics()
         assertThat(metrics).hasSize(1)
@@ -34,7 +34,7 @@ internal class BuildMetricTrackerTest {
             environment = Environment.CI,
             node = "agent-3c23034b"
         )
-        tracker.track(TimeMetric(SeriesName.create("metric"), 1))
+        tracker.track(TimeMetric(SeriesName.create("build", "metric"), 1))
 
         val metrics = statsd.getSentMetrics()
         assertThat(metrics).hasSize(1)
@@ -49,7 +49,7 @@ internal class BuildMetricTrackerTest {
             environment = Environment.Unknown,
             node = "user"
         )
-        tracker.track(TimeMetric(SeriesName.create("metric"), 1))
+        tracker.track(TimeMetric(SeriesName.create("build", "metric"), 1))
 
         val metrics = statsd.getSentMetrics()
         assertThat(metrics).hasSize(1)
@@ -82,6 +82,6 @@ internal class BuildMetricTrackerTest {
             environment = environment,
             node = node
         )
-        return BuildMetricTracker(envInfo, statsd)
+        return BuildMetricTrackerImpl(envInfo, statsd)
     }
 }

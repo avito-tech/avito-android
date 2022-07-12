@@ -21,7 +21,7 @@ internal class CriticalPathMetricsTracker(
                     .append(taskOperation.type.simpleName)
             }
             .forEach { (groupName, taskOperations) ->
-                val name = SeriesName.create("tasks", "critical", "task").append(groupName)
+                val name = SeriesName.create("build", "tasks", "critical", "task").append(groupName)
                 val durationMs = taskOperations.sumByLong { it.durationMs }
 
                 metricsTracker.track(
