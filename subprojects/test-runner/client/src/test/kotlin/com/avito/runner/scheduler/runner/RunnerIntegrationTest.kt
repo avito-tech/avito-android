@@ -579,12 +579,15 @@ internal class RunnerIntegrationTest {
 
         devices.send(device)
         val result = runner.runTests(tests)
-        result.fold({
-            throw AssertionError("Test run finished successfully, but failure was expected")
-        }, {
-            assertThat(it).isInstanceOf(IllegalStateException::class.java)
-            assertThat(it).hasMessageThat().startsWith("Test run finished with timeout")
-        })
+        result.fold(
+            onSuccess = {
+                throw AssertionError("Test run finished successfully, but failure was expected")
+            },
+            onFailure = {
+                assertThat(it).isInstanceOf(IllegalStateException::class.java)
+                assertThat(it).hasMessageThat().startsWith("Test run finished with timeout")
+            }
+        )
 
         assertThat(devicesProvider.isReleased).isTrue()
         state.assertIsCancelled()
@@ -600,7 +603,7 @@ internal class RunnerIntegrationTest {
         val runner = provideRunner(
             targets = targets,
             devicesProvider = devicesProvider,
-            executionTimeout = Duration.ofSeconds(5),
+            executionTimeout = Duration.ofSeconds(1),
             dispatcher = kotlinx.coroutines.Dispatchers.Default,
         )
         val device = StubDevice(
