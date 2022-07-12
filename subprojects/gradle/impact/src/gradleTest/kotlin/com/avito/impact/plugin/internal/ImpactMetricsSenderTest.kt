@@ -29,7 +29,7 @@ internal class ImpactMetricsSenderTest {
         val environmentInfo = StubEnvironmentInfo(
             environment = Environment.CI
         )
-        val metricsPrefix = BuildMetricTracker(environmentInfo, statsdSender)
+        val metricsPrefix = BuildMetricTracker.from(statsdSender, environmentInfo)
         sender = ImpactMetricsSender(projectsFinder, environmentInfo, metricsPrefix)
     }
 

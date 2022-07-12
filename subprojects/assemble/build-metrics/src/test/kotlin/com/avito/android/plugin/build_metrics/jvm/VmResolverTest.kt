@@ -1,0 +1,38 @@
+package com.avito.android.plugin.build_metrics.jvm
+
+import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm
+import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleDaemon
+import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleWorker
+import com.avito.android.plugin.build_metrics.internal.jvm.VmResolver
+import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.Test
+
+class VmResolverTest {
+
+    @Test
+    fun `found current Gradle worker process`() {
+        val currentVmId = ProcessHandle.current().pid()
+
+        val vms = find()
+
+        val vm = vms.firstOrNull { it.id == currentVmId }
+        assertThat(vm).isNotNull()
+        vm!!
+        assertThat(vm).isInstanceOf(GradleWorker::class.java)
+    }
+
+    @Test
+    fun `found Gradle daemon`() {
+        val gradleDaemonPid = ProcessHandle.current().parent().get().pid()
+
+        val vms = find()
+
+        val vm = vms.firstOrNull { it.id == gradleDaemonPid }
+        assertThat(vm).isNotNull()
+        vm!!
+        assertThat(vm).isInstanceOf(GradleDaemon::class.java)
+    }
+
+    private fun find(): Set<LocalVm> =
+        VmResolver(jps).localVMs().getOrThrow()
+}

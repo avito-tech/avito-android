@@ -123,7 +123,7 @@ internal class BuildCacheMetricsTrackerTest {
 
     private fun processResults(result: BuildOperationsResult): List<StatsMetric> {
         val statsd = StubStatsdSender()
-        val metricsTracker = BuildMetricTracker(envInfo, statsd)
+        val metricsTracker = BuildMetricTracker.from(statsd, envInfo)
 
         val listener = BuildCacheMetricsTracker(
             metricsTracker, LoggerFactory.getLogger(BuildCacheMetricsTracker::class.java)

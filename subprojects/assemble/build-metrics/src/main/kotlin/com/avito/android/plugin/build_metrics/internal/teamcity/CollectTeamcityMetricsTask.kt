@@ -1,8 +1,7 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.plugin.build_metrics.internal.teamcity
 
 import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.graphite.GraphiteSender
-import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsAction
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.teamcity.TeamcityApi
 import com.avito.teamcity.TeamcityCredentials
@@ -13,21 +12,21 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
-public abstract class CollectTeamcityMetricsTask @Inject constructor(
+internal abstract class CollectTeamcityMetricsTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
     @get:Input
-    public abstract val buildId: Property<String>
+    abstract val buildId: Property<String>
 
     @get:Input
-    public abstract val graphiteConfig: Property<GraphiteConfig>
+    abstract val graphiteConfig: Property<GraphiteConfig>
 
     @get:Input
-    public abstract val teamcityCredentials: Property<TeamcityCredentials>
+    abstract val teamcityCredentials: Property<TeamcityCredentials>
 
     @TaskAction
-    public fun action() {
+    fun action() {
         val buildId: String? = buildId.orNull
         require(!buildId.isNullOrBlank()) {
             "teamcity buildId property must be set"
