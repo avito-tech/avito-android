@@ -85,7 +85,6 @@ nav:
                     - projects/internal/BuildMetrics.md
                     - projects/internal/CriticalPath.md
                     - projects/internal/Signer.md
-                    - projects/internal/CiSteps.md
 
     -   CI:
             -   Impact analysis: ci/ImpactAnalysis.md
