@@ -16,6 +16,7 @@ targetSdk = "31"
 minSdk = "21"
 junit5 = "5.8.0"
 junit5Platform = "1.8.0"
+xmlUnit = "2.9.0"
 hamcrest = "2.2"
 moshi = "1.12.0"
 moshiX = "0.14.1"
@@ -103,6 +104,8 @@ junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", versio
 junitVintageEngine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit5" }
 junitPlatformRunner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junit5Platform" }
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit5Platform" }
+xmlUnit-core = { module = "org.xmlunit:xmlunit-core", version.ref = "xmlUnit" }
+xmlUnit-matchers = { module = "org.xmlunit:xmlunit-matchers", version.ref = "xmlUnit" }
 
 sentry = "io.sentry:sentry:1.7.23"
 statsd = "com.timgroup:java-statsd-client:3.1.0"
