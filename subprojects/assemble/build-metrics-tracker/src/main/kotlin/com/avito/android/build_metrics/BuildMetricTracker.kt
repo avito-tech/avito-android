@@ -1,6 +1,7 @@
 package com.avito.android.build_metrics
 
 import com.avito.android.sentry.EnvironmentInfo
+import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.GaugeDoubleMetric
 import com.avito.android.stats.GaugeLongMetric
@@ -8,31 +9,49 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.TimeMetric
+import com.avito.android.stats.statsd
 import com.avito.utils.gradle.Environment
+import org.gradle.api.Project
 
-public class BuildMetricTracker(
+public interface BuildMetricTracker {
+    public fun track(status: BuildStatus, metric: StatsMetric)
+    public fun track(metric: StatsMetric)
+
+    public companion object {
+
+        public fun from(project: Project): BuildMetricTracker {
+            val statsd = project.statsd.get()
+            val environmentInfo = project.environmentInfo().get()
+
+            return from(statsd, environmentInfo)
+        }
+
+        public fun from(statsd: StatsDSender, environmentInfo: EnvironmentInfo): BuildMetricTracker =
+            BuildMetricTrackerImpl(environmentInfo, statsd)
+    }
+}
+
+internal class BuildMetricTrackerImpl(
     private val environmentInfo: EnvironmentInfo,
-    private val sender: StatsDSender
-) {
+    private val statsd: StatsDSender
+) : BuildMetricTracker {
 
-    public fun track(status: BuildStatus, metric: StatsMetric) {
+    override fun track(status: BuildStatus, metric: StatsMetric) {
         val prefix = SeriesName.create(
             environment(),
             node(),
             "id", // for backward compatibility
             seriesName(status)
         )
-        sender.send(metric.withPrefix(prefix))
+        statsd.send(metric.withPrefix(prefix))
     }
 
-    public fun track(metric: StatsMetric) {
+    override fun track(metric: StatsMetric) {
         val prefix = SeriesName.create(
             environment(),
             node(),
-            // build on the last position to not interfere with environments
-            "build"
         )
-        sender.send(metric.withPrefix(prefix))
+        statsd.send(metric.withPrefix(prefix))
     }
 
     private fun environment(): String {

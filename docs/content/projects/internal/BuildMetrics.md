@@ -79,6 +79,13 @@ To understand the critical path better see a visualization in a [build trace](..
 - `<namespace>.<environment>.<node>.build.tasks.critical.task.<module>.<task type>` (time in ms):  
   tasks in the critical path
 
+### JVM metrics
+
+`<namespace>.<environment>.<node>.jvm.memory.<jvm process name>.[heap|metaspace].[used|committed]`
+
+This reflects what you can find by [jcmd PID GC.heap_info](https://www.baeldung.com/java-heap-size-cli#jcmd).  
+All values are measured in Kb and sent as time metrics.
+
 ### Specific build events
 
 - `<namespace>.<environment>.<node>.id.<build status>.app-build.<module path>.<task name>.finish` (time in ms): 

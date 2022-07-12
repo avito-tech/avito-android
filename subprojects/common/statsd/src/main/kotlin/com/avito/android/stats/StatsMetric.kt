@@ -1,5 +1,8 @@
 package com.avito.android.stats
 
+/**
+ * [Statsd metrics](https://github.com/statsd/statsd/blob/master/docs/metric_types.md#statsd-metric-types)
+ */
 public sealed class StatsMetric {
     public abstract val name: SeriesName
     public abstract val value: Any
@@ -13,6 +16,9 @@ public sealed class StatsMetric {
     }
 }
 
+/**
+ * [Timing](https://github.com/statsd/statsd/blob/master/docs/metric_types.md#timing)
+ */
 public data class TimeMetric(
     override val name: SeriesName,
     // todo use java.time.api
@@ -22,6 +28,9 @@ public data class TimeMetric(
     override val type: String = "time"
 }
 
+/**
+ * [Counting](https://github.com/statsd/statsd/blob/master/docs/metric_types.md#counting)
+ */
 public data class CountMetric(
     override val name: SeriesName,
     public val delta: Long = 1
@@ -30,6 +39,9 @@ public data class CountMetric(
     override val type: String = "count"
 }
 
+/**
+ * [Gauges](https://github.com/statsd/statsd/blob/master/docs/metric_types.md#gauges)
+ */
 public data class GaugeLongMetric(
     override val name: SeriesName,
     public val gauge: Long
@@ -38,6 +50,9 @@ public data class GaugeLongMetric(
     override val type: String = "gauge"
 }
 
+/**
+ * [Gauges](https://github.com/statsd/statsd/blob/master/docs/metric_types.md#gauges)
+ */
 public data class GaugeDoubleMetric(
     override val name: SeriesName,
     public val gauge: Double

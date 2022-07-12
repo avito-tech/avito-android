@@ -7,11 +7,15 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.TimeMetric
 import com.avito.test.gradle.TestResult
+import com.google.common.truth.IterableSubject
 import com.google.common.truth.Truth.assertWithMessage
 
 private const val loggerPrefix = "[StatsDSender] "
 
-internal inline fun <reified T : StatsMetric> TestResult.assertHasMetric(path: String): T {
+internal inline fun <reified T : StatsMetric> TestResult.assertHasMetric(
+    path: String,
+    quantity: IterableSubject.() -> Unit = { hasSize(1) }
+): T {
     val type = T::class.java
     val metrics = statsdMetrics()
     val filtered = metrics
@@ -21,7 +25,7 @@ internal inline fun <reified T : StatsMetric> TestResult.assertHasMetric(path: S
         }
 
     assertWithMessage("Expected metric ${type.simpleName}($path) in $metrics. Logs: $output")
-        .that(filtered).hasSize(1)
+        .that(filtered).quantity()
 
     return filtered.first()
 }

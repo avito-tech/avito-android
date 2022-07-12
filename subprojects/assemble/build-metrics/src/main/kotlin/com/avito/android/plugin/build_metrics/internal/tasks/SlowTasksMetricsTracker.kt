@@ -24,7 +24,7 @@ internal class SlowTasksMetricsTracker(
 
     private fun trackCumulativeTime(tasksExecutions: List<TaskExecutionResult>) {
         val timeMs = tasksExecutions.sumByLong { it.elapsedMs }
-        val name = SeriesName.create("tasks", "cumulative", "any")
+        val name = SeriesName.create("build", "tasks", "cumulative", "any")
         metricsTracker.track(
             TimeMetric(name, timeMs)
         )
@@ -70,7 +70,7 @@ internal class SlowTasksMetricsTracker(
             }
             .take(TOP_LIMIT)
             .forEach { (groupName, timeMs) ->
-                val name = SeriesName.create("tasks", "slow").append(groupName)
+                val name = SeriesName.create("build", "tasks", "slow").append(groupName)
                 metricsTracker.track(
                     TimeMetric(name, timeMs)
                 )

@@ -73,7 +73,7 @@ internal class CriticalPathMetricsTrackerTest {
 
     private fun processResults(vararg tasks: TaskOperation): List<StatsMetric> {
         val statsd = StubStatsdSender()
-        val metricsTracker = BuildMetricTracker(envInfo, statsd)
+        val metricsTracker = BuildMetricTracker.from(statsd, envInfo)
 
         val tracker = CriticalPathMetricsTracker(metricsTracker)
         tracker.onCriticalPathReady(

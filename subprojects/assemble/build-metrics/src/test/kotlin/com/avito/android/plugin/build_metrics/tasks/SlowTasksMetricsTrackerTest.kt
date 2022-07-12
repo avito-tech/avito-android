@@ -154,7 +154,7 @@ internal class SlowTasksMetricsTrackerTest {
 
     private fun processResults(vararg tasks: TaskExecutionResult): List<StatsMetric> {
         val statsd = StubStatsdSender()
-        val metricsTracker = BuildMetricTracker(envInfo, statsd)
+        val metricsTracker = BuildMetricTracker.from(statsd, envInfo)
 
         val listener = SlowTasksMetricsTracker(metricsTracker)
         val result = BuildOperationsResult(

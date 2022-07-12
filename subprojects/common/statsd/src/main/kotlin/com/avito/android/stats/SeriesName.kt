@@ -41,11 +41,10 @@ public class SeriesName private constructor(
         return part.prefix(this)
     }
 
-    public fun asAspect(): String = toString()
+    public fun asAspect(): String =
+        parts.joinToString(separator = ".")
 
-    override fun toString(): String {
-        return parts.joinToString(separator = ".")
-    }
+    override fun toString(): String = asAspect()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
