@@ -4,20 +4,19 @@
 avito-disclaimer.md
 --8<--
 
-Temporarily, the Github repository is a mirror.  
 We publish releases to Maven Central on demand.
 
 ## Publishing to an in-house Artifactory
 
 1. Check if diff against the last release contains any changes for users.
    If not, then probably there are no reasons to make a release.
-1. Check the current status of [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/1l).  
+1. Check the current status of [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/N8).  
    If it is `Failed` you could release from previous `Succeed` commits or fix problems.
 1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2022.9`.  
    This branch must be persistent. It is used for automation.
-1. If the release branch is not on the commit from [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/1l), 
+1. If the release branch is not on the commit from [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/N8), 
    manually run it on the `release branch`.
-1. Manually run [Artifactory publish](http://links.k.avito.ru/dBk) on the `release branch`.
+1. Manually run [Artifactory publish](http://links.k.avito.ru/In) on the `release branch`.
    It will upload artifacts to an in-house Artifactory instance.
 1. Make a PR to an internal avito repository with the new version of infrastructure.
 1. Checkout a new branch and make a PR to the tools repository:
@@ -106,4 +105,3 @@ Some additional info:
 - [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request's builds
 - [integration check](http://links.k.avito.ru/ZA) - currently, contains the biggest amount of integration checks
 - [nightly integration check](http://links.k.avito.ru/gZ) - the same as `integration check` but uses more Android emulators
-- [Gradle configuration compatibility check](http://links.k.avito.ru/80) - checks the configuration compatibility of our Gradle plugins with Avito repo  
