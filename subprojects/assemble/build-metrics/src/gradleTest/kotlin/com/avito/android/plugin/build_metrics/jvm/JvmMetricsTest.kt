@@ -3,6 +3,7 @@ package com.avito.android.plugin.build_metrics.jvm
 import com.avito.android.plugin.build_metrics.BuildMetricsRunner
 import com.avito.android.plugin.build_metrics.assertHasMetric
 import com.avito.android.stats.TimeMetric
+import com.avito.test.Flaky
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.IterableSubject
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
+@Flaky("MBSA-648")
 internal class JvmMetricsTest {
 
     private lateinit var projectDir: File
