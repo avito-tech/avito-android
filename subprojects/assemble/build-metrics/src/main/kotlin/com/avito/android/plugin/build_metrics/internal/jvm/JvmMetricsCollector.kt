@@ -26,7 +26,9 @@ internal class JvmMetricsCollector(
         return vmResolver.localVMs()
             .map { vms ->
                 @Suppress("UNCHECKED_CAST")
-                vms.associateWith { vm -> getHeapInfo(vm) }
+                vms
+                    .sortedBy { it.longevityRank }
+                    .associateWith { vm -> getHeapInfo(vm) }
                     .filterValues { it != null } as Map<LocalVm, HeapInfo>
             }
     }
