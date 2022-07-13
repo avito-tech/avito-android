@@ -11,7 +11,8 @@ import java.util.TimerTask
 
 internal class JvmMetricsListener(
     private val collector: JvmMetricsCollector,
-    private val sender: JvmMetricsSender
+    private val sender: JvmMetricsSender,
+    private val period: Duration = Duration.ofSeconds(30)
 ) : BuildResultListener {
 
     private val log = LoggerFactory.getLogger(JvmMetricsListener::class.java)
@@ -27,8 +28,6 @@ internal class JvmMetricsListener(
                 collect()
             }
         }
-        val period = Duration.ofSeconds(30)
-
         timer.schedule(timerTask, 0, period.toMillis())
     }
 
