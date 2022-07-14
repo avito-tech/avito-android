@@ -29,6 +29,51 @@ internal class NupokatiPluginTest {
         gradlew(projectDir, "tasks").assertThat().buildSuccessful()
     }
 
+    @Test
+    fun `read cd build config`(@TempDir projectDir: File) {
+        val cdConfig = """
+            |{
+            |  "schema_version": 2,
+            |  "project": "avito",
+            |  "release_version": "1",
+            |  "output_descriptor": {
+            |    "path": "http://stub",
+            |    "skip_upload": true
+            |  },
+            |  "deployments": []
+            |}""".trimMargin()
+
+        val cdConfigFile = File(projectDir, "cd-config.json").also { it.writeText(cdConfig) }
+
+        TestProjectGenerator(
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app",
+                    imports = listOf(
+                        "import com.avito.android.NupokatiPlugin",
+                    ),
+                    plugins = plugins {
+                        id("com.avito.android.nupokati")
+                    },
+                    useKts = true,
+                    buildGradleExtra = """
+                        |nupokati {
+                        |    cdBuildConfigFile.set(rootProject.file("${cdConfigFile.name}"))
+                        |    teamcityBuildUrl.set("http://strub")
+                        |}
+                        |plugins.withId("com.avito.android.nupokati") {
+                        |   val plugin = this as NupokatiPlugin
+                        |   check(plugin.cdBuildConfig.isPresent())
+                        |}
+                        |""".trimMargin()
+                )
+            )
+        ).generateIn(projectDir)
+
+        gradlew(projectDir, "help").assertThat()
+            .buildSuccessful()
+    }
+
     @TestFactory
     fun `dry run uploadCdBuildResult - triggers required tasks`(@TempDir projectDir: File): List<DynamicTest> {
         TestProjectGenerator(
@@ -43,7 +88,9 @@ internal class NupokatiPluginTest {
                             pluginId = "com.google.firebase.crashlytics"
                         )
                     },
-                    imports = listOf("import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension"),
+                    imports = listOf(
+                        "import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension"
+                    ),
                     useKts = true,
                     buildGradleExtra = """
                         |android {

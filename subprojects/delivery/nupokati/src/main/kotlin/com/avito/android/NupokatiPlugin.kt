@@ -25,18 +25,20 @@ import org.gradle.kotlin.dsl.withType
 
 public class NupokatiPlugin : Plugin<Project> {
 
+    public lateinit var cdBuildConfig: Provider<CdBuildConfig>
+
     override fun apply(project: Project) {
 
         val extension = project.extensions.create<NupokatiExtension>("nupokati")
+
+        cdBuildConfig = extension.cdBuildConfigFile
+            .map(CdBuildConfigTransformer(validator = StrictCdBuildConfigValidator()))
 
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
 
             val releaseVariantSelector = androidComponents.selector()
                 .withName(extension.releaseBuildVariantName.convention(DEFAULT_RELEASE_VARIANT).get())
-
-            val cdBuildConfig: Provider<CdBuildConfig> = extension.cdBuildConfigFile
-                .map(CdBuildConfigTransformer(validator = StrictCdBuildConfigValidator()))
 
             val skipUploadSpec = Spec<Task> {
                 val skipUpload = cdBuildConfig.get().outputDescriptor.skipUpload
@@ -83,7 +85,7 @@ public class NupokatiPlugin : Plugin<Project> {
                     this.reportViewerUrl.set(extension.reportViewer.frontendUrl)
                     this.reportCoordinates.set(extension.reportViewer.reportCoordinates)
                     this.teamcityBuildUrl.set(extension.teamcityBuildUrl)
-                    this.cdBuildConfig.set(cdBuildConfig)
+                    this.cdBuildConfig.set(this@NupokatiPlugin.cdBuildConfig)
                     this.appVersionCode.set(variant.getVersionCode())
                     this.buildOutputFileProperty.set(publishArtifactsTask.flatMap { it.buildOutput })
                     this.statsDConfig.set(project.statsdConfig)
