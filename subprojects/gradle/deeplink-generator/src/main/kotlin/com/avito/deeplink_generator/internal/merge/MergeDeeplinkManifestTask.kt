@@ -70,7 +70,8 @@ internal abstract class MergeDeeplinkManifestTask : DefaultTask() {
             optionalFeatures = emptyList(),
             dependencyFeatureNames = emptyList(),
             reportFile = null,
-            logger = NullLogger()
+            logger = NullLogger(),
+            namespace = ""
         )
     }
 
