@@ -5,12 +5,15 @@ import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleDaemon
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleWorker
 import com.avito.android.plugin.build_metrics.internal.jvm.VmResolver
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.TruthJUnit.assume
 import org.junit.jupiter.api.Test
 
 class VmResolverTest {
 
     @Test
     fun `found current Gradle worker process`() {
+        assume().that(javaHome.isJdk).isTrue()
+
         val currentVmId = ProcessHandle.current().pid()
 
         val vms = find()
@@ -23,6 +26,8 @@ class VmResolverTest {
 
     @Test
     fun `found Gradle daemon`() {
+        assume().that(javaHome.isJdk).isTrue()
+
         val gradleDaemonPid = ProcessHandle.current().parent().get().pid()
 
         val vms = find()

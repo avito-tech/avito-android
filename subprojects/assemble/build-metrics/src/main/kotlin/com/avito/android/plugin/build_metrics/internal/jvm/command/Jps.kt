@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics.internal.jvm.command
 
 import com.avito.android.Result
+import com.avito.android.plugin.build_metrics.internal.jvm.JavaHome
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm
 import com.avito.utils.ProcessRunner
 import java.io.File
@@ -8,13 +9,19 @@ import java.time.Duration
 
 internal class Jps(
     private val processRunner: ProcessRunner,
-    javaHome: File = javaHome(),
+    private val javaHome: JavaHome,
     private val timeout: Duration = Duration.ofSeconds(5)
 ) {
 
-    private val jps = File(javaHome, "bin/jps").path
+    private val jps = File(javaHome.path, "bin/jps").path
 
     fun run(): Result<Set<LocalVm.Unknown>> {
+        if (!javaHome.isJdk) {
+            return Result.Failure(
+                RuntimeException("Missing JDK binaries. Most probably you use JRE instead of JDK.")
+            )
+        }
+
         return processRunner.run("$jps -l", timeout)
             .map { output ->
                 output.lines()

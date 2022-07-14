@@ -2,11 +2,13 @@ package com.avito.android.plugin.build_metrics.jvm
 
 import com.avito.android.plugin.build_metrics.BuildMetricsRunner
 import com.avito.android.plugin.build_metrics.assertHasMetric
+import com.avito.android.plugin.build_metrics.internal.jvm.JavaHome
 import com.avito.android.stats.TimeMetric
 import com.avito.test.Flaky
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.IterableSubject
+import com.google.common.truth.TruthJUnit.assume
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -37,6 +39,8 @@ internal class JvmMetricsTest {
 
     @Test
     fun `build - send jvm metrics`() {
+        assume().that(JavaHome().isJdk).isTrue()
+
         val result = build(":delay")
 
         result.assertThat()

@@ -9,6 +9,7 @@ import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProv
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
 import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
+import com.avito.android.plugin.build_metrics.internal.jvm.JavaHome
 import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsCollector
 import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsListener
 import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsSender
@@ -51,13 +52,14 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         CriticalPathRegistry.addListener(project, criticalPathTracker)
 
         val processRunner = ProcessRunner.create(workingDirectory = null)
+        val javaHome = JavaHome()
 
         val jvmMetricsListener = JvmMetricsListener(
             collector = JvmMetricsCollector(
                 vmResolver = VmResolver(
-                    jps = Jps(processRunner)
+                    jps = Jps(processRunner, javaHome)
                 ),
-                jcmd = Jcmd(processRunner)
+                jcmd = Jcmd(processRunner, javaHome)
             ),
             sender = JvmMetricsSender(buildMetricTracker)
         )
