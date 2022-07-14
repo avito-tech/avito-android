@@ -4,7 +4,7 @@ plugins {
     id("convention.unit-testing")
 }
 
-val kotlinLanguageVersion = "1.5"
+val kotlinLanguageVersion = "1.6"
 
 /**
  * Exists because `compile` task ambiguous in projects with jvm and android modules combined
@@ -26,7 +26,7 @@ tasks.withType<KotlinCompile>().configureEach {
         apiVersion = kotlinLanguageVersion
 
         freeCompilerArgs = freeCompilerArgs +
-            "-Xopt-in=kotlin.RequiresOptIn" +
+            "-opt-in=kotlin.RequiresOptIn" +
             "-progressive"
     }
 }

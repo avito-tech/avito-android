@@ -19,7 +19,8 @@ internal object HtmlVerdictCases {
   <body>
     <h2>What went wrong:</h2>
     <pre>Execution failed for task ':app:compileDebugKotlin'.
-	&gt; Compilation error. See log for more details
+	&gt; A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers${'$'}GradleKotlinCompilerWorkAction
+		&gt; Compilation error. See log for more details
 </pre>
     <h3>Error logs:</h3>
     <pre class="logs">e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration
@@ -105,7 +106,8 @@ public abstract interface DaggerComponent {
   <body>
     <h2>What went wrong:</h2>
     <pre>Execution failed for task ':app:kaptGenerateStubsDebugKotlin'.
-	&gt; Compilation error. See log for more details
+	&gt; A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers${'$'}GradleKotlinCompilerWorkAction
+		&gt; Compilation error. See log for more details
 </pre>
     <h3>Error logs:</h3>
     <pre class="logs">e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration

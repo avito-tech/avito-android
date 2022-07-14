@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
-    kotlin("kapt")
+    id("convention.ksp")
 }
 
 dependencies {
@@ -21,7 +21,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.instrumentationTests)
     implementation(projects.subprojects.testRunner.reportViewer)
 
-    kapt(libs.moshiKapt)
+    ksp(libs.moshiCodegen)
 
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.common.resources)

@@ -105,6 +105,9 @@ class VideoCapturerImpl(
                     this.state = State.Idling
                 }
             }
+            State.Idling -> {
+                // do nothing
+            }
         }
     }
 

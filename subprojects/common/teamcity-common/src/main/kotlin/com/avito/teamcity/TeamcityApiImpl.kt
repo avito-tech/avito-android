@@ -89,6 +89,7 @@ internal class TeamcityApiImpl private constructor(private val teamCityInstance:
 
     override fun getBuild(buildId: String): Build = teamCityInstance.build(BuildId(buildId))
 
+    @Deprecated("Use getBuild instead")
     override fun getBuildNumber(buildId: String): String? = teamCityInstance.build(BuildId(buildId)).buildNumber
 
     override fun getPreviousBuildOnCommit(

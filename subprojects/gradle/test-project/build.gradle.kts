@@ -16,7 +16,4 @@ dependencies {
     implementation(libs.androidToolsCommon)
     implementation(libs.kotlinReflect)
     implementation(libs.truth)
-
-    testImplementation(libs.kotlinTest)
-    testImplementation(libs.kotlinTestJUnit)
 }

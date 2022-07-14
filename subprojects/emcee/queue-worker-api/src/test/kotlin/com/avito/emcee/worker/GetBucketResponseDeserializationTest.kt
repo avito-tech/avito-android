@@ -4,6 +4,7 @@ import com.avito.emcee.worker.model.dequeued
 import com.avito.emcee.worker.model.noBucket
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapter
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -12,8 +13,8 @@ internal class GetBucketResponseDeserializationTest {
 
     private val moshi = Moshi.Builder().build()
 
-    // TODO: Provide generated adapters for tests too.
-    private val adapter: JsonAdapter<GetBucketResponse> = moshi.adapter(GetBucketResponse::class.java)
+    @OptIn(ExperimentalStdlibApi::class)
+    private val adapter: JsonAdapter<GetBucketResponse> = moshi.adapter()
 
     @Test
     fun `get bucket - parsed correctly - when is dequeued`() {

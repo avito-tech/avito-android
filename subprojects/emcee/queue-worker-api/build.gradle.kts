@@ -1,7 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    kotlin("kapt") // TODO replace with ksp
+    id("convention.ksp")
 }
 
 dependencies {
@@ -12,6 +12,6 @@ dependencies {
     implementation(libs.moshiSealedRuntime)
     implementation(libs.moshiRetrofit)
 
-    kapt(libs.moshiSealedCodegen)
-    kapt(libs.moshiKapt)
+    ksp(libs.moshiCodegen)
+    ksp(libs.moshiSealedCodegen)
 }

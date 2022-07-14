@@ -6,6 +6,7 @@ import com.avito.emcee.queue.QueueApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 internal class JobWaiter(
@@ -18,7 +19,7 @@ internal class JobWaiter(
             do {
                 // TODO handle error
                 val status = queueApi.jobStatus(JobStatusBody(id = job.id))
-                delay(Duration.seconds(10)) // TODO how often? to config
+                delay(10.seconds) // TODO how often? to config
             } while (status.queueState.dequeuedBucketCount + status.queueState.enqueuedBucketCount != 0)
         }
     }

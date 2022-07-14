@@ -44,6 +44,9 @@ internal class TestExecutionScheduler(
                             verdict.intentions.forEach { intention ->
                                 intentions.send(intention)
                             }
+                        TestExecutionState.Verdict.DoNothing -> {
+                            // do nothing
+                        }
                     }
                 }
             }
@@ -66,6 +69,9 @@ internal class TestExecutionScheduler(
 
                         is TestExecutionState.Verdict.SendResult ->
                             throw IllegalStateException("Trying to send empty result")
+                        TestExecutionState.Verdict.DoNothing -> {
+                            // do nothing
+                        }
                     }
                 }
             }

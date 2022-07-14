@@ -11,7 +11,8 @@ internal object PlainTextVerdictCases {
         override fun compileKotlinFails() = """
             |* What went wrong:
             |Execution failed for task ':app:compileDebugKotlin'.
-            |	> Compilation error. See log for more details
+            |	> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers${'$'}GradleKotlinCompilerWorkAction
+            |		> Compilation error. See log for more details
             |
             |* Error logs:
             |e: ${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration
@@ -61,7 +62,8 @@ internal object PlainTextVerdictCases {
         override fun kaptStubGeneratingFails() = """
             |* What went wrong:
             |Execution failed for task ':app:kaptGenerateStubsDebugKotlin'.
-            |	> Compilation error. See log for more details
+            |	> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers${'$'}GradleKotlinCompilerWorkAction
+            |		> Compilation error. See log for more details
             |
             |* Error logs:
             |e: ${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration
