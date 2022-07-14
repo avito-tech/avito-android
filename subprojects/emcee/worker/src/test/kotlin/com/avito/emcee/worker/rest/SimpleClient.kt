@@ -7,24 +7,25 @@ import java.net.Socket
 
 class SimpleClient {
 
-    private lateinit var clientSocket: Socket
-    private lateinit var writer: PrintWriter
-    private lateinit var reader: BufferedReader
+    private var clientSocket: Socket? = null
+    private var writer: PrintWriter? = null
+    private var reader: BufferedReader? = null
 
     fun start(ip: String, port: Int) {
-        clientSocket = Socket(ip, port)
-        writer = PrintWriter(clientSocket.getOutputStream(), true)
-        reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
+        clientSocket = Socket(ip, port).also {
+            writer = PrintWriter(it.getOutputStream(), true)
+            reader = BufferedReader(InputStreamReader(it.getInputStream()))
+        }
     }
 
     fun sendRequest(body: String): String? {
-        writer.println(body)
-        return reader.readLine()
+        requireNotNull(writer).println(body)
+        return requireNotNull(reader).readLine()
     }
 
     fun stop() {
-        reader.close()
-        writer.close()
-        clientSocket.close()
+        reader?.close()
+        writer?.close()
+        clientSocket?.close()
     }
 }
