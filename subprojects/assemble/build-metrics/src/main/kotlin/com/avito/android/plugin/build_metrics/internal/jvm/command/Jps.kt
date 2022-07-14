@@ -1,6 +1,7 @@
-package com.avito.android.plugin.build_metrics.internal.jvm
+package com.avito.android.plugin.build_metrics.internal.jvm.command
 
 import com.avito.android.Result
+import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm
 import com.avito.utils.ProcessRunner
 import java.io.File
 import java.time.Duration
@@ -35,5 +36,3 @@ internal class Jps(
         }
     }
 }
-
-internal fun javaHome(): File = File(System.getProperty("java.home"))

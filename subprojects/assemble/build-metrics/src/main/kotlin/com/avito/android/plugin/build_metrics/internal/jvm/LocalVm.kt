@@ -5,18 +5,14 @@ internal sealed class LocalVm(
      * Local VM identifier.
      * Typically, but not necessarily, the PID.
      */
-    val id: Long,
-    /**
-     * The lower value - the shorter expected duration of process live
-     */
-    val longevityRank: Int
+    val id: Long
 ) {
 
-    class GradleDaemon(id: Long) : LocalVm(id, longevityRank = 3)
+    class GradleDaemon(id: Long) : LocalVm(id)
 
-    class GradleWorker(id: Long) : LocalVm(id, longevityRank = 1)
+    class GradleWorker(id: Long) : LocalVm(id)
 
-    class KotlinDaemon(id: Long) : LocalVm(id, longevityRank = 2)
+    class KotlinDaemon(id: Long) : LocalVm(id)
 
     class Unknown(
         id: Long,
@@ -24,7 +20,7 @@ internal sealed class LocalVm(
          * classname | JAR filename | "Unknown"
          */
         val name: String
-    ) : LocalVm(id, longevityRank = 1) {
+    ) : LocalVm(id) {
 
         override fun toString(): String {
             return "JVM($id, $name)"
