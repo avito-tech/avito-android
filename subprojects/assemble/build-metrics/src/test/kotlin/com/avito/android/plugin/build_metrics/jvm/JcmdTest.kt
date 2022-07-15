@@ -2,17 +2,20 @@ package com.avito.android.plugin.build_metrics.jvm
 
 import com.avito.android.Result
 import com.avito.android.plugin.build_metrics.internal.jvm.HeapInfo
-import com.avito.android.plugin.build_metrics.internal.jvm.Jcmd
+import com.avito.android.plugin.build_metrics.internal.jvm.command.Jcmd
 import com.avito.utils.ProcessRunner
 import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import com.google.common.truth.TruthJUnit.assume
 import org.junit.jupiter.api.Test
 
 internal class JcmdTest {
 
     @Test
     fun `heap info - parses G1 output`() {
+        assume().that(javaHome.isJdk).isTrue()
+
         val heapInfo = parseHeapInfo(
             """
             53139:
@@ -32,6 +35,8 @@ internal class JcmdTest {
 
     @Test
     fun `heap info - parses ParallelGC output`() {
+        assume().that(javaHome.isJdk).isTrue()
+
         val heapInfo = parseHeapInfo(
             """
              65649:
@@ -55,6 +60,8 @@ internal class JcmdTest {
 
     @Test
     fun `heap info - current process`() {
+        assume().that(javaHome.isJdk).isTrue()
+
         val currentVmId = ProcessHandle.current().pid()
 
         val heapInfoResult = jcmd.gcHeapInfo(pid = currentVmId)
@@ -67,7 +74,7 @@ internal class JcmdTest {
         val processRunner = StubProcessRunner()
         processRunner.result = Result.Success(output)
 
-        val result = Jcmd(processRunner).gcHeapInfo(pid = 0)
+        val result = Jcmd(processRunner, javaHome).gcHeapInfo(pid = 0)
         assertWithMessage(result.toString()).that(result.isSuccess()).isTrue()
 
         return result.getOrThrow()
@@ -75,5 +82,6 @@ internal class JcmdTest {
 }
 
 internal val jcmd = Jcmd(
-    processRunner = ProcessRunner.create(null)
+    processRunner = ProcessRunner.create(null),
+    javaHome
 )

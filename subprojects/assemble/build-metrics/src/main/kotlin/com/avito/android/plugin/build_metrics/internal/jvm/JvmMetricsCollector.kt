@@ -2,7 +2,9 @@ package com.avito.android.plugin.build_metrics.internal.jvm
 
 import com.avito.android.Result
 import com.avito.android.Result.Failure
+import com.avito.android.plugin.build_metrics.internal.jvm.command.Jcmd
 import org.slf4j.LoggerFactory
+import java.util.stream.Collectors.toMap
 
 /**
  * Collects JVM metrics by CLI JDK tools.
@@ -26,10 +28,10 @@ internal class JvmMetricsCollector(
         return vmResolver.localVMs()
             .map { vms ->
                 @Suppress("UNCHECKED_CAST")
-                vms
-                    .sortedBy { it.longevityRank }
-                    .associateWith { vm -> getHeapInfo(vm) }
-                    .filterValues { it != null } as Map<LocalVm, HeapInfo>
+                vms.parallelStream()
+                    .map { it to getHeapInfo(it) }
+                    .filter { it.second != null }
+                    .collect(toMap(Pair<*, *>::first, Pair<*, *>::second)) as Map<LocalVm, HeapInfo>
             }
     }
 

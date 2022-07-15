@@ -4,6 +4,7 @@ import com.avito.android.Result
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleDaemon
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleWorker
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.KotlinDaemon
+import com.avito.android.plugin.build_metrics.internal.jvm.command.Jps
 import org.gradle.process.internal.worker.GradleWorkerMain
 import java.util.stream.Collectors
 
