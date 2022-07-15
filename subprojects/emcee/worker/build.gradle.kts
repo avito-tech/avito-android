@@ -1,7 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    kotlin("kapt") // TODO replace with ksp
+    id("convention.ksp")
     application
 }
 
@@ -13,7 +13,8 @@ dependencies {
     implementation(libs.okhttpLogging)
     implementation(libs.moshi)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    kapt(libs.moshiKapt)
+
+    ksp(libs.moshiCodegen)
 
     testImplementation(libs.truth)
 }

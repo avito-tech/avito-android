@@ -14,9 +14,9 @@ internal class ToStringConverterFactory : Converter.Factory() {
     private val mediaType = "text/html".toMediaType()
 
     override fun responseBodyConverter(
-        type: Type?,
-        annotations: Array<Annotation>?,
-        retrofit: Retrofit?
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
     ): Converter<ResponseBody, *>? {
         return if (String::class.java == type) {
             Converter<ResponseBody, String> { value -> uriRegex.find(value.string())?.groupValues?.getOrNull(1) }
@@ -24,10 +24,10 @@ internal class ToStringConverterFactory : Converter.Factory() {
     }
 
     override fun requestBodyConverter(
-        type: Type?,
-        parameterAnnotations: Array<out Annotation>?,
-        methodAnnotations: Array<out Annotation>?,
-        retrofit: Retrofit?
+        type: Type,
+        parameterAnnotations: Array<out Annotation>,
+        methodAnnotations: Array<out Annotation>,
+        retrofit: Retrofit
     ): Converter<*, RequestBody>? {
         return if (String::class.java == type) {
             Converter<String, RequestBody> { value -> value.toRequestBody(mediaType) }

@@ -12,7 +12,7 @@ interface ToastChecks {
 
     @Deprecated(
         "Use toastDisplayedWithView for custom views " +
-            "or toastDisplayedWithText(String|StrintRes) for simple toasts"
+            "or toastDisplayedWithText(String|StringRes) for simple toasts"
     )
     fun toastDisplayedWithText(matcher: Matcher<View>)
 

@@ -51,7 +51,11 @@ internal class ProxyToastChecks(
         }
     }
 
-    @Suppress("OverridingDeprecatedMember")
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        "Use toastDisplayedWithView for custom views " +
+            "or toastDisplayedWithText(String|StringRes) for simple toasts"
+    )
     override fun toastDisplayedWithText(matcher: Matcher<View>) =
         toastDisplayedWithView(matcher)
 

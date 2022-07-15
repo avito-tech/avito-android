@@ -46,6 +46,24 @@ dependencyResolutionManagement {
                 includeGroupByRegex("org\\.jetbrains.*")
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    if (isInternalBuild) {
+                        val artifactoryUrl: String by settings
+                        name = "Proxy for gradle-plugins: https://repo1.maven.org/maven2"
+                        setUrl("$artifactoryUrl/mavenCentral")
+                        isAllowInsecureProtocol = true
+                    } else {
+                        name = "mavenCentral"
+                        setUrl("https://repo1.maven.org/maven2")
+                    }
+                }
+            }
+            filter {
+                includeGroup("net.java.dev.jna")
+            }
+        }
     }
 }
 

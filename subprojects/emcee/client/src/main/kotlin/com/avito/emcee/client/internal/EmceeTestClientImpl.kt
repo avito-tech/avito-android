@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
 
 internal class EmceeTestClientImpl(
@@ -46,7 +46,7 @@ internal class EmceeTestClientImpl(
                     // TODO clean up successfully scheduled tests
                     throw e
                 }
-                waiter.wait(config.job, Duration.minutes(60))
+                waiter.wait(config.job, 60.minutes)
             }
         }
     }

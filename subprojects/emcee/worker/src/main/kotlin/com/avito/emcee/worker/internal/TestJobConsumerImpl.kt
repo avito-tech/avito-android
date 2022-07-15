@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -42,9 +42,7 @@ internal class TestJobConsumerImpl(
                             testPackage = testPackage,
                             instrumentationRunnerClass = instrumentationRunnerClass,
                             testExecutionBehavior = testConfiguration.testExecutionBehavior,
-                            testMaximumDuration = Duration.seconds(
-                                testConfiguration.testMaximumDurationSec
-                            )
+                            testMaximumDuration = testConfiguration.testMaximumDurationSec.seconds
                         )
                     )
                 }
