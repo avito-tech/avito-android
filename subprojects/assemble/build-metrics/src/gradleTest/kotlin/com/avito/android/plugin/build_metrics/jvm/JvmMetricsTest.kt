@@ -27,6 +27,9 @@ internal class JvmMetricsTest {
                 id("com.avito.android.build-metrics")
             },
             buildGradleExtra = """
+                buildMetrics {
+                    metricsPrefix.addAll("build_id")
+                }
                 tasks.register<Task>("delay") {
                     doLast {
                         Thread.sleep(3000)
@@ -48,17 +51,17 @@ internal class JvmMetricsTest {
 
         val atLeastOne: IterableSubject.() -> Unit = { isNotEmpty() }
 
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_daemon.heap.used", atLeastOne)
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_daemon.heap.committed", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_daemon.heap.used", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_daemon.heap.committed", atLeastOne)
 
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_daemon.metaspace.used", atLeastOne)
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_daemon.metaspace.committed", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_daemon.metaspace.used", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_daemon.metaspace.committed", atLeastOne)
 
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_worker.heap.used", atLeastOne)
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_worker.heap.committed", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_worker.heap.used", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_worker.heap.committed", atLeastOne)
 
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_worker.metaspace.used", atLeastOne)
-        result.assertHasMetric<TimeMetric>(".jvm.memory.gradle_worker.metaspace.committed", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_worker.metaspace.used", atLeastOne)
+        result.assertHasMetric<TimeMetric>(".build_id.jvm.memory.gradle_worker.metaspace.committed", atLeastOne)
     }
 
     private fun build(vararg args: String) =

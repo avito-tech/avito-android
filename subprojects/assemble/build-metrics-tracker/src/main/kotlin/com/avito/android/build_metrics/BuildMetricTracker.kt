@@ -13,7 +13,6 @@ import com.avito.android.stats.statsd
 import com.avito.utils.gradle.Environment
 import org.gradle.api.Project
 
-// TODO: Use statsd client directly and pass required prefix from client/plugin
 public interface BuildMetricTracker {
 
     public fun track(status: BuildStatus, metric: StatsMetric)
