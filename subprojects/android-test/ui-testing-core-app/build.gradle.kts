@@ -1,5 +1,6 @@
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
+import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 
 plugins {
@@ -107,10 +108,10 @@ instrumentation {
 
     environments {
         register<KubernetesViaCredentials>("kubernetes") {
-            token.set(getOptionalStringProperty("kubernetesToken"))
-            caCertData.set(getOptionalStringProperty("kubernetesCaCertData"))
-            url.set(getOptionalStringProperty("kubernetesUrl"))
-            namespace.set(getOptionalStringProperty("kubernetesNamespace"))
+            token.set(getMandatoryStringProperty("kubernetesToken"))
+            caCertData.set(getMandatoryStringProperty("kubernetesCaCertData"))
+            url.set(getMandatoryStringProperty("kubernetesUrl"))
+            namespace.set(getMandatoryStringProperty("kubernetesNamespace"))
         }
     }
 

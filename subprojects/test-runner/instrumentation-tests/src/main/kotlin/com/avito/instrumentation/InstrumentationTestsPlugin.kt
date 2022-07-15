@@ -16,7 +16,6 @@ import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.utils.buildFailer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
@@ -48,12 +47,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             }
 
             extension.configurationsContainer.all { configuration ->
-
-                registerDefaultEnvironment(
-                    providers = project.providers,
-                    extension = extension,
-                    configuration = configuration
-                )
 
                 extension.environmentsContainer.all { environment ->
 
@@ -137,24 +130,5 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         extension.environmentsContainer.register<LocalAdb>("local")
 
         return extension
-    }
-
-    /**
-     * todo remove (registered for backward compatibility)
-     */
-    private fun registerDefaultEnvironment(
-        providers: ProviderFactory,
-        extension: InstrumentationTestsPluginExtension,
-        configuration: InstrumentationConfiguration
-    ) {
-        if (extension.environmentsContainer.findByName(ENVIRONMENT_DEFAULT) == null) {
-            extension.environmentsContainer.register<KubernetesViaCredentials>(ENVIRONMENT_DEFAULT) {
-                url.set(providers.gradleProperty("kubernetesUrl"))
-                token.set(providers.gradleProperty("kubernetesToken"))
-                caCertData.set(providers.gradleProperty("kubernetesCaCertData"))
-                @Suppress("DEPRECATION")
-                namespace.set(configuration.kubernetesNamespace)
-            }
-        }
     }
 }
