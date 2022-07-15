@@ -1,10 +1,8 @@
 package com.avito.instrumentation
 
 import com.avito.capitalize
-import com.avito.kotlin.dsl.typedNamed
 import com.avito.reportviewer.model.ReportCoordinates
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 
 internal fun instrumentationTaskName(
@@ -22,12 +20,6 @@ internal fun instrumentationTaskName(
             append(environment.capitalize())
         }
     }
-
-public fun TaskContainer.instrumentationTaskDefaultEnvironment(
-    configuration: String,
-    flavor: String?
-): TaskProvider<InstrumentationTestsTask> =
-    typedNamed(instrumentationTaskName(configuration, ENVIRONMENT_DEFAULT, flavor))
 
 public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
     flatMap { task ->
@@ -48,5 +40,3 @@ public const val instrumentationPluginId: String = "com.avito.android.instrument
 internal const val dumpDirName: String = "input-args-dump"
 
 internal const val CI_TASK_GROUP = "ci"
-
-internal const val ENVIRONMENT_DEFAULT: String = "default"

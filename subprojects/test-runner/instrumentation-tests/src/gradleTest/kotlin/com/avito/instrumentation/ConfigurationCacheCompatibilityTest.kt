@@ -23,7 +23,8 @@ internal class ConfigurationCacheCompatibilityTest {
                     plugins = plugins {
                         id(instrumentationPluginId)
                     },
-                    buildGradleExtra = instrumentationConfiguration()
+                    buildGradleExtra = instrumentationConfiguration(),
+                    useKts = true,
                 )
             )
         ).generateIn(projectDir)
@@ -45,7 +46,8 @@ internal class ConfigurationCacheCompatibilityTest {
                     plugins = plugins {
                         id(instrumentationPluginId)
                     },
-                    buildGradleExtra = instrumentationConfiguration()
+                    buildGradleExtra = instrumentationConfiguration(),
+                    useKts = true,
                 )
             )
         ).generateIn(projectDir)
