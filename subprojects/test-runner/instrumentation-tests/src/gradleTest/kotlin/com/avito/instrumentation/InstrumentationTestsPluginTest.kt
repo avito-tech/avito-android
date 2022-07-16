@@ -7,7 +7,6 @@ import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.plugin.plugins
-import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -27,7 +26,8 @@ internal class InstrumentationTestsPluginTest {
                 buildGradleExtra = """
                     instrumentation {
                     }
-                """.trimIndent()
+                """.trimIndent(),
+                useKts = true,
             )
         )
 
@@ -46,7 +46,8 @@ internal class InstrumentationTestsPluginTest {
                 buildGradleExtra = """
                     instrumentation {
                     }
-                """.trimIndent()
+                """.trimIndent(),
+                useKts = true,
             )
         )
 
@@ -68,7 +69,8 @@ internal class InstrumentationTestsPluginTest {
                 plugins = plugins {
                     id(instrumentationPluginId)
                 },
-                buildGradleExtra = instrumentationConfiguration()
+                buildGradleExtra = instrumentationConfiguration(),
+                useKts = true,
             )
         )
 
@@ -86,13 +88,14 @@ internal class InstrumentationTestsPluginTest {
                 plugins = plugins {
                     id(instrumentationPluginId)
                 },
-                buildGradleExtra = instrumentationConfiguration()
+                buildGradleExtra = instrumentationConfiguration(),
+                useKts = true,
             )
         )
 
-        runGradle(projectDir, ":$moduleName:instrumentationTwoDefault", "-PrunOnlyFailedTests=false").assertThat()
+        runGradle(projectDir, ":$moduleName:instrumentationTwoTest", "-PrunOnlyFailedTests=false").assertThat()
             .run {
-                tasksShouldBeTriggered(":$moduleName:instrumentationTwoDefault")
+                tasksShouldBeTriggered(":$moduleName:instrumentationTwoTest")
             }
     }
 
@@ -111,30 +114,31 @@ internal class InstrumentationTestsPluginTest {
                     |${instrumentationConfiguration()}
                     |    
                     |android {
-                    |   flavorDimensions "version"
-                    |    productFlavors {
-                    |       demo { 
-                    |           dimension "version"
+                    |   flavorDimensions("version")
+                    |   productFlavors {
+                    |       register("demo") { 
+                    |           setDimension("version")
                     |       }
-                    |       full {
-                    |           dimension "version"
+                    |       register("full") {
+                    |           setDimension("version")
                     |       }
-                    |    }
+                    |   }
                     |}
-                    |""".trimMargin()
+                    |""".trimMargin(),
+                useKts = true,
             )
         )
 
         runGradle(
             projectDir,
-            ":$moduleName:instrumentationDemoTwoDefault",
-            ":$moduleName:instrumentationFullTwoDefault",
+            ":$moduleName:instrumentationDemoTwoTest",
+            ":$moduleName:instrumentationFullTwoTest",
             "-PrunOnlyFailedTests=false"
         ).assertThat()
             .run {
                 tasksShouldBeTriggered(
-                    ":$moduleName:instrumentationDemoTwoDefault",
-                    ":$moduleName:instrumentationFullTwoDefault"
+                    ":$moduleName:instrumentationDemoTwoTest",
+                    ":$moduleName:instrumentationFullTwoTest"
                 ).inOrder()
             }
     }
@@ -156,36 +160,37 @@ internal class InstrumentationTestsPluginTest {
                     |${instrumentationConfiguration()}
                     |    
                     |android {
-                    |   flavorDimensions "version", "monetization"
+                    |   flavorDimensions("version", "monetization")
                     |    productFlavors {
-                    |       demo { 
-                    |           dimension "version"
+                    |       register("demo") { 
+                    |           setDimension("version")
                     |       }
-                    |       full {
-                    |           dimension "version"
+                    |       register("full") {
+                    |           setDimension("version")
                     |       }
-                    |       free {
-                    |           dimension "monetization"
+                    |       register("free") {
+                    |           setDimension("monetization")
                     |       }
-                    |       paid {
-                    |           dimension "monetization"
+                    |       register("paid") {
+                    |           setDimension("monetization")
                     |       }
                     |    }
                     |}
-                    |""".trimMargin()
+                    |""".trimMargin(),
+                useKts = true,
             )
         )
 
         runGradle(
             projectDir,
-            ":$moduleName:instrumentationDemoFreeTwoDefault",
-            ":$moduleName:instrumentationFullPaidTwoDefault",
+            ":$moduleName:instrumentationDemoFreeTwoTest",
+            ":$moduleName:instrumentationFullPaidTwoTest",
             "-PrunOnlyFailedTests=false"
         ).assertThat()
             .run {
                 tasksShouldBeTriggered(
-                    ":$moduleName:instrumentationDemoFreeTwoDefault",
-                    ":$moduleName:instrumentationFullPaidTwoDefault"
+                    ":$moduleName:instrumentationDemoFreeTwoTest",
+                    ":$moduleName:instrumentationFullPaidTwoTest"
                 ).inOrder()
             }
     }
@@ -201,13 +206,14 @@ internal class InstrumentationTestsPluginTest {
                 plugins = plugins {
                     id(instrumentationPluginId)
                 },
-                buildGradleExtra = instrumentationConfiguration()
+                buildGradleExtra = instrumentationConfiguration(),
+                useKts = true,
             )
         )
 
-        runGradle(projectDir, ":$moduleName:instrumentationTwoDefault", "-PrunOnlyFailedTests=false").assertThat()
+        runGradle(projectDir, ":$moduleName:instrumentationTwoTest", "-PrunOnlyFailedTests=false").assertThat()
             .run {
-                tasksShouldBeTriggered(":$moduleName:instrumentationTwoDefault")
+                tasksShouldBeTriggered(":$moduleName:instrumentationTwoTest")
             }
     }
 
@@ -239,31 +245,40 @@ internal class InstrumentationTestsPluginTest {
         )
 }
 
-@Language("groovy")
 internal fun instrumentationConfiguration(): String = """
-    |import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
+    |import com.avito.instrumentation.reservation.request.Device
+    |import com.avito.instrumentation.configuration.KubernetesViaCredentials
+    |import com.avito.kotlin.dsl.getOptionalStringProperty
     |
     |instrumentation {
     |    output = project.file("outputs").path
+    |    environments {
+    |       register<KubernetesViaCredentials>("test") {
+    |           url.set("http://stub")
+    |           namespace.set("android-emulator")
+    |           token.set(getOptionalStringProperty("kubernetesToken"))
+    |           caCertData.set(getOptionalStringProperty("kubernetesCaCertData"))
+    |       }
+    |    }
     |    
-    |    instrumentationParams = [
-    |        "jobSlug": "FunctionalTests"
-    |    ]
+    |    instrumentationParams = mapOf(
+    |        "jobSlug" to "FunctionalTests"
+    |    )
     |    
     |    experimental {
-    |        useService = true
-    |        useInMemoryReport = true
+    |        useService.set(true)
+    |        useInMemoryReport.set(true)
     |    }
     |
     |    configurations {
     |
-    |        functional {
-    |            instrumentationParams = [
-    |                "deviceName": "api22"
-    |            ]
+    |        register("functional") {
+    |            instrumentationParams = mapOf(
+    |                "deviceName" to "api22"
+    |            )
     |
     |            targets {
-    |                api22 {
+    |                register("api22") {
     |                    deviceName = "api22"
     |
     |                    scheduling {
@@ -272,7 +287,7 @@ internal fun instrumentationConfiguration(): String = """
     |                        }
     |
     |                        staticDevicesReservation {
-    |                            device = LocalEmulator.device(27)
+    |                            device = Device.LocalEmulator.device(27)
     |                            count = 1
     |                        }
     |                    }
@@ -280,13 +295,13 @@ internal fun instrumentationConfiguration(): String = """
     |            }
     |        }
     |
-    |        two {
-    |            instrumentationParams = [
-    |                "deviceName": "api22"
-    |            ]
+    |        register("two") {
+    |            instrumentationParams = mapOf(
+    |                "deviceName" to "api22"
+    |            )
     |
     |            targets {
-    |                api22 {
+    |                register("api22") {
     |                    deviceName = "api22"
     |
     |                    scheduling {
@@ -295,7 +310,7 @@ internal fun instrumentationConfiguration(): String = """
     |                        }
     |
     |                        staticDevicesReservation {
-    |                            device = LocalEmulator.device(27)
+    |                            device = Device.LocalEmulator.device(27)
     |                            count = 1
     |                        }
     |                    }
@@ -307,8 +322,8 @@ internal fun instrumentationConfiguration(): String = """
     |
     |android {
     |    defaultConfig {
-    |        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    |        testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
+    |        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    |        testInstrumentationRunnerArguments(mapOf("planSlug" to "AvitoAndroid"))
     |    }
     |}
     |""".trimMargin()

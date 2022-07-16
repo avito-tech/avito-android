@@ -14,23 +14,23 @@ internal class InstrumentationTestsPluginCIFalseTests {
     @field:TempDir
     lateinit var projectDir: File
 
-    private val instrumentationTask = ":app:instrumentationApi22Default"
+    private val instrumentationTask = ":app:instrumentationApi22Test"
 
     @Test
     fun `k8s emulator target task is available with credentials`() {
         createProject(
             projectDir = projectDir,
             device = """
-                |new CloudEmulator(
-                |    "api22",
-                |    22,
-                |    "Android_SDK_built_for_x86",
-                |    "stub",
-                |    false,
-                |    "1",
-                |    "1.3",
-                |    "3.5Gi",
-                |    "3Gi"
+                |Device.CloudEmulator(
+                |    name = "api22",
+                |    api = 22,
+                |    model = "Android_SDK_built_for_x86",
+                |    image = "stub",
+                |    gpu = false,
+                |    cpuCoresLimit = "1",
+                |    cpuCoresRequest = "1.3",
+                |    memoryLimit = "3.5Gi",
+                |    memoryRequest = "3Gi",
                 |)
                 |""".trimMargin()
         )
@@ -51,16 +51,16 @@ internal class InstrumentationTestsPluginCIFalseTests {
         createProject(
             projectDir = projectDir,
             device = """
-                |new CloudEmulator(
-                |    "api22",
-                |    22,
-                |    "Android_SDK_built_for_x86",
-                |    "stub",
-                |    false,
-                |    "1",
-                |    "1.3",
-                |    "3.5Gi",
-                |    "3Gi"
+                |Device.CloudEmulator(
+                |    name = "api22",
+                |    api = 22,
+                |    model = "Android_SDK_built_for_x86",
+                |    image = "stub",
+                |    gpu = false,
+                |    cpuCoresLimit = "1",
+                |    cpuCoresRequest = "1.3",
+                |    memoryLimit = "3.5Gi",
+                |    memoryRequest = "3Gi",
                 |)
                 |""".trimMargin()
         )
@@ -76,7 +76,7 @@ internal class InstrumentationTestsPluginCIFalseTests {
     fun `local emulator target task is always available`() {
         createProject(
             projectDir = projectDir,
-            device = "LocalEmulator.device(22)"
+            device = "Device.LocalEmulator.device(22)"
         )
 
         executeInstrumentationTask(
@@ -118,26 +118,35 @@ internal class InstrumentationTestsPluginCIFalseTests {
                     },
                     buildGradleExtra = instrumentationConfiguration(
                         device = device
-                    )
+                    ),
+                    useKts = true,
                 )
-
             )
         ).generateIn(projectDir)
     }
 
     private fun instrumentationConfiguration(device: String): String = """
-    |import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
-    |import com.avito.instrumentation.reservation.request.Device.CloudEmulator
+    |import com.avito.instrumentation.reservation.request.Device
+    |import com.avito.instrumentation.configuration.KubernetesViaCredentials
+    |import com.avito.kotlin.dsl.getOptionalStringProperty
     |
     |instrumentation {
     |
     |    output = rootProject.file("outputs").path
+    |    
+    |    environments {
+    |       register<KubernetesViaCredentials>("test") {
+    |           url.set("http://stub")
+    |           namespace.set("android-emulator")
+    |           token.set(getOptionalStringProperty("kubernetesToken"))
+    |           caCertData.set(getOptionalStringProperty("kubernetesCaCertData"))
+    |       }
+    |    }
     |
     |    configurations {
-    |
-    |        api22 {
+    |        register("api22") {
     |            targets {
-    |                api22 {
+    |                register("api22") {
     |                    deviceName = "api22"
     |
     |                    scheduling {
@@ -157,7 +166,7 @@ internal class InstrumentationTestsPluginCIFalseTests {
     |}
     |android {
     |    defaultConfig {
-    |        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    |        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     |    }
     |}
     |""".trimMargin()
