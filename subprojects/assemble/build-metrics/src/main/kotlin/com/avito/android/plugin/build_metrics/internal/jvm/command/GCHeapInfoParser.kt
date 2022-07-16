@@ -1,6 +1,8 @@
-package com.avito.android.plugin.build_metrics.internal.jvm
+package com.avito.android.plugin.build_metrics.internal.jvm.command
 
 import com.avito.android.Result
+import com.avito.android.plugin.build_metrics.internal.jvm.HeapInfo
+import com.avito.android.plugin.build_metrics.internal.jvm.MemoryUsage
 
 internal object GCHeapInfoParser {
 

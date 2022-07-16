@@ -8,6 +8,12 @@
 
 ## Configuring
 
+```kotlin
+buildMetrics {
+    metricsPrefix.addAll("prefix") // optional
+}
+```
+
 ### Disabling plugin
 
 Project property `avito.build.metrics.enabled=false`
@@ -17,11 +23,17 @@ Project property `avito.build.metrics.enabled=false`
 All metrics can use common placeholders in prefix:
 
 - Namespace: statsd prefix from `avito.stats.namespace` property
+- Prefix: from `metricsPrefix` property
+
+There are also deprecated ones:
+
 - Environment: `ci` | `local` | `_` (unknown)
 - Node: git username for local builds, hostname for CI builds
 - Build status: `success` | `failure`
 
-They will be referred in docs as `<placeholder>`.
+They will be replaced in favor of `metricsPrefix`.
+
+All mentioned prefixes will be referred in docs as `<...>`.
 
 ### Build cache metrics
 
@@ -81,7 +93,7 @@ To understand the critical path better see a visualization in a [build trace](..
 
 ### JVM metrics
 
-`<namespace>.<environment>.<node>.jvm.memory.<jvm process name>.[heap|metaspace].[used|committed]`
+`<namespace>.[<prefix>].jvm.memory.<jvm process name>.[heap|metaspace].[used|committed]`
 
 This reflects what you can find by [jcmd PID GC.heap_info](https://www.baeldung.com/java-heap-size-cli#jcmd).  
 All values are measured in Kb and sent as time metrics.

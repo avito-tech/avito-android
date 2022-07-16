@@ -4,9 +4,12 @@ package com.avito.android.stats
  * [Statsd metrics](https://github.com/statsd/statsd/blob/master/docs/metric_types.md#statsd-metric-types)
  */
 public sealed class StatsMetric {
+
     public abstract val name: SeriesName
     public abstract val value: Any
     public abstract val type: String
+
+    public abstract fun copy(name: SeriesName, value: Any): StatsMetric
 
     public companion object {
         public fun time(name: SeriesName, ms: Long): TimeMetric = TimeMetric(name, ms)
@@ -26,6 +29,9 @@ public data class TimeMetric(
 ) : StatsMetric() {
     override val value: Long = timeInMs
     override val type: String = "time"
+
+    override fun copy(name: SeriesName, value: Any): TimeMetric =
+        TimeMetric(name, value as Long)
 }
 
 /**
@@ -37,6 +43,9 @@ public data class CountMetric(
 ) : StatsMetric() {
     override val value: Long = delta
     override val type: String = "count"
+
+    override fun copy(name: SeriesName, value: Any): CountMetric =
+        CountMetric(name, value as Long)
 }
 
 /**
@@ -48,6 +57,9 @@ public data class GaugeLongMetric(
 ) : StatsMetric() {
     override val value: Long = gauge
     override val type: String = "gauge"
+
+    override fun copy(name: SeriesName, value: Any): GaugeLongMetric =
+        GaugeLongMetric(name, value as Long)
 }
 
 /**
@@ -59,4 +71,7 @@ public data class GaugeDoubleMetric(
 ) : StatsMetric() {
     override val value: Double = gauge
     override val type: String = "gauge"
+
+    override fun copy(name: SeriesName, value: Any): GaugeDoubleMetric =
+        GaugeDoubleMetric(name, value as Double)
 }

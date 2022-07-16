@@ -15,7 +15,6 @@ public sealed class BuildEnvironment(
 ) {
     public class Local(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
     public class GradleTestKit(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
-    public class Mirkale(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
     public class IDE(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
     public class CI(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
 

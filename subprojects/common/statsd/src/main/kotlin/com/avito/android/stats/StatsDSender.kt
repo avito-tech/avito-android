@@ -16,3 +16,6 @@ public interface StatsDSender {
         }
     }
 }
+
+public fun StatsDSender.withPrefix(series: SeriesName): StatsDSender =
+    StatsDSenderWithPrefix(delegate = this, prefix = series)

@@ -14,6 +14,7 @@ import com.avito.utils.gradle.Environment
 import org.gradle.api.Project
 
 public interface BuildMetricTracker {
+
     public fun track(status: BuildStatus, metric: StatsMetric)
     public fun track(metric: StatsMetric)
 

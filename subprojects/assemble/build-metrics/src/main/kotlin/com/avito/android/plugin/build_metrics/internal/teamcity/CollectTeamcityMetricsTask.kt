@@ -12,6 +12,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
+// TODO: convert to CLI app.
+//  It's no use to use Gradle for such tasks. They need to know nothing about a project.
 internal abstract class CollectTeamcityMetricsTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
