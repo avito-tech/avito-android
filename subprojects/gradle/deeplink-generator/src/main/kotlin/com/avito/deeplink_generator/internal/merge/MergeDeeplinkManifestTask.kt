@@ -1,10 +1,12 @@
 package com.avito.deeplink_generator.internal.merge
 
-import com.android.build.gradle.internal.tasks.manifest.mergeManifests
 import com.android.manifmerger.ManifestMerger2
+import com.android.manifmerger.MergingReport
 import com.android.utils.NullLogger
 import com.avito.capitalize
 import com.avito.deeplink_generator.model.Deeplink
+import com.google.common.base.Charsets
+import com.google.common.io.Files
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -51,27 +53,14 @@ internal abstract class MergeDeeplinkManifestTask : DefaultTask() {
         val publicDeeplinkManifest = createPublicDeeplinkManifest(outputManifestFile.parentFile)
         publicDeeplinkManifest.deleteOnExit()
 
-        mergeManifests(
-            mainManifest = inputManifestFile,
-            manifestOverlays = listOf(publicDeeplinkManifest),
-            dependencies = emptyList(),
-            navigationJsons = emptyList(),
-            featureName = null,
-            packageOverride = null,
-            versionCode = null,
-            versionName = null,
-            minSdkVersion = null,
-            targetSdkVersion = null,
-            maxSdkVersion = null,
-            outMergedManifestLocation = outputManifestFile.path,
-            outAaptSafeManifestLocation = null,
-            mergeType = ManifestMerger2.MergeType.LIBRARY,
-            placeHolders = emptyMap(),
-            optionalFeatures = emptyList(),
-            dependencyFeatureNames = emptyList(),
-            reportFile = null,
-            logger = NullLogger(),
-            namespace = ""
+        val mergingReport =
+            ManifestMerger2.newMerger(inputManifestFile, NullLogger(), ManifestMerger2.MergeType.LIBRARY)
+                .addFlavorAndBuildTypeManifests(publicDeeplinkManifest)
+                .merge()
+
+        save(
+            mergingReport.getMergedDocument(MergingReport.MergedManifestKind.MERGED),
+            outputManifestFile
         )
     }
 
@@ -119,6 +108,20 @@ internal abstract class MergeDeeplinkManifestTask : DefaultTask() {
                     android:pathPattern="${deeplink.path}"
                     android:scheme="${deeplink.scheme}"/>
         """.trimIndent()
+
+    /**
+     * Saves the [com.android.manifmerger.XmlDocument] to a file in UTF-8 encoding.
+     *
+     * This is a copy of a private function located in ManifestHelper.kt in Android Gradle Plugin.
+     *
+     * @param xmlDocument xml document to save.
+     * @param out file to save to.
+     */
+    private fun save(xmlDocument: String?, out: File) {
+        requireNotNull(xmlDocument) { "Manifest document can't be null!" }
+        Files.createParentDirs(out)
+        Files.asCharSink(out, Charsets.UTF_8).write(xmlDocument)
+    }
 
     internal companion object {
 
