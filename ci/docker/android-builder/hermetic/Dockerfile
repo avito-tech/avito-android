@@ -1,5 +1,5 @@
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/avito/debian-minbase:9.13
+FROM registry.k.avito.ru/avito/debian-minbase:11.3
 
 ARG ARTIFACTORY_URL
 ENV DEBIAN_FRONTEND=noninteractive
@@ -16,13 +16,13 @@ RUN \
     build-essential \
     acl \
     sudo \
-    openjdk-11-jdk \
+    openjdk-17-jdk \
     ca-certificates-java && \
   apt-get clean && \
   apt-get purge
 
 ENV LANG C.UTF-8
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
 
 # ----------------- Android SDK -----------------
 ENV ANDROID_HOME /opt/android-sdk
