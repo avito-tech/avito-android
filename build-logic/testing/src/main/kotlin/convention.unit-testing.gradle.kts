@@ -22,6 +22,13 @@ tasks.withType<Test>().configureEach {
      */
     jvmArgs(
         listOf(
+            // ParallelGC has less footprint than default GC (G1).
+            // Can't return committed memory to OS, but Gradle worker is shot-lived and this is ok.
+            // See also ci/gradle.properties
+            "-XX:+UseParallelGC",
+            "-XX:+UseGCOverheadLimit",
+            "-XX:GCTimeLimit=10",
+
             "--add-opens",
             "java.base/java.lang=ALL-UNNAMED",
             "--add-opens",
