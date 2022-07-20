@@ -19,6 +19,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.time.Duration
 
 internal class RunnerInputParamsTest {
 
@@ -217,6 +218,14 @@ internal class RunnerInputParamsTest {
                             )
                         )
                     )
+            },
+            Case("instrumentation task timeout") {
+                assertThat(it.instrumentationConfiguration.instrumentationTaskTimeout)
+                    .isEqualTo(Duration.ofMinutes(120))
+            },
+            Case("test runner execution timeout") {
+                assertThat(it.instrumentationConfiguration.testRunnerExecutionTimeout)
+                    .isEqualTo(Duration.ofMinutes(100))
             },
             Case("instrumentation enableDeviceDebug") {
                 assertThat(it.deviceDebug)

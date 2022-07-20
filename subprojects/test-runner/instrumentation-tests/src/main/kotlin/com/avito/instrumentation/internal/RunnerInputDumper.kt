@@ -6,10 +6,15 @@ import com.google.gson.GsonBuilder
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.time.Duration
 
 internal class RunnerInputDumper(private val dumpDir: File) {
 
-    private val gson = GsonBuilder().setPrettyPrinting().create()
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(File::class.java, FileTypeAdapter())
+        .registerTypeAdapter(Duration::class.java, DurationTypeAdapter())
+        .setPrettyPrinting()
+        .create()
 
     fun readInput(): RunnerInputParams {
         return ObjectInputStream(getDumpFile().inputStream()).use {
