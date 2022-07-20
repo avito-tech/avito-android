@@ -88,7 +88,16 @@ GRADLE_ARGS+="-Pcom.avito.android.tools.buildCache.remote.url=$GRADLE_GITHUB_BUI
 function runInBuilder() {
     COMMANDS=$@
 
+    if [[ -z ${CONTAINER_MAX_CPUS} ]]; then
+        # Default limit reflects CI build agent's limits
+        # Limiting org.gradle.workers.max is not enough.
+        # Other spawned processes don't respect it and use all CPUs of build agent
+        # (Kotlin daemon, r8 tracereferences and so on)
+        CONTAINER_MAX_CPUS=16
+    fi
+
     docker run --rm \
+        --cpus="$CONTAINER_MAX_CPUS" \
         --volume "$(pwd)":/app \
         --volume /var/run/docker.sock:/var/run/docker.sock \
         --volume "${GRADLE_CACHE_DIR}":/gradle/caches/modules-2 \
