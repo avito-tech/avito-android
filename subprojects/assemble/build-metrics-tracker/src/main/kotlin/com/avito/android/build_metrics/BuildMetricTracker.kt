@@ -16,7 +16,6 @@ import org.gradle.api.Project
 public interface BuildMetricTracker {
 
     public fun track(status: BuildStatus, metric: StatsMetric)
-    public fun track(metric: StatsMetric)
 
     public companion object {
 
@@ -27,7 +26,7 @@ public interface BuildMetricTracker {
             return from(statsd, environmentInfo)
         }
 
-        public fun from(statsd: StatsDSender, environmentInfo: EnvironmentInfo): BuildMetricTracker =
+        private fun from(statsd: StatsDSender, environmentInfo: EnvironmentInfo): BuildMetricTracker =
             BuildMetricTrackerImpl(environmentInfo, statsd)
     }
 }
@@ -43,14 +42,6 @@ internal class BuildMetricTrackerImpl(
             node(),
             "id", // for backward compatibility
             seriesName(status)
-        )
-        statsd.send(metric.withPrefix(prefix))
-    }
-
-    override fun track(metric: StatsMetric) {
-        val prefix = SeriesName.create(
-            environment(),
-            node(),
         )
         statsd.send(metric.withPrefix(prefix))
     }

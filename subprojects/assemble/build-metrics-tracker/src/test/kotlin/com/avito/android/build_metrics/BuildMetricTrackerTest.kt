@@ -12,51 +12,6 @@ import org.junit.jupiter.api.Test
 internal class BuildMetricTrackerTest {
 
     @Test
-    fun `build - local environment`() {
-        val statsd = statsd()
-        val tracker = metricTracker(
-            statsd = statsd,
-            environment = Environment.Local,
-            node = "user"
-        )
-        tracker.track(TimeMetric(SeriesName.create("build", "metric"), 1))
-
-        val metrics = statsd.getSentMetrics()
-        assertThat(metrics).hasSize(1)
-        assertThat(metrics.first().name.toString()).isEqualTo("local.user.build.metric")
-    }
-
-    @Test
-    fun `build - omit volatile node - CI environment`() {
-        val statsd = statsd()
-        val tracker = metricTracker(
-            statsd = statsd,
-            environment = Environment.CI,
-            node = "agent-3c23034b"
-        )
-        tracker.track(TimeMetric(SeriesName.create("build", "metric"), 1))
-
-        val metrics = statsd.getSentMetrics()
-        assertThat(metrics).hasSize(1)
-        assertThat(metrics.first().name.toString()).isEqualTo("ci._.build.metric")
-    }
-
-    @Test
-    fun `build - unknown environment`() {
-        val statsd = statsd()
-        val tracker = metricTracker(
-            statsd = statsd,
-            environment = Environment.Unknown,
-            node = "user"
-        )
-        tracker.track(TimeMetric(SeriesName.create("build", "metric"), 1))
-
-        val metrics = statsd.getSentMetrics()
-        assertThat(metrics).hasSize(1)
-        assertThat(metrics.first().name.toString()).isEqualTo("_.user.build.metric")
-    }
-
-    @Test
     fun `build - build status`() {
         val statsd = statsd()
         val tracker = metricTracker(

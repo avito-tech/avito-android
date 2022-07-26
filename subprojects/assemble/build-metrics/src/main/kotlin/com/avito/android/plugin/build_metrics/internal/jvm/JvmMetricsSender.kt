@@ -1,6 +1,5 @@
 package com.avito.android.plugin.build_metrics.internal.jvm
 
-import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleDaemon
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleWorker
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.KotlinDaemon
@@ -10,17 +9,12 @@ import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
 
 internal class JvmMetricsSender(
-    private val legacyTracker: BuildMetricTracker,
-    private val tracker: StatsDSender?
+    private val tracker: StatsDSender
 ) {
 
     fun send(vm: LocalVm, heapInfo: HeapInfo) {
         metrics(vm, heapInfo).forEach { metric ->
-            if (tracker != null) {
-                tracker.send(metric)
-            } else {
-                legacyTracker.track(metric)
-            }
+            tracker.send(metric)
         }
     }
 

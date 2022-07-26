@@ -58,16 +58,16 @@ public open class BuildMetricsPlugin : Plugin<Project> {
     private fun registerListeners(project: Project, extension: BuildMetricsExtension) {
         // TODO: remove after migrating clients to an extension MBSA-648
         val legacyMetricsTracker = BuildMetricTracker.from(project)
-        val metricsTracker: StatsDSender? = if (extension.metricsPrefix.isPresent) {
+        val metricsTracker: StatsDSender = if (extension.metricsPrefix.isPresent) {
             val prefix = SeriesName.create(*extension.metricsPrefix.get().toTypedArray())
             project.statsd.get().withPrefix(prefix)
         } else {
-            null
+            project.statsd.get()
         }
 
-        val buildOperationsListener = BuildOperationsResultProvider.register(project, legacyMetricsTracker)
+        val buildOperationsListener = BuildOperationsResultProvider.register(project, metricsTracker)
 
-        val criticalPathTracker = CriticalPathMetricsTracker(legacyMetricsTracker)
+        val criticalPathTracker = CriticalPathMetricsTracker(metricsTracker)
         CriticalPathRegistry.addListener(project, criticalPathTracker)
 
         val processRunner = ProcessRunner.create(workingDirectory = null)
@@ -80,7 +80,7 @@ public open class BuildMetricsPlugin : Plugin<Project> {
                 ),
                 jcmd = Jcmd(processRunner, javaHome)
             ),
-            sender = JvmMetricsSender(legacyMetricsTracker, metricsTracker)
+            sender = JvmMetricsSender(metricsTracker)
         )
 
         val buildListeners = listOf(

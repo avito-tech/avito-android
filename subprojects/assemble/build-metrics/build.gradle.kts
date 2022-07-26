@@ -24,7 +24,6 @@ dependencies {
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(testFixtures(projects.subprojects.common.graphite))
     testImplementation(testFixtures(projects.subprojects.gradle.process))
-    testImplementation(testFixtures(projects.subprojects.assemble.buildMetricsTracker))
     testImplementation(testFixtures(projects.subprojects.common.statsd))
     testImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
 
