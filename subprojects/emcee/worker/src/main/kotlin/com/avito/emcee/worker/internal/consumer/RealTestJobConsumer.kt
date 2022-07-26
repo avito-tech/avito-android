@@ -1,7 +1,10 @@
-package com.avito.emcee.worker.internal
+package com.avito.emcee.worker.internal.consumer
 
 import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.DeviceConfiguration
+import com.avito.emcee.worker.internal.TestExecutor
+import com.avito.emcee.worker.internal.TestExecutorProvider
+import com.avito.emcee.worker.internal.TestJobProducer
 import com.avito.emcee.worker.internal.artifacts.FileDownloader
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -11,7 +14,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-internal class TestJobConsumerImpl(
+internal class RealTestJobConsumer(
     private val deviceProvider: TestExecutorProvider,
     private val fileDownloader: FileDownloader,
 ) : TestJobConsumer {

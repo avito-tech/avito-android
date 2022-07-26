@@ -1,12 +1,21 @@
 package com.avito.emcee.worker.internal.rest.handler
 
 import com.avito.emcee.worker.internal.rest.HttpMethod
+import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
 
-// TODO: store currently processing buckets
-internal class ProcessingBucketsRequestHandler : RequestHandler(HttpMethod.POST, "/currentlyProcessingBuckets", {
+internal class ProcessingBucketsRequestHandler(
+    private val bucketsStorage: ProcessingBucketsStorage,
+) : RequestHandler(HttpMethod.POST, "/currentlyProcessingBuckets", {
+
+    val bucketIds = bucketsStorage.getAll().joinToString(
+        separator = ",",
+        prefix = "[",
+        postfix = "]",
+    ) { "\"${it.bucketId}\"" }
+
     """
         |{ 
-        |    "bucketIds":[] 
+        |    "bucketIds": $bucketIds
         |}
     """.trimMargin()
 })

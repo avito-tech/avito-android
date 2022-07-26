@@ -21,13 +21,14 @@ public data class SendBucketResultBody(
         @JsonClass(generateAdapter = true)
         public data class UnfilteredResult(
             val testEntry: TestEntry,
-            val testRunResult: List<TestRunResult>
+            val testRunResults: List<TestRunResult>
         ) {
             @JsonClass(generateAdapter = true)
             public data class TestRunResult(
                 /**
                  * in sec
                  */
+                val udid: String,
                 val duration: Int,
                 val exceptions: List<Exception>,
                 val hostName: String,

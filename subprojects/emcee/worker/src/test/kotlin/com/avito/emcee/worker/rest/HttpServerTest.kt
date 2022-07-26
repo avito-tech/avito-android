@@ -72,7 +72,7 @@ class HttpServerTest {
     }
 
     private fun createServer(): HttpServer = HttpServer.Builder()
-        .addHandler(ProcessingBucketsRequestHandler())
+        .addHandler(ProcessingBucketsRequestHandler(NoOpProcessingBucketsStorage()))
         .debug(true)
         .build()
 }

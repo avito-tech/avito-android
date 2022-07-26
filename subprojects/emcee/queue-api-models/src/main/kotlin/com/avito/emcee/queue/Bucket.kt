@@ -6,4 +6,6 @@ import com.squareup.moshi.JsonClass
 public data class Bucket(
     val bucketId: String,
     val payloadContainer: PayloadContainer,
+    val analyticsConfiguration: Any,
+    val workerCapabilityRequirements: List<String>
 )

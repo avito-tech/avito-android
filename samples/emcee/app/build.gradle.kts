@@ -30,7 +30,7 @@ android {
 
 emcee {
     queueBaseUrl.set("http://localhost:41000")
-    testTimeout.set(Duration.ofSeconds(1))
+    testTimeout.set(Duration.ofMinutes(1))
     artifactory {
         // put properties to .gradle/gradle.properties because say contains sensitive data
         user.set(project.getMandatoryStringProperty("emcee.sample.artifactory.user"))
