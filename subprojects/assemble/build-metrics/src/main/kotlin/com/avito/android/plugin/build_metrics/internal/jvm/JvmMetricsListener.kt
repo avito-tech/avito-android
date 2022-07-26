@@ -1,9 +1,9 @@
 package com.avito.android.plugin.build_metrics.internal.jvm
 
 import com.avito.android.Result
-import com.avito.android.build_metrics.BuildStatus
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.plugin.build_metrics.internal.BuildResultListener
+import com.avito.android.plugin.build_metrics.internal.BuildStatus
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.Timer

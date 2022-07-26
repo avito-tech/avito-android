@@ -1,19 +1,21 @@
 package com.avito.android.plugin.build_metrics.internal
 
-import com.avito.android.build_metrics.BuildMetricTracker
-import com.avito.android.build_metrics.BuildStatus
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.stats.SeriesName
+import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.TimeMetric
 
 internal class ConfigurationTimeListener(
-    private val metricTracker: BuildMetricTracker
+    private val metricTracker: StatsDSender
 ) : BuildResultListener {
 
     override fun onBuildFinished(status: BuildStatus, profile: BuildProfile) {
-        metricTracker.track(
-            status,
-            TimeMetric(SeriesName.create("init_configuration", "total"), profile.initWithConfigurationTimeMs)
+        val name = SeriesName.create("id") // for backward compatibility
+            .append(status.asSeriesName())
+            .append("init_configuration", "total")
+
+        metricTracker.send(
+            TimeMetric(name, profile.initWithConfigurationTimeMs)
         )
     }
 }
