@@ -93,7 +93,8 @@ function runInBuilder() {
         # Limiting org.gradle.workers.max is not enough.
         # Other spawned processes don't respect it and use all CPUs of build agent
         # (Kotlin daemon, r8 tracereferences and so on)
-        CONTAINER_MAX_CPUS=16
+        # See more details in an internal repository
+        CONTAINER_MAX_CPUS=15
     fi
 
     docker run --rm \
