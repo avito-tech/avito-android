@@ -10,7 +10,6 @@ dependencies {
     implementation(projects.subprojects.gradle.buildEnvironment)
     implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.assemble.criticalPath.api)
-    implementation(projects.subprojects.assemble.buildMetricsTracker)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.graphiteConfig)
     implementation(projects.subprojects.gradle.gradleExtensions)
@@ -24,7 +23,6 @@ dependencies {
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(testFixtures(projects.subprojects.common.graphite))
     testImplementation(testFixtures(projects.subprojects.gradle.process))
-    testImplementation(testFixtures(projects.subprojects.assemble.buildMetricsTracker))
     testImplementation(testFixtures(projects.subprojects.common.statsd))
     testImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
 

@@ -11,7 +11,5 @@ internal class RootProjectChecksExtensionTest {
 
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.MacOSLocalhost>(checks)
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.AndroidSdk>(checks)
-
-        assertNoInstance<RootProjectChecksExtension.RootProjectCheck.GradleProperties>(checks)
     }
 }

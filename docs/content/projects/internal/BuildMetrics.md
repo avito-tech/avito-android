@@ -24,14 +24,7 @@ All metrics can use common placeholders in prefix:
 
 - Namespace: statsd prefix from `avito.stats.namespace` property
 - Prefix: from `metricsPrefix` property
-
-There are also deprecated ones:
-
-- Environment: `ci` | `local` | `_` (unknown)
-- Node: git username for local builds, hostname for CI builds
 - Build status: `success` | `failure`
-
-They will be replaced in favor of `metricsPrefix`.
 
 All mentioned prefixes will be referred in docs as `<...>`.
 
@@ -39,33 +32,33 @@ All mentioned prefixes will be referred in docs as `<...>`.
 
 [Http build cache](https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_configure_remote) errors:
 
-- `<namespace>.<environment>.<node>.build.cache.errors.[load|store].<http status code>`: errors counter
+- `<namespace>.[<prefix>].build.cache.errors.[load|store].<http status code>`: errors counter
   
 Remote cache statistics:
 
-- `<namespace>.<environment>.<node>.build.cache.remote.[hit|miss]`: remote cache operations count by environments.  
+- `<namespace>.[<prefix>].build.cache.remote.[hit|miss]`: remote cache operations count by environments.  
 Shows count of cacheable tasks that were requested from the remote cache.  
 This is the same as **Performance** | **Build cache** | **Remote cache** | **Operations** | **Hit\Miss** in build scan.
 
 ### Common build metrics
 
-- `<namespace>.<environment>.<node>.id.<build status>.init_configuration.total` (time in ms): initialization with configuration time
-- `<namespace>.<environment>.<node>.id.<build status>.build-time.total` (time in ms): total build time
+- `<namespace>.[<prefix>].id.<build status>.init_configuration.total` (time in ms): initialization with configuration time
+- `<namespace>.[<prefix>].id.<build status>.build-time.total` (time in ms): total build time
 
 ### Tasks metrics
 
-- `<namespace>.<environment>.<node>.build.tasks.cumulative.any` (time in ms):  
+- `<namespace>.[<prefix>].build.tasks.cumulative.any` (time in ms):  
   cumulative time of all tasks
   
 #### Slowest tasks
 
 These metrics give different aggregates for tasks to highlight the slowest ones.
 
-- `<namespace>.<environment>.<node>.build.tasks.slow.task.<module>.<task type>` (time in ms):  
+- `<namespace>.[<prefix>].build.tasks.slow.task.<module>.<task type>` (time in ms):  
   top slowest tasks
-- `<namespace>.<environment>.<node>.build.tasks.slow.type.<task type>` (time in ms):  
+- `<namespace>.[<prefix>].build.tasks.slow.type.<task type>` (time in ms):  
   cumulative time of top slowest task types
-- `<namespace>.<environment>.<node>.build.tasks.slow.module.<module>` (time in ms):  
+- `<namespace>.[<prefix>].build.tasks.slow.module.<module>` (time in ms):  
   cumulative time of tasks in top slowest modules
 
 Example:
@@ -88,7 +81,7 @@ graph LR
 These metrics describe a critical path.
 To understand the critical path better see a visualization in a [build trace](../BuildTrace.md#critical-path).
 
-- `<namespace>.<environment>.<node>.build.tasks.critical.task.<module>.<task type>` (time in ms):  
+- `<namespace>.[<prefix>].build.tasks.critical.task.<module>.<task type>` (time in ms):  
   tasks in the critical path
 
 ### JVM metrics
@@ -100,5 +93,5 @@ All values are measured in Kb and sent as time metrics.
 
 ### Specific build events
 
-- `<namespace>.<environment>.<node>.id.<build status>.app-build.<module path>.<task name>.finish` (time in ms): 
+- `<namespace>.[<prefix>].id.<build status>.app-build.<module path>.<task name>.finish` (time in ms): 
   elapsed time from build start till Android app build task finished

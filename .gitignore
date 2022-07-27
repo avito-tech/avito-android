@@ -8,7 +8,10 @@ local.properties
 .DS_Store
 outputs/
 gh-pages-generated/
-# idea
+# IDEA
+# Temporary files when running tests on not JetBrains fork of JVM
+# https://youtrack.jetbrains.com/issue/IDEA-202129/attachpid-files-in-the-working-dir
+**/.attach_pid*
 *.iml
 **/.idea/*
 !.idea/dictionaries/

@@ -1,6 +1,5 @@
 package com.avito.android.plugin.build_metrics.cache
 
-import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.LOAD
 import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.STORE
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
@@ -9,12 +8,10 @@ import com.avito.android.plugin.build_metrics.internal.RemoteBuildCacheError
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheMetricsTracker
-import com.avito.android.sentry.StubEnvironmentInfo
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.StubStatsdSender
-import com.avito.utils.gradle.Environment
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
 import org.gradle.util.Path
@@ -22,11 +19,6 @@ import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 
 internal class BuildCacheMetricsTrackerTest {
-
-    private val envInfo = StubEnvironmentInfo(
-        node = "user",
-        environment = Environment.Local
-    )
 
     @Test
     fun `sends - remote hit-miss count`() {
@@ -56,13 +48,13 @@ internal class BuildCacheMetricsTrackerTest {
         )
         assertThat(metrics).contains(
             CountMetric(
-                SeriesName.create("local", "user", "build", "cache", "remote", "hit"),
+                SeriesName.create("build", "cache", "remote", "hit"),
                 delta = 1
             )
         )
         assertThat(metrics).contains(
             CountMetric(
-                SeriesName.create("local", "user", "build", "cache", "remote", "miss"),
+                SeriesName.create("build", "cache", "remote", "miss"),
                 delta = 1
             )
         )
@@ -97,12 +89,12 @@ internal class BuildCacheMetricsTrackerTest {
         )
         assertThat(metrics).contains(
             CountMetric(
-                SeriesName.create("local", "user", "build", "cache", "errors", "load", "503")
+                SeriesName.create("build", "cache", "errors", "load", "503")
             )
         )
         assertThat(metrics).contains(
             CountMetric(
-                SeriesName.create("local", "user", "build", "cache", "errors", "store", "500")
+                SeriesName.create("build", "cache", "errors", "store", "500")
             )
         )
     }
@@ -122,15 +114,14 @@ internal class BuildCacheMetricsTrackerTest {
     )
 
     private fun processResults(result: BuildOperationsResult): List<StatsMetric> {
-        val statsd = StubStatsdSender()
-        val metricsTracker = BuildMetricTracker.from(statsd, envInfo)
+        val metricsTracker = StubStatsdSender()
 
         val listener = BuildCacheMetricsTracker(
             metricsTracker, LoggerFactory.getLogger(BuildCacheMetricsTracker::class.java)
         )
         listener.onBuildFinished(result)
 
-        return statsd.getSentMetrics()
+        return metricsTracker.getSentMetrics()
     }
 
     private abstract class CustomTask : Task

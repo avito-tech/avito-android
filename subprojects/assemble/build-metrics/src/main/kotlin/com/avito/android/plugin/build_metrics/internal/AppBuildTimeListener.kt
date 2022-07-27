@@ -1,11 +1,10 @@
 package com.avito.android.plugin.build_metrics.internal
 
 import com.android.build.gradle.tasks.PackageApplication
-import com.avito.android.build_metrics.BuildMetricTracker
-import com.avito.android.build_metrics.BuildStatus
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.stats.SeriesName
+import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.TimeMetric
 import com.avito.kotlin.dsl.isRoot
@@ -15,7 +14,7 @@ import org.gradle.util.Path
 
 internal class AppBuildTimeListener(
     private val filter: TasksFilter,
-    private val metricTracker: BuildMetricTracker
+    private val metricTracker: StatsDSender
 ) : BuildResultListener {
 
     interface TasksFilter {
@@ -29,15 +28,16 @@ internal class AppBuildTimeListener(
             .filter { filter.isTracked(it.path) }
 
         tasks.forEach { task ->
-            metricTracker.track(
-                status,
-                createEvent(profile, task)
+            metricTracker.send(
+                createEvent(status, profile, task)
             )
         }
     }
 
-    private fun createEvent(report: BuildProfile, task: TaskExecution): StatsMetric {
-        val eventName = SeriesName.create("app-build")
+    private fun createEvent(status: BuildStatus, report: BuildProfile, task: TaskExecution): StatsMetric {
+        val eventName = SeriesName.create("id") // for backward compatibility
+            .append(status.asSeriesName())
+            .append("app-build")
             .append(task.module.toSeriesName())
             .append(task.name)
             .append("finish")
@@ -49,7 +49,7 @@ internal class AppBuildTimeListener(
 
     companion object {
 
-        fun from(project: Project, metricTracker: BuildMetricTracker): AppBuildTimeListener {
+        fun from(project: Project, metricTracker: StatsDSender): AppBuildTimeListener {
             return AppBuildTimeListener(
                 AppBuildTasksFilter(project),
                 metricTracker
