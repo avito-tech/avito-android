@@ -56,8 +56,11 @@ internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued 
                     ),
                     testMaximumDurationSec = 30
                 )
-            )
-        )
+            ),
+            payloadType = "runAndroidTests"
+        ),
+        analyticsConfiguration = emptyMap<String, String>(),
+        workerCapabilityRequirements = emptyList()
     )
 )
 

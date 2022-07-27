@@ -25,11 +25,8 @@ public data class SendBucketResultBody(
         ) {
             @JsonClass(generateAdapter = true)
             public data class TestRunResult(
-                /**
-                 * in sec
-                 */
                 val udid: String,
-                val duration: Int,
+                val duration: Int, // in seconds
                 val exceptions: List<Exception>,
                 val hostName: String,
                 val logs: List<Log>,
