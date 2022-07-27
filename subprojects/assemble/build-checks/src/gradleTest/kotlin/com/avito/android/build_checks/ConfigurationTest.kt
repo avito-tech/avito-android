@@ -45,7 +45,6 @@ internal class ConfigurationTest {
                 enableByDefault = true
                 androidSdk { enabled = false }
                 macOSLocalhost { enabled = false }
-                gradleProperties { enabled = false }
             """
         ).runChecks()
 

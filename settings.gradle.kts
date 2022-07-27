@@ -56,7 +56,6 @@ include(":subprojects:gradle:worker-extensions")
 
 include(":subprojects:assemble:build-checks")
 include(":subprojects:assemble:build-metrics")
-include(":subprojects:assemble:build-metrics-tracker")
 include(":subprojects:assemble:build-properties")
 include(":subprojects:assemble:build-trace")
 include(":subprojects:assemble:build-verdict")

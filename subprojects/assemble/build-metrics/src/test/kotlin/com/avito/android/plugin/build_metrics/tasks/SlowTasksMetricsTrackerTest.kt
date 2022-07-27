@@ -1,28 +1,20 @@
 package com.avito.android.plugin.build_metrics.tasks
 
-import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
 import com.avito.android.plugin.build_metrics.internal.CacheOperations
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksMetricsTracker
-import com.avito.android.sentry.StubEnvironmentInfo
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.StubStatsdSender
 import com.avito.android.stats.TimeMetric
-import com.avito.utils.gradle.Environment
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
 import org.gradle.util.Path
 import org.junit.jupiter.api.Test
 
 internal class SlowTasksMetricsTrackerTest {
-
-    private val envInfo = StubEnvironmentInfo(
-        node = "user",
-        environment = Environment.Local
-    )
 
     @Test
     fun `sends - cumulative time of all tasks`() {
@@ -42,7 +34,7 @@ internal class SlowTasksMetricsTrackerTest {
         )
         assertThat(metrics).contains(
             TimeMetric(
-                SeriesName.create("local", "user", "build", "tasks", "cumulative", "any"),
+                SeriesName.create("build", "tasks", "cumulative", "any"),
                 timeInMs = 3_000
             )
         )
@@ -72,7 +64,7 @@ internal class SlowTasksMetricsTrackerTest {
         )
         assertThat(metrics).contains(
             TimeMetric(
-                SeriesName.create("local", "user", "build", "tasks", "slow", "type", "CustomTaskA"),
+                SeriesName.create("build", "tasks", "slow", "type", "CustomTaskA"),
                 timeInMs = 3_000
             )
         )
@@ -102,7 +94,7 @@ internal class SlowTasksMetricsTrackerTest {
         )
         assertThat(metrics).contains(
             TimeMetric(
-                SeriesName.create("local", "user", "build", "tasks", "slow", "module", "app"),
+                SeriesName.create("build", "tasks", "slow", "module", "app"),
                 timeInMs = 3_000
             )
         )
@@ -132,7 +124,7 @@ internal class SlowTasksMetricsTrackerTest {
         )
         assertThat(metrics).contains(
             TimeMetric(
-                SeriesName.create("local", "user", "build", "tasks", "slow", "task", "app", "CustomTaskA"),
+                SeriesName.create("build", "tasks", "slow", "task", "app", "CustomTaskA"),
                 timeInMs = 2_000
             )
         )
@@ -153,8 +145,7 @@ internal class SlowTasksMetricsTrackerTest {
     )
 
     private fun processResults(vararg tasks: TaskExecutionResult): List<StatsMetric> {
-        val statsd = StubStatsdSender()
-        val metricsTracker = BuildMetricTracker.from(statsd, envInfo)
+        val metricsTracker = StubStatsdSender()
 
         val listener = SlowTasksMetricsTracker(metricsTracker)
         val result = BuildOperationsResult(
@@ -165,7 +156,7 @@ internal class SlowTasksMetricsTrackerTest {
         )
         listener.onBuildFinished(result)
 
-        return statsd.getSentMetrics()
+        return metricsTracker.getSentMetrics()
     }
 
     private abstract class CustomTaskA : Task

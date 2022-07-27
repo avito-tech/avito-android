@@ -1,6 +1,5 @@
 package com.avito.android.plugin.build_metrics
 
-import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.critical_path.CriticalPathRegistry
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.android.graphite.graphiteConfig
@@ -56,18 +55,16 @@ public open class BuildMetricsPlugin : Plugin<Project> {
     }
 
     private fun registerListeners(project: Project, extension: BuildMetricsExtension) {
-        // TODO: remove after migrating clients to an extension MBSA-648
-        val legacyMetricsTracker = BuildMetricTracker.from(project)
-        val metricsTracker: StatsDSender? = if (extension.metricsPrefix.isPresent) {
+        val metricsTracker: StatsDSender = if (extension.metricsPrefix.isPresent) {
             val prefix = SeriesName.create(*extension.metricsPrefix.get().toTypedArray())
             project.statsd.get().withPrefix(prefix)
         } else {
-            null
+            project.statsd.get()
         }
 
-        val buildOperationsListener = BuildOperationsResultProvider.register(project, legacyMetricsTracker)
+        val buildOperationsListener = BuildOperationsResultProvider.register(project, metricsTracker)
 
-        val criticalPathTracker = CriticalPathMetricsTracker(legacyMetricsTracker)
+        val criticalPathTracker = CriticalPathMetricsTracker(metricsTracker)
         CriticalPathRegistry.addListener(project, criticalPathTracker)
 
         val processRunner = ProcessRunner.create(workingDirectory = null)
@@ -80,14 +77,14 @@ public open class BuildMetricsPlugin : Plugin<Project> {
                 ),
                 jcmd = Jcmd(processRunner, javaHome)
             ),
-            sender = JvmMetricsSender(legacyMetricsTracker, metricsTracker)
+            sender = JvmMetricsSender(metricsTracker)
         )
 
         val buildListeners = listOf(
             jvmMetricsListener,
-            ConfigurationTimeListener(legacyMetricsTracker),
-            TotalBuildTimeListener(legacyMetricsTracker),
-            AppBuildTimeListener.from(project, legacyMetricsTracker)
+            ConfigurationTimeListener(metricsTracker),
+            TotalBuildTimeListener(metricsTracker),
+            AppBuildTimeListener.from(project, metricsTracker)
         )
 
         val eventsListeners = listOf(

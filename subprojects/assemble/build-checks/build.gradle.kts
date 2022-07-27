@@ -8,7 +8,6 @@ dependencies {
     implementation(projects.subprojects.gradle.buildFailer)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.impactShared)
-    implementation(projects.subprojects.assemble.buildMetricsTracker)
     implementation(projects.subprojects.gradle.buildEnvironment)
     implementation(projects.subprojects.common.files)
     implementation(projects.subprojects.common.result)

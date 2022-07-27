@@ -1,10 +1,10 @@
 package com.avito.impact.plugin.internal
 
-import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.isAndroidApp
 import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
+import com.avito.android.stats.StatsDSender
 import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.math.percentOf
@@ -15,7 +15,7 @@ import org.gradle.api.Project
 internal class ImpactMetricsSender(
     private val projectsFinder: ModifiedProjectsFinder,
     environmentInfo: EnvironmentInfo,
-    private val metricTracker: BuildMetricTracker
+    private val metricTracker: StatsDSender
 ) {
 
     init {
@@ -56,7 +56,7 @@ internal class ImpactMetricsSender(
             ),
             gauge = modified.size.percentOf(projects.size).roundToLong()
         )
-        metricTracker.track(metric)
+        metricTracker.send(metric)
     }
 
     private fun sendAppsMetrics(
@@ -71,6 +71,6 @@ internal class ImpactMetricsSender(
             name = SeriesName.create("build", "impact", "apps", configurationType.metricName.lowercase(), "modified"),
             gauge = modifiedApps.percentOf(apps).roundToLong()
         )
-        metricTracker.track(metric)
+        metricTracker.send(metric)
     }
 }

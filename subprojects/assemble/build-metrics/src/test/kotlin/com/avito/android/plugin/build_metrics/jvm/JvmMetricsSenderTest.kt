@@ -1,6 +1,5 @@
 package com.avito.android.plugin.build_metrics.jvm
 
-import com.avito.android.build_metrics.StubBuildMetricTracker
 import com.avito.android.plugin.build_metrics.internal.jvm.HeapInfo
 import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsSender
 import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm
@@ -80,7 +79,7 @@ internal class JvmMetricsSenderTest {
         vm: LocalVm,
         heapInfo: HeapInfo = stubHeapInfo()
     ) =
-        JvmMetricsSender(StubBuildMetricTracker(), tracker).send(vm, heapInfo)
+        JvmMetricsSender(tracker).send(vm, heapInfo)
 
     private fun stubHeapInfo() = HeapInfo(
         heap = MemoryUsage(usedKb = 1, committedKb = 1),

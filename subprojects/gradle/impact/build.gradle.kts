@@ -13,7 +13,6 @@ dependencies {
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.buildEnvironment)
-    implementation(projects.subprojects.assemble.buildMetricsTracker)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.statsdConfig)
 

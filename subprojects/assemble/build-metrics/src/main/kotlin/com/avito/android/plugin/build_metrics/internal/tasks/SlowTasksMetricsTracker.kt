@@ -1,17 +1,17 @@
 package com.avito.android.plugin.build_metrics.internal.tasks
 
-import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultListener
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.plugin.build_metrics.internal.module
 import com.avito.android.plugin.build_metrics.internal.toSeriesName
 import com.avito.android.stats.SeriesName
+import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.TimeMetric
 import com.avito.math.sumByLong
 
 internal class SlowTasksMetricsTracker(
-    private val metricsTracker: BuildMetricTracker,
+    private val metricsTracker: StatsDSender,
 ) : BuildOperationsResultListener {
 
     override fun onBuildFinished(result: BuildOperationsResult) {
@@ -25,7 +25,8 @@ internal class SlowTasksMetricsTracker(
     private fun trackCumulativeTime(tasksExecutions: List<TaskExecutionResult>) {
         val timeMs = tasksExecutions.sumByLong { it.elapsedMs }
         val name = SeriesName.create("build", "tasks", "cumulative", "any")
-        metricsTracker.track(
+
+        metricsTracker.send(
             TimeMetric(name, timeMs)
         )
     }
@@ -71,7 +72,7 @@ internal class SlowTasksMetricsTracker(
             .take(TOP_LIMIT)
             .forEach { (groupName, timeMs) ->
                 val name = SeriesName.create("build", "tasks", "slow").append(groupName)
-                metricsTracker.track(
+                metricsTracker.send(
                     TimeMetric(name, timeMs)
                 )
             }

@@ -1,6 +1,5 @@
 package com.avito.impact.plugin.internal
 
-import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.sentry.StubEnvironmentInfo
 import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.StatsMetric
@@ -29,8 +28,7 @@ internal class ImpactMetricsSenderTest {
         val environmentInfo = StubEnvironmentInfo(
             environment = Environment.CI
         )
-        val metricsPrefix = BuildMetricTracker.from(statsdSender, environmentInfo)
-        sender = ImpactMetricsSender(projectsFinder, environmentInfo, metricsPrefix)
+        sender = ImpactMetricsSender(projectsFinder, environmentInfo, statsdSender)
     }
 
     @Test
