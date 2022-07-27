@@ -1,17 +1,13 @@
 package com.avito.emcee.worker
 
-import com.avito.android.device.avd.AvdConfig
-import com.avito.android.device.avd.internal.AvdConfigurationProvider
-import com.avito.android.device.manager.AndroidDeviceManager
 import com.avito.emcee.worker.WorkerQueueApi.Companion.createWorkerQueueApi
-import com.avito.emcee.worker.internal.SingleInstanceAndroidDeviceTestExecutorProvider
-import com.avito.emcee.worker.internal.TestJobConsumerImpl
 import com.avito.emcee.worker.internal.TestJobProducerImpl
-import com.avito.emcee.worker.internal.artifacts.FileDownloader
-import com.avito.emcee.worker.internal.artifacts.FileDownloaderApi.Companion.createFileDownloaderApi
+import com.avito.emcee.worker.internal.consumer.FakeTestJobConsumer
 import com.avito.emcee.worker.internal.networking.SocketAddressResolver
 import com.avito.emcee.worker.internal.rest.HttpServer
 import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
+import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
+import com.avito.emcee.worker.internal.storage.SingleElementProcessingBucketsStorage
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import kotlinx.cli.ArgType
@@ -26,7 +22,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.io.File
-import java.nio.file.Path
 import kotlin.time.ExperimentalTime
 
 @ExperimentalStdlibApi
@@ -66,35 +61,25 @@ internal class StartWorkerCommand(
         val config: Config = requireNotNull(
             configAdapter.fromJson(File(configPath).readText())
         )
+        val bucketsStorage: ProcessingBucketsStorage = SingleElementProcessingBucketsStorage()
+        val api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl)
 
         HttpServer.Builder()
-            .addHandler(ProcessingBucketsRequestHandler())
+            .addHandler(ProcessingBucketsRequestHandler(bucketsStorage))
             .debug(debugMode)
             .build()
             .start(config.workerPort)
 
         val producer = TestJobProducerImpl(
-            api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl),
+            api = api,
             workerId = config.workerId,
             workerAddress = socketAddressResolver.resolve(config.workerPort)
         )
-        val fileDownloader = FileDownloader(
-            api = Retrofit.Builder().createFileDownloaderApi(okHttpClient, config.queueUrl)
+        val consumer = FakeTestJobConsumer(
+            api = api,
+            bucketsStorage = bucketsStorage,
         )
-        val consumer = TestJobConsumerImpl(
-            deviceProvider = SingleInstanceAndroidDeviceTestExecutorProvider(
-                AndroidDeviceManager.create(
-                    configurationProvider = AvdConfigurationProvider(
-                        config.avd.associateBy(
-                            keySelector = { AvdConfigurationProvider.ConfigurationKey(it.sdk, it.type) },
-                            valueTransform = { AvdConfig(it.emulatorFileName, it.sdCardFileName) }
-                        )
-                    ),
-                    androidSdk = Path.of(config.androidSdkPath)
-                )
-            ),
-            fileDownloader = fileDownloader
-        )
+
         runBlocking {
             consumer.consume(
                 producer.getJobs()

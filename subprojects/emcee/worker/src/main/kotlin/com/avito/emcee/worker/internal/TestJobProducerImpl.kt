@@ -27,17 +27,25 @@ internal class TestJobProducerImpl(
             )
         )
 
+        val signature = registerResponse.workerConfiguration.payloadSignature
+
         // TODO Should we add waiting some external signals?
         while (true) {
             val response = api.getBucket(
                 GetBucketBody(
                     workerId = workerId,
-                    payloadSignature = registerResponse.workerConfiguration.payloadSignature,
+                    payloadSignature = signature,
                     workerCapabilities = emptyList() // TODO do we have to pass something?
                 )
             )
             when (response) {
-                is GetBucketResponse.Dequeued -> emit(TestJobProducer.Job(response.bucket))
+                is GetBucketResponse.Dequeued -> emit(
+                    TestJobProducer.Job(
+                        workerId = workerId,
+                        payloadSignature = signature,
+                        bucket = response.bucket
+                    )
+                )
                 is GetBucketResponse.NoBucket -> delay(response.checkAfter.seconds)
             }
         }
