@@ -88,7 +88,7 @@ GRADLE_ARGS+="-Pcom.avito.android.tools.buildCache.remote.url=$GRADLE_GITHUB_BUI
 function runInBuilder() {
     COMMANDS=$@
 
-    if [[ -z ${CONTAINER_MAX_CPUS} ]]; then
+    if [[ -z ${CONTAINER_MAX_CPUS+x} ]]; then
         # Default limit reflects CI build agent's limits
         # Limiting org.gradle.workers.max is not enough.
         # Other spawned processes don't respect it and use all CPUs of build agent
