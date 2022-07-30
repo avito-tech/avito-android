@@ -1,8 +1,8 @@
-package com.avito.android.plugin.build_metrics.internal.jvm.command
+package com.avito.android.plugin.build_metrics.internal.runtime.command
 
 import com.avito.android.Result
-import com.avito.android.plugin.build_metrics.internal.jvm.HeapInfo
-import com.avito.android.plugin.build_metrics.internal.jvm.JavaHome
+import com.avito.android.plugin.build_metrics.internal.runtime.HeapInfo
+import com.avito.android.plugin.build_metrics.internal.runtime.JavaHome
 import com.avito.utils.ProcessRunner
 import java.io.File
 import java.time.Duration

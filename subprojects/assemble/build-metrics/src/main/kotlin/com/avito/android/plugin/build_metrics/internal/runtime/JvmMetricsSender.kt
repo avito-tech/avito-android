@@ -1,18 +1,22 @@
-package com.avito.android.plugin.build_metrics.internal.jvm
+package com.avito.android.plugin.build_metrics.internal.runtime
 
-import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleDaemon
-import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.GradleWorker
-import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.KotlinDaemon
-import com.avito.android.plugin.build_metrics.internal.jvm.LocalVm.Unknown
+import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm.GradleDaemon
+import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm.GradleWorker
+import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm.KotlinDaemon
+import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm.Unknown
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
 
-internal class JvmMetricsSender(
-    private val tracker: StatsDSender
-) {
+internal interface JvmMetricsSender {
+    fun send(vm: LocalVm, heapInfo: HeapInfo)
+}
 
-    fun send(vm: LocalVm, heapInfo: HeapInfo) {
+internal class JvmMetricsSenderImpl(
+    private val tracker: StatsDSender
+) : JvmMetricsSender {
+
+    override fun send(vm: LocalVm, heapInfo: HeapInfo) {
         metrics(vm, heapInfo).forEach { metric ->
             tracker.send(metric)
         }

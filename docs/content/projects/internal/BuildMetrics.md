@@ -86,10 +86,14 @@ To understand the critical path better see a visualization in a [build trace](..
 
 ### JVM metrics
 
-`<namespace>.[<prefix>].jvm.memory.<jvm process name>.[heap|metaspace].[used|committed]`
+`<namespace>.[<prefix>].jvm.memory.<jvm process name>.[heap|metaspace].[used|committed]` - in KiB
 
 This reflects what you can find by [jcmd PID GC.heap_info](https://www.baeldung.com/java-heap-size-cli#jcmd).  
 All values are measured in Kb and sent as time metrics.
+
+### OS metrics
+
+`<namespace>.[<prefix>].os.memory.[used|total]` - in KiB
 
 ### Specific build events
 
