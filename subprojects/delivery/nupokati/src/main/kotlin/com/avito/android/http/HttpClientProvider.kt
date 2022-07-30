@@ -5,6 +5,7 @@ import com.avito.android.stats.StatsDConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.http.BasicAuthenticator
 import com.avito.http.HttpClientProvider
+import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -26,5 +27,6 @@ internal fun createArtifactoryHttpClient(
         loggerFactory = loggerFactory
     ).provide()
         .authenticator(BasicAuthenticator(user, password))
+        .addInterceptor(RetryInterceptor(allowedMethods = listOf("PUT")))
         .build()
 }
