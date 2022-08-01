@@ -1,9 +1,9 @@
 package com.avito.emcee.worker.internal.consumer
 
+import com.avito.emcee.queue.BucketResult
 import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Payload
 import com.avito.emcee.worker.SendBucketResultBody
-import com.avito.emcee.worker.SendBucketResultBody.BucketResult.UnfilteredResult.TestRunResult.StartTime
 import com.avito.emcee.worker.WorkerQueueApi
 import com.avito.emcee.worker.internal.TestExecutor
 import com.avito.emcee.worker.internal.TestJobProducer
@@ -24,7 +24,7 @@ internal class FakeTestJobConsumer(
     override fun consume(jobs: Flow<TestJobProducer.Job>): Flow<TestJobConsumer.Result> = jobs.map { job ->
         bucketsStorage.add(job.bucket)
 
-        val startTime = StartTime(System.currentTimeMillis())
+        val startTime = BucketResult.UnfilteredResult.TestRunResult.StartTime(System.currentTimeMillis())
         delay(5.seconds)
 
         api.sendBucketResult(
@@ -47,22 +47,22 @@ internal class FakeTestJobConsumer(
         workerId: String,
         bucketId: String,
         signature: String,
-        startTime: StartTime,
+        startTime: BucketResult.UnfilteredResult.TestRunResult.StartTime,
         payload: Payload,
     ) = SendBucketResultBody(
         bucketId = bucketId,
         payloadSignature = signature,
         workerId = workerId,
-        bucketResult = SendBucketResultBody.BucketResult(
+        bucketResult = BucketResult(
             device = DeviceConfiguration(
                 type = payload.testConfiguration.deviceType,
                 sdkVersion = payload.testConfiguration.sdkVersion
             ),
             unfilteredResults = payload.testEntries.map {
-                SendBucketResultBody.BucketResult.UnfilteredResult(
+                BucketResult.UnfilteredResult(
                     testEntry = it,
                     testRunResults = listOf(
-                        SendBucketResultBody.BucketResult.UnfilteredResult.TestRunResult(
+                        BucketResult.UnfilteredResult.TestRunResult(
                             udid = UUID.randomUUID().toString(),
                             duration = 5,
                             exceptions = emptyList(),

@@ -9,6 +9,11 @@ class ExampleInstrumentedTest {
 
     @Test
     fun test() {
-        // epmty
+        // empty
+    }
+
+    @Test
+    fun test2() {
+        // empty
     }
 }

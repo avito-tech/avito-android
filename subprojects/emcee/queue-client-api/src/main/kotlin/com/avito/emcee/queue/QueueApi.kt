@@ -16,8 +16,11 @@ public interface QueueApi {
     @POST("scheduleTests")
     public suspend fun scheduleTests(@Body body: ScheduleTestsBody): ScheduleTestsResponse
 
-    @POST("jobStatus")
-    public suspend fun jobStatus(@Body body: JobStatusBody): JobStatus
+    @POST("jobState")
+    public suspend fun jobState(@Body body: JobStatusBody): JobStateResponse
+
+    @POST("jobResults")
+    public suspend fun jobResults(@Body body: JobStatusBody): JobResultsResponse
 
     public companion object {
 

@@ -2,6 +2,9 @@ package com.avito.emcee.client.internal
 
 import com.avito.emcee.client.EmceeTestClient
 import com.avito.emcee.client.EmceeTestClientConfig
+import com.avito.emcee.client.internal.result.JobResult
+import com.avito.emcee.client.internal.result.JobResultHasFailedTestsException
+import com.avito.emcee.client.internal.result.JobResultResolver
 import com.avito.emcee.queue.QueueApi
 import com.avito.emcee.queue.ScheduleTestsBody
 import com.avito.emcee.queue.ScheduledTests
@@ -18,7 +21,8 @@ internal class EmceeTestClientImpl(
     private val queueApi: QueueApi,
     private val uploader: FileUploader,
     private val testsParser: TestsParser,
-    private val waiter: JobWaiter
+    private val waiter: JobWaiter,
+    private val jobResultResolver: JobResultResolver,
 ) : EmceeTestClient {
 
     @ExperimentalTime
@@ -47,6 +51,9 @@ internal class EmceeTestClientImpl(
                     throw e
                 }
                 waiter.wait(config.job, 60.minutes)
+
+                val result = jobResultResolver.resolveResult(config.job)
+                if (result is JobResult.Failure) throw JobResultHasFailedTestsException(result.failedTests)
             }
         }
     }

@@ -9,6 +9,7 @@ import com.avito.emcee.client.internal.EmceeTestClientImpl
 import com.avito.emcee.client.internal.JobWaiter
 import com.avito.emcee.client.internal.TestsParser
 import com.avito.emcee.client.internal.UUIDBucketNameGenerator
+import com.avito.emcee.client.internal.result.JobResultResolver
 import com.avito.emcee.queue.QueueApi
 import com.avito.emcee.queue.QueueApi.Companion.create
 import com.avito.logger.LoggerFactory
@@ -27,7 +28,13 @@ public class EmceeTestActionFactory internal constructor(
     private val fileUploader = fileUploaderProvider.provide(httpClientProvider.provide())
 
     public fun create(): EmceeTestClient {
-        return EmceeTestClientImpl(queueApi, fileUploader, testsParser, JobWaiter(queueApi))
+        return EmceeTestClientImpl(
+            queueApi = queueApi,
+            uploader = fileUploader,
+            testsParser = testsParser,
+            waiter = JobWaiter(queueApi),
+            jobResultResolver = JobResultResolver(queueApi)
+        )
     }
 
     public companion object {

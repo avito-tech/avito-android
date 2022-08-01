@@ -4,8 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-public data class JobStatus(
+public data class JobResultsBody(
     @Json(name = "jobId")
-    val id: String,
-    val queueState: QueueState,
+    val id: String
 )

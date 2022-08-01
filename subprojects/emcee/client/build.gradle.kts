@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.subprojects.logger.slf4jGradleLogger)
     implementation(projects.subprojects.testRunner.instrumentationTestsDexLoader)
     implementation(projects.subprojects.testRunner.testAnnotations)
-    implementation(libs.coroutinesCore)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
 
