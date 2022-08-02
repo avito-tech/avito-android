@@ -223,7 +223,7 @@ draft_release:
 	$(call check_defined, version)
 	$(call check_defined, prev_version)
 	git fetch --all
-	gh release create $(version) \
+	gh release create v$(version) \
 		--draft \
 		--target $(version) \
 		--title $(version) \
