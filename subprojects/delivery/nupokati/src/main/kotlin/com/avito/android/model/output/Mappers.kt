@@ -1,4 +1,4 @@
-package com.avito.android.model
+package com.avito.android.model.output
 
 import com.avito.reportviewer.model.ReportCoordinates
 
