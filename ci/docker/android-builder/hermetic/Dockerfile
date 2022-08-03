@@ -4,6 +4,7 @@ FROM ${DOCKER_REGISTRY}/avito/debian-minbase:11.3
 ARG ARTIFACTORY_URL
 ENV DEBIAN_FRONTEND=noninteractive
 
+# TODO: remove java 11 after full migration in MBSA-234
 RUN \
   apt-get update && \
   apt-get install -y \
@@ -33,12 +34,14 @@ ARG ANDROID_SDK_BASE_URL=${ARTIFACTORY_URL}android-build-env/android_sdk
 
 COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux_6_0.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux_31_0_0.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_31_0_1.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools_linux_33_0_0.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDROID_HOME && \
-    rm /usr/local/bin/unzip_from_url.sh
+# See an explanation for zip files in README in parent dir
+# Use different image layers to cache better more stable parts
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-7_0.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux-32_0_0.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms-32_0_1.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-33_0_2.zip $ANDROID_HOME
+RUN rm /usr/local/bin/unzip_from_url.sh
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
