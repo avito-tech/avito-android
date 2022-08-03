@@ -6,12 +6,15 @@ private typealias WorkerName = String
 
 @JsonClass(generateAdapter = true)
 public data class QueueState(
-    /**
-     * something useless
-     */
     val caseId: String,
-    val enqueuedBucketCount: Int,
-    val enqueuedTests: List<TestName>,
-    val dequeuedBucketCount: Int,
-    val dequeuedTests: Map<WorkerName, List<TestName>>,
-)
+    val runningQueueState: RunningQueueState, // TODO: use polymorphic adapter, queue could be in 'deleted' state
+) {
+
+    @JsonClass(generateAdapter = true)
+    public data class RunningQueueState(
+        val dequeuedBucketCount: Int,
+        val dequeuedTests: List<Any>,
+        val enqueuedBucketCount: Int,
+        val enqueuedTests: List<TestName>,
+    )
+}

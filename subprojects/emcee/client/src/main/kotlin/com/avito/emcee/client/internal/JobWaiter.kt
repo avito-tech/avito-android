@@ -16,11 +16,15 @@ internal class JobWaiter(
     @ExperimentalTime
     suspend fun wait(job: Job, timeout: Duration) {
         withTimeout(timeout) {
-            do {
-                // TODO handle error
-                val status = queueApi.jobStatus(JobStatusBody(id = job.id))
-                delay(10.seconds) // TODO how often? to config
-            } while (status.queueState.dequeuedBucketCount + status.queueState.enqueuedBucketCount != 0)
+            while (getTestsCount(job) > 0) {
+                delay(5.seconds) // TODO how often? to config
+            }
         }
+    }
+
+    private suspend fun getTestsCount(job: Job): Int {
+        val status = queueApi.jobState(JobStatusBody(id = job.id)).jobState
+        return status.queueState.runningQueueState.dequeuedBucketCount +
+            status.queueState.runningQueueState.enqueuedBucketCount
     }
 }

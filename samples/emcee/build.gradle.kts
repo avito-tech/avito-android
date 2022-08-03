@@ -1,7 +1,7 @@
 plugins {
     `kotlin-dsl`
-    id("com.android.application") version "7.1.3" apply false
-    id("org.jetbrains.kotlin.android") version "1.5.31" apply false
+    id("com.android.application") version "7.2.1" apply false
+    id("org.jetbrains.kotlin.android") version "1.6.21" apply false
     id("com.avito.android.gradle-logger")
 }
 
