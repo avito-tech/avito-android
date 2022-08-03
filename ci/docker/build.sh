@@ -18,7 +18,7 @@ else
     echo "ERROR: Wrong number of arguments. Expected ones:
     ./build.sh <directory> <image-name>
     Or
-    ./build.sh <directory> <path to Dockerfile> <image-name>
+    ./build.sh <directory> <relative path to Dockerfile in directory> <image-name>
 
     Example:
     ./build.sh image-builder android/image-builder

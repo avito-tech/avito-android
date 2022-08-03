@@ -18,7 +18,7 @@ else
     echo "ERROR: Wrong number of arguments. Expected ones:
     ./publish.sh <directory> <image-name>
     Or
-    ./publish.sh <directory> <path to Dockerfile> <image-name>
+    ./publish.sh <directory> <relative path to Dockerfile in directory> <image-name>
 
     Example:
     ./publish.sh image-builder android/image-builder
