@@ -24,6 +24,8 @@ internal class JobResultResolver(
 
         return if (failedTests.isEmpty()) {
             JobResult.Success
-        } else JobResult.Failure(failedTests.map { it.testEntry })
+        } else {
+            JobResult.Failure(failedTests.map { it.testEntry })
+        }
     }
 }

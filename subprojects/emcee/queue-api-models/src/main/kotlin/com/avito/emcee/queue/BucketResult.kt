@@ -17,7 +17,8 @@ public data class BucketResult(
         @JsonClass(generateAdapter = true)
         public data class TestRunResult(
             val udid: String,
-            val duration: Int, // in seconds
+            @Json(name = "duration")
+            val durationSec: Int,
             val exceptions: List<Exception>,
             val hostName: String,
             val logs: List<Log>,
@@ -29,14 +30,11 @@ public data class BucketResult(
                 val filePathInProject: String,
                 val lineNumber: Int,
                 val reason: String,
-                val relatedTestName: RelatedTestName,
+                val relatedTestName: TestName,
             )
 
             @JsonClass(generateAdapter = true)
             public data class Log(val contents: String)
-
-            @JsonClass(generateAdapter = true)
-            public data class RelatedTestName(val className: String, val methodName: String)
 
             @JsonClass(generateAdapter = true)
             public data class StartTime(val date: Long)

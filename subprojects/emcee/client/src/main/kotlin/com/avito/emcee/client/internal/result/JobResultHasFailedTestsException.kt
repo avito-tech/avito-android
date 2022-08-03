@@ -5,7 +5,7 @@ import com.avito.emcee.queue.TestEntry
 internal class JobResultHasFailedTestsException(
     failedTests: List<TestEntry>
 ) : RuntimeException(
-    "These tests has been failed:\n${
+    "These tests have failed:\n${
         failedTests.map { it.name }.joinToString(separator = "\n") { "${it.className}#${it.methodName}" }
     }"
 )
