@@ -42,10 +42,12 @@ public class NupokatiPlugin : Plugin<Project> {
 
             val skipUploadSpec = Spec<Task> {
                 val skipUpload = cdBuildConfig.get().outputDescriptor.skipUpload
-                project.logger.lifecycle(
-                    "Skip uploading artifacts and contract json, " +
-                        "because skipUpload=true is called"
-                )
+                if (skipUpload) {
+                    project.logger.lifecycle(
+                        "Skip uploading artifacts and contract json, " +
+                            "because skipUpload=true is called"
+                    )
+                }
                 val shouldRunTask = !skipUpload
                 shouldRunTask
             }
