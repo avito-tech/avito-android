@@ -8,13 +8,16 @@ import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProv
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
 import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
-import com.avito.android.plugin.build_metrics.internal.jvm.JavaHome
-import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsCollector
-import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsListener
-import com.avito.android.plugin.build_metrics.internal.jvm.JvmMetricsSender
-import com.avito.android.plugin.build_metrics.internal.jvm.VmResolver
-import com.avito.android.plugin.build_metrics.internal.jvm.command.Jcmd
-import com.avito.android.plugin.build_metrics.internal.jvm.command.Jps
+import com.avito.android.plugin.build_metrics.internal.runtime.Cgroup2
+import com.avito.android.plugin.build_metrics.internal.runtime.JavaHome
+import com.avito.android.plugin.build_metrics.internal.runtime.JvmMetricsCollector
+import com.avito.android.plugin.build_metrics.internal.runtime.JvmMetricsSenderImpl
+import com.avito.android.plugin.build_metrics.internal.runtime.OsMetricsCollector
+import com.avito.android.plugin.build_metrics.internal.runtime.OsMetricsSenderImpl
+import com.avito.android.plugin.build_metrics.internal.runtime.RuntimeMetricsListener
+import com.avito.android.plugin.build_metrics.internal.runtime.VmResolver
+import com.avito.android.plugin.build_metrics.internal.runtime.command.Jcmd
+import com.avito.android.plugin.build_metrics.internal.runtime.command.Jps
 import com.avito.android.plugin.build_metrics.internal.tasks.CriticalPathMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsTask
 import com.avito.android.stats.SeriesName
@@ -70,18 +73,24 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         val processRunner = ProcessRunner.create(workingDirectory = null)
         val javaHome = JavaHome()
 
-        val jvmMetricsListener = JvmMetricsListener(
-            collector = JvmMetricsCollector(
-                vmResolver = VmResolver(
-                    jps = Jps(processRunner, javaHome)
+        val runtimeMetricsListener = RuntimeMetricsListener(
+            collectors = listOf(
+                JvmMetricsCollector(
+                    vmResolver = VmResolver(
+                        jps = Jps(processRunner, javaHome)
+                    ),
+                    jcmd = Jcmd(processRunner, javaHome),
+                    sender = JvmMetricsSenderImpl(metricsTracker)
                 ),
-                jcmd = Jcmd(processRunner, javaHome)
-            ),
-            sender = JvmMetricsSender(metricsTracker)
+                OsMetricsCollector(
+                    cgroup = Cgroup2.resolve(),
+                    sender = OsMetricsSenderImpl(metricsTracker)
+                )
+            )
         )
 
         val buildListeners = listOf(
-            jvmMetricsListener,
+            runtimeMetricsListener,
             ConfigurationTimeListener(metricsTracker),
             TotalBuildTimeListener(metricsTracker),
             AppBuildTimeListener.from(project, metricsTracker)

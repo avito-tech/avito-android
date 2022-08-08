@@ -1,4 +1,4 @@
-package com.avito.android.plugin.build_metrics.internal.jvm
+package com.avito.android.plugin.build_metrics.internal.runtime
 
 import com.avito.android.Result
 import com.avito.android.gradle.profile.BuildProfile
@@ -9,14 +9,13 @@ import java.time.Duration
 import java.util.Timer
 import java.util.TimerTask
 
-internal class JvmMetricsListener(
-    private val collector: JvmMetricsCollector,
-    private val sender: JvmMetricsSender,
+internal class RuntimeMetricsListener(
+    private val collectors: List<MetricsCollector>,
     private val period: Duration = Duration.ofSeconds(30)
 ) : BuildResultListener {
 
-    private val log = LoggerFactory.getLogger(JvmMetricsListener::class.java)
-    private val timer: Timer = Timer("jvm-metrics-collector")
+    private val log = LoggerFactory.getLogger(RuntimeMetricsListener::class.java)
+    private val timer: Timer = Timer("metrics-collector")
 
     init {
         startCollecting()
@@ -32,14 +31,13 @@ internal class JvmMetricsListener(
     }
 
     private fun collect() {
-        val collectResults = collector.collect()
+        collectors.forEach { collector ->
+            val result = collector.collect()
 
-        if (collectResults.isFailure()) {
-            log.warn("Disable collecting JVM metrics due to a failure", (collectResults as Result.Failure).throwable)
-            cancel()
-        }
-        collectResults.getOrThrow().forEach { (vm, heapInfo) ->
-            sender.send(vm, heapInfo)
+            if (result.isFailure()) {
+                log.warn("Disable collecting runtime metrics due to a failure", (result as Result.Failure).throwable)
+                cancel()
+            }
         }
     }
 

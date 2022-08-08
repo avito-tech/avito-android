@@ -1,10 +1,9 @@
-package com.avito.android.plugin.build_metrics.internal.jvm
+package com.avito.android.plugin.build_metrics.internal.runtime
 
 import com.avito.android.Result
 import com.avito.android.Result.Failure
-import com.avito.android.plugin.build_metrics.internal.jvm.command.Jcmd
+import com.avito.android.plugin.build_metrics.internal.runtime.command.Jcmd
 import org.slf4j.LoggerFactory
-import java.util.stream.Collectors.toMap
 
 /**
  * Collects JVM metrics by CLI JDK tools.
@@ -14,33 +13,37 @@ import java.util.stream.Collectors.toMap
  * - Instrument processes by java agents.
  *   Blocker: we have no full control on spawning VMs inside Gradle and plugins.
  * - Connect to VMs by JMX and read memory beans.
- *   Blocker: failed to make connections stable, so
+ *   Blocker: failed to make connections stable
  *   Inconvenience: uses internal classes from jdk.management.agent module (--add-opens in Gradle jvm args)
  */
 internal class JvmMetricsCollector(
     private val vmResolver: VmResolver,
-    private val jcmd: Jcmd
-) {
+    private val jcmd: Jcmd,
+    private val sender: JvmMetricsSender
+) : MetricsCollector {
 
     private val log = LoggerFactory.getLogger(JvmMetricsCollector::class.java)
 
-    fun collect(): Result<Map<LocalVm, HeapInfo>> {
+    override fun collect(): Result<Unit> {
         return vmResolver.localVMs()
             .map { vms ->
-                @Suppress("UNCHECKED_CAST")
                 vms.parallelStream()
                     .map { it to getHeapInfo(it) }
-                    .filter { it.second != null }
-                    .collect(toMap(Pair<*, *>::first, Pair<*, *>::second)) as Map<LocalVm, HeapInfo>
+                    .forEach { (vm, heapInfo) ->
+                        if (heapInfo != null) {
+                            sender.send(vm, heapInfo)
+                        }
+                    }
             }
+            .map { }
     }
 
     /**
      * @return null in case of error.
      *
      * There are some expected errors:
-     * - process may be killed already
-     * - process may have unsupported GC
+     * - process is killed already
+     * - process has unsupported GC
      *
      * We'd like to preserve as much as possible metrics from other processes
      */

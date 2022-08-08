@@ -1,4 +1,4 @@
-package com.avito.android.plugin.build_metrics.internal.jvm
+package com.avito.android.plugin.build_metrics.internal.runtime
 
 internal data class HeapInfo(
     val heap: MemoryUsage,
