@@ -2,8 +2,6 @@ package com.avito.emcee.queue
 
 import com.squareup.moshi.JsonClass
 
-private typealias WorkerName = String
-
 @JsonClass(generateAdapter = true)
 public data class QueueState(
     val caseId: String,

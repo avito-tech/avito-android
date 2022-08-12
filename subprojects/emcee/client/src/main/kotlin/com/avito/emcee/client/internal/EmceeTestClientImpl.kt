@@ -50,7 +50,7 @@ internal class EmceeTestClientImpl(
                     // TODO clean up successfully scheduled tests
                     throw e
                 }
-                waiter.wait(config.job, 60.minutes)
+                waiter.waitJobIsDone(config.job, 60.minutes)
 
                 val result = jobResultResolver.resolveResult(config.job)
                 if (result is JobResult.Failure) throw JobResultHasFailedTestsException(result.failedTests)

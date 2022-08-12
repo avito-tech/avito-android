@@ -14,7 +14,7 @@ internal class JobWaiter(
 ) {
 
     @ExperimentalTime
-    suspend fun wait(job: Job, timeout: Duration) {
+    suspend fun waitJobIsDone(job: Job, timeout: Duration) {
         withTimeout(timeout) {
             while (getTestsCount(job) > 0) {
                 delay(5.seconds) // TODO how often? to config
