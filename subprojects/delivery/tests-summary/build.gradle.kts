@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.reportViewer) {
         because("API to fetch reports; ReportCoordinates model")
     }
+    implementation(projects.subprojects.logger.gradleLogger)
 
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(testFixtures(projects.subprojects.testRunner.reportViewer))
