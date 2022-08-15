@@ -3,6 +3,8 @@ package com.avito.math
 import java.math.BigDecimal
 import java.math.MathContext
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @Suppress("MagicNumber")
 public fun Int.percentOf(sum: Int): Percent = FourDigitsPercent.create(toFloat() / sum * 100)
@@ -48,7 +50,9 @@ public interface Percent {
 
 internal data class FourDigitsPercent private constructor(val value: BigDecimal) : Percent {
 
-    private val formatted: String by lazy { DecimalFormat("0.##'%'").format(value) }
+    private val decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.US)
+
+    private val formatted: String by lazy { DecimalFormat("0.##'%'", decimalFormatSymbols).format(value) }
 
     override fun formatAsFourDigitsPrecision(): String = formatted
 
