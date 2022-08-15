@@ -1,5 +1,6 @@
 package com.avito.test.summary
 
+import com.avito.logger.LoggerFactory
 import com.avito.notification.NotificationClient
 import com.avito.notification.finder.ConjunctionPredicate
 import com.avito.notification.finder.SameAuthorPredicate
@@ -36,7 +37,8 @@ internal class TestSummarySenderImpl(
     private val globalSummaryChannel: SlackChannel,
     private val unitToChannelMapping: Map<Team, SlackChannel>,
     private val mentionOnFailures: Set<Team>,
-    private val slackUserName: String
+    private val slackUserName: String,
+    private val loggerFactory: LoggerFactory
 ) : TestSummarySender {
 
     private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewerUrl)
@@ -55,7 +57,8 @@ internal class TestSummarySenderImpl(
         )
     )
     private val slackBulkSender: SlackBulkSender = CoroutinesSlackBulkSender(
-        sender = slackConditionalSender
+        sender = slackConditionalSender,
+        loggerFactory = loggerFactory,
     )
 
     private val slackEmojiProvider = SlackEmojiProvider()

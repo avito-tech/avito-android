@@ -1,6 +1,7 @@
 package com.avito.test.summary
 
 import com.avito.android.stats.statsdConfig
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.report.model.Team
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
@@ -42,7 +43,8 @@ public abstract class TestSummaryTask : DefaultTask() {
             mentionOnFailures = slack.mentionOnFailures.map { set ->
                 set.map { Team(it) }.toSet()
             }.get(),
-            slackUserName = slack.username.get()
+            slackUserName = slack.username.get(),
+            loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
         )
 
         testSummarySender.send()

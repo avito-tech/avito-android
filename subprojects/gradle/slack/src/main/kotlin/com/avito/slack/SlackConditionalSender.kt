@@ -24,7 +24,6 @@ public class SlackConditionalSender(
                     updater.updateMessage(previousMessage, message.text)
                 },
                 {
-                    // TODO handle throwable
                     notificationClient.sendMessage(message)
                 }
             )

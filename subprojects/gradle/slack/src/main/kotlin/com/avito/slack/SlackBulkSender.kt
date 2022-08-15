@@ -1,5 +1,7 @@
 package com.avito.slack
 
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.notification.NotificationSender
 import com.avito.slack.model.SlackSendMessageRequest
 import kotlinx.coroutines.GlobalScope
@@ -23,7 +25,10 @@ public interface SlackBulkSender {
 @OptIn(ObsoleteCoroutinesApi::class)
 public class CoroutinesSlackBulkSender(
     private val sender: NotificationSender,
+    loggerFactory: LoggerFactory,
 ) : SlackBulkSender {
+
+    private val logger = loggerFactory.create<CoroutinesSlackBulkSender>()
 
     private val requestQueue = Channel<SlackSendMessageRequest>(Channel.UNLIMITED)
 
@@ -40,7 +45,8 @@ public class CoroutinesSlackBulkSender(
             for (request in tickedQueue) {
                 sender.sendMessage(request)
                     .onFailure {
-                    // TODO handle failure
+                        // TODO send alert that Slack integration is broken
+                        logger.warn("Fail to send message $request")
                     }
                 executedRequests.send(request)
             }
