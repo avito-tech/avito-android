@@ -1,12 +1,25 @@
+import com.avito.kotlin.dsl.getMandatoryStringProperty
+
 plugins {
     application
     id("convention.kotlin-jvm")
-    id("com.google.cloud.tools.jib") version "3.1.4"
+    id("com.bmuschko.docker-java-application") version "8.0.0"
     kotlin("plugin.serialization").version("1.6.21")
 }
 
 application {
     mainClass.set("com.avito.emcee.server.fake.MainKt")
+}
+
+val registry = project.getMandatoryStringProperty("avito.docker.registry", allowBlank = false)
+
+docker {
+    javaApplication {
+        baseImage.set("$registry/android/openjdk:11")
+        ports.set(setOf(41000))
+        images.set(setOf("emcee-queue:latest"))
+        mainClassName.set("com.avito.emcee.server.fake.MainKt")
+    }
 }
 
 dependencies {

@@ -3,7 +3,8 @@
 ## How to run locally
 
 We use [Gradle application plugin](https://docs.gradle.org/current/userguide/application_plugin.html)
-Plugin adds `:run` task which run `main` function in specified `mainClass:
+Plugin adds a `:run` task which invokes `main` function in specified `mainClass`:
+
 ```kotlin
 application {
     mainClass.set("ClassFullName")
@@ -16,23 +17,38 @@ application {
 
 ## How to test
 
-Ask me for sharing POSTMAN files
+- Using POSTMAN files (ask us if you need these files);
+- Run a real worker instance with the `./gradlew :subprojects:emcee:worker:run` command.
 
 ## How to build Docker image
 
-[Ktor docker image sample](https://github.com/ktorio/ktor-samples/tree/main/docker-image)
+We use Gradle plugin `com.bmuschko.docker-java-application`. See [official documentation](https://bmuschko.github.io/gradle-docker-plugin/current/user-guide) for more details.
+The plugins adds `buildDockerImage` tasks, which builds a Docker image
 
-We use Gradle plugin `com.google.cloud.tools.jib`
-Plugin adds task `jibDockerBuild` - to build an image to the local Docker registry run
+Run container using the following command:
+`docker run -it --rm -p 41000:41000 emcee-queue:latest`
+
+Then check if the queue responds correctly using `curl`:
+`curl -X POST <URL>/<request>`
 
 ### Using minukube docker daemon
 
 ```shell
 eval $(minikube docker-env)
-./gradlew jibDockerBuild
+./gradlew :subprojects:emcee:queue-fake-server:dockerBuildImage  
+
+minikube kubectl -- create -f subprojects/emcee/k8s/emcee.yaml
 ```
 
-### Ktor useful references
+Find the URL of the `emcee` service using: 
+```shell
+minikube service list
+```
+
+Then check if the queue responds correctly using `curl`:
+`curl -X POST https:127.0.0.1/<request>`
+
+### Useful references
 
 [Ktor http api tutorial](https://ktor.io/docs/creating-http-apis.html)
-[Content serialization](https://ktor.io/docs/serialization.html)
+[Ktor content serialization](https://ktor.io/docs/serialization.html)

@@ -11,15 +11,19 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 
 public fun main() {
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = 41000) {
         install(ContentNegotiation) {
             gson()
         }
         routing {
+            get("/") {
+                call.respond("Hello from the queue")
+            }
             post("/scheduleTests") {
                 call.respond(ScheduleTestsResponse("stub"))
             }

@@ -1,0 +1,44 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+    name: emcee
+    namespace: default
+    labels:
+        app: emcee
+        service: emcee
+spec:
+    selector:
+        matchLabels:
+            app: emcee
+            service: emcee
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: emcee
+                service: emcee
+        spec:
+            containers:
+                -   name: emcee
+                    image: emcee-queue
+                    imagePullPolicy: IfNotPresent
+                    ports:
+                        -   containerPort: 41000
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: emcee
+    namespace: default
+    labels:
+        name: emcee
+        service: emcee
+spec:
+    type: NodePort
+    selector:
+        app: emcee
+    ports:
+        -   protocol: TCP
+            port: 41000
+            targetPort: 41000
