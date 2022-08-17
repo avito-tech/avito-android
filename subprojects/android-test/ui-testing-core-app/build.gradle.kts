@@ -5,7 +5,6 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 
 plugins {
     id("convention.kotlin-android-app")
-    id("convention.shared-testing")
     id("com.avito.android.instrumentation-tests")
 }
 
@@ -58,15 +57,13 @@ dependencies {
 
     implementation(projects.subprojects.androidLib.proxyToast)
 
-    sharedTestImplementation(projects.subprojects.testRunner.testInhouseRunner)
-    sharedTestImplementation(projects.subprojects.testRunner.testReportAndroid)
-    sharedTestImplementation(projects.subprojects.testRunner.testAnnotations)
-    sharedTestImplementation(projects.subprojects.testRunner.reportViewer)
-    sharedTestImplementation(projects.subprojects.androidTest.uiTestingCore)
-    sharedTestImplementation(projects.subprojects.androidTest.toastRule)
-    sharedTestImplementation(projects.subprojects.common.truthExtensions)
-
-    testImplementation(projects.subprojects.testRunner.robolectricInhouseRunner)
+    androidTestImplementation(projects.subprojects.testRunner.testInhouseRunner)
+    androidTestImplementation(projects.subprojects.testRunner.testReportAndroid)
+    androidTestImplementation(projects.subprojects.testRunner.testAnnotations)
+    androidTestImplementation(projects.subprojects.testRunner.reportViewer)
+    androidTestImplementation(projects.subprojects.androidTest.uiTestingCore)
+    androidTestImplementation(projects.subprojects.androidTest.toastRule)
+    androidTestImplementation(projects.subprojects.common.truthExtensions)
 
     androidTestUtil(libs.testOrchestrator)
 }
