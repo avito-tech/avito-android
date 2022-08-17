@@ -44,9 +44,9 @@ public class CoroutinesSlackBulkSender(
         GlobalScope.launch {
             for (request in tickedQueue) {
                 sender.sendMessage(request)
-                    .onFailure {
+                    .onFailure { error ->
                         // TODO send alert that Slack integration is broken
-                        logger.warn("Fail to send message $request")
+                        logger.warn("Fail to send message $request", error)
                     }
                 executedRequests.send(request)
             }
