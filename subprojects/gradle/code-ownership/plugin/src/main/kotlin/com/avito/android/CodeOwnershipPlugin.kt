@@ -64,7 +64,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         val codeOwnershipExtension = project.extensions.create<CodeOwnershipExtension>("ownership")
 
         project.afterEvaluate {
-            if (strictOwnership) {
+            if (strictOwnership && it.state.failure == null) {
                 codeOwnershipExtension.checkProjectOwnershipSettings(it.path)
             }
         }
