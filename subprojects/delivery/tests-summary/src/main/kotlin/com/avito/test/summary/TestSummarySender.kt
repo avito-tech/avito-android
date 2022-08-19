@@ -38,7 +38,7 @@ internal class TestSummarySenderImpl(
     private val unitToChannelMapping: Map<Team, SlackChannel>,
     private val mentionOnFailures: Set<Team>,
     private val slackUserName: String,
-    private val loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory
 ) : TestSummarySender {
 
     private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewerUrl)
