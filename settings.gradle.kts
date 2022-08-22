@@ -1,4 +1,3 @@
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "avito-android-infra"
@@ -121,9 +120,7 @@ include(":subprojects:test-runner:test-report-jvm")
 include(":subprojects:test-runner:test-report-run-listener")
 include(":subprojects:test-runner:test-inhouse-runner")
 include(":subprojects:test-runner:test-instrumentation-runner")
-include(":subprojects:test-runner:robolectric-inhouse-runner")
 include(":subprojects:test-runner:shared:logger-providers")
-include(":subprojects:test-runner:shared-tests")
 include(":subprojects:test-runner:k8s-deployments-cleaner")
 include(":subprojects:test-runner:instrumentation-changed-tests-finder")
 include(":subprojects:test-runner:instrumentation-tests")

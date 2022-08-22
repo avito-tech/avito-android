@@ -3,7 +3,6 @@ import com.avito.android.artifactory.ensureUseOnlyProxies
 import com.avito.android.artifactory.setUrlOrProxy
 import com.avito.booleanProperty
 
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
