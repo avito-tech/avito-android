@@ -1,6 +1,7 @@
 package com.avito.test.http
 
 import com.avito.android.Result
+import com.avito.logger.LoggerFactory
 import com.avito.logger.PrintlnLoggerFactory
 import com.avito.logger.create
 import com.avito.utils.ResourcesReader
@@ -14,9 +15,10 @@ import java.util.Collections
 
 public class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
+    loggerFactory: LoggerFactory = PrintlnLoggerFactory
 ) : Dispatcher() {
 
-    private val logger = PrintlnLoggerFactory.create<MockDispatcher>()
+    private val logger = loggerFactory.create<MockDispatcher>()
 
     private val mocks = Collections.synchronizedList(mutableListOf<Mock>())
 
@@ -40,11 +42,20 @@ public class MockDispatcher(
     }
 
     override fun dispatch(request: RecordedRequest): MockResponse {
+        logger.info("Start dispatching request ${request.requestLine}")
         val requestData = RequestData(request)
 
         synchronized(capturers) {
-            capturers.find { it.requestMatcher.invoke(requestData) }?.run {
-                capture(request)
+            val foundCapturers = capturers.filter { it.requestMatcher.invoke(requestData) }
+            if (foundCapturers.isNotEmpty()) {
+                if (foundCapturers.size > 1) {
+                    logger.warn("There are more then one capturer found for request ${request.requestLine}")
+                }
+                val foundCapturer = foundCapturers[0]
+                foundCapturer.capture(request)
+                logger.debug("Request ${request.requestLine} was captured")
+            } else {
+                logger.debug("Request ${request.requestLine} wasn't captured")
             }
         }
 
@@ -53,16 +64,24 @@ public class MockDispatcher(
          *
          * synchronized because of concurrent iterator access (see MBS-7636)
          */
-        val matchedMock = synchronized(mocks) {
-            mocks.findLast { it.requestMatcher.invoke(requestData) }
-                ?.also { mock -> if (mock.removeAfterMatched) mocks.remove(mock) }
+        val lastMatchedMock = synchronized(mocks) {
+            val matchedMocks = mocks.filter { it.requestMatcher.invoke(requestData) }
+            if (matchedMocks.isNotEmpty()) {
+                val mock = matchedMocks.last()
+                if (mock.removeAfterMatched) {
+                    mocks.remove(mock)
+                }
+                mock
+            } else {
+                null
+            }
         }
 
-        val response = if (matchedMock?.response != null) {
-            logger.debug("Request matched: [$requestData], answering: ${matchedMock.response}")
-            matchedMock.response
+        val response = if (lastMatchedMock != null) {
+            logger.debug("Request matched: [$requestData], answering: ${lastMatchedMock.response}")
+            lastMatchedMock.response
         } else {
-            logger.warn("Unmocked request captured: [$requestData], answering: [$unmockedResponse]")
+            logger.warn("UnMocked request captured: [$requestData], answering: [$unmockedResponse]")
             unmockedResponse
         }
 
