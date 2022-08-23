@@ -7,7 +7,7 @@ internal class AndroidTestMetadata(
     private val testName: String
 ) : LoggerMetadata {
 
-    override val asMessagePrefix: String = "[$tag]"
+    override val asMessagePrefix: String = tag
 
     override fun asMap(): Map<String, String> {
         return mapOf(
