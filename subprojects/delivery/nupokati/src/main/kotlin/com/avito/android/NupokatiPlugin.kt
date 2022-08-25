@@ -7,9 +7,8 @@ import com.android.build.gradle.AppPlugin
 import com.avito.android.agp.getVersionCode
 import com.avito.android.artifactory_backup.ArtifactoryBackupTask
 import com.avito.android.contract_upload.UploadCdBuildResultTask
-import com.avito.android.model.CdBuildConfig
-import com.avito.android.provider.CdBuildConfigTransformer
-import com.avito.android.provider.StrictCdBuildConfigValidator
+import com.avito.android.model.input.CdBuildConfig
+import com.avito.android.model.input.CdBuildConfigParserFactory
 import com.avito.android.stats.statsdConfig
 import com.avito.capitalize
 import org.gradle.api.Plugin
@@ -25,14 +24,17 @@ import org.gradle.kotlin.dsl.withType
 
 public class NupokatiPlugin : Plugin<Project> {
 
+    /**
+     * to be accessible from client-side build scripts
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
     public lateinit var cdBuildConfig: Provider<CdBuildConfig>
 
     override fun apply(project: Project) {
 
         val extension = project.extensions.create<NupokatiExtension>("nupokati")
 
-        cdBuildConfig = extension.cdBuildConfigFile
-            .map(CdBuildConfigTransformer(validator = StrictCdBuildConfigValidator()))
+        cdBuildConfig = extension.cdBuildConfigFile.map(CdBuildConfigParserFactory())
 
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -65,15 +67,19 @@ public class NupokatiPlugin : Plugin<Project> {
 
                         this.artifactoryUser.set(extension.artifactory.login)
                         this.artifactoryPassword.set(extension.artifactory.password)
-                        this.artifactoryUploadPath.set(
-                            cdBuildConfig.map {
-                                it.outputDescriptor.path.substringBeforeLast('/')
-                            }
-                        )
-                        this.buildVariant.set(variant.name)
-                        this.files.set(project.files(bundle))
+                        this.artifactoryUploadPath.set(cdBuildConfig.map {
+                            it.outputDescriptor.path.substringBeforeLast('/')
+                        })
+                        this.schemaVersion.set(cdBuildConfig.map { it.schemaVersion })
                         this.statsDConfig.set(project.statsdConfig)
                         this.buildOutput.set(project.layout.buildDirectory.file("nupokati/buildOutput.json"))
+
+                        @Suppress("DEPRECATION")
+                        this.files.set(project.files(bundle))
+                        @Suppress("DEPRECATION")
+                        this.buildConfiguration.set(
+                            requireNotNull(variant.buildType) { "buildType should not be null here" }
+                        )
 
                         onlyIf(skipUploadSpec)
                     }
@@ -92,7 +98,6 @@ public class NupokatiPlugin : Plugin<Project> {
                     this.buildOutputFileProperty.set(publishArtifactsTask.flatMap { it.buildOutput })
                     this.statsDConfig.set(project.statsdConfig)
 
-                    // todo depend on output with actually uploaded artifacts
                     dependsOn(publishArtifactsTask)
 
                     onlyIf(skipUploadSpec)

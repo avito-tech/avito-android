@@ -2,13 +2,11 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
-    id("convention.ksp")
+    id("convention.serialization")
 }
 
 dependencies {
     implementation(libs.androidGradle)
-    implementation(libs.gson)
-    implementation(libs.moshiAdapters)
     implementation(libs.okhttp)
 
     implementation(projects.subprojects.common.httpClient)
@@ -20,8 +18,6 @@ dependencies {
     implementation(projects.subprojects.logger.slf4jGradleLogger)
     implementation(projects.subprojects.testRunner.instrumentationTests)
     implementation(projects.subprojects.testRunner.reportViewer)
-
-    ksp(libs.moshiCodegen)
 
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.common.resources)

@@ -10,12 +10,13 @@ import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.MockResponse
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class NupokatiPluginIntegrationTest {
+internal class NupokatiPluginV3IntegrationTest {
 
     private val mockDispatcher = MockDispatcher()
 
@@ -36,9 +37,10 @@ internal class NupokatiPluginIntegrationTest {
 
         val releaseVersion = "118.0"
 
+        @Language("json")
         val cdConfig = """
             |{
-            |  "schema_version": 2,
+            |  "schema_version": 3,
             |  "project": "avito",
             |  "release_version": "$releaseVersion",
             |  "output_descriptor": {
@@ -47,8 +49,21 @@ internal class NupokatiPluginIntegrationTest {
             |  },
             |  "deployments": [
             |    {
-            |      "type": "qapps",
-            |      "is_release": true
+            |      "type": "app-binary",
+            |      "store": "ru-store",
+            |      "file_type": "apk",
+            |      "build_configuration": "release"
+            |    },
+            |    {
+            |      "type": "app-binary",
+            |      "store": "google-play",
+            |      "file_type": "bundle",
+            |      "build_configuration": "release"
+            |    },
+            |    {
+            |      "type": "artifact",
+            |      "file_type": "json",
+            |      "kind": "feature-toggles"
             |    }
             |  ]
             |}""".trimMargin()
@@ -75,6 +90,7 @@ internal class NupokatiPluginIntegrationTest {
                     useKts = true,
                     imports = listOf(
                         "import com.avito.reportviewer.model.ReportCoordinates",
+                        "import com.avito.android.artifactory_backup.ArtifactoryBackupTask",
                     ),
                     buildGradleExtra = """
                         |android {
@@ -82,6 +98,35 @@ internal class NupokatiPluginIntegrationTest {
                         |        getByName("release") {
                         |            isMinifyEnabled = true
                         |            proguardFile("proguard.pro")
+                        |        }
+                        |    }
+                        |}
+                        |
+                        |androidComponents {
+                        |    val release = selector().withBuildType("release")
+                        |    onVariants(release) { variant ->
+                        |        tasks.withType<ArtifactoryBackupTask>().configureEach {
+                        |            this.artifacts.add(
+                        |                variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.BUNDLE)
+                        |                .map {
+                        |                    com.avito.android.model.input.DeploymentV3.AppBinary(
+                        |                        store = "google-play",
+                        |                        buildConfiguration = "release",
+                        |                        file = it.asFile,
+                        |                    )
+                        |                }
+                        |            )
+                        |
+                        |            this.artifacts.add(
+                        |                variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.APK)
+                        |                .map {
+                        |                    com.avito.android.model.input.DeploymentV3.AppBinary(
+                        |                        store = "ru-store",
+                        |                        buildConfiguration = "release",
+                        |                        file = it.getApkOrThrow(),
+                        |                    )
+                        |                }
+                        |            )
                         |        }
                         |    }
                         |}
@@ -100,10 +145,31 @@ internal class NupokatiPluginIntegrationTest {
                         |        reportCoordinates.set(ReportCoordinates("$planSlug", "$jobSlug", "$runId"))
                         |    }
                         |}
+                        |
+                        |afterEvaluate {
+                        |    tasks.withType<ArtifactoryBackupTask>().configureEach {
+                        |        this.artifacts.add(
+                        |            com.avito.android.model.input.DeploymentV3.Artifact(
+                        |                kind = "feature-toggles",
+                        |                file = layout.projectDirectory.file("feature_toggles.json").asFile,
+                        |            )
+                        |        )
+                        |    }
+                        |}
+                        |
+                        |fun org.gradle.api.file.Directory.getApkOrThrow(): File {
+                        |    val dir = asFile
+                        |    val apks = dir.listFiles().orEmpty().filter { it.extension == "apk" }
+                        |
+                        |    require(apks.size < 2) { "Multiple APK are not supported" }
+                        |    return requireNotNull(apks.firstOrNull()) { "APK not found" }
+                        |}
                         |""".trimMargin()
                 )
             )
         ).generateIn(projectDir)
+
+        File("$projectDir/app/feature_toggles.json").writeText("")
 
         val branchName = "release_11"
         projectDir.git("checkout -b $branchName")
@@ -114,6 +180,26 @@ internal class NupokatiPluginIntegrationTest {
                 requestMatcher = {
                     method == "PUT"
                         && path == "/artifactory/mobile-releases/avito_android/118.0_2/app-release.aab"
+                },
+                response = MockResponse().setResponseCode(HttpCodes.OK)
+            )
+        )
+
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = {
+                    method == "PUT"
+                        && path == "/artifactory/mobile-releases/avito_android/118.0_2/app-release-unsigned.apk"
+                },
+                response = MockResponse().setResponseCode(HttpCodes.OK)
+            )
+        )
+
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = {
+                    method == "PUT"
+                        && path == "/artifactory/mobile-releases/avito_android/118.0_2/feature_toggles.json"
                 },
                 response = MockResponse().setResponseCode(HttpCodes.OK)
             )
@@ -136,9 +222,10 @@ internal class NupokatiPluginIntegrationTest {
             .assertThat()
             .buildSuccessful()
 
+        // todo add QAPPS test
         val expectedContract = """
         |{
-        |  "schema_version": 2,
+        |  "schema_version": 3,
         |  "teamcity_build_url": "$teamcityUrl",
         |  "build_number": "$versionCode",
         |  "release_version": "$releaseVersion",
@@ -156,10 +243,27 @@ internal class NupokatiPluginIntegrationTest {
         |  },
         |  "artifacts": [
         |    {
-        |      "type": "bundle",
+        |      "store": "ru-store",
+        |      "type": "app-binary",
+        |      "file_type": "apk",
+        |      "name": "app-release-unsigned.apk",
+        |      "uri": "${mockWebServerUrl}artifactory/mobile-releases/avito_android/118.0_2/app-release-unsigned.apk",
+        |      "build_configuration": "release"
+        |    },
+        |    {
+        |      "store": "google-play",
+        |      "type": "app-binary",
+        |      "file_type": "bundle",
         |      "name": "app-release.aab",
         |      "uri": "${mockWebServerUrl}artifactory/mobile-releases/avito_android/118.0_2/app-release.aab",
-        |      "build_variant": "release"
+        |      "build_configuration": "release"
+        |    },
+        |    {
+        |      "type": "artifact", 
+        |      "file_type": "json",
+        |      "name": "feature_toggles.json", 
+        |      "uri": "${mockWebServerUrl}artifactory/mobile-releases/avito_android/118.0_2/feature_toggles.json", 
+        |      "kind" : "feature-toggles" 
         |    }
         |  ]
         |}

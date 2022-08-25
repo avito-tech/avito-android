@@ -2,10 +2,17 @@ package com.avito.android.artifactory_backup
 
 import com.avito.android.http.ArtifactoryClient
 import com.avito.android.http.createArtifactoryHttpClient
+import com.avito.android.model.input.Deployment
+import com.avito.android.model.input.DeploymentV2
+import com.avito.android.model.output.ArtifactsAdapter
+import com.avito.android.model.output.ArtifactsFactory
+import com.avito.android.model.output.ArtifactsV2Factory
+import com.avito.android.model.output.ArtifactsV3Factory
 import com.avito.android.stats.StatsDConfig
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -28,11 +35,19 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
     @get:Input
     public abstract val artifactoryUploadPath: Property<String>
 
+    @Deprecated("included in Artifact for schema version >= 3")
     @get:Input
-    public abstract val buildVariant: Property<String>
+    public abstract val buildConfiguration: Property<String>
 
+    @get:Input
+    public abstract val schemaVersion: Property<Long>
+
+    @Deprecated("use artifacts for schema version >= 3")
     @get:InputFiles
     public abstract val files: Property<FileCollection>
+
+    @get:Input
+    public abstract val artifacts: ListProperty<Deployment>
 
     @get:Internal
     public abstract val statsDConfig: Property<StatsDConfig>
@@ -49,18 +64,33 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
         )
 
         val artifactoryClient = ArtifactoryClient(httpClient)
-        val artifactsAdapter = CdBuildResultArtifactsAdapter()
+
+        @Suppress("UNCHECKED_CAST")
+        val artifactsFactory: ArtifactsFactory<Deployment> = when (schemaVersion.get()) {
+            2L -> ArtifactsV2Factory() as ArtifactsFactory<Deployment>
+            3L -> ArtifactsV3Factory() as ArtifactsFactory<Deployment>
+            else -> throw IllegalArgumentException("Unsupported schema version: ${schemaVersion.get()}")
+        }
+
+        val artifactsAdapter = ArtifactsAdapter(schemaVersion = schemaVersion.get())
 
         val artifactoryBackupAction = ArtifactoryBackupAction(
             artifactoryClient = artifactoryClient,
+            artifactsFactory = artifactsFactory,
             artifactsAdapter = artifactsAdapter,
             logger = logger
         )
 
+        @Suppress("DEPRECATION")
+        val deployments: List<Deployment> = when (schemaVersion.get()) {
+            2L -> files.map { it.map { file -> DeploymentV2(file, buildConfiguration.get()) } }.get()
+            3L -> artifacts.get()
+            else -> throw IllegalArgumentException("Unsupported schema version: ${schemaVersion.get()}")
+        }
+
         val artifactsJson = artifactoryBackupAction.backup(
             artifactoryUploadPath = artifactoryUploadPath.get(),
-            buildVariant = buildVariant.get(),
-            files = files.get().files
+            deployments = deployments
         )
 
         this.buildOutput.get().asFile.writeText(artifactsJson)

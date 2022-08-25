@@ -1,12 +1,11 @@
 package com.avito.android.contract_upload
 
-import com.avito.android.artifactory_backup.CdBuildResultArtifactsAdapter
 import com.avito.android.http.ArtifactoryClient
 import com.avito.android.http.createArtifactoryHttpClient
-import com.avito.android.model.CdBuildConfig
-import com.avito.android.model.CdBuildResult
-import com.avito.android.model.toCdCoordinates
-import com.avito.android.provider.uploadCdGson
+import com.avito.android.model.input.CdBuildConfig
+import com.avito.android.model.output.ArtifactsAdapter
+import com.avito.android.model.output.CdBuildResult
+import com.avito.android.model.output.toCdCoordinates
 import com.avito.android.stats.StatsDConfig
 import com.avito.git.gitState
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
@@ -61,34 +60,32 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
 
         val buildOutputFile = buildOutputFileProperty.get().asFile
 
-        val artifactsAdapter = CdBuildResultArtifactsAdapter()
+        val cdBuildConfig = cdBuildConfig.get()
 
-        val buildOutput = artifactsAdapter.fromJson(buildOutputFile.readText())
+        val artifactsAdapter = ArtifactsAdapter(cdBuildConfig.schemaVersion)
+
+        val artifacts = artifactsAdapter.fromJson(buildOutputFile.readText())
 
         createUploadAction().send(
             testResults = CdBuildResult.TestResultsLink(
                 reportUrl = reportLinksGenerator.generateReportLink(filterOnlyFailures = false),
                 reportCoordinates = reportCoordinates.get().toCdCoordinates()
             ),
-            buildOutput = buildOutput,
-            cdBuildConfig = cdBuildConfig.get(),
+            artifacts = artifacts,
+            cdBuildConfig = cdBuildConfig,
             versionCode = appVersionCode.get(),
             teamcityUrl = teamcityBuildUrl.get(),
             gitState = gitState.get(),
         )
     }
 
-    private fun createUploadAction(): UploadCdBuildResultTaskAction {
-        return UploadCdBuildResultTaskAction(
-            gson = uploadCdGson,
-            client = ArtifactoryClient(
-                createArtifactoryHttpClient(
-                    user = artifactoryUser.get(),
-                    password = artifactoryPassword.get(),
-                    statsDConfig = statsDConfig.get()
-                )
-            ),
-            logger = logger
+    private fun createUploadAction(): UploadCdBuildResultTaskAction = UploadCdBuildResultTaskAction(
+        client = ArtifactoryClient(
+            createArtifactoryHttpClient(
+                user = artifactoryUser.get(),
+                password = artifactoryPassword.get(),
+                statsDConfig = statsDConfig.get()
+            )
         )
-    }
+    )
 }

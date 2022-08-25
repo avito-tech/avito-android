@@ -11,7 +11,7 @@ import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class NupokatiPluginTest {
+internal class NupokatiPluginV2Test {
 
     @Test
     fun `configuration successful - without nupokati config provided`(@TempDir projectDir: File) {

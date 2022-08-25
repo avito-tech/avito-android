@@ -1,22 +1,18 @@
 package com.avito.android.contract_upload
 
 import com.avito.android.http.ArtifactoryClient
-import com.avito.android.model.BuildOutput
-import com.avito.android.model.CdBuildConfig
-import com.avito.android.model.CdBuildResult
+import com.avito.android.model.input.CdBuildConfig
+import com.avito.android.model.output.CdBuildResult
 import com.avito.git.GitState
-import com.google.gson.Gson
-import org.gradle.api.logging.Logger
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 
-internal class UploadCdBuildResultTaskAction(
-    private val client: ArtifactoryClient,
-    private val gson: Gson,
-    private val logger: Logger,
-) {
+internal class UploadCdBuildResultTaskAction(private val client: ArtifactoryClient) {
 
     fun send(
         testResults: CdBuildResult.TestResultsLink,
-        buildOutput: BuildOutput,
+        artifacts: JsonElement,
         cdBuildConfig: CdBuildConfig,
         versionCode: Int,
         teamcityUrl: String,
@@ -32,13 +28,15 @@ internal class UploadCdBuildResultTaskAction(
                 commitHash = gitState.currentBranch.commit
             ),
             testResults = testResults,
-            artifacts = buildOutput.artifacts
+            artifacts = artifacts
         )
-        val cdBuildResultRaw = gson.toJson(result)
 
-        logger.lifecycle("CONTENT = $cdBuildResultRaw")
+        val jsonString = Json.encodeToString(result)
 
-        val response = client.uploadJson(cdBuildConfig.outputDescriptor.path, cdBuildResultRaw)
+        val response = client.uploadJson(
+            url = cdBuildConfig.outputDescriptor.path,
+            fileContent = jsonString
+        )
 
         if (!response.isSuccessful) {
             throw RuntimeException("Upload build result failed: ${response.code} ${response.body?.string()}")
