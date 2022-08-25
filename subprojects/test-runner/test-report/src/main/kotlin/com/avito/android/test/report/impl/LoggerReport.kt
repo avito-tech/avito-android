@@ -63,7 +63,7 @@ internal class LoggerReport(
     }
 
     override fun startPrecondition(step: StepResult) {
-        traceMethod("startPrecondition") {
+        traceMethod("startPrecondition ${step.title}") {
             report.startPrecondition(step)
         }
     }
@@ -75,7 +75,7 @@ internal class LoggerReport(
     }
 
     override fun startStep(step: StepResult) {
-        traceMethod("startStep") {
+        traceMethod("startStep ${step.title}") {
             report.startStep(step)
         }
     }
@@ -111,13 +111,13 @@ internal class LoggerReport(
     }
 
     override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
-        traceMethod("addHtml") {
+        traceMethod("addHtml $label") {
             report.addHtml(label, content, wrapHtml)
         }
     }
 
     override fun addText(label: String, text: String) {
-        traceMethod("addText") {
+        traceMethod("addText $label") {
             report.addText(label, text)
         }
     }
@@ -129,13 +129,13 @@ internal class LoggerReport(
     }
 
     override fun addScreenshot(label: String) {
-        traceMethod("addScreenshot") {
+        traceMethod("addScreenshot $label") {
             report.addScreenshot(label)
         }
     }
 
     override fun addAssertion(label: String) {
-        traceMethod("addAssertion") {
+        traceMethod("addAssertion $label") {
             report.addAssertion(label)
         }
     }
