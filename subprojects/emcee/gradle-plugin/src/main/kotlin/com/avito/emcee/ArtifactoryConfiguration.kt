@@ -16,4 +16,7 @@ public abstract class ArtifactoryConfiguration {
 
     @get:Input
     public abstract val repository: Property<String>
+
+    @get:Input
+    public abstract val folder: Property<String>
 }

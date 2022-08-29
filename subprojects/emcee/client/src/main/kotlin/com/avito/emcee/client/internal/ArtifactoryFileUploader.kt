@@ -25,7 +25,7 @@ internal class ArtifactoryFileUploader(
     override suspend fun upload(file: File): HttpUrl {
         val url: HttpUrl = artifactorySettings.baseUrl.toHttpUrl().newBuilder()
             .addEncodedPathSegment(artifactorySettings.repository)
-            .addEncodedPathSegment("emcee-transport")
+            .addEncodedPathSegment(artifactorySettings.folder)
             .addEncodedPathSegment(bucketName)
             .addEncodedPathSegment(file.name)
             .build()
