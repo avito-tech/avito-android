@@ -11,7 +11,7 @@ public class EmceePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val emceeExtension = project.extensions.create("emcee", EmceeExtension::class.java)
-
+        emceeExtension.artifactory.folder.set("emcee-transport")
         project.plugins.withType(AppPlugin::class.java) {
 
             val androidComponents = project.extensions.getByType(ApplicationAndroidComponentsExtension::class.java)
