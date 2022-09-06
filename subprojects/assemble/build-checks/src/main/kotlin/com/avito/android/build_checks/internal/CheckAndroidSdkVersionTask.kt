@@ -54,7 +54,9 @@ internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
                     API level: ${version.compileSdkVersion}, 
                     (installed revision $localRevision, expected revision: $expectedRevision).
                     
-                    How to fix: install or update Android SDK Platform in SDK Manager.
+                    How to fix:
+                    Go to `Preferences > Appearance & Behavior > System Settings > Android SDK`
+                    Install or update Android SDK Platform in SDK Manager.
                     """.trimIndent()
                 ).toString()
             )
