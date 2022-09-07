@@ -1,6 +1,4 @@
 ARG DOCKER_REGISTRY
-ARG ARTIFACTORY_URL
-ARG GRADLE_GITHUB_BUILD_CACHE_URL
 
 FROM ${DOCKER_REGISTRY}/android/openjdk:11 as BUILD
 
@@ -8,11 +6,7 @@ RUN mkdir /app
 COPY . /app
 WORKDIR /app
 
-RUN ./gradlew subprojects:emcee:worker:build \
-    -PartifactoryUrl=${ARTIFACTORY_URL} \
-    -Pcom.avito.android.tools.buildCache.remote.url=${GRADLE_GITHUB_BUILD_CACHE_URL}
-
-RUN ls subprojects/emcee/worker/build/libs
+RUN ./gradlew subprojects:emcee:worker:build
 
 FROM ${DOCKER_REGISTRY}/android/openjdk:11
 
