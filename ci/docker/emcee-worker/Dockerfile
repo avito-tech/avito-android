@@ -1,4 +1,5 @@
 ARG DOCKER_REGISTRY
+ARG ARTIFACTORY_URL
 
 FROM ${DOCKER_REGISTRY}/android/openjdk:11 as BUILD
 
@@ -6,7 +7,7 @@ RUN mkdir /app
 COPY . /app
 WORKDIR /app
 
-RUN ./gradlew subprojects:emcee:worker:build
+RUN ./gradlew subprojects:emcee:worker:build -PartifactoryUrl=${ARTIFACTORY_URL}
 
 FROM ${DOCKER_REGISTRY}/android/openjdk:11
 
