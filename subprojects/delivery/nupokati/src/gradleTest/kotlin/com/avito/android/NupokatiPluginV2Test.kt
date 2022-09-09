@@ -16,6 +16,9 @@ internal class NupokatiPluginV2Test {
     @Test
     fun `configuration successful - without nupokati config provided`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

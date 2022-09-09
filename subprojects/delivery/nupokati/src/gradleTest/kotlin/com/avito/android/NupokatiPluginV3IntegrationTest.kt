@@ -80,6 +80,9 @@ internal class NupokatiPluginV3IntegrationTest {
         val versionCode = 122
 
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

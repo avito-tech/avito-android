@@ -9,6 +9,7 @@ import com.avito.android.model.output.ArtifactsFactory
 import com.avito.android.model.output.ArtifactsV2Factory
 import com.avito.android.model.output.ArtifactsV3Factory
 import com.avito.android.stats.StatsDConfig
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -57,6 +58,8 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
 
     @TaskAction
     public fun doWork() {
+        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
+
         val httpClient = createArtifactoryHttpClient(
             user = artifactoryUser.get(),
             password = artifactoryPassword.get(),
@@ -73,12 +76,11 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
         }
 
         val artifactsAdapter = ArtifactsAdapter(schemaVersion = schemaVersion.get())
-
         val artifactoryBackupAction = ArtifactoryBackupAction(
             artifactoryClient = artifactoryClient,
             artifactsFactory = artifactsFactory,
             artifactsAdapter = artifactsAdapter,
-            logger = logger
+            loggerFactory = loggerFactory
         )
 
         @Suppress("DEPRECATION")

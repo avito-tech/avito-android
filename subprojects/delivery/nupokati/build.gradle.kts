@@ -12,6 +12,7 @@ dependencies {
     implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.common.problem)
+    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.statsdConfig)
