@@ -2,6 +2,7 @@ package com.avito.android.model.output
 
 import com.avito.android.model.input.DeploymentV3
 import okhttp3.HttpUrl
+import java.io.File
 
 internal class ArtifactsV3Factory : ArtifactsFactory<DeploymentV3> {
 
@@ -10,11 +11,7 @@ internal class ArtifactsV3Factory : ArtifactsFactory<DeploymentV3> {
         return when (deployment) {
             is DeploymentV3.AppBinary -> ArtifactV3.AppBinary(
                 store = deployment.store,
-                fileType = when (deployment.file.extension) {
-                    "aab" -> "bundle"
-                    "apk" -> "apk"
-                    else -> throw IllegalArgumentException("Unsupported extension: ${deployment.file.extension}")
-                },
+                fileType = getAndroidAppFileType(deployment.file),
                 name = file.name,
                 uri = url.toString(),
                 buildConfiguration = deployment.buildConfiguration,
@@ -26,11 +23,20 @@ internal class ArtifactsV3Factory : ArtifactsFactory<DeploymentV3> {
                 kind = deployment.kind,
             )
             is DeploymentV3.QApps -> ArtifactV3.QApps(
-                fileType = file.extension,
+                fileType = getAndroidAppFileType(deployment.file),
                 name = file.name,
                 uri = url.toString(),
-                isRelease = deployment.isRelease,
+                store = deployment.store,
+                buildConfiguration = deployment.buildConfiguration,
             )
+        }
+    }
+
+    private fun getAndroidAppFileType(file: File): String {
+        return when (file.extension) {
+            "aab" -> "bundle"
+            "apk" -> "apk"
+            else -> throw IllegalArgumentException("Unsupported android file app extension: ${file.extension}")
         }
     }
 }

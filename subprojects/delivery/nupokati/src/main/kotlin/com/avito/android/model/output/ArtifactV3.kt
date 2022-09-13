@@ -31,9 +31,10 @@ internal sealed class ArtifactV3 : Artifact() {
     @Serializable
     @SerialName("qapps")
     data class QApps(
+        val store: String,
         @SerialName("file_type") override val fileType: String,
         override val name: String,
         override val uri: String,
-        @SerialName("is_release") val isRelease: Boolean,
+        @SerialName("build_configuration") val buildConfiguration: String,
     ) : ArtifactV3()
 }
