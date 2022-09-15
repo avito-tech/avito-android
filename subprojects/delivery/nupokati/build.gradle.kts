@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.androidGradle)
     implementation(libs.okhttp)
 
+    implementation(projects.subprojects.delivery.qapps)
     implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.common.problem)
