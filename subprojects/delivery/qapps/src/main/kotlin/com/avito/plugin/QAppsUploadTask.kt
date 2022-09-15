@@ -1,7 +1,6 @@
 package com.avito.plugin
 
 import Slf4jGradleLoggerFactory
-import com.avito.android.VariantAwareTask
 import com.avito.android.getApkOrThrow
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
@@ -11,10 +10,12 @@ import com.avito.utils.buildFailer
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
@@ -24,10 +25,10 @@ import javax.inject.Inject
  */
 public abstract class QAppsUploadTask @Inject constructor(
     objects: ObjectFactory
-) : VariantAwareTask, DefaultTask() {
+) : DefaultTask() {
 
     @Input
-    public override val variantName: Property<String> = objects.property()
+    public val variantName: Property<String> = objects.property()
 
     @Input
     public val comment: Property<String> = objects.property()
@@ -49,6 +50,9 @@ public abstract class QAppsUploadTask @Inject constructor(
 
     @Input
     public val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
+
+    @Input
+    public val releaseBuildVariants: ListProperty<String> = objects.listProperty()
 
     @get:InputDirectory
     public abstract val apkDirectory: DirectoryProperty
@@ -73,7 +77,7 @@ public abstract class QAppsUploadTask @Inject constructor(
             versionName = versionName.get(),
             versionCode = versionCode.get(),
             packageName = packageName.get(),
-            releaseChain = releaseChain.get(),
+            releaseChain = releaseChain.getOrElse(false) && isReleaseBuildVariant(variantName.get()),
             httpClientProvider = httpClientProvider,
             loggerFactory = Slf4jGradleLoggerFactory
         ).upload()
@@ -82,5 +86,11 @@ public abstract class QAppsUploadTask @Inject constructor(
             { logger.info("Upload to qapps was successful: ${apk.path}") },
             { project.buildFailer.failBuild("Can't upload to qapps: ${apk.path};", it) }
         )
+    }
+
+    private fun isReleaseBuildVariant(variantName: String): Boolean {
+        return releaseBuildVariants.map { variants ->
+            variants.contains(variantName)
+        }.getOrElse(false)
     }
 }

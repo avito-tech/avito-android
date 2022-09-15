@@ -17,7 +17,9 @@ public class QAppsPlugin : Plugin<Project> {
         project.withAndroidApp { appExtension ->
             appExtension.applicationVariants.all { variant ->
 
-                project.tasks.register<QAppsUploadTask>(qappsUploadUnsignedTaskName(variant.name)) {
+                project.tasks.register<QAppsUploadTask>(
+                    qappsUploadUnsignedTaskName(variant.name),
+                ) {
                     description = "Upload unsigned ${variant.name} to qapps"
                     configure(extension, variant)
 
@@ -36,7 +38,9 @@ public class QAppsPlugin : Plugin<Project> {
                     val signedApkDir = project.tasks.signedApkDir(variant.name)
 
                     if (signedApkDir.isPresent) {
-                        project.tasks.register<QAppsUploadTask>(qappsUploadSignedTaskName(variant.name)) {
+                        project.tasks.register<QAppsUploadTask>(
+                            qappsUploadSignedTaskName(variant.name),
+                        ) {
                             description = "Upload signed ${variant.name} to qapps"
                             configure(extension, variant)
                             apkDirectory.set(signedApkDir)
@@ -58,9 +62,9 @@ public class QAppsPlugin : Plugin<Project> {
         versionName.set(variant.versionName)
         versionCode.set(variant.versionCode.toString())
         packageName.set(variant.applicationId)
-
         host.set(extension.serviceUrl)
         comment.set(extension.comment)
         branch.set(extension.branchName)
+        releaseBuildVariants.set(extension.releaseBuildVariants)
     }
 }
