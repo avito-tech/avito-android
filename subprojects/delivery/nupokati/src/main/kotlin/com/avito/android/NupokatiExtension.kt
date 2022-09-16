@@ -1,8 +1,10 @@
 package com.avito.android
 
+import com.avito.android.model.input.CdBuildConfigParserFactory
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Nested
 
 public abstract class NupokatiExtension {
@@ -25,5 +27,9 @@ public abstract class NupokatiExtension {
 
     public fun reportViewer(action: Action<ReportViewerExtension>) {
         action.execute(reportViewer)
+    }
+
+    public fun releaseVersion(): Provider<String> {
+        return cdBuildConfigFile.map(CdBuildConfigParserFactory()).map { it.releaseVersion }
     }
 }
