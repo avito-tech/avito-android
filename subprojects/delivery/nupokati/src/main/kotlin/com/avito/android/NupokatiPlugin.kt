@@ -4,13 +4,17 @@ import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.ApplicationVariant
 import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.android.agp.getVersionCode
 import com.avito.android.artifactory_backup.ArtifactoryBackupTask
 import com.avito.android.contract_upload.UploadCdBuildResultTask
-import com.avito.android.model.input.CdBuildConfig
 import com.avito.android.model.input.CdBuildConfigParserFactory
+import com.avito.android.model.input.CdBuildConfigV2
+import com.avito.android.model.input.CdBuildConfigV3
 import com.avito.android.stats.statsdConfig
 import com.avito.capitalize
+import com.avito.kotlin.dsl.withType
+import com.avito.plugin.QAppsUploadTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -24,17 +28,18 @@ import org.gradle.kotlin.dsl.withType
 
 public class NupokatiPlugin : Plugin<Project> {
 
-    /**
-     * to be accessible from client-side build scripts
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
-    public lateinit var cdBuildConfig: Provider<CdBuildConfig>
-
     override fun apply(project: Project) {
-
+        require(project.plugins.hasPlugin("com.avito.android.qapps")) {
+            "Nupokati needs com.avito.android.qapps. Apply it before nupokati"
+        }
         val extension = project.extensions.create<NupokatiExtension>("nupokati")
 
-        cdBuildConfig = extension.cdBuildConfigFile.map(CdBuildConfigParserFactory())
+        val cdBuildConfig = extension.cdBuildConfigFile.map(CdBuildConfigParserFactory())
+
+        val nupokatiTask = project.tasks.register("nupokati") {
+            it.group = CD_TASK_GROUP
+            it.description = "Root task for CD nupokati contract execution"
+        }
 
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -43,6 +48,13 @@ public class NupokatiPlugin : Plugin<Project> {
                 .withName(extension.releaseBuildVariantName.convention(DEFAULT_RELEASE_VARIANT).get())
 
             val skipUploadSpec = Spec<Task> {
+                if (!cdBuildConfig.isPresent) {
+                    project.logger.lifecycle(
+                        "Skip uploading artifacts and contract json, " +
+                            "because cdBuildConfigFile wasn't set"
+                    )
+                    return@Spec true
+                }
                 val skipUpload = cdBuildConfig.get().outputDescriptor.skipUpload
                 if (skipUpload) {
                     project.logger.lifecycle(
@@ -80,27 +92,50 @@ public class NupokatiPlugin : Plugin<Project> {
                         this.buildConfiguration.set(
                             requireNotNull(variant.buildType) { "buildType should not be null here" }
                         )
+                        onlyIf(skipUploadSpec)
+                    }
+
+                val uploadCdBuildResultTask =
+                    project.tasks.register<UploadCdBuildResultTask>(uploadCdBuildResultTaskName(variantSlug)) {
+                        group = CD_TASK_GROUP
+                        description = "Send build result to Nupokati service"
+
+                        this.artifactoryUser.set(extension.artifactory.login)
+                        this.artifactoryPassword.set(extension.artifactory.password)
+                        this.reportViewerUrl.set(extension.reportViewer.frontendUrl)
+                        this.reportCoordinates.set(extension.reportViewer.reportCoordinates)
+                        this.teamcityBuildUrl.set(extension.teamcityBuildUrl)
+                        this.cdBuildConfig.set(cdBuildConfig)
+                        this.appVersionCode.set(variant.getVersionCode())
+                        this.buildOutputFileProperty.set(publishArtifactsTask.flatMap { it.buildOutput })
+                        this.statsDConfig.set(project.statsdConfig)
+
+                        dependsOn(publishArtifactsTask)
 
                         onlyIf(skipUploadSpec)
                     }
 
-                project.tasks.register<UploadCdBuildResultTask>(uploadCdBuildResultTaskName(variantSlug)) {
-                    group = CD_TASK_GROUP
-                    description = "Send build result to Nupokati service"
+                nupokatiTask.dependsOn(uploadCdBuildResultTask)
 
-                    this.artifactoryUser.set(extension.artifactory.login)
-                    this.artifactoryPassword.set(extension.artifactory.password)
-                    this.reportViewerUrl.set(extension.reportViewer.frontendUrl)
-                    this.reportCoordinates.set(extension.reportViewer.reportCoordinates)
-                    this.teamcityBuildUrl.set(extension.teamcityBuildUrl)
-                    this.cdBuildConfig.set(this@NupokatiPlugin.cdBuildConfig)
-                    this.appVersionCode.set(variant.getVersionCode())
-                    this.buildOutputFileProperty.set(publishArtifactsTask.flatMap { it.buildOutput })
-                    this.statsDConfig.set(project.statsdConfig)
+                project.afterEvaluate {
+                    if (cdBuildConfig.isPresent) {
+                        when (val config = cdBuildConfig.get()) {
+                            is CdBuildConfigV2 -> {
+                                val qapps = config.deployments.filterIsInstance<CdBuildConfigV2.Deployment.Qapps>()
+                                val isRelease = qapps.any { it.isRelease }
+                                project.tasks.withType<QAppsUploadTask>().configureEach {
+                                    it.releaseChain.set(isRelease)
+                                    it.onlyIf {
+                                        qapps.isNotEmpty()
+                                    }
+                                }
+                            }
 
-                    dependsOn(publishArtifactsTask)
-
-                    onlyIf(skipUploadSpec)
+                            is CdBuildConfigV3 -> throw UnsupportedOperationException(
+                                "Fail to evaluate project. CdBuildConfigV3 currently unsupported"
+                            )
+                        }
+                    }
                 }
             }
         }

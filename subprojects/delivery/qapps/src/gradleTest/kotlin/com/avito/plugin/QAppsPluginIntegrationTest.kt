@@ -25,40 +25,70 @@ internal class QAppsPluginIntegrationTest {
         mockWebServer.shutdown()
     }
 
+    private data class TestCase(
+        val releaseBuildVariants: List<String>,
+        val releaseChain: Boolean,
+        val expectedReleaseChain: Boolean
+    )
+
     @TestFactory
     fun uploadApkIntegration(@TempDir tempPath: File): Collection<DynamicTest> {
-        prepareProject(tempPath)
+        return listOf(
+            TestCase(
+                releaseBuildVariants = listOf("debug"),
+                releaseChain = false,
+                expectedReleaseChain = false,
+            ),
+            TestCase(
+                releaseBuildVariants = listOf("debug"),
+                releaseChain = true,
+                expectedReleaseChain = true,
+            ),
+            TestCase(
+                releaseBuildVariants = emptyList(),
+                releaseChain = true,
+                expectedReleaseChain = false,
+            ),
+            TestCase(
+                releaseBuildVariants = emptyList(),
+                releaseChain = false,
+                expectedReleaseChain = false,
+            ),
+        ).flatMap { testCase ->
+            prepareProject(tempPath, testCase)
 
-        val runResult = runUpload(tempPath)
+            val runResult = runUpload(tempPath)
 
-        val testCollection = mutableListOf<DynamicTest>()
+            val testCollection = mutableListOf<DynamicTest>()
 
-        testCollection += dynamicTest("build is successful") {
-            runResult.assertThat().buildSuccessful()
-        }
-
-        val request = mockWebServer.takeRequest()
-
-        testCollection += dynamicTest("request path is correct") {
-            assertThat(request.path).isEqualTo("/qapps/api/os/android/upload")
-        }
-
-        val body = request.body.readUtf8()
-
-        testCollection += listOf(
-            "branch" to "My-feature-branch",
-            "comment" to "my awesome apk",
-            "version_code" to "111",
-            "version_name" to "12.3",
-            "package_name" to "com.qapps.app"
-        )
-            .map { (key, value) ->
-                dynamicTest("param $key passed with correct value") {
-                    assertThat(body).containsMatch(multipartBodyFormData(key, value))
-                }
+            testCollection += dynamicTest("build is successful") {
+                runResult.assertThat().buildSuccessful()
             }
 
-        return testCollection
+            val request = mockWebServer.takeRequest()
+
+            testCollection += dynamicTest("request path is correct") {
+                assertThat(request.path).isEqualTo("/qapps/api/os/android/upload")
+            }
+
+            val body = request.body.readUtf8()
+
+            testCollection += listOf(
+                "branch" to "My-feature-branch",
+                "comment" to "my awesome apk",
+                "version_code" to "111",
+                "version_name" to "12.3",
+                "package_name" to "com.qapps.app",
+                "release_chain" to testCase.expectedReleaseChain.toString()
+            )
+                .map { (key, value) ->
+                    dynamicTest("param $key passed with correct value") {
+                        assertThat(body).containsMatch(multipartBodyFormData(key, value))
+                    }
+                }
+
+            testCollection
+        }
     }
 
     private fun multipartBodyFormData(key: String, value: String) =
@@ -77,14 +107,23 @@ internal class QAppsPluginIntegrationTest {
         )
     }
 
-    private fun prepareProject(projectDir: File) {
+    private fun prepareProject(
+        projectDir: File,
+        testCase: QAppsPluginIntegrationTest.TestCase,
+    ) {
+        val releaseBuildVariants = testCase.releaseBuildVariants
+            .joinToString(separator = ",") {
+                "\"$it\""
+            }
+
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
                     imports = listOf(
-                        "import com.avito.plugin.qappsUploadUnsignedTaskProvider"
+                        "import com.avito.plugin.qappsUploadUnsignedTaskProvider",
+                        "import com.avito.plugin.QAppsUploadTask"
                     ),
                     plugins = plugins {
                         id("com.avito.android.qapps")
@@ -97,6 +136,10 @@ internal class QAppsPluginIntegrationTest {
                             serviceUrl.set("${mockWebServer.url("/")}")
                             branchName.set("My-feature-branch")
                             comment.set("my awesome apk")
+                            releaseBuildVariants.set(listOf($releaseBuildVariants))
+                         }
+                         tasks.withType<QAppsUploadTask>().configureEach {
+                            releaseChain.set(${testCase.releaseChain})
                          }
                          afterEvaluate {
                             tasks.qappsUploadUnsignedTaskProvider("debug").configure {

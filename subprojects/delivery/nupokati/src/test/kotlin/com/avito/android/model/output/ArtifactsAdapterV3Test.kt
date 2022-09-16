@@ -32,6 +32,14 @@ internal class ArtifactsAdapterV3Test {
             |"build_configuration":"release"
             |},
             |{
+            |"type":"qapps",
+            |"store":"ru-store",
+            |"file_type":"apk",
+            |"name":"stub.apk",
+            |"uri":"http://artifactory/artifactory/mobile-releases/avito_test_android/1792.0_1/stub.apk",
+            |"build_configuration":"release"
+            |},
+            |{
             |"type":"artifact",
             |"file_type":"json",
             |"name":"feature_toggles.json",
@@ -53,6 +61,13 @@ internal class ArtifactsAdapterV3Test {
             fileType = "bundle",
             name = bundleFileName,
             uri = "${url}artifactory/mobile-releases/avito_test_android/1792.0_1/$bundleFileName",
+            buildConfiguration = "release"
+        ),
+        ArtifactV3.QApps(
+            store = "ru-store",
+            fileType = "apk",
+            name = apkFileName,
+            uri = "${url}artifactory/mobile-releases/avito_test_android/1792.0_1/$apkFileName",
             buildConfiguration = "release"
         ),
         ArtifactV3.FileArtifact(
