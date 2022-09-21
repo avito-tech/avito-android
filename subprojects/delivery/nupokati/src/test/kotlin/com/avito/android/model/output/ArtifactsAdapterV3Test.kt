@@ -1,5 +1,7 @@
 package com.avito.android.model.output
 
+import com.avito.android.artifactory_backup.ArtifactV3
+import com.avito.android.artifactory_backup.ArtifactsAdapter
 import com.google.common.truth.Truth
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test

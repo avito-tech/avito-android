@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class CdBuildConfigV3(
+internal data class CdBuildConfigV3(
     @SerialName("schema_version") override val schemaVersion: Long,
     val project: NupokatiProject,
     @SerialName("output_descriptor") override val outputDescriptor: OutputDescriptor,
@@ -13,11 +13,11 @@ public data class CdBuildConfigV3(
 ) : CdBuildConfig {
 
     @Serializable
-    public sealed class Deployment {
+    sealed class Deployment {
 
         @Serializable
         @SerialName("app-binary")
-        public data class AppBinary(
+        data class AppBinary(
             val store: String,
             @SerialName("file_type") val fileType: AndroidArtifactType,
             @SerialName("build_configuration") val buildConfiguration: String
@@ -25,7 +25,7 @@ public data class CdBuildConfigV3(
 
         @Serializable
         @SerialName("artifact")
-        public data class Artifact(
+        data class Artifact(
             val kind: String,
             @SerialName("file_type") val fileType: String
         ) : Deployment()
@@ -35,7 +35,7 @@ public data class CdBuildConfigV3(
          */
         @Serializable
         @SerialName("qapps")
-        public data class Qapps(
+        data class Qapps(
             @SerialName("is_release") val isRelease: Boolean
         ) : Deployment()
     }

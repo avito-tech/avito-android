@@ -2,9 +2,6 @@ package com.avito.android.artifactory_backup
 
 import com.avito.android.http.ArtifactoryClient
 import com.avito.android.model.input.Deployment
-import com.avito.android.model.output.Artifact
-import com.avito.android.model.output.ArtifactsAdapter
-import com.avito.android.model.output.ArtifactsFactory
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import okhttp3.HttpUrl.Companion.toHttpUrl
