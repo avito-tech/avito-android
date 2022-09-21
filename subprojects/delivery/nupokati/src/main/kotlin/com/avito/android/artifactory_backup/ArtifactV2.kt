@@ -1,4 +1,4 @@
-package com.avito.android.model.output
+package com.avito.android.artifactory_backup
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +15,8 @@ internal sealed class ArtifactV2 : Artifact() {
         override val type: String,
         override val name: String,
         override val uri: String,
-        @SerialName("build_variant") val buildVariant: String
+        @SerialName("build_variant")
+        val buildVariant: String
     ) : ArtifactV2()
 
     @Serializable

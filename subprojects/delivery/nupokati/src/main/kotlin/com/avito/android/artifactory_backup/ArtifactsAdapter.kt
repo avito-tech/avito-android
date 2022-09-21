@@ -1,4 +1,4 @@
-package com.avito.android.model.output
+package com.avito.android.artifactory_backup
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
