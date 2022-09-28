@@ -32,7 +32,7 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
     @get:Input
     public abstract val artifactoryUploadPath: Property<String>
 
-    @Deprecated("included in Artifact for schema version >= 3")
+    @Deprecated("included in Artifact for schema version < 3")
     @get:Input
     public abstract val buildConfiguration: Property<String>
 
