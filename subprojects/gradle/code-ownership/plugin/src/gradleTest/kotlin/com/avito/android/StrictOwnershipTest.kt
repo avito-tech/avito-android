@@ -34,6 +34,9 @@ internal class StrictOwnershipTest {
                     modules = listOf(
                         AndroidAppModule(
                             "app",
+                            plugins = plugins {
+                                id("com.avito.android.code-ownership-validation")
+                            },
                             imports = listOf("import com.avito.android.model.Owner"),
                             dependencies = setOf(
                                 project(
@@ -54,6 +57,9 @@ internal class StrictOwnershipTest {
                         ),
                         AndroidLibModule(
                             name = "feature",
+                            plugins = plugins {
+                                id("com.avito.android.code-ownership-validation")
+                            },
                             imports = listOf("import com.avito.android.model.Owner"),
                             dependencies = setOf(
                                 project(
@@ -75,6 +81,9 @@ internal class StrictOwnershipTest {
                         ),
                         AndroidLibModule(
                             name = "dependent_test_module",
+                            plugins = plugins {
+                                id("com.avito.android.code-ownership-validation")
+                            },
                             imports = listOf("import com.avito.android.model.Owner"),
                             buildGradleExtra = if (case.isOwnershipConfigured) {
                                 """
