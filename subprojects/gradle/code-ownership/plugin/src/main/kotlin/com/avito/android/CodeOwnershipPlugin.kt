@@ -5,6 +5,7 @@ package com.avito.android
 import com.avito.android.diff.ReportCodeOwnershipDiffTask
 import com.avito.android.diff.ReportCodeOwnershipExtension
 import com.avito.android.info.ReportCodeOwnershipInfoTask
+import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -16,8 +17,27 @@ public class CodeOwnershipPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         check(target.isRoot()) { "Code ownership plugin must be applied to the root project" }
 
+        configureStrictOwnershipCheck(target)
         configureDiffReportTask(target)
         configureInfoReportTask(target)
+    }
+
+    private fun configureStrictOwnershipCheck(target: Project) {
+        val extractValidationPlugin = target.getBooleanProperty("avito.ownership.extractValidationPlugin", false)
+        if (extractValidationPlugin) return
+
+        val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
+        target.subprojects { subproject ->
+            subproject.plugins.withId("kotlin") {
+                setupLibrary(subproject, strictOwnership)
+            }
+            subproject.plugins.withId("com.android.library") {
+                setupLibrary(subproject, strictOwnership)
+            }
+            subproject.plugins.withId("com.android.application") {
+                setupLibrary(subproject, strictOwnership)
+            }
+        }
     }
 
     private fun configureDiffReportTask(target: Project) {
