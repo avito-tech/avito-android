@@ -20,6 +20,7 @@ xmlUnit = "2.9.0"
 hamcrest = "2.2"
 moshi = "1.13.0"
 moshiX = "0.17.2"
+ktor = "2.1.2"
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
@@ -134,5 +135,13 @@ moshiRetrofit = "com.squareup.retrofit2:converter-moshi:2.9.0"
 moshiSealedRuntime = { module = "dev.zacsweers.moshix:moshi-sealed-runtime", version.ref = "moshiX" }
 moshiSealedCodegen = { module = "dev.zacsweers.moshix:moshi-sealed-codegen", version.ref = "moshiX" }
 
+# https://github.com/ktorio/ktor/releases
+ktorCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktorNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktorContentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktorSerializationGson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
+ktorClient = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]
+ktor = ["ktorCore", "ktorNetty", "ktorContentNegotiation", "ktorSerializationGson"]

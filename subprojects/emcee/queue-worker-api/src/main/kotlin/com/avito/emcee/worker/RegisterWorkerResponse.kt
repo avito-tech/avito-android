@@ -16,5 +16,6 @@ public data class RegisterWorkerResponse(
         val portRange: Any,
         val payloadSignature: String,
         val maximumCacheTTL: Long,
+        val trackSigkillIgnorance: Boolean
     )
 }
