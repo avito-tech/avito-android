@@ -78,6 +78,7 @@ internal class ExportOwnershipInfoTest {
         gradlew(
             projectDir,
             "reportCodeOwnershipInfo",
+            "-Pavito.ownership.extractValidationPlugin=true"
         ).assertThat().buildSuccessful()
 
         val file = File(projectDir, "ownership.csv")
