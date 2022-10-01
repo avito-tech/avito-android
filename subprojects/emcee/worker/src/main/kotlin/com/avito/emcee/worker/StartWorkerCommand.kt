@@ -3,8 +3,11 @@ package com.avito.emcee.worker
 import com.avito.emcee.worker.WorkerQueueApi.Companion.createWorkerQueueApi
 import com.avito.emcee.worker.internal.TestJobProducerImpl
 import com.avito.emcee.worker.internal.consumer.FakeTestJobConsumer
+import com.avito.emcee.worker.internal.identifier.HostnameWorkerIdProvider
+import com.avito.emcee.worker.internal.identifier.WorkerIdProvider
 import com.avito.emcee.worker.internal.networking.SocketAddressResolver
 import com.avito.emcee.worker.internal.rest.HttpServer
+import com.avito.emcee.worker.internal.rest.handler.HealthCheckRequestHandler
 import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
 import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
 import com.avito.emcee.worker.internal.storage.SingleElementProcessingBucketsStorage
@@ -62,16 +65,18 @@ internal class StartWorkerCommand(
         )
         val bucketsStorage: ProcessingBucketsStorage = SingleElementProcessingBucketsStorage()
         val api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl)
+        val workerIdProvider: WorkerIdProvider = HostnameWorkerIdProvider()
 
         HttpServer.Builder()
             .addHandler(ProcessingBucketsRequestHandler(bucketsStorage))
+            .addHandler(HealthCheckRequestHandler)
             .debug(debugMode)
             .build()
             .start(config.workerPort)
 
         val producer = TestJobProducerImpl(
             api = api,
-            workerId = config.workerId,
+            workerId = workerIdProvider.provide(),
             workerAddress = socketAddressResolver.resolve(config.workerPort)
         )
         val consumer = FakeTestJobConsumer(

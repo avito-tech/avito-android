@@ -1,5 +1,5 @@
 {
     "workerPort": 80,
-    "queueUrl": "http://127.0.0.1:41000",
+    "queueUrl": "http://emcee-queue-service:41000",
     "androidSdkPath": "/Users/john/androidSdk"
 }

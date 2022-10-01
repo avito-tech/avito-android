@@ -39,6 +39,8 @@ tasks {
             .map { if (it.isDirectory) it else zipTree(it) } +
             sourcesMain.output
 
+        archiveFileName.set("emcee-worker.jar")
+
         from(contents)
         dependsOn("assemble")
     }

@@ -6,7 +6,7 @@ internal class SocketAddressResolver {
 
     fun resolve(port: Int): SocketAddress {
         return SocketAddress(
-            host = InetAddress.getLocalHost().hostName,
+            host = InetAddress.getLocalHost().hostAddress,
             port = port
         )
     }
