@@ -79,6 +79,7 @@ public abstract class EmceeTestTask : DefaultTask() {
             user = artifactory.user.get(),
             password = artifactory.password.get(),
             repository = artifactory.repository.get(),
+            folder = artifactory.folder.get()
         )
 
         val emceeTestAction = EmceeTestActionFactory

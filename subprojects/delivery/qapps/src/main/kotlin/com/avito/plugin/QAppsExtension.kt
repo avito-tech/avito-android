@@ -1,7 +1,9 @@
 package com.avito.plugin
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
@@ -19,4 +21,9 @@ public open class QAppsExtension @Inject constructor(objects: ObjectFactory) {
      * Branch name without remote specified
      */
     public val branchName: Property<String> = objects.property()
+
+    /**
+     * Set android build variant names you expect as release
+     */
+    public val releaseBuildVariants: ListProperty<String> = objects.listProperty()
 }

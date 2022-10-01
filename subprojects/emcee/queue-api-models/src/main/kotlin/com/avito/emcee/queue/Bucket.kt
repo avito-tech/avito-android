@@ -8,4 +8,6 @@ public data class Bucket(
     val payloadContainer: PayloadContainer,
     val analyticsConfiguration: Any,
     val workerCapabilityRequirements: List<String>
-)
+) {
+    public companion object
+}

@@ -12,6 +12,7 @@ import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.MockResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -30,6 +31,7 @@ internal class NupokatiPluginV3IntegrationTest {
     }
 
     @Test
+    @Disabled("MBSA-743")
     fun `uploadCdBuildResult - json contains required data`(@TempDir projectDir: File) {
 
         val outputDescriptorPath =
@@ -80,10 +82,14 @@ internal class NupokatiPluginV3IntegrationTest {
         val versionCode = 122
 
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
                     plugins = plugins {
+                        id("com.avito.android.qapps")
                         id("com.avito.android.nupokati")
                     },
                     versionCode = versionCode,
@@ -216,11 +222,14 @@ internal class NupokatiPluginV3IntegrationTest {
 
         gradlew(
             projectDir,
-            ":app:uploadCdBuildResultRelease",
+            ":app:nupokati",
+            expectFailure = true,
             dryRun = false
         )
             .assertThat()
-            .buildSuccessful()
+            // TODO  replace with success when MBSA-743
+            .outputContains("Fail to evaluate project. CdBuildConfigV3 currently unsupported")
+            .buildFailed()
 
         // todo add QAPPS test
         val expectedContract = """

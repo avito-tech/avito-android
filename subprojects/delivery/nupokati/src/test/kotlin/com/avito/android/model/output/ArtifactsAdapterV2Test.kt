@@ -1,5 +1,7 @@
 package com.avito.android.model.output
 
+import com.avito.android.artifactory_backup.ArtifactV2
+import com.avito.android.artifactory_backup.ArtifactsAdapter
 import com.google.common.truth.Truth
 import kotlinx.serialization.json.JsonElement
 import org.intellij.lang.annotations.Language

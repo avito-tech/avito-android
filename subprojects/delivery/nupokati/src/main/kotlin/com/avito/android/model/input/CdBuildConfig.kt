@@ -1,10 +1,10 @@
 package com.avito.android.model.input
 
-public sealed interface CdBuildConfig {
+internal sealed interface CdBuildConfig {
 
-    public val schemaVersion: Long
+    val schemaVersion: Long
 
-    public val releaseVersion: String
+    val releaseVersion: String
 
-    public val outputDescriptor: OutputDescriptor
+    val outputDescriptor: OutputDescriptor
 }

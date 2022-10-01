@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class CdBuildConfigV2(
+internal data class CdBuildConfigV2(
     @SerialName("schema_version") override val schemaVersion: Long,
     val project: NupokatiProject,
     @SerialName("output_descriptor") override val outputDescriptor: OutputDescriptor,
@@ -13,11 +13,11 @@ public data class CdBuildConfigV2(
 ) : CdBuildConfig {
 
     @Serializable
-    public sealed class Deployment {
+    sealed class Deployment {
 
         @Serializable
         @SerialName("google-play")
-        public data class GooglePlay(
+        data class GooglePlay(
             @SerialName("artifact_type") val artifactType: AndroidArtifactType,
             // TODO: decouple logic and move the mapping on client side MBSA-636
             // Contract should show a declarative intention, but build variants are more implementation details.
@@ -29,7 +29,7 @@ public data class CdBuildConfigV2(
 
         @Serializable
         @SerialName("ru-store")
-        public data class RuStore(
+        data class RuStore(
             @SerialName("artifact_type") val artifactType: AndroidArtifactType,
         ) : Deployment()
 
@@ -38,7 +38,7 @@ public data class CdBuildConfigV2(
          */
         @Serializable
         @SerialName("qapps")
-        public data class Qapps(
+        data class Qapps(
             /**
              * Send artifacts as release versions.
              * Non-release artifacts are stored for a limited time.
@@ -46,7 +46,7 @@ public data class CdBuildConfigV2(
             @SerialName("is_release") val isRelease: Boolean
         ) : Deployment()
 
-        public enum class Track {
+        enum class Track {
             alpha,
             internal,
             beta,

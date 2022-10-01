@@ -12,11 +12,14 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.moshi)
+    implementation(libs.bundles.ktor)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
     ksp(libs.moshiCodegen)
 
     testImplementation(libs.truth)
+    testImplementation(libs.ktorClient)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
 }
 
 application {

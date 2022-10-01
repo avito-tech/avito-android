@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public enum class AndroidArtifactType {
+internal enum class AndroidArtifactType {
 
     @SerialName("bundle")
     BUNDLE,

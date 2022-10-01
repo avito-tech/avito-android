@@ -16,13 +16,11 @@ import kotlinx.cli.Subcommand
 import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.io.File
-import java.util.concurrent.Executors
 import kotlin.time.ExperimentalTime
 
 @ExperimentalStdlibApi
@@ -69,11 +67,7 @@ internal class StartWorkerCommand(
             .addHandler(ProcessingBucketsRequestHandler(bucketsStorage))
             .debug(debugMode)
             .build()
-            .also {
-                Executors.newSingleThreadExecutor().execute {
-                    it.start(config.workerPort)
-                }
-            }
+            .start(config.workerPort)
 
         val producer = TestJobProducerImpl(
             api = api,

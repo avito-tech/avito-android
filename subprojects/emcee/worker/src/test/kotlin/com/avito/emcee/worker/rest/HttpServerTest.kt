@@ -1,67 +1,59 @@
 package com.avito.emcee.worker.rest
 
+import com.avito.emcee.queue.Bucket
 import com.avito.emcee.worker.internal.rest.HttpServer
 import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
+import com.avito.emcee.worker.internal.storage.SingleElementProcessingBucketsStorage
+import com.avito.emcee.worker.rest.stub.stub
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.post
+import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.net.ServerSocket
-import java.util.concurrent.Executors
 
+@ExperimentalCoroutinesApi
 class HttpServerTest {
 
     private var port: Int? = null
-    private val client = SimpleClient()
+    private val bucketsStorage = SingleElementProcessingBucketsStorage()
     private val server = createServer()
+    private val client = HttpClient(CIO)
 
     @BeforeEach
-    fun before() {
+    fun beforeAll() {
         port = findAvailablePort()
-        Executors.newSingleThreadExecutor().submit { server.start(port!!) }
-        waitServerStart()
-
-        client.start("127.0.0.1", port!!)
+        server.start(port!!)
     }
 
     @Test
-    fun `http server - returns 200 OK - when request is supported`() {
-
-        val response = client.sendRequest(
-            """
-            |POST /currentlyProcessingBuckets HTTP/1.0
-            |Content-Type: application-json
-            |
-            |{"param":1}
-        """.trimMargin()
-        )
-        assertEquals(response, "HTTP/1.0 200 OK")
+    fun `processing buckets - returns correct result - when buckets list is empty`() = runTest {
+        val response = client.post("http://127.0.0.1:$port/currentlyProcessingBuckets")
+        assertEquals("{\"bucketIds\":[]}", response.bodyAsText())
     }
 
     @Test
-    fun `http server - returns 400 Bad Request - when request is unknown`() {
-        client.start("127.0.0.1", port!!)
-        val response = client.sendRequest(
-            """
-            |POST /unknownRequest HTTP/1.0
-            |Content-Type: application-json
-            |
-            |{"param":1}
-        """.trimMargin()
-        )
-        assertEquals(response, "HTTP/1.0 400 Bad Request")
+    fun `processing buckets - returns correct result - when buckets list has entries`() = runTest {
+        bucketsStorage.add(Bucket.stub("stub-bucket-id"))
+        val response = client.post("http://127.0.0.1:$port/currentlyProcessingBuckets")
+        assertEquals("{\"bucketIds\":[\"stub-bucket-id\"]}", response.bodyAsText())
+    }
+
+    @Test
+    fun `unknown request - returns 400 Not Found`() = runTest {
+        val response = client.post("http://127.0.0.1:$port/unknownRequest")
+        assertEquals(404, response.status.value)
+        assertEquals("Not Found", response.status.description)
     }
 
     @AfterEach
     fun after() {
-        client.stop()
         server.stop()
-    }
-
-    private fun waitServerStart() {
-        while (!server.isStarted) {
-            Thread.onSpinWait()
-        }
     }
 
     private fun findAvailablePort(): Int {
@@ -72,7 +64,7 @@ class HttpServerTest {
     }
 
     private fun createServer(): HttpServer = HttpServer.Builder()
-        .addHandler(ProcessingBucketsRequestHandler(NoOpProcessingBucketsStorage()))
+        .addHandler(ProcessingBucketsRequestHandler(bucketsStorage))
         .debug(true)
         .build()
 }

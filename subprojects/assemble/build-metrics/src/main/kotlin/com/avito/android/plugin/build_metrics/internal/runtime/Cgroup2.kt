@@ -40,12 +40,18 @@ internal sealed class Cgroup2 {
             val cgroupDir = File("/sys/fs/cgroup")
 
             return if (cgroupDir.exists()) {
-                Available(
-                    memory = Memory(
-                        memoryMax = File(cgroupDir, "memory.max"),
-                        memoryCurrent = File(cgroupDir, "memory.current")
+                val memoryMax = File(cgroupDir, "memory.max")
+                val memoryCurrent = File(cgroupDir, "memory.current")
+                if (memoryMax.exists() && memoryCurrent.exists()) {
+                    Available(
+                        memory = Memory(
+                            memoryMax = memoryMax,
+                            memoryCurrent = memoryCurrent
+                        )
                     )
-                )
+                } else {
+                    Unavailable
+                }
             } else {
                 Unavailable
             }

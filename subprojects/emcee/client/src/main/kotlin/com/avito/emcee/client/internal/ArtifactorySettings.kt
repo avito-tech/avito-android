@@ -8,4 +8,5 @@ public data class ArtifactorySettings(
     val user: String,
     val password: String,
     val repository: String,
+    val folder: String,
 )

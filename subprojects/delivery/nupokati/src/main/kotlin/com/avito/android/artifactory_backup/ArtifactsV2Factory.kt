@@ -1,4 +1,4 @@
-package com.avito.android.model.output
+package com.avito.android.artifactory_backup
 
 import com.avito.android.model.input.DeploymentV2
 import okhttp3.HttpUrl

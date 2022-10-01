@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public enum class NupokatiProject(public val id: String) {
+internal enum class NupokatiProject(val id: String) {
 
     @SerialName("avito")
     AVITO("avito"),

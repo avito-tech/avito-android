@@ -2,18 +2,18 @@ package com.avito.android.artifactory_backup
 
 import com.avito.android.http.ArtifactoryClient
 import com.avito.android.model.input.Deployment
-import com.avito.android.model.output.Artifact
-import com.avito.android.model.output.ArtifactsAdapter
-import com.avito.android.model.output.ArtifactsFactory
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import org.gradle.api.logging.Logger
 
 internal class ArtifactoryBackupAction(
     private val artifactoryClient: ArtifactoryClient,
     private val artifactsFactory: ArtifactsFactory<Deployment>,
     private val artifactsAdapter: ArtifactsAdapter,
-    private val logger: Logger,
+    loggerFactory: LoggerFactory,
 ) {
+
+    private val logger = loggerFactory.create<ArtifactoryBackupAction>()
 
     fun backup(
         artifactoryUploadPath: String,
@@ -23,7 +23,7 @@ internal class ArtifactoryBackupAction(
 
         val artifacts = mutableListOf<Artifact>()
 
-        logger.lifecycle("Uploading artifacts: path=$artifactoryUploadPath, deployments=$deployments")
+        logger.info("Uploading artifacts: path=$artifactoryUploadPath, deployments=$deployments")
 
         deployments.forEach { deployment ->
             val url = destinationFolder.newBuilder().addEncodedPathSegment(deployment.file.name).build()
@@ -32,9 +32,9 @@ internal class ArtifactoryBackupAction(
 
             if (response.isSuccessful) {
                 artifacts.add(artifact)
-                logger.lifecycle("Artifact uploaded successfully: $artifact")
+                logger.info("Artifact uploaded successfully: $artifact")
             } else {
-                logger.error(
+                logger.warn(
                     "Can't upload artifact: $artifact; " +
                         "code=${response.code}; " +
                         "body=${response.body?.string()}"

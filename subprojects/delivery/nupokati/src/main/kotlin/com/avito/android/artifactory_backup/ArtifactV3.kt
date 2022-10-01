@@ -1,4 +1,4 @@
-package com.avito.android.model.output
+package com.avito.android.artifactory_backup
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,16 +13,19 @@ internal sealed class ArtifactV3 : Artifact() {
     @SerialName("app-binary")
     data class AppBinary(
         val store: String,
-        @SerialName("file_type") override val fileType: String,
+        @SerialName("file_type")
+        override val fileType: String,
         override val name: String,
         override val uri: String,
-        @SerialName("build_configuration") val buildConfiguration: String,
+        @SerialName("build_configuration")
+        val buildConfiguration: String,
     ) : ArtifactV3()
 
     @Serializable
     @SerialName("artifact")
     data class FileArtifact(
-        @SerialName("file_type") override val fileType: String,
+        @SerialName("file_type")
+        override val fileType: String,
         override val name: String,
         override val uri: String,
         val kind: String,
@@ -31,9 +34,12 @@ internal sealed class ArtifactV3 : Artifact() {
     @Serializable
     @SerialName("qapps")
     data class QApps(
-        @SerialName("file_type") override val fileType: String,
+        val store: String,
+        @SerialName("file_type")
+        override val fileType: String,
         override val name: String,
         override val uri: String,
-        @SerialName("is_release") val isRelease: Boolean,
+        @SerialName("build_configuration")
+        val buildConfiguration: String,
     ) : ArtifactV3()
 }

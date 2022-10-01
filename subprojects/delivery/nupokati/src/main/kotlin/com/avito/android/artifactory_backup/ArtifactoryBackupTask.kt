@@ -4,11 +4,8 @@ import com.avito.android.http.ArtifactoryClient
 import com.avito.android.http.createArtifactoryHttpClient
 import com.avito.android.model.input.Deployment
 import com.avito.android.model.input.DeploymentV2
-import com.avito.android.model.output.ArtifactsAdapter
-import com.avito.android.model.output.ArtifactsFactory
-import com.avito.android.model.output.ArtifactsV2Factory
-import com.avito.android.model.output.ArtifactsV3Factory
 import com.avito.android.stats.StatsDConfig
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -35,7 +32,7 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
     @get:Input
     public abstract val artifactoryUploadPath: Property<String>
 
-    @Deprecated("included in Artifact for schema version >= 3")
+    @Deprecated("included in Artifact for schema version < 3")
     @get:Input
     public abstract val buildConfiguration: Property<String>
 
@@ -47,7 +44,7 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
     public abstract val files: Property<FileCollection>
 
     @get:Input
-    public abstract val artifacts: ListProperty<Deployment>
+    internal abstract val artifacts: ListProperty<Deployment>
 
     @get:Internal
     public abstract val statsDConfig: Property<StatsDConfig>
@@ -57,6 +54,8 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
 
     @TaskAction
     public fun doWork() {
+        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
+
         val httpClient = createArtifactoryHttpClient(
             user = artifactoryUser.get(),
             password = artifactoryPassword.get(),
@@ -73,12 +72,11 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
         }
 
         val artifactsAdapter = ArtifactsAdapter(schemaVersion = schemaVersion.get())
-
         val artifactoryBackupAction = ArtifactoryBackupAction(
             artifactoryClient = artifactoryClient,
             artifactsFactory = artifactsFactory,
             artifactsAdapter = artifactsAdapter,
-            logger = logger
+            loggerFactory = loggerFactory
         )
 
         @Suppress("DEPRECATION")
