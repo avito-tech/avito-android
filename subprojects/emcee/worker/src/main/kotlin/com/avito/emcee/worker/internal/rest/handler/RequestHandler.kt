@@ -1,5 +1,5 @@
 package com.avito.emcee.worker.internal.rest.handler
 
-import com.avito.emcee.worker.internal.rest.HttpMethod
+import io.ktor.http.HttpMethod
 
-internal open class RequestHandler(val method: HttpMethod, val path: String, val response: () -> String)
+internal open class RequestHandler<T : Any>(val method: HttpMethod, val path: String, val response: () -> T)

@@ -1,21 +1,12 @@
 package com.avito.emcee.worker.internal.rest.handler
 
-import com.avito.emcee.worker.internal.rest.HttpMethod
+import com.avito.emcee.worker.internal.rest.model.CurrentlyProcessingBucketsResponse
 import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
+import io.ktor.http.HttpMethod
 
 internal class ProcessingBucketsRequestHandler(
     private val bucketsStorage: ProcessingBucketsStorage,
-) : RequestHandler(HttpMethod.POST, "/currentlyProcessingBuckets", {
+) : RequestHandler<CurrentlyProcessingBucketsResponse>(HttpMethod.Post, "/currentlyProcessingBuckets", {
 
-    val bucketIds = bucketsStorage.getAll().joinToString(
-        separator = ",",
-        prefix = "[",
-        postfix = "]",
-    ) { "\"${it.bucketId}\"" }
-
-    """
-        |{ 
-        |    "bucketIds": $bucketIds
-        |}
-    """.trimMargin()
+    CurrentlyProcessingBucketsResponse(bucketsStorage.getAll().map { it.bucketId })
 })
