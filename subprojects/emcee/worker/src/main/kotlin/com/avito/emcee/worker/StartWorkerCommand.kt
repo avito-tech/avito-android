@@ -3,8 +3,11 @@ package com.avito.emcee.worker
 import com.avito.emcee.worker.WorkerQueueApi.Companion.createWorkerQueueApi
 import com.avito.emcee.worker.internal.TestJobProducerImpl
 import com.avito.emcee.worker.internal.consumer.FakeTestJobConsumer
+import com.avito.emcee.worker.internal.identifier.HostnameWorkerIdProvider
+import com.avito.emcee.worker.internal.identifier.WorkerIdProvider
 import com.avito.emcee.worker.internal.networking.SocketAddressResolver
 import com.avito.emcee.worker.internal.rest.HttpServer
+import com.avito.emcee.worker.internal.rest.handler.HealthCheckRequestHandler
 import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
 import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
 import com.avito.emcee.worker.internal.storage.SingleElementProcessingBucketsStorage
@@ -16,13 +19,11 @@ import kotlinx.cli.Subcommand
 import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.io.File
-import java.util.concurrent.Executors
 import kotlin.time.ExperimentalTime
 
 @ExperimentalStdlibApi
@@ -64,20 +65,18 @@ internal class StartWorkerCommand(
         )
         val bucketsStorage: ProcessingBucketsStorage = SingleElementProcessingBucketsStorage()
         val api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl)
+        val workerIdProvider: WorkerIdProvider = HostnameWorkerIdProvider()
 
         HttpServer.Builder()
             .addHandler(ProcessingBucketsRequestHandler(bucketsStorage))
+            .addHandler(HealthCheckRequestHandler)
             .debug(debugMode)
             .build()
-            .also {
-                Executors.newSingleThreadExecutor().execute {
-                    it.start(config.workerPort)
-                }
-            }
+            .start(config.workerPort)
 
         val producer = TestJobProducerImpl(
             api = api,
-            workerId = config.workerId,
+            workerId = workerIdProvider.provide(),
             workerAddress = socketAddressResolver.resolve(config.workerPort)
         )
         val consumer = FakeTestJobConsumer(
