@@ -28,4 +28,11 @@ gradlePlugin {
             displayName = "Ownership"
         }
     }
+    plugins {
+        create("codeOwnershipValidationPlugin") {
+            id = "com.avito.android.code-ownership-validation"
+            implementationClass = "com.avito.android.CodeOwnershipValidationPlugin"
+            displayName = "Ownership Validation"
+        }
+    }
 }

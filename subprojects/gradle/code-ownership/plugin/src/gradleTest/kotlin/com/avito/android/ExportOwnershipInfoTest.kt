@@ -26,6 +26,9 @@ internal class ExportOwnershipInfoTest {
             modules = listOf(
                 AndroidAppModule(
                     "app",
+                    plugins = plugins {
+                        id("com.avito.android.code-ownership-validation")
+                    },
                     imports = listOf("import com.avito.android.model.Owner"),
                     dependencies = setOf(
                         project(
@@ -50,6 +53,9 @@ internal class ExportOwnershipInfoTest {
                 ),
                 AndroidLibModule(
                     name = "feature",
+                    plugins = plugins {
+                        id("com.avito.android.code-ownership-validation")
+                    },
                     imports = listOf("import com.avito.android.model.Owner"),
                     buildGradleExtra = """
                         |object Speed : Owner {
@@ -72,6 +78,7 @@ internal class ExportOwnershipInfoTest {
         gradlew(
             projectDir,
             "reportCodeOwnershipInfo",
+            "-Pavito.ownership.extractValidationPlugin=true"
         ).assertThat().buildSuccessful()
 
         val file = File(projectDir, "ownership.csv")

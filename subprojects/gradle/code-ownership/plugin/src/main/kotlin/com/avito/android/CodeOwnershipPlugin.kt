@@ -23,8 +23,10 @@ public class CodeOwnershipPlugin : Plugin<Project> {
     }
 
     private fun configureStrictOwnershipCheck(target: Project) {
-        val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
+        val extractValidationPlugin = target.getBooleanProperty("avito.ownership.extractValidationPlugin", false)
+        if (extractValidationPlugin) return
 
+        val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
         target.subprojects { subproject ->
             subproject.plugins.withId("kotlin") {
                 setupLibrary(subproject, strictOwnership)

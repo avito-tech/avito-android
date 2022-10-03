@@ -20,6 +20,9 @@ internal class ConfigurationCacheCompatibilityTest {
             },
             modules = listOf(
                 AndroidLibModule(
+                    plugins = plugins {
+                        id("com.avito.android.code-ownership-validation")
+                    },
                     name = "lib",
                     imports = listOf("import com.avito.android.model.Owner"),
                     buildGradleExtra = """
@@ -116,6 +119,7 @@ internal class ConfigurationCacheCompatibilityTest {
             tempDir,
             "reportCodeOwnershipInfo",
             "-Pavito.ownership.strictOwnership=true",
+            "-Pavito.ownership.extractValidationPlugin=true",
             dryRun = true,
             configurationCache = true
         )
