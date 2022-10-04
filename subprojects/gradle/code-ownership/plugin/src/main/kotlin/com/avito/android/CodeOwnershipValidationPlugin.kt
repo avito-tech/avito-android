@@ -11,7 +11,7 @@ public class CodeOwnershipValidationPlugin : Plugin<Project> {
         val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
 
         target.afterEvaluate {
-            if (strictOwnership) {
+            if (strictOwnership && it.state.failure == null) {
                 codeOwnershipExtension.checkProjectOwnershipSettings(it.path)
             }
         }
