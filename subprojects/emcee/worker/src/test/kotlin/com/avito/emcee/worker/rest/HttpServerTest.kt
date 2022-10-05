@@ -20,15 +20,13 @@ import java.net.ServerSocket
 @ExperimentalCoroutinesApi
 class HttpServerTest {
 
-    private var port: Int? = null
     private val bucketsStorage = SingleElementProcessingBucketsStorage()
     private val server = createServer()
     private val client = HttpClient(CIO)
 
     @BeforeEach
     fun beforeAll() {
-        port = findAvailablePort()
-        server.start(port!!)
+        server.start()
     }
 
     @Test
@@ -56,15 +54,21 @@ class HttpServerTest {
         server.stop()
     }
 
-    private fun findAvailablePort(): Int {
-        val s = ServerSocket(0)
-        val port = s.localPort
-        s.close()
-        return port
+    private fun createServer(): HttpServer {
+        return HttpServer(
+            handlers = listOf(ProcessingBucketsRequestHandler(bucketsStorage)),
+            debug = true,
+            port = port
+        )
     }
 
-    private fun createServer(): HttpServer = HttpServer.Builder()
-        .addHandler(ProcessingBucketsRequestHandler(bucketsStorage))
-        .debug(true)
-        .build()
+    private companion object {
+        private val port: Int = findAvailablePort()
+        private fun findAvailablePort(): Int {
+            val s = ServerSocket(0)
+            val port = s.localPort
+            s.close()
+            return port
+        }
+    }
 }
