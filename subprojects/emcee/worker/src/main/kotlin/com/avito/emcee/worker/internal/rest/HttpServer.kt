@@ -14,12 +14,15 @@ import io.ktor.server.routing.routing
 
 internal class HttpServer(
     private val handlers: List<RequestHandler<*>>,
-    private val debug: Boolean
+    private val debug: Boolean,
+    private val port: Int,
+    private val gracePeriodMs: Long = 500,
+    private val timeoutMs: Long = 500,
 ) {
 
     private var server: NettyApplicationEngine? = null
 
-    fun start(port: Int) {
+    fun start() {
         if (debug) println("Starting REST server on $port port/")
         server = embeddedServer(Netty, port = port) {
             install(ContentNegotiation) {
@@ -39,24 +42,9 @@ internal class HttpServer(
     }
 
     fun stop() {
-        requireNotNull(server) {
+        val server = requireNotNull(server) {
             "HttpServer is not started yet!"
-        }.stop()
-    }
-
-    class Builder {
-
-        private val handlers: MutableList<RequestHandler<*>> = mutableListOf()
-        private var debug = false
-
-        fun addHandler(handler: RequestHandler<*>) = apply {
-            handlers.add(handler)
         }
-
-        fun debug(value: Boolean): Builder = apply {
-            debug = value
-        }
-
-        fun build(): HttpServer = HttpServer(handlers, debug)
+        server.stop(gracePeriodMs, timeoutMs)
     }
 }
