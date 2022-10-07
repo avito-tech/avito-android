@@ -42,15 +42,15 @@ internal open class BuildImage(
         description = "DockerHub password"
     )
 
-    protected val registry: String by option(
+    protected val registry: String? by option(
         type = ArgType.String,
         description = "Docker target registry"
-    ).required()
+    )
 
-    protected val artifactoryUrl: String by option(
+    protected val artifactoryUrl: String? by option(
         type = ArgType.String,
         description = "Internal artifactory url"
-    ).required()
+    )
 
     protected val imageName: String by option(
         type = ArgType.String,

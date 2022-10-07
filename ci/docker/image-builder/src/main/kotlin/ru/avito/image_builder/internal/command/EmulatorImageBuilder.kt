@@ -19,9 +19,9 @@ internal class EmulatorImageBuilder(
      */
     private val buildDir: File,
     private val api: Int,
-    private val registry: String,
+    private val registry: String?,
     private val imageName: String,
-    private val artifactoryUrl: String,
+    private val artifactoryUrl: String?,
     private val login: RegistryLogin,
     private val tagger: ImageTagger,
 ) : ImageBuilder {
@@ -55,14 +55,28 @@ internal class EmulatorImageBuilder(
 
         val emulatorArch = if (api < 28) "x86" else "x86_64"
 
-        val buildResult = docker.build(
-            "--build-arg", "DOCKER_REGISTRY=$registry",
+        val buildArgs = mutableListOf(
             "--build-arg", "SDK_VERSION=$api",
             "--build-arg", "EMULATOR_ARCH=$emulatorArch",
-            "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
             "--file", File(buildDir, dockerfilePath).canonicalPath,
-            buildDir.canonicalPath,
+            buildDir.canonicalPath
         )
+
+        if (registry.isNullOrBlank()) {
+            log.warning("--registry not specified, make sure base images are available locally or in dockerHub")
+        } else {
+            buildArgs.add("--build-arg")
+            buildArgs.add("DOCKER_REGISTRY=$registry")
+        }
+
+        if (artifactoryUrl.isNullOrBlank()) {
+            log.warning("--artifactoryUrl not specified, hermetic build will fail")
+        } else {
+            buildArgs.add("--build-arg")
+            buildArgs.add("DOCKER_REGISTRY=$registry")
+        }
+
+        val buildResult = docker.build(*buildArgs.toTypedArray())
         check(buildResult.isSuccess) {
             "Failed to build the image: ${buildResult.exceptionOrNull()}"
         }
@@ -170,6 +184,12 @@ internal class EmulatorImageBuilder(
         } else {
             "$imageName-$api"
         }
-        return tagger.tag(id, "$registry/$name")
+        return tagger.tag(id, buildString {
+            if (!registry.isNullOrBlank()) {
+                append(registry)
+                append('/')
+            }
+            append(name)
+        })
     }
 }

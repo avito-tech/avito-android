@@ -1,7 +1,6 @@
 package ru.avito.image_builder.internal.cli
 
 import kotlinx.cli.ArgType
-import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.ImagePublisher
 import ru.avito.image_builder.internal.command.ImageTagger
@@ -11,7 +10,6 @@ import ru.avito.image_builder.internal.docker.CliDocker
 import ru.avito.image_builder.internal.docker.RegistryCredentials
 import java.io.File
 
-@OptIn(ExperimentalCli::class)
 internal class PublishImage(
     name: String,
     description: String

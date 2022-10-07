@@ -1,7 +1,5 @@
-ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/android/ubuntu:20.04
+FROM ubuntu:20.04
 
-ARG ARTIFACTORY_URL
 ARG SDK_VERSION
 ARG EMULATOR_ARCH
 
@@ -41,7 +39,7 @@ ENV LANG=C.UTF-8 \
 # ----------------- Android SDK -----------------
 # https://developer.android.com/studio/index.html#command-tools
 # Additional info about directory structure: https://stackoverflow.com/a/61176718/981330
-ARG COMMANDLINE_TOOLS_URL=$ARTIFACTORY_URL/android-build-env/android_sdk/commandlinetools/commandlinetools-linux-8092744_latest.zip
+ARG COMMANDLINE_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
 ARG ANDROID_SDK_FILE_NAME=commandlinetools.zip
 
 RUN curl $COMMANDLINE_TOOLS_URL --progress-bar --location --output $ANDROID_SDK_FILE_NAME && \
