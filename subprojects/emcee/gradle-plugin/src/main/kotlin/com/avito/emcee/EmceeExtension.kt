@@ -8,7 +8,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 import java.time.Duration
 
-public abstract class EmceeExtension(objects: ObjectFactory) {
+public abstract class EmceeExtension(objects: ObjectFactory) : DevicesContainer {
 
     @get:Nested
     internal abstract val job: JobConfiguration
@@ -18,7 +18,7 @@ public abstract class EmceeExtension(objects: ObjectFactory) {
 
     public abstract val retries: Property<Int>
 
-    public abstract val deviceApis: ListProperty<Int>
+    internal abstract val devices: ListProperty<Device>
 
     public abstract val testTimeout: Property<Duration>
 
@@ -35,4 +35,16 @@ public abstract class EmceeExtension(objects: ObjectFactory) {
     public fun artifactory(action: Action<ArtifactoryConfiguration>) {
         action.execute(artifactory)
     }
+
+    public fun devices(action: Action<DevicesContainer>) {
+        action.execute(this)
+    }
+
+    override fun addDevice(sdk: Int, type: String) {
+        devices.add(Device(sdk, type))
+    }
+}
+
+public interface DevicesContainer {
+    public fun addDevice(sdk: Int, type: String)
 }
