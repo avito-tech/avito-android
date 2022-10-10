@@ -4,7 +4,7 @@ import com.avito.emcee.queue.DeviceConfiguration
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-internal interface TestExecutorProvider {
+internal interface DeviceTestExecutorProvider {
 
     suspend fun provide(configuration: DeviceConfiguration): TestExecutor
 }

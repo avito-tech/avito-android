@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.logging.Logger
 
 @ExperimentalCoroutinesApi
 internal class StartAndroidDevice(
@@ -27,6 +28,8 @@ internal class StartAndroidDevice(
     private val startAvd: StartAvd,
     private val maximumRunningDevices: Int = 1
 ) {
+
+    private val logger = Logger.getLogger("StartAndroidDevice")
 
     suspend fun execute(sdk: Int, type: String): AndroidDevice {
         return coroutineScope {
@@ -42,15 +45,20 @@ internal class StartAndroidDevice(
                     startAvd.execute(sdk, type)
                         .collect { notification ->
                             when (notification) {
-                                is Notification.Exit -> cancel()
+                                is Notification.Exit -> {
+                                    logger.info("start avd exits: \n ${notification.output}")
+                                    cancel()
+                                }
+
                                 is Notification.Output -> {
-                                    // TODO add logging
+                                    logger.info(notification.line)
                                 }
                             }
                         }
                 }
                 activeDevice.await()
             } finally {
+                logger.info("finally")
                 withContext(NonCancellable) {
                     if (!deviceEventsChannel.isClosedForReceive) {
                         deviceEventsChannel.cancel()

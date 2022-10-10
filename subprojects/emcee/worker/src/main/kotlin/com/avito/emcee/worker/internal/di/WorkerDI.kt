@@ -24,9 +24,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.ExperimentalTime
 
+@ExperimentalCoroutinesApi
 @ExperimentalTime
 internal class WorkerDI(
     private val config: Config,
@@ -37,8 +39,11 @@ internal class WorkerDI(
     private val okHttpClient = OkHttpClient.Builder().apply {
         if (debugMode) {
             val logger = Logger.getLogger("HTTP")
+            logger.level = Level.FINE
             addInterceptor(HttpLoggingInterceptor { message ->
                 logger.fine(message)
+                // TODO Delete when configure logging properly
+                println(message)
             }.apply { level = HttpLoggingInterceptor.Level.BODY })
         }
     }.build()
