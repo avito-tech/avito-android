@@ -6,6 +6,7 @@ import com.avito.cli.Notification
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import java.nio.file.Path
+import java.util.logging.Logger
 import kotlin.io.path.absolutePathString
 
 @ExperimentalCoroutinesApi
@@ -14,7 +15,10 @@ internal class StartAvd(
     private val androidSdk: Path
 ) {
 
+    private val logger = Logger.getLogger("StartAvd")
+
     fun execute(sdk: Int, type: String): Flow<Notification> {
+        logger.info("Start sdk:$sdk, type:$type")
         val avdConfig = configurationProvider.provide(ConfigurationKey(sdk, type))
         return FlowCommandLine(
             command = androidSdk.resolveSibling("emulator").absolutePathString(),

@@ -5,6 +5,7 @@ import com.avito.android.device.AndroidApplication
 import com.avito.android.device.AndroidDevice
 import com.avito.android.device.InstrumentationCommand
 import kotlinx.coroutines.withTimeout
+import java.util.logging.Logger
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -12,9 +13,12 @@ internal class StatefulAndroidDeviceTestExecutor(
     private val device: AndroidDevice
 ) : TestExecutor {
 
+    private val logger = Logger.getLogger("StatefulAndroidDeviceTestExecutor")
+
     private var state: AndroidDeviceState = AndroidDeviceState.Clean(device)
 
     override suspend fun beforeTestBucket() {
+        logger.info("beforeTestBucket")
         // empty
     }
 
@@ -24,19 +28,23 @@ internal class StatefulAndroidDeviceTestExecutor(
          * current logic correct but ineffective if two buckets use same apps.
          * Optimization could be to uninstall apps only if in a new bucket we got new apps
          */
+        logger.info("afterTestBucket")
         state = state.clean()
     }
 
     override suspend fun execute(
         job: TestExecutor.Job
     ): TestExecutor.Result {
+        logger.info("Execute job: $job")
         device.isAlive()
+        logger.info("Prepare state for job: $job")
         state = state.prepareStateForExecution(
             listOf(
                 AndroidApplication(job.apk, job.applicationPackage),
                 AndroidApplication(job.testApk, job.testPackage)
             )
         )
+        logger.info("Execute test job: $job")
         val result = executeTest(job)
         state = state.testExecuted()
         return result
