@@ -70,9 +70,11 @@ internal class EmceePluginTest {
                     |       baseUrl.set("http://artifactory/")
                     |       repository.set("android-emcee") 
                     |   }
+                    |   devices {
+                    |       addDevice(22, "default")
+                    |       addDevice(30, "default")
+                    |   }
                     |   retries.set(2)
-                    |   deviceApis.add(22)
-                    |   deviceApis.add(30)
                     |   testTimeout.set(Duration.ofSeconds(120))
                     |   queueBaseUrl.set("http://emcee.queue")
                     |   configTestMode.set(true)

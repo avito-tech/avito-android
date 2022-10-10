@@ -10,7 +10,7 @@ internal class ExtensionConfigurator(
     override fun configure(task: EmceeTestTask) {
         task.job.set(emceeExtension.job)
         task.retries.set(emceeExtension.retries)
-        task.deviceApis.set(emceeExtension.deviceApis)
+        task.devices.set(emceeExtension.devices)
         task.testTimeout.set(emceeExtension.testTimeout)
         task.baseUrl.set(emceeExtension.queueBaseUrl)
         task.configTestMode.set(emceeExtension.configTestMode)

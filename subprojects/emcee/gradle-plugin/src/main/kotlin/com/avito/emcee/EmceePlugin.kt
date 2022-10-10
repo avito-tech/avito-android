@@ -26,7 +26,9 @@ public class EmceePlugin : Plugin<Project> {
                     EmceeTestTaskConfigurator.Builder(emceeExtension)
                         .application(variant)
                         .build()
-                )
+                ).configure {
+                    it.group = "Emcee"
+                }
             }
         }
     }
