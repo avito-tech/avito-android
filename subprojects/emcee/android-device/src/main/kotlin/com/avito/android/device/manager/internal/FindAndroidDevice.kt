@@ -45,9 +45,11 @@ internal class FindAndroidDevice(
         return this
             .filter { it.state == DeviceState.DEVICE }
             .firstOrNull { device ->
-                val sdkProp = adb.execute(
+                val sdkPropString = adb.execute(
                     GetSinglePropRequest("ro.build.version.sdk"), device.serial
-                ).toInt()
+                )
+                // Sometimes prop value contains `\n` at the end of the result
+                val sdkProp = sdkPropString.trimIndent().toInt()
                 sdkProp == sdk
             }
     }
