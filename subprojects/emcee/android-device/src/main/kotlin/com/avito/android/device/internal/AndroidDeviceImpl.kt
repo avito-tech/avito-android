@@ -6,7 +6,6 @@ import com.avito.android.device.AndroidDevice
 import com.avito.android.device.DeviceSerial
 import com.avito.android.device.InstrumentationCommand
 import com.malinskiy.adam.AndroidDebugBridgeClient
-import com.malinskiy.adam.request.pkg.StreamingPackageInstallRequest
 import com.malinskiy.adam.request.pkg.UninstallRemotePackageRequest
 import com.malinskiy.adam.request.testrunner.InstrumentOptions
 import com.malinskiy.adam.request.testrunner.TestAssumptionFailed
@@ -16,29 +15,24 @@ import com.malinskiy.adam.request.testrunner.TestRunnerRequest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.receiveOrNull
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import java.util.logging.Logger
 
 internal class AndroidDeviceImpl(
     override val sdk: Int,
     override val type: String,
     override val serial: DeviceSerial,
+    private val installPackage: InstallPackage,
     private val adb: AndroidDebugBridgeClient,
 ) : AndroidDevice {
+
+    private val logger = Logger.getLogger("AndroidDevice")
 
     override suspend fun install(application: AndroidApplication): Result<Unit> {
         return execute(
             action = {
-                val success = adb.execute(
-                    StreamingPackageInstallRequest(
-                        pkg = application.apk,
-                        supportedFeatures = emptyList(),
-                        reinstall = false,
-                        extraArgs = emptyList()
-                    ),
-                    serial = serial.value
-                )
-                if (!success) {
-                    throw RuntimeException("Streaming install of the $application not success")
-                }
+                logger.info("Start install $application")
+                runBlocking { installPackage.installTo(application, serial) }
             },
             errorMessageBuilder = { "Failed to install $application" }
         )
@@ -70,6 +64,7 @@ internal class AndroidDeviceImpl(
                     scope = this,
                     serial = serial.value
                 )
+
                 @Suppress("DEPRECATION")
                 val result = instrumentationOutput.receiveOrNull() ?: emptyList()
                 // parsing is copy-pasted from com.malinskiy.marathon.android.adam.AndroidDeviceTestRunner
