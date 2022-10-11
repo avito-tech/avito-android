@@ -131,6 +131,7 @@ internal abstract class MergeDeeplinkManifestTask : DefaultTask() {
             
                 <application>
                     <activity
+                        android:exported="true"
                         android:name="%s"
                         tools:node="merge">
         """.trimIndent()
