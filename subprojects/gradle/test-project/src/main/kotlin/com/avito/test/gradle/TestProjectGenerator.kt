@@ -16,7 +16,11 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.Properties
 
+/**
+ * @see [convention.gradle-testing.gradle.kts]
+ */
 internal val sdkVersion: Int by lazy { System.getProperty("compileSdkVersion").toInt() }
+internal val targetSdk: Int by lazy { System.getProperty("targetSdk").toInt() }
 internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
 internal val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
 

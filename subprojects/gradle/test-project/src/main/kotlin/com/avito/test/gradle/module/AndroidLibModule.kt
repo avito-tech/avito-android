@@ -13,6 +13,7 @@ import com.avito.test.gradle.module
 import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import com.avito.test.gradle.sdkVersion
+import com.avito.test.gradle.targetSdk
 import java.io.File
 
 public class AndroidLibModule(
@@ -57,6 +58,10 @@ public class AndroidLibModule(
                 |android {
                 |   compileSdkVersion($sdkVersion)
                 |   buildToolsVersion("$buildToolsVersion")
+                |   
+                |   defaultConfig {
+                |       targetSdk = $targetSdk
+                |   }
                 |   
                 |   $kotlinPluginExtra
                 |}
