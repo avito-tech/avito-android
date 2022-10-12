@@ -1,10 +1,16 @@
 package com.avito.emcee.worker.internal.di
 
+import com.avito.android.device.avd.AvdConfig
+import com.avito.android.device.avd.internal.AvdConfigurationProvider
+import com.avito.android.device.manager.AndroidDeviceManager
 import com.avito.emcee.worker.Config
 import com.avito.emcee.worker.WorkerQueueApi.Companion.createWorkerQueueApi
+import com.avito.emcee.worker.internal.SingleInstanceAndroidDeviceTestExecutorProvider
 import com.avito.emcee.worker.internal.TestJobProducer
 import com.avito.emcee.worker.internal.TestJobProducerImpl
-import com.avito.emcee.worker.internal.consumer.FakeTestJobConsumer
+import com.avito.emcee.worker.internal.artifacts.FileDownloader
+import com.avito.emcee.worker.internal.artifacts.FileDownloaderApi.Companion.createFileDownloaderApi
+import com.avito.emcee.worker.internal.consumer.RealTestJobConsumer
 import com.avito.emcee.worker.internal.consumer.TestJobConsumer
 import com.avito.emcee.worker.internal.identifier.HostnameWorkerIdProvider
 import com.avito.emcee.worker.internal.identifier.WorkerIdProvider
@@ -14,12 +20,15 @@ import com.avito.emcee.worker.internal.rest.handler.HealthCheckRequestHandler
 import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
 import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
 import com.avito.emcee.worker.internal.storage.SingleElementProcessingBucketsStorage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.ExperimentalTime
 
+@ExperimentalCoroutinesApi
 @ExperimentalTime
 internal class WorkerDI(
     private val config: Config,
@@ -30,8 +39,11 @@ internal class WorkerDI(
     private val okHttpClient = OkHttpClient.Builder().apply {
         if (debugMode) {
             val logger = Logger.getLogger("HTTP")
+            logger.level = Level.FINE
             addInterceptor(HttpLoggingInterceptor { message ->
                 logger.fine(message)
+                // TODO Delete when configure logging properly
+                println(message)
             }.apply { level = HttpLoggingInterceptor.Level.BODY })
         }
     }.build()
@@ -42,6 +54,8 @@ internal class WorkerDI(
         Retrofit.Builder()
             .createWorkerQueueApi(okHttpClient, config.queueUrl)
 
+    private val fileDownloaderApi = Retrofit.Builder().createFileDownloaderApi(okHttpClient, "https://stub")
+
     fun producer(): TestJobProducer {
         return TestJobProducerImpl(
             api = api,
@@ -51,9 +65,18 @@ internal class WorkerDI(
     }
 
     fun consumer(): TestJobConsumer {
-        return FakeTestJobConsumer(
-            api = api,
-            bucketsStorage = bucketsStorage,
+        val configurations = config.avd.associateBy(
+            keySelector = { avd -> AvdConfigurationProvider.ConfigurationKey(avd.sdk, avd.type) },
+            valueTransform = { avd -> AvdConfig(avd.emulatorFileName, avd.sdCardFileName) }
+        )
+        return RealTestJobConsumer(
+            deviceProvider = SingleInstanceAndroidDeviceTestExecutorProvider(
+                manager = AndroidDeviceManager.create(
+                    AvdConfigurationProvider(configurations),
+                    config.androidSdkPath,
+                )
+            ),
+            fileDownloader = FileDownloader(fileDownloaderApi),
         )
     }
 

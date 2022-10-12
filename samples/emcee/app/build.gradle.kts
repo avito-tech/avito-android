@@ -28,6 +28,17 @@ android {
     }
 }
 
+androidComponents {
+    beforeVariants {
+        if (it.name == "debug") {
+            it.enableUnitTest = false
+            it.enableAndroidTest = true
+        } else {
+            it.enable = false
+        }
+    }
+}
+
 emcee {
     queueBaseUrl.set("http://localhost:41000")
     testTimeout.set(Duration.ofMinutes(1))
@@ -46,7 +57,9 @@ emcee {
     }
     retries.set(1)
     outputDir.set(project.layout.buildDirectory.dir("emcee"))
-    deviceApis.set(listOf(21))
+    devices {
+        addDevice(22, "default")
+    }
 }
 
 dependencies {

@@ -37,7 +37,7 @@ public abstract class EmceeTestTask : DefaultTask() {
     public abstract val retries: Property<Int>
 
     @get:Input
-    public abstract val deviceApis: ListProperty<Int>
+    public abstract val devices: ListProperty<Device>
 
     @get:Internal // todo do we want to invalidate test results on host change?
     public abstract val baseUrl: Property<String>
@@ -92,7 +92,7 @@ public abstract class EmceeTestTask : DefaultTask() {
         val job = job.get()
         val testTimeoutInSec = testTimeout.get().seconds
 
-        val devices = deviceApis.get().map { api -> DeviceConfiguration("", api) }
+        val devices = devices.get().map { device -> DeviceConfiguration(device.type, device.sdk) }
         require(devices.isNotEmpty()) {
             "Failed to execute ${this.name}. There are no configured devices in extension"
         }

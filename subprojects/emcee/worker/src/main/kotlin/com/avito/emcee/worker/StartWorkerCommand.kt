@@ -21,7 +21,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalCli
 internal class StartWorkerCommand(
     name: String,
-    description: String
+    description: String,
 ) : Subcommand(name, description) {
 
     private val logger = Logger.getLogger("StartWorkerCommand")

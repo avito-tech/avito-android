@@ -11,6 +11,8 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import java.util.logging.Level
+import java.util.logging.Logger
 
 internal class HttpServer(
     private val handlers: List<RequestHandler<*>>,
@@ -22,8 +24,14 @@ internal class HttpServer(
 
     private var server: NettyApplicationEngine? = null
 
+    private val logger = Logger.getLogger("HttpServer").apply {
+        if (debug) {
+            level = Level.FINE
+        }
+    }
+
     fun start() {
-        if (debug) println("Starting REST server on $port port/")
+        logger.info("Starting REST server on port:$port")
         server = embeddedServer(Netty, port = port) {
             install(ContentNegotiation) {
                 gson() // TODO: use Moshi instead when it will be available

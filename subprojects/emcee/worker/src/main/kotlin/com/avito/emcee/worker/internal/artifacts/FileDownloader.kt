@@ -11,19 +11,23 @@ internal class FileDownloader(private val api: FileDownloaderApi) {
 
     suspend fun download(httpUrl: HttpUrl): File = withContext(Dispatchers.IO) {
         val fileName = fileNameProvider.resolve(httpUrl)
-        val file = File(fileName).apply {
-            if (exists()) delete()
-            createNewFile()
+        val file = File(fileName)
+        if (file.exists()) {
+            file.delete()
+            file.createNewFile()
         }
 
-        api.downloadFile(httpUrl).run {
-            require(isSuccessful && body() != null) { "Failed to download file from $httpUrl. $this" }
-            val body = requireNotNull(body()) { "Response body of GET ($httpUrl) request is empty. $this" }
+        val downloadedFileResponse = api.downloadFile(httpUrl)
+        require(downloadedFileResponse.isSuccessful) {
+            "Failed to download file from $httpUrl. $downloadedFileResponse"
+        }
+        val body = requireNotNull(downloadedFileResponse.body()) {
+            "Response body of GET ($httpUrl) request is empty. $downloadedFileResponse"
+        }
 
-            body.byteStream().use { input ->
-                file.outputStream().use { output ->
-                    input.copyTo(output)
-                }
+        body.byteStream().use { input ->
+            file.outputStream().use { output ->
+                input.copyTo(output)
             }
         }
 

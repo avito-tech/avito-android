@@ -62,7 +62,7 @@ internal sealed class AndroidDeviceState {
     class WithDataOnDisk(
         device: AndroidDevice,
         apps: List<AndroidApplication>
-    ) : AndroidDeviceState.InstalledApplications(device, apps) {
+    ) : InstalledApplications(device, apps) {
 
         override suspend fun prepareStateForExecution(newApps: List<AndroidApplication>): AndroidDeviceState {
             require(apps == newApps) {
