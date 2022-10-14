@@ -81,11 +81,12 @@ internal class ExportOwnershipInfoTest {
             "-Pavito.ownership.extractValidationPlugin=true"
         ).assertThat().buildSuccessful()
 
-        val file = File(projectDir, "ownership.csv")
+        val file = File(projectDir, "build/outputs/code-ownership/gradle-modules-owners.csv")
         assertTrue(file.exists())
 
         assertEquals(
             """
+            |name,owners
             |:app,"Speed"
             |:common,""
             |:feature,"Speed,Performance"

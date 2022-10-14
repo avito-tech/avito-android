@@ -59,6 +59,8 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         target.tasks.register<ReportCodeOwnershipInfoTask>("reportCodeOwnershipInfo") {
             group = "documentation"
             description = "Exports code ownership info for all the modules to CSV file"
+
+            outputCsv.set(project.layout.buildDirectory.file("outputs/code-ownership/gradle-modules-owners.csv"))
         }
     }
 

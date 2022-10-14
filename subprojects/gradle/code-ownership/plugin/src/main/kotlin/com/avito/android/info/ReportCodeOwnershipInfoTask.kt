@@ -3,16 +3,19 @@ package com.avito.android.info
 import com.avito.android.ownership
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 public abstract class ReportCodeOwnershipInfoTask : DefaultTask() {
 
+    @get:OutputFile
+    public abstract val outputCsv: RegularFileProperty
+
     @TaskAction
     public fun printOwnership() {
-        val file = File(project.projectDir.toString(), "ownership.csv").apply {
-            if (exists()) delete()
-            createNewFile()
+        val file = outputCsv.get().asFile.apply {
+            writeText("name,owners\n")
         }
 
         project.subprojects { subproject ->
