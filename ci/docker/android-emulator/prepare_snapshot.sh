@@ -2,7 +2,7 @@
 
 # Script that runs emulator and apply environments for saving snapshot
 
-set -e
+set -ex
 
 function echo_error() { echo "$@" 1>&2; }
 

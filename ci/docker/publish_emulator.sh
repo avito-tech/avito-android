@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 source $(dirname "$0")/../_environment.sh
 

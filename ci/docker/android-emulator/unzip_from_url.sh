@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 TEMP_ZIP_FILE=temp.zip
 
