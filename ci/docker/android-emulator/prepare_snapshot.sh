@@ -37,7 +37,7 @@ echo "Starting emulator..."
 SNAPSHOT_ENABLED="false" ./run_emulator.sh &
 
 echo "Waiting for emulator booting..."
-sleep 30
+sleep 60
 
 echo "Checking boot_completed status"
 require 1 adb shell "getprop sys.boot_completed"
