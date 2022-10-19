@@ -1,4 +1,6 @@
+
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
+import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -179,6 +181,25 @@ instrumentation {
                 }
             }
         }
+        register("local") {
+            targets {
+                register("api30") {
+                    deviceName = "API30"
+                    scheduling {
+                        quota {
+                            retryCount = 1
+                            minimumSuccessCount = 1
+                        }
+                        testsCountBasedReservation {
+                            device = Device.LocalEmulator.device(30, "Android_SDK_built_for_x86_64")
+                            maximum = 1
+                            testsPerEmulator = 1
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
 
