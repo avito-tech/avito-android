@@ -2,34 +2,41 @@ package com.avito.logger.handler
 
 import com.avito.logger.LogLevel
 import java.io.PrintWriter
+import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.appendText
 
 internal class FileLoggingHandler(
     private val messagePrefix: String,
     acceptedLogLevel: LogLevel,
-    logFile: Path
+    logFile: Path,
 ) : LogLevelLoggingHandler(acceptedLogLevel) {
 
-    private val fileWriter by lazy {
-        if (!Files.exists(logFile)) { Files.createFile(logFile) }
-        Files.newBufferedWriter(logFile)
+    private val logFile by lazy(lock) {
+        if (!Files.exists(logFile)) {
+            Files.createFile(logFile)
+        }
+        logFile
     }
-    private val stackTraceWriter by lazy { PrintWriter(fileWriter) }
 
     override fun handleIfAcceptLogLevel(level: LogLevel, message: String, error: Throwable?) {
-        fileWriter.write("$messagePrefix [$level] $message")
-        fileWriter.newLine()
-        if (error != null) {
-            val errorMessage = error.message
-            if (errorMessage != null) {
-                fileWriter.write(errorMessage)
-                fileWriter.newLine()
+        val logString = buildString {
+            appendLine("$messagePrefix [$level] $message")
+            if (error != null) {
+                val errorMessage = error.message
+                if (errorMessage != null) {
+                    appendLine(errorMessage)
+                }
+                val sw = StringWriter()
+                error.printStackTrace(PrintWriter(sw))
+                append(sw.toString())
             }
-            error.printStackTrace(stackTraceWriter)
-            fileWriter.newLine()
         }
-        // TODO remove that flush. Could be done by adding `close` fun. Where we will close fileWriter
-        fileWriter.flush()
+        logFile.appendText(logString)
+    }
+
+    companion object {
+        private val lock = Any()
     }
 }
