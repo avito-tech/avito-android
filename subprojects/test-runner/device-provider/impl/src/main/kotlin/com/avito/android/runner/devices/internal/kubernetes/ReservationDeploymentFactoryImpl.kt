@@ -31,7 +31,7 @@ internal class ReservationDeploymentFactoryImpl(
     loggerFactory: LoggerFactory
 ) : ReservationDeploymentFactory {
 
-    private val logger = loggerFactory.create<ReservationDeploymentFactoryImpl>()
+    private val logger = loggerFactory.create<ReservationDeploymentFactory>()
 
     init {
         val prefix = { reason: String -> "Can't create configuration, precondition failed: $reason" }

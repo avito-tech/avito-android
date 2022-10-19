@@ -18,7 +18,8 @@ public class KubernetesReservationListenerProvider(
             StatsDKubernetesReservationMetricsSender(
                 StatsDSender.create(runnerMetricsConfig.statsDConfig, loggerFactory),
                 KubernetesReservationState(timeProvider),
-                runnerMetricsConfig.runnerPrefix
+                runnerMetricsConfig.runnerPrefix,
+                loggerFactory,
             )
         } else {
             StubKubernetesReservationListener

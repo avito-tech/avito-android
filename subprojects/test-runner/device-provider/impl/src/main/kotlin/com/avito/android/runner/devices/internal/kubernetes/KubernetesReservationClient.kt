@@ -42,6 +42,7 @@ internal class KubernetesReservationClient(
     override suspend fun claim(
         reservations: Collection<ReservationData>
     ): ReservationClient.ClaimResult {
+        logger.debug("claim $reservations")
         require(reservations.isNotEmpty()) {
             "Must have at least one reservation but empty"
         }

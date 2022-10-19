@@ -1,4 +1,3 @@
-
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
@@ -199,7 +198,6 @@ instrumentation {
                 }
             }
         }
-
     }
 }
 

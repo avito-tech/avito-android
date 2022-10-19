@@ -11,24 +11,25 @@ import java.util.concurrent.Future
 class FileLoggingHandlerTest {
 
     @Test
-    fun test(@TempDir file: File) {
+    fun `when 10 threads write to one log file concurrenty - we have all log lines`(@TempDir file: File) {
         val logFile = File(file, "logs.txt")
         val pool = Executors.newFixedThreadPool(10)
         val jobs = mutableListOf<Future<*>>()
-        val expectedLinesCount = 121
-        for (i in 0..10) {
-            val f = pool.submit {
+        val expectedLinesCount = 100
+        repeat(10) {
+            val logFuture = pool.submit {
                 val handler = FileLoggingHandler("test", acceptedLogLevel = LogLevel.DEBUG, logFile.toPath())
-                for (ii in 0..10) {
+                repeat(10) {
                     handler.write(LogLevel.DEBUG, Thread.currentThread().name, null)
                 }
             }
-            jobs.add(f)
+            jobs.add(logFuture)
         }
         jobs.forEach { it.get() }
         Truth
             .assertWithMessage("Assert lines count in logs file")
             .that(logFile.readLines().count())
             .isEqualTo(expectedLinesCount)
+        pool.shutdownNow()
     }
 }

@@ -61,6 +61,7 @@ internal class KubernetesReservationClaimer(
         podsChannel: Channel<KubePod>,
         serialsChannel: Channel<DeviceCoordinate>
     ) {
+        logger.debug("Create deployment $reservation")
         val deployment = reservationDeploymentFactory.createDeployment(
             namespace = kubernetesApi.namespace,
             reservation = reservation
