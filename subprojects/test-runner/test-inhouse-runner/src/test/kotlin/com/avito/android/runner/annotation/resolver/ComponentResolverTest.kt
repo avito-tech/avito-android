@@ -1,7 +1,6 @@
 package com.avito.android.runner.annotation.resolver
 
 import com.avito.android.mock.MockWebServerApiRule
-import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -9,6 +8,7 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 
@@ -41,7 +41,7 @@ class ComponentResolverTest {
         //  It's harder to understand and maintain.
         val aClass = compile(file)
 
-        assertThat(NetworkingResolver().resolver(aClass)).isEqualTo(
+        assertEquals(NetworkingResolver().resolver(aClass),
             TestMetadataResolver.Resolution.ReplaceSerializable(
                 NetworkingType.MOCK_WEB_SERVER
             )
@@ -73,7 +73,39 @@ class ComponentResolverTest {
 
         val aClass = compile(file)
 
-        assertThat(NetworkingResolver().resolver(aClass)).isEqualTo(
+        assertEquals(NetworkingResolver().resolver(aClass),
+            TestMetadataResolver.Resolution.ReplaceSerializable(
+                NetworkingType.MOCKED_NETWORK_LAYER
+            )
+        )
+    }
+
+    @Test
+    fun `resolver - resolves mocked network layer type - for test with AbstractMockitoApiRuleCrt child`() {
+        val file = FileSpec.builder("", "Test")
+            .addType(
+                TypeSpec.classBuilder("Test")
+                    .addProperty(
+                        PropertySpec.builder("mockApi", TestMockApiRuleCrt::class)
+                            .initializer("TestMockApiRuleCrt()")
+                            .addAnnotation(
+                                AnnotationSpec.builder(Rule::class)
+                                    .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .addFunction(
+                        FunSpec.builder("test")
+                            .build()
+                    )
+                    .build()
+            )
+            .build()
+
+        val aClass = compile(file)
+
+        assertEquals(NetworkingResolver().resolver(aClass),
             TestMetadataResolver.Resolution.ReplaceSerializable(
                 NetworkingType.MOCKED_NETWORK_LAYER
             )
@@ -89,7 +121,7 @@ class ComponentResolverTest {
             inheritClassPath = true
         }.compile()
 
-        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        assertEquals(result.exitCode, KotlinCompilation.ExitCode.OK)
 
         val packageSlug = if (file.packageName.isBlank()) "" else "${file.packageName}."
         return result.classLoader.loadClass("$packageSlug${file.name}")

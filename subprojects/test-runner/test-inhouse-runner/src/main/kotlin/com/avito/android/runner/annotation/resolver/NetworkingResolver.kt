@@ -1,6 +1,7 @@
 package com.avito.android.runner.annotation.resolver
 
 import com.avito.android.api.AbstractMockApiRule
+import com.avito.android.api.AbstractMockApiRuleCrt
 import com.avito.android.mock.MockWebServerApiRule
 
 class NetworkingResolver : ClassReflectionResolver(key = NETWORKING_TYPE_KEY, resolver = { aClass ->
@@ -9,7 +10,9 @@ class NetworkingResolver : ClassReflectionResolver(key = NETWORKING_TYPE_KEY, re
         .find { it.type == MockWebServerApiRule::class.java } != null
 
     val hasMockitoApiRule = aClass.declaredFields
-        .find { AbstractMockApiRule::class.java.isAssignableFrom(it.type) } != null
+        .find { AbstractMockApiRule::class.java.isAssignableFrom(it.type) } != null ||
+        aClass.declaredFields
+            .find { AbstractMockApiRuleCrt::class.java.isAssignableFrom(it.type) } != null
 
     val networkingType = when {
         hasMockApiRule && hasMockitoApiRule -> NetworkingType.ILLEGAL

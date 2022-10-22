@@ -21,5 +21,6 @@ dependencies {
     implementation(libs.bundles.hamcrest)
     implementation(libs.junit)
     implementation(libs.freeReflection)
+    implementation(libs.kotlin.coroutines)
     implementation(projects.subprojects.androidTest.instrumentation)
 }

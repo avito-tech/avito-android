@@ -12,6 +12,13 @@ abstract class ApiRequest {
     abstract fun verify()
 }
 
+abstract class ApiRequestCrt {
+
+    var mode: VerificationMode = com.nhaarman.mockitokotlin2.atLeast(1)
+
+    abstract suspend fun verify()
+}
+
 fun <T : ApiRequest> T.atLeast(numInvocations: Int): T =
     this.apply { mode = com.nhaarman.mockitokotlin2.atLeast(numInvocations) }
 

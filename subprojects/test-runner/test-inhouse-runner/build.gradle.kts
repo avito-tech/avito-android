@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.okhttpLogging)
     implementation(libs.okhttpMockWebServer)
     implementation(libs.gson)
+    implementation(libs.kotlin.coroutines)
 
     testImplementation(libs.kotlinPoet)
     testImplementation(libs.kotlinCompileTesting)

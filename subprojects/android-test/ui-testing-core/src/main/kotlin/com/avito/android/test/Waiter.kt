@@ -4,6 +4,7 @@ import androidx.test.espresso.DataInteraction
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.ViewInteraction
+import kotlinx.coroutines.delay
 
 /**
  * This method also exposed to the client, for hacking purposes
@@ -24,6 +25,39 @@ fun <T> waitFor(
         onWaiterRetry = onWaiterRetry,
         action = action
     )
+}
+
+suspend fun <T> waitForCrt(
+    frequencyMs: Long = UITestConfig.waiterFrequencyMs,
+    timeoutMs: Long = UITestConfig.waiterTimeoutMs,
+    allowedExceptions: Set<Class<out Any>> = UITestConfig.waiterAllowedExceptions,
+    sleepAction: suspend (frequencyMs: Long) -> Unit = { delay(it) },
+    onWaiterRetry: (e: Throwable) -> Unit = UITestConfig.onWaiterRetry,
+    action: suspend () -> T
+): T {
+    var caughtAllowedException: Throwable
+    val startTime = System.currentTimeMillis()
+
+    do {
+        try {
+            return action.invoke()
+        } catch (e: Throwable) {
+            val isExceptionAllowed =
+                allowedExceptions.find { it.isAssignableFrom(e.javaClass) } != null
+
+            onWaiterRetry(e)
+
+            when {
+                isExceptionAllowed -> {
+                    sleepAction(frequencyMs)
+                    caughtAllowedException = e
+                }
+                else -> throw e
+            }
+        }
+    } while (System.currentTimeMillis() - startTime <= timeoutMs)
+
+    throw caughtAllowedException
 }
 
 /**
