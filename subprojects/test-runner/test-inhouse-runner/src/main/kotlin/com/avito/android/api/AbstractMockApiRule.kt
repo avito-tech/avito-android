@@ -11,6 +11,10 @@ abstract class AbstractMockApiRule<T : RequestRegistry> : SimpleRule() {
         val registry = registry ?: return // can be null if another rule failed after us
         try {
             registry.registeredMocks.values.forEach(ApiRequest::verify)
+
+            runBlocking {
+                registry.registeredSuspendMocks.values.forEach { it.verify() }
+            }
         } finally {
             registry.reset()
             this.registry = null
@@ -25,29 +29,8 @@ abstract class AbstractMockApiRule<T : RequestRegistry> : SimpleRule() {
         }
         registry!!.init()
     }
-}
 
-abstract class AbstractMockApiRuleCrt<T : RequestRegistry> : SimpleRule() {
-
-    private var registry: T? = null
-
-    override fun after() {
-        val registry = registry ?: return // can be null if another rule failed after us
-        try {
-            registry.registeredMocks.values.forEach(ApiRequest::verify)
-
-            runBlocking {
-                registry.registeredMocksCrt.values.forEach { it.verify() }
-            }
-        } finally {
-            registry.reset()
-            this.registry = null
-        }
-    }
-
-    protected abstract fun createRegistry(): T
-
-    fun stub(init: suspend T.() -> Unit) {
+    fun stubSuspend(init: suspend T.() -> Unit) {
         if (registry == null) {
             registry = createRegistry()
         }

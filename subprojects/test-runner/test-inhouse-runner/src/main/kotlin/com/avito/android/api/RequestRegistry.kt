@@ -5,12 +5,12 @@ import android.util.Log
 abstract class RequestRegistry {
 
     val registeredMocks = mutableMapOf<String, ApiRequest>()
-    val registeredMocksCrt = mutableMapOf<String, ApiRequestCrt>()
+    val registeredSuspendMocks = mutableMapOf<String, ApiRequestSuspend>()
 
     fun reset() {
         resetApi()
         registeredMocks.clear()
-        registeredMocksCrt.clear()
+        registeredSuspendMocks.clear()
     }
 
     protected abstract fun resetApi()
@@ -21,9 +21,9 @@ abstract class RequestRegistry {
         return this
     }
 
-    fun <T : ApiRequestCrt> T.registerCrt(): T {
+    fun <T : ApiRequestSuspend> T.registerSuspend(): T {
         Log.d("TestRunner", "${javaClass.simpleName} registered")
-        registeredMocksCrt[javaClass.simpleName] = this
+        registeredSuspendMocks[javaClass.simpleName] = this
         return this
     }
 }

@@ -1,7 +1,7 @@
 package com.avito.android.util
 
 import com.avito.android.test.waitFor
-import com.avito.android.test.waitForCrt
+import com.avito.android.test.waitForSuspend
 import com.nhaarman.mockitokotlin2.verify
 import org.mockito.verification.VerificationMode
 
@@ -19,8 +19,8 @@ fun <T> waitForVerify(mock: T, mode: VerificationMode, that: T.() -> Unit) {
     ) { verify(mock, mode).that() }
 }
 
-suspend fun <T> waitForVerifyCrt(mock: T, mode: VerificationMode, that: suspend T.() -> Unit) {
-    waitForCrt(
+suspend fun <T> waitForVerifySuspend(mock: T, mode: VerificationMode, that: suspend T.() -> Unit) {
+    waitForSuspend(
         timeoutMs = DEFAULT_VERIFY_TIMEOUT_MS,
         allowedExceptions = setOf(Throwable::class.java)
     ) { verify(mock, mode).that() }

@@ -27,7 +27,7 @@ fun <T> waitFor(
     )
 }
 
-suspend fun <T> waitForCrt(
+suspend fun <T> waitForSuspend(
     frequencyMs: Long = UITestConfig.waiterFrequencyMs,
     timeoutMs: Long = UITestConfig.waiterTimeoutMs,
     allowedExceptions: Set<Class<out Any>> = UITestConfig.waiterAllowedExceptions,

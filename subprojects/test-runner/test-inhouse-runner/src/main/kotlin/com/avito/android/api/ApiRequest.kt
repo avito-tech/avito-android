@@ -12,7 +12,7 @@ abstract class ApiRequest {
     abstract fun verify()
 }
 
-abstract class ApiRequestCrt {
+abstract class ApiRequestSuspend {
 
     var mode: VerificationMode = com.nhaarman.mockitokotlin2.atLeast(1)
 
