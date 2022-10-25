@@ -9,7 +9,8 @@ import com.avito.logger.create
 
 class DeviceSettingsChecker(
     private val context: Context,
-    loggerFactory: LoggerFactory
+    private val maximumSupportedSdk: Int = Build.VERSION_CODES.S,
+    loggerFactory: LoggerFactory,
 ) {
 
     private val logger = loggerFactory.create<DeviceSettingsChecker>()
@@ -35,8 +36,8 @@ class DeviceSettingsChecker(
     }
 
     private fun checkSupportedApi() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-            throw IllegalStateException("Android 12 (API level 31) and above is not supported yet")
+        if (Build.VERSION.SDK_INT > maximumSupportedSdk) {
+            throw IllegalStateException("Android with API level above than $maximumSupportedSdk is not supported yet")
         }
     }
 
