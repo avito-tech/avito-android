@@ -115,6 +115,7 @@ internal class TestRunnerImpl(
                     }
                     Result.Failure(e)
                 } finally {
+                    logger.info("Test run release resources")
                     deviceWorkerPool.stop()
                     state.cancel()
                     devicesProvider.releaseDevices()

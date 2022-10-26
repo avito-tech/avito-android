@@ -117,6 +117,7 @@ internal class LocalDevicesProvider(
         device.online && device.api == reservation.device.api
 
     override suspend fun releaseDevices() {
+        logger.info("release devices")
         devices.close()
     }
 }
