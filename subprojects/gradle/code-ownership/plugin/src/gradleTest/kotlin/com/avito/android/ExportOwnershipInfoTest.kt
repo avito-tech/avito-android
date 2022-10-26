@@ -8,8 +8,7 @@ import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.plugin.plugins
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -81,16 +80,17 @@ internal class ExportOwnershipInfoTest {
         ).assertThat().buildSuccessful()
 
         val file = File(projectDir, "build/outputs/code-ownership/gradle-modules-owners.csv")
-        assertTrue(file.exists())
+        assertThat(file.exists()).isTrue()
 
-        assertEquals(
-            """
+        assertThat(file.readText())
+            .isEqualTo(
+                """
             |name,owners
             |:app,"Speed"
             |:common,""
             |:feature,"Speed,Performance"
             |
-        """.trimMargin(), file.readText()
-        )
+        """.trimMargin()
+            )
     }
 }

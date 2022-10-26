@@ -5,7 +5,7 @@ import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.plugin.plugins
-import org.junit.Assert
+import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -42,16 +42,19 @@ internal class FileOwnersDiffReporterTest {
         runTask(projectDir).assertThat().buildSuccessful()
 
         val file = File(projectDir, "ownership_diff_report.txt")
-        Assert.assertTrue(file.exists())
+        Truth
+            .assertThat(file.exists())
+            .isTrue()
 
-        Assert.assertEquals(
-            """
+        Truth
+            .assertThat(file.readText())
+            .isEqualTo(
+                """
             |Found difference in code owners structure!
             |*Removed owners:* Speed
             |*Added owners:* Performance, Mobile Architecture
-            """.trimMargin(),
-            file.readText()
-        )
+            """.trimMargin()
+            )
     }
 
     private fun runTask(tempDir: File): TestResult {

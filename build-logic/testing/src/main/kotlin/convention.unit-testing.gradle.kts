@@ -59,8 +59,12 @@ tasks.withType<Test>().configureEach {
 project.withVersionCatalog { libs ->
     plugins.withType<KotlinBasePluginWrapper> {
         dependencies {
+            // If we use Junit 4 annotations in tests, they won't run, and it may confuse developers.
+            // Our tests run only on Junit 5 jupiter, so we explicitly remove this transitive dependency.
+            addProvider<MinimalExternalModuleDependency, ExternalModuleDependency>("testImplementation", libs.truth) {
+                exclude(group = "junit")
+            }
             add("testImplementation", libs.junitJupiterApi)
-            add("testImplementation", libs.truth)
 
             add("testRuntimeOnly", libs.junitJupiterEngine)
             add("testRuntimeOnly", libs.junitPlatformRunner)

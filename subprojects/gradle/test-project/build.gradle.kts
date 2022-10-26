@@ -5,7 +5,6 @@ plugins {
 }
 
 dependencies {
-    api(libs.okhttpMockWebServer)
     api(gradleTestKit())
 
     implementation(projects.subprojects.gradle.process)
