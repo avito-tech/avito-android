@@ -102,7 +102,6 @@ internal class StrictOwnershipTest {
                 val args = mutableListOf(
                     "reportCodeOwnershipInfo",
                     "-PgitBranch=xxx",
-                    "-Pavito.ownership.extractValidationPlugin=true"
                 )
                 if (case.isStrictOwnershipFlagEnabled) {
                     args.add("-Pavito.ownership.strictOwnership=true")

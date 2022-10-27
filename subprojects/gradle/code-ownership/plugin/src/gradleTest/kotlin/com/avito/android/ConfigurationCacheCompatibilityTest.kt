@@ -119,7 +119,6 @@ internal class ConfigurationCacheCompatibilityTest {
             tempDir,
             "reportCodeOwnershipInfo",
             "-Pavito.ownership.strictOwnership=true",
-            "-Pavito.ownership.extractValidationPlugin=true",
             dryRun = true,
             configurationCache = true
         )
