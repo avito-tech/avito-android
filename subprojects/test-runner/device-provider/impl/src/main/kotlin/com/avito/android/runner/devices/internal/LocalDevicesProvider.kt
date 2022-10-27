@@ -53,7 +53,7 @@ internal class LocalDevicesProvider(
                             val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
                             val adbDevices = findDevices(reservation, acquiredCoordinates)
 
-                            logger.debug("Found local devices: $adbDevices")
+                            logger.info("Found local devices: $adbDevices")
 
                             adbDevices.forEach { device ->
                                 val coordinate = device.coordinate
@@ -85,7 +85,7 @@ internal class LocalDevicesProvider(
         acquiredDevices: Set<DeviceCoordinate>
     ): Set<Device> {
         return try {
-            logger.debug("Getting local emulators")
+            logger.info("Getting local emulators")
             val devices = devicesManager.connectedDevices()
                 .asSequence()
                 .filter { it.id is Serial.Local }
@@ -99,7 +99,7 @@ internal class LocalDevicesProvider(
                 .filter { fitsReservation(it, reservation) }
                 .filter { isBooted(it) }
                 .toSet()
-            logger.debug(
+            logger.info(
                 "Getting local emulators completed. " +
                     "Received ${devices.size} emulators."
             )

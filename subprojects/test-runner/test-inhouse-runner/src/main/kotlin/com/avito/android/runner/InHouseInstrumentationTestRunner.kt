@@ -238,9 +238,9 @@ abstract class InHouseInstrumentationTestRunner :
 
     override fun beforeOnCreate(arguments: Bundle) {
         injectTestMetadata(instrumentationArguments)
-        logger.debug("Instrumentation arguments: $instrumentationArguments")
+        logger.verbose("Instrumentation arguments: $instrumentationArguments")
         val environment = testRunEnvironment.asRunEnvironmentOrThrow()
-        logger.debug("TestRunEnvironment: $environment")
+        logger.info("TestRunEnvironment: $environment")
         StepDslProvider.initialize(
             StepDslDelegateImpl(
                 reportLifecycle = report,
@@ -384,7 +384,7 @@ abstract class InHouseInstrumentationTestRunner :
             if (e.message?.contains("UiAutomation not connected") != true) {
                 throw e
             } else {
-                logger.debug("Got UiAutomation not connected when finished")
+                logger.verbose("Got UiAutomation not connected when finished")
             }
         }
     }

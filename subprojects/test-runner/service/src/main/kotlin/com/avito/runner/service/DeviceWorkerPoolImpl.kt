@@ -63,17 +63,19 @@ internal class DeviceWorkerPoolImpl(
 
                 launch(CoroutineName("send-intentions")) {
                     for (intention in state.intentions) {
-                        logger.debug("received intention: $intention")
+                        logger.info("received intention: $intention")
                         intentionsRouter.sendIntention(intention = intention)
                     }
                 }
 
                 launch(CoroutineName("worker-messages")) {
                     for (message in messages) {
-                        logger.debug("received message: $message")
+                        logger.info("received message: $message")
                         when (message) {
                             is DeviceWorkerMessage.ApplicationInstalled ->
-                                logger.debug("Application: ${message.installation.installation.application} installed")
+                                logger.verbose(
+                                    "Application: ${message.installation.installation.application} installed"
+                                )
 
                             is DeviceWorkerMessage.FailedIntentionProcessing -> {
                                 logger.warn(

@@ -18,22 +18,22 @@ internal class FinishedReport(
     }
 
     override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
-        logger.debug("Fail to addHtml $label")
+        logger.warn("Fail to addHtml $label")
     }
 
     override fun addText(label: String, text: String) {
-        logger.debug("Fail to addText $label")
+        logger.warn("Fail to addText $label")
     }
 
     override fun addComment(comment: String) {
-        logger.debug("Fail to addComment $comment")
+        logger.warn("Fail to addComment $comment")
     }
 
     override fun addScreenshot(label: String) {
-        logger.debug("Fail to addScreenshot $label")
+        logger.warn("Fail to addScreenshot $label")
     }
 
     override fun addAssertion(label: String) {
-        logger.debug("Fail to addAssertion $label")
+        logger.warn("Fail to addAssertion $label")
     }
 }

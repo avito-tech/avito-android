@@ -2,6 +2,10 @@ package com.avito.logger
 
 public class PrintlnLogger(private val tag: String) : Logger {
 
+    override fun verbose(msg: String) {
+        println("VERBOSE:[$tag] $msg")
+    }
+
     override fun debug(msg: String) {
         println("DEBUG:[$tag] $msg")
     }

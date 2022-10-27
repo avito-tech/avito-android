@@ -41,7 +41,7 @@ internal class KubernetesReservationReleaser(
     private suspend fun releasePods(deploymentName: String, pods: List<KubePod>) {
         val runningPods = pods.filter { it.phase is KubePod.PodPhase.Running }
         if (runningPods.isNotEmpty()) {
-            logger.debug("Save emulators logs for deployment: $deploymentName")
+            logger.info("Save emulators logs for deployment: $deploymentName")
             runningPods.forEach { pod -> releasePod(pod) }
         }
     }
@@ -69,7 +69,7 @@ internal class KubernetesReservationReleaser(
                         )
                     }
                     device.disconnect().fold(
-                        { logger.debug("Device: $serial disconnected") },
+                        { logger.info("Device: $serial disconnected") },
                         { error ->
                             logger.warn("Failed to disconnect device: $serial", error)
                         }

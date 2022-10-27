@@ -22,7 +22,7 @@ public class IntentionsRouter(
         mutex.withLock {
             val id = state.routingIdentifier()
 
-            logger.debug("observing intentions with id: $id for state: $state")
+            logger.info("observing intentions with id: $id for state: $state")
 
             return intentionRoutings.getOrPut(
                 key = id,
@@ -35,7 +35,7 @@ public class IntentionsRouter(
         mutex.withLock {
             val intentionId = intention.state.routingIdentifier()
 
-            logger.debug("sending intention with id: $intentionId [$intention]")
+            logger.info("sending intention with id: $intentionId")
 
             intentionRoutings.getOrPut(
                 key = intentionId,

@@ -15,7 +15,7 @@ internal class HttpClientProvider(
     private val client: OkHttpClient by lazy {
         val logger = loggerFactory.create("HTTP")
         val httpLoggingInterceptor = HttpLoggingInterceptor { message ->
-            logger.debug(message)
+            logger.verbose(message)
         }
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         HttpClientProvider(

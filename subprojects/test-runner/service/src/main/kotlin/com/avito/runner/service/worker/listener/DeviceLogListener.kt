@@ -10,27 +10,27 @@ import com.avito.runner.service.worker.model.DeviceInstallation
 internal class DeviceLogListener(private val deviceLogger: Logger) : DeviceListener {
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
-        deviceLogger.debug("Device is online ($state)")
+        deviceLogger.info("Device is online ($state)")
     }
 
     override suspend fun onIntentionReceived(device: Device, intention: Intention) {
-        deviceLogger.debug("Received intention: $intention")
+        deviceLogger.info("Received intention: $intention")
     }
 
     override suspend fun onApplicationInstalled(device: Device, installation: DeviceInstallation) {
-        deviceLogger.debug("Application installed: ${installation.installation}")
+        deviceLogger.info("Application installed: ${installation.installation}")
     }
 
     override suspend fun onStatePrepared(device: Device, state: State) {
-        deviceLogger.debug("State prepared: ($state)")
+        deviceLogger.info("State prepared: ($state)")
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
-        deviceLogger.debug("Worker test run started for intention: $intention")
+        deviceLogger.info("Worker test run started for intention: $intention")
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
-        deviceLogger.debug("Worker test run completed for intention: $intention")
+        deviceLogger.info("Worker test run completed for intention: $intention")
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
@@ -42,6 +42,6 @@ internal class DeviceLogListener(private val deviceLogger: Logger) : DeviceListe
     }
 
     override suspend fun onFinished(device: Device) {
-        deviceLogger.debug("Worker ended with success result")
+        deviceLogger.info("Worker ended with success result")
     }
 }

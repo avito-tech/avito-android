@@ -7,11 +7,11 @@ import java.nio.file.Path
 internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEventsListener {
 
     override fun onGetSdkPropertySuccess(attempt: Int, api: Int, durationMs: Long) {
-        logger.debug("Got ro.build.version.sdk = $api")
+        logger.info("Got ro.build.version.sdk = $api")
     }
 
     override fun onGetSdkPropertyError(attempt: Int, durationMs: Long) {
-        logger.debug("Attempt $attempt: reading ro.build.version.sdk failed")
+        logger.verbose("Attempt $attempt: reading ro.build.version.sdk failed")
     }
 
     override fun onGetSdkPropertyFailure(throwable: Throwable, durationMs: Long) {
@@ -24,7 +24,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         applicationPackage: String,
         durationMs: Long
     ) {
-        logger.debug("Attempt $attempt: application $applicationPackage installed")
+        logger.info("Attempt $attempt: application $applicationPackage installed")
     }
 
     override fun onInstallApplicationError(
@@ -34,7 +34,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         throwable: Throwable,
         durationMs: Long
     ) {
-        logger.debug("Attempt $attempt: failed to install application $applicationPackage")
+        logger.verbose("Attempt $attempt: failed to install application $applicationPackage")
     }
 
     override fun onInstallApplicationFailure(
@@ -51,7 +51,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         attempt: Int,
         durationMs: Long
     ) {
-        logger.debug("Device status: alive")
+        logger.info("Device status: alive")
     }
 
     override fun onGetAliveDeviceError(
@@ -59,7 +59,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         attempt: Int,
         durationMs: Long
     ) {
-        logger.debug("Attempt $attempt: failed to determine the device status")
+        logger.verbose("Attempt $attempt: failed to determine the device status")
     }
 
     override fun onGetAliveDeviceFailed(
@@ -76,7 +76,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         name: String,
         durationMs: Long
     ) {
-        logger.debug("Attempt: $attempt: clear package $name completed")
+        logger.info("Attempt: $attempt: clear package $name completed")
     }
 
     override fun onClearPackageError(
@@ -104,7 +104,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         to: Path,
         durationMs: Long
     ) {
-        logger.debug("Pull success from: $from to $to")
+        logger.info("Pull success from: $from to $to")
     }
 
     override fun onPullError(
@@ -114,7 +114,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         throwable: Throwable,
         durationMs: Long
     ) {
-        logger.debug("Attempt $attempt: failed to pull $from")
+        logger.verbose("Attempt $attempt: failed to pull $from")
     }
 
     override fun onPullFailure(
@@ -132,7 +132,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         output: String,
         durationMs: Long
     ) {
-        logger.debug("Successfully cleared $remotePath. ($output)")
+        logger.info("Successfully cleared $remotePath. ($output)")
     }
 
     override fun onClearDirectoryError(
@@ -142,7 +142,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         throwable: Throwable,
         durationMs: Long
     ) {
-        logger.debug("Attempt $attempt: failed to clear $remotePath")
+        logger.verbose("Attempt $attempt: failed to clear $remotePath")
     }
 
     override fun onClearDirectoryFailure(
@@ -159,7 +159,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         remotePath: String,
         durationMs: Long
     ) {
-        logger.debug("Listing $remotePath success")
+        logger.info("Listing $remotePath success")
     }
 
     override fun onListError(
@@ -169,7 +169,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         throwable: Throwable,
         durationMs: Long
     ) {
-        logger.debug("Attempt $attempt: failed to list directory $remotePath")
+        logger.verbose("Attempt $attempt: failed to list directory $remotePath")
     }
 
     override fun onListFailure(
@@ -213,7 +213,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         testName: String,
         durationMs: Long
     ) {
-        logger.debug("Run test passed: $testName")
+        logger.info("Run test passed: $testName")
     }
 
     override fun onRunTestIgnored(
@@ -221,7 +221,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         testName: String,
         durationMs: Long
     ) {
-        logger.debug("Run test ignored: $testName")
+        logger.info("Run test ignored: $testName")
     }
 
     override fun onRunTestRunError(

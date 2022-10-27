@@ -24,7 +24,7 @@ internal class DeploymentPodsListener(
         deploymentName: String,
         podsChannel: SendChannel<KubePod>
     ): Result<Unit> {
-        logger.debug("Start listening devices for $deploymentName")
+        logger.info("Start listening devices for $deploymentName")
 
         var next = true
         var result: Result<Unit> = Result.Success(Unit)
@@ -49,7 +49,7 @@ internal class DeploymentPodsListener(
                 }
             }
         }
-        logger.debug("listenPodsFromDeployment finished, [deploymentName=$deploymentName]")
+        logger.info("listenPodsFromDeployment finished, [deploymentName=$deploymentName]")
         return result
     }
 }

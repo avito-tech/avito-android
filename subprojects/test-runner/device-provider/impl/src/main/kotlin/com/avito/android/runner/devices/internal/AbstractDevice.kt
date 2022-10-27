@@ -55,7 +55,7 @@ internal abstract class AbstractDevice(
         conditionName = "Wait device with serial: $serial",
         maxAttempts = attempts,
         onSuccess = { conditionName: String, durationMs: Long, attempt: Int ->
-            logger.debug("$conditionName succeed in $durationMs at attempt=$attempt")
+            logger.verbose("$conditionName succeed in $durationMs at attempt=$attempt")
         },
         sleepAction = { frequencyMs: Long -> delay(frequencyMs) },
         frequencySeconds = frequencySec,

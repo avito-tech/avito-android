@@ -6,7 +6,12 @@ package com.avito.logger
 public interface Logger {
 
     /**
-     * additional information for troubleshooting
+     * Low level events. Use in rare cases when we want to see the big amount of data for explore problems
+     */
+    public fun verbose(msg: String)
+
+    /**
+     * temporary additional information for troubleshooting
      */
     public fun debug(msg: String)
 

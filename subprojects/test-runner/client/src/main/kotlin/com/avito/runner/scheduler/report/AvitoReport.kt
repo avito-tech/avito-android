@@ -100,23 +100,23 @@ internal class AvitoReport(
 
     override fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>) {
         if (notReportedTests.isEmpty()) {
-            logger.debug("No lost tests to report")
+            logger.info("No lost tests to report")
             return
         }
 
         notReportedTests.actionOnBatches { index, lostTestsBatch ->
-            logger.debug("Reporting ${lostTestsBatch.size} lost tests for batch: $index")
+            logger.info("Reporting ${lostTestsBatch.size} lost tests for batch: $index")
 
             reportsApi.addTests(
                 buildId = buildId,
                 reportCoordinates = reportCoordinates,
                 tests = lostTestsBatch
             ).fold(
-                { logger.debug("Lost tests successfully reported") },
+                { logger.info("Lost tests successfully reported") },
                 { logger.warn("Can't report lost tests", it) }
             )
 
-            logger.debug("Reporting lost tests for batch: $index completed")
+            logger.info("Reporting lost tests for batch: $index completed")
         }
 
         // this is not obvious side-effect, yet very important for correct logic on report-viewer side
@@ -141,7 +141,7 @@ internal class AvitoReport(
     private fun finish() {
         if (hasAtLeastOneTestReported) {
             reportsApi.setFinished(reportCoordinates = reportCoordinates).fold(
-                { logger.debug("Test run finished $reportCoordinates") },
+                { logger.info("Test run finished $reportCoordinates") },
                 { error -> logger.warn("Can't finish test run $reportCoordinates", error) }
             )
         } else {

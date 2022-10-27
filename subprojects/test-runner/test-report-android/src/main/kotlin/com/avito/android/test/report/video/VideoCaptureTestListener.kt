@@ -27,9 +27,8 @@ class VideoCaptureTestListener(
 
     override fun beforeTestStart(state: Started) {
         if (videoFeature.videoRecordingEnabled(shouldRecord)) {
-            logger.debug("Video recording feature enabled. Recording starting")
             videoCapturer.start().fold(
-                onSuccess = { logger.debug("Video recording feature enabled. Recording started") },
+                onSuccess = { logger.info("Video recording feature enabled. Recording started") },
                 onFailure = { throwable ->
                     logger.warn(
                         "Video recording feature enabled. Failed to start recording.",
@@ -38,7 +37,7 @@ class VideoCaptureTestListener(
                 }
             )
         } else {
-            logger.debug("Video recording feature disabled.")
+            logger.verbose("Video recording feature disabled.")
         }
     }
 
@@ -48,17 +47,17 @@ class VideoCaptureTestListener(
 
     override fun beforeTestFinished(state: Started) {
         if (videoFeature.videoUploadingEnabled(shouldRecord, savedIncident)) {
-            logger.debug("Video uploading enabled. Recording stopping...")
+            logger.info("Video uploading enabled. Recording stopping...")
             videoCapturer.stop().fold(
                 onSuccess = { videoFile ->
-                    logger.debug("Video uploading enabled. Recording stopped")
+                    logger.info("Video uploading enabled. Recording stopped")
                     val video = transport.sendContent(
                         test = state.testMetadata,
                         file = videoFile,
                         type = Entry.File.Type.video,
                         comment = "video"
                     )
-                    logger.debug("Video uploading enabled. Video uploaded")
+                    logger.info("Video uploading enabled. Video uploaded")
                     waitUploads(state = state, video = video)
                 },
                 onFailure = { throwable ->
@@ -72,7 +71,7 @@ class VideoCaptureTestListener(
             )
         } else {
             videoCapturer.abort()
-            logger.debug("Video uploading disabled. Video recording process aborted")
+            logger.verbose("Video uploading disabled. Video recording process aborted")
         }
     }
 

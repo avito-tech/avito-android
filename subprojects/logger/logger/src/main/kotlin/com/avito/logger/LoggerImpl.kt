@@ -6,6 +6,10 @@ internal class LoggerImpl(
     private val handler: LoggingHandler,
 ) : Logger {
 
+    override fun verbose(msg: String) {
+        handler.write(LogLevel.VERBOSE, msg, null)
+    }
+
     override fun debug(msg: String) {
         handler.write(LogLevel.DEBUG, msg, null)
     }

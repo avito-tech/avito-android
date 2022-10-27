@@ -28,6 +28,7 @@ internal class SentryLoggingHandler(
 
     private fun LogLevel.toSentryLevel(): Event.Level {
         return when (this) {
+            LogLevel.VERBOSE -> Event.Level.DEBUG
             LogLevel.DEBUG -> Event.Level.DEBUG
             LogLevel.INFO -> Event.Level.INFO
             LogLevel.WARNING -> Event.Level.WARNING

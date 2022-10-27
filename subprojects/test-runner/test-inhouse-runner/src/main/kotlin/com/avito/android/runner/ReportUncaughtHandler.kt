@@ -13,7 +13,7 @@ internal class ReportUncaughtHandler(
 
     override fun uncaughtException(t: Thread, e: Throwable) {
         if (e.message in nonCriticalErrorMessages) {
-            logger.debug("Non critical error caught by ReportUncaughtHandler. ${e.message}")
+            logger.verbose("Non critical error caught by ReportUncaughtHandler. ${e.message}")
         } else {
             logger.warn("Application crashed", e)
             InHouseInstrumentationTestRunner.instance.reportUnexpectedIncident(incident = e)

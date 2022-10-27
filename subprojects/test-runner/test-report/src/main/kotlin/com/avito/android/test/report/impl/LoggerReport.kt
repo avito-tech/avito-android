@@ -141,9 +141,9 @@ internal class LoggerReport(
     }
 
     private inline fun <T> traceMethod(name: String, action: () -> T): T {
-        logger.debug("Method: $name execution started")
+        logger.verbose("Method: $name execution started")
         val result = action()
-        logger.debug("Method: $name execution finished")
+        logger.verbose("Method: $name execution finished")
         return result
     }
 }

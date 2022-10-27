@@ -40,16 +40,16 @@ internal class ReservationDeploymentFactoryImpl(
     }
 
     override fun createDeployment(namespace: String, reservation: ReservationData): Deployment {
-        logger.debug("Creating deployment for configuration: $configurationName")
+        logger.info("Creating deployment for configuration: $configurationName")
         val deploymentName = deploymentNameGenerator.generateName(namespace)
-        logger.debug("Deployment name will be: $deploymentName")
+        logger.info("Deployment name will be: $deploymentName")
 
         return when (val device = reservation.device) {
             is Device.LocalEmulator -> throw IllegalStateException(
                 "Local emulator $device is unsupported in kubernetes reservation"
             )
             is Device.CloudEmulator -> {
-                logger.debug("Creating ${reservation.count} replicas of cloud emulator deployment: $device")
+                logger.info("Creating ${reservation.count} replicas of cloud emulator deployment: $device")
                 getCloudEmulatorDeployment(
                     emulator = device,
                     deploymentName = deploymentName,

@@ -104,7 +104,7 @@ internal class DeviceWorker(
         intendedState: State
     ): Result<State> = if (intendedState.digest != currentState.digest) {
 
-        device.logger.debug(
+        device.logger.info(
             "Current state=${currentState.digest}, " +
                 "intended=${intendedState.digest}. Preparing new state..."
         )
@@ -121,7 +121,7 @@ internal class DeviceWorker(
             }
         )
     } else {
-        device.logger.debug(
+        device.logger.info(
             "Current state=${currentState.digest}, " +
                 "intended=${intendedState.digest}. Clearing packages..."
         )

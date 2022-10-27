@@ -21,24 +21,24 @@ internal class StatsDKubernetesReservationMetricsSender(
     private val queueSeriesName = runnerPrefix.append("reservation.pod.queue", multipart = true)
 
     override suspend fun onClaim(reservations: Collection<ReservationData>) {
-        loggerFactory.debug("onClaim $reservations")
+        loggerFactory.info("onClaim $reservations")
         val requestedPodCount = reservations.fold(0) { acc, reservation -> acc + reservation.count }
         state.claim(requestedPodCount)
     }
 
     override suspend fun onPodAcquired() {
-        loggerFactory.debug("onPodAcquired")
+        loggerFactory.info("onPodAcquired")
         val queueTime = state.podAcquired()
         sendQueueTime(queueTime)
     }
 
     override suspend fun onPodRemoved() {
-        loggerFactory.debug("onPodRemoved")
+        loggerFactory.info("onPodRemoved")
         state.podRemoved()
     }
 
     override suspend fun onRelease() {
-        loggerFactory.debug("onRelease")
+        loggerFactory.info("onRelease")
         state.release().forEach { queueTime ->
             sendQueueTime(queueTime)
         }

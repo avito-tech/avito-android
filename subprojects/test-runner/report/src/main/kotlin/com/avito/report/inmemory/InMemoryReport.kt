@@ -29,13 +29,13 @@ internal class InMemoryReport(
 
     @Synchronized
     override fun addTest(testAttempt: TestAttempt) {
-        logger.debug("addTest $testAttempt")
+        logger.verbose("addTest $testAttempt")
         this.testAttempts.add(testAttempt)
     }
 
     @Synchronized
     override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
-        logger.debug("addSkippedTests $skippedTests")
+        logger.verbose("addSkippedTests $skippedTests")
 
         this.testAttempts.addAll(
             skippedTests.map { (test, reason) ->

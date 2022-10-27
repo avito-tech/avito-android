@@ -58,9 +58,9 @@ internal class StatsDSenderImpl(
             is GaugeDoubleMetric -> client.gauge(aspect, metric.value)
         }
         if (config is StatsDConfig.Enabled) {
-            logger.debug("${metric.type}:${config.namespace}.$aspect:${metric.value}")
+            logger.verbose("${metric.type}:${config.namespace}.$aspect:${metric.value}")
         } else {
-            logger.debug("Skip statsd event: ${metric.type}:<namespace>.$aspect:${metric.value}")
+            logger.verbose("Skip statsd event: ${metric.type}:<namespace>.$aspect:${metric.value}")
         }
     }
 }

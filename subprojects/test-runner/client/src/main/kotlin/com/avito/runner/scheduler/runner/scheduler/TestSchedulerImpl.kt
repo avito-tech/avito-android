@@ -38,7 +38,7 @@ internal class TestSchedulerImpl(
     private val logger = loggerFactory.create<TestSchedulerImpl>()
 
     override fun schedule(): TestSchedulerResult {
-        logger.debug("Filter config: $filter")
+        logger.info("Filter config: $filter")
         filterInfoWriter.writeFilterConfig(filter)
 
         val tests = testSuiteLoader.loadTestSuite(testApk, AllChecks())
@@ -46,7 +46,7 @@ internal class TestSchedulerImpl(
         tests.fold(
             { result ->
                 logger.info("Tests parsed from apk: ${result.size}")
-                logger.debug("Tests parsed from apk: ${result.map { it.testName }}")
+                logger.verbose("Tests parsed from apk: ${result.map { it.testName }}")
             },
             { error -> logger.critical("Can't parse tests from apk", error) }
         )
@@ -60,10 +60,10 @@ internal class TestSchedulerImpl(
         val skippedTests = testSuite.skippedTests.map {
             "${it.first.name} on ${it.first.device} because ${it.second.reason}"
         }
-        logger.debug("Skipped tests: $skippedTests")
+        logger.verbose("Skipped tests: $skippedTests")
 
         val testsToRun = testSuite.testsToRun
-        logger.debug("Tests to run: ${testsToRun.map { "${it.name} on ${it.device}" }}")
+        logger.verbose("Tests to run: ${testsToRun.map { "${it.name} on ${it.device}" }}")
 
         filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
         filterInfoWriter.writeFilterExcludes(testSuite.skippedTests)

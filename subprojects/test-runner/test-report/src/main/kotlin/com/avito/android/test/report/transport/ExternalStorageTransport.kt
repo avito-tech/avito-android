@@ -35,7 +35,7 @@ public class ExternalStorageTransport(
             }
             .fold(
                 onSuccess = { file ->
-                    logger.debug("Write report to file: $file")
+                    logger.info("Wrote report to file: $file")
                 },
                 onFailure = { throwable ->
                     logger.critical(

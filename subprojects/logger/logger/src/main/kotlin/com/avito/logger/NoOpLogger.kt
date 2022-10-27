@@ -2,6 +2,9 @@ package com.avito.logger
 
 public object NoOpLogger : Logger {
 
+    override fun verbose(msg: String) {
+    }
+
     override fun debug(msg: String) {
     }
 

@@ -53,9 +53,9 @@ public class MockDispatcher(
                 }
                 val foundCapturer = foundCapturers[0]
                 foundCapturer.capture(request)
-                logger.debug("Request ${request.requestLine} was captured")
+                logger.verbose("Request ${request.requestLine} was captured")
             } else {
-                logger.debug("Request ${request.requestLine} wasn't captured")
+                logger.verbose("Request ${request.requestLine} wasn't captured")
             }
         }
 
@@ -78,7 +78,7 @@ public class MockDispatcher(
         }
 
         val response = if (lastMatchedMock != null) {
-            logger.debug("Request matched: [$requestData], answering: ${lastMatchedMock.response}")
+            logger.verbose("Request matched: [$requestData], answering: ${lastMatchedMock.response}")
             lastMatchedMock.response
         } else {
             logger.warn("UnMocked request captured: [$requestData], answering: [$unmockedResponse]")

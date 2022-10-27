@@ -10,6 +10,7 @@ internal class AndroidLogcatLoggingHandler(
 
     override fun handleIfAcceptLogLevel(level: LogLevel, message: String, error: Throwable?) {
         when (level) {
+            LogLevel.VERBOSE -> Log.v(tag, message, error)
             LogLevel.DEBUG -> Log.d(tag, message, error)
             LogLevel.INFO -> Log.i(tag, message, error)
             LogLevel.WARNING -> Log.w(tag, message, error)

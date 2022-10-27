@@ -65,7 +65,7 @@ public open class StubDevice(
 
         val result = installApplicationResultsQueue.poll()
 
-        logger.debug("installApplication(\"$applicationPackage\") resulted with $result")
+        logger.info("installApplication(\"$applicationPackage\") resulted with $result")
 
         return result
     }
@@ -84,7 +84,7 @@ public open class StubDevice(
 
         val result = runTestsResultsQueue.poll().get()
 
-        logger.debug("runIsolatedTest() resulted with: $result")
+        logger.info("runIsolatedTest() resulted with: $result")
 
         return DeviceTestCaseRun(
             testCaseRun = TestCaseRun(
@@ -106,14 +106,14 @@ public open class StubDevice(
 
         val result = clearPackageResultsQueue.poll().get()
 
-        logger.debug("clearPackage(\"$name\") resulted with: $result")
+        logger.info("clearPackage(\"$name\") resulted with: $result")
 
         return result
     }
 
     override fun pull(from: Path, to: Path): Result<File> {
 
-        logger.debug("pull called [from: $from to: $to]")
+        logger.info("pull called [from: $from to: $to]")
 
         return if (from.toString().contains("report.json")) {
             to.toFile().writeText("")
@@ -160,7 +160,7 @@ public open class StubDevice(
 
         val result = gettingDeviceStatusResultsQueue.poll()
 
-        logger.debug("deviceStatus() resulted with: $result")
+        logger.info("deviceStatus() resulted with: $result")
 
         return result
     }

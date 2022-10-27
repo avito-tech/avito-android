@@ -33,6 +33,11 @@ public val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope 
 private fun testLoggerFactory() = object : LoggerFactory {
     override fun create(tag: String): Logger {
         return object : Logger {
+
+            override fun verbose(msg: String) {
+                println("[$tag] $msg")
+            }
+
             override fun debug(msg: String) {
                 println("[$tag] $msg")
             }

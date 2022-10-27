@@ -43,18 +43,18 @@ internal class KubernetesApiImpl(
 
     override suspend fun deleteDeployment(deploymentName: String) {
         try {
-            logger.debug("Deleting deployment: $deploymentName")
+            logger.info("Deleting deployment: $deploymentName")
             kubernetesClient.apps().deployments().withName(deploymentName).delete()
-            logger.debug("Deployment: $deploymentName deleted")
+            logger.info("Deployment: $deploymentName deleted")
         } catch (t: Throwable) {
             logger.warn("Failed to delete deployment $deploymentName", t)
         }
     }
 
     override suspend fun createDeployment(deployment: Deployment) {
-        logger.debug("Deployment.create(): start $deployment")
+        logger.info("Deployment.create(): start $deployment")
         kubernetesClient.apps().deployments().create(deployment)
-        logger.debug("Deployment.create(): client returned")
+        logger.info("Deployment.create(): client returned")
 
         waitForDeploymentCreationDone(
             deploymentName = deployment.metadata.name,
@@ -73,11 +73,11 @@ internal class KubernetesApiImpl(
         deploymentName: String,
         count: Int
     ) {
-        logger.debug("waitForDeploymentCreationDone name=$deploymentName count=$count")
+        logger.info("waitForDeploymentCreationDone name=$deploymentName count=$count")
         waitForCondition(
             conditionName = "Deployment $deploymentName deployed",
             onSuccess = { conditionName: String, durationMs: Long, attempt: Int ->
-                logger.debug("$conditionName succeed in $durationMs at attempt=$attempt")
+                logger.info("$conditionName succeed in $durationMs at attempt=$attempt")
             },
             sleepAction = { frequencyMs: Long -> delay(frequencyMs) }
         ) {
@@ -109,7 +109,7 @@ internal class KubernetesApiImpl(
                     }
                 }
         }.onSuccess { pods ->
-            logger.debug(
+            logger.verbose(
                 "Getting pods for deployment $deploymentName:\n" +
                     pods.joinToString(separator = "\n")
             )

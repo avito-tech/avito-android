@@ -28,11 +28,11 @@ internal class RemoteDeviceProviderImpl(
     override suspend fun create(pod: KubePod): Result<RemoteDevice> {
         with(pod) {
             val podName = name
-            logger.debug("Found new pod: $podName")
+            logger.info("Found new pod: $podName")
             return bootDevice().onFailure { error ->
                 logger.warn(initializeFailureMessage(podName, ip), error)
                 val isDeleted = kubernetesApi.deletePod(podName)
-                logger.debug("Pod $podName is deleted: $isDeleted")
+                logger.info("Pod $podName is deleted: $isDeleted")
             }
         }
     }

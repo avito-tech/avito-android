@@ -61,7 +61,7 @@ internal class KubernetesReservationClaimer(
         podsChannel: Channel<KubePod>,
         serialsChannel: Channel<DeviceCoordinate>
     ) {
-        logger.debug("Create deployment $reservation")
+        logger.info("Create deployment $reservation")
         val deployment = reservationDeploymentFactory.createDeployment(
             namespace = kubernetesApi.namespace,
             reservation = reservation
@@ -91,7 +91,7 @@ internal class KubernetesReservationClaimer(
                 podsChannel
                     .map {
                         if (serialsChannel.isClosedForSend) {
-                            logger.debug("cancel waiting-pods")
+                            logger.info("cancel waiting-pods")
                             podsChannel.cancel()
                         }
                         it
@@ -110,7 +110,7 @@ internal class KubernetesReservationClaimer(
                                 }
                         }
                     }
-                logger.debug("initializeDevices finished")
+                logger.info("initializeDevices finished")
             }
         }
     }
@@ -120,7 +120,7 @@ internal class KubernetesReservationClaimer(
         serials: Channel<DeviceCoordinate>,
     ) {
         if (serials.isClosedForSend) {
-            logger.debug("Pod $podName boot device but serials channel closed")
+            logger.info("Pod $podName boot device but serials channel closed")
             return
         }
         emulatorsLogsReporter.redirectLogcat(
@@ -134,6 +134,6 @@ internal class KubernetesReservationClaimer(
             )
         )
 
-        logger.debug("Pod $podName sent outside for further usage")
+        logger.info("Pod $podName sent outside for further usage")
     }
 }

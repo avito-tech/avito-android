@@ -34,9 +34,9 @@ public abstract class AbstractReportTestListener : RunListener() {
 
     private inline fun processEvent(event: String, testName: String, action: () -> Unit) {
         try {
-            logger.debug("Receive event: $event for test: $testName")
+            logger.verbose("Receive event: $event for test: $testName")
             action()
-            logger.debug("Processed event: $event for test: $testName SUCCESSFULLY")
+            logger.verbose("Processed event: $event for test: $testName SUCCESSFULLY")
         } catch (t: Throwable) {
             logger.warn("Processed event: $event for test: $testName UNSUCCESSFULLY", t)
             throw t

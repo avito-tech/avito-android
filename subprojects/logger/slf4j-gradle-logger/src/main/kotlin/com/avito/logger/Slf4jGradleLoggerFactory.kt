@@ -17,6 +17,11 @@ private class Slf4jGradleLogger(
     private val delegate: org.slf4j.Logger,
     private val tag: String
 ) : Logger {
+
+    override fun verbose(msg: String) {
+        delegate.trace("[$tag] $msg")
+    }
+
     override fun debug(msg: String) {
         delegate.debug("[$tag] $msg")
     }

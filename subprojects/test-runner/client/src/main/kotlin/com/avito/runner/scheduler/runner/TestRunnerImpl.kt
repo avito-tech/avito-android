@@ -71,7 +71,7 @@ internal class TestRunnerImpl(
                         gottenResults.add(result)
                         val gottenCount = gottenResults.size
 
-                        logger.debug(
+                        logger.verbose(
                             "Result for test: %s received after %d tries. Progress (%s)".format(
                                 result.request.testCase.name,
                                 result.result.size,
@@ -91,14 +91,14 @@ internal class TestRunnerImpl(
 
                     val summaryReport = summaryReportMaker.make(gottenResults, startTime)
                     reporter.report(report = summaryReport)
-                    logger.debug(
+                    logger.info(
                         "Test run finished. The results: " +
                             "passed = ${summaryReport.successRunsCount}, " +
                             "failed = ${summaryReport.failedRunsCount}, " +
                             "ignored = ${summaryReport.ignoredRunsCount}, " +
                             "took ${summaryReport.durationMilliseconds.millisecondsToHumanReadableTime()}."
                     )
-                    logger.debug(
+                    logger.info(
                         "Matching results: " +
                             "matched = ${summaryReport.matchedCount}, " +
                             "mismatched = ${summaryReport.mismatchedCount}, " +
