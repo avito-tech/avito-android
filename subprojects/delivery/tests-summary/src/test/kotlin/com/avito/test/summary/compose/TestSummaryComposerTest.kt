@@ -12,9 +12,9 @@ import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-internal class SlackSummaryComposerTest {
+internal class TestSummaryComposerTest {
 
-    private val composer: SlackSummaryComposer = SlackSummaryComposerImpl("http://localhost/")
+    private val composer: TestSummaryComposer = TestSummaryComposerImpl("http://localhost/")
 
     @Test
     fun `slack message - contains manual tests count`() {
@@ -206,7 +206,7 @@ internal class SlackSummaryComposerTest {
         val message = compose(suiteWithFailure, mentionOnFailures = true)
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
-        assertThat(message.getOrThrow()).contains("<!channel>")
+        assertThat(message.getOrThrow()).contains("@channel")
     }
 
     @Test
@@ -221,7 +221,7 @@ internal class SlackSummaryComposerTest {
         val message = compose(greenSuite, mentionOnFailures = true)
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
-        assertThat(message.getOrThrow()).doesNotContain("<!channel>")
+        assertThat(message.getOrThrow()).doesNotContain("@channel")
     }
 
     @Test
@@ -247,7 +247,7 @@ internal class SlackSummaryComposerTest {
         val message = compose(suiteWithFailure, mentionOnFailures = false)
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
-        assertThat(message.getOrThrow()).doesNotContain("<!channel>")
+        assertThat(message.getOrThrow()).doesNotContain("@channel")
     }
 
     private fun compose(

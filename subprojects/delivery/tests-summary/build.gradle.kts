@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.subprojects.common.time)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.slack)
+    implementation(projects.subprojects.gradle.alertino)
     implementation(projects.subprojects.gradle.statsdConfig)
     implementation(projects.subprojects.logger.slf4jGradleLogger)
     implementation(projects.subprojects.testRunner.reportViewer) {

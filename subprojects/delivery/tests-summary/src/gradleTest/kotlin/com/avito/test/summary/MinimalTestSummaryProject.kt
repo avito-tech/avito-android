@@ -17,6 +17,7 @@ internal object MinimalTestSummaryProject {
                 "import com.avito.report.model.Team",
                 "import com.avito.reportviewer.model.ReportCoordinates",
                 "import com.avito.slack.model.SlackChannel",
+                "import com.avito.alertino.model.AlertinoRecipient",
             ),
             buildGradleExtra = """
                 testSummary {
@@ -33,6 +34,16 @@ internal object MinimalTestSummaryProject {
                         slack.summaryChannel.set(SlackChannel("someId", "#someChannel"))
                         slack.reserveChannel.set(SlackChannel("someId", "#someChannel"))
                         slack.mentionOnFailures.set(setOf("someChannel"))
+                        
+                        alertino.alertinoEndpoint.set("https://localhost")
+                        alertino.alertinoTemplate.set("template")
+                        alertino.alertinoTemplate.set("text")
+                        alertino.unitToChannelMapping.set(
+                            mapOf(Team("someTeam") to AlertinoRecipient("#someChannel"))
+                        )
+                        alertino.summaryChannel.set(AlertinoRecipient("#someChannel"))
+                        alertino.reserveChannel.set(AlertinoRecipient("#someChannel"))
+                        alertino.mentionOnFailures.set(setOf("@username"))
                         
                         reportViewer.url.set("someUrl")
                         reportViewer.reportsHost.set("someUrl")

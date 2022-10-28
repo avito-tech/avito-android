@@ -12,6 +12,9 @@ public abstract class TestSummaryAppExtension @Inject constructor() : Named {
     public abstract val slack: SlackExtension
 
     @get:Nested
+    public abstract val alertino: AlertinoExtension
+
+    @get:Nested
     public abstract val reportViewer: ReportViewerExtension
 
     @get:Input

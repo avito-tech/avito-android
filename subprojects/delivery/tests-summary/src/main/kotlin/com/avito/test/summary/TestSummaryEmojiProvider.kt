@@ -1,6 +1,6 @@
 package com.avito.test.summary
 
-internal class SlackEmojiProvider {
+internal class TestSummaryEmojiProvider {
 
     fun emojiName(health: Int): String = when (health) {
         in 100..Int.MAX_VALUE -> ":stfgod0:"

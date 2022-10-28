@@ -54,6 +54,7 @@ public class TestSummaryPlugin : Plugin<Project> {
 
                 this.reportViewerExtension.set(extension.reportViewer)
                 this.slackExtension.set(extension.slack)
+                this.alertinoExtension.set(extension.alertino)
                 this.buildUrl.set(extension.buildUrl)
             }
         }
