@@ -1,0 +1,15 @@
+apiVersion: v2
+type: application
+name: gradle-remote-cache
+version: v2.3.0
+appVersion: v1.0.0
+description: gradle remote cache app
+keywords:
+    - gradle
+    - cache
+sources:
+    - https://github.com/avito-tech/avito-android
+maintainers:
+    - name: Fill in
+      url: https://change.me
+kubeVersion: ">=1.14.0-0"

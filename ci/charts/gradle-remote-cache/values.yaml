@@ -1,0 +1,15 @@
+# -- image settings
+registry:
+    # -- url of docker registry
+    url: docker.registry
+    # -- image to use for remote cache
+    image: path/to/image
+    # -- tag to use for remote cache
+    tag: latest
+
+# -- host settings
+hosts:
+    # -- url for github cache
+    gradle_cache_url: gradle-remote-cache-github.example.com
+    # -- url for local cache
+    avito_cache_url: gradle-remote-cache.example.com
