@@ -4,7 +4,6 @@ import com.avito.android.http.ArtifactoryClient
 import com.avito.android.http.createArtifactoryHttpClient
 import com.avito.android.model.input.Deployment
 import com.avito.android.model.input.DeploymentV2
-import com.avito.android.stats.StatsDConfig
 import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
@@ -13,7 +12,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
@@ -46,9 +44,6 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
     @get:Input
     internal abstract val artifacts: ListProperty<Deployment>
 
-    @get:Internal
-    public abstract val statsDConfig: Property<StatsDConfig>
-
     @get:OutputFile
     public abstract val buildOutput: RegularFileProperty
 
@@ -59,7 +54,6 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
         val httpClient = createArtifactoryHttpClient(
             user = artifactoryUser.get(),
             password = artifactoryPassword.get(),
-            statsDConfig = statsDConfig.get()
         )
 
         val artifactoryClient = ArtifactoryClient(httpClient)

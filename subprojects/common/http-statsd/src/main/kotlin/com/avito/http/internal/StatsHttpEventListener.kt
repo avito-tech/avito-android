@@ -13,10 +13,10 @@ import okhttp3.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
 
-internal class StatsHttpEventListener(
+public class StatsHttpEventListener(
     private val statsDSender: StatsDSender,
     private val timeProvider: TimeProvider,
-    private val requestMetadataProvider: RequestMetadataProvider,
+    private val requestMetadataProvider: RequestMetadataProvider = TagRequestMetadataProvider(),
     loggerFactory: LoggerFactory,
 ) : EventListener() {
 
@@ -24,9 +24,9 @@ internal class StatsHttpEventListener(
 
     private val successResponseCode = 200..299
 
-    var callStarted = 0L
+    private var callStarted = 0L
 
-    var responseCode: Int? = null
+    private var responseCode: Int? = null
 
     override fun callStart(call: Call) {
         callStarted = timeProvider.nowInMillis()

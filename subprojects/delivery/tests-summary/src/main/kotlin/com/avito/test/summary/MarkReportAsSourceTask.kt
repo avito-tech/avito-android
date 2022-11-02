@@ -1,9 +1,10 @@
 package com.avito.test.summary
 
 import Slf4jGradleLoggerFactory
-import com.avito.android.stats.statsdConfig
+import com.avito.reportviewer.ReportsApiFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.time.TimeProvider
+import okhttp3.OkHttpClient
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -23,8 +24,10 @@ public abstract class MarkReportAsSourceTask : DefaultTask() {
 
     @TaskAction
     public fun doWork() {
-        val testSummaryFactory = TestSummaryFactory(project.statsdConfig)
-        val reportsApi = testSummaryFactory.createReportsApi(reportsHost.get())
+        val reportsApi = ReportsApiFactory.create(
+            host = reportsHost.get(),
+            builder = OkHttpClient.Builder()
+        )
 
         MarkReportAsSourceAction(
             reportsApi = reportsApi,

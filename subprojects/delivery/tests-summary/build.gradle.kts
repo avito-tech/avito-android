@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(libs.okhttp)
-    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.httpStatsd)
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.common.time)

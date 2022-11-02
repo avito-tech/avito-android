@@ -1,12 +1,12 @@
 package com.avito.plugin
 
 import com.avito.android.Result
-import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -24,7 +24,7 @@ internal class QAppsUploadAction(
     private val versionCode: String,
     private val packageName: String,
     private val releaseChain: Boolean,
-    private val httpClientProvider: HttpClientProvider,
+    private val httpClientBuilder: OkHttpClient.Builder,
     loggerFactory: LoggerFactory
 ) {
 
@@ -35,7 +35,7 @@ internal class QAppsUploadAction(
             .baseUrl(host)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .client(
-                httpClientProvider.provide()
+                httpClientBuilder
                     .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
                     .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
                     .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)

@@ -10,7 +10,7 @@ dependencies {
         "used because EmceeConfig serialized to JSON for testing. Replace as soon as possible"
     }
 
-    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.httpStatsd)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.emcee.queueClientApi)
     implementation(projects.subprojects.logger.slf4jGradleLogger)

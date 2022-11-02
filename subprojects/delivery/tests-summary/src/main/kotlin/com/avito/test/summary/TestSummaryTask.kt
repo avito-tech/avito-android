@@ -1,10 +1,11 @@
 package com.avito.test.summary
 
-import com.avito.android.stats.statsdConfig
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.report.model.Team
+import com.avito.reportviewer.ReportsApiFactory
 import com.avito.test.summary.sender.AlertinoTestSummarySender
 import com.avito.test.summary.sender.TestSummarySender
+import okhttp3.OkHttpClient
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -31,11 +32,14 @@ public abstract class TestSummaryTask : DefaultTask() {
         val logger = loggerFactory.create(this::class.java.simpleName)
         logger.info("Executing testSummary task")
 
-        val testSummaryFactory = TestSummaryFactory(project.statsdConfig)
         val alertino = alertinoExtension.get()
 
         val reportViewer = reportViewerExtension.get()
-        val reportsApi = testSummaryFactory.createReportsApi(reportViewer.reportsHost.get())
+
+        val reportsApi = ReportsApiFactory.create(
+            host = reportViewer.reportsHost.get(),
+            builder = OkHttpClient.Builder()
+        )
 
         val testSummarySender: TestSummarySender = AlertinoTestSummarySender(
             alertinoBaseUrl = alertino.alertinoEndpoint.get(),

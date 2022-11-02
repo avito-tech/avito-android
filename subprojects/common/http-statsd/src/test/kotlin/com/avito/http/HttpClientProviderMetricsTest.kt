@@ -15,9 +15,9 @@ internal class HttpClientProviderMetricsTest : BaseHttpClientProviderMetricsTest
 
     @Test
     fun `timeout metric send - request timed out`() {
-        val provider = createClientProvider()
+        val provider = createClientBuilder()
 
-        val httpClient = provider.provide()
+        val httpClient = provider
             .readTimeout(1, TimeUnit.MILLISECONDS)
             .build()
 
@@ -34,9 +34,9 @@ internal class HttpClientProviderMetricsTest : BaseHttpClientProviderMetricsTest
 
     @Test
     fun `response 200 metric send - success request`() {
-        val provider = createClientProvider()
+        val provider = createClientBuilder()
 
-        val httpClient = provider.provide().build()
+        val httpClient = provider.build()
 
         mockWebServer.enqueue(MockResponse().setResponseCode(200))
 
@@ -49,9 +49,9 @@ internal class HttpClientProviderMetricsTest : BaseHttpClientProviderMetricsTest
 
     @Test
     fun `response 502 metric - failed request`() {
-        val provider = createClientProvider()
+        val provider = createClientBuilder()
 
-        val httpClient = provider.provide().build()
+        val httpClient = provider.build()
 
         mockWebServer.enqueue(MockResponse().setResponseCode(502))
 
@@ -64,9 +64,9 @@ internal class HttpClientProviderMetricsTest : BaseHttpClientProviderMetricsTest
 
     @Test
     fun `all retries metrics send - request retries multiple times`() {
-        val provider = createClientProvider()
+        val provider = createClientBuilder()
 
-        val httpClient = provider.provide()
+        val httpClient = provider
             .addInterceptor(RetryInterceptor(retries = 3))
             .build()
 

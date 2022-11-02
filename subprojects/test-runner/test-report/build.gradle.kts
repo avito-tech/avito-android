@@ -9,7 +9,7 @@ dependencies {
 
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.common.reflectionExtensions)
-    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.httpStatsd)
     implementation(projects.subprojects.common.time)
     implementation(projects.subprojects.testRunner.testReportArtifacts) {
         because("ExternalStorageTransport need to know where to store artifacts")
@@ -33,5 +33,5 @@ dependencies {
     testImplementation(projects.subprojects.common.junitUtils)
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(testFixtures(projects.subprojects.common.time))
-    testImplementation(testFixtures(projects.subprojects.common.httpClient))
+    testImplementation(testFixtures(projects.subprojects.common.httpStatsd))
 }

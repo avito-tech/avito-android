@@ -7,7 +7,6 @@ plugins {
 dependencies {
     implementation(projects.subprojects.common.files)
     implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.result)
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.gradle.android)
@@ -21,7 +20,6 @@ dependencies {
 
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(testFixtures(projects.subprojects.common.httpClient))
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)

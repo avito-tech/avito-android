@@ -16,6 +16,6 @@ dependencies {
 
     testImplementation(libs.coroutinesTest)
 
-    testFixturesApi(testFixtures(projects.subprojects.common.httpClient))
+    testFixturesApi(testFixtures(projects.subprojects.common.httpStatsd))
     testFixturesApi(testFixtures(projects.subprojects.testRunner.kubernetes))
 }

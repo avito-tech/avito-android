@@ -3,6 +3,7 @@ package com.avito.http
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.StubStatsdSender
 import com.avito.http.internal.RequestMetadata
+import com.avito.http.internal.StatsHttpEventListener
 import com.avito.logger.PrintlnLoggerFactory
 import com.avito.time.DefaultTimeProvider
 import com.google.common.truth.Correspondence
@@ -39,11 +40,15 @@ internal open class BaseHttpClientProviderMetricsTest {
         )
     }
 
-    protected fun createClientProvider(): HttpClientProvider {
-        return HttpClientProvider(
-            statsDSender = statsDSender,
-            timeProvider = DefaultTimeProvider(),
-            loggerFactory = loggerFactory
-        )
+    protected fun createClientBuilder(): OkHttpClient.Builder {
+        return OkHttpClient.Builder()
+            .eventListenerFactory {
+                StatsHttpEventListener(
+                    statsDSender = statsDSender,
+                    timeProvider = DefaultTimeProvider(),
+                    loggerFactory = loggerFactory,
+                )
+            }
+
     }
 }

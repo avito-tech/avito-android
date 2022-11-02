@@ -8,7 +8,7 @@ dependencies {
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.statsdConfig)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.httpStatsd)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.logger.slf4jGradleLogger)
 

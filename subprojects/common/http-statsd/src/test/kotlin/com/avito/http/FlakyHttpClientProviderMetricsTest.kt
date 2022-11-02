@@ -19,9 +19,9 @@ internal class FlakyHttpClientProviderMetricsTest : BaseHttpClientProviderMetric
 
     @Test
     fun `all metrics send - multiple parallel requests`() {
-        val provider = createClientProvider()
+        val provider = createClientBuilder()
 
-        val httpClient = provider.provide().build()
+        val httpClient = provider.build()
 
         val count = 3
 

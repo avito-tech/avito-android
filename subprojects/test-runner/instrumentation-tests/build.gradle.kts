@@ -26,7 +26,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.testAnnotations)
 
     testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(testFixtures(projects.subprojects.common.httpClient))
+    testImplementation(testFixtures(projects.subprojects.common.httpStatsd))
     testImplementation(testFixtures(projects.subprojects.testRunner.report))
     testImplementation(testFixtures(projects.subprojects.testRunner.reportViewer))
     testImplementation(testFixtures(projects.subprojects.testRunner.client))

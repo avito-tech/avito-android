@@ -4,7 +4,6 @@ import com.avito.android.test.report.transport.ExternalStorageTransport
 import com.avito.android.test.report.transport.NoOpTransport
 import com.avito.android.test.report.transport.Transport
 import com.avito.filestorage.RemoteStorage
-import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.TestArtifactsProvider
@@ -14,12 +13,13 @@ import com.avito.reportviewer.ReportsApiFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.model.DeviceName
 import com.avito.time.TimeProvider
+import okhttp3.OkHttpClient
 
 public class ReportTransportFactory(
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
     private val remoteStorage: RemoteStorage,
-    private val httpClientProvider: HttpClientProvider,
+    private val okHttpClientBuilder: OkHttpClient.Builder,
     private val reportViewerQuery: ReportViewerQuery,
     reportSerializer: ReportSerializer,
     testArtifactsProvider: TestArtifactsProvider
@@ -51,7 +51,7 @@ public class ReportTransportFactory(
                 loggerFactory = loggerFactory,
                 reportsApi = ReportsApiFactory.create(
                     host = reportDestination.reportApiUrl,
-                    httpClientProvider = httpClientProvider
+                    builder = okHttpClientBuilder,
                 ),
                 reportViewerQuery = reportViewerQuery,
                 remoteStorageTransport = uploadFromDevice

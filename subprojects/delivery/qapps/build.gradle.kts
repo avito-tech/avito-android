@@ -10,7 +10,6 @@ dependencies {
     }
 
     implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.result)
     api(projects.subprojects.gradle.android)
     implementation(projects.subprojects.gradle.buildFailer)
@@ -24,7 +23,6 @@ dependencies {
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(projects.subprojects.common.testOkhttp)
     testImplementation(projects.subprojects.logger.logger)
-    testImplementation(testFixtures(projects.subprojects.common.httpClient))
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)

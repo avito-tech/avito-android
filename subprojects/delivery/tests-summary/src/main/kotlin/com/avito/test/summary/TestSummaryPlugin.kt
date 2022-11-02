@@ -2,8 +2,8 @@ package com.avito.test.summary
 
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
-import com.avito.android.stats.statsdConfig
 import com.avito.kotlin.dsl.isRoot
+import com.avito.time.DefaultTimeProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
@@ -27,11 +27,11 @@ public class TestSummaryPlugin : Plugin<Project> {
             throw problem.asRuntimeException()
         }
 
-        val testSummaryFactory = TestSummaryFactory(target.statsdConfig)
-
         testSummaryContainer.all { extension ->
 
             val appName = extension.name
+
+            val timeProvider = DefaultTimeProvider()
 
             target.tasks.register<MarkReportAsSourceTask>(markReportForTmsTaskName(appName)) {
                 group = "ci"
@@ -39,7 +39,7 @@ public class TestSummaryPlugin : Plugin<Project> {
 
                 this.reportCoordinates.set(extension.reportViewer.reportCoordinates)
                 this.reportsHost.set(extension.reportViewer.reportsHost)
-                this.timeProvider.set(testSummaryFactory.timeProvider)
+                this.timeProvider.set(timeProvider)
             }
 
             target.tasks.register<TestSummaryTask>(testSummaryTaskName(appName)) {

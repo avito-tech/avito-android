@@ -2,11 +2,8 @@ package com.avito.plugin
 
 import Slf4jGradleLoggerFactory
 import com.avito.android.getApkOrThrow
-import com.avito.android.stats.statsd
-import com.avito.http.HttpClientProvider
-import com.avito.time.DefaultTimeProvider
-import com.avito.time.TimeProvider
 import com.avito.utils.buildFailer
+import okhttp3.OkHttpClient
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
@@ -61,14 +58,6 @@ public abstract class QAppsUploadTask @Inject constructor(
     public fun upload() {
         val apk = apkDirectory.get().getApkOrThrow()
 
-        val timeProvider: TimeProvider = DefaultTimeProvider()
-
-        val httpClientProvider = HttpClientProvider(
-            statsDSender = project.statsd.get(),
-            timeProvider = timeProvider,
-            loggerFactory = Slf4jGradleLoggerFactory
-        )
-
         val uploadResult = QAppsUploadAction(
             apk = apk,
             comment = comment.get(),
@@ -78,8 +67,8 @@ public abstract class QAppsUploadTask @Inject constructor(
             versionCode = versionCode.get(),
             packageName = packageName.get(),
             releaseChain = releaseChain.getOrElse(false) && isReleaseBuildVariant(variantName.get()),
-            httpClientProvider = httpClientProvider,
-            loggerFactory = Slf4jGradleLoggerFactory
+            loggerFactory = Slf4jGradleLoggerFactory,
+            httpClientBuilder = OkHttpClient.Builder()
         ).upload()
 
         uploadResult.fold(
