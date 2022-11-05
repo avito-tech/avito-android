@@ -1,11 +1,12 @@
 package com.avito.android.info
 
-import com.avito.android.ownership
+import com.avito.android.CodeOwnershipExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.findByType
 
 public abstract class ReportCodeOwnershipInfoTask : DefaultTask() {
 
@@ -24,7 +25,8 @@ public abstract class ReportCodeOwnershipInfoTask : DefaultTask() {
     }
 
     private fun Project.formatToCsvLine(): String {
-        val ownersCell = extensions.ownership.owners.joinToString(
+        val owners = extensions.findByType<CodeOwnershipExtension>()?.owners ?: emptySet()
+        val ownersCell = owners.joinToString(
             separator = ",",
             prefix = "\"",
             postfix = "\"",

@@ -6,10 +6,8 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.codeOwnership.api)
+    api(projects.subprojects.gradle.codeOwnership.extensions)
 
-    implementation(projects.subprojects.gradle.impact)
-    implementation(projects.subprojects.gradle.impactShared)
     implementation(projects.subprojects.gradle.preBuild)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.common.okhttp)
@@ -23,13 +21,6 @@ gradlePlugin {
             id = "com.avito.android.code-ownership"
             implementationClass = "com.avito.android.CodeOwnershipPlugin"
             displayName = "Ownership"
-        }
-    }
-    plugins {
-        create("codeOwnershipValidationPlugin") {
-            id = "com.avito.android.code-ownership-validation"
-            implementationClass = "com.avito.android.CodeOwnershipValidationPlugin"
-            displayName = "Ownership Validation"
         }
     }
 }

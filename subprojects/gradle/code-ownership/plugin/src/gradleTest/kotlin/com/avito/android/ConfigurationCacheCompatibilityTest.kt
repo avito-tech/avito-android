@@ -21,7 +21,7 @@ internal class ConfigurationCacheCompatibilityTest {
             modules = listOf(
                 AndroidLibModule(
                     plugins = plugins {
-                        id("com.avito.android.code-ownership-validation")
+                        id("com.avito.android.code-ownership")
                     },
                     name = "lib",
                     imports = listOf("import com.avito.android.model.Owner"),
