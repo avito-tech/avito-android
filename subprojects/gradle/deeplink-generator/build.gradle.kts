@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.codeOwnership.extensions)
+    implementation(projects.subprojects.gradle.codeOwnership.extensions) // TODO Remove after MBSA-974
 
     implementation(projects.subprojects.common.result)
     implementation(libs.androidToolsCommon)

@@ -15,16 +15,17 @@ import org.gradle.kotlin.dsl.register
 public class CodeOwnershipPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
+        val codeOwnershipExtension = target.extensions.create<CodeOwnershipExtension>("ownership")
         if (target.isRoot()) {
             configureDiffReportTask(target)
             configureInfoReportTask(target)
         } else {
-            configureStrictOwnershipCheck(target)
+            configureStrictOwnershipCheck(target, codeOwnershipExtension)
         }
     }
 
-    private fun configureStrictOwnershipCheck(target: Project) {
-        val codeOwnershipExtension = target.extensions.create<CodeOwnershipExtension>("ownership")
+    private fun configureStrictOwnershipCheck(target: Project, codeOwnershipExtension: CodeOwnershipExtension) {
+        // TODO MBSA-797 Move this check to a gradle task
         val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
         if (!strictOwnership) return
 

@@ -56,7 +56,7 @@ internal class CollectWarningsTest {
             .assertThat()
             .buildSuccessful()
 
-        val warningsDir = File(projectDir, "warnings")
+        val warningsDir = File(projectDir, "build/warnings")
         assert(warningsDir.list().isNullOrEmpty())
     }
 
@@ -84,7 +84,7 @@ internal class CollectWarningsTest {
 
         collectWarnings(projectDir).assertThat().buildSuccessful()
 
-        val warningsDir = File(projectDir, "warnings")
+        val warningsDir = File(projectDir, "build/warnings")
         assert(warningsDir.exists())
 
         val warningsFile = File(warningsDir, "app/compileReleaseKotlin.log")
@@ -186,8 +186,8 @@ internal class CollectWarningsTest {
 
         collectWarnings(projectDir).assertThat().buildSuccessful()
 
-        val appWarningsDir = File(projectDir, "warnings/app")
-        val feedWarningsDir = File(projectDir, "warnings/feed")
+        val appWarningsDir = File(projectDir, "build/warnings/app")
+        val feedWarningsDir = File(projectDir, "build/warnings/feed")
 
         assert(appWarningsDir.exists())
         assert(feedWarningsDir.exists())

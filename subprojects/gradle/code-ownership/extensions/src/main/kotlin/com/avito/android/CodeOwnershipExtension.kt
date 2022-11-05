@@ -2,13 +2,18 @@ package com.avito.android
 
 import com.avito.android.model.Owner
 
-public open class CodeOwnershipExtension {
+public abstract class CodeOwnershipExtension {
 
+    // TODO MA-2868 Replace ordinary var properties with gradle way properties
     public var owners: Set<Owner> = emptySet()
     public var emptyOwnersErrorMessage: String = DEFAULT_EMPTY_OWNERS_ERROR_MESSAGE
 
     public fun owners(vararg owners: Owner) {
         this.owners = owners.toSet()
+    }
+
+    public fun emptyOwnersErrorMessage(message: String) {
+        this.emptyOwnersErrorMessage = message
     }
 
     private companion object {

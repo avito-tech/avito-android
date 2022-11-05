@@ -8,7 +8,6 @@ plugins {
 dependencies {
     implementation(libs.kotlinGradle)
     implementation(libs.moshi)
-    implementation(libs.coroutinesCore)
     implementation(libs.moshiRetrofit)
     implementation(libs.okhttp)
     implementation(projects.subprojects.gradle.gradleExtensions)

@@ -1,11 +1,11 @@
 package com.avito.tech_budget.warnings
 
-import com.avito.android.tech_budget.internal.warnings.log.FileLogStorage
-import com.avito.android.tech_budget.internal.warnings.log.FileLogStorage.Companion.DEFAULT_SEPARATOR
-import com.avito.android.tech_budget.internal.warnings.log.LogEntry
-import com.avito.android.tech_budget.internal.warnings.log.LogStorage
+import com.avito.android.tech_budget.internal.warnings.log.FileLogReader
+import com.avito.android.tech_budget.internal.warnings.log.FileLogWriter
+import com.avito.android.tech_budget.internal.warnings.log.FileLogWriter.Companion.DEFAULT_SEPARATOR
+import com.avito.android.tech_budget.internal.warnings.log.LogFileProjectProvider
 import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
-import com.avito.android.tech_budget.internal.warnings.log.converter.JsonProjectInfoConverter
+import com.avito.android.tech_budget.internal.warnings.log.converter.ProjectInfoConverter
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -18,16 +18,13 @@ class LogStorageTest {
 
     @Test
     fun `when read empty output - empty list returned`(@TempDir output: File) {
-        val handler = createLogStorage(output)
-
-        val logEntries = handler.getAll()
-
+        val logEntries = createLogReader(output).getAll()
         assertThat(logEntries).isEmpty()
     }
 
     @Test
     fun `when read output without project file - error returned`(@TempDir output: File) {
-        val handler = createLogStorage(output)
+        val handler = createLogReader(output)
 
         val moduleDir = File(output, "app")
         createFile(moduleDir)
@@ -43,7 +40,7 @@ class LogStorageTest {
 
     @Test
     fun `when read output with empty project file - project path error returned`(@TempDir output: File) {
-        val handler = createLogStorage(output)
+        val handler = createLogReader(output)
 
         val moduleDir = File(output, "app")
 
@@ -61,7 +58,7 @@ class LogStorageTest {
 
     @Test
     fun `when read output with correct files - entries collected`(@TempDir output: File) {
-        val handler = createLogStorage(output)
+        val handler = createLogReader(output)
 
         val projectPath = ":app"
         val owners = listOf("Speed", "Messenger")
@@ -84,24 +81,18 @@ class LogStorageTest {
         val pool = Executors.newFixedThreadPool(10)
         val jobs = mutableListOf<Future<*>>()
         val expectedEntriesCount = 100
-        repeat(10) {
+        repeat(10) { i ->
             val logFuture = pool.submit {
-                val handler = createLogStorage(output)
+                val saver = createLogWriter(output, i)
                 repeat(10) {
-                    handler.save(
-                        LogEntry(
-                            ProjectInfo(":app", setOf()),
-                            "compileKotlin",
-                            Thread.currentThread().name
-                        )
-                    )
+                    saver.save(Thread.currentThread().name)
                 }
             }
             jobs.add(logFuture)
         }
         jobs.forEach { it.get() }
 
-        val logEntries = createLogStorage(output).getAll()
+        val logEntries = createLogReader(output).getAll()
 
         assertThat(logEntries)
             .hasSize(expectedEntriesCount)
@@ -110,12 +101,19 @@ class LogStorageTest {
 
     private companion object {
 
-        fun createLogStorage(output: File): LogStorage {
-            return FileLogStorage(
-                output,
-                projectInfoConverter = JsonProjectInfoConverter()
+        fun createLogReader(output: File) =
+            FileLogReader(output, DEFAULT_SEPARATOR, createProjectInfoConverter())
+
+        fun createLogWriter(output: File, number: Int) =
+            FileLogWriter(
+                fileProvider = LogFileProjectProvider(
+                    rootOutputDir = output,
+                    projectInfo = ProjectInfo(":app", setOf()),
+                    taskName = "compileKotlin_$number",
+                    projectInfoConverter = createProjectInfoConverter()
+                ),
+                separator = DEFAULT_SEPARATOR
             )
-        }
 
         fun createFile(
             directory: File,
@@ -135,7 +133,9 @@ class LogStorageTest {
         ) = createFile(
             directory,
             name = ".project",
-            content = JsonProjectInfoConverter().convertToString(ProjectInfo(projectPath, owners))
+            content = createProjectInfoConverter().convertToString(ProjectInfo(projectPath, owners))
         )
+
+        fun createProjectInfoConverter() = ProjectInfoConverter.default()
     }
 }

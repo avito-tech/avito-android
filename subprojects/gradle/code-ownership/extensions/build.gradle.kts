@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(projects.subprojects.gradle.codeOwnership.api)
-    implementation(gradleApi())
+    compileOnly(gradleApi())
     implementation(projects.subprojects.gradle.gradleExtensions)
 }
 
