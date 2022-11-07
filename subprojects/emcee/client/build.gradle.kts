@@ -10,12 +10,12 @@ dependencies {
         "used because EmceeConfig serialized to JSON for testing. Replace as soon as possible"
     }
 
-    implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.emcee.queueClientApi)
     implementation(projects.subprojects.logger.slf4jGradleLogger)
     implementation(projects.subprojects.testRunner.instrumentationTestsDexLoader)
     implementation(projects.subprojects.testRunner.testAnnotations)
+    // TODO move to libs.versions.toml
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)

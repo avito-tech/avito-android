@@ -28,15 +28,19 @@ public abstract class TestSummaryTask : DefaultTask() {
     @TaskAction
     public fun doWork() {
         val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
-        val logger = loggerFactory.create(this::class.java.simpleName)
+        val logger = loggerFactory.create("TestSummaryTask")
         logger.info("Executing testSummary task")
 
-        val testSummaryFactory = TestSummaryFactory(project.statsdConfig)
         val alertino = alertinoExtension.get()
 
         val reportViewer = reportViewerExtension.get()
-        val reportsApi = testSummaryFactory.createReportsApi(reportViewer.reportsHost.get())
 
+        val di = TestSummaryDI(
+            project.statsdConfig,
+            loggerFactory
+        )
+
+        val reportsApi = di.provideReportsApi(reportViewer.reportsHost.get())
         val testSummarySender: TestSummarySender = AlertinoTestSummarySender(
             alertinoBaseUrl = alertino.alertinoEndpoint.get(),
             alertinoTemplate = alertino.alertinoTemplate.get(),

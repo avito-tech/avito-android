@@ -8,7 +8,6 @@ dependencies {
     api(projects.subprojects.common.result)
 
     implementation(projects.subprojects.common.time)
-    implementation(projects.subprojects.common.httpClient)
     implementation(projects.subprojects.common.okhttp)
     implementation(libs.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(libs.okhttp)

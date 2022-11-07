@@ -5,8 +5,6 @@ plugins {
 
 dependencies {
     api(projects.subprojects.common.result)
-    api(projects.subprojects.common.httpClient)
-
+    api(projects.subprojects.common.httpStatsd)
     implementation(libs.retrofit)
-    implementation(libs.okhttp)
 }

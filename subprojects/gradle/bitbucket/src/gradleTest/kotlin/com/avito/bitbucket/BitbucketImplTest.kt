@@ -1,7 +1,5 @@
 package com.avito.bitbucket
 
-import com.avito.http.HttpClientProvider
-import com.avito.http.createStubInstance
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
@@ -13,6 +11,7 @@ import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -104,7 +103,7 @@ internal class BitbucketImplTest {
             credentials = AtlassianCredentials("", "")
         ),
         pullRequestId = null,
-        httpClientProvider = HttpClientProvider.createStubInstance()
+        builder = OkHttpClient.Builder()
     )
 
     private fun File.createSourceFiles(fileToBeModifiedPath: String, notModifiedFilePath: String) {

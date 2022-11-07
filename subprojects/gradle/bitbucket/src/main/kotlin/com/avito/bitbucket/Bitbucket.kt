@@ -1,8 +1,8 @@
 package com.avito.bitbucket
 
 import com.avito.android.Result
-import com.avito.http.HttpClientProvider
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import java.io.File
 
 public interface Bitbucket {
@@ -45,11 +45,11 @@ public interface Bitbucket {
         public fun create(
             bitbucketConfig: BitbucketConfig,
             pullRequestId: Int?,
-            httpClientProvider: HttpClientProvider
+            builder: OkHttpClient.Builder
         ): Bitbucket = BitbucketImpl(
             config = bitbucketConfig,
             pullRequestId = pullRequestId,
-            httpClientProvider = httpClientProvider
+            builder = builder
         )
     }
 }

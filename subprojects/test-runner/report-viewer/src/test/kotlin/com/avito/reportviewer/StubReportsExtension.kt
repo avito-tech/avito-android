@@ -1,8 +1,7 @@
 package com.avito.reportviewer
 
-import com.avito.http.HttpClientProvider
-import com.avito.http.createStubInstance
 import com.avito.test.http.MockDispatcher
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -22,7 +21,7 @@ internal class StubReportsExtension : BeforeEachCallback, AfterEachCallback, Par
             stubReportApi = StubReportApi(
                 realApi = ReportsApiFactory.create(
                     host = mockWebServer.url("/").toString(),
-                    httpClientProvider = HttpClientProvider.createStubInstance()
+                    builder = OkHttpClient.Builder(),
                 ),
                 mockDispatcher = mockDispatcher
             )

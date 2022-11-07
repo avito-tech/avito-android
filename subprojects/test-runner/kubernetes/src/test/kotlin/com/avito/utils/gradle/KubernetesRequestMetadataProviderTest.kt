@@ -1,12 +1,12 @@
 package com.avito.utils.gradle
 
-import com.avito.http.internal.RequestMetadataProvider
+import com.avito.http.RequestMetadataProvider
 import com.avito.k8s.KubernetesRequestMetadataProvider
 import com.avito.truth.ResultSubject
 import com.google.common.truth.Truth.assertThat
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.junit.jupiter.api.Test
 
 internal class KubernetesRequestMetadataProviderTest {
@@ -36,7 +36,7 @@ internal class KubernetesRequestMetadataProviderTest {
                     "apis/apps/v1/namespaces/android-emulator/deployments/" +
                     "android-emulator-00f2f120-f5f7-4481-b34a-4466857701b6"
             )
-            .method("PUT", RequestBody.create(MediaType.parse("application/yaml"), "some yaml content"))
+            .method("PUT", "some yaml content".toRequestBody("application/yaml".toMediaType()))
             .build()
 
         val metadataProvider: RequestMetadataProvider = createRequestMetadataProvider()

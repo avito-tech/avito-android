@@ -1,17 +1,13 @@
 package com.avito.android.signer
 
-import Slf4jGradleLoggerFactory
 import com.avito.android.Problem
 import com.avito.android.signer.internal.SignViaServiceAction
-import com.avito.android.stats.statsd
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
-import com.avito.time.DefaultTimeProvider
-import com.avito.time.TimeProvider
 import com.avito.utils.buildFailer
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
@@ -47,16 +43,11 @@ public abstract class AbstractSignTask(
     @TaskAction
     public fun doWork() {
         val unsignedFile = unsignedFile()
-        val timeProvider: TimeProvider = DefaultTimeProvider()
         val serviceUrl: HttpUrl = serviceUrl.map { it.toHttpUrl() }.get()
 
         val timeout = readWriteTimeoutSec.get()
 
-        val httpClient = HttpClientProvider(
-            statsDSender = project.statsd.get(),
-            timeProvider = timeProvider,
-            loggerFactory = Slf4jGradleLoggerFactory
-        ).provide()
+        val httpClient = OkHttpClient.Builder()
             .writeTimeout(timeout, TimeUnit.SECONDS)
             .readTimeout(timeout, TimeUnit.SECONDS)
             .addInterceptor(

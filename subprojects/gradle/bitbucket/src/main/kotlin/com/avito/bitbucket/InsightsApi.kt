@@ -1,13 +1,11 @@
 package com.avito.bitbucket
 
-import com.avito.http.internal.RequestMetadata
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Tag
 
 /**
  * https://docs.atlassian.com/bitbucket-server/rest/latest/bitbucket-code-insights-rest.html
@@ -22,7 +20,6 @@ internal interface InsightsApi {
         @Path("commitId") commitId: String,
         @Path("insightKey") insightKey: String,
         @Body insightReportCreateRequest: InsightReportCreateRequest,
-        @Tag metadata: RequestMetadata = RequestMetadata("bitbucket", "create-insights-report")
     ): Call<InsightReportCreateResponse>
 
     @POST("/rest/insights/1.0/projects/{projectKey}/repos/{repositorySlug}/commits/{commitId}/reports/{insightKey}/annotations")
@@ -32,7 +29,6 @@ internal interface InsightsApi {
         @Path("commitId") commitId: String,
         @Path("insightKey") insightKey: String,
         @Body annotationCreateRequest: AnnotationCreateRequest,
-        @Tag metadata: RequestMetadata = RequestMetadata(SERVICE_NAME, "add-insight")
     ): Call<Unit>
 
     @DELETE("/rest/insights/1.0/projects/{projectKey}/repos/{repositorySlug}/commits/{commitId}/reports/{insightKey}/annotations")
@@ -41,8 +37,6 @@ internal interface InsightsApi {
         @Path("repositorySlug") repositorySlug: String,
         @Path("commitId") commitId: String,
         @Path("insightKey") insightKey: String,
-        @Tag metadata: RequestMetadata = RequestMetadata(SERVICE_NAME, "delete-all-insights")
-
     ): Call<Unit>
 
     @POST("/rest/insights/1.0/projects/{projectKey}/repos/{repositorySlug}/commits/{commitId}/reports/{insightKey}/annotations")
@@ -52,7 +46,6 @@ internal interface InsightsApi {
         @Path("commitId") commitId: String,
         @Path("insightKey") insightKey: String,
         @Body annotationsBulkCreateRequest: AnnotationsBulkCreateRequest,
-        @Tag metadata: RequestMetadata = RequestMetadata(SERVICE_NAME, "add-insights")
     ): Call<Unit>
 }
 
@@ -78,5 +71,3 @@ internal data class AnnotationCreateRequest(
 internal data class AnnotationsBulkCreateRequest(val annotations: List<AnnotationCreateRequest>)
 
 public enum class Severity { LOW, MEDIUM, HIGH }
-
-private const val SERVICE_NAME = "bitbucket"

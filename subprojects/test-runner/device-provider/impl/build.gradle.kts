@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.subprojects.common.waiter)
 
     testImplementation(libs.coroutinesTest)
+    testImplementation(testFixtures(projects.subprojects.common.time))
 
-    testFixturesApi(testFixtures(projects.subprojects.common.httpClient))
     testFixturesApi(testFixtures(projects.subprojects.testRunner.kubernetes))
 }

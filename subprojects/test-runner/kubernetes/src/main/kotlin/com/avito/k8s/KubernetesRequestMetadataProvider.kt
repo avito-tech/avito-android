@@ -1,8 +1,8 @@
 package com.avito.k8s
 
 import com.avito.android.Result
-import com.avito.http.internal.RequestMetadata
-import com.avito.http.internal.RequestMetadataProvider
+import com.avito.http.RequestMetadata
+import com.avito.http.RequestMetadataProvider
 import okhttp3.Request
 
 /**
@@ -11,7 +11,7 @@ import okhttp3.Request
 internal class KubernetesRequestMetadataProvider : RequestMetadataProvider {
 
     override fun provide(request: Request): Result<RequestMetadata> {
-        val pathSegments = request.url().pathSegments()
+        val pathSegments = request.url.pathSegments
 
         val serviceName = "kubernetes"
 
@@ -22,7 +22,7 @@ internal class KubernetesRequestMetadataProvider : RequestMetadataProvider {
                         return Result.Success(
                             RequestMetadata(
                                 serviceName = serviceName,
-                                methodName = "pods_${request.method().lowercase()}"
+                                methodName = "pods_${request.method.lowercase()}"
                             )
                         )
                     }
@@ -35,7 +35,7 @@ internal class KubernetesRequestMetadataProvider : RequestMetadataProvider {
                                 return Result.Success(
                                     RequestMetadata(
                                         serviceName = serviceName,
-                                        methodName = "deployments_${request.method().lowercase()}"
+                                        methodName = "deployments_${request.method.lowercase()}"
                                     )
                                 )
                             }
@@ -53,7 +53,7 @@ internal class KubernetesRequestMetadataProvider : RequestMetadataProvider {
     private fun getErrorMessage(request: Request): String {
         return buildString {
             appendLine("KubernetesRequestMetadataProvider: unknown k8s API method")
-            appendLine("Original request was: ${request.method()} ${request.url()}")
+            appendLine("Original request was: ${request.method} ${request.url}")
             appendLine("To fix it just add required method handling")
         }
     }

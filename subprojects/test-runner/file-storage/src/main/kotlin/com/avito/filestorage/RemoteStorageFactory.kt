@@ -1,6 +1,5 @@
 package com.avito.filestorage
 
-import com.avito.http.HttpClientProvider
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -12,13 +11,13 @@ public object RemoteStorageFactory {
 
     public fun create(
         endpoint: HttpUrl,
-        httpClientProvider: HttpClientProvider,
+        builder: OkHttpClient.Builder,
         isAndroidRuntime: Boolean,
     ): RemoteStorage = HttpRemoteStorage(
         endpoint = endpoint,
         storageClient = createClient(
             endpoint = endpoint,
-            httpClient = httpClientProvider.provide()
+            httpClient = builder
                 .connectTimeout(10L, TimeUnit.SECONDS)
                 // Decreased to troubleshoot timeouts (MBS-9407)
                 // We could use custom timeout for specific heavy requests

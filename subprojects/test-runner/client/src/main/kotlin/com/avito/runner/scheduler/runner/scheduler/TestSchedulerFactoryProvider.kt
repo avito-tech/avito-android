@@ -9,7 +9,7 @@ import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservatio
 import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactoryProvider
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
-import com.avito.http.HttpClientProvider
+import com.avito.http.StatsHttpEventListener
 import com.avito.k8s.KubernetesApiFactory
 import com.avito.k8s.KubernetesClientFactory
 import com.avito.logger.LoggerFactory
@@ -25,28 +25,32 @@ import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.ProcessRunner
+import okhttp3.OkHttpClient
 
 public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFactory) {
 
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 
     public fun provide(params: RunnerInputParams): TestSchedulerFactory {
-
-        val httpClientProvider = HttpClientProvider(
-            statsDSender = StatsDSender.create(
-                config = params.statsDConfig,
-                loggerFactory = loggerFactory
-            ),
-            timeProvider = timeProvider,
+        val statsDSender = StatsDSender.create(
+            config = params.statsDConfig,
             loggerFactory = loggerFactory
         )
+        val httpClientBuilder = OkHttpClient.Builder()
+            .eventListenerFactory {
+                StatsHttpEventListener(
+                    statsDSender = statsDSender,
+                    timeProvider = timeProvider,
+                    loggerFactory = loggerFactory,
+                )
+            }
 
         val metricsConfig = createRunnerMetricsConfig(params)
 
         val reportFactory = createReportFactory(
             params = params,
             timeProvider = timeProvider,
-            httpClientProvider = httpClientProvider
+            builder = httpClientBuilder
         )
 
         val report = reportFactory.createReport()
@@ -85,7 +89,7 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
             testRunnerFactoryProvider = TestRunnerFactoryProvider(
                 params = params,
                 timeProvider = timeProvider,
-                httpClientProvider = httpClientProvider,
+                httpClientBuilder = httpClientBuilder,
                 report = report,
                 loggerFactory = loggerFactory,
                 devicesProviderFactory = DeviceProviderFactoryProvider(
@@ -97,8 +101,10 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
                         loggerFactory = loggerFactory,
                         kubernetesApiFactory = KubernetesApiFactory(
                             kubernetesClientFactory = KubernetesClientFactory(
-                                httpClientProvider = httpClientProvider,
                                 kubernetesCredentials = params.kubernetesCredentials,
+                                loggerFactory = loggerFactory,
+                                timeProvider = timeProvider,
+                                statsDSender = statsDSender,
                             ),
                             loggerFactory = loggerFactory,
                         ),
@@ -149,13 +155,13 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
     private fun createReportFactory(
         params: RunnerInputParams,
         timeProvider: TimeProvider,
-        httpClientProvider: HttpClientProvider,
+        builder: OkHttpClient.Builder,
     ): ReportFactory {
         return ReportFactoryImpl(
             timeProvider = timeProvider,
             buildId = params.buildId,
             loggerFactory = loggerFactory,
-            httpClientProvider = httpClientProvider,
+            httpClientBuilder = builder,
             reportViewerConfig = params.reportViewerConfig
         )
     }

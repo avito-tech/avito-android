@@ -6,7 +6,6 @@ import com.avito.android.http.createArtifactoryHttpClient
 import com.avito.android.model.input.CdBuildConfig
 import com.avito.android.model.output.CdBuildResult
 import com.avito.android.model.output.toCdCoordinates
-import com.avito.android.stats.StatsDConfig
 import com.avito.git.gitState
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportViewerQuery
@@ -16,7 +15,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 public abstract class UploadCdBuildResultTask : DefaultTask() {
@@ -44,9 +42,6 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
 
     @get:InputFile
     public abstract val buildOutputFileProperty: RegularFileProperty
-
-    @get:Internal
-    public abstract val statsDConfig: Property<StatsDConfig>
 
     @TaskAction
     public fun sendCdBuildResult() {
@@ -84,7 +79,6 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
             createArtifactoryHttpClient(
                 user = artifactoryUser.get(),
                 password = artifactoryPassword.get(),
-                statsDConfig = statsDConfig.get()
             )
         )
     )

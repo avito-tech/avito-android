@@ -1,6 +1,5 @@
 package com.avito.emcee.client.internal
 
-import com.avito.http.internal.RequestMetadata
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType
@@ -17,8 +16,6 @@ internal class ArtifactoryFileUploader(
     private val artifactorySettings: ArtifactorySettings,
     private val bucketName: String,
 ) : FileUploader {
-
-    private val serviceName: String = "emcee-artifactory"
 
     private val applicationApk = "application/vnd.android.package-archive".toMediaType()
 
@@ -46,10 +43,6 @@ internal class ArtifactoryFileUploader(
         val request = Request.Builder()
             .put(requestBody)
             .url(url)
-            .tag(
-                RequestMetadata::class.java,
-                RequestMetadata(serviceName = serviceName, methodName = "upload")
-            )
             .build()
 
         return httpClient.newCall(request).execute()

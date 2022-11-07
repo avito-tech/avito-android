@@ -1,11 +1,8 @@
 
-import com.avito.android.stats.statsd
-import com.avito.http.HttpClientProvider
-import com.avito.time.DefaultTimeProvider
-import com.avito.time.TimeProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
@@ -37,16 +34,8 @@ public abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
 
     @TaskAction
     public fun doWork() {
-        val timeProvider: TimeProvider = DefaultTimeProvider()
-
-        val httpClientProvider = HttpClientProvider(
-            statsDSender = project.statsd.get(),
-            timeProvider = timeProvider,
-            loggerFactory = Slf4jGradleLoggerFactory
-        )
-
         try {
-            val result = createClient(httpClientProvider).releaseAnalysis(
+            val result = createClient().releaseAnalysis(
                 meta = meta,
                 apk = MultipartBody.Part.createFormData(
                     "build_after",
@@ -71,12 +60,11 @@ public abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     }
 
     private fun createClient(
-        httpClientProvider: HttpClientProvider,
         gson: Gson = GsonBuilder().setLenient().create()
     ): ProsectorApi = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .client(httpClientProvider.provide().build())
+        .client(OkHttpClient.Builder().build())
         .build()
         .create(ProsectorApi::class.java)
 }

@@ -2,7 +2,6 @@ package com.avito.test.summary
 
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
-import com.avito.android.stats.statsdConfig
 import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,8 +26,6 @@ public class TestSummaryPlugin : Plugin<Project> {
             throw problem.asRuntimeException()
         }
 
-        val testSummaryFactory = TestSummaryFactory(target.statsdConfig)
-
         testSummaryContainer.all { extension ->
 
             val appName = extension.name
@@ -39,7 +36,6 @@ public class TestSummaryPlugin : Plugin<Project> {
 
                 this.reportCoordinates.set(extension.reportViewer.reportCoordinates)
                 this.reportsHost.set(extension.reportViewer.reportsHost)
-                this.timeProvider.set(testSummaryFactory.timeProvider)
             }
 
             target.tasks.register<TestSummaryTask>(testSummaryTaskName(appName)) {

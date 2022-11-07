@@ -14,7 +14,7 @@ dependencies {
     implementation(projects.subprojects.logger.androidLogger)
     implementation(projects.subprojects.logger.elasticLogger)
     implementation(projects.subprojects.logger.sentryLogger)
-    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.httpStatsd)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.common.statsd)
     implementation(projects.subprojects.testRunner.reportViewer) {

@@ -12,7 +12,7 @@ import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.android.transport.ReportTransportFactory
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
-import com.avito.http.HttpClientProvider
+import com.avito.http.StatsHttpEventListener
 import com.avito.logger.LogLevel
 import com.avito.logger.LoggerFactory
 import com.avito.logger.LoggerFactoryBuilder
@@ -29,6 +29,7 @@ import com.avito.test.report.listener.description.DescriptionMetadataParser
 import com.avito.test.report.screenshot.NoOpScreenshotCapturer
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import okhttp3.OkHttpClient
 import org.junit.runner.Description
 import org.junit.runner.notification.RunListener
 import java.util.Base64
@@ -53,18 +54,21 @@ public class RobolectricReportTestListener(
         .addLoggingHandlerProvider(PrintlnLoggingHandlerProvider(LogLevel.DEBUG, printStackTrace = false))
         .build()
 
-    private val httpClientProvider: HttpClientProvider = HttpClientProvider(
-        statsDSender = StatsDSender.create(
-            config = runEnvironment.statsDConfig,
-            loggerFactory = loggerFactory
-        ),
-        timeProvider = timeProvider,
-        loggerFactory = loggerFactory
-    )
+    private val httpClientBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
+        .eventListenerFactory {
+            StatsHttpEventListener(
+                statsDSender = StatsDSender.create(
+                    config = runEnvironment.statsDConfig,
+                    loggerFactory = loggerFactory
+                ),
+                timeProvider = timeProvider,
+                loggerFactory = loggerFactory
+            )
+        }
 
     private val remoteStorage: RemoteStorage = RemoteStorageFactory.create(
         endpoint = runEnvironment.fileStorageUrl,
-        httpClientProvider = httpClientProvider,
+        builder = httpClientBuilder,
         isAndroidRuntime = true
     )
 
@@ -80,7 +84,7 @@ public class RobolectricReportTestListener(
             timeProvider = timeProvider,
             loggerFactory = loggerFactory,
             remoteStorage = remoteStorage,
-            httpClientProvider = httpClientProvider,
+            okHttpClientBuilder = httpClientBuilder,
             testArtifactsProvider = TestArtifactsProviderFactory.createForJavaRuntime(
                 provider = outputDirProvider,
                 testName = metadata.testName

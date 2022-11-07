@@ -1,14 +1,13 @@
 package com.avito.plugin
 
 import com.avito.android.Result
-import com.avito.http.HttpClientProvider
-import com.avito.http.createStubInstance
 import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
@@ -43,8 +42,8 @@ internal class QAppsUploadActionTest {
             versionCode = "0",
             packageName = "com.avito.android",
             releaseChain = false,
-            httpClientProvider = HttpClientProvider.createStubInstance(),
-            loggerFactory = PrintlnLoggerFactory
+            loggerFactory = PrintlnLoggerFactory,
+            httpClientBuilder = OkHttpClient.Builder(),
         )
 
     private val failedResponse = MockResponse()

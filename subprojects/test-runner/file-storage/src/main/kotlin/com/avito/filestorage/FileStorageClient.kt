@@ -1,6 +1,6 @@
 package com.avito.filestorage
 
-import com.avito.http.internal.RequestMetadata
+import com.avito.http.RequestMetadata
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body

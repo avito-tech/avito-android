@@ -14,7 +14,6 @@ import com.avito.android.contract_upload.UploadCdBuildResultTask
 import com.avito.android.model.input.CdBuildConfigParserFactory
 import com.avito.android.model.input.CdBuildConfigV2
 import com.avito.android.model.input.CdBuildConfigV3
-import com.avito.android.stats.statsdConfig
 import com.avito.android.uploadCdBuildResultTaskName
 import com.avito.capitalize
 import com.avito.kotlin.dsl.withType
@@ -116,7 +115,6 @@ internal class NupokatiV2Configurator(
         cdBuildConfig.set(cdBuildConfigProvider)
         appVersionCode.set(variant.getVersionCode())
         buildOutputFileProperty.set(publishArtifactsTask.flatMap { it.buildOutput })
-        statsDConfig.set(project.statsdConfig)
 
         dependsOn(publishArtifactsTask)
         onlyIf(skipUploadSpec)
@@ -136,7 +134,6 @@ internal class NupokatiV2Configurator(
             it.outputDescriptor.path.substringBeforeLast('/')
         })
         this.schemaVersion.set(cdBuildConfigProvider.map { it.schemaVersion })
-        this.statsDConfig.set(project.statsdConfig)
         this.buildOutput.set(project.layout.buildDirectory.file("nupokati/buildOutput.json"))
 
         @Suppress("DEPRECATION")

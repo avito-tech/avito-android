@@ -8,7 +8,6 @@ dependencies {
     api(projects.subprojects.testRunner.testModel)
     api(projects.subprojects.testRunner.runnerApi)
     api(projects.subprojects.testRunner.report)
-    api(projects.subprojects.common.httpClient)
     api(projects.subprojects.logger.logger)
 
     implementation(projects.subprojects.testRunner.testReportArtifacts)

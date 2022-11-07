@@ -1,60 +1,57 @@
 # Networking
 
-We use [Okhttp](https://square.github.io/okhttp/) sometimes with [Retrofit](https://square.github.io/retrofit/) for
+We use [Okhttp](https://square.github.io/okhttp/) and [Retrofit](https://square.github.io/retrofit/) for
 networking in Gradle plugins and Android libraries.
 
-## Obtaining an OkHttpClient
+## How to observe your plugin http request stability
 
-Add dependency on `http-client` module:
+Add `StatsHttpEventListener` from module `subprojects:common:http-statsd` to your `OkHttpClient.Builder`
 
-```kotlin
-dependencies {
-    implementation(projects.subprojects.common.httpClient)
-}
-```
+1. Add module dependency
 
-Create an instance of `HttpClientProvider`
+    ```kotlin
+    dependencies {
+        implementation(projects.subprojects.common.httpStatsd)
+    }
+    ```
 
-```kotlin
-val httpClientProvider = HttpClientProvider(statsdSender, timeProvider)
-```
+2. Add `StatsHttpEventListener`
 
-Get the client:
+    ```kotlin
+    OkHttpClient.Builder()
+        .eventListenerFactory {
+            StatsHttpEventListener(
+                statsDSender = statsdSender,
+                timeProvider = timeProvider,
+                loggerFactory = loggerFactory,
+                requestMetadataProvder = requestMetadataProvder,
+            )
+        }
+    ```
 
-```kotlin
-val httpClient = httpClientProvider.provide().build()
-```
+3. Add RequestMetadata to your request `tag` corresponding to your requestMetadataProvider type
 
-Method provide() returns `OkHttpClient.Builder` so you can configure it further
+    ???+ warning
+        Missing tag will lead to missing metrics for this api method / service
+        Warning message could be found in logs
 
-## Required tag
 
-Obtained client needs some additional information to be able to gather required statistics.
-
-Every request should contain a tag of type `RequestMetadata`
-
-???+ warning 
-    Missing tag will lead to missing metrics for this api method / service 
-    Warning message could be found in logs
-
-### Creating OkHttpRequest manually
-
-```kotlin
-Request.Builder()
-    .url("some url")
-    .tag(RequestMetadata::class.java, RequestMetadata("some-service", "some-method"))
-    .build()
-```
-
-### Using Retrofit
-
-```kotlin
-interface SomeApi {
-
-    @POST("/")
-    fun someMethod(
-        @Body someBody: String,
-        @Tag metadata: RequestMetadata = RequestMetadata("some-service", "some-method")
-    ): Call<Unit>
-}
-```
+    ```kotlin
+    Request.Builder()
+        .url("some url")
+        .tag(RequestMetadata::class.java, RequestMetadata("some-service", "some-method"))
+        .build()
+    ```
+    
+    or
+    
+    ```kotlin
+    interface SomeApi {
+    
+        @POST("/")
+        fun someMethod(
+            @Body someBody: String,
+            @Tag metadata: RequestMetadata = RequestMetadata("some-service", "some-method")
+        ): Call<Unit>
+    }
+    ```

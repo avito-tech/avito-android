@@ -2,10 +2,10 @@ package com.avito.bitbucket
 
 import com.avito.android.Result
 import com.avito.http.BasicAuthenticator
-import com.avito.http.HttpClientProvider
 import com.avito.impact.changes.newChangesDetector
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -13,7 +13,7 @@ import java.io.File
 internal class BitbucketImpl(
     private val config: BitbucketConfig,
     private val pullRequestId: Int?,
-    httpClientProvider: HttpClientProvider
+    builder: OkHttpClient.Builder
 ) : Bitbucket {
 
     /**
@@ -25,8 +25,8 @@ internal class BitbucketImpl(
     private val retrofit = Retrofit.Builder()
         .baseUrl(config.baseUrl.toHttpUrl())
         .client(
-            httpClientProvider
-                .provide().authenticator(
+            builder
+                .authenticator(
                     BasicAuthenticator(
                         user = config.credentials.user,
                         password = config.credentials.password

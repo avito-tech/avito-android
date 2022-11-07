@@ -1,6 +1,6 @@
 package com.avito.jsonrpc
 
-import com.avito.http.internal.RequestMetadata
+import com.avito.http.RequestMetadata
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType

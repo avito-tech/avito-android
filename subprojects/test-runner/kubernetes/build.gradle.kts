@@ -11,15 +11,14 @@ dependencies {
         because("kubernetes dsl uses old version")
     }
     api(projects.subprojects.gradle.gradleExtensions)
-    api(projects.subprojects.common.httpClient)
+    api(projects.subprojects.common.httpStatsd)
 
-    implementation(gradleApi())
+    compileOnly(gradleApi())
     implementation(libs.officialKubernetesClient)
     implementation(libs.googleAuthLibrary)
     implementation(libs.coroutinesCore)
     implementation(projects.subprojects.common.result)
     implementation(projects.subprojects.common.waiter)
-    implementation(projects.subprojects.logger.logger)
 
     testImplementation(projects.subprojects.common.truthExtensions)
 }

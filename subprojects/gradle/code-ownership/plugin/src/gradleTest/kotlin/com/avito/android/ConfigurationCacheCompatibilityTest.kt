@@ -70,40 +70,6 @@ internal class ConfigurationCacheCompatibilityTest {
         runDiffReportTask(projectDir).assertThat().buildSuccessful().configurationCachedReused()
     }
 
-    @Test
-    fun `configuration with applied plugin and slack report - ok`(@TempDir projectDir: File) {
-        TestProjectGenerator(
-            name = "rootapp",
-            plugins = plugins {
-                id("com.avito.android.code-ownership")
-            },
-            imports = listOf(
-                "import com.avito.android.model.StubOwner",
-                "import com.avito.android.diff.report.OwnersDiffReportDestination",
-                "import com.avito.android.diff.provider.SimpleOwnersProvider",
-                "import com.avito.slack.model.SlackChannel"
-            ),
-            buildGradleExtra = """
-                codeOwnershipDiffReport { 
-                    expectedOwnersProvider.set(SimpleOwnersProvider(setOf()))
-                    actualOwnersProvider.set(SimpleOwnersProvider(setOf(StubOwner)))
-                    diffReportDestination.set(OwnersDiffReportDestination.Slack(
-                        token = "anyToken",
-                        workspace = "anyWorkspace",
-                        channel = SlackChannel(id = "anyId", name = "#test-alerts"),
-                        userName = "Android Ownership Diff Reporter"
-                    ))
-                } 
-            """.trimIndent(),
-            useKts = true,
-            modules = listOf(AndroidLibModule(name = "lib"))
-        ).generateIn(projectDir)
-
-        runDiffReportTask(projectDir).assertThat().buildSuccessful()
-
-        runDiffReportTask(projectDir).assertThat().buildSuccessful().configurationCachedReused()
-    }
-
     private fun runDiffReportTask(tempDir: File): TestResult {
         return gradlew(
             tempDir,

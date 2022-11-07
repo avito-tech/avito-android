@@ -47,7 +47,7 @@ import com.avito.android.transport.ReportTransportFactory
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
-import com.avito.http.HttpClientProvider
+import com.avito.http.StatsHttpEventListener
 import com.avito.logger.LogLevel
 import com.avito.logger.LoggerFactoryBuilder
 import com.avito.logger.create
@@ -62,6 +62,7 @@ import com.avito.reportviewer.ReportViewerQuery
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
 
@@ -80,15 +81,18 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
 
-    private val httpClientProvider: HttpClientProvider by lazy {
-        HttpClientProvider(
-            statsDSender = StatsDSender.create(
-                config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
-                loggerFactory = loggerFactory
-            ),
-            timeProvider = timeProvider,
-            loggerFactory = loggerFactory
-        )
+    private val httpClientBuilder: OkHttpClient.Builder by lazy {
+        OkHttpClient.Builder()
+            .eventListenerFactory {
+                StatsHttpEventListener(
+                    statsDSender = StatsDSender.create(
+                        config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
+                        loggerFactory = loggerFactory
+                    ),
+                    timeProvider = timeProvider,
+                    loggerFactory = loggerFactory
+                )
+            }
     }
 
     private val testArtifactsProvider: TestArtifactsProvider by lazy {
@@ -109,7 +113,7 @@ abstract class InHouseInstrumentationTestRunner :
             timeProvider = timeProvider,
             loggerFactory = loggerFactory,
             remoteStorage = remoteStorage,
-            httpClientProvider = httpClientProvider,
+            okHttpClientBuilder = httpClientBuilder,
             testArtifactsProvider = testArtifactsProvider,
             reportViewerQuery = ReportViewerQuery { Base64.encodeToString(it, Base64.DEFAULT) },
             reportSerializer = ReportSerializer()
@@ -169,7 +173,7 @@ abstract class InHouseInstrumentationTestRunner :
     override val remoteStorage: RemoteStorage by lazy {
         RemoteStorageFactory.create(
             endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
-            httpClientProvider = httpClientProvider,
+            builder = httpClientBuilder,
             isAndroidRuntime = true
         )
     }

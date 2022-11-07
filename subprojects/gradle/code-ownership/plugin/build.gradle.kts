@@ -12,10 +12,7 @@ dependencies {
     implementation(projects.subprojects.gradle.impactShared)
     implementation(projects.subprojects.gradle.preBuild)
     implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.slack)
-    implementation(projects.subprojects.common.httpClient)
-    implementation(projects.subprojects.gradle.statsdConfig)
-    implementation(projects.subprojects.logger.slf4jGradleLogger)
+    implementation(projects.subprojects.common.okhttp)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 }

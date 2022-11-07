@@ -2,7 +2,6 @@ package com.avito.runner.scheduler
 
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.stats.StatsDSender
-import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.report.Report
 import com.avito.runner.config.RunnerInputParams
@@ -14,13 +13,14 @@ import com.avito.runner.scheduler.runner.TestRunnerExecutionState
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
+import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.file.Files
 
 public class TestRunnerFactoryProvider(
     private val params: RunnerInputParams,
     private val timeProvider: TimeProvider,
-    private val httpClientProvider: HttpClientProvider,
+    private val httpClientBuilder: OkHttpClient.Builder,
     private val report: Report,
     private val devicesProviderFactory: DevicesProviderFactory,
     private val loggerFactory: LoggerFactory,
@@ -75,7 +75,7 @@ public class TestRunnerFactoryProvider(
             testListenerFactory = TestListenerFactory(
                 loggerFactory = loggerFactory,
                 timeProvider = timeProvider,
-                httpClientProvider = httpClientProvider
+                httpClientBuilder = httpClientBuilder
             ),
             report = report,
             targets = params.instrumentationConfiguration.targets,

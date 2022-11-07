@@ -1,6 +1,9 @@
 package com.avito.k8s
 
-import com.avito.http.HttpClientProvider
+import com.avito.android.stats.StatsDSender
+import com.avito.http.StatsHttpEventListener
+import com.avito.logger.LoggerFactory
+import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import io.fabric8.kubernetes.client.Config
 import io.fabric8.kubernetes.client.ConfigBuilder
@@ -13,8 +16,10 @@ import io.kubernetes.client.util.KubeConfig
 import java.io.File
 
 public class KubernetesClientFactory(
-    private val httpClientProvider: HttpClientProvider,
     private val kubernetesCredentials: KubernetesCredentials,
+    private val loggerFactory: LoggerFactory,
+    private val timeProvider: TimeProvider,
+    private val statsDSender: StatsDSender,
 ) {
 
     public fun create(): KubernetesClient {
@@ -70,15 +75,16 @@ public class KubernetesClientFactory(
         }
 
         val kubernetesHttpClient = HttpClientUtils.createHttpClient(config).newBuilder()
-
-        val httpClient = httpClientProvider
-            .provide(
-                builder = kubernetesHttpClient,
-                requestMetadataProvider = KubernetesRequestMetadataProvider()
+        val client = kubernetesHttpClient.eventListenerFactory {
+            StatsHttpEventListener(
+                statsDSender = statsDSender,
+                timeProvider = timeProvider,
+                requestMetadataProvider = KubernetesRequestMetadataProvider(),
+                loggerFactory = loggerFactory,
             )
-            .build()
+        }.build()
 
-        return DefaultKubernetesClient(httpClient, config)
+        return DefaultKubernetesClient(client, config)
     }
 
     /**

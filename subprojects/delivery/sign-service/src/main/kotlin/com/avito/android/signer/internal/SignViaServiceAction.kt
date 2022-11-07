@@ -1,7 +1,6 @@
 package com.avito.android.signer.internal
 
 import com.avito.android.Result
-import com.avito.http.internal.RequestMetadata
 import com.avito.utils.ExistingFile
 import com.avito.utils.createOrClear
 import com.avito.utils.toExisting
@@ -55,10 +54,6 @@ internal class SignViaServiceAction(
         return Request.Builder()
             .url(serviceUrl)
             .post(body)
-            .tag(
-                RequestMetadata::class.java,
-                RequestMetadata("signer", "sign")
-            )
             .build()
     }
 

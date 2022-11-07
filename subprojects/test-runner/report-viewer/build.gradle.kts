@@ -13,7 +13,9 @@ dependencies {
     api(libs.androidAnnotations)
 
     implementation(libs.kotson)
-    implementation(projects.subprojects.common.httpClient)
+    implementation(projects.subprojects.common.httpStatsd) {
+        because("RequestMetadata")
+    }
     implementation(projects.subprojects.testRunner.testModel)
 
     testImplementation(libs.jsonPathAssert)
@@ -24,6 +26,4 @@ dependencies {
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(testFixtures(projects.subprojects.testRunner.report))
     testImplementation(testFixtures(projects.subprojects.testRunner.reportViewer))
-
-    testFixturesImplementation(testFixtures(projects.subprojects.common.httpClient))
 }

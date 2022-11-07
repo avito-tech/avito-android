@@ -1,10 +1,10 @@
 package com.avito.reportviewer
 
-import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.jsonrpc.JsonRpcClient
 import com.avito.report.serialize.createReportGson
 import com.avito.reportviewer.internal.ReportsApiImpl
+import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
 public object ReportsApiFactory {
@@ -13,14 +13,14 @@ public object ReportsApiFactory {
 
     public fun create(
         host: String,
-        httpClientProvider: HttpClientProvider,
+        builder: OkHttpClient.Builder,
         retryRequests: Boolean = true,
         readWriteTimeoutSec: Long = DEFAULT_TIMEOUT_SEC
     ): ReportsApi {
         return ReportsApiImpl(
             client = JsonRpcClient(
                 host = host,
-                httpClient = httpClientProvider.provide()
+                httpClient = builder
                     .writeTimeout(readWriteTimeoutSec, TimeUnit.SECONDS)
                     .readTimeout(readWriteTimeoutSec, TimeUnit.SECONDS)
                     .apply {

@@ -1,7 +1,6 @@
 package com.avito.runner.listener
 
 import com.avito.filestorage.RemoteStorageFactory
-import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.report.Report
 import com.avito.report.model.TestStaticData
@@ -20,12 +19,13 @@ import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
 import java.io.File
 
 public class TestListenerFactory(
     private val loggerFactory: LoggerFactory,
     private val timeProvider: TimeProvider,
-    private val httpClientProvider: HttpClientProvider
+    private val httpClientBuilder: OkHttpClient.Builder
 ) {
 
     public fun createReportTestListener(
@@ -62,7 +62,7 @@ public class TestListenerFactory(
         val artifactsUploader: TestArtifactsUploader = AvitoFileStorageUploader(
             RemoteStorageFactory.create(
                 endpoint = fileStorageUrl.toHttpUrl(),
-                httpClientProvider = httpClientProvider,
+                builder = httpClientBuilder,
                 isAndroidRuntime = false
             )
         )

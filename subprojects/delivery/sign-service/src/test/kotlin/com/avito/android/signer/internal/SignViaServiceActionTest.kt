@@ -1,12 +1,11 @@
 package com.avito.android.signer.internal
 
 import com.avito.android.Result
-import com.avito.http.HttpClientProvider
-import com.avito.http.createStubInstance
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
@@ -23,15 +22,13 @@ internal class SignViaServiceActionTest {
 
     private val server = MockWebServerFactory.create()
 
-    private val httpClientProvider = HttpClientProvider.createStubInstance()
-
     private val apk: File
         get() = File(testProjectDir, "test.apk").apply { createNewFile() }
 
     private val signViaServiceAction: SignViaServiceAction
         get() = SignViaServiceAction(
             serviceUrl = server.url("/"),
-            httpClient = httpClientProvider.provide().build(),
+            httpClient = OkHttpClient.Builder().build(),
             token = "123456",
             unsignedFile = apk,
             signedFile = apk,

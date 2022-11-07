@@ -1,6 +1,5 @@
 package com.avito.android.http
 
-import com.avito.http.internal.RequestMetadata
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType
@@ -15,7 +14,6 @@ import java.io.File
 
 internal class ArtifactoryClient(
     private val httpClient: OkHttpClient,
-    private val serviceName: String = "nupokati-artifactory"
 ) {
 
     private val applicationJson = "application/json".toMediaType()
@@ -32,10 +30,6 @@ internal class ArtifactoryClient(
         val request = Request.Builder()
             .put(requestBody)
             .url(url)
-            .tag(
-                RequestMetadata::class.java,
-                RequestMetadata(serviceName = serviceName, methodName = "upload")
-            )
             .build()
 
         return httpClient.newCall(request).execute()
