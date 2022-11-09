@@ -1,11 +1,11 @@
 # -- image settings
-registry:
+docker:
     # -- url of docker registry
-    url: docker.registry
+    registry: docker.registry
     # -- image to use for remote cache
     image: path/to/image
     # -- tag to use for remote cache
-    tag: latest
+    image_tag: latest
 
 # -- host settings
 hosts:

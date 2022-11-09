@@ -261,25 +261,5 @@ internal_publish_gradle_cache_node_image:
 	docker tag gradle/build-cache-node:$(GRADLE_CACHE_NODE_TAG) $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG) && \
 	docker push $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)
 
-deploy_gradle_cache_node:
-	$(call check_defined, GRADLE_CACHE_NODE_HOST)
-	cd ./ci/k8s/gradle-remote-cache && \
-	sed -e 's|GRADLE_CACHE_NODE_HOST|$(GRADLE_CACHE_NODE_HOST)|g' -e 's|NODE_IMAGE|$(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)|g' github-project.yaml | kubectl apply -f - && \
-	echo "Gradle Cache Node web interface should be available soon here: http://$(GRADLE_CACHE_NODE_HOST)"
-
-delete_gradle_cache_node:
-	cd ./ci/k8s/gradle-remote-cache && \
-	kubectl delete -f github-project.yaml
-
-deploy_avito_cache_node:
-	$(call check_defined, AVITO_CACHE_NODE_HOST)
-	cd ./ci/k8s/gradle-remote-cache && \
-	sed -e 's|GRADLE_CACHE_NODE_HOST|$(AVITO_CACHE_NODE_HOST)|g' -e 's|NODE_IMAGE|$(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)|g' avito-project.yaml | kubectl apply -f - && \
-	echo "Gradle Cache Node web interface should be available soon here: http://$(AVITO_CACHE_NODE_HOST)"
-
-delete_avito_cache_node:
-	cd ./ci/k8s/gradle-remote-cache && \
-	kubectl delete -f avito-project.yaml
-
 write_locks:
 	./gradlew resolveAndLockAll --write-locks --no-configuration-cache --quiet > /dev/null

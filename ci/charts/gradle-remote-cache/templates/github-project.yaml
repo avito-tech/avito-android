@@ -32,7 +32,7 @@ spec:
                             mountPath: /data
             containers:
                 -   name: gradle-remote-cache-github
-                    image: "{{ .Values.registry.url }}/{{ .Values.registry.image }}:{{ .Values.registry.tag}}"
+                    image: "{{ .Values.docker.registry }}/{{ .Values.docker.image }}:{{ .Values.docker.image_tag}}"
                     imagePullPolicy: IfNotPresent
                     resources:
                         requests:
