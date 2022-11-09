@@ -19,7 +19,6 @@ Extra materials about technical writing:
 - [GitLab documentation styleguide](https://docs.gitlab.com/ee/development/documentation/styleguide.html)
 - [What nobody tells you about documentation](https://www.divio.com/blog/documentation/)
 
-
 ### Use appropriate format for the problem
 
 There is no universal documentation. 
