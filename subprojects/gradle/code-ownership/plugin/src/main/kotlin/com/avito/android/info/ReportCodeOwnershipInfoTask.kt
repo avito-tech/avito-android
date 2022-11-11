@@ -25,7 +25,7 @@ public abstract class ReportCodeOwnershipInfoTask : DefaultTask() {
     }
 
     private fun Project.formatToCsvLine(): String {
-        val owners = extensions.findByType<CodeOwnershipExtension>()?.owners ?: emptySet()
+        val owners = extensions.findByType<CodeOwnershipExtension>()?.owners?.orNull ?: emptySet()
         val ownersCell = owners.joinToString(
             separator = ",",
             prefix = "\"",

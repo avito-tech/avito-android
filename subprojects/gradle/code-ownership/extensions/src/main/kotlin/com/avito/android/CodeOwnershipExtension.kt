@@ -1,19 +1,26 @@
 package com.avito.android
 
 import com.avito.android.model.Owner
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.gradle.kotlin.dsl.property
 
-public abstract class CodeOwnershipExtension {
+public abstract class CodeOwnershipExtension(
+    objects: ObjectFactory,
+) {
 
-    // TODO MA-2868 Replace ordinary var properties with gradle way properties
-    public var owners: Set<Owner> = emptySet()
-    public var emptyOwnersErrorMessage: String = DEFAULT_EMPTY_OWNERS_ERROR_MESSAGE
+    public val owners: SetProperty<Owner> = objects.setProperty(Owner::class.java)
+        .convention(emptySet())
+    public val emptyOwnersErrorMessage: Property<String> =
+        objects.property<String>().convention(DEFAULT_EMPTY_OWNERS_ERROR_MESSAGE)
 
     public fun owners(vararg owners: Owner) {
-        this.owners = owners.toSet()
+        this.owners.set(owners.toSet())
     }
 
     public fun emptyOwnersErrorMessage(message: String) {
-        this.emptyOwnersErrorMessage = message
+        this.emptyOwnersErrorMessage.set(message)
     }
 
     private companion object {

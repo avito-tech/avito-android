@@ -32,7 +32,7 @@ class MisleadingExceptionTest {
                         |enum Owners { Speed }
                         |
                         |ownership {
-                        |    owners = [Owners.Speed]
+                        |    owners(Owners.Speed)
                         |}
                     """.trimMargin(),
                     useKts = false

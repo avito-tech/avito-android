@@ -76,7 +76,7 @@ internal class WarningsConfigurator : TechBudgetConfigurator() {
         val projectInfo = ProjectInfo(
             path = subProject.path,
             // TODO Serialize / Deserialize owners in separate entity MA-2868
-            owners = codeOwnershipExtension.owners.map { it.toString() },
+            owners = codeOwnershipExtension.owners.get().map { it.toString() },
         )
 
         val logDirectoryProvider = LogFileProjectProvider(

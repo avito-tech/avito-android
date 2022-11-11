@@ -185,7 +185,7 @@ internal class UploadWarningsTest {
                         }
                         
                         ownership {
-                            owners = setOf(Speed, Performance)
+                            owners(Speed, Performance)
                         }                    
                         """.trimIndent()
                 )

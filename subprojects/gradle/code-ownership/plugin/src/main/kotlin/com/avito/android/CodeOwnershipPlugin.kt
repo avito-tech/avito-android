@@ -30,8 +30,10 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         if (!strictOwnership) return
 
         target.afterEvaluate {
-            if (it.state.failure == null && codeOwnershipExtension.owners.isEmpty()) {
-                throw IllegalStateException(codeOwnershipExtension.emptyOwnersErrorMessage.format(it.path))
+            val codeOwners = codeOwnershipExtension.owners.get()
+            if (it.state.failure == null && codeOwners.isEmpty()) {
+                val emptyOwnersMessage = codeOwnershipExtension.emptyOwnersErrorMessage.get()
+                throw IllegalStateException(emptyOwnersMessage.format(it.path))
             }
         }
     }
