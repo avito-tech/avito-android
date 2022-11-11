@@ -18,11 +18,6 @@ public class TechBudgetPlugin : Plugin<Project> {
         } else {
             if (target.getBooleanProperty("com.avito.android.tech-budget.enable", default = false)) {
                 configurators.forEach { it.configureCollect(target) }
-            } else {
-                target.logger.lifecycle(
-                    "Tech budget collection disabled. " +
-                        "You can enable by passing parameter `-Pcom.avito.android.tech-budget.enable=true`."
-                )
             }
         }
     }
