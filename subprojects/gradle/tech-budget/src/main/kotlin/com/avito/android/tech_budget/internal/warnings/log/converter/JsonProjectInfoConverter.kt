@@ -4,10 +4,10 @@ import com.avito.android.tech_budget.internal.di.MoshiProvider
 import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
 
 internal class JsonProjectInfoConverter(
-    moshiProvider: MoshiProvider = MoshiProvider()
+    moshiProvider: MoshiProvider
 ) : ProjectInfoConverter {
 
-    private val jsonAdapter = moshiProvider.provide().adapter(ProjectInfo::class.java)
+    private val jsonAdapter by lazy { moshiProvider.provide().adapter(ProjectInfo::class.java) }
 
     override fun extractFromString(rawText: String): ProjectInfo {
         return requireNotNull(jsonAdapter.fromJson(rawText)) { "Log entry should not be null!" }

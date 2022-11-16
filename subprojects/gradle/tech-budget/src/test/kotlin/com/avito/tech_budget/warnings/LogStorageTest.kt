@@ -1,11 +1,14 @@
 package com.avito.tech_budget.warnings
 
+import com.avito.android.model.Owner
 import com.avito.android.tech_budget.internal.warnings.log.FileLogReader
 import com.avito.android.tech_budget.internal.warnings.log.FileLogWriter
 import com.avito.android.tech_budget.internal.warnings.log.FileLogWriter.Companion.DEFAULT_SEPARATOR
 import com.avito.android.tech_budget.internal.warnings.log.LogFileProjectProvider
 import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.log.converter.ProjectInfoConverter
+import com.avito.tech_budget.warnings.fakes.FakeOwners
+import com.avito.tech_budget.warnings.fakes.FakeOwnersSerializer
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -61,7 +64,7 @@ class LogStorageTest {
         val handler = createLogReader(output)
 
         val projectPath = ":app"
-        val owners = listOf("Speed", "Messenger")
+        val owners = listOf(FakeOwners.Messenger, FakeOwners.Speed)
         val moduleDir = File(output, "app")
 
         createFile(moduleDir)
@@ -129,13 +132,13 @@ class LogStorageTest {
         fun createProjectFile(
             directory: File,
             projectPath: String = ":app",
-            owners: List<String>,
+            owners: List<Owner>,
         ) = createFile(
             directory,
             name = ".project",
             content = createProjectInfoConverter().convertToString(ProjectInfo(projectPath, owners))
         )
 
-        fun createProjectInfoConverter() = ProjectInfoConverter.default()
+        fun createProjectInfoConverter() = ProjectInfoConverter.default { FakeOwnersSerializer() }
     }
 }
