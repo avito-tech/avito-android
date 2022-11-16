@@ -21,18 +21,29 @@ internal sealed class Error {
     data class Cause(val message: String)
 
     companion object {
-        fun from(throwable: Throwable) = when {
+        private const val noErrorMessage = "(no error message)"
+
+        fun from(throwable: Throwable): Error = when {
             throwable is MultiCauseException && throwable.causes.size > 1 -> Multi(
-                message = throwable.localizedMessage,
+                message = throwable.getLocalizedMessageSafe(),
                 errors = throwable.causes.map { it.toSingle() }
             )
+
             else -> throwable.toSingle()
         }
 
-        private fun Throwable.toSingle() = Single(
-            message = localizedMessage,
-            stackTrace = stackTraceToString(),
-            causes = getCausesRecursively().map { Cause(it.localizedMessage ?: "${it::class.java} (no error message)") }
-        )
+        private fun Throwable.toSingle(): Single {
+            return Single(
+                message = getLocalizedMessageSafe(),
+                stackTrace = stackTraceToString(),
+                causes = getCausesRecursively().map {
+                    Cause(it.getLocalizedMessageSafe())
+                }
+            )
+        }
+
+        private fun Throwable.getLocalizedMessageSafe(): String {
+            return localizedMessage ?: "${this::class } $noErrorMessage"
+        }
     }
 }
