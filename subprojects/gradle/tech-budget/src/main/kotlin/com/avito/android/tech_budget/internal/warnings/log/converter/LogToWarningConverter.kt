@@ -13,7 +13,7 @@ internal class LogToWarningConverter {
 
         return Warning(
             moduleName = log.projectInfo.path,
-            ownerNames = log.projectInfo.owners,
+            owners = log.projectInfo.owners,
             sourceFile = sourceFile,
             fullMessage = warningWithoutPrefix
         )

@@ -1,8 +1,16 @@
 package com.avito.android.tech_budget.internal.di
 
+import com.avito.android.OwnerSerializer
+import com.avito.android.tech_budget.internal.owners.adapter.DefaultOwnerAdapter
+import com.avito.android.tech_budget.internal.owners.adapter.OwnerAdapter
 import com.squareup.moshi.Moshi
+import javax.inject.Provider
 
-internal class MoshiProvider {
+internal class MoshiProvider(
+    private val uploadOwnersAdapter: OwnerAdapter
+) {
 
-    fun provide(): Moshi = Moshi.Builder().build()
+    constructor(ownersSerializer: Provider<OwnerSerializer>) : this(DefaultOwnerAdapter(ownersSerializer))
+
+    fun provide(): Moshi = Moshi.Builder().add(uploadOwnersAdapter).build()
 }

@@ -6,7 +6,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal class RetrofitProvider(
     private val baseUrl: String,
-    private val moshiProvider: MoshiProvider = MoshiProvider()
+    private val moshiProvider: MoshiProvider
 ) {
 
     fun provide(): Retrofit {

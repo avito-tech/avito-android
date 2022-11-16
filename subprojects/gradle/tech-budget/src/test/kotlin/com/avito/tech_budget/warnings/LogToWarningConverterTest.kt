@@ -3,6 +3,7 @@ package com.avito.tech_budget.warnings
 import com.avito.android.tech_budget.internal.warnings.log.LogEntry
 import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.log.converter.LogToWarningConverter
+import com.avito.tech_budget.warnings.fakes.FakeOwners
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -28,7 +29,7 @@ internal class LogToWarningConverterTest {
 
     @Test
     fun `convert valid log entry - owners parsed`() {
-        val owners = listOf("Speed", "Messenger")
+        val owners = listOf(FakeOwners.Speed, FakeOwners.Messenger)
         val entry = LogEntry(
             ProjectInfo(":app", owners = owners),
             taskName = "compile",
@@ -37,7 +38,7 @@ internal class LogToWarningConverterTest {
 
         val warning = converter.convert(entry)
 
-        assertThat(warning.ownerNames).isEqualTo(owners)
+        assertThat(warning.owners).isEqualTo(owners)
     }
 
     @Test
