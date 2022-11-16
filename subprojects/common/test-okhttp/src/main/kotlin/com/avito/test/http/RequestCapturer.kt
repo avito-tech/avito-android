@@ -1,5 +1,6 @@
 package com.avito.test.http
 
+import com.avito.android.util.AssertionWaiter
 import com.avito.android.util.waitForAssertion
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.RecordedRequest
@@ -22,7 +23,16 @@ public class RequestCapturer(
 
     public inner class Checks {
 
-        public fun singleRequestCaptured(): RequestChecks = waitForAssertion {
+        public fun singleRequestCaptured(): RequestChecks =
+            singleRequestCaptured(
+                AssertionWaiter.DEFAULT_TIMEOUT_MS,
+                AssertionWaiter.DEFAULT_FREQUENCY_MS
+            )
+
+        public fun singleRequestCaptured(
+            timeoutMilliseconds: Long,
+            frequencyMilliseconds: Long,
+        ): RequestChecks = waitForAssertion(timeoutMilliseconds, frequencyMilliseconds) {
             synchronized(this@RequestCapturer) {
                 assertThat(
                     "Single request should be captured, Currently matched: $requests",

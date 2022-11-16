@@ -13,9 +13,13 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import java.util.Collections
 
+/**
+ * @param strictMode dispatcher will throw [IllegalStateException] if more than one capturer found for request
+ */
 public class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
-    loggerFactory: LoggerFactory = PrintlnLoggerFactory
+    private val strictMode: Boolean = true,
+    loggerFactory: LoggerFactory = PrintlnLoggerFactory,
 ) : Dispatcher() {
 
     private val logger = loggerFactory.create<MockDispatcher>()
@@ -47,10 +51,18 @@ public class MockDispatcher(
 
         synchronized(capturers) {
             val foundCapturers = capturers.filter { it.requestMatcher.invoke(requestData) }
-            if (foundCapturers.isNotEmpty()) {
-                if (foundCapturers.size > 1) {
+
+            if (foundCapturers.size > 1) {
+                if (strictMode) {
+                    error(
+                        "Found ${foundCapturers.size} capturers for request ${request.requestLine}. Should be 1."
+                    )
+                } else {
                     logger.warn("There are more then one capturer found for request ${request.requestLine}")
                 }
+            }
+
+            if (foundCapturers.isNotEmpty()) {
                 val foundCapturer = foundCapturers[0]
                 foundCapturer.capture(request)
                 logger.verbose("Request ${request.requestLine} was captured")
@@ -89,7 +101,7 @@ public class MockDispatcher(
     }
 }
 
-private val gson = Gson()
+private val internalGson by lazy { Gson() }
 
 /**
  * Use file contents as response body
@@ -97,10 +109,11 @@ private val gson = Gson()
  * @param fileName specify file path, relative to assets dir
  *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
  */
-public fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
+@Deprecated(message = "Use same extension from com.avito.android.mock")
+public fun MockResponse.setBodyFromFile(fileName: String, gson: Gson = internalGson): MockResponse {
     val text = ResourcesReader.readText(fileName)
     if (fileName.endsWith(".json")) {
-        validateJson(text).onFailure {
+        validateJson(text, gson).onFailure {
             throw IllegalArgumentException("$fileName contains invalid json", it)
         }
     }
@@ -108,4 +121,5 @@ public fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
     return this
 }
 
-private fun validateJson(json: String): Result<Unit> = Result.tryCatch { gson.fromJson<JsonElement>(json) }
+private fun validateJson(json: String, gson: Gson): Result<Unit> =
+    Result.tryCatch { gson.fromJson<JsonElement>(json) }

@@ -1,5 +1,7 @@
 package com.avito.android.util
 
+import com.avito.android.util.AssertionWaiter.DEFAULT_FREQUENCY_MS
+import com.avito.android.util.AssertionWaiter.DEFAULT_TIMEOUT_MS
 import com.avito.android.waiter.repeatFor
 import com.avito.android.waiter.waitFor
 
@@ -24,5 +26,7 @@ public fun continuousAssertion(
     action = action
 )
 
-private const val DEFAULT_TIMEOUT_MS = 5000L
-private const val DEFAULT_FREQUENCY_MS = 50L
+public object AssertionWaiter {
+    public const val DEFAULT_TIMEOUT_MS: Long = 5000L
+    public const val DEFAULT_FREQUENCY_MS: Long = 50L
+}

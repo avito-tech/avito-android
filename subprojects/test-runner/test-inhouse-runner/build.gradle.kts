@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.subprojects.common.httpStatsd)
     implementation(projects.subprojects.common.okhttp)
     implementation(projects.subprojects.common.statsd)
+    implementation(projects.subprojects.common.resources)
     implementation(projects.subprojects.testRunner.reportViewer) {
         because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
     }

@@ -62,6 +62,7 @@ import com.avito.reportviewer.ReportViewerQuery
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
@@ -207,7 +208,14 @@ abstract class InHouseInstrumentationTestRunner :
 
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
 
-    val mockDispatcher = MockDispatcher()
+    val mockDispatcher by lazy {
+        MockDispatcher(
+            loggerFactory = loggerFactory,
+            strictMode = testRunEnvironment.asRunEnvironmentOrThrow().mockDispatcherIsStrict
+        )
+    }
+
+    val gson by lazy { Gson() }
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 

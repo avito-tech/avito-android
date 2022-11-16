@@ -55,7 +55,8 @@ sealed class TestRunEnvironment {
         internal val elasticConfig: ElasticConfig,
         internal val sentryConfig: SentryConfig,
         internal val statsDConfig: StatsDConfig,
-        internal val fileStorageUrl: HttpUrl
+        internal val fileStorageUrl: HttpUrl,
+        internal val mockDispatcherIsStrict: Boolean,
     ) : TestRunEnvironment()
 }
 
@@ -83,6 +84,7 @@ fun provideEnvironment(
             fileStorageUrl = argumentsProvider.getArgumentOrThrow("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
+            mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: false,
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
@@ -109,6 +111,7 @@ fun parseEnvironment(
             fileStorageUrl = argumentsProvider.getArgumentOrThrow("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
+            mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: false,
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
