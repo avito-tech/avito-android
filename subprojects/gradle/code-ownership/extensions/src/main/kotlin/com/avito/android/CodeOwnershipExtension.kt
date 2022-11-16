@@ -14,6 +14,7 @@ public abstract class CodeOwnershipExtension(
         .convention(emptySet())
     public val emptyOwnersErrorMessage: Property<String> =
         objects.property<String>().convention(DEFAULT_EMPTY_OWNERS_ERROR_MESSAGE)
+    public abstract val ownerSerializer: Property<OwnerSerializer>
 
     public fun owners(vararg owners: Owner) {
         this.owners.set(owners.toSet())
