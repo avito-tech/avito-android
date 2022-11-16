@@ -1,6 +1,8 @@
 package com.avito.android.info
 
 import com.avito.android.CodeOwnershipExtension
+import com.avito.android.OwnerSerializer
+import com.avito.android.model.Owner
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
@@ -25,13 +27,25 @@ public abstract class ReportCodeOwnershipInfoTask : DefaultTask() {
     }
 
     private fun Project.formatToCsvLine(): String {
-        val owners = extensions.findByType<CodeOwnershipExtension>()?.owners?.orNull ?: emptySet()
+        val extension = extensions.findByType<CodeOwnershipExtension>()
+        val owners = extension?.owners?.orNull ?: emptySet()
+        val ownersSerializer = extension?.ownerSerializer?.orNull ?: ToStringOwnerSerializer()
         val ownersCell = owners.joinToString(
             separator = ",",
             prefix = "\"",
             postfix = "\"",
-            transform = { it.toString() }
+            transform = { owner -> ownersSerializer.serialize(owner) }
         )
         return "$path,$ownersCell\n"
+    }
+
+    private class ToStringOwnerSerializer : OwnerSerializer {
+        override fun deserialize(rawOwner: String): Owner {
+            error("Can't parse $rawOwner to owner entity. This operation is unsupported in ToStringOwnersSerializer")
+        }
+
+        override fun serialize(owner: Owner): String {
+            return owner.toString()
+        }
     }
 }
