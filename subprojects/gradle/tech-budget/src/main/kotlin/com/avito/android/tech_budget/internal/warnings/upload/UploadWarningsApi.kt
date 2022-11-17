@@ -13,7 +13,7 @@ import javax.inject.Provider
 
 internal interface UploadWarningsApi {
 
-    @POST("/dumpWarnings")
+    @POST("dumpWarnings/")
     fun dumpWarnings(@Body request: WarningsRequestBody): Call<DumpResponse>
 
     companion object {

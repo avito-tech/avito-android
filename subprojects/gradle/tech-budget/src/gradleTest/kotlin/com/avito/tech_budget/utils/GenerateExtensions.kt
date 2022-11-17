@@ -5,7 +5,6 @@ internal fun dumpInfoExtension(webServerUrl: String): String = """
                         baseUploadUrl.set("$webServerUrl")
                         commitHash.set("123")
                         currentDate.set("2022-10-31")
-                        platform.set("android")
                         project.set("avito")
                     }    
 """.trimIndent()

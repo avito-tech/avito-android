@@ -84,7 +84,12 @@ internal class UploadOwnersTest {
         projectDir: File,
         expectFailure: Boolean = false,
     ) =
-        gradlew(projectDir, "uploadOwners", expectFailure = expectFailure)
+        gradlew(
+            projectDir,
+            "uploadOwners",
+            "-Pcom.avito.android.tech-budget.enable=true",
+            expectFailure = expectFailure
+        )
 
     private fun generateProject(
         projectDir: File,

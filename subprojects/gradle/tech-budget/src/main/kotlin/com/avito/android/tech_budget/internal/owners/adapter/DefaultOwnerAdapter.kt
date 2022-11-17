@@ -8,6 +8,16 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import javax.inject.Provider
 
+/**
+ * [OwnerAdapter] which serializes [Owner] to a plain String with [OwnerSerializer].
+ *
+ * Used to upload owner names with warnings, dependencies and other tech budget metrics.
+ *
+ * Sample output:
+ * ```json
+ * "owners": ["Speed", "Messenger"]
+ * ```
+ */
 internal class DefaultOwnerAdapter(
     private val ownerSerializer: Provider<OwnerSerializer>
 ) : OwnerAdapter() {

@@ -12,6 +12,7 @@ import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.log.TaskLogsDumper
 import com.avito.android.tech_budget.internal.warnings.log.converter.ProjectInfoConverter
 import com.avito.android.tech_budget.internal.warnings.upload.UploadWarningsTask
+import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.withType
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
@@ -22,9 +23,17 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-internal class WarningsConfigurator : TechBudgetConfigurator() {
+internal class WarningsConfigurator : TechBudgetConfigurator {
 
-    override fun doConfigureUpload(root: Project) {
+    override fun configure(project: Project) {
+        if (project.isRoot()) {
+            configureUpload(project)
+        } else {
+            configureCollect(project)
+        }
+    }
+
+    private fun configureUpload(root: Project) {
         val extension = root.extensions.getByType<TechBudgetExtension>()
         val collectWarnings = root.tasks.register<CollectWarningsTask>(CollectWarningsTask.NAME) {
             this.outputDirectory.set(extension.warnings.outputDirectory)
@@ -38,7 +47,7 @@ internal class WarningsConfigurator : TechBudgetConfigurator() {
         }
     }
 
-    override fun doConfigureCollect(subProject: Project) {
+    private fun configureCollect(subProject: Project) {
         require(subProject.rootProject.plugins.hasPlugin("com.avito.android.tech-budget")) {
             "Plugin `com.avito.android.tech-budget` must be applied to the root project"
         }

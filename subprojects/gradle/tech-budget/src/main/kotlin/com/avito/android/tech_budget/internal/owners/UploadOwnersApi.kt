@@ -12,7 +12,7 @@ import retrofit2.http.POST
 
 internal interface UploadOwnersApi {
 
-    @POST("/dumpOwners")
+    @POST("dumpOwners/")
     fun dumpOwners(@Body request: UploadOwnersRequestBody): Call<DumpResponse>
 
     companion object {

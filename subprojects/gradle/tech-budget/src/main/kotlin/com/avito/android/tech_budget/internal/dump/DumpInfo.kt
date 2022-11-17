@@ -8,7 +8,6 @@ import com.squareup.moshi.JsonClass
 internal class DumpInfo(
     @Json(name = "commitHash") val commitHash: String,
     @Json(name = "commitDate") val commitDate: String,
-    @Json(name = "platform") val platform: String,
     @Json(name = "project") val project: String
 ) {
 
@@ -16,7 +15,6 @@ internal class DumpInfo(
         fun fromExtension(extension: DumpInfoConfiguration) = DumpInfo(
             extension.commitHash.get(),
             extension.currentDate.get(),
-            extension.platform.get(),
             extension.project.get(),
         )
     }

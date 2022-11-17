@@ -41,13 +41,12 @@ internal class UploadWarningsTest {
     }
 
     @Test
-    fun `compile with warnings - collection disabled - no warnings uploaded`(@TempDir projectDir: File) {
+    fun `compile with warnings - plugin disabled - no warnings uploaded`(@TempDir projectDir: File) {
         generateProject(projectDir, containsWarnings = true)
 
-        uploadWarnings(projectDir, collectWarningsEnabled = false)
+        uploadWarnings(projectDir, collectWarningsEnabled = false, expectFailure = true)
             .assertThat()
-            .buildSuccessful()
-            .outputContains("No warnings found")
+            .buildFailed()
     }
 
     @Test
@@ -72,6 +71,22 @@ internal class UploadWarningsTest {
         request.Checks().singleRequestCaptured().bodyContains(
             """
                 "owners":["Speed","Messenger"]
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `compile with warnings - without ownership ext - empty owners sent to server`(@TempDir projectDir: File) {
+        generateProject(projectDir, containsWarnings = true, includesOwners = false)
+
+        val request = mockDispatcher.captureRequest { path.contains("/dumpWarnings") }
+        uploadWarnings(projectDir)
+            .assertThat()
+            .buildSuccessful()
+
+        request.Checks().singleRequestCaptured().bodyContains(
+            """
+                "owners":[]
             """.trimIndent()
         )
     }
@@ -121,6 +136,7 @@ internal class UploadWarningsTest {
         containsWarnings: Boolean = true,
         outputDirectoryName: String? = null,
         separator: String? = null,
+        includesOwners: Boolean = true,
     ) = TestProjectGenerator(
         plugins = plugins {
             id("com.avito.android.tech-budget")
@@ -132,7 +148,7 @@ internal class UploadWarningsTest {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
                     ${collectWarningsExtension(outputDirectoryName, separator)}
                 }
-                ${ownershipExtension()}
+                ${if (includesOwners) ownershipExtension() else ""}
             """.trimIndent(),
         modules = listOf(
             AndroidAppModule(
@@ -142,7 +158,7 @@ internal class UploadWarningsTest {
                     id("com.avito.android.code-ownership")
                 },
                 useKts = true,
-                buildGradleExtra = ownershipExtension(),
+                buildGradleExtra = if (includesOwners) ownershipExtension() else "",
                 mutator = {
                     if (containsWarnings) {
                         dir("src/main/kotlin/") {

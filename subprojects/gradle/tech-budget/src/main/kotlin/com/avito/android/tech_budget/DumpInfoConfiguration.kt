@@ -12,9 +12,6 @@ public abstract class DumpInfoConfiguration {
     public abstract val currentDate: Property<String>
 
     @get:Input
-    public abstract val platform: Property<String>
-
-    @get:Input
     public abstract val project: Property<String>
 
     @get:Input
