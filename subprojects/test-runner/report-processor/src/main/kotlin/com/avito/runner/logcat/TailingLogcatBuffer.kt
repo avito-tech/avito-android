@@ -10,13 +10,17 @@ internal class TailingLogcatBuffer(
     readFileFromEnd: Boolean = true
 ) : LogcatBuffer {
 
+    private val lock = Any()
+
     private val buffer = mutableListOf<String>()
 
     private val tailerListener = object : TailerListenerAdapter() {
 
         override fun handle(line: String?) {
             if (line != null) {
-                buffer.add(line)
+                synchronized(lock) {
+                    buffer.add(line)
+                }
             }
         }
     }
@@ -35,19 +39,21 @@ internal class TailingLogcatBuffer(
     }
 
     override fun getLogs(): LogcatResult {
-        return if (buffer.isNotEmpty()) {
-            LogcatResult.Success(
-                output = buffer.joinToString(separator = "\n")
-            )
-        } else {
-            LogcatResult.Unavailable(
-                reason = Problem(
-                    shortDescription = "No logs fetched during test execution",
-                    context = "TailingLogcatBuffer: getting logs for test report",
-                    because = "It's unexpected, probably a bug: " +
-                        "at least some log lines are printed during any test execution"
+        return synchronized(lock) {
+            if (buffer.isNotEmpty()) {
+                LogcatResult.Success(
+                    output = buffer.joinToString(separator = "\n")
                 )
-            )
+            } else {
+                LogcatResult.Unavailable(
+                    reason = Problem(
+                        shortDescription = "No logs fetched during test execution",
+                        context = "TailingLogcatBuffer: getting logs for test report",
+                        because = "It's unexpected, probably a bug: " +
+                            "at least some log lines are printed during any test execution"
+                    )
+                )
+            }
         }
     }
 }
