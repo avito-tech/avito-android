@@ -1,9 +1,8 @@
-package com.avito.tech_budget.warnings.fakes
+package com.avito.android.model
 
 import com.avito.android.OwnerSerializer
-import com.avito.android.model.Owner
 
-internal class FakeOwnersSerializer : OwnerSerializer {
+class FakeOwnersSerializer : OwnerSerializer {
     override fun deserialize(rawOwner: String): Owner {
         return FakeOwners.valueOf(rawOwner)
     }

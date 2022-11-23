@@ -21,6 +21,7 @@ hamcrest = "2.2"
 moshi = "1.13.0"
 moshiX = "0.17.2"
 ktor = "2.1.2"
+jacksonDataformat = "2.13.0"
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
@@ -62,6 +63,7 @@ retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars"
 
 gson = "com.google.code.gson:gson:2.8.9"
 kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
+jacksonDataformat-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jacksonDataformat" }
 
 layoutLibApi = { module = "com.android.tools.layoutlib:layoutlib-api", version.ref = "androidTools" }
 androidSdkCommon = { module = "com.android.tools:sdk-common", version.ref = "androidTools" }

@@ -3,15 +3,20 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
     id("convention.test-fixtures")
+    id("convention.ksp")
 }
 
 dependencies {
+    api(libs.moshi)
     api(projects.subprojects.gradle.codeOwnership.extensions)
 
+    implementation(libs.jacksonDataformat.toml)
     implementation(projects.subprojects.gradle.preBuild)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.common.okhttp)
 
+    ksp(libs.moshiCodegen)
+    testImplementation(testFixtures(projects.subprojects.gradle.codeOwnership.plugin))
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 }
 

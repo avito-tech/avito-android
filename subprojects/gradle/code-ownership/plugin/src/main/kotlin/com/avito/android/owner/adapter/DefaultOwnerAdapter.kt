@@ -1,4 +1,4 @@
-package com.avito.android.tech_budget.internal.owners.adapter
+package com.avito.android.owner.adapter
 
 import com.avito.android.OwnerSerializer
 import com.avito.android.model.Owner
@@ -18,9 +18,11 @@ import javax.inject.Provider
  * "owners": ["Speed", "Messenger"]
  * ```
  */
-internal class DefaultOwnerAdapter(
+public class DefaultOwnerAdapter(
     private val ownerSerializer: Provider<OwnerSerializer>
 ) : OwnerAdapter() {
+
+    public constructor(ownerSerializer: OwnerSerializer) : this(Provider { ownerSerializer })
 
     @FromJson
     override fun fromJson(reader: JsonReader): Owner? {

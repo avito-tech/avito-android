@@ -1,14 +1,20 @@
 package com.avito.android
 
+import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
+import com.avito.android.utils.LIBS_OWNERS_TOML_CONTENT
+import com.avito.android.utils.LIBS_VERSIONS_TOML_CONTENT
+import com.avito.android.utils.compactPrintJson
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.IMPLEMENTATION
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
+import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -16,12 +22,32 @@ import java.io.File
 internal class ExportOwnershipInfoTest {
 
     @Test
-    internal fun `ownership exporting to csv file - works correctly`(@TempDir projectDir: File) {
+    internal fun `internal deps ownership exporting file - works correctly`(@TempDir projectDir: File) {
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.code-ownership")
             },
+            useKts = true,
+            imports = listOf(
+                "import com.avito.android.model.Owner",
+                "import com.avito.android.OwnerSerializer"
+            ),
+            buildGradleExtra = """
+                        |object TestOwnerSerializer : OwnerSerializer {
+                        |   override fun deserialize(rawOwner: String): Owner {
+                        |       error("Can't deserialize owner!")
+                        |   }
+                        |   
+                        |   override fun serialize(owner: Owner): String {
+                        |       return "Test" + owner.toString()
+                        |   }
+                        |} 
+                        |
+                        |ownership {
+                        |    ownerSerializer.set(TestOwnerSerializer)
+                        |}
+                    """.trimMargin(),
             modules = listOf(
                 AndroidAppModule(
                     "app",
@@ -76,21 +102,104 @@ internal class ExportOwnershipInfoTest {
 
         gradlew(
             projectDir,
-            "reportCodeOwnershipInfo",
+            "exportInternalDepsCodeOwners",
         ).assertThat().buildSuccessful()
 
-        val file = File(projectDir, "build/outputs/code-ownership/gradle-modules-owners.csv")
+        val file = File(projectDir, "build/ownership/internal-dependencies-owners.json")
         assertThat(file.exists()).isTrue()
 
-        assertThat(file.readText())
-            .isEqualTo(
-                """
-            |name,owners
-            |:app,"Speed"
-            |:common,""
-            |:feature,"Speed,Performance"
-            |
-        """.trimMargin()
-            )
+        assertThat(file.readText()).isEqualTo(EXPECTED_INTERNAL_DEPS_CODE_OWNERS)
+    }
+
+    @Test
+    internal fun `external deps ownership exporting file - works correctly`(@TempDir projectDir: File) {
+        projectDir.file("gradle/libs.versions.toml", LIBS_VERSIONS_TOML_CONTENT)
+        projectDir.file("gradle/libs.owners.toml", LIBS_OWNERS_TOML_CONTENT)
+        TestProjectGenerator(
+            name = "rootapp",
+            plugins = plugins {
+                id("com.avito.android.code-ownership")
+            },
+            useKts = true,
+            buildGradleExtra = FAKE_OWNERSHIP_EXTENSION
+
+        ).generateIn(projectDir)
+
+        gradlew(
+            projectDir,
+            "exportExternalDepsCodeOwners",
+        ).assertThat().buildSuccessful()
+
+        val file = File(projectDir, "build/ownership/external-dependencies-owners.json")
+        assertThat(file.exists()).isTrue()
+
+        assertThat(file.readText()).isEqualTo(EXPECTED_EXTERNAL_DEPS_CODE_OWNERS)
+    }
+
+    private companion object {
+
+        @Language("json")
+        private val EXPECTED_INTERNAL_DEPS_CODE_OWNERS = """
+            [
+               {
+                  "moduleName":":app",
+                  "owners":[
+                     "TestSpeed"
+                  ],
+                  "type":"internal"
+               },
+               {
+                  "moduleName":":common",
+                  "owners":[
+                     
+                  ],
+                  "type":"internal"
+               },
+               {
+                  "moduleName":":feature",
+                  "owners":[
+                     "TestSpeed",
+                     "TestPerformance"
+                  ],
+                  "type":"internal"
+               }
+            ]
+        """.trimIndent().compactPrintJson()
+
+        @Language("json")
+        private val EXPECTED_EXTERNAL_DEPS_CODE_OWNERS = """
+            [
+                {
+                    "moduleName": "io.gitlab.arturbosch.detekt",
+                    "owners": [
+                        "Speed"
+                    ],
+                    "type": "external"
+                },
+                {
+                    "moduleName": "com.google.code.gson:gson",
+                    "owners": [
+                        "Speed"
+                    ],
+                    "type": "external"
+                },
+                {
+                    "moduleName": "androidx.core:core",
+                    "owners": [
+                        "Messenger"
+                    ],
+                    "type": "external"
+                },
+                {
+                    "moduleName": "androidx.constraintlayout:constraintlayout",
+                    "owners": [
+                        "Messenger"
+                    ],
+                    "type": "external"
+                }
+            ]
+            """
+            .trimIndent()
+            .compactPrintJson()
     }
 }

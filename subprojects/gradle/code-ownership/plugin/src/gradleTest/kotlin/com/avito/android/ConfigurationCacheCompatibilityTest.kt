@@ -24,12 +24,25 @@ internal class ConfigurationCacheCompatibilityTest {
                         id("com.avito.android.code-ownership")
                     },
                     name = "lib",
-                    imports = listOf("import com.avito.android.model.Owner"),
+                    imports = listOf(
+                        "import com.avito.android.model.Owner",
+                        "import com.avito.android.OwnerSerializer"
+                    ),
                     buildGradleExtra = """
                         |object Speed : Owner { }
+                        |object SpeedOwnerSerializer : OwnerSerializer {
+                        |   override fun deserialize(rawOwner: String): com.avito.android.model.Owner {
+                        |       return Speed
+                        |   }
+                        |   
+                        |   override fun serialize(owner: Owner): String {
+                        |       return "Speed"
+                        |   }
+                        |} 
                         |
                         |ownership {
                         |    owners(Speed)
+                        |    ownerSerializer.set(SpeedOwnerSerializer)
                         |}
                     """.trimMargin(),
                     useKts = true
@@ -83,7 +96,7 @@ internal class ConfigurationCacheCompatibilityTest {
     private fun runInfoReportTask(tempDir: File): TestResult {
         return gradlew(
             tempDir,
-            "reportCodeOwnershipInfo",
+            "exportInternalDepsCodeOwners",
             "-Pavito.ownership.strictOwnership=true",
             dryRun = true,
             configurationCache = true
