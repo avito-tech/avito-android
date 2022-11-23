@@ -91,6 +91,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
             libsOwnersFile.set(codeOwnershipExtension.externalDependencies.libsOwnersFile)
             expectedOwnersProvider.set(reportExtension.expectedOwnersProvider.get())
             ownerSerializer.set(codeOwnershipExtension.ownerSerializer)
+            reportFile.set(target.layout.buildDirectory.file("reports/check_external_dependencies.report"))
         }
     }
 }

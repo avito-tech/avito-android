@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.subprojects.common.okhttp)
 
     ksp(libs.moshiCodegen)
-    testImplementation(testFixtures(projects.subprojects.gradle.codeOwnership.plugin))
+    gradleTestImplementation(libs.jsonAssert)
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 }
 

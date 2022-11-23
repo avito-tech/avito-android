@@ -98,6 +98,7 @@ internal class UploadOwnersTest {
         includeOwnersProvider: Boolean = true,
     ) = TestProjectGenerator(
         plugins = plugins {
+            id("com.avito.android.gradle-logger")
             id("com.avito.android.tech-budget")
             if (includeCodeOwnership) id("com.avito.android.code-ownership")
         },

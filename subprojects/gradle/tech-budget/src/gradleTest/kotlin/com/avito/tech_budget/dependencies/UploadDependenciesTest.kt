@@ -3,13 +3,13 @@ package com.avito.tech_budget.dependencies
 import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
 import com.avito.android.utils.LIBS_OWNERS_TOML_CONTENT
 import com.avito.android.utils.LIBS_VERSIONS_TOML_CONTENT
-import com.avito.android.utils.compactPrintJson
 import com.avito.tech_budget.utils.dumpInfoExtension
 import com.avito.tech_budget.utils.failureResponse
 import com.avito.tech_budget.utils.successResponse
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
@@ -43,11 +43,7 @@ internal class UploadDependenciesTest {
             .assertThat()
             .buildSuccessful()
 
-        request.Checks().singleRequestCaptured().bodyContains(
-            """
-                "modules":$EXPECTED_DEPS_CODE_OWNERS
-            """.trimIndent()
-        )
+        request.checks.singleRequestCaptured().jsonEquals(EXPECTED_DEPS_CODE_OWNERS)
     }
 
     @Test
@@ -104,6 +100,7 @@ internal class UploadDependenciesTest {
         includeVersionFiles: Boolean = true
     ) = TestProjectGenerator(
         plugins = plugins {
+            id("com.avito.android.gradle-logger")
             if (includeCodeOwnership) id("com.avito.android.code-ownership")
             id("com.avito.android.tech-budget")
         },
@@ -114,6 +111,19 @@ internal class UploadDependenciesTest {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
                 }
             """.trimIndent(),
+        modules = listOf(
+            AndroidAppModule(
+                name = "app",
+                imports = listOf("import com.avito.android.model.Owner"),
+                plugins = plugins { id("com.avito.android.code-ownership") },
+                useKts = true,
+                buildGradleExtra = """
+                    ownership {
+                        owners(object: Owner { override fun toString() = "Speed" })
+                    }
+                """.trimIndent(),
+            )
+        )
     ).generateIn(projectDir).also {
         if (includeVersionFiles) {
             projectDir.file("gradle/libs.versions.toml", LIBS_VERSIONS_TOML_CONTENT)
@@ -124,66 +134,50 @@ internal class UploadDependenciesTest {
     private companion object {
         @Language("json")
         private val EXPECTED_DEPS_CODE_OWNERS = """
-            [
-               {
-                  "moduleName":":appA",
-                  "owners":[
-                     
-                  ],
-                  "type":"internal"
+           {
+               "dumpInfo":{
+                  "commitHash":"123",
+                  "commitDate":"2022-10-31",
+                  "project":"avito"
                },
-               {
-                  "moduleName":":appB",
-                  "owners":[
-                     
-                  ],
-                  "type":"internal"
-               },
-               {
-                  "moduleName":":independent",
-                  "owners":[
-                     
-                  ],
-                  "type":"internal"
-               },
-               {
-                  "moduleName":":shared",
-                  "owners":[
-                     
-                  ],
-                  "type":"internal"
-               },
-               {
-                  "moduleName":"io.gitlab.arturbosch.detekt",
-                  "owners":[
-                     "Speed"
-                  ],
-                  "type":"external"
-               },
-               {
-                  "moduleName":"com.google.code.gson:gson",
-                  "owners":[
-                     "Speed"
-                  ],
-                  "type":"external"
-               },
-               {
-                  "moduleName":"androidx.core:core",
-                  "owners":[
-                     "Messenger"
-                  ],
-                  "type":"external"
-               },
-               {
-                  "moduleName":"androidx.constraintlayout:constraintlayout",
-                  "owners":[
-                     "Messenger"
-                  ],
-                  "type":"external"
-               }
-            ]
-        """
-            .trimIndent()
-            .compactPrintJson()
+               "modules":[
+                  {
+                     "moduleName":":app",
+                     "owners":[
+                        "Speed"
+                     ],
+                     "type":"internal"
+                  },
+                  {
+                     "moduleName":"io.gitlab.arturbosch.detekt",
+                     "owners":[
+                        "Speed"
+                     ],
+                     "type":"external"
+                  },
+                  {
+                     "moduleName":"com.google.code.gson:gson",
+                     "owners":[
+                        "Speed"
+                     ],
+                     "type":"external"
+                  },
+                  {
+                     "moduleName":"androidx.core:core",
+                     "owners":[
+                        "Messenger"
+                     ],
+                     "type":"external"
+                  },
+                  {
+                     "moduleName":"androidx.constraintlayout:constraintlayout",
+                     "owners":[
+                        "Messenger"
+                     ],
+                     "type":"external"
+                  }
+               ]
+            } 
+        """.trimIndent()
     }
 }

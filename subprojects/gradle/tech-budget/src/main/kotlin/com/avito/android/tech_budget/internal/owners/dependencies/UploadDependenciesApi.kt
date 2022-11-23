@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.internal.di.MoshiProvider
 import com.avito.android.tech_budget.internal.di.RetrofitProvider
 import com.avito.android.tech_budget.internal.dump.DumpResponse
 import com.avito.android.tech_budget.internal.owners.dependencies.models.UploadDependenciesRequestBody
+import com.avito.logger.LoggerFactory
 import retrofit2.Call
 import retrofit2.create
 import retrofit2.http.Body
@@ -17,8 +18,12 @@ internal interface UploadDependenciesApi {
     fun dumpModules(@Body request: UploadDependenciesRequestBody): Call<DumpResponse>
 
     companion object {
-        fun create(baseUrl: String, ownerSerializer: OwnerSerializer): UploadDependenciesApi =
-            RetrofitProvider(baseUrl, MoshiProvider(DefaultOwnerAdapter(ownerSerializer)))
+        fun create(
+            baseUrl: String,
+            ownerSerializer: OwnerSerializer,
+            loggerFactory: LoggerFactory
+        ): UploadDependenciesApi =
+            RetrofitProvider(baseUrl, MoshiProvider(DefaultOwnerAdapter(ownerSerializer)), loggerFactory)
                 .provide()
                 .create()
     }

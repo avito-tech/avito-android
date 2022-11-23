@@ -9,6 +9,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.plugin.plugins
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -55,6 +56,37 @@ internal class CheckExternalDepsCodeOwnersTaskTest {
             .buildSuccessful()
     }
 
+    @Test
+    internal fun `check dependencies twice - remove output - build cache used`(@TempDir projectDir: File) {
+        generateProject(projectDir)
+
+        runCheck(projectDir)
+            .assertThat()
+            .buildSuccessful()
+
+        val output = File(projectDir, "build/reports/check_external_dependencies.report")
+        output.delete()
+
+        runCheck(projectDir)
+            .assertThat()
+            .buildSuccessful()
+            .taskWithOutcome(":${CheckExternalDepsCodeOwners.NAME}", TaskOutcome.FROM_CACHE)
+    }
+
+    @Test
+    internal fun `check dependencies twice - result is up to date`(@TempDir projectDir: File) {
+        generateProject(projectDir)
+
+        runCheck(projectDir)
+            .assertThat()
+            .buildSuccessful()
+
+        runCheck(projectDir)
+            .assertThat()
+            .buildSuccessful()
+            .taskWithOutcome(":${CheckExternalDepsCodeOwners.NAME}", TaskOutcome.UP_TO_DATE)
+    }
+
     private fun generateProject(
         projectDir: File,
         hasExpectedOwnersProvider: Boolean = true,
@@ -81,6 +113,7 @@ internal class CheckExternalDepsCodeOwnersTaskTest {
     private fun runCheck(projectDir: File, expectFailure: Boolean = false) = gradlew(
         projectDir,
         CheckExternalDepsCodeOwners.NAME,
+        "-Dorg.gradle.caching=true",
         expectFailure = expectFailure
     )
 }

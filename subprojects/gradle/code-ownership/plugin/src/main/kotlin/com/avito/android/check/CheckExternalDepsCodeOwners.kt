@@ -5,12 +5,16 @@ import com.avito.android.diff.provider.OwnersProvider
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
+@CacheableTask
 public abstract class CheckExternalDepsCodeOwners : DefaultTask() {
 
     @get:InputFile
@@ -27,36 +31,33 @@ public abstract class CheckExternalDepsCodeOwners : DefaultTask() {
     @get:Internal
     public abstract val expectedOwnersProvider: Property<OwnersProvider>
 
+    @get:OutputFile
+    @get:Optional
+    public abstract val reportFile: RegularFileProperty
+
     @TaskAction
     public fun checkDependencies() {
-        val versionsFile = libsVersionsFile.asFile.orNull
-        val ownersFile = libsOwnersFile.asFile.orNull
+        val versionsFile = libsVersionsFile.asFile.get()
+        val ownersFile = libsOwnersFile.asFile.get()
 
-        require(versionsFile != null && versionsFile.exists()) {
-            propertyRequiredMessage("ownership.externalDependencies.libsVersionsFile") +
-                "It must contain a valid toml file with external dependencies config.\n" +
-                "Format is described here: $TOML_DEPENDENCIES_LINK"
-        }
-
-        require(ownersFile != null && ownersFile.exists()) {
-            propertyRequiredMessage("ownership.externalDependencies.libsOwnersFile") +
-                """
-                It must contain a valid toml file with external dependencies config.
-                Format is similar to format of libs.versions.toml, but instead of dependency you must declare an owner:
-                 
-                [libraries]
-                android-constraintLayout = "OwnerName"
-                """.trimIndent()
-        }
         val ownerSerializer = ownerSerializer.orNull
             ?: throwRequiredPropertyError("ownership.ownersSerializer")
         val validOwnersProvider = expectedOwnersProvider.orNull
             ?: throwRequiredPropertyError("codeOwnershipDiffReport.expectedOwnersProvider")
         val checker = ExternalDepsCodeOwnersChecker(ownerSerializer, validOwnersProvider)
         checker.check(versionsFile, ownersFile)
+        reportToFile("External owners check successful. No errors found.")
+    }
+
+    private fun reportToFile(message: String) {
+        val reportFile = reportFile.get().asFile
+        reportFile.createNewFile()
+        reportFile.writeText(message)
     }
 
     private fun throwRequiredPropertyError(propertyName: String): Nothing {
+        val message = propertyRequiredMessage(propertyName)
+        reportToFile(message)
         error(propertyRequiredMessage(propertyName))
     }
 
@@ -65,7 +66,5 @@ public abstract class CheckExternalDepsCodeOwners : DefaultTask() {
 
     public companion object {
         public const val NAME: String = "checkExternalDepsCodeOwners"
-        private const val TOML_DEPENDENCIES_LINK =
-            "https://docs.gradle.org/current/userguide/platforms.html#sub:conventional-dependencies-toml"
     }
 }

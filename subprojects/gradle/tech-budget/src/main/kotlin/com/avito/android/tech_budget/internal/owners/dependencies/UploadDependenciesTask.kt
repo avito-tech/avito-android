@@ -7,9 +7,12 @@ import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.owners.dependencies.models.UploadDependenciesRequestBody
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
+import com.avito.logger.GradleLoggerPlugin
+import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
@@ -34,11 +37,16 @@ internal abstract class UploadDependenciesTask : DefaultTask() {
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
 
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+
     @TaskAction
     fun uploadDependencies() {
         val internalDeps = extractDependencies(internalDependencies.asFile.get())
         val externalDeps = extractDependencies(externalDependencies.asFile.get())
-        uploadDependencies(internalDeps + externalDeps)
+        val loggerFactory = loggerFactory.get()
+        val logger = loggerFactory.create("Dependencies")
+        logger.info("Found ${internalDeps.size} internal and ${externalDeps.size} external dependencies")
+        uploadDependencies(internalDeps + externalDeps, loggerFactory)
     }
 
     private fun extractDependencies(file: File): List<OwnedDependency> {
@@ -47,14 +55,16 @@ internal abstract class UploadDependenciesTask : DefaultTask() {
         return ownedDependenciesSerializer.deserialize(rawOwners)
     }
 
-    private fun uploadDependencies(dependencies: List<OwnedDependency>) {
+    private fun uploadDependencies(dependencies: List<OwnedDependency>, loggerFactory: LoggerFactory) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
+        val ownedDependencies = dependencies.filter { it.owners.isNotEmpty() }
 
         val service = UploadDependenciesApi.create(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = ownerSerializer.get()
+            ownerSerializer = ownerSerializer.get(),
+            loggerFactory = loggerFactory
         )
-        service.dumpModules(UploadDependenciesRequestBody(DumpInfo.fromExtension(dumpInfoConfig), dependencies))
+        service.dumpModules(UploadDependenciesRequestBody(DumpInfo.fromExtension(dumpInfoConfig), ownedDependencies))
             .executeWithHttpFailure(errorMessage = "Upload dependencies request failed")
     }
 }

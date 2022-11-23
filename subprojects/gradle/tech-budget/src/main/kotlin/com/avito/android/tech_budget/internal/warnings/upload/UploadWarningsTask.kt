@@ -9,9 +9,12 @@ import com.avito.android.tech_budget.internal.warnings.log.converter.LogToWarnin
 import com.avito.android.tech_budget.internal.warnings.log.converter.ProjectInfoConverter
 import com.avito.android.tech_budget.internal.warnings.upload.model.Warning
 import com.avito.android.tech_budget.internal.warnings.upload.model.WarningsRequestBody
+import com.avito.logger.GradleLoggerPlugin
+import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
@@ -30,6 +33,8 @@ internal abstract class UploadWarningsTask : DefaultTask() {
     @get:Internal
     abstract val ownerSerializer: Property<OwnerSerializer>
 
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+
     @TaskAction
     fun uploadWarnings() {
         val logToWarningConverter = LogToWarningConverter()
@@ -43,17 +48,24 @@ internal abstract class UploadWarningsTask : DefaultTask() {
         val warnings = logReader.getAll()
             .map(logToWarningConverter::convert)
 
+        val logger = loggerFactory.get().create("Warnings")
         if (warnings.isEmpty()) {
-            logger.lifecycle("No warnings found")
+            logger.info("No warnings found")
         } else {
-            logger.lifecycle("Found ${warnings.size} warnings. Uploading...")
+            logger.info("Found ${warnings.size} warnings. Uploading...")
             uploadCollectedWarnings(warnings)
         }
     }
 
     private fun uploadCollectedWarnings(warnings: List<Warning>) {
         val dumpConfiguration = dumpInfoConfiguration.get()
-        val sender = UploadWarningsApi.create(dumpConfiguration.baseUploadUrl.get()) { ownerSerializer.get() }
+
+        val sender = UploadWarningsApi.create(
+            baseUrl = dumpConfiguration.baseUploadUrl.get(),
+            ownerSerializer = { ownerSerializer.get() },
+            loggerFactory = loggerFactory.get()
+        )
+
         sender.dumpWarnings(WarningsRequestBody(DumpInfo.fromExtension(dumpConfiguration), warnings))
             .executeWithHttpFailure(errorMessage = "Upload warnings request failed")
     }

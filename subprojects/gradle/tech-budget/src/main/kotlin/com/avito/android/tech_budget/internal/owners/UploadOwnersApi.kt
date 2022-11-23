@@ -5,6 +5,7 @@ import com.avito.android.tech_budget.internal.di.MoshiProvider
 import com.avito.android.tech_budget.internal.di.RetrofitProvider
 import com.avito.android.tech_budget.internal.dump.DumpResponse
 import com.avito.android.tech_budget.internal.owners.models.UploadOwnersRequestBody
+import com.avito.logger.LoggerFactory
 import retrofit2.Call
 import retrofit2.create
 import retrofit2.http.Body
@@ -16,8 +17,8 @@ internal interface UploadOwnersApi {
     fun dumpOwners(@Body request: UploadOwnersRequestBody): Call<DumpResponse>
 
     companion object {
-        fun create(baseUrl: String, uploadOwnersAdapter: OwnerAdapter): UploadOwnersApi =
-            RetrofitProvider(baseUrl, MoshiProvider(uploadOwnersAdapter))
+        fun create(baseUrl: String, uploadOwnersAdapter: OwnerAdapter, loggerFactory: LoggerFactory): UploadOwnersApi =
+            RetrofitProvider(baseUrl, MoshiProvider(uploadOwnersAdapter), loggerFactory)
                 .provide()
                 .create()
     }

@@ -16,7 +16,7 @@ val FAKE_OWNERSHIP_EXTENSION: String =
                     }
                 
                     override fun serialize(owner: com.avito.android.model.Owner): String {
-                        return (owner as FakeOwners).name
+                        return (owner as? FakeOwners)?.name ?: owner.toString()
                     }
             }
 

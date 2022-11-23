@@ -22,6 +22,11 @@ internal class ExternalDepsCodeOwnersChecker(
         DEPENDENCIES_SECTION_NAMES.forEach { sectionName ->
             val versionsFileSection = versionsFileData[sectionName]
             val ownersFileSection = ownersFileData[sectionName]
+            val versionsFileSectionPresent = versionsFileSection != null
+            val ownersFileSectionPresent = ownersFileSection != null
+            require(versionsFileSectionPresent == ownersFileSectionPresent) {
+                "If section exists in versions file, it must also exist in owners file"
+            }
             if (versionsFileSection != null && ownersFileSection != null) {
                 checkSection(versionsFileSection, ownersFileSection, versionsFile, ownersFile)
             }

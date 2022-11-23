@@ -10,9 +10,11 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshiRetrofit)
     implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.codeOwnership.plugin)
     implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.logger.gradleLogger)
 
     ksp(libs.moshiCodegen)
 
