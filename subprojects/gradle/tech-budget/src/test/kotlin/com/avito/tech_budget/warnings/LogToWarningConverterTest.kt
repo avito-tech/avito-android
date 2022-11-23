@@ -1,9 +1,9 @@
 package com.avito.tech_budget.warnings
 
+import com.avito.android.model.FakeOwners
 import com.avito.android.tech_budget.internal.warnings.log.LogEntry
 import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.log.converter.LogToWarningConverter
-import com.avito.tech_budget.warnings.fakes.FakeOwners
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir

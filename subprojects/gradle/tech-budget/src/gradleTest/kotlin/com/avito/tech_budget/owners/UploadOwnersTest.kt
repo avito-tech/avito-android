@@ -1,8 +1,9 @@
 package com.avito.tech_budget.owners
 
+import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
+import com.avito.android.utils.FAKE_OWNERS_PROVIDER_EXTENSION
 import com.avito.tech_budget.utils.dumpInfoExtension
 import com.avito.tech_budget.utils.failureResponse
-import com.avito.tech_budget.utils.ownershipExtension
 import com.avito.tech_budget.utils.successResponse
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
@@ -102,21 +103,11 @@ internal class UploadOwnersTest {
         },
         useKts = true,
         buildGradleExtra = """
-                ${if (includeCodeOwnership) ownershipExtension() else ""}
-                ${if (includeCodeOwnership && includeOwnersProvider) codeOwnershipDiffExtension() else ""}
+                ${if (includeCodeOwnership) FAKE_OWNERSHIP_EXTENSION else ""}
+                ${if (includeCodeOwnership && includeOwnersProvider) FAKE_OWNERS_PROVIDER_EXTENSION else ""}
                 techBudget {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
                 }
             """.trimIndent(),
     ).generateIn(projectDir)
-
-    private fun codeOwnershipDiffExtension(): String = """
-            codeOwnershipDiffReport {
-                expectedOwnersProvider.set(
-                    com.avito.android.diff.provider.OwnersProvider {
-                        setOf(FakeOwners.Speed, FakeOwners.Messenger)                       
-                    }
-                )
-            }
-    """.trimIndent()
 }

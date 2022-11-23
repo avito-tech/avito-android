@@ -1,6 +1,7 @@
 package com.avito.android.tech_budget
 
 import com.avito.android.tech_budget.internal.owners.OwnersConfigurator
+import com.avito.android.tech_budget.internal.owners.dependencies.DependenciesConfigurator
 import com.avito.android.tech_budget.internal.warnings.WarningsConfigurator
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
@@ -20,6 +21,7 @@ public class TechBudgetPlugin : Plugin<Project> {
 
         val configurators = setOf(
             OwnersConfigurator(),
+            DependenciesConfigurator(),
             WarningsConfigurator(),
         )
         configurators.forEach { it.configure(target) }

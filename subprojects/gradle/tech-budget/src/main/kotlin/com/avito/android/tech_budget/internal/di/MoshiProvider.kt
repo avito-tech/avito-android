@@ -1,8 +1,8 @@
 package com.avito.android.tech_budget.internal.di
 
 import com.avito.android.OwnerSerializer
-import com.avito.android.tech_budget.internal.owners.adapter.DefaultOwnerAdapter
-import com.avito.android.tech_budget.internal.owners.adapter.OwnerAdapter
+import com.avito.android.owner.adapter.DefaultOwnerAdapter
+import com.avito.android.owner.adapter.OwnerAdapter
 import com.squareup.moshi.Moshi
 import javax.inject.Provider
 

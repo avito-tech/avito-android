@@ -16,8 +16,10 @@ dependencies {
 
     ksp(libs.moshiCodegen)
 
+    testImplementation(testFixtures(projects.subprojects.gradle.codeOwnership.plugin))
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
+    gradleTestImplementation(testFixtures(projects.subprojects.gradle.codeOwnership.plugin))
 }
 
 gradlePlugin {

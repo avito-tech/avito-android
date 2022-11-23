@@ -1,8 +1,8 @@
 package com.avito.tech_budget.warnings
 
+import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
 import com.avito.tech_budget.utils.dumpInfoExtension
 import com.avito.tech_budget.utils.failureResponse
-import com.avito.tech_budget.utils.ownershipExtension
 import com.avito.tech_budget.utils.successResponse
 import com.avito.tech_budget.warnings.CollectWarningsTest.Companion.WARNING_CONTENT
 import com.avito.test.gradle.TestProjectGenerator
@@ -148,7 +148,7 @@ internal class UploadWarningsTest {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
                     ${collectWarningsExtension(outputDirectoryName, separator)}
                 }
-                ${if (includesOwners) ownershipExtension() else ""}
+                ${if (includesOwners) FAKE_OWNERSHIP_EXTENSION else ""}
             """.trimIndent(),
         modules = listOf(
             AndroidAppModule(
@@ -158,7 +158,7 @@ internal class UploadWarningsTest {
                     id("com.avito.android.code-ownership")
                 },
                 useKts = true,
-                buildGradleExtra = if (includesOwners) ownershipExtension() else "",
+                buildGradleExtra = if (includesOwners) FAKE_OWNERSHIP_EXTENSION else "",
                 mutator = {
                     if (containsWarnings) {
                         dir("src/main/kotlin/") {

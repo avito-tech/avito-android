@@ -1,5 +1,7 @@
 package com.avito.tech_budget.warnings
 
+import com.avito.android.model.FakeOwners
+import com.avito.android.model.FakeOwnersSerializer
 import com.avito.android.model.Owner
 import com.avito.android.tech_budget.internal.warnings.log.FileLogReader
 import com.avito.android.tech_budget.internal.warnings.log.FileLogWriter
@@ -7,8 +9,6 @@ import com.avito.android.tech_budget.internal.warnings.log.FileLogWriter.Compani
 import com.avito.android.tech_budget.internal.warnings.log.LogFileProjectProvider
 import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.log.converter.ProjectInfoConverter
-import com.avito.tech_budget.warnings.fakes.FakeOwners
-import com.avito.tech_budget.warnings.fakes.FakeOwnersSerializer
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
