@@ -1,13 +1,8 @@
 package com.avito.test.http
 
-import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.PrintlnLoggerFactory
 import com.avito.logger.create
-import com.avito.utils.ResourcesReader
-import com.github.salomonbrys.kotson.fromJson
-import com.google.gson.Gson
-import com.google.gson.JsonElement
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
@@ -100,26 +95,3 @@ public class MockDispatcher(
         return response
     }
 }
-
-private val internalGson by lazy { Gson() }
-
-/**
- * Use file contents as response body
- *
- * @param fileName specify file path, relative to assets dir
- *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
- */
-@Deprecated(message = "Use same extension from com.avito.android.mock")
-public fun MockResponse.setBodyFromFile(fileName: String, gson: Gson = internalGson): MockResponse {
-    val text = ResourcesReader.readText(fileName)
-    if (fileName.endsWith(".json")) {
-        validateJson(text, gson).onFailure {
-            throw IllegalArgumentException("$fileName contains invalid json", it)
-        }
-    }
-    setBody(text)
-    return this
-}
-
-private fun validateJson(json: String, gson: Gson): Result<Unit> =
-    Result.tryCatch { gson.fromJson<JsonElement>(json) }

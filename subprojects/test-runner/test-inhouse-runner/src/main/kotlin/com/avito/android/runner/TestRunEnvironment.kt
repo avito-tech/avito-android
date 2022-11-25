@@ -84,7 +84,7 @@ fun provideEnvironment(
             fileStorageUrl = argumentsProvider.getArgumentOrThrow("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
-            mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: false,
+            mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: true,
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
@@ -111,7 +111,7 @@ fun parseEnvironment(
             fileStorageUrl = argumentsProvider.getArgumentOrThrow("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
-            mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: false,
+            mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: true,
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
