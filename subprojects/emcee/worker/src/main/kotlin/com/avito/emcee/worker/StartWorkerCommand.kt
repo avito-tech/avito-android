@@ -12,7 +12,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.logging.Level
+import java.util.logging.LogRecord
 import java.util.logging.Logger
+import java.util.logging.SimpleFormatter
 import kotlin.time.ExperimentalTime
 
 @ExperimentalStdlibApi
@@ -40,7 +46,16 @@ internal class StartWorkerCommand(
         description = "Enables verbose logging",
     ).default(false)
 
+    private val logLevel: String by option(
+        type = ArgType.String,
+        fullName = "logLevel",
+        shortName = "ll",
+        description = "Log level",
+    ).default("info")
+
     override fun execute() {
+        setupLoggingLevel()
+
         val reader = ConfigReader(Moshi.Builder().build())
         val config: Config = reader.read(File(configPath))
         logger.info("Apply the config: \n $config")
@@ -61,6 +76,39 @@ internal class StartWorkerCommand(
                 .collect { result ->
                     println(result)
                 }
+        }
+    }
+
+    private fun setupLoggingLevel() {
+        val targetLevel: Level = when(this.logLevel.lowercase(Locale.getDefault())) {
+            "all" -> Level.ALL
+            "config" -> Level.CONFIG
+            "fine" -> Level.FINE
+            "finer" -> Level.FINER
+            "finest" -> Level.FINEST
+            "info" -> Level.INFO
+            "off" -> Level.OFF
+            "severe" -> Level.SEVERE
+            "warning" -> Level.WARNING
+            else -> error("Undefined log level passed: ${this.logLevel}")
+        }
+        Logger.getLogger("").apply {
+            level = targetLevel
+            for (handler in handlers) {
+                handler.level = targetLevel
+
+                // Sets up logging format similar to Emcee queue
+                handler.formatter = object : SimpleFormatter() {
+
+                    // 2022-11-28 16:05:30.500
+                    val dateFormatter = SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS", Locale.ROOT)
+
+                    override fun format(record: LogRecord): String {
+                        // [INFO] 2022-11-25 16:05:30.500: Message
+                        return "[${record.level}] ${dateFormatter.format(Date(record.millis))}: ${record.message}\n"
+                    }
+                }
+            }
         }
     }
 }
