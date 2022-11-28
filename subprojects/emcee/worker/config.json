@@ -1,0 +1,8 @@
+{
+    "workerPort": 8080,
+    "queueUrl": "http://127.0.0.1:41000",
+    "androidSdkPath": "/Users/Shared/Android/sdk",
+    "avd": [
+        { "sdk": 22, "type": "default", "emulatorFileName": "Avd22", "sdCardFileName": "stub-sd-card-name" }
+    ]
+}
