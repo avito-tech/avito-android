@@ -3,7 +3,7 @@ package com.avito.android.device.manager.internal
 import com.avito.android.device.AndroidDevice
 import com.avito.android.device.DeviceSerial
 import com.avito.android.device.internal.AndroidDeviceImpl
-import com.avito.android.device.internal.InstallPackage
+import com.avito.android.device.internal.InstallPackageCommand
 import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.request.device.Device
 import com.malinskiy.adam.request.device.DeviceState
@@ -32,7 +32,7 @@ internal class FindAndroidDevice(
                 type = type,
                 serial = DeviceSerial(foundDevice.serial),
                 adb = adb,
-                installPackage = InstallPackage(adb),
+                installPackageCommand = InstallPackageCommand(adb),
             )
         } else {
             null

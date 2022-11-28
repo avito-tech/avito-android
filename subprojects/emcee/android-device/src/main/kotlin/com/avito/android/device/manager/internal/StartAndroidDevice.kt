@@ -2,9 +2,9 @@ package com.avito.android.device.manager.internal
 
 import com.avito.android.device.AndroidDevice
 import com.avito.android.device.DeviceSerial
-import com.avito.android.device.avd.internal.StartAvd
+import com.avito.android.device.avd.internal.StartAvdCommand
 import com.avito.android.device.internal.AndroidDeviceImpl
-import com.avito.android.device.internal.InstallPackage
+import com.avito.android.device.internal.InstallPackageCommand
 import com.avito.cli.Notification
 import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.request.device.AsyncDeviceMonitorRequest
@@ -24,7 +24,7 @@ import java.util.logging.Logger
 @ExperimentalCoroutinesApi
 internal class StartAndroidDevice(
     private val adb: AndroidDebugBridgeClient,
-    private val startAvd: StartAvd,
+    private val startAvdCommand: StartAvdCommand,
     private val maximumRunningDevices: Int = 1
 ) {
 
@@ -59,7 +59,7 @@ internal class StartAndroidDevice(
     }
 
     private suspend fun startAvd(sdk: Int, type: String) {
-        startAvd.execute(sdk, type)
+        startAvdCommand.execute(sdk, type)
             .collect { notification ->
                 when (notification) {
                     is Notification.Exit -> logger.info("start avd exits: \n ${notification.output}")
@@ -91,7 +91,7 @@ internal class StartAndroidDevice(
             type = type,
             serial = DeviceSerial(device!!.serial),
             adb = adb,
-            installPackage = InstallPackage(adb),
+            installPackageCommand = InstallPackageCommand(adb),
         )
     }
 }

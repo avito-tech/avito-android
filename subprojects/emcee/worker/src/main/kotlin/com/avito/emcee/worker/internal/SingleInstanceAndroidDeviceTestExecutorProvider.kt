@@ -18,7 +18,7 @@ internal class SingleInstanceAndroidDeviceTestExecutorProvider(
     override suspend fun provide(
         configuration: DeviceConfiguration
     ): TestExecutor {
-        logger.info("Start provide $configuration")
+        logger.info("Looking for device with $configuration")
         return StatefulAndroidDeviceTestExecutor(device = getDevice(configuration))
     }
 
@@ -30,7 +30,6 @@ internal class SingleInstanceAndroidDeviceTestExecutorProvider(
                 this.last = null
             }
             val new = manager.findOrStart(configuration.sdkVersion, configuration.type)
-            logger.info("New device: $new")
             this.last = new
             new
         } else {

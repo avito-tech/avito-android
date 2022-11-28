@@ -39,13 +39,6 @@ internal class StartWorkerCommand(
         description = "Absolute path to worker config"
     ).required()
 
-    private val debugMode: Boolean by option(
-        type = ArgType.Boolean,
-        fullName = "debug",
-        shortName = "d",
-        description = "Enables verbose logging",
-    ).default(false)
-
     private val logLevel: String by option(
         type = ArgType.String,
         fullName = "logLevel",
@@ -58,8 +51,8 @@ internal class StartWorkerCommand(
 
         val reader = ConfigReader(Moshi.Builder().build())
         val config: Config = reader.read(File(configPath))
-        logger.info("Apply the config: \n $config")
-        val di = WorkerDI(config, debugMode)
+        logger.info("Apply the config: $config")
+        val di = WorkerDI(config)
         val httpServer = di.httpServer()
         val producer = di.producer()
         val consumer = di.consumer()
@@ -70,11 +63,10 @@ internal class StartWorkerCommand(
                 .consume(jobs)
                 .catch {
                     httpServer.stop()
-                    logger.info("Http server stopped")
                     throw it
                 }
                 .collect { result ->
-                    println(result)
+                    logger.info("Test finished with result: $result")
                 }
         }
     }

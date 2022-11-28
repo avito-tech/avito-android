@@ -10,12 +10,12 @@ import java.util.logging.Logger
 import kotlin.io.path.absolutePathString
 
 @ExperimentalCoroutinesApi
-internal class StartAvd(
+internal class StartAvdCommand(
     private val configurationProvider: AvdConfigurationProvider,
     private val androidSdk: Path
 ) {
 
-    private val logger = Logger.getLogger("StartAvd")
+    private val logger = Logger.getLogger("StartAvdCommand")
 
     fun execute(sdk: Int, type: String): Flow<Notification> {
         logger.info("Start sdk:$sdk, type:$type")

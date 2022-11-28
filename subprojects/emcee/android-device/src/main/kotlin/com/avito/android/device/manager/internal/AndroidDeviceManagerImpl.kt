@@ -18,12 +18,19 @@ internal class AndroidDeviceManagerImpl(
         sdk: Int,
         type: String,
     ): AndroidDevice {
-        logger.info("Start findOrStart sdk:$sdk, type:$type")
-        return findAndroidDevice.execute(sdk, type)
-            ?: startAndroidDevice.execute(sdk, type)
+        val foundDevice = findAndroidDevice.execute(sdk, type)
+        if (foundDevice != null) {
+            logger.info("Found an already started device: $foundDevice")
+            return foundDevice
+        }
+
+        val startedDevice = startAndroidDevice.execute(sdk, type)
+        logger.info("Device did not found. Started a new one: $startedDevice")
+        return startedDevice
     }
 
     override suspend fun stop(device: AndroidDevice) {
+        logger.info("Stopping device: $device")
         stopAndroidDevice.execute(device.serial)
     }
 }

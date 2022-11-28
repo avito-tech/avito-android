@@ -15,13 +15,13 @@ import kotlinx.coroutines.withContext
 import java.util.logging.Logger
 import kotlin.math.roundToInt
 
-internal class InstallPackage(
+internal class InstallPackageCommand(
     private val adb: AndroidDebugBridgeClient,
 ) {
 
-    private val logger = Logger.getLogger("InstallPackage")
+    private val logger = Logger.getLogger("InstallPackageCommand")
 
-    suspend fun installTo(
+    suspend fun installPackageToDevice(
         application: AndroidApplication,
         serial: DeviceSerial
     ) {
@@ -42,7 +42,7 @@ internal class InstallPackage(
                         (currentProgress * 100).roundToInt() == 100
                     }
                     .map {
-                        logger.info("Start install $application")
+                        logger.info("Installing $application to device with $serial")
                         adb.execute(
                             InstallRemotePackageRequest(
                                 absoluteRemoteFilePath = absoluteRemoteFilePath,
@@ -54,9 +54,9 @@ internal class InstallPackage(
                     }.first()
                 progress.cancel()
                 if (exitCode != 0) {
-                    throw RuntimeException(
-                        "Install of the $application not success; \n $output"
-                    )
+                    val ex = RuntimeException("Installation of $application failed;\n $output")
+                    logger.throwing("InstallPackageCommand", "installPackageToDevice", ex)
+                    throw ex
                 }
             }
         }

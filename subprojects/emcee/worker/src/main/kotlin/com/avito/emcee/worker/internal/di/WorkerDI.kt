@@ -24,7 +24,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.ExperimentalTime
 
@@ -32,28 +31,20 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 internal class WorkerDI(
     private val config: Config,
-    private val debugMode: Boolean
 ) {
 
     private val workerIdProvider: WorkerIdProvider = HostnameWorkerIdProvider()
-    private val okHttpClient = OkHttpClient.Builder().apply {
-        if (debugMode) {
-            val logger = Logger.getLogger("HTTP")
-            logger.level = Level.FINE
-            addInterceptor(HttpLoggingInterceptor { message ->
-                logger.fine(message)
-                // TODO Delete when configure logging properly
-                println(message)
-            }.apply { level = HttpLoggingInterceptor.Level.BODY })
-        }
-    }.build()
     private val socketAddressResolver = SocketAddressResolver()
     private val bucketsStorage: ProcessingBucketsStorage = SingleElementProcessingBucketsStorage()
 
-    private val api =
-        Retrofit.Builder()
-            .createWorkerQueueApi(okHttpClient, config.queueUrl)
+    private val okHttpClient = OkHttpClient.Builder().apply {
+        val logger = Logger.getLogger("HTTP")
+        addInterceptor(HttpLoggingInterceptor { message ->
+            logger.finest(message)
+        }.apply { level = HttpLoggingInterceptor.Level.BASIC })
+    }.build()
 
+    private val api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl)
     private val fileDownloaderApi = Retrofit.Builder().createFileDownloaderApi(okHttpClient, "https://stub")
 
     fun producer(): TestJobProducer {
@@ -86,7 +77,6 @@ internal class WorkerDI(
                 ProcessingBucketsRequestHandler(bucketsStorage),
                 HealthCheckRequestHandler,
             ),
-            debug = debugMode,
             port = config.workerPort,
         )
     }

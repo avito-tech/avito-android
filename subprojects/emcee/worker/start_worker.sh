@@ -11,4 +11,4 @@ echo "Building worker..."
 ./gradlew :subprojects:emcee:worker:assemble --quiet >/dev/null
 
 echo "Starting worker..."
-java -jar ./subprojects/emcee/worker/build/libs/emcee-worker.jar start -c ./subprojects/emcee/worker/config.json -ll fine
+java -jar ./subprojects/emcee/worker/build/libs/emcee-worker.jar start -c ./subprojects/emcee/worker/config.json -ll info

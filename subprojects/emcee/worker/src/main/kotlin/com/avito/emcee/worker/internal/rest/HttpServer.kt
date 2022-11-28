@@ -11,12 +11,10 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import java.util.logging.Level
 import java.util.logging.Logger
 
 internal class HttpServer(
     private val handlers: List<RequestHandler<*>>,
-    private val debug: Boolean,
     private val port: Int,
     private val gracePeriodMs: Long = 500,
     private val timeoutMs: Long = 500,
@@ -24,14 +22,10 @@ internal class HttpServer(
 
     private var server: NettyApplicationEngine? = null
 
-    private val logger = Logger.getLogger("HttpServer").apply {
-        if (debug) {
-            level = Level.FINE
-        }
-    }
+    private val logger = Logger.getLogger("HttpServer")
 
     fun start() {
-        logger.info("Starting REST server on port:$port")
+        logger.info("Starting REST server at $port port")
         server = embeddedServer(Netty, port = port) {
             install(ContentNegotiation) {
                 gson() // TODO: use Moshi instead when it will be available
@@ -53,6 +47,7 @@ internal class HttpServer(
         val server = requireNotNull(server) {
             "HttpServer is not started yet!"
         }
+        logger.info("REST server has been stopped")
         server.stop(gracePeriodMs, timeoutMs)
     }
 }

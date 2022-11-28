@@ -16,23 +16,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.receiveOrNull
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import java.util.logging.Logger
 
 internal class AndroidDeviceImpl(
     override val sdk: Int,
     override val type: String,
     override val serial: DeviceSerial,
-    private val installPackage: InstallPackage,
+    private val installPackageCommand: InstallPackageCommand,
     private val adb: AndroidDebugBridgeClient,
 ) : AndroidDevice {
-
-    private val logger = Logger.getLogger("AndroidDevice")
 
     override suspend fun install(application: AndroidApplication): Result<Unit> {
         return execute(
             action = {
-                logger.info("Start install $application")
-                runBlocking { installPackage.installTo(application, serial) }
+                runBlocking { installPackageCommand.installPackageToDevice(application, serial) }
             },
             errorMessageBuilder = { "Failed to install $application" }
         )
@@ -119,5 +115,9 @@ internal class AndroidDeviceImpl(
         return Result
             .tryCatch(action)
             .rescue { error -> Result.Failure(RuntimeException(errorMessageBuilder(), error)) }
+    }
+
+    override fun toString(): String {
+        return "AndroidDevice(type=$type, sdkVersion=$sdk, serial=$serial)"
     }
 }

@@ -18,7 +18,7 @@ internal class StatefulAndroidDeviceTestExecutor(
     private var state: AndroidDeviceState = AndroidDeviceState.Clean(device)
 
     override suspend fun beforeTestBucket() {
-        logger.info("beforeTestBucket")
+        logger.fine("StatefulAndroidDeviceTestExecutor lifecycle: beforeTestBucket")
         // empty
     }
 
@@ -28,23 +28,23 @@ internal class StatefulAndroidDeviceTestExecutor(
          * current logic correct but ineffective if two buckets use same apps.
          * Optimization could be to uninstall apps only if in a new bucket we got new apps
          */
-        logger.info("afterTestBucket")
+        logger.fine("StatefulAndroidDeviceTestExecutor lifecycle: afterTestBucket")
         state = state.clean()
     }
 
     override suspend fun execute(
         job: TestExecutor.Job
     ): TestExecutor.Result {
-        logger.info("Execute job: $job")
+        logger.fine("Executing job: $job")
         device.isAlive()
-        logger.info("Prepare state for job: $job")
+        logger.fine("Preparing state for job: $job")
         state = state.prepareStateForExecution(
             listOf(
                 AndroidApplication(job.apk, job.applicationPackage),
                 AndroidApplication(job.testApk, job.testPackage)
             )
         )
-        logger.info("Execute test job: $job")
+        logger.fine("Executing test job: $job")
         val result = executeTest(job)
         state = state.testExecuted()
         return result
@@ -62,8 +62,8 @@ internal class StatefulAndroidDeviceTestExecutor(
                 )
             }
             instrumentationResult
-                .map { TestExecutor.Result(it.success) }
+                .map { TestExecutor.Result(job.test, it.success) }
                 .getOrThrow()
-        }.getOrElse { TestExecutor.Result(false) }
+        }.getOrElse { TestExecutor.Result(job.test, false) }
     }
 }

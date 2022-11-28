@@ -2,7 +2,7 @@ package com.avito.android.device.manager
 
 import com.avito.android.device.AndroidDevice
 import com.avito.android.device.avd.internal.AvdConfigurationProvider
-import com.avito.android.device.avd.internal.StartAvd
+import com.avito.android.device.avd.internal.StartAvdCommand
 import com.avito.android.device.manager.internal.AndroidDeviceManagerImpl
 import com.avito.android.device.manager.internal.FindAndroidDevice
 import com.avito.android.device.manager.internal.StartAndroidDevice
@@ -32,7 +32,7 @@ public interface AndroidDeviceManager {
                 stopAndroidDevice = stopAndroidDevice,
                 startAndroidDevice = StartAndroidDevice(
                     adb,
-                    StartAvd(configurationProvider, androidSdk),
+                    StartAvdCommand(configurationProvider, androidSdk),
                     maximumRunningDevices
                 )
             )
