@@ -8,6 +8,6 @@ public data class TestName(
     val methodName: String
 ) {
     public fun asInstrumentationArg(): String {
-        return "$className.$methodName"
+        return "$className#$methodName"
     }
 }

@@ -9,7 +9,7 @@ class ExampleInstrumentedTest {
 
     @Test
     fun test() {
-        // empty
+        throw AssertionError("This test should fail")
     }
 
     @Test

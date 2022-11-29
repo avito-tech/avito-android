@@ -23,17 +23,21 @@ internal class SingleInstanceAndroidDeviceTestExecutorProvider(
     }
 
     private suspend fun getDevice(configuration: DeviceConfiguration): AndroidDevice {
-        val last = last
-        return if (last == null || last.sdk != configuration.sdkVersion || last.type != configuration.type) {
-            if (last != null) {
-                manager.stop(last)
-                this.last = null
-            }
-            val new = manager.findOrStart(configuration.sdkVersion, configuration.type)
-            this.last = new
-            new
-        } else {
-            last
+        if (isDeviceSuitableForConfiguration(last, configuration)) {
+            logger.fine("Remembered device is suitable for $configuration")
+            return last!!
         }
+        return manager.findOrStart(configuration.sdkVersion, configuration.type)
+            .also { device -> last = device }
+    }
+
+    private suspend fun isDeviceSuitableForConfiguration(
+        device: AndroidDevice?,
+        configuration: DeviceConfiguration
+    ): Boolean {
+        return device != null &&
+            device.sdk == configuration.sdkVersion &&
+            device.type == configuration.type &&
+            device.isAlive()
     }
 }

@@ -72,7 +72,7 @@ internal class StartWorkerCommand(
     }
 
     private fun setupLoggingLevel() {
-        val targetLevel: Level = when(this.logLevel.lowercase(Locale.getDefault())) {
+        val targetLevel: Level = when (this.logLevel.lowercase(Locale.getDefault())) {
             "all" -> Level.ALL
             "config" -> Level.CONFIG
             "fine" -> Level.FINE

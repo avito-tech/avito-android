@@ -7,6 +7,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileReader
 
+@Suppress("MaxLineLength")
 internal class ConfigSerializationTest {
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(Config::class.java)

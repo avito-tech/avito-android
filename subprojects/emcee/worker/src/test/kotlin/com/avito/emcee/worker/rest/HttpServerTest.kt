@@ -57,7 +57,6 @@ class HttpServerTest {
     private fun createServer(): HttpServer {
         return HttpServer(
             handlers = listOf(ProcessingBucketsRequestHandler(bucketsStorage)),
-            debug = true,
             port = port
         )
     }

@@ -15,13 +15,13 @@ import kotlinx.coroutines.withContext
 import java.util.logging.Logger
 import kotlin.math.roundToInt
 
-internal class InstallPackageCommand(
+internal class InstallApplicationCommand(
     private val adb: AndroidDebugBridgeClient,
 ) {
 
-    private val logger = Logger.getLogger("InstallPackageCommand")
+    private val logger = Logger.getLogger("InstallApplicationCommand")
 
-    suspend fun installPackageToDevice(
+    suspend fun installApplicationToDevice(
         application: AndroidApplication,
         serial: DeviceSerial
     ) {
@@ -55,7 +55,11 @@ internal class InstallPackageCommand(
                 progress.cancel()
                 if (exitCode != 0) {
                     val ex = RuntimeException("Installation of $application failed;\n $output")
-                    logger.throwing("InstallPackageCommand", "installPackageToDevice", ex)
+                    logger.throwing(
+                        "InstallApplicationCommand",
+                        "installApplicationToDevice",
+                        ex
+                    )
                     throw ex
                 }
             }

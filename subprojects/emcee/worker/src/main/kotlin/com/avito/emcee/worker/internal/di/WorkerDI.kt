@@ -2,7 +2,7 @@ package com.avito.emcee.worker.internal.di
 
 import com.avito.android.device.avd.AvdConfig
 import com.avito.android.device.avd.internal.AvdConfigurationProvider
-import com.avito.android.device.manager.AndroidDeviceManager
+import com.avito.android.device.manager.AndroidDeviceManagerFactory
 import com.avito.emcee.worker.Config
 import com.avito.emcee.worker.WorkerQueueApi.Companion.createWorkerQueueApi
 import com.avito.emcee.worker.internal.SingleInstanceAndroidDeviceTestExecutorProvider
@@ -62,12 +62,15 @@ internal class WorkerDI(
         )
         return RealTestJobConsumer(
             deviceProvider = SingleInstanceAndroidDeviceTestExecutorProvider(
-                manager = AndroidDeviceManager.create(
-                    AvdConfigurationProvider(configurations),
-                    config.androidSdkPath,
+                manager = AndroidDeviceManagerFactory.create(
+                    configurationProvider = AvdConfigurationProvider(configurations),
+                    androidSdk = config.androidSdkPath,
+                    maximumRunningDevices = 1,
                 )
             ),
             fileDownloader = FileDownloader(fileDownloaderApi),
+            bucketsStorage = bucketsStorage,
+            api = api,
         )
     }
 

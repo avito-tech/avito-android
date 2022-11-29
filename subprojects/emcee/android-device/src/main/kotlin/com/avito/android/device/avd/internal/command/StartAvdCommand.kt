@@ -1,5 +1,6 @@
-package com.avito.android.device.avd.internal
+package com.avito.android.device.avd.internal.command
 
+import com.avito.android.device.avd.internal.AvdConfigurationProvider
 import com.avito.android.device.avd.internal.AvdConfigurationProvider.ConfigurationKey
 import com.avito.cli.FlowCommandLine
 import com.avito.cli.Notification
@@ -15,10 +16,10 @@ internal class StartAvdCommand(
     private val androidSdk: Path
 ) {
 
-    private val logger = Logger.getLogger("StartAvdCommand")
+    private val logger = Logger.getLogger("StartEmulatorCommand")
 
     fun execute(sdk: Int, type: String): Flow<Notification> {
-        logger.info("Start sdk:$sdk, type:$type")
+        logger.fine("Start sdk:$sdk, type:$type")
         val avdConfig = configurationProvider.provide(ConfigurationKey(sdk, type))
         val emulatorCommand = androidSdk.resolve("emulator/emulator").absolutePathString()
         return FlowCommandLine(

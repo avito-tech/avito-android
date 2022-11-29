@@ -8,7 +8,7 @@ docker run --rm --network="host" --name="emcee-queue" $DOCKER_REGISTRY/android/e
 echo "Queue started"
 
 echo "Building worker..."
-./gradlew :subprojects:emcee:worker:assemble --quiet >/dev/null
+./gradlew :subprojects:emcee:worker:build -x test --quiet >/dev/null
 
 echo "Starting worker..."
 java -jar ./subprojects/emcee/worker/build/libs/emcee-worker.jar start -c ./subprojects/emcee/worker/config.json -ll info

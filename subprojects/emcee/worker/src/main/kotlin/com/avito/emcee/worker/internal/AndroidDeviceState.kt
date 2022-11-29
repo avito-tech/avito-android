@@ -29,9 +29,7 @@ internal sealed class AndroidDeviceState {
         }
 
         override fun testExecuted(): AndroidDeviceState {
-            throw UnsupportedOperationException(
-                "Can't change state. Because test can't be executed without installed apps"
-            )
+            error("Can't change the state. Test can't be executed without installed apps")
         }
     }
 
@@ -66,7 +64,7 @@ internal sealed class AndroidDeviceState {
 
         override suspend fun prepareStateForExecution(newApps: List<AndroidApplication>): AndroidDeviceState {
             require(apps == newApps) {
-                "Can't prepare state. Installed apps:$apps are not equal to newApps:$newApps"
+                "Can't prepare the state. Installed apps:$apps are not equal to newApps:$newApps"
             }
             apps.forEach { app -> device.clearPackage(app.packageName).onFailure { throw it } }
             return InstalledApplications(device, apps)

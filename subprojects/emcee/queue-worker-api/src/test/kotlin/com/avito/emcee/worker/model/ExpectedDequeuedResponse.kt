@@ -16,6 +16,7 @@ internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued 
     caseId = "bucketDequeued",
     bucket = Bucket(
         bucketId = "1F10555C-0D48-436F-B0A6-4D0ABF813493",
+        derivedFrom = null,
         payloadContainer = PayloadContainer(
             payload = Payload(
                 testEntries = listOf(

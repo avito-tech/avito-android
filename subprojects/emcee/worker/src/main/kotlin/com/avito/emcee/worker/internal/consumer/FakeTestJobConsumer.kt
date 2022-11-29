@@ -39,7 +39,7 @@ internal class FakeTestJobConsumer(
 
         bucketsStorage.remove(job.bucket)
 
-        val results = job.bucket.payloadContainer.payload.testEntries.map { TestExecutor.Result(true) }
+        val results = job.bucket.payloadContainer.payload.testEntries.map { TestExecutor.Result(it, true) }
         TestJobConsumer.Result(results)
     }
 

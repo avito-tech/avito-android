@@ -36,7 +36,7 @@ internal class StatefulAndroidDeviceTestExecutor(
         job: TestExecutor.Job
     ): TestExecutor.Result {
         logger.fine("Executing job: $job")
-        device.isAlive()
+        check(device.isAlive()) { "Device is not alive" }
         logger.fine("Preparing state for job: $job")
         state = state.prepareStateForExecution(
             listOf(
@@ -52,6 +52,7 @@ internal class StatefulAndroidDeviceTestExecutor(
 
     private suspend fun executeTest(job: TestExecutor.Job): TestExecutor.Result {
         return Result.tryCatch {
+            logger.info("Executing instrumentation for the job: $job")
             val instrumentationResult = withTimeout(job.testMaximumDuration) {
                 device.executeInstrumentation(
                     command = InstrumentationCommand(

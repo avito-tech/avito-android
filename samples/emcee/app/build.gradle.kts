@@ -57,12 +57,15 @@ emcee {
     }
     retries.set(1)
     outputDir.set(project.layout.buildDirectory.dir("emcee"))
+
     devices {
         addDevice(22, "default")
+        addDevice(31, "default")
     }
 }
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test:runner:1.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.4")
 }

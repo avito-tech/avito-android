@@ -3,7 +3,7 @@ package com.avito.android.device.manager.internal
 import com.avito.android.device.AndroidDevice
 import com.avito.android.device.DeviceSerial
 import com.avito.android.device.internal.AndroidDeviceImpl
-import com.avito.android.device.internal.InstallPackageCommand
+import com.avito.android.device.internal.InstallApplicationCommand
 import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.request.device.Device
 import com.malinskiy.adam.request.device.DeviceState
@@ -12,19 +12,15 @@ import com.malinskiy.adam.request.prop.GetSinglePropRequest
 
 internal class FindAndroidDevice(
     private val adb: AndroidDebugBridgeClient,
-    private val stop: StopAndroidDevice,
     private val maximumRunningDevices: Int
 ) {
 
     suspend fun execute(sdk: Int, type: String): AndroidDevice? {
         val devices: List<Device> = adb.execute(request = ListDevicesRequest())
         require(devices.size <= maximumRunningDevices) {
-            "Must be maximum $maximumRunningDevices running devices per worker"
+            "More than $maximumRunningDevices device(s) are running. The previous test run may be finished incorrectly."
         }
         val foundDevice = devices.find(sdk, type)
-        devices
-            .filter { it.serial != foundDevice?.serial }
-            .forEach { device -> stop.execute(DeviceSerial(device.serial)) }
 
         return if (foundDevice != null) {
             AndroidDeviceImpl(
@@ -32,7 +28,7 @@ internal class FindAndroidDevice(
                 type = type,
                 serial = DeviceSerial(foundDevice.serial),
                 adb = adb,
-                installPackageCommand = InstallPackageCommand(adb),
+                installApplicationCommand = InstallApplicationCommand(adb),
             )
         } else {
             null

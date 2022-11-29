@@ -11,6 +11,7 @@ import com.avito.emcee.queue.TestExecutionBehavior
 
 fun Bucket.Companion.stub(bucketId: String) = Bucket(
     bucketId = bucketId,
+    derivedFrom = null,
     payloadContainer = PayloadContainer(
         payload = Payload(
             testEntries = emptyList(),
