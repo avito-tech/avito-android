@@ -4,6 +4,7 @@ RUN \
   apt-get update && \
   apt-get install -y \
     sudo \
+    zip \
     libssl-dev && \
   apt-get clean && \
   apt-get purge
