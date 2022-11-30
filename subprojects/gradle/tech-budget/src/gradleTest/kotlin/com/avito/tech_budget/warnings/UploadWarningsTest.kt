@@ -74,6 +74,17 @@ internal class UploadWarningsTest {
             """.trimIndent()
         )
     }
+    @Test
+    fun `compile with 2 warnings - restrict batch size to 1 - two requests sent`(@TempDir projectDir: File) {
+        generateProject(projectDir, containsWarnings = true, restrictBatchSize = true)
+
+        val request = mockDispatcher.captureRequest { path.contains("/dumpWarnings") }
+        uploadWarnings(projectDir)
+            .assertThat()
+            .buildSuccessful()
+
+        request.Checks().requestsCaptured(requestsCount = 2)
+    }
 
     @Test
     fun `compile with warnings - without ownership ext - empty owners sent to server`(@TempDir projectDir: File) {
@@ -137,6 +148,7 @@ internal class UploadWarningsTest {
         outputDirectoryName: String? = null,
         separator: String? = null,
         includesOwners: Boolean = true,
+        restrictBatchSize: Boolean = false
     ) = TestProjectGenerator(
         plugins = plugins {
             id("com.avito.android.gradle-logger")
@@ -147,7 +159,7 @@ internal class UploadWarningsTest {
         buildGradleExtra = """
                 techBudget {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
-                    ${collectWarningsExtension(outputDirectoryName, separator)}
+                    ${collectWarningsExtension(outputDirectoryName, separator, restrictBatchSize)}
                 }
                 ${if (includesOwners) FAKE_OWNERSHIP_EXTENSION else ""}
             """.trimIndent(),
@@ -171,15 +183,17 @@ internal class UploadWarningsTest {
         )
     ).generateIn(projectDir)
 
-    private fun collectWarningsExtension(outputDirectoryName: String?, separator: String?) =
-        if (outputDirectoryName.isNullOrEmpty() && separator.isNullOrEmpty()) {
-            ""
-        } else {
+    private fun collectWarningsExtension(outputDirectoryName: String?, separator: String?, restrictBatchSize: Boolean) =
             """
                     collectWarnings {
-                        outputDirectory.set(project.file("$outputDirectoryName"))
-                        warningsSeparator.set("$separator")
+                        ${if (!outputDirectoryName.isNullOrEmpty()) {
+                            "outputDirectory.set(project.file(\"$outputDirectoryName\"))"
+                        } else ""}
+                        ${if (!separator.isNullOrEmpty()) "warningsSeparator.set(\"$separator\")" else ""}
+                        ${if (restrictBatchSize) { """
+                            uploadWarningsBatchSize.set(1)
+                            uploadWarningsParallelRequestsCount.set(1)
+                        """.trimIndent() } else ""}
                     }
             """.trimIndent()
-        }
 }

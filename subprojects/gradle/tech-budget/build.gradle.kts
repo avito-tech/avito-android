@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.subprojects.gradle.codeOwnership.plugin)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.logger.gradleLogger)
+    implementation(projects.subprojects.common.compositeException)
 
     ksp(libs.moshiCodegen)
 

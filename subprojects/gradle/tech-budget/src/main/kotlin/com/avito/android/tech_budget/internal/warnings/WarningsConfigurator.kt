@@ -44,6 +44,8 @@ internal class WarningsConfigurator : TechBudgetConfigurator {
             this.warningsSeparator.set(extension.warnings.warningsSeparator)
             this.dumpInfoConfiguration.set(extension.dumpInfo)
             this.ownerSerializer.set(root.requireCodeOwnershipExtension().ownerSerializer)
+            this.uploadWarningsBatchSize.set(extension.warnings.uploadWarningsBatchSize)
+            this.uploadWarningsParallelRequestsCount.set(extension.warnings.uploadWarningsParallelRequestsCount)
         }
     }
 

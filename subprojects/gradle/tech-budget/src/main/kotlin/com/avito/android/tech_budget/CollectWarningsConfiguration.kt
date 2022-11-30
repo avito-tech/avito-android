@@ -1,6 +1,7 @@
 package com.avito.android.tech_budget
 
 import com.avito.android.tech_budget.internal.warnings.log.FileLogWriter.Companion.DEFAULT_SEPARATOR
+import com.avito.android.tech_budget.internal.warnings.upload.UploadWarningsBatcher
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
@@ -35,4 +36,19 @@ public abstract class CollectWarningsConfiguration @Inject constructor(
      */
     public val compileWarningsTaskNames: SetProperty<String> = objects.setProperty(String::class.java)
         .convention(setOf("compileReleaseKotlin"))
+
+    /**
+     * Maximum warnings count which will be uploaded in one portion to a server.
+     *
+     * On a large projects, warnings need to be divided into a batches because project can contain great amount of them,
+     * and it's better to upload them in parallel, not in a single chunk.
+     */
+    public val uploadWarningsBatchSize: Property<Int> = objects.property(Int::class.java)
+        .convention(UploadWarningsBatcher.DEFAULT_BATCH_SIZE)
+
+    /**
+     * Maximum number of parallel requests to uploadWarnings endpoint when we send warnings in batches.
+     */
+    public val uploadWarningsParallelRequestsCount: Property<Int> = objects.property(Int::class.java)
+        .convention(UploadWarningsBatcher.DEFAULT_PARALLEL_REQUESTS_COUNT)
 }
