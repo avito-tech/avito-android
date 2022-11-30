@@ -2,7 +2,7 @@
 
 ## Project structure
 
-- `subprojects` contains almost all of source code divided by project modules
+- `subprojects` contains almost all source code divided by project modules
 
 - `samples` separate gradle project that includeBuild("subprojects") to iterate on changes fast and provide samples
 

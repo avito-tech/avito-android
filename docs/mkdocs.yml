@@ -87,8 +87,14 @@ nav:
                     - projects/internal/Signer.md
 
     -   CI:
+            -   Containerization:
+                -   Main: ci/containers/DockerImagesMain.md
+                -   Images:
+                    -   Image builder: ci/containers/ImageBuilder.md
+                    -   Android builder: ci/containers/AndroidBuilderImage.md
+                    -   Android emulator: ci/containers/AndroidEmulatorImage.md
+                -   Publish images to DockerHub: ci/containers/PublishToDockerHub.md
             -   Impact analysis: ci/ImpactAnalysis.md
-            -   Containers: ci/Containers.md
     -   Testing:
             -   Flaky annotation: test/FlakyAnnotation.md
             -   Toast: test/Toast.md
