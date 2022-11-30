@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 
 internal class RetrofitProvider(
     private val baseUrl: String,
@@ -20,8 +21,9 @@ internal class RetrofitProvider(
 
         val logger = loggerFactory.create("OkHttp")
         val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(
-                HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BODY)
+                HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC)
             )
             .build()
 
