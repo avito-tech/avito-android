@@ -14,21 +14,27 @@ if [[ -z "${DOCKER_REGISTRY_PASSWORD+x}" ]]; then
     exit 1
 fi
 
-if [[ "$#" -ne 3 ]]; then
-    echo "ERROR: Wrong number of arguments. Expected ones:
+if [[ "$#" -ne 4 ]]; then
+    echo "ERROR: Wrong number of arguments $#. Expected ones:
     You should pass a path to a directory with Dockerfile and image name to publish:
-    ./publish_emulator.sh <relative path to Dockerfile> <image-name> <API level>
+    ./publish_emulator.sh <relative path to Dockerfile> <image-name> <API level> <debug>
 
     Example:
-    ./publish_emulator.sh hermetic/Dockerfile android/emulator-hermetic 30
+    ./publish_emulator.sh hermetic/Dockerfile android/emulator-hermetic 30 true/false
     "
     exit 1
 fi
 
 readonly BUILD_DIRECTORY=$(pwd)/android-emulator
 readonly DOCKERFILE=$1
-readonly IMAGE_NAME=$2
 readonly API=$3
+readonly DEBUG=$4
+
+if [[ $DEBUG = true ]]; then
+    readonly IMAGE_NAME=debug-$2
+else
+    readonly IMAGE_NAME=$2
+fi
 
 docker run --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \

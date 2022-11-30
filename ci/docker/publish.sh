@@ -4,25 +4,22 @@ set -e
 
 source $(dirname "$0")/../_environment.sh
 
-if [[ "$#" -eq 2 ]]
-then
-  readonly BUILD_DIRECTORY=$(pwd)/$1
-  readonly DOCKERFILE="Dockerfile"
-  readonly IMAGE_NAME=$2
-elif [[ "$#" -eq 3 ]]
+if [[ "$#" -eq 4 ]]
 then
   readonly BUILD_DIRECTORY=$(pwd)/$1
   readonly DOCKERFILE=$2
-  readonly IMAGE_NAME=$3
+  readonly DEBUG=$4
+  if [[ $DEBUG = true ]]; then
+      readonly IMAGE_NAME=debug-$3
+  else
+      readonly IMAGE_NAME=$3
+  fi
 else
     echo "ERROR: Wrong number of arguments. Expected ones:
-    ./publish.sh <directory> <image-name>
-    Or
-    ./publish.sh <directory> <relative path to Dockerfile in directory> <image-name>
+    ./publish.sh <directory> <relative path to Dockerfile in directory> <image-name> <debug>
 
     Example:
-    ./publish.sh image-builder android/image-builder
-    ./publish.sh android-builder hermetic/Dockerfile android/builder-hermetic
+    ./publish.sh android-builder hermetic/Dockerfile android/builder-hermetic true/false
     "
     exit 1
 fi
@@ -38,7 +35,3 @@ docker run --rm \
         --registry "${DOCKER_REGISTRY}" \
         --artifactoryUrl "${ARTIFACTORY_URL}" \
         --imageName "${IMAGE_NAME}"
-
-# DockerHub is disabled temporary to make builds more hermetic
-#        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
-#        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
