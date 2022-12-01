@@ -23,24 +23,32 @@ public class RequestCapturer(
 
     public inner class Checks {
 
-        public fun singleRequestCaptured(): RequestChecks =
-            singleRequestCaptured(
-                AssertionWaiter.DEFAULT_TIMEOUT_MS,
-                AssertionWaiter.DEFAULT_FREQUENCY_MS
-            )
+        public fun requestsCaptured(
+            requestsCount: Int,
+            assertionMessage: String = "$requestsCount requests should be captured.",
+            timeoutMilliseconds: Long = AssertionWaiter.DEFAULT_TIMEOUT_MS,
+            frequencyMilliseconds: Long = AssertionWaiter.DEFAULT_FREQUENCY_MS,
+        ): Collection<RequestChecks> =
+            waitForAssertion(timeoutMilliseconds, frequencyMilliseconds) {
+                synchronized(this@RequestCapturer) {
+                    assertThat(
+                        "$assertionMessage Currently matched: $requests",
+                        requests.size == requestsCount
+                    )
+                    requests.map { request -> RequestChecks(RequestData(request)) }
+                }
+            }
 
         public fun singleRequestCaptured(
-            timeoutMilliseconds: Long,
-            frequencyMilliseconds: Long,
-        ): RequestChecks = waitForAssertion(timeoutMilliseconds, frequencyMilliseconds) {
-            synchronized(this@RequestCapturer) {
-                assertThat(
-                    "Single request should be captured, Currently matched: $requests",
-                    requests.size == 1
-                )
-                RequestChecks(RequestData(requests.first()))
-            }
-        }
+            timeoutMilliseconds: Long = AssertionWaiter.DEFAULT_TIMEOUT_MS,
+            frequencyMilliseconds: Long = AssertionWaiter.DEFAULT_FREQUENCY_MS,
+        ): RequestChecks =
+            requestsCaptured(
+                requestsCount = 1,
+                assertionMessage = "Single request should be captured.",
+                timeoutMilliseconds = timeoutMilliseconds,
+                frequencyMilliseconds = frequencyMilliseconds
+            ).first()
 
         public fun nothingCaptured() {
             synchronized(this@RequestCapturer) {
