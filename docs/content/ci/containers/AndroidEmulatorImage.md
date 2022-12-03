@@ -9,6 +9,12 @@ If there are no needed config you should:
 
 1. Copy-paste closest `config_*.ini`
 2. Change `image.sysdir.1` property to your sdk path i.e. `system-images/android-22/google_apis/x86/` for SDK 22 
+3. Upload emulator system image to [artifactory](http://links.k.avito.ru/emulator-system_images)
+   1. You could find a link to system image at Android Studio SDK Manager. Try to download image you will see the link.
+   2. Unzip image and change internal structure of folders to `system-image/android-<sdk>/google_apis/<image-arch>`. You could example at any image in [artifactory](http://links.k.avito.ru/emulator-system_images)
+
+???+ info
+    We change internal structure of folders inside zip archive because we want
 
 ## How to build an emulator image
 

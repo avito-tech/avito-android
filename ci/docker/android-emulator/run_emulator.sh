@@ -30,8 +30,7 @@ else
     emulator_arguments+=(-no-window -gpu swiftshader_indirect)
 fi
 
-# TODO remove SNAPSHOT_DISABLED (for backward compatibility)
-if [ "${SNAPSHOT_ENABLED}" == "true" ] || [ "${SNAPSHOT_DISABLED}" != "true" ]; then
+if [ "${SNAPSHOT_ENABLED}" == "true" ]; then
     echo "Snapshots: Emulator will be ran with loading snapshot (for using emulator with snapshot on CI)"
     emulator_arguments+=(-snapshot ci -no-snapshot-save)
 else
