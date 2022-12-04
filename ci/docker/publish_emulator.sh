@@ -31,7 +31,7 @@ readonly API=$3
 readonly DEBUG=$4
 
 if [[ $DEBUG = true ]]; then
-    readonly IMAGE_NAME=debug-$2
+    readonly IMAGE_NAME=$2-debug
 else
     readonly IMAGE_NAME=$2
 fi
@@ -48,7 +48,3 @@ docker run --rm \
         --artifactoryUrl "${ARTIFACTORY_URL}" \
         --imageName "${IMAGE_NAME}" \
         --api "${API}"
-
-# DockerHub is disabled temporary to make builds more hermetic
-#        --dockerHubUsername "${DOCKER_HUB_USERNAME}" \
-#        --dockerHubPassword "${DOCKER_HUB_PASSWORD}" \
