@@ -97,6 +97,10 @@ adb emu avd snapshot save ci
 
 sleep 5
 
+# Find `model` parameter for Gradle configuration
+echo "Print devices"
+adb devices -l
+
 adb emu avd snapshot list
 adb emu kill
 

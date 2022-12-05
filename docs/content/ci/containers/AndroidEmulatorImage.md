@@ -12,6 +12,8 @@ If there are no needed config you should:
 3. Upload emulator system image to [artifactory](http://links.k.avito.ru/emulator-system_images)
    1. You could find a link to system image at Android Studio SDK Manager. Try to download image you will see the link.
    2. Unzip image and change internal structure of folders to `system-image/android-<sdk>/google_apis/<image-arch>`. You could example at any image in [artifactory](http://links.k.avito.ru/emulator-system_images)
+4. Copy-paste image tag from the end of the Build Log
+5. Copy-paste image avd model from the Log. Search `Print devices`
 
 ???+ info
     We change internal structure of folders inside zip archive because we want
