@@ -10,7 +10,7 @@ then
   readonly DOCKERFILE=$2
   readonly DEBUG=$4
   if [[ $DEBUG = true ]]; then
-      readonly IMAGE_NAME=debug-$3
+      readonly IMAGE_NAME=$3-debug
   else
       readonly IMAGE_NAME=$3
   fi
