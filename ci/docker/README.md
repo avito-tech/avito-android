@@ -1,3 +1,12 @@
+## Docker dir structure conventions
+
+### Hermetic vs Non-Hermetic
+
+Each image should have only `hermetic` or `non-hermetic` dir where place related `Dockerfile`
+
+#### image_name.txt
+
+Each hermetic or non-hermetic dir contains, close to `Dockerfile`, `image_name.txt` with image publication name i.e. `android/builder-hermetic`
 
 ## Hermetic containers
 

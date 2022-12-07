@@ -78,7 +78,7 @@ Use [cAdvisor](https://github.com/google/cadvisor)
 1. Run at Teamcity [Build and publish android-emulator (internal)](http://links.k.avito.ru/publish-android-emulator-image)
 
 ???+ info
-    You will need `Image tag` and `Avd model` when try to add new emulator to Test Runner. You could copy-paste them from `Teamcity Build Log`. Image tag from the end of the Build Log. Avd model - Search phrase `Print devices`. We print `adb devices -l` from `prepare_emulator.sh`   
+    You will need `Image tag` and `Avd model` when try to add new emulator to Test Runner. You could copy-paste them from `Teamcity Build Log`. Image tag from the end of the Build Log - search phrase `Published the image`. Avd model - Search phrase `Print devices`. We print `adb devices -l` from `prepare_emulator.sh`   
 
 
 ## How to run an emulator image
