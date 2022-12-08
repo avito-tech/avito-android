@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ExecutorService
 import java.util.logging.Logger
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 @ExperimentalCoroutinesApi
@@ -72,7 +72,7 @@ internal class StartAndroidDevice(
         logger.info("Waiting for device...")
         var result: String
         do {
-            delay(100.milliseconds)
+            delay(5.seconds)
             result = adb.execute(
                 GetSinglePropRequest("sys.boot_completed"),
                 serial = device.serial.value,

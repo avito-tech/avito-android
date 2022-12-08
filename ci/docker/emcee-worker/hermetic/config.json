@@ -1,0 +1,8 @@
+{
+    "workerPort": 8080,
+    "queueUrl": "http://emcee-queue-service:41000",
+    "androidSdkPath": "/opt/android-sdk",
+    "avd": [
+        { "sdk": 22, "type": "default", "emulatorFileName": "emulator_22", "sdCardFileName": "/sdcard.img" }
+    ]
+}

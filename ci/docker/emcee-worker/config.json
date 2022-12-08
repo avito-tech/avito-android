@@ -1,5 +1,0 @@
-{
-    "workerPort": 8080,
-    "queueUrl": "http://emcee-queue-service:41000",
-    "androidSdkPath": "/Users/john/androidSdk"
-}
