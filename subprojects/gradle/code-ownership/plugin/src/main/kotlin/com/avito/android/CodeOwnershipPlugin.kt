@@ -2,7 +2,8 @@
 
 package com.avito.android
 
-import com.avito.android.check.CheckExternalDepsCodeOwners
+import com.avito.android.check.deps.CheckExternalDepsCodeOwners
+import com.avito.android.check.ownersip.CheckOwnersPresentTask
 import com.avito.android.diff.ReportCodeOwnershipDiffTask
 import com.avito.android.diff.ReportCodeOwnershipExtension
 import com.avito.android.info.ExportExternalDepsCodeOwners
@@ -25,21 +26,21 @@ public class CodeOwnershipPlugin : Plugin<Project> {
             configureExportInternalDepsTask(target, codeOwnershipExtension)
             configureExportExternalDepsTask(target, codeOwnershipExtension)
         } else {
-            configureStrictOwnershipCheck(target, codeOwnershipExtension)
+            configureStrictOwnershipCheckTask(target, codeOwnershipExtension)
         }
     }
 
-    private fun configureStrictOwnershipCheck(target: Project, codeOwnershipExtension: CodeOwnershipExtension) {
-        // TODO MBSA-797 Move this check to a gradle task
+    private fun configureStrictOwnershipCheckTask(target: Project, codeOwnershipExtension: CodeOwnershipExtension) {
         val strictOwnership = target.getBooleanProperty("avito.ownership.strictOwnership", false)
         if (!strictOwnership) return
 
-        target.afterEvaluate {
-            val codeOwners = codeOwnershipExtension.owners.get()
-            if (it.state.failure == null && codeOwners.isEmpty()) {
-                val emptyOwnersMessage = codeOwnershipExtension.emptyOwnersErrorMessage.get()
-                throw IllegalStateException(emptyOwnersMessage.format(it.path))
-            }
+        target.tasks.register<CheckOwnersPresentTask>("checkOwnersPresent") {
+            group = "verification"
+            description = "Checks that list of owners is not empty"
+
+            owners.set(codeOwnershipExtension.owners)
+            emptyOwnersErrorMessage.set(codeOwnershipExtension.emptyOwnersErrorMessage)
+            projectPath.set(target.path)
         }
     }
 

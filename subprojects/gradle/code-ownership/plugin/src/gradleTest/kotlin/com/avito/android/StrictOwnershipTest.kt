@@ -43,7 +43,7 @@ internal class StrictOwnershipTest {
                                     configuration = IMPLEMENTATION
                                 )
                             ),
-                            buildGradleExtra = if (case.isOwnershipConfigured) {
+                            buildGradleExtra = BIND_TASKS_GRADLE_EXTRA + if (case.isOwnershipConfigured) {
                                 """
                                     |object Speed : Owner
                                     |
@@ -66,7 +66,7 @@ internal class StrictOwnershipTest {
                                     configuration = IMPLEMENTATION
                                 )
                             ),
-                            buildGradleExtra = if (case.isOwnershipConfigured) {
+                            buildGradleExtra = BIND_TASKS_GRADLE_EXTRA + if (case.isOwnershipConfigured) {
                                 """
                                     |object Speed : Owner
                                     |object Performance : Owner
@@ -84,7 +84,7 @@ internal class StrictOwnershipTest {
                                 id("com.avito.android.code-ownership")
                             },
                             imports = listOf("import com.avito.android.model.Owner"),
-                            buildGradleExtra = if (case.isOwnershipConfigured) {
+                            buildGradleExtra = BIND_TASKS_GRADLE_EXTRA + if (case.isOwnershipConfigured) {
                                 """
                                     |object MobileArchitecture : Owner
                                     |
@@ -95,7 +95,15 @@ internal class StrictOwnershipTest {
                             } else "",
                             useKts = true,
                         )
-                    )
+                    ),
+                    buildGradleExtra = """
+                        |tasks.register("checkAllModulesHaveOwners")
+                        |
+                        |def initialTaskNames = project.gradle.startParameter.taskNames
+                        |project.gradle.startParameter.setTaskNames(
+                        |   initialTaskNames + ":checkAllModulesHaveOwners"
+                        |)
+                    """.trimMargin()
                 ).generateIn(projectDir)
 
                 val args = mutableListOf(
@@ -153,5 +161,16 @@ internal class StrictOwnershipTest {
                 false -> append("when ownership is not configured")
             }
         }
+    }
+
+    private companion object {
+        val BIND_TASKS_GRADLE_EXTRA = """
+            |val strictProperty = "avito.ownership.strictOwnership"
+            |if (hasProperty(strictProperty) && property(strictProperty).toString().toBoolean()) {
+            |   rootProject.tasks.named("checkAllModulesHaveOwners") {
+            |       dependsOn(tasks.named("checkOwnersPresent"))
+            |   }
+            |}
+        """.trimMargin()
     }
 }

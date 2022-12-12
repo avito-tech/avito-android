@@ -1,4 +1,4 @@
-package com.avito.android.check
+package com.avito.android.check.deps
 
 import com.avito.android.OwnerSerializer
 import com.avito.android.diff.provider.OwnersProvider

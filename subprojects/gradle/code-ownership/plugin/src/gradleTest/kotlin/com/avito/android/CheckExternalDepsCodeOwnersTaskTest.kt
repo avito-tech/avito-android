@@ -1,6 +1,6 @@
 package com.avito.android
 
-import com.avito.android.check.CheckExternalDepsCodeOwners
+import com.avito.android.check.deps.CheckExternalDepsCodeOwners
 import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
 import com.avito.android.utils.FAKE_OWNERS_PROVIDER_EXTENSION
 import com.avito.android.utils.LIBS_OWNERS_TOML_CONTENT

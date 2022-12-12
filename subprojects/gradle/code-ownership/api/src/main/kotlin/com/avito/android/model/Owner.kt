@@ -1,3 +1,5 @@
 package com.avito.android.model
 
-public interface Owner
+import java.io.Serializable
+
+public interface Owner : Serializable

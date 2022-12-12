@@ -1,7 +1,7 @@
 package com.avito.android.info
 
 import com.avito.android.OwnerSerializer
-import com.avito.android.check.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCIES_SECTION_NAMES
+import com.avito.android.check.deps.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCIES_SECTION_NAMES
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
 import com.fasterxml.jackson.databind.JsonNode
