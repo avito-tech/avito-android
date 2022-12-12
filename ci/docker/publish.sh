@@ -37,9 +37,10 @@ then
       readonly IMAGE_NAME=$TMP_IMAGE_NAME
   fi
 else
-    echo "ERROR: Wrong number of arguments. See README.md
+    echo "ERROR: Wrong number of arguments.
      Expected ones:
     ./publish.sh <directory> <relative path to directory with Dockerfile and image name> <debug>
+    See documentation about dir conventions \`./ci/docker/README.md##Docker dir structure conventions\`
 
     Example:
     ./publish.sh android-builder hermetic true

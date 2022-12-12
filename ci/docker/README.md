@@ -6,7 +6,7 @@ Each image should have only `hermetic` or `non-hermetic` dir where place related
 
 #### image_name.txt
 
-Each hermetic or non-hermetic dir contains, close to `Dockerfile`, `image_name.txt` with image publication name i.e. `android/builder-hermetic`
+Each hermetic or non-hermetic dir contains, close to `Dockerfile`, `image_name.txt` with image publication name e.g. `android/builder-hermetic`
 
 ## Hermetic containers
 
