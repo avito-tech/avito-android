@@ -10,6 +10,6 @@ internal class DumpResponse(
 
     @JsonClass(generateAdapter = true)
     internal class Result(
-        @Json(name = "id") val id: String
+        @Json(name = "id") val id: Int
     )
 }

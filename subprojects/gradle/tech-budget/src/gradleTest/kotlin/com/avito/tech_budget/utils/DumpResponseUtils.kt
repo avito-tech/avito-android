@@ -6,7 +6,7 @@ internal fun successResponse() = MockResponse().setResponseCode(200).setBody(
     """
                 {
                     "result": {
-                        "id": "string"
+                        "id": 0
                     }
                 }
             """.trimIndent()
