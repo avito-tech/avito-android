@@ -2,6 +2,7 @@ package com.avito.android.tech_budget
 
 import com.avito.android.tech_budget.internal.ab_tests.ABTestsConfigurator
 import com.avito.android.tech_budget.internal.deeplinks.DeepLinkConfigurator
+import com.avito.android.tech_budget.internal.feature_toggles.FeatureTogglesConfigurator
 import com.avito.android.tech_budget.internal.owners.OwnersConfigurator
 import com.avito.android.tech_budget.internal.owners.dependencies.DependenciesConfigurator
 import com.avito.android.tech_budget.internal.warnings.WarningsConfigurator
@@ -26,7 +27,8 @@ public class TechBudgetPlugin : Plugin<Project> {
             DependenciesConfigurator(),
             WarningsConfigurator(),
             DeepLinkConfigurator(),
-            ABTestsConfigurator()
+            ABTestsConfigurator(),
+            FeatureTogglesConfigurator(),
         )
         configurators.forEach { it.configure(target) }
     }
