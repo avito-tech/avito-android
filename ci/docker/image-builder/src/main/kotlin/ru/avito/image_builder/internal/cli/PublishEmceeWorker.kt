@@ -2,7 +2,7 @@ package ru.avito.image_builder.internal.cli
 
 import kotlinx.cli.ArgType
 import kotlinx.cli.required
-import ru.avito.image_builder.internal.command.EmulatorImageBuilder
+import ru.avito.image_builder.internal.command.EmceeWorkerBuilder
 import ru.avito.image_builder.internal.command.ImagePublisher
 import ru.avito.image_builder.internal.command.ImageTagger
 import ru.avito.image_builder.internal.command.RegistryLoginImpl
@@ -12,7 +12,7 @@ import ru.avito.image_builder.internal.docker.CliDocker
 import ru.avito.image_builder.internal.docker.RegistryCredentials
 import java.io.File
 
-internal class PublishEmulator(
+internal class PublishEmceeWorker(
     name: String,
     description: String,
 ) : BuildImage(name, description) {
@@ -27,19 +27,19 @@ internal class PublishEmulator(
         description = "Docker registry password"
     ).required()
 
-    private val api: Int by option(
-        type = ArgType.Int,
-        description = "API version"
+    private val apis: String by option(
+        type = ArgType.String,
+        description = "Space separated list of API versions"
     ).required()
 
     override fun execute() {
         val docker = CliDocker()
 
-        val builder = EmulatorImageBuilder(
+        val builder = EmceeWorkerBuilder(
             docker = docker,
             dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
-            api = api,
+            apis = apis.split(' ').mapNotNull { it.toIntOrNull() }.toSet(),
             registry = registry,
             imageName = imageName,
             artifactoryUrl = artifactoryUrl,

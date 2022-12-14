@@ -2,7 +2,7 @@
 
 set -exu
 
-if [[ "$#" -eq 1 ]]
+if [[ "$#" -eq 2 ]]
 then
     readonly dockerDir=$(dirname "$0")
     source "$dockerDir"/../_environment.sh
@@ -12,7 +12,7 @@ then
     readonly RELATIVE_DOCKERFILE=ci/docker/emcee-worker/hermetic/Dockerfile
 
     readonly TMP_IMAGE_NAME=$(cat "$IMAGE_DIR"/image_name.txt)
-    readonly DEBUG=$1
+    readonly DEBUG=$2
     if [[ $DEBUG = true ]]; then
       readonly IMAGE_NAME=$TMP_IMAGE_NAME-debug
     else
@@ -20,9 +20,9 @@ then
     fi
 else
     echo "ERROR: Wrong number of arguments
-    Expected: ./publish_emcee_worker <debug>
+    Expected: ./publish_emcee_worker '<space separated list of APIs>' <debug>
 
-    Example: ./publish_emcee_worker true/false
+    Example: ./publish_emcee_worker '22 29 30 31' true
     "
     exit 1
 fi
@@ -30,13 +30,14 @@ fi
 docker run --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     --volume "${BUILD_DIRECTORY}":/build \
-    "${IMAGE_BUILDER}" publish \
+    "${IMAGE_BUILDER}" publishEmceeWorker \
         --dockerfilePath "${RELATIVE_DOCKERFILE}" \
         --buildDir /build \
         --registryUsername "${DOCKER_REGISTRY_USERNAME}" \
         --registryPassword "${DOCKER_REGISTRY_PASSWORD}" \
         --registry "${DOCKER_REGISTRY}" \
         --artifactoryUrl "${ARTIFACTORY_URL}" \
+        --apis "$1" \
         --imageName "${IMAGE_NAME}"
 
 

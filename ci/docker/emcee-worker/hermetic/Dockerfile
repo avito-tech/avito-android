@@ -41,16 +41,14 @@ RUN apt-get update && \
     apt-get clean && apt-get purge
 
 ARG ANDROID_HOME=/opt/android-sdk
-ARG SDK_VERSION=22
-ARG EMULATOR_ARCH="x86"
 ARG ARTIFACTORY_URL
+ARG SDK_VERSIONS
 
 # DEBIAN_FRONTEND - to prevent timezone questions
 ENV LANG=C.UTF-8 \
     SHELL=/bin/bash \
     JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 \
     DEBIAN_FRONTEND=noninteractive \
-    VERSION=${SDK_VERSION} \
     ANDROID_SDK_ROOT=$ANDROID_HOME \
     PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin \
     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${ANDROID_HOME}/emulator/lib64/qt/lib:${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/gles_swiftshader
@@ -61,26 +59,9 @@ ENV LANG=C.UTF-8 \
 # Additional info about directory structure: https://stackoverflow.com/a/61176718/981330
 ARG ANDROID_SDK_BASE_URL=${ARTIFACTORY_URL}android-build-env/android_sdk
 
-COPY ci/docker/android-emulator/unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
-
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux_6_0.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_31_0_1.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/emulator/emulator_linux_31_2_8.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools_linux_33_0_0.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDROID_HOME && \
-    unzip_from_url.sh "${ANDROID_SDK_BASE_URL}/system-images/system-images-android-${SDK_VERSION}-${EMULATOR_ARCH}.zip" $ANDROID_HOME && \
-    rm /usr/local/bin/unzip_from_url.sh
-
-# ------------------ Emulators ------------------
-# Create emulator and increase internal storage
-RUN echo "no" | avdmanager create avd \
-    --name emulator_${SDK_VERSION} \
-    --package "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" \
-    --abi google_apis/${EMULATOR_ARCH} && \
-    mksdcard -l e 512M /sdcard.img
-
-COPY ci/docker/android-emulator/hardware/config_${SDK_VERSION}.ini /root/.android/avd/emulator_${SDK_VERSION}.avd/config.ini
-COPY ci/docker/emcee-worker/entrypoint.sh ./
+COPY ci/docker/android-emulator/hardware ./hardware
+COPY ci/docker/android-emulator/unzip_from_url.sh ci/docker/android-emulator/prepare_snapshot.sh ci/docker/android-emulator/run_emulator.sh  ci/docker/emcee-worker/setup_environment.sh ci/docker/emcee-worker/entrypoint.sh ./
+RUN ./setup_environment.sh $ANDROID_SDK_BASE_URL $ANDROID_HOME "${SDK_VERSIONS}"
 
 # https://developer.android.com/studio/command-line/adb#howadbworks
 # 5037 - ADB server port
@@ -90,4 +71,4 @@ COPY ci/docker/emcee-worker/entrypoint.sh ./
 # 80   - Worker HTTP server
 EXPOSE 80 5037 5554 5555 5900
 
-ENTRYPOINT ["./entrypoint.sh"]
+CMD ["./entrypoint.sh"]

@@ -3,6 +3,7 @@ package ru.avito.image_builder
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 import ru.avito.image_builder.internal.cli.BuildImage
+import ru.avito.image_builder.internal.cli.PublishEmceeWorker
 import ru.avito.image_builder.internal.cli.PublishEmulator
 import ru.avito.image_builder.internal.cli.PublishImage
 
@@ -18,7 +19,8 @@ public object Main {
         parser.subcommands(
             BuildImage("build", "Build image"),
             PublishImage("publish", "Build and publish image"),
-            PublishEmulator("publishEmulator", "Build and publish Android emulator image")
+            PublishEmulator("publishEmulator", "Build and publish Android emulator image"),
+            PublishEmceeWorker("publishEmceeWorker", "Build and publish Emcee worker image"),
         )
         parser.parse(sanitizeEmptyArgs(args))
     }

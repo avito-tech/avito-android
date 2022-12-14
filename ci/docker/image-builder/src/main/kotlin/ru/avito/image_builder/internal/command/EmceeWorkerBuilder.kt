@@ -7,7 +7,7 @@ import ru.avito.image_builder.internal.docker.ImageId
 import java.io.File
 import java.util.logging.Logger
 
-internal class EmulatorImageBuilder(
+internal class EmceeWorkerBuilder(
     private val docker: CliDocker,
     /**
      * Relative path to the Dockerfile inside context (buildDir)
@@ -18,7 +18,7 @@ internal class EmulatorImageBuilder(
      * https://docs.docker.com/engine/reference/commandline/build/#build-with-path
      */
     private val buildDir: File,
-    private val api: Int,
+    private val apis: Set<Int>,
     private val registry: String,
     private val imageName: String,
     private val artifactoryUrl: String,
@@ -33,7 +33,7 @@ internal class EmulatorImageBuilder(
         login.login()
 
         val imageId = buildImage()
-        val preparedImageId = emulatorPreparer.prepareEmulators(imageId, setOf(api))
+        val preparedImageId = emulatorPreparer.prepareEmulators(imageId, apis)
 
         return tag(preparedImageId)
     }
@@ -41,12 +41,9 @@ internal class EmulatorImageBuilder(
     private fun buildImage(): ImageId {
         log.info("Building an image ...")
 
-        val emulatorArch = if (api < 28) "x86" else "x86_64"
-
         val buildResult = docker.build(
             "--build-arg", "DOCKER_REGISTRY=$registry",
-            "--build-arg", "SDK_VERSION=$api",
-            "--build-arg", "EMULATOR_ARCH=$emulatorArch",
+            "--build-arg", "SDK_VERSIONS=${apis.joinToString(separator = " ")}",
             "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
             "--file", File(buildDir, dockerfilePath).canonicalPath,
             buildDir.canonicalPath,
@@ -59,12 +56,5 @@ internal class EmulatorImageBuilder(
         return id
     }
 
-    private fun tag(id: ImageId): Image {
-        val name = if (imageName.endsWith("-$api")) {
-            imageName
-        } else {
-            "$imageName-$api"
-        }
-        return tagger.tag(id, "$registry/$name")
-    }
+    private fun tag(id: ImageId): Image = tagger.tag(id, "$registry/$imageName")
 }
