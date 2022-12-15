@@ -36,6 +36,41 @@ internal class ValidatePublicDeeplinksTest {
     }
 
     @Test
+    fun `assemble single library - validate the same links - remove output - build cache used`(
+        @TempDir projectDir: File
+    ) {
+        TestProjectGenerator(
+            name = "rootapp",
+            modules = listOf(
+                libModule(
+                    buildScriptLinks = listOf(
+                        "1/feed",
+                        "1/profile"
+                    ),
+                    codeLinks = listOf(
+                        "1/feed",
+                        "1/profile"
+                    )
+                )
+            )
+        ).generateIn(projectDir)
+
+        gradlew(projectDir, ":lib:assembleRelease", "-Dorg.gradle.caching=true")
+        gradlew(projectDir, ":lib:assembleRelease", "-Dorg.gradle.caching=true")
+            .assertThat()
+            .buildSuccessful()
+            .taskWithOutcome(":lib:validateReleasePublicDeeplinks", TaskOutcome.UP_TO_DATE)
+
+        val output = File(projectDir, "lib/build/deeplinks/public-deeplinks-validation.out")
+        output.delete()
+
+        gradlew(projectDir, ":lib:assembleRelease", "-Dorg.gradle.caching=true")
+            .assertThat()
+            .buildSuccessful()
+            .taskWithOutcome(":lib:validateReleasePublicDeeplinks", TaskOutcome.FROM_CACHE)
+    }
+
+    @Test
     fun `assemble single library - build script missing links - failure`(@TempDir projectDir: File) {
         TestProjectGenerator(
             name = "rootapp",
@@ -113,15 +148,16 @@ internal class ValidatePublicDeeplinksTest {
                             val variantName = variant.name.capitalize()
                             val generateDeeplinksFromCode = 
                                 tasks.register("generate%sDeeplinksFromCode".format(variantName)) {
-                                    val file = File(project.buildDir, "public_links.tmp")
-                                    if (file.exists()) file.delete()
-                                    file.parentFile.mkdirs()
-                                    file.createNewFile()
-                                    file.writer().use {
-                                        it.write(
-                                            listOf(${codeLinks.joinToString { "\"$it\"" }})
-                                            .joinToString(separator = "\n")
-                                        )
+                                    doLast { 
+                                        val file = File(project.buildDir, "public_links.tmp")
+                                        file.parentFile.mkdirs()
+                                        file.createNewFile()
+                                        file.writer().use {
+                                            it.write(
+                                                listOf(${codeLinks.joinToString { "\"$it\"" }})
+                                                .joinToString(separator = "\n")
+                                            )
+                                        }
                                     }
                             } 
                             val validateReleaseDeeplinks = 

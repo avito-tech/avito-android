@@ -8,9 +8,11 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
@@ -20,6 +22,7 @@ import org.gradle.api.tasks.TaskAction
  *
  * Deeplinks from code can be stored in file and supplied with [publicDeeplinksFromCode].
  */
+@CacheableTask
 public abstract class ValidatePublicDeeplinksTask : DefaultTask() {
 
     /**
@@ -28,7 +31,6 @@ public abstract class ValidatePublicDeeplinksTask : DefaultTask() {
      */
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:Optional
     public abstract val publicDeeplinksFromCode: RegularFileProperty
 
     /**
@@ -36,8 +38,7 @@ public abstract class ValidatePublicDeeplinksTask : DefaultTask() {
      *
      * Example: `Please, add isPublic = true to @DeeplinkMeta annotation for all deeplinks listed above.`
      */
-    @get:Input
-    @get:Optional
+    @get:Internal
     public abstract val codeFixHint: Property<String>
 
     @get:Input
@@ -46,12 +47,16 @@ public abstract class ValidatePublicDeeplinksTask : DefaultTask() {
     @get:Input
     public abstract val publicDeeplinksFromBuildScript: SetProperty<Deeplink>
 
+    @get:OutputFile
+    public abstract val validationResult: RegularFileProperty
+
     @TaskAction
     public fun validate() {
         val generatedDeeplinks = extractPublicDeeplinksFromCode()
         val deeplinksFromBuildScript = publicDeeplinksFromBuildScript.get()
-        val codeFixHint = codeFixHint.orNull ?: ""
+        val codeFixHint = codeFixHint.get()
         PublicDeeplinksValidator.validate(generatedDeeplinks, deeplinksFromBuildScript, codeFixHint)
+        validationResult.get().asFile.writeText("Public DeepLinks from code match with deeplinks from build script.")
     }
 
     private fun extractPublicDeeplinksFromCode(): Set<Deeplink> {

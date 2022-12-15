@@ -36,8 +36,8 @@ public class DeeplinkGeneratorPlugin : Plugin<Project> {
         ) { task ->
             task.defaultScheme.set(ext.defaultScheme)
             task.publicDeeplinksFromBuildScript.set(ext.publicDeeplinks)
-            task.publicDeeplinksFromCode.set(ext.publicDeeplinksFromCode)
             task.codeFixHint.set(ext.validationCodeFixHint)
+            task.validationResult.set(project.layout.buildDirectory.file("deeplinks/public-deeplinks-validation.out"))
         }
     }
 
