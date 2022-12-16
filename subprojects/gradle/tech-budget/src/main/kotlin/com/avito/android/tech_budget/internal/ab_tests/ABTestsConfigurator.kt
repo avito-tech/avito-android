@@ -1,10 +1,11 @@
 package com.avito.android.tech_budget.internal.ab_tests
 
 import com.avito.android.tech_budget.TechBudgetExtension
+import com.avito.android.tech_budget.ab_tests.ABTest
 import com.avito.android.tech_budget.ab_tests.CollectProjectABTestsTask
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
-import com.avito.android.tech_budget.internal.ab_tests.serializer.JsonABTestFileParser
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.utils.parser.JsonFileParser
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
@@ -19,13 +20,12 @@ internal class ABTestsConfigurator : TechBudgetConfigurator {
                 techBudgetExtension.abTests.collectProjectABTestsTaskName.get()
             )
 
-            dependsOn(collectProjectABTestsTask)
             this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializer)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
-            this.abTestsInput.set(collectProjectABTestsTask.get().abTestsOutput)
+            this.abTestsInput.set(collectProjectABTestsTask.flatMap { it.abTestsOutput })
             this.abTestsFileParser.set(
                 techBudgetExtension.abTests.abTestsFileParser
-                    .orElse(JsonABTestFileParser(ownerSerializer.get()))
+                    .orElse(JsonFileParser(ownerSerializer.get(), ABTest::class))
             )
         }
     }

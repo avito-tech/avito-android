@@ -10,5 +10,4 @@ public class ABTest(
     @Json(name = "defaultGroup") public val defaultGroup: String,
     @Json(name = "groups") public val groups: List<String>,
     @Json(name = "owners") public val owners: List<Owner>
-
 )

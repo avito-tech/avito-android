@@ -3,10 +3,11 @@ package com.avito.android.tech_budget.internal.ab_tests
 import com.avito.android.OwnerSerializer
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.ab_tests.ABTest
-import com.avito.android.tech_budget.ab_tests.ABTestsFileParser
 import com.avito.android.tech_budget.internal.ab_tests.models.UploadABTestsRequest
+import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
+import com.avito.android.tech_budget.parser.FileParser
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
@@ -21,7 +22,7 @@ import org.gradle.api.tasks.TaskAction
 internal abstract class UploadABTestsTask : DefaultTask() {
 
     @get:Internal
-    abstract val abTestsFileParser: Property<ABTestsFileParser>
+    abstract val abTestsFileParser: Property<FileParser<ABTest>>
 
     @get:InputFile
     abstract val abTestsInput: RegularFileProperty
@@ -54,11 +55,11 @@ internal abstract class UploadABTestsTask : DefaultTask() {
     private fun upload(abTests: List<ABTest>) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
 
-        val service = UploadABTestsApi.create(
+        val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = { ownerSerializer.get() },
+            ownerSerializer = ownerSerializer.get(),
             loggerFactory = loggerFactory.get()
-        )
+        ).provide<UploadABTestsApi>()
 
         service.dumpABTests(UploadABTestsRequest(DumpInfo.fromExtension(dumpInfoConfig), abTests))
             .executeWithHttpFailure("Upload AB Tests request failed")

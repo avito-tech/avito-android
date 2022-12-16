@@ -1,7 +1,9 @@
 package com.avito.android.tech_budget.internal.warnings.upload
 
 import com.avito.android.OwnerSerializer
+import com.avito.android.owner.adapter.DefaultOwnerAdapter
 import com.avito.android.tech_budget.DumpInfoConfiguration
+import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.warnings.log.FileLogReader
 import com.avito.android.tech_budget.internal.warnings.log.converter.LogToWarningConverter
@@ -67,11 +69,11 @@ internal abstract class UploadWarningsTask : DefaultTask() {
         val sender = UploadWarningsBatcher(
             batchSize = uploadWarningsBatchSize.get(),
             parallelRequestsCount = uploadWarningsParallelRequestsCount.get(),
-            apiClient = UploadWarningsApi.create(
+            apiClient = ApiServiceProvider(
                 baseUrl = dumpConfiguration.baseUploadUrl.get(),
-                ownerSerializer = { ownerSerializer.get() },
+                ownerAdapter = DefaultOwnerAdapter { ownerSerializer.get() },
                 loggerFactory = loggerFactory.get()
-            )
+            ).provide()
         )
 
         sender.send(DumpInfo.fromExtension(dumpConfiguration), warnings)

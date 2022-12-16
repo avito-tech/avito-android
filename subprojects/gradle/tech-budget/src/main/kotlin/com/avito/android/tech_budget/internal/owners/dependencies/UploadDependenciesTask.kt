@@ -4,6 +4,7 @@ import com.avito.android.OwnerSerializer
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
 import com.avito.android.tech_budget.DumpInfoConfiguration
+import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.owners.dependencies.models.UploadDependenciesRequestBody
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
@@ -59,11 +60,11 @@ internal abstract class UploadDependenciesTask : DefaultTask() {
         val dumpInfoConfig = dumpInfoConfiguration.get()
         val ownedDependencies = dependencies.filter { it.owners.isNotEmpty() }
 
-        val service = UploadDependenciesApi.create(
+        val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
             ownerSerializer = ownerSerializer.get(),
             loggerFactory = loggerFactory
-        )
+        ).provide<UploadDependenciesApi>()
         service.dumpModules(UploadDependenciesRequestBody(DumpInfo.fromExtension(dumpInfoConfig), ownedDependencies))
             .executeWithHttpFailure(errorMessage = "Upload dependencies request failed")
     }

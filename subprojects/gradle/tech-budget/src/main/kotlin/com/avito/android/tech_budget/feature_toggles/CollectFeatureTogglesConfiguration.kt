@@ -1,5 +1,6 @@
 package com.avito.android.tech_budget.feature_toggles
 
+import com.avito.android.tech_budget.parser.FileParser
 import org.gradle.api.provider.Property
 
 public abstract class CollectFeatureTogglesConfiguration {
@@ -29,5 +30,5 @@ public abstract class CollectFeatureTogglesConfiguration {
      * ]
      * ```
      */
-    public abstract val featureTogglesFileParser: Property<FeatureTogglesFileParser>
+    public abstract val featureTogglesFileParser: Property<FileParser<FeatureToggle>>
 }

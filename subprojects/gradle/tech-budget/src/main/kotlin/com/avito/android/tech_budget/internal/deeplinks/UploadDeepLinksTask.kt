@@ -3,10 +3,11 @@ package com.avito.android.tech_budget.internal.deeplinks
 import com.avito.android.OwnerSerializer
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.deeplinks.DeepLink
-import com.avito.android.tech_budget.deeplinks.DeepLinksFileParser
 import com.avito.android.tech_budget.internal.deeplinks.models.UploadDeepLinksRequest
+import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
+import com.avito.android.tech_budget.parser.FileParser
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
@@ -21,7 +22,7 @@ import org.gradle.api.tasks.TaskAction
 internal abstract class UploadDeepLinksTask : DefaultTask() {
 
     @get:Internal
-    abstract val deeplinksFileParser: Property<DeepLinksFileParser>
+    abstract val deeplinksFileParser: Property<FileParser<DeepLink>>
 
     @get:InputFile
     abstract val deeplinksInput: RegularFileProperty
@@ -54,11 +55,11 @@ internal abstract class UploadDeepLinksTask : DefaultTask() {
     private fun upload(deeplinks: List<DeepLink>) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
 
-        val service = UploadDeepLinksApi.create(
+        val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = { ownerSerializer.get() },
+            ownerSerializer = ownerSerializer.get(),
             loggerFactory = loggerFactory.get()
-        )
+        ).provide<UploadDeepLinksApi>()
 
         service.dumpDeepLinks(UploadDeepLinksRequest(DumpInfo.fromExtension(dumpInfoConfig), deeplinks))
             .executeWithHttpFailure("Upload deepLinks request failed")

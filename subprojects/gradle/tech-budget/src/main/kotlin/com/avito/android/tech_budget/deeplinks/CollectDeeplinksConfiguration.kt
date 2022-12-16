@@ -1,5 +1,6 @@
 package com.avito.android.tech_budget.deeplinks
 
+import com.avito.android.tech_budget.parser.FileParser
 import org.gradle.api.provider.Property
 
 public abstract class CollectDeeplinksConfiguration {
@@ -29,5 +30,5 @@ public abstract class CollectDeeplinksConfiguration {
      * ]
      * ```
      */
-    public abstract val deepLinksFileParser: Property<DeepLinksFileParser>
+    public abstract val deepLinksFileParser: Property<FileParser<DeepLink>>
 }

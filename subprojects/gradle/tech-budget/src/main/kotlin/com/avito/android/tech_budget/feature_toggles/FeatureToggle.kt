@@ -11,5 +11,4 @@ public class FeatureToggle(
     @Json(name = "description") public val description: String,
     @Json(name = "isRemote") public val isRemote: Boolean,
     @Json(name = "owners") public val owners: List<Owner>
-
 )

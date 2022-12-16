@@ -2,9 +2,10 @@ package com.avito.android.tech_budget.internal.feature_toggles
 
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.feature_toggles.CollectProjectFeatureTogglesTask
+import com.avito.android.tech_budget.feature_toggles.FeatureToggle
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
-import com.avito.android.tech_budget.internal.feature_toggles.serializer.JsonFeatureToggleFileParser
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.utils.parser.JsonFileParser
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
@@ -19,13 +20,12 @@ internal class FeatureTogglesConfigurator : TechBudgetConfigurator {
                 techBudgetExtension.featureToggles.collectProjectFeatureTogglesTaskName.get()
             )
 
-            dependsOn(collectProjectFeatureTogglesTask)
             this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializer)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
-            this.featureTogglesInput.set(collectProjectFeatureTogglesTask.get().featureTogglesOutput)
+            this.featureTogglesInput.set(collectProjectFeatureTogglesTask.flatMap { it.featureTogglesOutput })
             this.featureTogglesFileParser.set(
                 techBudgetExtension.featureToggles.featureTogglesFileParser
-                    .orElse(JsonFeatureToggleFileParser(ownerSerializer.get()))
+                    .orElse(JsonFileParser(ownerSerializer.get(), FeatureToggle::class))
             )
         }
     }

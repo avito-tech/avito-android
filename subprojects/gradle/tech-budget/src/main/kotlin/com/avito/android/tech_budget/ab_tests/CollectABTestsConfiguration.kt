@@ -1,5 +1,6 @@
 package com.avito.android.tech_budget.ab_tests
 
+import com.avito.android.tech_budget.parser.FileParser
 import org.gradle.api.provider.Property
 
 public abstract class CollectABTestsConfiguration {
@@ -28,5 +29,5 @@ public abstract class CollectABTestsConfiguration {
      * ]
      * ```
      */
-    public abstract val abTestsFileParser: Property<ABTestsFileParser>
+    public abstract val abTestsFileParser: Property<FileParser<ABTest>>
 }
