@@ -8,11 +8,22 @@ All supported emulators configs you could find at `./ci/android-emulator/hardwar
 If there are no needed config you should:
 
 1. Copy-paste closest `config_*.ini`
-2. Change `image.sysdir.1` property to your sdk path i.e. `system-images/android-22/google_apis/x86/` for SDK 22 
+2. Change `image.sysdir.1` property to your sdk path e.g. `system-images/android-22/google_apis/x86/` for SDK 22 
 3. Upload emulator system image to [artifactory](http://links.k.avito.ru/emulator-system_images)
    1. You could find a link to system image at Android Studio SDK Manager. Try to download image you will see the link.
-   2. Unzip image and change internal structure of folders to `system-image/android-<sdk>/google_apis/<image-arch>`. You could example at any image in [artifactory](http://links.k.avito.ru/emulator-system_images)
+   2. Unzip image and change internal structure of folders to `system-image/android-<sdk>/google_apis/<image-arch>`. \
+      You could find example at any image in [artifactory](http://links.k.avito.ru/emulator-system_images) e.g. for api 25
+      ```shell
+         unzip x86-25_r18.zip; 
+         mkdir -pv system-images/android-25/google_apis;
+         mv x86 system-images/android-25/google_apis/x86;
+         zip -r system-images-android-25-x86.zip system-images;
+      ```
 4. [Publish an emulator](#how-to-publish-a-new-emulator-image)
+
+### Known build emulator image issues
+
+- `Waiting for emulator booting...` is flaky because we hardcode time which we are waiting for boot 
 
 ???+ info
     We change internal structure of folders inside emulator system image zip archive because we want to add ability for users to extract and use images locally
