@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.feature_toggles.FeatureToggle
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
 import com.avito.android.tech_budget.internal.utils.parser.JsonFileParser
+import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
@@ -14,6 +15,8 @@ import org.gradle.kotlin.dsl.register
 internal class FeatureTogglesConfigurator : TechBudgetConfigurator {
 
     override fun configure(project: Project) {
+        if (!project.isRoot()) return // Collection is enabled only for root
+
         project.tasks.register<UploadFeatureTogglesTask>(UploadFeatureTogglesTask.NAME) {
             val techBudgetExtension = project.extensions.getByType<TechBudgetExtension>()
             val collectProjectFeatureTogglesTask = project.tasks.typedNamed<CollectProjectFeatureTogglesTask>(
