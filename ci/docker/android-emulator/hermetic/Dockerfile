@@ -5,6 +5,9 @@ ARG ARTIFACTORY_URL
 ARG SDK_VERSION
 ARG EMULATOR_ARCH
 
+ENV EMULATOR_ARCH=${EMULATOR_ARCH}
+ENV SDK_VERSION=${SDK_VERSION}
+
 # -------------------- Common -------------------
 # net-tools             basic network primitives
 # socat                 redirecting adb and VNC from emulator to host

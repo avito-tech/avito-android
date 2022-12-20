@@ -2,7 +2,7 @@
 
 # Script that runs emulator and apply environments for saving snapshot
 
-set -ex
+set -exu
 
 function echo_error() { echo "$@" 1>&2; }
 
@@ -28,9 +28,20 @@ function requireAtLeast() {
     fi
 }
 
-if [[ -z "${VERSION}" ]]; then
-    echo_error "You must specify VERSION environment variable"
+if [[ -z "${SDK_VERSION}" ]]; then
+    echo_error "You must specify SDK_VERSION environment variable"
     exit 1
+fi
+
+if [[ -z "${EMULATOR_ARCH}" ]]; then
+    echo_error "You must specify EMULATOR_ARCH environment variable"
+    exit 1
+fi
+
+readonly AVD_IMAGE_DIR=/opt/android-sdk/system-images/android-${SDK_VERSION}/google_apis/${EMULATOR_ARCH}
+if [ ! -d "$AVD_IMAGE_DIR" ]; then
+  echo "Error: avd image dir ${AVD_IMAGE_DIR} not found."
+  exit 1
 fi
 
 echo "Starting emulator..."
@@ -71,7 +82,7 @@ adb emu kill
 
 sleep 5
 
-SNAPSHOT_ENABLED="false" ./run_emulator.sh &
+SNAPSHOT_ENABLED="false"; ./run_emulator.sh &
 
 echo "Waiting for emulator booting..."
 sleep 30

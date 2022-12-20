@@ -44,5 +44,5 @@ emulator_arguments+=(-no-boot-anim -no-audio -partition-size 2048)
 adb start-server
 
 cd /opt/android-sdk/emulator
-echo "Run ${binary_name} binary for emulator ${emulator_name} with abi: x86 (Version: ${VERSION})"
+echo "Run ${binary_name} binary for emulator ${emulator_name} with abi: $EMULATOR_ARCH (Version: ${SDK_VERSION})"
 echo "no" | ./qemu/linux-x86_64/${binary_name} "${emulator_arguments[@]}"
