@@ -85,6 +85,11 @@ GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "
 GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
 GRADLE_ARGS+="-Pcom.avito.android.tools.buildCache.remote.url=$GRADLE_GITHUB_BUILD_CACHE_URL "
 
+GRADLE_ARGS+="-Pemcee.sample.artifactory.url=$ARTIFACTORY_URL "
+GRADLE_ARGS+="-Pemcee.sample.artifactory.repository=android-ci-no-backups "
+GRADLE_ARGS+="-Pemcee.sample.artifactory.user=$ARTIFACTORY_PUBLISH_USER "
+GRADLE_ARGS+="-Pemcee.sample.artifactory.password=$ARTIFACTORY_PUBLISH_PASSWORD "
+
 function runInBuilder() {
     COMMANDS=$@
 

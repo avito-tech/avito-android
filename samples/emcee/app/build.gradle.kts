@@ -9,6 +9,7 @@ plugins {
 
 android {
     compileSdk = 32
+    buildToolsVersion = "32.0.0"
 
     defaultConfig {
         applicationId = "com.avito.emcee"
@@ -40,7 +41,7 @@ androidComponents {
 }
 
 emcee {
-    queueBaseUrl.set("http://localhost:41000")
+    queueBaseUrl.set("http://emcee-queue-service.emcee:41000")
     testTimeout.set(Duration.ofMinutes(1))
     artifactory {
         // put properties to .gradle/gradle.properties because say contains sensitive data
