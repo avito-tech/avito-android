@@ -6,23 +6,22 @@ avito-disclaimer.md
 
 We publish releases to Maven Central on demand.
 
-## Publishing to an in-house Artifactory
+## How to make a new infra release
 
 1. Check if diff against the last release contains any changes for users.
    If not, then probably there are no reasons to make a release.
-1. Check the current status of [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/N8).  
-   If it is `Failed` you could release from previous `Succeed` commits or fix problems.
-1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2022.9`.  
+2. Check the current status of `integration check infra build against avito-android` [Github](http://links.k.avito.ru/N8) or [Stash](http://links.k.avito.ru/integration-check-with-stash)
+   1. If it is `Failed` you could release from previous `Succeed` commits or fix problems
+   2. If there are pending changes after last success build. You should run build on last changes or use last `success` commit for release.
+3. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2022.9`.  
    This branch must be persistent. It is used for automation.
-1. If the release branch is not on the commit from [githubIntegrationCheck tools against avito-android monorepo](http://links.k.avito.ru/N8), 
-   manually run it on the `release branch`.
-1. Manually run [Artifactory publish](http://links.k.avito.ru/In) on the `release branch`.
-   It will upload artifacts to an in-house Artifactory instance.
-1. Make a PR to an internal avito repository with the new version of infrastructure.
-1. Checkout a new branch and make a PR to the tools repository:
+4. Publish infra to internal Artifactory repo [Github](http://links.k.avito.ru/In) or [Stash](http://links.k.avito.ru/publish-infra-from-stash) on the `release branch`
+   1. Currently, we don't publish to external Artifactory. [Publish to Maven Central](#publishing-to-maven-central)
+5. Update `infraVersion` at an internal avito-android repository
+6. Update `infraVersion` at the infra repository:
     - Change `infraVersion` property in the `./gradle.properties` to the new version
     - Bump up a `projectVersion` property in the `./gradle.properties` to the next version
-1. Publish [to Maven Central](#publishing-to-maven-central) if needed.
+    - Open a pull request with those changes
 
 
 ## Publishing to Maven Central
