@@ -8,6 +8,7 @@ dependencies {
     implementation(projects.subprojects.common.diffUtil)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.android)
+    implementation(projects.subprojects.logger.gradleLogger)
 
     gradleTestImplementation(projects.subprojects.common.resources)
     gradleTestImplementation(projects.subprojects.gradle.testProject)

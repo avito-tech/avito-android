@@ -25,7 +25,6 @@ class CheckMergedConfigurationsIntegrationTest {
                 file(
                     name = APP_RULES_PATH,
                     content = """
-                        -printconfiguration "$MERGED_CONFIG_PATH"
                         # -keep class com.avito.security.** { *; }
                         """.trimIndent()
                 )
@@ -51,6 +50,8 @@ class CheckMergedConfigurationsIntegrationTest {
         val diffFile = projectDir.resolve("app/build/outputs/proguard_guard/release/diff.txt")
 
         build.assertThat().buildFailed()
+        build.assertThat().tasksShouldNotBeTriggered(":app:minifyReleaseWithR8")
+        build.assertThat().tasksShouldBeTriggered(":app:shadowedMinifyReleaseWithR8")
         assertThat(diffFile.readText()).isEqualTo(
             """
                --- -keep class com.avito.security.** { *; }
@@ -68,7 +69,6 @@ class CheckMergedConfigurationsIntegrationTest {
                 file(
                     name = APP_RULES_PATH,
                     content = """
-                        -printconfiguration "$MERGED_CONFIG_PATH"
                         -keep class com.avito.security.** { *; }
                         """.trimIndent()
                 )
@@ -93,16 +93,75 @@ class CheckMergedConfigurationsIntegrationTest {
         val diffFile = projectDir.resolve("app/build/outputs/proguard_guard/release/diff.txt")
 
         build.assertThat().buildSuccessful()
+        build.assertThat().tasksShouldNotBeTriggered(":app:minifyReleaseWithR8")
+        build.assertThat().tasksShouldBeTriggered(":app:shadowedMinifyReleaseWithR8")
+        assertThat(diffFile.exists()).isFalse()
+    }
+
+    @Test
+    fun `integration - no shadow task - original task called`() {
+        generateProject(
+            appConfigFilesCreator = {
+                file(
+                    name = APP_RULES_PATH,
+                    content = """
+                        -keep class com.avito.security.** { *; }
+                        """.trimIndent()
+                )
+                file(
+                    name = LOCKED_CONFIG_PATH,
+                    content = ResourcesReader.readText("locked-configuration.pro")
+                )
+            },
+            libConfigFilesCreator = {
+                file(
+                    name = LIB_RULES_PATH,
+                    content = """
+                        -keepclasseswithmembers class * {
+                            @com.avito.android.jsonrpc.annotations.* <methods>;
+                        }
+                        """.trimIndent()
+                )
+            },
+            appBuildGradleExtra = """
+                android {
+                    buildTypes {
+                        release {
+                            minifyEnabled true
+                            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+                            proguardFile '$APP_RULES_PATH'
+                        }
+                    }
+                }
+                proguardGuard {
+                    lockVariant("release") {
+                        shadowR8Task = false
+                        lockedConfigurationFile = file("$LOCKED_CONFIG_PATH")
+                    }
+                }
+                """.trimIndent()
+        )
+
+        val build = gradlew(projectDir, ":app:checkReleaseMergedProguard")
+        val diffFile = projectDir.resolve("app/build/outputs/proguard_guard/release/diff.txt")
+
+        build.assertThat().buildSuccessful()
+        build.assertThat().tasksShouldBeTriggered(":app:minifyReleaseWithR8")
+        build.assertThat().tasksShouldNotBeTriggered(":app:shadowedMinifyReleaseWithR8")
         assertThat(diffFile.exists()).isFalse()
     }
 
     private fun generateProject(
         appConfigFilesCreator: File.(AndroidAppModule) -> Unit,
         libConfigFilesCreator: File.() -> Unit,
+        appBuildGradleExtra: String? = null,
     ) {
         val libraryModule = "lib"
 
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -110,7 +169,7 @@ class CheckMergedConfigurationsIntegrationTest {
                     plugins = plugins {
                         id("com.avito.android.proguard-guard")
                     },
-                    buildGradleExtra = """
+                    buildGradleExtra = appBuildGradleExtra ?: """
                         android {
                             buildTypes {
                                 release {
@@ -121,7 +180,7 @@ class CheckMergedConfigurationsIntegrationTest {
                             }
                         }
                         proguardGuard {
-                            lockVariant("release", file("$MERGED_CONFIG_PATH")) {
+                            lockVariant("release") {
                                 lockedConfigurationFile = file("$LOCKED_CONFIG_PATH")
                             }
                         }
@@ -149,7 +208,6 @@ class CheckMergedConfigurationsIntegrationTest {
     }
 
     companion object {
-        const val MERGED_CONFIG_PATH = "merged-config.pro"
         const val LOCKED_CONFIG_PATH = "proguard-guard/release/guarded-configuration.pro"
         const val APP_RULES_PATH = "proguard-rules.pro"
         const val LIB_RULES_PATH = "lib-proguard-rules.pro"

@@ -15,7 +15,17 @@ public abstract class BuildVariantProguardGuardConfiguration(
 ) {
     public val failOnDifference: Property<Boolean> = objects.property<Boolean>().convention(true)
 
-    internal val mergedConfigurationFile: RegularFileProperty = objects.fileProperty()
+    /**
+     * Tasks of ProguardGuard will depend on fast custom R8 task without input classes to obfuscate.
+     * You could still have real R8 task alongside shadowed one.
+     */
+    public val shadowR8Task: Property<Boolean> = objects.property<Boolean>().convention(true)
+
+    /**
+     * File referenced by `-printconfiguration <filename>` in your
+     * proguard configuration (https://www.guardsquare.com/manual/configuration/usage).
+     */
+    public val mergedConfigurationFile: RegularFileProperty = objects.fileProperty()
 
     public val lockedConfigurationFile: RegularFileProperty = objects.fileProperty().convention(
         layout.projectDirectory.dir("proguard-guard").dir(name).file(

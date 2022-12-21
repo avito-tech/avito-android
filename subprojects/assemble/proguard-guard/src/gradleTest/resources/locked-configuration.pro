@@ -119,7 +119,6 @@
 
 # End of content from /private/var/folders/k8/dmdh3l614170yl4klcmvdd080000gn/T/junit2560000168188006963/app/build/intermediates/default_proguard_files/global/proguard-android-optimize.txt-7.2.1
 # The proguard configuration file for the following section is /private/var/folders/k8/dmdh3l614170yl4klcmvdd080000gn/T/junit2560000168188006963/app/proguard-rules.pro
--printconfiguration "merged-config.pro"
 -keep class com.avito.security.** { *; }
 # End of content from /private/var/folders/k8/dmdh3l614170yl4klcmvdd080000gn/T/junit2560000168188006963/app/proguard-rules.pro
 # The proguard configuration file for the following section is /private/var/folders/k8/dmdh3l614170yl4klcmvdd080000gn/T/junit2560000168188006963/app/build/intermediates/aapt_proguard_file/release/aapt_rules.txt

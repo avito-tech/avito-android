@@ -2,17 +2,16 @@ package com.avito.android.proguard_guard
 
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.ApplicationVariant
-import com.android.build.api.variant.Variant
+import com.avito.android.capitalizedName
 import com.avito.android.isAndroidApp
+import com.avito.android.proguard_guard.shadowr8.dependsOnMinificationTask
 import com.avito.android.proguard_guard.task.CheckMergedConfigurationTask
+import com.avito.android.proguard_guard.task.ProguardGuardTask
 import com.avito.android.proguard_guard.task.UpdateLockedConfigurationTask
 import com.avito.capitalize
-import com.avito.kotlin.dsl.namedOrNull
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.kotlin.dsl.create
-import java.lang.IllegalStateException
 
 public class ProguardGuardPlugin : Plugin<Project> {
 
@@ -21,6 +20,12 @@ public class ProguardGuardPlugin : Plugin<Project> {
             .gradleProperty(enabledProp)
             .map { it.toBoolean() }
             .getOrElse(true)
+
+    private val Project.debugR8: Boolean
+        get() = providers
+            .gradleProperty(debugR8Prop)
+            .map { it.toBoolean() }
+            .getOrElse(false)
 
     override fun apply(project: Project) {
         if (!project.pluginIsEnabled) {
@@ -61,17 +66,20 @@ public class ProguardGuardPlugin : Plugin<Project> {
         variant: ApplicationVariant,
         extension: BuildVariantProguardGuardConfiguration,
     ) {
-        project.tasks.register(
-            "check${variant.capitalizedName()}MergedProguard",
-            CheckMergedConfigurationTask::class.java,
-        ) { task ->
-            task.group = "Proguard guard"
-            task.description = "Compare ${variant.capitalizedName()} proguard config with locked config"
-            task.mergedConfigurationFile.set(extension.mergedConfigurationFile)
-            task.lockedConfigurationFile.set(extension.lockedConfigurationFile)
-            task.failOnDifference.set(extension.failOnDifference)
-            task.diffFile.set(extension.outputFile)
-            task.dependsOnMinification(project, variant)
+        val updateTaskPath = project.path + ":" + computeUpdateTaskName(variant.name)
+        registerProguardGuardTask<CheckMergedConfigurationTask>(
+            project = project,
+            name = computeCheckTaskName(variant.name),
+            variant = variant,
+            shadowR8Task = extension.shadowR8Task.get(),
+            taskConstructorArgs = arrayOf(updateTaskPath)
+        ) {
+            it.group = "Proguard guard"
+            it.description = "Compare ${variant.capitalizedName()} proguard config with locked config"
+            it.mergedConfigurationFile.set(extension.mergedConfigurationFile)
+            it.lockedConfigurationFile.set(extension.lockedConfigurationFile)
+            it.failOnDifference.set(extension.failOnDifference)
+            it.diffFile.set(extension.outputFile)
         }
     }
 
@@ -80,32 +88,47 @@ public class ProguardGuardPlugin : Plugin<Project> {
         variant: ApplicationVariant,
         extension: BuildVariantProguardGuardConfiguration,
     ) {
-        project.tasks.register(
-            "update${variant.capitalizedName()}LockedProguard",
-            UpdateLockedConfigurationTask::class.java,
+        registerProguardGuardTask<UpdateLockedConfigurationTask>(
+            project = project,
+            name = computeUpdateTaskName(variant.name),
+            variant = variant,
+            shadowR8Task = extension.shadowR8Task.get(),
         ) { task ->
             task.group = "Proguard guard"
             task.description = "Update locked proguard config with ${variant.capitalizedName()}"
             task.mergedConfigurationFile.set(extension.mergedConfigurationFile)
             task.lockedConfigurationFile.set(extension.lockedConfigurationFile)
-            task.dependsOnMinification(project, variant)
         }
     }
 
-    private fun Task.dependsOnMinification(
+    private inline fun <reified T : ProguardGuardTask> registerProguardGuardTask(
         project: Project,
+        name: String,
         variant: ApplicationVariant,
+        shadowR8Task: Boolean,
+        vararg taskConstructorArgs: Any,
+        crossinline configure: (T) -> Unit
     ) {
-        val minificationTaskName = "minify${variant.capitalizedName()}WithR8"
-        project.tasks.namedOrNull(minificationTaskName)
-            ?: throw IllegalStateException(
-                "Task $minificationTaskName was not found in project ${project.path}. " +
-                    "You probably forgot to set minifyEnabled to true."
-            )
-        dependsOn(minificationTaskName)
+        val task = project.tasks.register(name, T::class.java, *taskConstructorArgs)
+        task.configure {
+            configure(it)
+        }
+        task.dependsOnMinificationTask(
+            project = project,
+            variant = variant,
+            shadowR8Task = shadowR8Task,
+            debug = project.debugR8
+        )
     }
 
-    private fun Variant.capitalizedName(): String = name.capitalize()
+    public companion object {
+        public fun computeCheckTaskName(variantName: String): String =
+            "check${variantName.capitalize()}MergedProguard"
+
+        public fun computeUpdateTaskName(variantName: String): String =
+            "update${variantName.capitalize()}LockedProguard"
+    }
 }
 
 private const val enabledProp = "avito.proguard-guard.enabled"
+private const val debugR8Prop = "avito.proguard-guard.debugR8"

@@ -29,6 +29,9 @@ class UpdateLockedConfigurationTest {
             file(name = lockedConfigPath, content = lockedConfigContent)
         }
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -39,7 +42,8 @@ class UpdateLockedConfigurationTest {
                     buildGradleExtra = """
                         android.buildTypes.debug.minifyEnabled = true
                         proguardGuard {
-                            lockVariant("debug", file("$mergedConfigPath")) {
+                            lockVariant("debug") {
+                                mergedConfigurationFile = file("$mergedConfigPath")
                                 lockedConfigurationFile = file("$lockedConfigPath")
                             }
                         }

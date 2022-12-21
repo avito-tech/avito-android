@@ -3,26 +3,22 @@ package com.avito.android.proguard_guard.task
 import com.avito.android.diff_util.EditList
 import com.avito.android.proguard_guard.diff.ConfigurationDiffBuilder
 import com.avito.android.proguard_guard.diff.EditListFormatter
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.lang.IllegalStateException
+import javax.inject.Inject
 
 @CacheableTask
-public abstract class CheckMergedConfigurationTask : DefaultTask() {
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    public abstract val mergedConfigurationFile: RegularFileProperty
+public abstract class CheckMergedConfigurationTask @Inject constructor(
+    private val updateTaskPath: String
+) : ProguardGuardTask() {
 
     // Cannot use @InputFile because it could not exist (https://github.com/gradle/gradle/issues/2016)
     @get:InputFiles
@@ -82,7 +78,11 @@ public abstract class CheckMergedConfigurationTask : DefaultTask() {
 
             diffFile.writeText(diff)
 
-            val errorText = "Merged proguard configuration has changed. See diff at ${diffFile.path}:\n$diff"
+            val errorText = """
+                |Merged proguard configuration has changed. See diff at ${diffFile.path}:
+                |$diff
+                |Call './gradlew $updateTaskPath' to update locked configuration
+            """.trimMargin()
             if (failOnDifference.get()) {
                 throw IllegalStateException(errorText)
             } else {

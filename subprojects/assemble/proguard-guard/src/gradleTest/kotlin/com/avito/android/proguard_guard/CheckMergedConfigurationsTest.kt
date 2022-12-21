@@ -21,7 +21,9 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 $ENABLE_MINIFICATION
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH"))
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
+                    }
                 }
                 """.trimIndent(),
             configFilesCreator = {
@@ -42,7 +44,9 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 $ENABLE_MINIFICATION
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH"))
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
+                    }
                 }
                 """.trimIndent(),
             configFilesCreator = {
@@ -69,7 +73,9 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 $ENABLE_MINIFICATION
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH"))
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
+                    }
                 }
                 """.trimIndent(),
             configFilesCreator = {
@@ -94,6 +100,12 @@ class CheckMergedConfigurationsTest {
         val output = projectDir.resolve(DEFAULT_OUTPUT_PATH)
 
         build.assertThat().buildFailed()
+        build.assertThat().outputContains("""
+            --- -optimizationpasses 4
+            +++ -optimizationpasses 5
+
+            Call './gradlew :app:updateDebugLockedProguard' to update locked configuration
+        """.trimIndent())
         assertThat(output.exists()).isTrue()
         val diffContent = output.readText()
         assertThat(diffContent).contains("--- -optimizationpasses 4")
@@ -107,7 +119,8 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 proguardGuard {
                     $ENABLE_MINIFICATION
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH")) {
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
                         lockedConfigurationFile = file("$lockedPath")
                     }
                 }
@@ -137,7 +150,8 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 $ENABLE_MINIFICATION
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH")) {
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
                         outputFile = file("$outputPath")
                     }
                 }
@@ -167,7 +181,9 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 $ENABLE_MINIFICATION
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH"))
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
+                    }
                 }
                 """.trimIndent(),
             configFilesCreator = { }
@@ -185,7 +201,8 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 $ENABLE_MINIFICATION
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH")) {
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
                         failOnDifference = false
                     }
                 }
@@ -214,7 +231,9 @@ class CheckMergedConfigurationsTest {
             buildGradleExtra = """
                 $ENABLE_MINIFICATION
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH"))
+                    lockVariant("debug") {
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
+                    }
                 }
                 """.trimIndent(),
             configFilesCreator = {
@@ -234,11 +253,14 @@ class CheckMergedConfigurationsTest {
     }
 
     @Test
-    fun `minify is disabled - fail`() {
+    fun `shadow task is disabled - minify is disabled - fail`() {
         generateProject(
             buildGradleExtra = """
                 proguardGuard {
-                    lockVariant("debug", file("$TEST_MERGED_CONFIG_PATH"))
+                    lockVariant("debug") {
+                        shadowR8Task = false
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
+                    }
                 }
                 """.trimIndent(),
             configFilesCreator = {
@@ -251,7 +273,33 @@ class CheckMergedConfigurationsTest {
 
         build.assertThat().buildFailed()
         build.assertThat().outputContains(
-            "Task minifyDebugWithR8 was not found in project :app. " +
+            "Minification is disabled for variant debug. " +
+                "You probably forgot to set minifyEnabled to true."
+        )
+    }
+
+    @Test
+    fun `shadow task is enabled - minify is disabled - fail`() {
+        generateProject(
+            buildGradleExtra = """
+                proguardGuard {
+                    lockVariant("debug") {
+                        shadowR8Task = true
+                        mergedConfigurationFile = file("$TEST_MERGED_CONFIG_PATH")
+                    }
+                }
+                """.trimIndent(),
+            configFilesCreator = {
+                file(TEST_MERGED_CONFIG_PATH, TEST_CONFIG_CONTENT)
+                file(DEFAULT_LOCKED_CONFIG_PATH, TEST_CONFIG_CONTENT)
+            }
+        )
+
+        val build = gradlew(projectDir, "checkDebugMergedProguard", expectFailure = true)
+
+        build.assertThat().buildFailed()
+        build.assertThat().outputContains(
+            "Minification is disabled for variant debug. " +
                 "You probably forgot to set minifyEnabled to true."
         )
     }
@@ -261,6 +309,9 @@ class CheckMergedConfigurationsTest {
         configFilesCreator: File.(AndroidAppModule) -> Unit
     ) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = MODULE_NAME,
