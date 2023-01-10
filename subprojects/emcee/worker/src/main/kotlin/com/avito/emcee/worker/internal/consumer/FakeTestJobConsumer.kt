@@ -63,8 +63,8 @@ internal class FakeTestJobConsumer(
                     testEntry = it,
                     testRunResults = listOf(
                         BucketResult.UnfilteredResult.TestRunResult(
-                            udid = UUID.randomUUID().toString(),
-                            durationSec = 5,
+                            uuid = UUID.randomUUID().toString(),
+                            duration = 5.seconds,
                             exceptions = emptyList(),
                             hostName = "",
                             logs = emptyList(),

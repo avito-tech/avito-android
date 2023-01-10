@@ -38,10 +38,10 @@ internal class WorkerDI(
     private val bucketsStorage: ProcessingBucketsStorage = SingleElementProcessingBucketsStorage()
 
     private val okHttpClient = OkHttpClient.Builder().apply {
-        val logger = Logger.getLogger("HTTP")
+        val logger = Logger.getLogger(HttpLoggingInterceptor::class.simpleName)
         addInterceptor(HttpLoggingInterceptor { message ->
-            logger.finest(message)
-        }.apply { level = HttpLoggingInterceptor.Level.BASIC })
+            logger.finer(message)
+        }.apply { level = HttpLoggingInterceptor.Level.BODY })
     }.build()
 
     private val api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl)

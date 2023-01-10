@@ -1,6 +1,8 @@
 package com.avito.emcee.worker
 
+import com.avito.emcee.moshi.DurationAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.addAdapter
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -21,12 +23,13 @@ public interface WorkerQueueApi {
 
     public companion object {
 
+        @OptIn(ExperimentalStdlibApi::class)
         public fun Retrofit.Builder.createWorkerQueueApi(client: OkHttpClient, baseUrl: String): WorkerQueueApi {
-            return addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder().build()
-                ).failOnUnknown()
-            )
+            val moshi = Moshi.Builder()
+                .addAdapter(DurationAdapter())
+                .build()
+
+            return addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .baseUrl(baseUrl)
                 .build()

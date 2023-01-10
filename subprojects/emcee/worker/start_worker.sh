@@ -11,4 +11,11 @@ echo "Building worker..."
 ./gradlew :subprojects:emcee:worker:build -x test --quiet >/dev/null
 
 echo "Starting worker..."
-java -jar ./subprojects/emcee/worker/build/libs/emcee-worker.jar start -c ./subprojects/emcee/worker/config.json -ll info
+
+if [[ "$#" -eq 1 ]]; then
+    LOG_LEVEL=$1
+else
+    LOG_LEVEL=info
+fi
+
+java -jar ./subprojects/emcee/worker/build/libs/emcee-worker.jar start -c ./subprojects/emcee/worker/config.json -ll $LOG_LEVEL

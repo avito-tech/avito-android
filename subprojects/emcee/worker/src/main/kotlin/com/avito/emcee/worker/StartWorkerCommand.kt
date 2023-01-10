@@ -30,7 +30,7 @@ internal class StartWorkerCommand(
     description: String,
 ) : Subcommand(name, description) {
 
-    private val logger = Logger.getLogger("StartWorkerCommand")
+    private val logger = Logger.getLogger(StartWorkerCommand::class.simpleName)
 
     private val configPath: String by option(
         type = ArgType.String,

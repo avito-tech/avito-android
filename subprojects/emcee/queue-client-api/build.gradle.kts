@@ -10,6 +10,7 @@ dependencies {
 
     implementation(libs.moshi)
     implementation(libs.moshiRetrofit)
+    implementation(projects.subprojects.emcee.moshiAdapters)
 
     ksp(libs.moshiCodegen)
 }

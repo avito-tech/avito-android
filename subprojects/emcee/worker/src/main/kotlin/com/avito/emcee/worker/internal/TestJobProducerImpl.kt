@@ -8,7 +8,6 @@ import com.avito.emcee.worker.internal.networking.SocketAddress
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -46,7 +45,7 @@ internal class TestJobProducerImpl(
                         bucket = response.bucket
                     )
                 )
-                is GetBucketResponse.NoBucket -> delay(response.checkAfter.seconds)
+                is GetBucketResponse.NoBucket -> delay(response.checkAfter)
             }
         }
     }

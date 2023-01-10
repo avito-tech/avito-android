@@ -1,17 +1,22 @@
 package com.avito.emcee.worker
 
+import com.avito.emcee.moshi.DurationAdapter
 import com.avito.emcee.worker.model.dequeued
 import com.avito.emcee.worker.model.noBucket
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
+import com.squareup.moshi.addAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class GetBucketResponseDeserializationTest {
 
-    private val moshi = Moshi.Builder().build()
+    @OptIn(ExperimentalStdlibApi::class)
+    private val moshi = Moshi.Builder()
+        .addAdapter(DurationAdapter())
+        .build()
 
     @OptIn(ExperimentalStdlibApi::class)
     private val adapter: JsonAdapter<GetBucketResponse> = moshi.adapter()

@@ -11,12 +11,12 @@ import com.avito.emcee.queue.TestEntry
 import com.avito.emcee.queue.TestExecutionBehavior
 import com.avito.emcee.queue.TestName
 import com.avito.emcee.worker.GetBucketResponse
+import kotlin.time.Duration.Companion.seconds
 
 internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued = GetBucketResponse.Dequeued(
     caseId = "bucketDequeued",
     bucket = Bucket(
         bucketId = "1F10555C-0D48-436F-B0A6-4D0ABF813493",
-        derivedFrom = null,
         payloadContainer = PayloadContainer(
             payload = Payload(
                 testEntries = listOf(
@@ -55,15 +55,12 @@ internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued 
                         environment = mapOf("SOME" to "env values"),
                         retries = 5
                     ),
-                    testMaximumDurationSec = 30
+                    testMaximumDuration = 30.seconds
                 )
             ),
-            payloadType = "runAndroidTests"
         ),
-        analyticsConfiguration = emptyMap<String, String>(),
-        workerCapabilityRequirements = emptyList()
     )
 )
 
 internal fun GetBucketResponse.Companion.noBucket() =
-    GetBucketResponse.NoBucket(caseId = "checkAgainLater", checkAfter = 30)
+    GetBucketResponse.NoBucket(caseId = "checkAgainLater", checkAfter = 30.seconds)

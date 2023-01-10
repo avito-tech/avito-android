@@ -73,7 +73,7 @@ internal class RealTestJobConsumer(
                     testPackage = testPackage,
                     instrumentationRunnerClass = instrumentationRunnerClass,
                     testExecutionBehavior = testConfiguration.testExecutionBehavior,
-                    testMaximumDuration = testConfiguration.testMaximumDurationSec.seconds
+                    testMaximumDuration = testConfiguration.testMaximumDuration
                 )
             )
         }
@@ -119,8 +119,8 @@ internal class RealTestJobConsumer(
                     testEntry = entry,
                     testRunResults = listOf(
                         BucketResult.UnfilteredResult.TestRunResult(
-                            udid = UUID.randomUUID().toString(),
-                            durationSec = 5,
+                            uuid = UUID.randomUUID().toString(),
+                            duration = 5.seconds, // TODO: calculate real execution time
                             exceptions = emptyList(),
                             hostName = "",
                             logs = emptyList(),

@@ -22,7 +22,7 @@ internal class HttpServer(
 
     private var server: NettyApplicationEngine? = null
 
-    private val logger = Logger.getLogger("HttpServer")
+    private val logger = Logger.getLogger(HttpServer::class.simpleName)
 
     fun start() {
         logger.info("Starting REST server at $port port")

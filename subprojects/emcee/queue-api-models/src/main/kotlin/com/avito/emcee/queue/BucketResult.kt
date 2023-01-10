@@ -2,6 +2,7 @@ package com.avito.emcee.queue
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlin.time.Duration
 
 @JsonClass(generateAdapter = true)
 public data class BucketResult(
@@ -16,9 +17,9 @@ public data class BucketResult(
     ) {
         @JsonClass(generateAdapter = true)
         public data class TestRunResult(
-            val udid: String,
-            @Json(name = "duration")
-            val durationSec: Int,
+            @Json(name = "udid")
+            val uuid: String,
+            val duration: Duration,
             val exceptions: List<Exception>,
             val hostName: String,
             val logs: List<Log>,

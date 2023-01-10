@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshiSealedRuntime)
     implementation(libs.moshiRetrofit)
+    implementation(projects.subprojects.emcee.moshiAdapters)
 
     ksp(libs.moshiCodegen)
     ksp(libs.moshiSealedCodegen)

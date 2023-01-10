@@ -7,11 +7,12 @@ import com.avito.emcee.queue.RemoteApk
 import com.avito.emcee.queue.TestConfiguration
 import com.avito.emcee.queue.TestExecutionBehavior
 import okhttp3.HttpUrl
+import kotlin.time.Duration
 
 internal class TestConfigurationFactory(
     private val apkUrl: HttpUrl,
     private val testApkUrl: HttpUrl,
-    private val testMaximumDurationSec: Long,
+    private val testMaximumDuration: Duration,
     private val testExecutionBehavior: TestExecutionBehavior,
     private val appPackage: String,
     private val testAppPackage: String,
@@ -26,7 +27,7 @@ internal class TestConfigurationFactory(
             ),
             deviceType = device.type,
             sdkVersion = device.sdkVersion,
-            testMaximumDurationSec = testMaximumDurationSec,
+            testMaximumDuration = testMaximumDuration,
             testExecutionBehavior = testExecutionBehavior
         )
 }

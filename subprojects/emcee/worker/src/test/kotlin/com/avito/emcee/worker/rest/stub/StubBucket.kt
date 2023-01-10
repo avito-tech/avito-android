@@ -8,10 +8,10 @@ import com.avito.emcee.queue.PayloadContainer
 import com.avito.emcee.queue.RemoteApk
 import com.avito.emcee.queue.TestConfiguration
 import com.avito.emcee.queue.TestExecutionBehavior
+import kotlin.time.Duration.Companion.seconds
 
 fun Bucket.Companion.stub(bucketId: String) = Bucket(
     bucketId = bucketId,
-    derivedFrom = null,
     payloadContainer = PayloadContainer(
         payload = Payload(
             testEntries = emptyList(),
@@ -33,11 +33,8 @@ fun Bucket.Companion.stub(bucketId: String) = Bucket(
                     environment = emptyMap(),
                     retries = 3
                 ),
-                testMaximumDurationSec = 300
+                testMaximumDuration = 30.seconds
             ),
         ),
-        payloadType = "stub"
     ),
-    analyticsConfiguration = Any(),
-    workerCapabilityRequirements = emptyList()
 )

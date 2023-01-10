@@ -15,6 +15,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 internal class EmceeTestClientImpl(
@@ -82,7 +83,7 @@ internal class EmceeTestClientImpl(
             TestConfigurationFactory(
                 apkUrl = apkUrl.await(),
                 testApkUrl = testApkUrl.await(),
-                testMaximumDurationSec = config.testMaximumDurationSec,
+                testMaximumDuration = config.testMaximumDurationSec.seconds,
                 testExecutionBehavior = config.testExecutionBehavior,
                 appPackage = config.appPackage,
                 testAppPackage = config.testAppPackage,

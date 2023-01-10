@@ -3,13 +3,14 @@ package com.avito.emcee.worker
 import com.avito.emcee.queue.Bucket
 import com.squareup.moshi.JsonClass
 import dev.zacsweers.moshix.sealed.annotations.TypeLabel
+import kotlin.time.Duration
 
 @JsonClass(generateAdapter = true, generator = "sealed:caseId")
 public sealed class GetBucketResponse {
 
     @JsonClass(generateAdapter = true)
     @TypeLabel("checkAgainLater")
-    public data class NoBucket(val caseId: String, val checkAfter: Int) : GetBucketResponse()
+    public data class NoBucket(val caseId: String, val checkAfter: Duration) : GetBucketResponse()
 
     @JsonClass(generateAdapter = true)
     @TypeLabel("bucketDequeued")
