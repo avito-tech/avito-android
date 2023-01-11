@@ -3,7 +3,6 @@ package com.avito.emcee
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.gradle.AppPlugin
 import com.avito.emcee.internal.EmceeTestTaskConfigurator
-import com.avito.emcee.internal.capitalize
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -18,7 +17,7 @@ public class EmceePlugin : Plugin<Project> {
 
             androidComponents.onVariants { variant ->
 
-                val variantSlug = variant.name.capitalize()
+                val variantSlug = variant.name.uppercase()
 
                 project.tasks.register(
                     "emceeTest$variantSlug",

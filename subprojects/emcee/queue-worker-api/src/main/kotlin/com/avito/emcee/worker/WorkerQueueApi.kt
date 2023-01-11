@@ -1,6 +1,8 @@
 package com.avito.emcee.worker
 
+import com.avito.android.Result
 import com.avito.emcee.moshi.DurationAdapter
+import com.avito.retrofit.adapter.ResultCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
 import okhttp3.OkHttpClient
@@ -13,10 +15,10 @@ import retrofit2.http.POST
 public interface WorkerQueueApi {
 
     @POST("registerWorker")
-    public suspend fun registerWorker(@Body body: RegisterWorkerBody): RegisterWorkerResponse
+    public suspend fun registerWorker(@Body body: RegisterWorkerBody): Result<RegisterWorkerResponse>
 
     @POST("getBucket")
-    public suspend fun getBucket(@Body body: GetBucketBody): GetBucketResponse
+    public suspend fun getBucket(@Body body: GetBucketBody): Result<GetBucketResponse>
 
     @POST("bucketResult")
     public suspend fun sendBucketResult(@Body body: SendBucketResultBody)
@@ -29,7 +31,8 @@ public interface WorkerQueueApi {
                 .addAdapter(DurationAdapter())
                 .build()
 
-            return addConverterFactory(MoshiConverterFactory.create(moshi))
+            return addCallAdapterFactory(ResultCallAdapterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .baseUrl(baseUrl)
                 .build()

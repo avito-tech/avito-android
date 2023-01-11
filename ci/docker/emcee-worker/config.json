@@ -1,8 +1,41 @@
 {
     "workerPort": 8080,
-    "queueUrl": "http://emcee-queue-service:41000",
+    "queue": {
+        "url": "http://emcee-queue-service:41000",
+        "retriesCount": 10,
+        "retryDelayMs": 3000
+    },
     "androidSdkPath": "/opt/android-sdk",
-    "avd": [
-        { "sdk": 22, "type": "default", "emulatorFileName": "emulator_22", "sdCardFileName": "/sdcard.img" }
+    "configurations": [
+        {
+            "sdk": 22,
+            "type": "default",
+            "emulatorFileName": "emulator_22",
+            "sdCardFileName": "/sdcard.img"
+        },
+        {
+            "sdk": 24,
+            "type": "default",
+            "emulatorFileName": "emulator_24",
+            "sdCardFileName": "/sdcard.img"
+        },
+        {
+            "sdk": 29,
+            "type": "default",
+            "emulatorFileName": "emulator_29",
+            "sdCardFileName": "/sdcard.img"
+        },
+        {
+            "sdk": 30,
+            "type": "default",
+            "emulatorFileName": "emulator_30",
+            "sdCardFileName": "/sdcard.img"
+        },
+        {
+            "sdk": 31,
+            "type": "default",
+            "emulatorFileName": "emulator_31",
+            "sdCardFileName": "/sdcard.img"
+        }
     ]
 }

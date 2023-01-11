@@ -1,9 +1,23 @@
 {
     "workerPort": 8080,
-    "queueUrl": "http://127.0.0.1:41000",
+    "queue": {
+        "url": "http://127.0.0.1:41000",
+        "retriesCount": 10,
+        "retryDelayMs": 3000
+    },
     "androidSdkPath": "/Users/Shared/Android/sdk",
-    "avd": [
-        { "sdk": 22, "type": "default", "emulatorFileName": "Avd22", "sdCardFileName": "sdcard" },
-        { "sdk": 31, "type": "default", "emulatorFileName": "Avd31", "sdCardFileName": "sdcard" }
+    "configurations": [
+        {
+            "sdk": 22,
+            "type": "default",
+            "emulatorFileName": "Avd22",
+            "sdCardFileName": "sdcard"
+        },
+        {
+            "sdk": 31,
+            "type": "default",
+            "emulatorFileName": "Avd31",
+            "sdCardFileName": "sdcard"
+        }
     ]
 }

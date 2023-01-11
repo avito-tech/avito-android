@@ -1,5 +1,7 @@
 package com.avito.emcee.worker
 
+import com.avito.android.Problem
+import com.avito.android.asRuntimeException
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.nio.file.Path
@@ -12,9 +14,9 @@ public data class Config(
      */
     val workerPort: Int,
     /**
-     * Url where worker will ask for test buckets
+     * Queue configuration
      */
-    val queueUrl: String,
+    val queue: QueueConfig,
     /**
      * ANDROID_HOME directory
      */
@@ -24,21 +26,34 @@ public data class Config(
     /**
      * Emulator data by `sdk`, `type`
      */
-    val avd: Set<Avd>,
+    val configurations: Set<AvdConfiguration>,
 ) {
     @JsonClass(generateAdapter = true)
-    public data class Avd(
+    public data class AvdConfiguration(
         val sdk: Int,
         val type: String,
         val emulatorFileName: String,
         val sdCardFileName: String
     )
 
+    @JsonClass(generateAdapter = true)
+    public data class QueueConfig(
+        val url: String,
+        val retriesCount: Int,
+        val retryDelayMs: Long,
+    )
+
     val androidSdkPath: Path
         get() {
             val androidSdkHomePath = Path.of(androidSdkPathString)
-            require(androidSdkHomePath.exists()) {
-                "Incorrect config. $androidSdkPathString doesn't exist"
+            if (!androidSdkHomePath.exists()) {
+                throw Problem(
+                    shortDescription = "Provided Android SDK path does not exist",
+                    context = "Parsing worker configuration",
+                    possibleSolutions = listOf("""
+                        Ensure that Android SDK is available at the path, specified in the worker configuration file.
+                    """.trimIndent())
+                ).asRuntimeException()
             }
             return androidSdkHomePath
         }

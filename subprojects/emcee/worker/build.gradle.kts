@@ -8,6 +8,9 @@ plugins {
 dependencies {
     implementation(projects.subprojects.emcee.queueWorkerApi)
     implementation(projects.subprojects.emcee.androidDevice)
+    implementation(projects.subprojects.common.okhttp)
+    implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.common.problem)
     implementation(libs.kotlinXCli)
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)

@@ -20,6 +20,7 @@ import com.avito.emcee.worker.internal.rest.handler.HealthCheckRequestHandler
 import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
 import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
 import com.avito.emcee.worker.internal.storage.SingleElementProcessingBucketsStorage
+import com.avito.http.RetryInterceptor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,16 +37,31 @@ internal class WorkerDI(
     private val workerIdProvider: WorkerIdProvider = HostnameWorkerIdProvider()
     private val socketAddressResolver = SocketAddressResolver()
     private val bucketsStorage: ProcessingBucketsStorage = SingleElementProcessingBucketsStorage()
+    private val httpLogger = Logger.getLogger("HTTP")
 
-    private val okHttpClient = OkHttpClient.Builder().apply {
-        val logger = Logger.getLogger(HttpLoggingInterceptor::class.simpleName)
+    private val okHttpClientBuilder = OkHttpClient.Builder().apply {
         addInterceptor(HttpLoggingInterceptor { message ->
-            logger.finer(message)
+            httpLogger.finer(message)
         }.apply { level = HttpLoggingInterceptor.Level.BODY })
-    }.build()
+    }
 
-    private val api = Retrofit.Builder().createWorkerQueueApi(okHttpClient, config.queueUrl)
-    private val fileDownloaderApi = Retrofit.Builder().createFileDownloaderApi(okHttpClient, "https://stub")
+    private val api = Retrofit.Builder().createWorkerQueueApi(
+        client = okHttpClientBuilder
+            .addInterceptor(
+                RetryInterceptor(
+                    retries = config.queue.retriesCount,
+                    delayMs = config.queue.retryDelayMs,
+                    allowedMethods = listOf("POST"),
+                )
+            )
+            .build(),
+        baseUrl = config.queue.url
+    )
+
+    private val fileDownloaderApi = Retrofit.Builder().createFileDownloaderApi(
+        client = okHttpClientBuilder.build(),
+        baseUrl = "https://stub.uses-direct-links"
+    )
 
     fun producer(): TestJobProducer {
         return TestJobProducerImpl(
@@ -56,7 +72,7 @@ internal class WorkerDI(
     }
 
     fun consumer(): TestJobConsumer {
-        val configurations = config.avd.associateBy(
+        val configurations = config.configurations.associateBy(
             keySelector = { avd -> AvdConfigurationProvider.ConfigurationKey(avd.sdk, avd.type) },
             valueTransform = { avd -> AvdConfig(avd.emulatorFileName, avd.sdCardFileName) }
         )

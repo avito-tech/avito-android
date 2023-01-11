@@ -51,7 +51,7 @@ internal class StartWorkerCommand(
 
         val reader = ConfigReader(Moshi.Builder().build())
         val config: Config = reader.read(File(configPath))
-        logger.info("Apply the config: $config")
+        logger.info("Applied configuration: $config")
         val di = WorkerDI(config)
         val httpServer = di.httpServer()
         val producer = di.producer()

@@ -18,4 +18,5 @@ else
     LOG_LEVEL=info
 fi
 
-java -jar ./subprojects/emcee/worker/build/libs/emcee-worker.jar start -c ./subprojects/emcee/worker/config.json -ll $LOG_LEVEL
+# --add-opens solves the Retrofit and Java 11 issue. See https://github.com/square/retrofit/issues/3341
+java --add-opens=java.base/java.lang.invoke=ALL-UNNAMED -jar ./subprojects/emcee/worker/build/libs/emcee-worker.jar start -c ./subprojects/emcee/worker/config.json -ll $LOG_LEVEL

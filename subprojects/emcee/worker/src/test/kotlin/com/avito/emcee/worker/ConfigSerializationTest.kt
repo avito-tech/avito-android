@@ -7,7 +7,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileReader
 
-@Suppress("MaxLineLength")
 internal class ConfigSerializationTest {
     private val moshi = Moshi.Builder().build()
     private val adapter = moshi.adapter(Config::class.java)
@@ -19,10 +18,25 @@ internal class ConfigSerializationTest {
             """
                 {
                     "workerPort": 80,
-                    "queueUrl": "http://127.0.0.1:41000",
+                    "queue": {
+                        "url": "http://127.0.0.1:41000",
+                        "retriesCount": 3,
+                        "retryDelayMs": 10000
+                    },
                     "androidSdkPath": "/Users/Shared/Android/sdk",
-                    "avd": [
-                        { "sdk": 21, "type": "default", "emulatorFileName": "stub-emulator-name", "sdCardFileName": "stub-sd-card-name" }
+                    "configurations": [
+                        { 
+                            "sdk": 22, 
+                            "type": "default", 
+                            "emulatorFileName": "stub-emulator-name", 
+                            "sdCardFileName": "stub-sd-card-name" 
+                        },
+                        { 
+                            "sdk": 31, 
+                            "type": "default", 
+                            "emulatorFileName": "stub-emulator-name", 
+                            "sdCardFileName": "stub-sd-card-name" 
+                        }
                     ]
                 }
             """.trimIndent()
@@ -33,11 +47,24 @@ internal class ConfigSerializationTest {
             .isEqualTo(
                 Config(
                     workerPort = 80,
-                    queueUrl = "http://127.0.0.1:41000",
+                    queue = Config.QueueConfig(
+                        url = "http://127.0.0.1:41000",
+                        retriesCount = 3,
+                        retryDelayMs = 10_000
+                    ),
                     androidSdkPathString = "/Users/Shared/Android/sdk",
-                    avd = setOf(
-                        Config.Avd(
-                            21, "default", "stub-emulator-name", "stub-sd-card-name"
+                    configurations = setOf(
+                        Config.AvdConfiguration(
+                            sdk = 22,
+                            type = "default",
+                            emulatorFileName = "stub-emulator-name",
+                            sdCardFileName = "stub-sd-card-name"
+                        ),
+                        Config.AvdConfiguration(
+                            sdk = 31,
+                            type = "default",
+                            emulatorFileName = "stub-emulator-name",
+                            sdCardFileName = "stub-sd-card-name"
                         )
                     )
                 )
