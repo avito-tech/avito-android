@@ -63,12 +63,7 @@ COPY ci/docker/android-emulator/hardware ./hardware
 COPY ci/docker/android-emulator/unzip_from_url.sh ci/docker/android-emulator/prepare_snapshot.sh ci/docker/android-emulator/run_emulator.sh  ci/docker/emcee-worker/setup_environment.sh ci/docker/emcee-worker/entrypoint.sh ./
 RUN ./setup_environment.sh $ANDROID_SDK_BASE_URL $ANDROID_HOME "${SDK_VERSIONS}"
 
-# https://developer.android.com/studio/command-line/adb#howadbworks
-# 5037 - ADB server port
-# 5554 - Console port
-# 5555 - ADB
-# 5900 - VNC
 # 80   - Worker HTTP server
-EXPOSE 80 5037 5554 5555 5900
+EXPOSE 80
 
 CMD ["./entrypoint.sh"]
