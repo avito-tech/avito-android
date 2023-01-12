@@ -16,7 +16,8 @@ internal class EmulatorPreparer(
         val containerId = runContainer(imageId)
 
         for (api in apis) {
-            prepareEmulator(containerId, api)
+            val architecture = if (api < 28) "x86" else "x86_64"
+            prepareEmulator(containerId, api, architecture)
         }
 
         val preparedImageId = commitChanges(containerId)
@@ -45,8 +46,13 @@ internal class EmulatorPreparer(
         return ContainerId(containerId)
     }
 
-    private fun prepareEmulator(containerId: ContainerId, api: Int) {
-        val result = docker.exec(containerId.value, "bash", "-c", "VERSION=$api ./prepare_snapshot.sh")
+    private fun prepareEmulator(containerId: ContainerId, api: Int, architecture: String) {
+        val result = docker.exec(
+            containerId.value,
+            "bash",
+            "-c",
+            "./prepare_snapshot.sh $api $architecture",
+        )
         check(result.isSuccess) {
             "Failed to exec preparation script: ${result.exceptionOrNull()}"
         }

@@ -28,15 +28,28 @@ function requireAtLeast() {
     fi
 }
 
-if [[ -z "${SDK_VERSION}" ]]; then
-    echo_error "You must specify SDK_VERSION environment variable"
+if [[ "$#" -ne 2 ]]; then
+    echo "ERROR: Wrong number of arguments $#. Expected ones:
+    SDK version, emulator architecture.
+
+    For example:
+    ./prepare_snapshot.sh 24 x86
+    "
     exit 1
 fi
 
-if [[ -z "${EMULATOR_ARCH}" ]]; then
-    echo_error "You must specify EMULATOR_ARCH environment variable"
+if ! [[ $1 =~ ^[0-9]+$ ]]; then
+    echo_error "ERROR: Incorrect SDK version passed. An integer value expected, see https://developer.android.com/studio/releases/platforms"
     exit 1
 fi
+
+if ! [[ $2 =~ ^x86(_64)?$ ]]; then
+    echo_error "ERROR: Incorrect emulator architecture passed. x86 and x86_64 are supported."
+    exit 1
+fi
+
+readonly SDK_VERSION=$1
+readonly EMULATOR_ARCH=$2
 
 readonly AVD_IMAGE_DIR=/opt/android-sdk/system-images/android-${SDK_VERSION}/google_apis/${EMULATOR_ARCH}
 if [ ! -d "$AVD_IMAGE_DIR" ]; then
@@ -45,7 +58,7 @@ if [ ! -d "$AVD_IMAGE_DIR" ]; then
 fi
 
 echo "Starting emulator..."
-SNAPSHOT_ENABLED="false" ./run_emulator.sh &
+SNAPSHOT_ENABLED="false" ./run_emulator.sh "$SDK_VERSION" "$EMULATOR_ARCH" &
 
 echo "Waiting for emulator booting..."
 sleep 60
@@ -82,7 +95,7 @@ adb emu kill
 
 sleep 5
 
-SNAPSHOT_ENABLED="false"; ./run_emulator.sh &
+SNAPSHOT_ENABLED="false"; ./run_emulator.sh "$SDK_VERSION" "$EMULATOR_ARCH" &
 
 echo "Waiting for emulator booting..."
 sleep 30

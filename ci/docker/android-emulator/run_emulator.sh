@@ -4,12 +4,30 @@
 
 set -ex
 
-if [[ -z "${VERSION}" ]]; then
-    echo_error "You must specify VERSION environment variable"
+if [[ "$#" -ne 2 ]]; then
+    echo "ERROR: Wrong number of arguments $#. Expected ones:
+    SDK version, emulator architecture.
+
+    For example:
+    ./run_emulator.sh 24 x86
+    "
     exit 1
 fi
 
-emulator_name="emulator_${VERSION}"
+if ! [[ $1 =~ ^[0-9]+$ ]]; then
+    echo_error "ERROR: Incorrect SDK version passed. An integer value expected, see https://developer.android.com/studio/releases/platforms"
+    exit 1
+fi
+
+if ! [[ $2 =~ ^x86(_64)?$ ]]; then
+    echo_error "ERROR: Incorrect emulator architecture passed. x86 and x86_64 are supported."
+    exit 1
+fi
+
+readonly SDK_VERSION=$1
+readonly EMULATOR_ARCH=$2
+
+emulator_name="emulator_${SDK_VERSION}"
 sd_card_name="/sdcard.img"
 
 emulator_arguments=(-avd ${emulator_name} -sdcard ${sd_card_name} -verbose)
