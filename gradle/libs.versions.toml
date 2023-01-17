@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.6.21"
+kotlin = "1.7.10"
 agp = "7.2.1"
 # formula: 23 + agp version
 androidTools = "30.1.2"
@@ -26,7 +26,7 @@ jacksonDataformat = "2.13.0"
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.6.21-1.0.6"
+ksp = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.7.10-1.0.6"
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 

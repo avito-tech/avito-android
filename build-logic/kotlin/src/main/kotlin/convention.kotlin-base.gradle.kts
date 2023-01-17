@@ -4,7 +4,7 @@ plugins {
     id("convention.unit-testing")
 }
 
-val kotlinLanguageVersion = "1.6"
+val kotlinLanguageVersion = "1.7"
 
 /**
  * Exists because `compile` task ambiguous in projects with jvm and android modules combined
