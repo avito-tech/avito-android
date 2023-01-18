@@ -30,9 +30,11 @@ internal class AlertinoClient(
         RetryInterceptor(
             retries = 3, allowedMethods = listOf("POST")
         )
-    ).addInterceptor(HttpLoggingInterceptor { message ->
-        logger.info(message)
-    }).build()
+    ).addInterceptor(
+        HttpLoggingInterceptor { message ->
+            logger.info(message)
+        }.apply { setLevel(HttpLoggingInterceptor.Level.BODY) }
+    ).build()
 
     private val retrofit =
         Retrofit.Builder()

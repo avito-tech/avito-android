@@ -12,6 +12,7 @@ internal object MinimalTestSummaryProject {
         return TestProjectGenerator(
             plugins = plugins {
                 id(testSummaryPluginId)
+                id("com.avito.android.gradle-logger")
             },
             imports = listOf(
                 "import com.avito.report.model.Team",

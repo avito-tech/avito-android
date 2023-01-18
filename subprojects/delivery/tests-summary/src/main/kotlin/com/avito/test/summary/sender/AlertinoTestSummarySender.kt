@@ -142,7 +142,9 @@ internal class AlertinoTestSummarySender(
                     template = alertinoTemplate,
                     recipient = globalSummaryChannel,
                     values = mapOf("text" to it)
-                )
+                ).onFailure { error ->
+                    logger.warn("Cannot send message for test summary: ${error.message}")
+                }
             }.onFailure {
                 logger.warn("Cannot compose message for test summary (channel: $globalSummaryChannel)")
             }
