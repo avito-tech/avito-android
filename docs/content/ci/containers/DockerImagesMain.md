@@ -16,7 +16,7 @@ We have:
 
 ## Internal clean up policy
 
-[Internal image hub clean up policy](ImagesCleanUp.md)
+[Internal image hub clean up policy](ImagesCleanUpPolicy.md)
 
 ## Best practices
 
