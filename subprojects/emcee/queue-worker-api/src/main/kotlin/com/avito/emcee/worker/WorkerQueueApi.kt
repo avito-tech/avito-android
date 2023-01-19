@@ -17,6 +17,9 @@ public interface WorkerQueueApi {
     @POST("registerWorker")
     public suspend fun registerWorker(@Body body: RegisterWorkerBody): Result<RegisterWorkerResponse>
 
+    @POST("updateWorkerDetails")
+    public suspend fun updateWorkerDetails(@Body body: UpdateWorkerDetailsBody)
+
     @POST("getBucket")
     public suspend fun getBucket(@Body body: GetBucketBody): Result<GetBucketResponse>
 

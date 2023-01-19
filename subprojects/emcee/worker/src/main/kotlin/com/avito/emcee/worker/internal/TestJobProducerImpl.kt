@@ -4,9 +4,8 @@ import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.emcee.worker.GetBucketBody
 import com.avito.emcee.worker.GetBucketResponse
-import com.avito.emcee.worker.RegisterWorkerBody
 import com.avito.emcee.worker.WorkerQueueApi
-import com.avito.emcee.worker.internal.networking.SocketAddress
+import com.avito.emcee.worker.configuration.PayloadSignature
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -18,41 +17,30 @@ import kotlin.time.ExperimentalTime
 internal class TestJobProducerImpl(
     private val api: WorkerQueueApi,
     private val workerId: String,
-    private val workerAddress: SocketAddress
+    private val payloadSignature: PayloadSignature,
 ) : TestJobProducer {
 
     override fun getJobs(): Flow<TestJobProducer.Job> = flow {
-        val registerResponse = api.registerWorker(
-            RegisterWorkerBody(
-                workerId = workerId,
-                workerRestAddress = workerAddress.serialized()
-            )
-        ).getOrElse { throwable ->
-            throw throwable
-                .toQueueProblem("Registering a new worker at startup")
-                .asRuntimeException()
-        }
-
-        val signature = registerResponse.workerConfiguration.payloadSignature
-
         while (currentCoroutineContext().isActive) {
             val response = api.getBucket(
                 GetBucketBody(
                     workerId = workerId,
-                    payloadSignature = signature,
-                    workerCapabilities = emptyList() // TODO do we have to pass something?
+                    payloadSignature = payloadSignature,
                 )
             ).getOrElse { throwable ->
-                throw throwable
-                    .toQueueProblem("Polling the Emcee queue for available buckets")
-                    .asRuntimeException()
+                throw Problem(
+                    shortDescription = "Connection to Emcee queue failed",
+                    context = "Polling the Emcee queue for available buckets",
+                    possibleSolutions = listOf("heck if Emcee queue is running and available"),
+                    throwable = throwable
+                ).asRuntimeException()
             }
 
             when (response) {
                 is GetBucketResponse.Dequeued -> emit(
                     TestJobProducer.Job(
                         workerId = workerId,
-                        payloadSignature = signature,
+                        payloadSignature = payloadSignature,
                         bucket = response.bucket
                     )
                 )
@@ -60,11 +48,4 @@ internal class TestJobProducerImpl(
             }
         }
     }
-
-    private fun Throwable.toQueueProblem(context: String) = Problem(
-        shortDescription = "Connection to Emcee queue failed",
-        context = context,
-        possibleSolutions = listOf("Check if Emcee queue is running and available"),
-        throwable = this
-    )
 }

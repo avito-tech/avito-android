@@ -15,7 +15,6 @@ import java.util.logging.Logger
 
 internal class HttpServer(
     private val handlers: List<RequestHandler<*>>,
-    private val port: Int,
     private val gracePeriodMs: Long = 500,
     private val timeoutMs: Long = 500,
 ) {
@@ -24,7 +23,7 @@ internal class HttpServer(
 
     private val logger = Logger.getLogger(HttpServer::class.simpleName)
 
-    fun start() {
+    fun start(port: Int) {
         logger.info("Starting REST server at $port port")
         server = embeddedServer(Netty, port = port) {
             install(ContentNegotiation) {

@@ -26,7 +26,7 @@ class HttpServerTest {
 
     @BeforeEach
     fun beforeAll() {
-        server.start()
+        server.start(port)
     }
 
     @Test
@@ -57,7 +57,6 @@ class HttpServerTest {
     private fun createServer(): HttpServer {
         return HttpServer(
             handlers = listOf(ProcessingBucketsRequestHandler(bucketsStorage)),
-            port = port
         )
     }
 

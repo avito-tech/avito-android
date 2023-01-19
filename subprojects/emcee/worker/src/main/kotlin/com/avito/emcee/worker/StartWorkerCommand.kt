@@ -53,11 +53,16 @@ internal class StartWorkerCommand(
         val config: Config = reader.read(File(configPath))
         logger.info("Applied configuration: $config")
         val di = WorkerDI(config)
+        val workerRegisterer = di.workerRegisterer()
         val httpServer = di.httpServer()
-        val producer = di.producer()
         val consumer = di.consumer()
         runBlocking {
-            httpServer.start()
+            val payloadSignature = workerRegisterer.register(
+                onWorkerPortAvailable = { port ->
+                    httpServer.start(port)
+                }
+            )
+            val producer = di.producer(payloadSignature)
             val jobs = producer.getJobs()
             consumer
                 .consume(jobs)

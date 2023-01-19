@@ -17,7 +17,6 @@ internal class ConfigSerializationTest {
         file.writeText(
             """
                 {
-                    "workerPort": 80,
                     "queue": {
                         "url": "http://127.0.0.1:41000",
                         "retriesCount": 3,
@@ -46,7 +45,6 @@ internal class ConfigSerializationTest {
         Truth.assertThat(config)
             .isEqualTo(
                 Config(
-                    workerPort = 80,
                     queue = Config.QueueConfig(
                         url = "http://127.0.0.1:41000",
                         retriesCount = 3,

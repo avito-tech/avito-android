@@ -10,10 +10,6 @@ import kotlin.io.path.exists
 @JsonClass(generateAdapter = true)
 public data class Config(
     /**
-     * Worker starts a REST server on this port
-     */
-    val workerPort: Int,
-    /**
      * Queue configuration
      */
     val queue: QueueConfig,

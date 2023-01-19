@@ -5,6 +5,7 @@ import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Payload
 import com.avito.emcee.worker.SendBucketResultBody
 import com.avito.emcee.worker.WorkerQueueApi
+import com.avito.emcee.worker.configuration.PayloadSignature
 import com.avito.emcee.worker.internal.TestExecutor
 import com.avito.emcee.worker.internal.TestJobProducer
 import com.avito.emcee.worker.internal.storage.ProcessingBucketsStorage
@@ -46,7 +47,7 @@ internal class FakeTestJobConsumer(
     private fun createBucketResult(
         workerId: String,
         bucketId: String,
-        signature: String,
+        signature: PayloadSignature,
         startTime: BucketResult.UnfilteredResult.TestRunResult.StartTime,
         payload: Payload,
     ) = SendBucketResultBody(

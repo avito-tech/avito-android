@@ -5,6 +5,7 @@ import com.avito.android.device.avd.internal.AvdConfigurationProvider
 import com.avito.android.device.manager.AndroidDeviceManagerFactory
 import com.avito.emcee.worker.Config
 import com.avito.emcee.worker.WorkerQueueApi.Companion.createWorkerQueueApi
+import com.avito.emcee.worker.configuration.PayloadSignature
 import com.avito.emcee.worker.internal.SingleInstanceAndroidDeviceTestExecutorProvider
 import com.avito.emcee.worker.internal.TestJobProducer
 import com.avito.emcee.worker.internal.TestJobProducerImpl
@@ -14,7 +15,9 @@ import com.avito.emcee.worker.internal.consumer.RealTestJobConsumer
 import com.avito.emcee.worker.internal.consumer.TestJobConsumer
 import com.avito.emcee.worker.internal.identifier.HostnameWorkerIdProvider
 import com.avito.emcee.worker.internal.identifier.WorkerIdProvider
-import com.avito.emcee.worker.internal.networking.SocketAddressResolver
+import com.avito.emcee.worker.internal.networking.WorkerHostAddressResolver
+import com.avito.emcee.worker.internal.registerer.WorkerRegisterer
+import com.avito.emcee.worker.internal.registerer.WorkerRegistererImpl
 import com.avito.emcee.worker.internal.rest.HttpServer
 import com.avito.emcee.worker.internal.rest.handler.HealthCheckRequestHandler
 import com.avito.emcee.worker.internal.rest.handler.ProcessingBucketsRequestHandler
@@ -35,11 +38,11 @@ internal class WorkerDI(
 ) {
 
     private val workerIdProvider: WorkerIdProvider = HostnameWorkerIdProvider()
-    private val socketAddressResolver = SocketAddressResolver()
     private val bucketsStorage: ProcessingBucketsStorage = SingleElementProcessingBucketsStorage()
-    private val httpLogger = Logger.getLogger("HTTP")
+    private val workerHostAddressResolver = WorkerHostAddressResolver()
 
     private val okHttpClientBuilder = OkHttpClient.Builder().apply {
+        val httpLogger = Logger.getLogger("HTTP")
         addInterceptor(HttpLoggingInterceptor { message ->
             httpLogger.finer(message)
         }.apply { level = HttpLoggingInterceptor.Level.BODY })
@@ -60,14 +63,14 @@ internal class WorkerDI(
 
     private val fileDownloaderApi = Retrofit.Builder().createFileDownloaderApi(
         client = okHttpClientBuilder.build(),
-        baseUrl = "https://stub.uses-direct-links"
+        baseUrl = "https://stub.uses-direct-urls"
     )
 
-    fun producer(): TestJobProducer {
+    fun producer(payloadSignature: PayloadSignature): TestJobProducer {
         return TestJobProducerImpl(
             api = api,
             workerId = workerIdProvider.provide(),
-            workerAddress = socketAddressResolver.resolve(config.workerPort)
+            payloadSignature = payloadSignature,
         )
     }
 
@@ -96,7 +99,12 @@ internal class WorkerDI(
                 ProcessingBucketsRequestHandler(bucketsStorage),
                 HealthCheckRequestHandler,
             ),
-            port = config.workerPort,
         )
     }
+
+    fun workerRegisterer(): WorkerRegisterer = WorkerRegistererImpl(
+        queueApi = api,
+        workerId = workerIdProvider.provide(),
+        workerHostAddressResolver = workerHostAddressResolver,
+    )
 }

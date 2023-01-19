@@ -1,5 +1,4 @@
 {
-    "workerPort": 8080,
     "queue": {
         "url": "http://emcee-queue-service:41000",
         "retriesCount": 10,
