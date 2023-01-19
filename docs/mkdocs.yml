@@ -93,6 +93,7 @@ nav:
                     -   Image builder: ci/containers/ImageBuilder.md
                     -   Android builder: ci/containers/AndroidBuilderImage.md
                     -   Android emulator: ci/containers/AndroidEmulatorImage.md
+                -   Internal hub images clean up policy: ci/containers/ImagesCleanUp.md
                 -   Publish images to DockerHub: ci/containers/PublishToDockerHub.md
             -   Impact analysis: ci/ImpactAnalysis.md
     -   Testing:

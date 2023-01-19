@@ -14,6 +14,10 @@ We have:
 - [Android builder image](AndroidBuilderImage.md)
 - [Android emulator image](AndroidEmulatorImage.md)
 
+## Internal clean up policy
+
+[Internal image hub clean up policy](ImagesCleanUp.md)
+
 ## Best practices
 
 ### Reproducible image
