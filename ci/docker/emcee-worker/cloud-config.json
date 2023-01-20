@@ -1,0 +1,17 @@
+{
+    "workerPort": 8080,
+    "queue": {
+        "url": "http://staging.k.avito.ru:80/service-emcee-cloud-backend/queue/",
+        "retriesCount": 10,
+        "retryDelayMs": 3000
+    },
+    "androidSdkPath": "/opt/android-sdk",
+    "configurations": [
+        {
+            "sdk": 22,
+            "type": "default",
+            "emulatorFileName": "emulator_22",
+            "sdCardFileName": "/sdcard.img"
+        }
+    ]
+}

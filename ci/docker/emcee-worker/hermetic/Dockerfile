@@ -19,6 +19,7 @@ RUN mkdir /app
 WORKDIR /app
 COPY --from=BUILD /app/subprojects/emcee/worker/build/libs/emcee-worker.jar emcee-worker.jar
 COPY --from=BUILD /app/ci/docker/emcee-worker/config.json config.json
+COPY --from=BUILD /app/ci/docker/emcee-worker/cloud-config.json cloud-config.json
 
 # -------------------- Common -------------------
 # net-tools             basic network primitives
