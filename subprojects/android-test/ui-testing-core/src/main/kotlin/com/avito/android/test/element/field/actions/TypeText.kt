@@ -75,7 +75,7 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
             ApplicationProvider.getApplicationContext<Application>()
                 .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             )
-            .getFieldByReflectionWithAnyField("mIInputContext")
+            .getFieldByReflectionWithAnyField("mFallbackInputConnection")
 
         var textChangedAtLeastOnce = false
         val textWatcher = object : SimpleTextWatcher() {
