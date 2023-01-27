@@ -20,6 +20,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import java.util.concurrent.TimeUnit
+import android.os.Build
 
 /**
  * Type text action that is used for typing instead of [androidx.test.espresso.action.TypeTextAction]
@@ -71,11 +72,16 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
     private fun writeText(uiController: UiController, editText: EditText) {
         HiddenApiOpener.ensureUnseal()
 
+        val inputFieldName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            "mFallbackInputConnection"
+        } else {
+            "mIInputContext"
+        }
         val context = (
             ApplicationProvider.getApplicationContext<Application>()
                 .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             )
-            .getFieldByReflectionWithAnyField("mFallbackInputConnection")
+            .getFieldByReflectionWithAnyField(inputFieldName)
 
         var textChangedAtLeastOnce = false
         val textWatcher = object : SimpleTextWatcher() {
