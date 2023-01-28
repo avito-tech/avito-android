@@ -13,7 +13,7 @@ import com.avito.android.test.util.matchDrawable
 import org.hamcrest.Description
 
 open class DrawableMatcher<T : View>(
-    private val drawableSupplier: (T) -> Drawable,
+    private val drawableSupplier: (T) -> Drawable?,
     private val drawableTintSupplier: (T) -> ColorStateList?,
     @DrawableRes private val src: Int? = null,
     @ColorRes private val tint: Int? = null,

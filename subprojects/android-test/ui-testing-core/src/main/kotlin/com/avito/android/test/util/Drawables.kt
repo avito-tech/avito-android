@@ -29,7 +29,13 @@ internal fun matchDrawable(
     return if (noOther && otherTint != null) {
         matchColors(sourceTint, otherTint)
     } else {
-        matchDrawable(context, source!!, sourceTint, otherId!!, otherTint)
+        checkNotNull(source) {
+            "Source must be not null"
+        }
+        checkNotNull(otherId) {
+            "otherId must be not null"
+        }
+        matchDrawable(context, source, sourceTint, otherId, otherTint)
     }
 }
 

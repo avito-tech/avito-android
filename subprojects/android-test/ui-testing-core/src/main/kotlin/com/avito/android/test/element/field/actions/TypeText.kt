@@ -2,6 +2,7 @@ package com.avito.android.test.element.field.actions
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -71,11 +72,18 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
     private fun writeText(uiController: UiController, editText: EditText) {
         HiddenApiOpener.ensureUnseal()
 
+        // TODO replace 33 by Build.VERSION_CODES.TIRAMISU when compileSdk = 33
+        val inputFieldName = if (Build.VERSION.SDK_INT >= 33) {
+            "mFallbackInputConnection"
+        } else {
+            "mIInputContext"
+        }
+
         val context = (
             ApplicationProvider.getApplicationContext<Application>()
                 .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             )
-            .getFieldByReflectionWithAnyField("mIInputContext")
+            .getFieldByReflectionWithAnyField(inputFieldName)
 
         var textChangedAtLeastOnce = false
         val textWatcher = object : SimpleTextWatcher() {

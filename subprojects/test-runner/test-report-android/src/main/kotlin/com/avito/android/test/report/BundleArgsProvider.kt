@@ -18,7 +18,7 @@ class BundleArgsProvider(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
     override fun <T : Serializable> getSerializableArgument(name: String): T? =
         bundle.getSerializable(name) as T?
 

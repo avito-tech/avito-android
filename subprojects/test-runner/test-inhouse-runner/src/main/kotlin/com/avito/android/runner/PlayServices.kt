@@ -19,10 +19,11 @@ internal fun Context.checkPlayServices() {
 }
 
 @Suppress("DEPRECATION")
-internal val Context.playServicesOnDeviceVersion: Int
+private val Context.playServicesOnDeviceVersion: Int
     get() = packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0).versionCode
 
-internal val Context.playServicesMetaDataVersion: Int
+@Suppress("DEPRECATION")
+private val Context.playServicesMetaDataVersion: Int
     get() =
         packageManager.getApplicationInfo(
             packageName,
