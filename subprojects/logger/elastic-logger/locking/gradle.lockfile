@@ -1,7 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-androidx.annotation:annotation:1.1.0=runtimeClasspath,testRuntimeClasspath
+androidx.annotation:annotation:1.5.0=runtimeClasspath,testRuntimeClasspath
 com.google.auto.value:auto-value-annotations:1.6.3=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.google.code.findbugs:jsr305:3.0.2=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.google.code.gson:gson:2.8.9=runtimeClasspath,testRuntimeClasspath

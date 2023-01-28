@@ -1,8 +1,9 @@
+
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.reservation.request.Device
-import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import java.time.Duration
 
 plugins {
     id("convention.kotlin-android-app")
@@ -117,34 +118,40 @@ instrumentation {
         useLegacyExtensionsV1Beta.set(false)
     }
 
-    val emulator22 = CloudEmulator(
-        name = "api22",
-        api = 22,
+    val defaultCpuRequest = "1.15"
+    val defaultCpuLimit = "1.3"
+    val defaultMemoryLimit = "4Gi"
+
+    val emulator24 = Device.CloudEmulator(
+        name = "api24",
+        api = 24,
         model = "Android_SDK_built_for_x86",
-        image = emulatorImage(22, "5429ee25fd2b"),
-        cpuCoresRequest = "1",
-        cpuCoresLimit = "1.3",
-        memoryLimit = "4Gi"
+        image = emulatorImage(24, "3a1f15409f37"),
+        cpuCoresRequest = defaultCpuRequest,
+        cpuCoresLimit = defaultCpuLimit,
+        memoryLimit = defaultMemoryLimit
     )
 
-    val emulator29 = CloudEmulator(
-        name = "api29",
-        api = 29,
-        model = "Android_SDK_built_for_x86_64",
-        image = emulatorImage(29, "e8ce9edfc78d"),
-        cpuCoresRequest = "1",
-        cpuCoresLimit = "1.3",
-        memoryLimit = "4Gi"
+    val emulator31 = Device.CloudEmulator(
+        name = "api31",
+        api = 31,
+        model = "sdk_gphone64_x86_64",
+        image = emulatorImage(31, "6a829b9c8932"),
+        cpuCoresRequest = defaultCpuRequest,
+        cpuCoresLimit = defaultCpuLimit,
+        memoryLimit = "4.5Gi"
     )
 
     configurations {
         register("ui") {
+            testRunnerExecutionTimeout = Duration.ofMinutes(10)
+            instrumentationTaskTimeout = Duration.ofMinutes(10)
             reportSkippedTests = true
             filter = "ci"
 
             targets {
-                register("api22") {
-                    deviceName = "API22"
+                register("api24") {
+                    deviceName = "API24"
 
                     scheduling {
                         quota {
@@ -153,28 +160,27 @@ instrumentation {
                         }
 
                         testsCountBasedReservation {
-                            device = emulator22
-                            maximum = 50
-                            minimum = 2
-                            testsPerEmulator = 3
+                            device = emulator24
+                            minimum = 1
+                            maximum = 10
+                            testsPerEmulator = 12
                         }
                     }
                 }
 
-                register("api29") {
-                    deviceName = "API29"
+                register("api31") {
+                    deviceName = "API31"
 
                     scheduling {
                         quota {
                             retryCount = 1
                             minimumSuccessCount = 1
                         }
-
                         testsCountBasedReservation {
-                            device = emulator29
-                            maximum = 50
-                            minimum = 2
-                            testsPerEmulator = 3
+                            device = emulator31
+                            minimum = 1
+                            maximum = 10
+                            testsPerEmulator = 12
                         }
                     }
                 }
@@ -203,7 +209,7 @@ instrumentation {
 
 fun emulatorImage(api: Int, label: String): String {
     return if (avitoRegistry != null) {
-        "$avitoRegistry/android/emulator-$api:$label"
+        "$avitoRegistry/android/emulator-hermetic-$api:$label"
     } else {
         "avitotech/android-emulator-$api:$label"
     }

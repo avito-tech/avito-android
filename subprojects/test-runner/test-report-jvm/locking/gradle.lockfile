@@ -1,10 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-androidx.annotation:annotation:1.1.0=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
-androidx.lifecycle:lifecycle-common:2.0.0=runtimeClasspath,testRuntimeClasspath
-androidx.test:core:1.4.0=runtimeClasspath,testRuntimeClasspath
-androidx.test:monitor:1.4.0=runtimeClasspath,testRuntimeClasspath
+androidx.annotation:annotation:1.5.0=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.fasterxml.jackson.core:jackson-core:2.9.9=runtimeClasspath,testRuntimeClasspath
 com.github.salomonbrys.kotson:kotson:2.5.0=runtimeClasspath,testRuntimeClasspath
 com.google.auto.value:auto-value-annotations:1.6.3=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath

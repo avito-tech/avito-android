@@ -37,6 +37,9 @@ abstract class InHouseScenarioScreenRule<A : Activity>(
 
     fun launchActivity(startIntent: Intent?): ActivityScenario<A> = activityRule.launchActivity(startIntent)
 
+    fun launchActivityForResult(startIntent: Intent?): ActivityScenario<A> =
+        activityRule.launchActivityForResult(startIntent)
+
     class ChecksLibrary<A : Activity>(private val scenarioFunc: () -> ActivityScenario<A>) {
 
         /**

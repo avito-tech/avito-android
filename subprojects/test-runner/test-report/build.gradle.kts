@@ -20,7 +20,6 @@ dependencies {
     implementation(projects.subprojects.common.throwableUtils)
     implementation(projects.subprojects.androidTest.resourceManagerExceptions)
     implementation(projects.subprojects.androidTest.websocketReporter)
-    implementation(libs.androidXTestCore)
     implementation(libs.okio)
     implementation(libs.kotson)
     implementation(libs.okhttp)

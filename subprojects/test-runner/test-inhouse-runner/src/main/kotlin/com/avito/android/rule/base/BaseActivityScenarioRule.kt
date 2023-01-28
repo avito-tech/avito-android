@@ -54,6 +54,18 @@ open class BaseActivityScenarioRule<A : Activity>(
         return scenario
     }
 
+    fun launchActivityForResult(intent: Intent? = null): ActivityScenario<A> {
+        InstrumentationRegistry.getInstrumentation().setInTouchMode(initialTouchMode)
+        _scenario = when (intent) {
+            null -> ActivityScenario.launchActivityForResult(activityClass)
+            else -> ActivityScenario.launchActivityForResult(
+                intent.setClass(InstrumentationRegistry.getInstrumentation().targetContext, activityClass)
+            )
+        }
+        afterActivityLaunched()
+        return scenario
+    }
+
     @CallSuper
     protected open fun afterActivityLaunched() {
         // empty
