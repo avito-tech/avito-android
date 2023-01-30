@@ -2,6 +2,7 @@ package com.avito.emcee.client
 
 import com.avito.emcee.client.internal.ArtifactorySettings
 import com.avito.emcee.client.internal.FilePathAdapter
+import com.avito.emcee.moshi.SecondsToDurationAdapter
 import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Job
 import com.avito.emcee.queue.ScheduleStrategy
@@ -10,6 +11,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
+import com.squareup.moshi.addAdapter
 import java.io.File
 
 @JsonClass(generateAdapter = true)
@@ -18,7 +20,6 @@ public class EmceeTestClientConfig(
     public val artifactory: ArtifactorySettings,
     public val scheduleStrategy: ScheduleStrategy,
     public val testExecutionBehavior: TestExecutionBehavior,
-    public val testMaximumDurationSec: Long,
     public val devices: List<DeviceConfiguration>,
     public val apk: File,
     public val appPackage: String,
@@ -32,7 +33,8 @@ public class EmceeTestClientConfig(
         @OptIn(ExperimentalStdlibApi::class)
         public fun createMoshiAdapter(): JsonAdapter<EmceeTestClientConfig> {
             val moshi = Moshi.Builder()
-                .add(FilePathAdapter())
+                .addAdapter(FilePathAdapter())
+                .addAdapter(SecondsToDurationAdapter())
                 .build()
             return moshi.adapter()
         }

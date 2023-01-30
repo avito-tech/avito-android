@@ -1,8 +1,8 @@
 package com.avito.emcee.client.internal
 
 import com.avito.emcee.queue.Job
-import com.avito.emcee.queue.JobStatusBody
 import com.avito.emcee.queue.QueueApi
+import com.avito.emcee.queue.status.JobStatusBody
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration
@@ -23,7 +23,7 @@ internal class JobWaiter(
     }
 
     private suspend fun getTestsCount(job: Job): Int {
-        val status = queueApi.jobState(JobStatusBody(id = job.id)).jobState
+        val status = queueApi.jobState(JobStatusBody(jobId = job.id)).jobState
         return status.queueState.runningQueueState.dequeuedBucketCount +
             status.queueState.runningQueueState.enqueuedBucketCount
     }

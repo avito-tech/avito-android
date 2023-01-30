@@ -23,6 +23,7 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 public abstract class EmceeTestTask : DefaultTask() {
@@ -106,10 +107,10 @@ public abstract class EmceeTestTask : DefaultTask() {
             artifactory = artifactorySettings,
             scheduleStrategy = ScheduleStrategy(testsSplitter = ScheduleStrategy.TestsSplitter.Individual),
             testExecutionBehavior = TestExecutionBehavior(
-                environment = emptyMap(),
-                retries = retries.get()
+                environment = Any(),
+                numberOfRetries = retries.get(),
+                testMaximumDuration = testTimeoutInSec.seconds
             ),
-            testMaximumDurationSec = testTimeoutInSec,
             devices = devices,
             apk = apk.get().getApkOrThrow(), // todo should be optional for libraries
             appPackage = appPackage.get(),

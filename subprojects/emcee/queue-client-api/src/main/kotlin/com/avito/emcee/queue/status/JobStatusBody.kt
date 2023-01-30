@@ -1,10 +1,8 @@
-package com.avito.emcee.queue
+package com.avito.emcee.queue.status
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 public data class JobStatusBody(
-    @Json(name = "jobId")
-    val id: String
+    val jobId: String
 )

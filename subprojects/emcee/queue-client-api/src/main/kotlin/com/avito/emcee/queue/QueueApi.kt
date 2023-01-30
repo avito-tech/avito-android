@@ -1,6 +1,11 @@
 package com.avito.emcee.queue
 
-import com.avito.emcee.moshi.DurationAdapter
+import com.avito.emcee.moshi.SecondsToDurationAdapter
+import com.avito.emcee.queue.results.JobResultsResponse
+import com.avito.emcee.queue.schedule.ScheduleTestsBody
+import com.avito.emcee.queue.schedule.ScheduleTestsResponse
+import com.avito.emcee.queue.status.JobStateResponse
+import com.avito.emcee.queue.status.JobStatusBody
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
 import okhttp3.OkHttpClient
@@ -31,7 +36,7 @@ public interface QueueApi {
             return addConverterFactory(
                 MoshiConverterFactory.create(
                     Moshi.Builder()
-                        .addAdapter(DurationAdapter())
+                        .addAdapter(SecondsToDurationAdapter())
                         .build()
                 )
             )

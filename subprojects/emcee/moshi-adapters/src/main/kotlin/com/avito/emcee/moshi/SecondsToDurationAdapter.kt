@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * In the Apple world (and Emcee queue) seconds are used for time measurement by default.
  */
-public class DurationAdapter : JsonAdapter<Duration>() {
+public class SecondsToDurationAdapter : JsonAdapter<Duration>() {
 
     override fun toJson(writer: JsonWriter, value: Duration?) {
         when (value) {

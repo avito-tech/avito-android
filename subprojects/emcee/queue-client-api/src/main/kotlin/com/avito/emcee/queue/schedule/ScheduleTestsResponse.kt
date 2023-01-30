@@ -1,4 +1,4 @@
-package com.avito.emcee.queue
+package com.avito.emcee.queue.schedule
 
 import com.squareup.moshi.JsonClass
 

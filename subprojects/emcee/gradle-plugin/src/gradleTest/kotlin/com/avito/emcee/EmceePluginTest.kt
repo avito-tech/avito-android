@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.io.path.Path
+import kotlin.time.Duration.Companion.minutes
 
 internal class EmceePluginTest {
 
@@ -95,9 +96,9 @@ internal class EmceePluginTest {
             Case("job group id") { assertThat(job.groupId).isEqualTo("PRTests#PR-2214") },
             Case("job priority") { assertThat(job.priority).isEqualTo(100) },
             Case("job group priority") { assertThat(job.groupPriority).isEqualTo(100) },
-            Case("retries") { assertThat(testExecutionBehavior.retries).isEqualTo(2) },
+            Case("retries") { assertThat(testExecutionBehavior.numberOfRetries).isEqualTo(2) },
             Case("devices") { assertThat(devices.map { it.sdkVersion }).containsExactly(22, 30) },
-            Case("single test timeout") { assertThat(testMaximumDurationSec).isEqualTo(120) },
+            Case("single test timeout") { assertThat(testExecutionBehavior.testMaximumDuration).isEqualTo(2.minutes) },
         ).map { case -> DynamicTest.dynamicTest(case.paramName) { case.assertion(config) } }
     }
 

@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(projects.subprojects.emcee.queueClientModels)
+    api(projects.subprojects.emcee.moshiAdapters)
     api(libs.moshiAdapters) {
         "used because EmceeConfig serialized to JSON for testing. Replace as soon as possible"
     }

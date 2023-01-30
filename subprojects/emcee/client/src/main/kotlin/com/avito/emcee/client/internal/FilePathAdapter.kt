@@ -1,18 +1,20 @@
 package com.avito.emcee.client.internal
 
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.ToJson
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
 import java.io.File
 
-internal class FilePathAdapter {
+internal class FilePathAdapter : JsonAdapter<File>() {
 
-    @ToJson
-    fun toJson(file: File): String {
-        return file.path
+    override fun toJson(writer: JsonWriter, value: File?) {
+        when (value) {
+            null -> writer.nullValue()
+            else -> writer.value(value.path)
+        }
     }
 
-    @FromJson
-    fun fromJson(filePath: String): File {
-        return File(filePath)
+    override fun fromJson(reader: JsonReader): File {
+        return File(reader.nextString())
     }
 }

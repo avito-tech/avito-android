@@ -1,6 +1,7 @@
 package com.avito.emcee.worker.internal.consumer
 
 import com.avito.emcee.queue.BucketResult
+import com.avito.emcee.queue.BucketResultContainer
 import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Payload
 import com.avito.emcee.worker.SendBucketResultBody
@@ -54,27 +55,29 @@ internal class FakeTestJobConsumer(
         bucketId = bucketId,
         payloadSignature = signature,
         workerId = workerId,
-        bucketResult = BucketResult(
-            device = DeviceConfiguration(
-                type = payload.testConfiguration.deviceType,
-                sdkVersion = payload.testConfiguration.sdkVersion
-            ),
-            unfilteredResults = payload.testEntries.map {
-                BucketResult.UnfilteredResult(
-                    testEntry = it,
-                    testRunResults = listOf(
-                        BucketResult.UnfilteredResult.TestRunResult(
-                            uuid = UUID.randomUUID().toString(),
-                            duration = 5.seconds,
-                            exceptions = emptyList(),
-                            hostName = "",
-                            logs = emptyList(),
-                            startTime = startTime,
-                            succeeded = true
+        bucketResultContainer = BucketResultContainer(
+            payload = BucketResult(
+                device = DeviceConfiguration(
+                    type = payload.testConfigurationContainer.payload.deviceType,
+                    sdkVersion = payload.testConfigurationContainer.payload.sdkVersion
+                ),
+                unfilteredResults = payload.testEntries.map {
+                    BucketResult.UnfilteredResult(
+                        testEntry = it,
+                        testRunResults = listOf(
+                            BucketResult.UnfilteredResult.TestRunResult(
+                                uuid = UUID.randomUUID().toString(),
+                                duration = 5.seconds,
+                                exceptions = emptyList(),
+                                hostName = "",
+                                logs = emptyList(),
+                                startTime = startTime,
+                                succeeded = true
+                            )
                         )
                     )
-                )
-            }
+                }
+            )
         )
     )
 }

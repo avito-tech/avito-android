@@ -1,59 +1,61 @@
 {
-    "caseId": "bucketDequeued",
-    "bucket": {
-        "analyticsConfiguration": {},
-        "bucketId": "1F10555C-0D48-436F-B0A6-4D0ABF813493",
-        "payloadContainer": {
-            "payload": {
-                "testConfiguration": {
-                    "buildArtifacts": {
-                        "appApk": {
-                            "location": {
-                                "url": "https://example.com/artifactory/repo/path/app.apk"
+    "bucket" : {
+        "analyticsConfiguration" : {
+
+        },
+        "bucketId" : "BucketFixturesFixedBucketId",
+        "payloadContainer" : {
+            "payload" : {
+                "testConfigurationContainer" : {
+                    "payload" : {
+                        "androidBuildArtifacts" : {
+                            "appApk" : {
+                                "location" : {
+                                    "url" : "app.apk"
+                                },
+                                "package" : "ru.avito.app.package"
                             },
-                            "package": "com.avito.android"
+                            "runnerClass" : "ru.avito.RunnerClass",
+                            "testApk" : {
+                                "location" : {
+                                    "url" : "tests.apk"
+                                },
+                                "package" : "ru.avito.tests.package"
+                            }
                         },
-                        "runnerClass": "com.avito.android.InstrumentationRunner",
-                        "testApk": {
-                            "location": {
-                                "url": "https://example.com/artifactory/repo/path/test.apk"
-                            },
-                            "package": "com.avito.android.test"
-                        }
+                        "deviceType" : "deviceType",
+                        "sdkVersion" : 23,
+                        "testMaximumDuration" : 60
                     },
-                    "deviceType": "Nexus 5",
-                    "sdkVersion": 30,
-                    "testExecutionBehavior": {
-                        "environment": {
-                            "SOME": "env values"
-                        },
-                        "logCapturingMode": "noLogs",
-                        "numberOfRetries": 5,
-                        "runnerWasteCleanupPolicy": "clean",
-                        "testRetryMode": "retryThroughQueue",
-                        "userInsertedLibraries": []
-                    },
-                    "testMaximumDuration": 30
+                    "payloadType" : "androidTestConfiguration"
                 },
-                "testEntries": [
+                "testEntries" : [
                     {
-                        "tags": [],
-                        "testName": {
-                            "className": "SomeClassNameWithTests",
-                            "methodName": "testMethod"
-                        }
-                    },
-                    {
-                        "tags": [],
-                        "testName": {
-                            "className": "AnotherClass",
-                            "methodName": "test"
+                        "tags" : [
+                            "tag"
+                        ],
+                        "testName" : {
+                            "className" : "class",
+                            "methodName" : "test"
                         }
                     }
-                ]
+                ],
+                "testExecutionBehavior" : {
+                    "environment" : {
+                        "some" : "env"
+                    },
+                    "logCapturingMode" : "noLogs",
+                    "numberOfRetries" : 0,
+                    "runnerWasteCleanupPolicy" : "clean",
+                    "testMaximumDuration" : 60,
+                    "testRetryMode" : "retryThroughQueue"
+                }
             },
-            "payloadType": "runAndroidTests"
+            "payloadType" : "runTests"
         },
-        "workerCapabilityRequirements": []
-    }
+        "workerCapabilityRequirements" : [
+
+        ]
+    },
+    "caseId" : "bucketDequeued"
 }

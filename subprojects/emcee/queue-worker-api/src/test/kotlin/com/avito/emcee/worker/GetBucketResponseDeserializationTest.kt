@@ -1,6 +1,6 @@
 package com.avito.emcee.worker
 
-import com.avito.emcee.moshi.DurationAdapter
+import com.avito.emcee.moshi.SecondsToDurationAdapter
 import com.avito.emcee.worker.model.dequeued
 import com.avito.emcee.worker.model.noBucket
 import com.squareup.moshi.JsonAdapter
@@ -15,7 +15,7 @@ internal class GetBucketResponseDeserializationTest {
 
     @OptIn(ExperimentalStdlibApi::class)
     private val moshi = Moshi.Builder()
-        .addAdapter(DurationAdapter())
+        .addAdapter(SecondsToDurationAdapter())
         .build()
 
     @OptIn(ExperimentalStdlibApi::class)

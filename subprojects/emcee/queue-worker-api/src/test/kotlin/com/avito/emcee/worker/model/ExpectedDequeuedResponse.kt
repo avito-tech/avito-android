@@ -6,56 +6,52 @@ import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.Payload
 import com.avito.emcee.queue.PayloadContainer
 import com.avito.emcee.queue.RemoteApk
-import com.avito.emcee.queue.TestConfiguration
+import com.avito.emcee.queue.TestConfigurationContainer
 import com.avito.emcee.queue.TestEntry
 import com.avito.emcee.queue.TestExecutionBehavior
 import com.avito.emcee.queue.TestName
 import com.avito.emcee.worker.GetBucketResponse
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 internal fun GetBucketResponse.Companion.dequeued(): GetBucketResponse.Dequeued = GetBucketResponse.Dequeued(
     caseId = "bucketDequeued",
     bucket = Bucket(
-        bucketId = "1F10555C-0D48-436F-B0A6-4D0ABF813493",
+        bucketId = "BucketFixturesFixedBucketId",
         payloadContainer = PayloadContainer(
             payload = Payload(
                 testEntries = listOf(
                     TestEntry(
                         caseId = null,
-                        tags = emptyList(),
+                        tags = listOf("tag"),
                         name = TestName(
-                            className = "SomeClassNameWithTests",
-                            methodName = "testMethod"
-                        )
-                    ),
-                    TestEntry(
-                        caseId = null,
-                        tags = emptyList(),
-                        name = TestName(
-                            className = "AnotherClass",
+                            className = "class",
                             methodName = "test"
                         )
+                    ),
+                ),
+                testConfigurationContainer = TestConfigurationContainer(
+                    payload = TestConfigurationContainer.Payload(
+                        androidBuildArtifacts = BuildArtifacts(
+                            app = RemoteApk(
+                                location = ApkLocation(url = "app.apk"),
+                                packageName = "ru.avito.app.package"
+                            ),
+                            testApp = RemoteApk(
+                                location = ApkLocation("tests.apk"),
+                                packageName = "ru.avito.tests.package"
+                            ),
+                            runnerClass = "ru.avito.RunnerClass"
+                        ),
+                        deviceType = "deviceType",
+                        sdkVersion = 23,
+                        testMaximumDuration = 1.minutes
                     )
                 ),
-                testConfiguration = TestConfiguration(
-                    buildArtifacts = BuildArtifacts(
-                        app = RemoteApk(
-                            location = ApkLocation(url = "https://example.com/artifactory/repo/path/app.apk"),
-                            packageName = "com.avito.android"
-                        ),
-                        testApp = RemoteApk(
-                            location = ApkLocation("https://example.com/artifactory/repo/path/test.apk"),
-                            packageName = "com.avito.android.test"
-                        ),
-                        runnerClass = "com.avito.android.InstrumentationRunner"
-                    ),
-                    deviceType = "Nexus 5",
-                    sdkVersion = 30,
-                    testExecutionBehavior = TestExecutionBehavior(
-                        environment = mapOf("SOME" to "env values"),
-                        retries = 5
-                    ),
-                    testMaximumDuration = 30.seconds
+                testExecutionBehavior = TestExecutionBehavior(
+                    numberOfRetries = 0,
+                    environment = mapOf("some" to "env"),
+                    testMaximumDuration = 1.minutes
                 )
             ),
         ),

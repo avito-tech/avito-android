@@ -1,9 +1,13 @@
 package com.avito.emcee.worker.internal.consumer
 
 import com.avito.emcee.queue.BucketResult
+import com.avito.emcee.queue.BucketResultContainer
 import com.avito.emcee.queue.BuildArtifacts
 import com.avito.emcee.queue.DeviceConfiguration
 import com.avito.emcee.queue.Payload
+import com.avito.emcee.queue.TestConfigurationContainer
+import com.avito.emcee.queue.TestEntry
+import com.avito.emcee.queue.TestExecutionBehavior
 import com.avito.emcee.worker.SendBucketResultBody
 import com.avito.emcee.worker.WorkerQueueApi
 import com.avito.emcee.worker.configuration.PayloadSignature
@@ -36,7 +40,11 @@ internal class RealTestJobConsumer(
                 bucketsStorage.add(job.bucket)
 
                 val startTime = BucketResult.UnfilteredResult.TestRunResult.StartTime(System.currentTimeMillis())
-                val results = executeTest()
+                val results = executeTests(
+                    payload = testConfigurationContainer.payload,
+                    testEntries = testEntries,
+                    testExecutionBehavior = testExecutionBehavior,
+                )
                 sendTestResults(job, results, startTime)
 
                 bucketsStorage.remove(job.bucket)
@@ -52,18 +60,22 @@ internal class RealTestJobConsumer(
         return apk to testApk
     }
 
-    private suspend fun Payload.executeTest(): List<TestExecutor.Result> {
+    private suspend fun executeTests(
+        payload: TestConfigurationContainer.Payload,
+        testEntries: List<TestEntry>,
+        testExecutionBehavior: TestExecutionBehavior
+    ): List<TestExecutor.Result> = with(payload) {
         val executor = deviceProvider.provide(
             DeviceConfiguration(
-                testConfiguration.deviceType,
-                testConfiguration.sdkVersion
+                deviceType,
+                sdkVersion
             )
         )
         executor.beforeTestBucket()
-        val applicationPackage = testConfiguration.buildArtifacts.app.packageName
-        val testPackage = testConfiguration.buildArtifacts.testApp.packageName
-        val instrumentationRunnerClass = testConfiguration.buildArtifacts.runnerClass
-        val (apk, testApk) = downloadArtifacts(testConfiguration.buildArtifacts)
+        val applicationPackage = androidBuildArtifacts.app.packageName
+        val testPackage = androidBuildArtifacts.testApp.packageName
+        val instrumentationRunnerClass = androidBuildArtifacts.runnerClass
+        val (apk, testApk) = downloadArtifacts(androidBuildArtifacts)
         val results = testEntries.map { testEntry ->
             executor.execute(
                 TestExecutor.Job(
@@ -73,8 +85,8 @@ internal class RealTestJobConsumer(
                     applicationPackage = applicationPackage,
                     testPackage = testPackage,
                     instrumentationRunnerClass = instrumentationRunnerClass,
-                    testExecutionBehavior = testConfiguration.testExecutionBehavior,
-                    testMaximumDuration = testConfiguration.testMaximumDuration
+                    testExecutionBehavior = testExecutionBehavior,
+                    testMaximumDuration = testMaximumDuration
                 )
             )
         }
@@ -110,28 +122,30 @@ internal class RealTestJobConsumer(
         bucketId = bucketId,
         payloadSignature = signature,
         workerId = workerId,
-        bucketResult = BucketResult(
-            device = DeviceConfiguration(
-                type = payload.testConfiguration.deviceType,
-                sdkVersion = payload.testConfiguration.sdkVersion
-            ),
-            unfilteredResults = payload.testEntries.map { entry ->
-                BucketResult.UnfilteredResult(
-                    testEntry = entry,
-                    testRunResults = listOf(
-                        BucketResult.UnfilteredResult.TestRunResult(
-                            uuid = UUID.randomUUID().toString(),
-                            duration = 5.seconds, // TODO: calculate real execution time
-                            exceptions = emptyList(),
-                            hostName = "",
-                            logs = emptyList(),
-                            startTime = startTime,
-                            succeeded = results.find { it.testEntry == entry }?.success
-                                ?: error("Cannot find $entry in test results: $results")
+        bucketResultContainer = BucketResultContainer(
+            payload = BucketResult(
+                device = DeviceConfiguration(
+                    type = payload.testConfigurationContainer.payload.deviceType,
+                    sdkVersion = payload.testConfigurationContainer.payload.sdkVersion
+                ),
+                unfilteredResults = payload.testEntries.map { entry ->
+                    BucketResult.UnfilteredResult(
+                        testEntry = entry,
+                        testRunResults = listOf(
+                            BucketResult.UnfilteredResult.TestRunResult(
+                                uuid = UUID.randomUUID().toString(),
+                                duration = 5.seconds, // TODO: calculate real execution time
+                                exceptions = emptyList(),
+                                hostName = "",
+                                logs = emptyList(),
+                                startTime = startTime,
+                                succeeded = results.find { it.testEntry == entry }?.success
+                                    ?: error("Cannot find $entry in test results: $results")
+                            )
                         )
                     )
-                )
-            }
+                }
+            )
         )
     )
 }

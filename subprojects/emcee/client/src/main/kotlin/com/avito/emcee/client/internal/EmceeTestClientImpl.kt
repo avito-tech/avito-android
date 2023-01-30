@@ -6,16 +6,15 @@ import com.avito.emcee.client.internal.result.JobResult
 import com.avito.emcee.client.internal.result.JobResultHasFailedTestsException
 import com.avito.emcee.client.internal.result.JobResultResolver
 import com.avito.emcee.queue.QueueApi
-import com.avito.emcee.queue.ScheduleTestsBody
-import com.avito.emcee.queue.ScheduledTests
-import com.avito.emcee.queue.TestConfiguration
+import com.avito.emcee.queue.SimilarlyConfiguredTestEntries
+import com.avito.emcee.queue.TestConfigurationContainer
 import com.avito.emcee.queue.TestEntry
+import com.avito.emcee.queue.schedule.ScheduleTestsBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 internal class EmceeTestClientImpl(
@@ -61,14 +60,17 @@ internal class EmceeTestClientImpl(
 
     private fun createBody(
         config: EmceeTestClientConfig,
-        configuration: TestConfiguration,
+        testConfigurationContainer: TestConfigurationContainer,
         tests: List<TestEntry>
     ): ScheduleTestsBody {
         return ScheduleTestsBody(
             prioritizedJob = config.job,
             scheduleStrategy = config.scheduleStrategy,
-            tests = ScheduledTests(
-                config = ScheduledTests.Config(configuration),
+            similarlyConfiguredTestEntries = SimilarlyConfiguredTestEntries(
+                testEntryConfiguration = SimilarlyConfiguredTestEntries.TestEntryConfiguration(
+                    testConfigurationContainer = testConfigurationContainer,
+                    testExecutionBehavior = config.testExecutionBehavior,
+                ),
                 testEntries = tests
             )
         )
@@ -76,15 +78,14 @@ internal class EmceeTestClientImpl(
 
     private suspend fun createFactory(
         config: EmceeTestClientConfig
-    ): TestConfigurationFactory =
+    ): TestConfigurationContainerFactory =
         withContext(Dispatchers.IO) {
             val apkUrl = async { uploader.upload(config.apk) }
             val testApkUrl = async { uploader.upload(config.testApk) }
-            TestConfigurationFactory(
+            TestConfigurationContainerFactory(
                 apkUrl = apkUrl.await(),
                 testApkUrl = testApkUrl.await(),
-                testMaximumDuration = config.testMaximumDurationSec.seconds,
-                testExecutionBehavior = config.testExecutionBehavior,
+                testMaximumDuration = config.testExecutionBehavior.testMaximumDuration,
                 appPackage = config.appPackage,
                 testAppPackage = config.testAppPackage,
                 testRunnerClass = config.testRunnerClass,

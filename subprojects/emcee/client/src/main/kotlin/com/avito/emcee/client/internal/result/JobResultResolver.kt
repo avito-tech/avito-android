@@ -2,8 +2,8 @@ package com.avito.emcee.client.internal.result
 
 import com.avito.emcee.queue.BucketResult
 import com.avito.emcee.queue.Job
-import com.avito.emcee.queue.JobStatusBody
 import com.avito.emcee.queue.QueueApi
+import com.avito.emcee.queue.status.JobStatusBody
 
 internal class JobResultResolver(
     private val queueApi: QueueApi
@@ -13,8 +13,8 @@ internal class JobResultResolver(
 
         val unfilteredResults: List<BucketResult.UnfilteredResult> = queueApi.jobResults(JobStatusBody(job.id))
             .jobResults
-            .bucketResults
-            .map { it.unfilteredResults }
+            .bucketResultContainers
+            .map { it.payload.unfilteredResults }
             .flatten()
 
         // TODO: compare successful tests with scheduled

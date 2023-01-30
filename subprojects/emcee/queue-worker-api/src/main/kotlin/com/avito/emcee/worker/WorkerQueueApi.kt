@@ -1,7 +1,7 @@
 package com.avito.emcee.worker
 
 import com.avito.android.Result
-import com.avito.emcee.moshi.DurationAdapter
+import com.avito.emcee.moshi.SecondsToDurationAdapter
 import com.avito.retrofit.adapter.ResultCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
@@ -31,7 +31,7 @@ public interface WorkerQueueApi {
         @OptIn(ExperimentalStdlibApi::class)
         public fun Retrofit.Builder.createWorkerQueueApi(client: OkHttpClient, baseUrl: String): WorkerQueueApi {
             val moshi = Moshi.Builder()
-                .addAdapter(DurationAdapter())
+                .addAdapter(SecondsToDurationAdapter())
                 .build()
 
             return addCallAdapterFactory(ResultCallAdapterFactory.create())
