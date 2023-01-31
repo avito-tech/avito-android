@@ -79,7 +79,9 @@ public abstract class CheckMergedConfigurationTask @Inject constructor(
             diffFile.writeText(diff)
 
             val errorText = """
-                |Merged proguard configuration has changed. See diff at ${diffFile.path}:
+                |Merged proguard configuration has changed. 
+                |See diff at ${diffFile.path}:
+                |
                 |$diff
                 |Call './gradlew $updateTaskPath' to update locked configuration
             """.trimMargin()
