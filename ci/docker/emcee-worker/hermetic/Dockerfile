@@ -8,10 +8,11 @@ RUN mkdir /app
 COPY . /app
 WORKDIR /app
 
-RUN ./gradlew subprojects:emcee:worker:build \
+RUN ./gradlew subprojects:emcee:worker:build -x test \
     -PartifactoryUrl=${ARTIFACTORY_URL} \
     -Pcom.avito.android.tools.buildCache.remote.url=unused \
-    --no-build-cache
+    --no-build-cache \
+    --stacktrace
 
 FROM ${DOCKER_REGISTRY}/avito/debian-minbase:9.13
 

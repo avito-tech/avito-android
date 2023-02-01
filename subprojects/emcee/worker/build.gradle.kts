@@ -1,6 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.ksp")
+    id("convention.publish-kotlin-library")
     application
 }
 
