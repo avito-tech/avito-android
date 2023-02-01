@@ -15,39 +15,35 @@ internal fun BuildVerdict.Configuration.html(): String {
     return error.html().trimIndent()
 }
 
-private fun Error.html(): String {
-    val error: Error = this
-    return createHTML().html {
-        head {
-            title {
-                text("Build failed")
-            }
+private fun Error.html() = createHTML().html {
+    head {
+        title {
+            text("Build failed")
         }
-        body {
-            when (error) {
-                is Error.Single -> {
-                    h2 {
-                        text("FAILURE: Build failed with an exception")
-                    }
+    }
+    body {
+        when (this@html) {
+            is Error.Single -> {
+                h2 {
+                    text("FAILURE: Build failed with an exception")
+                }
+                h3 {
+                    text("What went wrong:")
+                }
+                pre {
+                    text(text())
+                }
+            }
+            is Error.Multi -> {
+                h2 {
+                    text("FAILURE: $message")
+                }
+                errors.forEachIndexed { index, error ->
                     h3 {
-                        text("What went wrong:")
+                        text("${index + 1}: Task failed with an exception")
                     }
                     pre {
-                        text(error.text())
-                    }
-                }
-
-                is Error.Multi -> {
-                    h2 {
-                        text("FAILURE: $message")
-                    }
-                    error.errors.forEachIndexed { index, error ->
-                        h3 {
-                            text("${index + 1}: Task failed with an exception")
-                        }
-                        pre {
-                            text(error.text().trimIndent())
-                        }
+                        text(error.text().trimIndent())
                     }
                 }
             }

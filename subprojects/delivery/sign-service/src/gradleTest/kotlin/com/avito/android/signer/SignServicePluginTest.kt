@@ -167,6 +167,6 @@ internal class SignServicePluginTest {
             expectFailure = true
         ).assertThat()
             .buildFailed()
-            .outputContains("task 'signBundleViaServiceRelease' not found in project ':app'")
+            .outputContains("Task 'signBundleViaServiceRelease' not found in project ':app'")
     }
 }
