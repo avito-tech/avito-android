@@ -1,3 +1,5 @@
+import com.avito.logger.LogLevel
+
 plugins {
     id("convention.gradle-properties")
     id("convention.lifecycle")
@@ -25,6 +27,10 @@ buildscript {
          */
         classpath(libs.okio)
     }
+}
+
+gradleLogger {
+    fileHandler.set(LogLevel.INFO)
 }
 
 val taskGroup = "Avito Android build"
