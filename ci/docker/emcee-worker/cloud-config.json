@@ -8,9 +8,9 @@
     "androidSdkPath": "/opt/android-sdk",
     "configurations": [
         {
-            "sdk": 22,
+            "sdk": 24,
             "type": "default",
-            "emulatorFileName": "emulator_22",
+            "emulatorFileName": "emulator_24",
             "sdCardFileName": "/sdcard.img"
         }
     ]
