@@ -3,7 +3,6 @@ package com.avito.android.ui.test
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.DrawableActivity
 import com.avito.android.ui.R
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -29,14 +28,7 @@ class DrawableMatcherTest {
             .hasBackground(tint = android.R.color.white)
     }
 
-    /**
-     * TODO fix
-     * Maybe problem with vector drawable
-     * check how google compare VectorDrawables
-     * https://android.googlesource.com/platform/cts/+/9950144/tests/tests/graphics/src/android/graphics/drawable/cts/VectorDrawableTest.java
-     */
     @Test
-    @Ignore("Broken on API 31")
     fun textViewDrawable_matches_drawable() {
         Screen.drawablesScreen.textViewWithDrawable.checks
             .withIcons(left = R.drawable.ic_check_black_24dp)

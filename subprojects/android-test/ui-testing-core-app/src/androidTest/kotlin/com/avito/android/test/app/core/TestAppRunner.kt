@@ -2,7 +2,6 @@ package com.avito.android.test.app.core
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.test.espresso.IdlingPolicies
 import com.avito.android.runner.InHouseInstrumentationTestRunner
 import com.avito.android.runner.TestRunEnvironment
 import com.avito.android.runner.annotation.resolver.AnnotationResolversBasedMetadataInjector
@@ -10,7 +9,6 @@ import com.avito.android.runner.annotation.resolver.TestMetadataAnnotationResolv
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.runner.parseEnvironment
 import com.avito.android.test.report.BundleArgsProvider
-import java.util.concurrent.TimeUnit
 
 class TestAppRunner : InHouseInstrumentationTestRunner() {
 
@@ -28,8 +26,6 @@ class TestAppRunner : InHouseInstrumentationTestRunner() {
 
     override fun onStart() {
         super.onStart()
-        IdlingPolicies.setMasterPolicyTimeout(10, TimeUnit.SECONDS)
-        IdlingPolicies.setIdlingResourceTimeout(10, TimeUnit.SECONDS)
         @Suppress("DEPRECATION")
         targetContext.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
     }

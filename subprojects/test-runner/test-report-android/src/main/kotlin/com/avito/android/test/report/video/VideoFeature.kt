@@ -1,5 +1,6 @@
 package com.avito.android.test.report.video
 
+import android.os.Build
 import com.avito.report.model.Incident
 
 /**
@@ -14,7 +15,7 @@ interface VideoFeature {
 
 class VideoFeatureImplementation(
     private val videoFeatureValue: VideoFeatureValue,
-    private val canRecord: Boolean = videoFeatureValue is VideoFeatureValue.Enabled
+    private val canRecord: Boolean = Build.VERSION.SDK_INT >= 23 && videoFeatureValue is VideoFeatureValue.Enabled
 ) : VideoFeature {
 
     override fun videoRecordingEnabled(shouldRecord: Boolean): Boolean = shouldRecord && canRecord

@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.avito.android.test.screenshot
 
 import android.graphics.Bitmap

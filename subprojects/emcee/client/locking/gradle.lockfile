@@ -1,7 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
-androidx.annotation:annotation:1.5.0=runtimeClasspath,testRuntimeClasspath
+androidx.annotation:annotation:1.1.0=runtimeClasspath,testRuntimeClasspath
 com.github.salomonbrys.kotson:kotson:2.5.0=runtimeClasspath,testRuntimeClasspath
 com.google.auto.service:auto-service-annotations:1.0=kapt,kaptClasspath_kaptKotlin,kaptTest
 com.google.auto.value:auto-value-annotations:1.6.3=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
@@ -53,15 +53,13 @@ org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.6.21=kotlinCompilerP
 org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.6.21=kotlinCompilerPluginClasspathMain,kotlinCompilerPluginClasspathTest
 org.jetbrains.kotlin:kotlin-scripting-jvm:1.6.21=kotlinCompilerPluginClasspathMain,kotlinCompilerPluginClasspathTest
 org.jetbrains.kotlin:kotlin-stdlib-common:1.6.0=kapt,kaptClasspath_kaptKotlin,kaptTest
-org.jetbrains.kotlin:kotlin-stdlib-common:1.6.21=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain,kotlinCompilerPluginClasspathTest,kotlinKaptWorkerDependencies,kotlinKlibCommonizerClasspath,testCompileClasspath,testImplementationDependenciesMetadata
-org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10=runtimeClasspath,testRuntimeClasspath
+org.jetbrains.kotlin:kotlin-stdlib-common:1.6.21=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain,kotlinCompilerPluginClasspathTest,kotlinKaptWorkerDependencies,kotlinKlibCommonizerClasspath,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.0=kapt,kaptClasspath_kaptKotlin,kaptTest
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.21=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0=kapt,kaptClasspath_kaptKotlin,kaptTest
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 org.jetbrains.kotlin:kotlin-stdlib:1.6.0=kapt,kaptClasspath_kaptKotlin,kaptTest
-org.jetbrains.kotlin:kotlin-stdlib:1.6.21=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain,kotlinCompilerPluginClasspathTest,kotlinKaptWorkerDependencies,kotlinKlibCommonizerClasspath,testCompileClasspath,testImplementationDependenciesMetadata
-org.jetbrains.kotlin:kotlin-stdlib:1.7.10=runtimeClasspath,testRuntimeClasspath
+org.jetbrains.kotlin:kotlin-stdlib:1.6.21=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain,kotlinCompilerPluginClasspathTest,kotlinKaptWorkerDependencies,kotlinKlibCommonizerClasspath,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 org.jetbrains.kotlinx:atomicfu:0.16.3=implementationDependenciesMetadata,testImplementationDependenciesMetadata
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath

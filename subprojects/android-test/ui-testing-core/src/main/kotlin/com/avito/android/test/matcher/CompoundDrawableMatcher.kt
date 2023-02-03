@@ -1,6 +1,7 @@
 package com.avito.android.test.matcher
 
 import android.content.res.Resources
+import android.os.Build
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -29,7 +30,11 @@ class CompoundDrawableMatcher(
         val compoundDrawables = item.compoundDrawables
         this.description = getDescription(context.resources)
 
-        val tintList = item.compoundDrawableTintList
+        val tintList = if (Build.VERSION.SDK_INT >= 23) {
+            item.compoundDrawableTintList
+        } else {
+            null
+        }
 
         return matchDrawable(
             context,

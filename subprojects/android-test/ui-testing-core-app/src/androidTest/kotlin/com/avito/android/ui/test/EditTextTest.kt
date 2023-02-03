@@ -50,7 +50,7 @@ class EditTextTest {
 
         val superLongText = StringBuilder()
             .apply {
-                (0..2000)
+                (0..100_000)
                     .forEach { _ ->
                         append("a")
                     }

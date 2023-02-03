@@ -4,6 +4,7 @@ import android.view.MenuItem
 import androidx.test.espresso.NoMatchingRootException
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.OverflowMenuActivity
+import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
@@ -40,8 +41,9 @@ class OverflowMenuTest {
             )
         )
 
-        assertThrows(NoMatchingRootException::class.java) {
+        val error = assertThrows(NoMatchingRootException::class.java) {
             Screen.overflow.toolbar.menuItem.withDisabledAutoOpenOverflow().actions.click()
         }
+        assertThat(error).hasMessageThat().contains("Не найдена view в иерархии")
     }
 }
