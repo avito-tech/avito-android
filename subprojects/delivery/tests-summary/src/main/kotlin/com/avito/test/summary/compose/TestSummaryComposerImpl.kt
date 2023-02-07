@@ -55,23 +55,23 @@ internal class TestSummaryComposerImpl(private val reportViewerUrl: String) : Te
                         "${testData.success} (${testData.percentSuccessOfAutomated})"
                 )
                 appendLine(
-                    ":warning: " +
-                        "*Тесты упали только на некоторых девайсах*: " +
-                        "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated})"
-                )
-                appendLine(
                     ":red_circle: " +
                         "*Тесты упали на всех девайсах*: " +
                         "${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated})"
                 )
                 appendLine(
+                    ":warning: " +
+                        "*Тесты упали только на некоторых девайсах*: " +
+                        "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated})"
+                )
+                appendLine(
                     ":white_circle: " +
-                        "*Пропущенные тесты (например, заигнорен) на всех девайсах*: " +
+                        "*Пропущенные тесты на всех девайсах (например, заигнорены)*: " +
                         "${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated})"
                 )
                 appendLine(
                     ":black_circle: " +
-                        "*Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: " +
+                        "*Потерянные тесты на некоторых девайсах (например, зависли и не зарепортились)*: " +
                         "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated})"
                 )
 

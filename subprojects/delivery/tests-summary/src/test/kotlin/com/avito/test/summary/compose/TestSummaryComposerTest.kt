@@ -84,7 +84,7 @@ internal class TestSummaryComposerTest {
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
         assertThat(message.getOrThrow()).contains(
-            ":white_circle: *Пропущенные тесты (например, заигнорен) на всех девайсах*: 3 (100%)"
+            ":white_circle: *Пропущенные тесты на всех девайсах (например, заигнорены)*: 3 (100%)"
         )
     }
 
@@ -103,7 +103,7 @@ internal class TestSummaryComposerTest {
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
         assertThat(message.getOrThrow()).contains(
-            ":black_circle: *Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: 2 (50%)"
+            ":black_circle: *Потерянные тесты на некоторых девайсах (например, зависли и не зарепортились)*: 2 (50%)"
         )
     }
 
