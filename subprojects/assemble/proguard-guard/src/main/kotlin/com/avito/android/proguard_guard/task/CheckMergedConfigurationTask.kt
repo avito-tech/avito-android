@@ -1,6 +1,9 @@
 package com.avito.android.proguard_guard.task
 
 import com.avito.android.diff_util.EditList
+import com.avito.android.proguard_guard.configuration.parseConfigurationSorted
+import com.avito.android.proguard_guard.configuration.print
+import com.avito.android.proguard_guard.configuration.writeTo
 import com.avito.android.proguard_guard.diff.ConfigurationDiffBuilder
 import com.avito.android.proguard_guard.diff.EditListFormatter
 import org.gradle.api.file.RegularFileProperty
@@ -17,7 +20,8 @@ import javax.inject.Inject
 
 @CacheableTask
 public abstract class CheckMergedConfigurationTask @Inject constructor(
-    private val updateTaskPath: String
+    private val updateTaskPath: String,
+    private val debug: Boolean,
 ) : ProguardGuardTask() {
 
     // Cannot use @InputFile because it could not exist (https://github.com/gradle/gradle/issues/2016)
@@ -31,9 +35,15 @@ public abstract class CheckMergedConfigurationTask @Inject constructor(
     @get:OutputFile
     public abstract val diffFile: RegularFileProperty
 
+    @get:OutputFile
+    public abstract val sortedMergedConfigurationFile: RegularFileProperty
+
     @TaskAction
     public fun check() {
         val diffFile = diffFile.get().asFile.also {
+            it.delete()
+        }
+        val sortedMergedConfigurationFile = sortedMergedConfigurationFile.get().asFile.also {
             it.delete()
         }
 
@@ -43,26 +53,29 @@ public abstract class CheckMergedConfigurationTask @Inject constructor(
         logger.lifecycle("Locked proguard config: $lockedConfigurationFile")
         logger.lifecycle("Merged proguard config: $mergedConfigurationFile")
 
+        val sortedConfiguration = parseConfigurationSorted(mergedConfigurationFile)
+        if (debug) {
+            sortedConfiguration.print(this)
+        }
+        val sortedConfigurationLines: List<String> = sortedConfiguration.writeTo(sortedMergedConfigurationFile)
+
         if (lockedConfigurationFile.exists()) {
             compareConfigurations(
-                lockedConfigurationFile = lockedConfigurationFile,
-                mergedConfigurationFile = mergedConfigurationFile,
+                lockedConfigurationLines = lockedConfigurationFile.readLines(),
+                mergedConfigurationLines = sortedConfigurationLines,
                 diffFile = diffFile,
             )
         } else {
             logger.lifecycle("Locked proguard config does not exist. Just creating it.")
-            mergedConfigurationFile.copyTo(lockedConfigurationFile)
+            sortedMergedConfigurationFile.copyTo(lockedConfigurationFile)
         }
     }
 
     private fun compareConfigurations(
-        lockedConfigurationFile: File,
-        mergedConfigurationFile: File,
+        lockedConfigurationLines: List<String>,
+        mergedConfigurationLines: List<String>,
         diffFile: File
     ) {
-        val lockedConfigurationLines = lockedConfigurationFile.readMeaningfulLines()
-        val mergedConfigurationLines = mergedConfigurationFile.readMeaningfulLines()
-
         val editList: EditList = ConfigurationDiffBuilder().build(
             lockedConfigurationLines,
             mergedConfigurationLines
@@ -90,12 +103,6 @@ public abstract class CheckMergedConfigurationTask @Inject constructor(
             } else {
                 logger.warn(errorText)
             }
-        }
-    }
-
-    private fun File.readMeaningfulLines(): List<String> {
-        return readLines().filterNot {
-            it.isBlank() || it.startsWith('#')
         }
     }
 }

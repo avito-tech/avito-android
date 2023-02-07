@@ -22,6 +22,7 @@ moshi = "1.13.0"
 moshiX = "0.17.2"
 ktor = "2.1.2"
 jacksonDataformat = "2.13.0"
+proguard = "6.2.2"
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
@@ -93,7 +94,8 @@ espressoIntents = { module = "androidx.test.espresso:espresso-intents", version.
 espressoDescendantActions = "com.forkingcode.espresso.contrib:espresso-descendant-actions:1.4.0"
 radiography = "com.squareup.radiography:radiography:2.4.1"
 rx3Ilder = "com.squareup.rx.idler:rx3-idler:0.11.0"
-proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
+proguardRetrace = { module = "net.sf.proguard:proguard-retrace", version.ref = "proguard" }
+proguardBase = { module = "net.sf.proguard:proguard-base", version.ref = "proguard" }
 dexlib = "org.smali:dexlib2:2.3"
 dextestparser = "com.linkedin.dextestparser:parser:2.3.4"
 

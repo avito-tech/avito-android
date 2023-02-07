@@ -54,11 +54,17 @@ class CheckMergedConfigurationsIntegrationTest {
         build.assertThat().tasksShouldBeTriggered(":app:shadowedMinifyReleaseWithR8")
         assertThat(diffFile.readText()).isEqualTo(
             """
-               --- -keep class com.avito.security.** { *; }
-               ...
-               +++ -keepnames class ru.avito.messenger.api.entity.* { *; }
-               
-               """.trimIndent(),
+                --- -keep class com.avito.security.** {
+                ---     <fields>;
+                ---     <methods>;
+                --- }
+                ...
+                +++ -keep,allowshrinking class ru.avito.messenger.api.entity.* {
+                +++     <fields>;
+                +++     <methods>;
+                +++ }
+                
+            """.trimIndent(),
         )
     }
 

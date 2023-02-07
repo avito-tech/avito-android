@@ -21,6 +21,7 @@ class UpdateLockedConfigurationTest {
         val mergedConfigContent = """
             #comment
             -allowaccessmodification
+            -optimizations !field/*,!class/merging/*
             """.trimIndent()
         val lockedConfigPath = "guarded-configuration.pro"
         val lockedConfigContent = "-optimizationpasses 5"
@@ -57,6 +58,10 @@ class UpdateLockedConfigurationTest {
         val locked = projectDir.resolve("app/$lockedConfigPath")
 
         build.assertThat().buildSuccessful()
-        assertThat(locked.readText()).isEqualTo(mergedConfigContent)
+        assertThat(locked.readText()).isEqualTo("""
+            -optimizations !class/merging/*,!field/*
+            -allowaccessmodification
+            
+        """.trimIndent())
     }
 }

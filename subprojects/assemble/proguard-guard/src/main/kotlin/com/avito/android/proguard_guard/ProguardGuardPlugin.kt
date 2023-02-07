@@ -11,6 +11,8 @@ import com.avito.android.proguard_guard.task.UpdateLockedConfigurationTask
 import com.avito.capitalize
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.kotlin.dsl.create
 
 public class ProguardGuardPlugin : Plugin<Project> {
@@ -21,9 +23,9 @@ public class ProguardGuardPlugin : Plugin<Project> {
             .map { it.toBoolean() }
             .getOrElse(true)
 
-    private val Project.debugR8: Boolean
+    private val Project.debug: Boolean
         get() = providers
-            .gradleProperty(debugR8Prop)
+            .gradleProperty(debugProp)
             .map { it.toBoolean() }
             .getOrElse(false)
 
@@ -72,14 +74,15 @@ public class ProguardGuardPlugin : Plugin<Project> {
             name = computeCheckTaskName(variant.name),
             variant = variant,
             shadowR8Task = extension.shadowR8Task.get(),
-            taskConstructorArgs = arrayOf(updateTaskPath)
-        ) {
-            it.group = "Proguard guard"
-            it.description = "Compare ${variant.capitalizedName()} proguard config with locked config"
-            it.mergedConfigurationFile.set(extension.mergedConfigurationFile)
-            it.lockedConfigurationFile.set(extension.lockedConfigurationFile)
-            it.failOnDifference.set(extension.failOnDifference)
-            it.diffFile.set(extension.outputFile)
+            taskConstructorArgs = arrayOf(updateTaskPath, project.debug)
+        ) { task ->
+            task.group = "Proguard guard"
+            task.description = "Compare ${variant.capitalizedName()} proguard config with locked config"
+            task.mergedConfigurationFile.set(extension.mergedConfigurationFile)
+            task.sortedMergedConfigurationFile.setSortedFileFrom(task.mergedConfigurationFile)
+            task.lockedConfigurationFile.set(extension.lockedConfigurationFile)
+            task.failOnDifference.set(extension.failOnDifference)
+            task.diffFile.set(extension.outputFile)
         }
     }
 
@@ -93,10 +96,12 @@ public class ProguardGuardPlugin : Plugin<Project> {
             name = computeUpdateTaskName(variant.name),
             variant = variant,
             shadowR8Task = extension.shadowR8Task.get(),
+            taskConstructorArgs = arrayOf(project.debug)
         ) { task ->
             task.group = "Proguard guard"
             task.description = "Update locked proguard config with ${variant.capitalizedName()}"
             task.mergedConfigurationFile.set(extension.mergedConfigurationFile)
+            task.sortedMergedConfigurationFile.setSortedFileFrom(task.mergedConfigurationFile)
             task.lockedConfigurationFile.set(extension.lockedConfigurationFile)
         }
     }
@@ -117,8 +122,16 @@ public class ProguardGuardPlugin : Plugin<Project> {
             project = project,
             variant = variant,
             shadowR8Task = shadowR8Task,
-            debug = project.debugR8
+            debug = project.debug
         )
+    }
+
+    private fun RegularFileProperty.setSortedFileFrom(mergedFileProvider: RegularFileProperty) {
+        set(mergedFileProvider.map { mergedFile ->
+            val sortedFileName = "sorted-${mergedFile.asFile.name}"
+            val sortedFile = mergedFile.asFile.resolveSibling(sortedFileName)
+            RegularFile { sortedFile }
+        })
     }
 
     public companion object {
@@ -131,4 +144,4 @@ public class ProguardGuardPlugin : Plugin<Project> {
 }
 
 private const val enabledProp = "avito.proguard-guard.enabled"
-private const val debugR8Prop = "avito.proguard-guard.debugR8"
+private const val debugProp = "avito.proguard-guard.debug"

@@ -56,7 +56,7 @@ class CheckMergedConfigurationsTest {
                 )
                 file(
                     DEFAULT_LOCKED_CONFIG_PATH,
-                    content = "#comment2\n\n$TEST_CONFIG_CONTENT"
+                    content = TEST_CONFIG_CONTENT
                 )
             }
         )
@@ -331,7 +331,7 @@ class CheckMergedConfigurationsTest {
         const val DEFAULT_LOCKED_CONFIG_PATH = "proguard-guard/debug/locked-configuration.pro"
         const val DEFAULT_OUTPUT_PATH = "$MODULE_NAME/build/outputs/proguard_guard/debug/diff.txt"
         const val TEST_MERGED_CONFIG_PATH = "merged-config.pro"
-        const val TEST_CONFIG_CONTENT = "-optimizationpasses 5\n-allowaccessmodification"
+        const val TEST_CONFIG_CONTENT = "-optimizationpasses 5\n-allowaccessmodification\n"
         const val ENABLE_MINIFICATION = "android.buildTypes.debug.minifyEnabled = true"
     }
 }

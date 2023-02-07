@@ -9,6 +9,7 @@ dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.android)
     implementation(projects.subprojects.logger.gradleLogger)
+    implementation(libs.proguardBase)
 
     gradleTestImplementation(projects.subprojects.common.resources)
     gradleTestImplementation(projects.subprojects.gradle.testProject)
