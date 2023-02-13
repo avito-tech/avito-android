@@ -41,7 +41,11 @@ RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDR
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux-32_0_0.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms-32_0_1.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-33_0_2.zip $ANDROID_HOME
+# Don't forget to also change AVITO_ANDROID_NDK variable while upgrading to a newer version
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/ndk/android-ndk-r25c-linux.zip $ANDROID_HOME
 RUN rm /usr/local/bin/unzip_from_url.sh
+
+ENV AVITO_ANDROID_NDK ${ANDROID_HOME}/android-ndk-r25c
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
