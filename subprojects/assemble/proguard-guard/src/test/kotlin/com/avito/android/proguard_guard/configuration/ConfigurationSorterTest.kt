@@ -15,6 +15,12 @@ class ConfigurationSorterTest {
 
     @Test
     fun `configuration is sorted ascending`() {
+        /*
+            1. Create configuration with all the lists fields filled in incorrect order. Same for lists of lists.
+            2. Create expectedConfiguration with the same lists but sorted
+            3. Sort original configuration
+            4. Compare
+         */
         val configuration = Configuration().apply {
             programJars = createClassPath()
             libraryJars = createClassPath()

@@ -19,6 +19,16 @@ internal fun parseConfigurationSorted(configurationFile: File): Configuration {
     return configuration
 }
 
+/**
+ * Sorts all the List typed fields inside the configuration in place.
+ *
+ * Lists have a race-based order in a final proguard configuration.
+ * It's easier to find changes in them after sorting.
+ *
+ * Lists are sorted by comparing elements individually e.g. (0) < (0,1) < (1)
+ *
+ * There are nested lists. Deeper lists are sorted first.
+ */
 internal fun Configuration.sortConfigurationInPlace() {
     programJars?.sortClassPathInPlace()
     libraryJars?.sortClassPathInPlace()

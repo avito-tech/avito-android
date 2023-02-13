@@ -23,7 +23,6 @@ internal fun Configuration.writeTo(file: File): List<String> {
         filteredLines.forEach { line ->
             filePrintWriter.println(line)
         }
-        filePrintWriter.flush()
     }
 
     return filteredLines
