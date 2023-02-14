@@ -17,32 +17,56 @@ import java.io.Serializable
  *  same rules applies for append
  */
 public class SeriesName private constructor(
-    private val parts: List<String>
+    private val parts: List<String>,
+    private val tags: Map<String, String>,
 ) : Serializable {
 
+    public fun addTag(key: String, value: String): SeriesName {
+        requireTag(key, value)
+        return SeriesName(parts, tags.plus(key to value))
+    }
+
+    public fun addTags(tags: Map<String, String>): SeriesName {
+        tags.forEach { (k, v) -> requireTag(k, v) }
+        return SeriesName(parts, tags.plus(tags))
+    }
+
     public fun prefix(seriesName: SeriesName): SeriesName {
-        return SeriesName(seriesName.parts + parts)
+        return SeriesName(seriesName.parts + parts, seriesName.tags + tags)
     }
 
     public fun append(part: String, multipart: Boolean = false): SeriesName {
         return if (multipart) {
             val multiparts = part.split('.').map { graphiteSeriesPart(it) }
-            SeriesName(parts + multiparts)
+            SeriesName(parts + multiparts, tags)
         } else {
-            SeriesName(parts + graphiteSeriesPart(part))
+            SeriesName(parts + graphiteSeriesPart(part), tags)
         }
     }
 
     public fun append(vararg part: String): SeriesName {
-        return SeriesName(parts + part.map { graphiteSeriesPart(it) })
+        return SeriesName(parts + part.map { graphiteSeriesPart(it) }, tags)
     }
 
     public fun append(part: SeriesName): SeriesName {
         return part.prefix(this)
     }
 
-    public fun asAspect(): String =
-        parts.joinToString(separator = ".")
+    public fun asAspect(): String = buildString {
+        append(parts.joinToString(separator = "."))
+        if (tags.isNotEmpty()) {
+            append(tags.map { "${it.key}=${it.value}" }.joinToString(prefix = ";", separator = ";"))
+        }
+    }
+
+    private fun requireTag(key: String, value: String) {
+        require(key.isNotBlank()) {
+            "Tag key mustn't be blank"
+        }
+        require(value.isNotBlank()) {
+            "Tag value mustn't be blank"
+        }
+    }
 
     override fun toString(): String = asAspect()
 
@@ -54,11 +78,13 @@ public class SeriesName private constructor(
 
         if (parts != other.parts) return false
 
+        if (tags != other.tags) return false
+
         return true
     }
 
     override fun hashCode(): Int {
-        return parts.hashCode()
+        return 31 * parts.hashCode() + tags.hashCode()
     }
 
     public companion object {
@@ -66,11 +92,11 @@ public class SeriesName private constructor(
         private val invalidSymbols by lazy { "[^a-zA-Z0-9_-]+".toRegex() }
 
         public fun create(vararg part: String): SeriesName {
-            return SeriesName(mutableListOf()).append(*part)
+            return SeriesName(mutableListOf(), emptyMap()).append(*part)
         }
 
         public fun create(seriesName: String, multipart: Boolean): SeriesName {
-            return SeriesName(mutableListOf()).append(seriesName, multipart)
+            return SeriesName(mutableListOf(), emptyMap()).append(seriesName, multipart)
         }
 
         private fun graphiteSeriesPart(value: String): String {

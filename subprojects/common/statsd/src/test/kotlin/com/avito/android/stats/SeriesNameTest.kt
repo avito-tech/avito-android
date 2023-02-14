@@ -2,6 +2,7 @@ package com.avito.android.stats
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class SeriesNameTest {
 
@@ -87,5 +88,57 @@ internal class SeriesNameTest {
         val result = SeriesName.create("one").prefix(SeriesName.create("minus-one", "zero"))
 
         assertThat(result.toString()).isEqualTo("minus-one.zero.one")
+    }
+
+    @Test
+    fun `add tag`() {
+        val result = SeriesName.create("one").addTag("tag", "tagValue")
+
+        assertThat(result.toString()).isEqualTo("one;tag=tagValue")
+    }
+
+    @Test
+    fun `add tags at once`() {
+        val result = SeriesName.create("one").addTags(
+            mapOf(
+                "tag1" to "tagValue",
+                "tag2" to "tagValue",
+            )
+        )
+
+        assertThat(result.toString()).isEqualTo("one;tag1=tagValue;tag2=tagValue")
+    }
+
+    @Test
+    fun `add tags by two executions`() {
+        val result = SeriesName.create("one")
+            .addTag("tag1", "tagValue")
+            .addTag("tag2", "tagValue")
+
+        assertThat(result.toString()).isEqualTo("one;tag1=tagValue;tag2=tagValue")
+    }
+
+    @Test
+    fun `add empty tag key - fail`() {
+        assertThrows<IllegalArgumentException> {
+            SeriesName.create("one")
+                .addTag("", "tagValue")
+        }
+    }
+
+    @Test
+    fun `add empty tag value - fail`() {
+        assertThrows<IllegalArgumentException> {
+            SeriesName.create("one")
+                .addTag("t", "")
+        }
+    }
+
+    @Test
+    fun `append series with tags value`() {
+        val given = SeriesName.create("given")
+        val tags = SeriesName.create().addTag("one", "value")
+        val result = given.append(tags)
+        assertThat(result.toString()).isEqualTo("given;one=value")
     }
 }
