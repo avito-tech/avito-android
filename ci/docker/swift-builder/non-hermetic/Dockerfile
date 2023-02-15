@@ -5,6 +5,7 @@ RUN \
   apt-get install -y \
     sudo \
     zip \
+    openjdk-11-jdk \
     libssl-dev && \
   apt-get clean && \
   apt-get purge
