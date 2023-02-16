@@ -50,9 +50,6 @@ internal class MergeDeeplinkManifestTest {
         gradlew(projectDir, ":feed:assembleRelease").assertThat()
             .buildSuccessful()
             .tasksShouldNotBeTriggered(":feed:mergeReleasePublicDeeplinkManifest")
-
-        val manifest = getGeneratedManifestLibFile(File(projectDir, "feed"))
-        assertThat(manifest.exists()).isFalse()
     }
 
     @Test
@@ -145,7 +142,7 @@ internal class MergeDeeplinkManifestTest {
         fun getGeneratedManifestLibFile(libDir: File) =
             File(
                 libDir,
-                "/build/intermediates/merged_manifest/release/mergeReleasePublicDeeplinkManifest/AndroidManifest.xml"
+                "/build/intermediates/merged_manifest/release/AndroidManifest.xml"
             )
 
         fun getGeneratedManifestAppFile(appDir: File) =

@@ -33,7 +33,7 @@ internal fun R8Task.print() {
         info("featureJavaResourceOutputDir: ${featureJavaResourceOutputDir.orNull}")
         info("outputResources: ${outputResources.orNull}")
         info("Start ProguardConfigurableTask")
-        info("variantType: ${variantType.orNull}")
+        info("variantName: $variantName")
         info("includeFeaturesInScopes: ${includeFeaturesInScopes.orNull}")
         info("testedMappingFile: ${testedMappingFile.joinToString()}")
         info("classes: ${classes.joinToString()}")
