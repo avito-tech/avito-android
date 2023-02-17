@@ -26,6 +26,8 @@ buildscript {
          * our instrumentation-tests plugin in subprojects in runtime
          */
         classpath(libs.okio)
+        // TODO Delete when update sentry in infra
+        classpath("com.fasterxml.jackson.core:jackson-core:2.11.1")
     }
 }
 
