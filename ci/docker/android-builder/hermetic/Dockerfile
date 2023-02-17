@@ -41,16 +41,9 @@ RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDR
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux-32_0_0.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms-32_0_1.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-33_0_2.zip $ANDROID_HOME
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/ndk/android-ndk-r25c-linux.zip $ANDROID_HOME/ndk
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/ndk/ndk-linux-25_2_9519653.zip $ANDROID_HOME
 
 RUN rm /usr/local/bin/unzip_from_url.sh
-# Move all the NDK files (which are inside ndk-version-dependent dir) to stable ${ANDROID_HOME}/ndk dir
-RUN \
-    cd $ANDROID_HOME/ndk && \
-    NDK_DIR=$(ls) && \
-    mv $NDK_DIR/* . && \
-    rm -d $NDK_DIR
-ENV AVITO_ANDROID_NDK ${ANDROID_HOME}/ndk
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases

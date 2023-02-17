@@ -57,3 +57,20 @@ This is the image for building and testing Android applications. It contains And
     - In internal avito repository: `ci/_main.sh`
 1. Check this images is working. At least, run `ci/local_check.sh`.
 1. Make PR with a new image.
+
+## How to prepare ndk archive
+
+1. Download [ndk](https://developer.android.com/ndk/downloads) for linux
+1. If you are using MacOS make sure you are working in volume with [case-sensitive file system](https://support.apple.com/en-am/guide/disk-utility/dsku19ed921c/mac). Create new volume using "Disk Utility" and copy archive there if you don't have case-sensitive volume.
+1. Unpack zip archive using `unzip <zip file>` command in terminal to verify that archive is fully unpacked. Do not use double-click. If you see replace prompt, check previous step.
+1. Change file structure to `ndk/<version>/<ndk files>`
+1. Create zip archive using `zip` tool with `-ry9` flags
+
+For example for `25.2.9519653` do:
+   ```shell
+   unzip android-ndk-r25c-linux.zip;
+   mv android-ndk-r25c 25.2.9519653;
+   mkdir ndk;
+   mv 25.2.9519653 ndk/25.2.9519653;
+   zip -ry9 ndk-linux-25_2_9519653.zip ndk;
+   ```
