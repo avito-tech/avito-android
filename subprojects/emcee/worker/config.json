@@ -4,7 +4,7 @@
         "retriesCount": 10,
         "retryDelayMs": 3000
     },
-    "androidSdkPath": "/Users/Shared/Android/sdk",
+    "androidSdkPath": "/opt/android-sdk",
     "configurations": [
         {
             "sdk": 22,

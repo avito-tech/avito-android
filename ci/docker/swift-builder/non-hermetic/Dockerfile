@@ -1,11 +1,10 @@
-FROM swift:5.6.2
+FROM swift:5.6.3
 
 RUN \
   apt-get update && \
   apt-get install -y \
     sudo \
     zip \
-    openjdk-11-jdk \
     libssl-dev && \
   apt-get clean && \
   apt-get purge

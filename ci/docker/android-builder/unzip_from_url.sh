@@ -8,6 +8,6 @@ set -e
 #   In case of missing or invalid file it won't fail.
 TEMP_ZIP_FILE=$(mktemp)
 
-curl "$1" --progress-bar --location --output $TEMP_ZIP_FILE &&
-    unzip $TEMP_ZIP_FILE -d "$2" &&
-    rm -f $TEMP_ZIP_FILE
+curl "$1" --progress-bar --location --output "$TEMP_ZIP_FILE" &&
+    unzip "$TEMP_ZIP_FILE" -d "$2" &&
+    rm -f "$TEMP_ZIP_FILE"
