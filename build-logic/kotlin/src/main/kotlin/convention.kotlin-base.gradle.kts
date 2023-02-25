@@ -1,10 +1,9 @@
+import com.avito.android.withVersionCatalog
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("convention.unit-testing")
 }
-
-val kotlinLanguageVersion = "1.6"
 
 /**
  * Exists because `compile` task ambiguous in projects with jvm and android modules combined
@@ -15,18 +14,21 @@ val compileAllTask: TaskProvider<Task> = tasks.register("compileAll") {
     dependsOn(tasks.withType<KotlinCompile>())
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
+// workaround for https://github.com/gradle/gradle/issues/15383
+project.withVersionCatalog { libs ->
+    val kotlinLanguageVersion = libs.versions.kotlinLanguageVersion.get()
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
 
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+            allWarningsAsErrors = true
 
-        allWarningsAsErrors = true
+            languageVersion = kotlinLanguageVersion
+            apiVersion = kotlinLanguageVersion
 
-        languageVersion = kotlinLanguageVersion
-        apiVersion = kotlinLanguageVersion
-
-        freeCompilerArgs = freeCompilerArgs +
-            "-opt-in=kotlin.RequiresOptIn" +
-            "-progressive"
+            freeCompilerArgs = freeCompilerArgs +
+                "-opt-in=kotlin.RequiresOptIn" +
+                "-progressive"
+        }
     }
 }

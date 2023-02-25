@@ -1,5 +1,7 @@
 [versions]
-kotlin = "1.6.21"
+kotlin = "1.7.10"
+kotlinLanguageVersion = "1.7"
+kspVersion = "1.7.10-1.0.6"
 agp = "7.4.1"
 # formula: 23 + agp version
 # check versions https://mvnrepository.com/artifact/com.android.tools.external.com-intellij
@@ -28,7 +30,7 @@ proguard = "6.2.2"
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.6.21-1.0.6"
+ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 
