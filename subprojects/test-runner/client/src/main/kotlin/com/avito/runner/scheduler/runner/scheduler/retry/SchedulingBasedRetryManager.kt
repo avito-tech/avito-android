@@ -7,7 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal class SchedulingBasedRetryManager(
-    private val scheduling: TestRunRequest.Scheduling
+    private val scheduling: TestRunRequest.Scheduling,
 ) : RetryManager {
 
     override fun retryCount(history: List<DeviceTestCaseRun>): Int {

@@ -28,7 +28,7 @@ internal interface TestExecutionState {
 
 internal class TestExecutionStateImplementation(
     override val request: TestRunRequest,
-    private val retryManager: RetryManager
+    private val retryManager: RetryManager,
 ) : TestExecutionState {
 
     private val history: MutableList<DeviceTestCaseRun> = mutableListOf()
@@ -50,12 +50,12 @@ internal class TestExecutionStateImplementation(
         } else {
             val runCount = retryRemains - executionsInProgress
 
-            executionsInProgress += runCount
-
             if (runCount > 0) {
                 TestExecutionState.Verdict.Run(
                     intentions = nextRunIntentions(runCount = runCount)
-                )
+                ).also {
+                    executionsInProgress += runCount
+                }
             } else {
                 TestExecutionState.Verdict.DoNothing
             }
@@ -69,7 +69,7 @@ internal class TestExecutionStateImplementation(
 
     private fun nextRunIntentions(runCount: Int): List<Intention> {
         return (0 until runCount)
-            .map { index -> nextRunIntention(history.size + index + 1) }
+            .map { index -> nextRunIntention(history.size + executionsInProgress + index + 1) }
             .toList()
     }
 

@@ -36,7 +36,7 @@ internal class TestExecutionScheduler(
                             results.send(
                                 TestRunResult(
                                     request = state.request,
-                                    result = verdict.results
+                                    result = verdict.results,
                                 )
                             )
 
@@ -44,6 +44,7 @@ internal class TestExecutionScheduler(
                             verdict.intentions.forEach { intention ->
                                 intentions.send(intention)
                             }
+
                         TestExecutionState.Verdict.DoNothing -> {
                             // do nothing
                         }
@@ -56,8 +57,8 @@ internal class TestExecutionScheduler(
                         TestExecutionStateImplementation(
                             request = request,
                             retryManager = SchedulingBasedRetryManager(
-                                scheduling = request.scheduling
-                            )
+                                scheduling = request.scheduling,
+                            ),
                         )
                     states[request.testCase] = testState
 
@@ -69,6 +70,7 @@ internal class TestExecutionScheduler(
 
                         is TestExecutionState.Verdict.SendResult ->
                             throw IllegalStateException("Trying to send empty result")
+
                         TestExecutionState.Verdict.DoNothing -> {
                             // do nothing
                         }

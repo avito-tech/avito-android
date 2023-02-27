@@ -780,7 +780,7 @@ internal class RunnerIntegrationTest {
             dispatcher = dispatcher,
             results = state.results,
             intentions = state.intentions,
-            intentionResults = state.intentionResults
+            intentionResults = state.intentionResults,
         )
 
         return TestRunnerImpl(

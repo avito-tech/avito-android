@@ -61,7 +61,7 @@ internal class TestRunnerFactoryImpl(
             scheduler = TestExecutionScheduler(
                 results = executionState.results,
                 intentions = executionState.intentions,
-                intentionResults = executionState.intentionResults
+                intentionResults = executionState.intentionResults,
             ),
             devicesProvider = devicesProvider,
             reservationWatcher = DeviceReservationWatcher.create(

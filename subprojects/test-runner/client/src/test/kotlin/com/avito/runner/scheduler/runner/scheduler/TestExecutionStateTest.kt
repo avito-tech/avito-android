@@ -366,9 +366,9 @@ internal class TestExecutionStateTest {
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
             .isInstanceOf<InstrumentationTestRunAction>()
-        assertWithMessage("Should be 5")
+        assertWithMessage("Should be 6")
             .that(verdict.intentions[0].action.executionNumber)
-            .isEqualTo(5)
+            .isEqualTo(6)
     }
 
     private fun createFailedTestCaseRun(): DeviceTestCaseRun {
@@ -397,7 +397,7 @@ internal class TestExecutionStateTest {
                 retryCount = quota,
                 minimumFailedCount = minimalFailedCount,
                 minimumSuccessCount = minimalPassedCount
-            )
+            ),
         )
 
     private fun provideTestExecutionState(
@@ -406,6 +406,6 @@ internal class TestExecutionStateTest {
     ) =
         TestExecutionStateImplementation(
             request = request,
-            retryManager = retry
+            retryManager = retry,
         )
 }

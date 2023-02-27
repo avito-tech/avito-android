@@ -181,7 +181,7 @@ internal class SchedulingBasedRetryManagerTest {
                 retryCount = quota,
                 minimumSuccessCount = minimalPassedCount,
                 minimumFailedCount = minimalFailedCount
-            )
+            ),
         )
 
     companion object {
