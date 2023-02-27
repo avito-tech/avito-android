@@ -46,8 +46,8 @@ internal class OsMetricsCollector(
     @Suppress("DEPRECATION")
     private fun OperatingSystemMXBean.toMemoryInfo() =
         MemoryInfo(
-            usedKb = (totalPhysicalMemorySize - freePhysicalMemorySize).bytesToKiB(),
-            totalKb = totalPhysicalMemorySize.bytesToKiB()
+            usedKb = (totalMemorySize - freeMemorySize).bytesToKiB(),
+            totalKb = totalMemorySize.bytesToKiB()
         )
 
     /**
