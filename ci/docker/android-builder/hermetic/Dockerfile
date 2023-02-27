@@ -24,7 +24,7 @@ RUN \
   apt-get purge
 
 ENV LANG C.UTF-8
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
 
 # ----------------- Android SDK -----------------
 ENV ANDROID_HOME /opt/android-sdk

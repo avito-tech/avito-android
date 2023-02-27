@@ -8,6 +8,11 @@ plugins {
 
 kotlin {
     explicitApi()
+    jvmToolchain {
+        (this as JavaToolchainSpec).apply {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
 }
 
 tasks.withType<Jar>().configureEach {
