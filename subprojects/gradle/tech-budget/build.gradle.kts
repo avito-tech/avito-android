@@ -23,6 +23,7 @@ dependencies {
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
     gradleTestImplementation(testFixtures(projects.subprojects.gradle.codeOwnership.plugin))
+    gradleTestImplementation(libs.truth)
 }
 
 gradlePlugin {
