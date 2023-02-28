@@ -47,12 +47,12 @@ RUN rm /usr/local/bin/unzip_from_url.sh
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
-ARG PROFILER_VERSION=0.15.0
+ARG PROFILER_VERSION=0.19.0
 
 # Install gradle-profiler
 RUN \
   cd /opt/ && \
-  curl ${ARTIFACTORY_URL}gradle-ext-releases/org/gradle/profiler/gradle-profiler/${PROFILER_VERSION}/gradle-profiler-${PROFILER_VERSION}.zip \
+  curl ${ARTIFACTORY_URL}android-build-env/gradle-profiler/gradle-profiler-${PROFILER_VERSION}.zip \
     --progress-bar --location --output gradle-profiler.zip && \
   unzip gradle-profiler.zip && \
   mv gradle-profiler-${PROFILER_VERSION} gradle-profiler && \
