@@ -106,7 +106,7 @@ internal class RetryInterceptorTest {
         return createApi(baseUrl = server.url("/")) {
             addInterceptor(
                 RetryInterceptor(
-                    retries = maxAttempts,
+                    tries = maxAttempts,
                     allowedMethods = listOf("GET", "POST"),
                     delayMs = 1,
                     useIncreasingDelay = false

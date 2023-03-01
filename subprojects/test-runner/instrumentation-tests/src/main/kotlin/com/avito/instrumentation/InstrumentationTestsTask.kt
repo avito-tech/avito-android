@@ -121,6 +121,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val kubernetesCredentials: Property<KubernetesCredentials>
 
     @get:Internal
+    public abstract val kubernetesHttpTries: Property<Int>
+
+    @get:Internal
     public abstract val buildFailer: Property<BuildFailer>
 
     @get:Internal
@@ -183,6 +186,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
             },
+            kubernetesHttpTries = kubernetesHttpTries.get(),
             deviceDebug = enableDeviceDebug.get(),
             projectName = projectName.get(),
             suppressFailure = suppressFailure.get(),

@@ -1,8 +1,10 @@
 package com.avito.k8s
 
 import com.avito.android.stats.StatsDSender
+import com.avito.http.RetryInterceptor
 import com.avito.http.StatsHttpEventListener
 import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import io.fabric8.kubernetes.client.Config
@@ -13,6 +15,7 @@ import io.fabric8.kubernetes.client.OAuthTokenProvider
 import io.fabric8.kubernetes.client.utils.HttpClientUtils
 import io.kubernetes.client.util.FilePersister
 import io.kubernetes.client.util.KubeConfig
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
 
 public class KubernetesClientFactory(
@@ -20,7 +23,10 @@ public class KubernetesClientFactory(
     private val loggerFactory: LoggerFactory,
     private val timeProvider: TimeProvider,
     private val statsDSender: StatsDSender,
+    private val httpTries: Int,
 ) {
+
+    private val logger = loggerFactory.create<KubernetesClientFactory>()
 
     public fun create(): KubernetesClient {
         val config = when (kubernetesCredentials) {
@@ -82,7 +88,10 @@ public class KubernetesClientFactory(
                 requestMetadataProvider = KubernetesRequestMetadataProvider(),
                 loggerFactory = loggerFactory,
             )
-        }.build()
+        }
+            .addInterceptor(RetryInterceptor(tries = httpTries))
+            .addInterceptor(HttpLoggingInterceptor(logger::info).apply { level = HttpLoggingInterceptor.Level.BODY })
+            .build()
 
         return DefaultKubernetesClient(client, config)
     }
