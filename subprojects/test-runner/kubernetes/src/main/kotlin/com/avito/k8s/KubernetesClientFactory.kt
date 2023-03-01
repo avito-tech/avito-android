@@ -90,7 +90,7 @@ public class KubernetesClientFactory(
             )
         }
             .addInterceptor(RetryInterceptor(tries = httpTries))
-            .addInterceptor(HttpLoggingInterceptor(logger::info).apply { level = HttpLoggingInterceptor.Level.BODY })
+            .addInterceptor(HttpLoggingInterceptor(logger::debug).apply { level = HttpLoggingInterceptor.Level.BODY })
             .build()
 
         return DefaultKubernetesClient(client, config)
