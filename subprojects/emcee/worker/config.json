@@ -1,7 +1,7 @@
 {
     "queue": {
         "url": "http://127.0.0.1:41000",
-        "retriesCount": 10,
+        "triesCount": 10,
         "retryDelayMs": 3000
     },
     "androidSdkPath": "/opt/android-sdk",

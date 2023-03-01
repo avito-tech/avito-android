@@ -52,7 +52,7 @@ internal class WorkerDI(
         client = okHttpClientBuilder
             .addInterceptor(
                 RetryInterceptor(
-                    retries = config.queue.retriesCount,
+                    tries = config.queue.triesCount,
                     delayMs = config.queue.retryDelayMs,
                     allowedMethods = listOf("POST"),
                 )

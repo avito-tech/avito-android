@@ -35,7 +35,7 @@ public data class Config(
     @JsonClass(generateAdapter = true)
     public data class QueueConfig(
         val url: String,
-        val retriesCount: Int,
+        val triesCount: Int,
         val retryDelayMs: Long,
     )
 

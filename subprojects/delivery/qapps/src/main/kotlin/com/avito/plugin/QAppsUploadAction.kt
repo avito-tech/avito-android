@@ -41,7 +41,7 @@ internal class QAppsUploadAction(
                     .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
                     .addInterceptor(
                         RetryInterceptor(
-                            retries = 3,
+                            tries = 3,
                             allowedMethods = listOf("GET", "POST")
                         )
                     )

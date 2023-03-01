@@ -2,7 +2,7 @@
     "workerPort": 8080,
     "queue": {
         "url": "http://prod.k.avito.ru:80/service-emcee-cloud-backend/queue/",
-        "retriesCount": 10,
+        "triesCount": 10,
         "retryDelayMs": 3000
     },
     "androidSdkPath": "/opt/android-sdk",

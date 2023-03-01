@@ -28,6 +28,8 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
 
     public abstract val sentryDsnUrl: Property<String>
 
+    public abstract val kubernetesHttpTries: Property<Int>
+
     @get:Nested
     public abstract val experimental: ExperimentalExtension
 

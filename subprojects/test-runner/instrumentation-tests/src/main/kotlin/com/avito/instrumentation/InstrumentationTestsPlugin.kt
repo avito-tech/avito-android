@@ -98,6 +98,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             gradleTestKitRun.set(project.getBooleanProperty("isGradleTestKitRun"))
             logcatTags.set(extension.logcatTags)
             enableDeviceDebug.set(configuration.enableDeviceDebug)
+            kubernetesHttpTries.set(extension.kubernetesHttpTries.convention(3))
 
             configurators.forEach {
                 it.configure(this)

@@ -35,7 +35,7 @@ public class KubernetesReservationClientProvider(
             ),
             listener = kubernetesReservationListenerProvider.provide(),
             loggerFactory = loggerFactory,
-            podsQueryIntervalMs = 5000L,
+            podsQueryIntervalMs = 10000L,
             dispatcher = Dispatchers.IO
         ).create()
     }

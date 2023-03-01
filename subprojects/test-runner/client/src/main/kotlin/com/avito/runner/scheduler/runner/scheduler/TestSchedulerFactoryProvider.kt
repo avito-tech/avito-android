@@ -105,6 +105,7 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
                                 loggerFactory = loggerFactory,
                                 timeProvider = timeProvider,
                                 statsDSender = statsDSender,
+                                httpTries = params.kubernetesHttpTries,
                             ),
                             loggerFactory = loggerFactory,
                         ),

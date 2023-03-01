@@ -19,7 +19,7 @@ internal class ConfigSerializationTest {
                 {
                     "queue": {
                         "url": "http://127.0.0.1:41000",
-                        "retriesCount": 3,
+                        "triesCount": 3,
                         "retryDelayMs": 10000
                     },
                     "androidSdkPath": "/Users/Shared/Android/sdk",
@@ -47,7 +47,7 @@ internal class ConfigSerializationTest {
                 Config(
                     queue = Config.QueueConfig(
                         url = "http://127.0.0.1:41000",
-                        retriesCount = 3,
+                        triesCount = 3,
                         retryDelayMs = 10_000
                     ),
                     androidSdkPathString = "/Users/Shared/Android/sdk",
