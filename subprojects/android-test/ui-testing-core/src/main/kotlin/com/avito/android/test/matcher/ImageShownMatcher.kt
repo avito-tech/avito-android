@@ -18,7 +18,7 @@ class ImageShownMatcher : BoundedMatcher<View, ImageView>(ImageView::class.java)
         layout.drawingCache.apply {
             for (i in 0 until height) {
                 for (j in 0 until width) {
-                    if (getPixel(i, j) != 0) {
+                    if (getPixel(j, i) != 0) {
                         return true
                     }
                 }
