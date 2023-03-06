@@ -1,4 +1,4 @@
-package com.avito.android.stats
+package com.avito.graphite.series
 
 import java.io.Serializable
 

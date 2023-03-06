@@ -1,5 +1,6 @@
 package com.avito.android.graphite
 
+import com.avito.graphite.series.SeriesName
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
 import com.avito.kotlin.dsl.getBooleanProperty
@@ -13,11 +14,13 @@ public val Project.graphiteConfig: Provider<GraphiteConfig> by ProjectProperty.l
     Providers.of(config(project))
 }
 
-private fun config(project: Project): GraphiteConfig =
-    GraphiteConfig(
+private fun config(project: Project): GraphiteConfig {
+    val namespace = project.getMandatoryStringProperty("avito.graphite.namespace")
+    return GraphiteConfig(
         isEnabled = project.getBooleanProperty("avito.graphite.enabled", false),
         debug = project.getBooleanProperty("avito.graphite.debug", false),
         host = project.getMandatoryStringProperty("avito.graphite.host"),
         port = project.getMandatoryIntProperty("avito.graphite.port"),
-        namespace = project.getMandatoryStringProperty("avito.graphite.namespace")
+        metricPrefix = SeriesName.create(namespace, multipart = true),
     )
+}

@@ -1,8 +1,8 @@
 package com.avito.runner.service.worker.device.adb.listener
 
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.TimeMetric
+import com.avito.graphite.series.SeriesName
 import com.avito.runner.service.worker.device.Device
 import java.nio.file.Path
 

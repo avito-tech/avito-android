@@ -1,9 +1,9 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.runner.devices.model.ReservationData
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
+import com.avito.graphite.series.SeriesName
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 

@@ -1,5 +1,7 @@
 package com.avito.android.stats
 
+import com.avito.graphite.series.SeriesName
+
 internal class StatsDSenderWithPrefix(
     private val delegate: StatsDSender,
     private val prefix: SeriesName,

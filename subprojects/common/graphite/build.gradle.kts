@@ -3,3 +3,8 @@ plugins {
     id("convention.publish-kotlin-library")
     id("convention.test-fixtures")
 }
+
+dependencies {
+    api(projects.subprojects.common.series)
+    api(projects.subprojects.logger.logger)
+}

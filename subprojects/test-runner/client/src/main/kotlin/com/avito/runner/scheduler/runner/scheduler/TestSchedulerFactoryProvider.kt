@@ -7,8 +7,8 @@ import com.avito.android.runner.devices.internal.EmulatorsLogsReporterProvider
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClientProvider
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationListenerProvider
 import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactoryProvider
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
+import com.avito.graphite.series.SeriesName
 import com.avito.http.StatsHttpEventListener
 import com.avito.k8s.KubernetesApiFactory
 import com.avito.k8s.KubernetesClientFactory

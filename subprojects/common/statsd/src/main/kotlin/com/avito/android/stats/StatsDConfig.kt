@@ -1,5 +1,6 @@
 package com.avito.android.stats
 
+import com.avito.graphite.series.SeriesName
 import java.io.Serializable
 
 public sealed class StatsDConfig : Serializable {

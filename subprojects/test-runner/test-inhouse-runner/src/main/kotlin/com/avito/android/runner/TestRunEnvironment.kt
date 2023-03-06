@@ -5,12 +5,12 @@ import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.ElasticConfigFactory
 import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
 import com.avito.android.sentry.SentryConfig
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import com.avito.android.test.report.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
 import com.avito.android.transport.ReportDestination
+import com.avito.graphite.series.SeriesName
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.utils.BuildMetadata
 import okhttp3.HttpUrl

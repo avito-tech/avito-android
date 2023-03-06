@@ -1,5 +1,6 @@
 package com.avito.android.stats
 
+import com.avito.graphite.series.SeriesName
 import com.avito.logger.LoggerFactory
 
 public interface StatsDSender {

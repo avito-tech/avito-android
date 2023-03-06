@@ -1,8 +1,8 @@
 package com.avito.http
 
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.TimeMetric
+import com.avito.graphite.series.SeriesName
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.TimeProvider

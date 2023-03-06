@@ -1,6 +1,7 @@
 package com.avito.android.stats
 
 import Slf4jGradleLoggerFactory
+import com.avito.graphite.series.SeriesName
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
 import com.avito.kotlin.dsl.getBooleanProperty

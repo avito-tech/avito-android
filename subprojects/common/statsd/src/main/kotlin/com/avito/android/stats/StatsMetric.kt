@@ -1,5 +1,7 @@
 package com.avito.android.stats
 
+import com.avito.graphite.series.SeriesName
+
 /**
  * [Statsd metrics](https://github.com/statsd/statsd/blob/master/docs/metric_types.md#statsd-metric-types)
  */

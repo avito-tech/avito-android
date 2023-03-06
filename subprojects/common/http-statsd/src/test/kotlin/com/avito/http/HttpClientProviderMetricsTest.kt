@@ -1,7 +1,7 @@
 package com.avito.http
 
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
+import com.avito.graphite.series.SeriesName
 import com.google.common.truth.Truth.assertThat
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse

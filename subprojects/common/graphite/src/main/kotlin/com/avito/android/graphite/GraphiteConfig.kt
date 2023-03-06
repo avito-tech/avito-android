@@ -1,5 +1,6 @@
 package com.avito.android.graphite
 
+import com.avito.graphite.series.SeriesName
 import java.io.Serializable
 
 public data class GraphiteConfig(
@@ -19,5 +20,5 @@ public data class GraphiteConfig(
      * For example: namespace "apps.android" with a metric "build_time"
      * will result in "app.android.build_time" in graphite.
      */
-    val namespace: String
+    val metricPrefix: SeriesName
 ) : Serializable

@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.metrics
 
 import com.avito.android.stats.GaugeLongMetric
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
+import com.avito.graphite.series.SeriesName
 import java.time.Duration
 
 internal class TestRunnerMetricsSenderImpl(
