@@ -15,8 +15,10 @@ import com.malinskiy.adam.request.device.DeviceState
 import com.malinskiy.adam.request.prop.GetSinglePropRequest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.filter
@@ -53,7 +55,9 @@ internal class StartAndroidDevice(
             device
         }
 
-        val avdProcessFuture = executorService.submit(startAvd(sdk, type))
+        val avdProcessFuture = executorService.submit(
+            startAvd(sdk, type) { this.cancel(it.message.orEmpty(), it) }
+        )
         val device = deviceStatusDeferred.await()
 
         storage.put(AndroidDeviceCoordinates(sdk, type), AndroidDeviceProcess(avdProcessFuture))
@@ -81,11 +85,19 @@ internal class StartAndroidDevice(
         logger.info("Device is booted and ready to work")
     }
 
-    private fun startAvd(sdk: Int, type: String): Runnable = kotlinx.coroutines.Runnable {
+    private fun startAvd(
+        sdk: Int,
+        type: String,
+        errorHandler: (Throwable) -> Unit
+    ): Runnable = kotlinx.coroutines.Runnable {
         runBlocking {
             // This Flow is infinite, so cannot be collected in coroutineScope
             startAvdCommand.execute(sdk, type)
                 .takeWhile { it !is Notification.Exit }
+                .catch {
+                    logger.fine(it.message)
+                    errorHandler.invoke(it)
+                }
                 .collect { notification ->
                     when (notification) {
                         is Notification.Output -> logger.fine(notification.line)
