@@ -6,96 +6,106 @@
     [Gradle Enterprise](https://gradle.com/gradle-enterprise-solution-overview/), 
     [Talaiot](https://github.com/cdsap/Talaiot)
 
-## Configuring
+## How to start
+
+1. Configuring the extension
+
+    Set two mandatory properties `buildType` and `environment`. Without them plugin won't work
+    
+    ```kotlin
+    buildMetrics {
+        environment.set(BuildEnvironment.CI)
+        buildType.set("any string")
+    }
+    ```
+
+2. Add mandatory gradle properties for statsd and graphite. See modules `subprojects:gradle:statsd-config`, `subprojects:gradle:graphite-config`
+
+### How to disable plugin
+
+Add project property `avito.build.metrics.enabled=false`
+
+#### How to disable concrete metric sending
+
+In Gradle extension we have appropriate flag for each metric e.g.
 
 ```kotlin
-buildMetrics {
-    metricsPrefix.addAll("prefix") // optional
-}
+    buildMetrics {
+        sendJvmMetrics.set(false)
+    }
 ```
-
-### Disabling plugin
-
-Project property `avito.build.metrics.enabled=false`
 
 ## Metrics
 
-All metrics can use common placeholders in prefix:
+All metrics sent to graphite or statsd depending on our intention. Contact us for details.
 
-- Namespace: statsd prefix from `avito.stats.namespace` property
-- Prefix: from `metricsPrefix` property
-- Build status: `success` | `failure`
+### What is the metric final path
 
-All mentioned prefixes will be referred in docs as `<...>`.
+The final metrics path is constructed from:
 
-### Build cache metrics
+- namespace prefix
+    - `avito.stats.namespace` for statsd metrics
+    - `avito.graphite.namespace` for graphite metrics
+- plugin prefix. It's static and equal to `builds`
+- the unique metric path. Part which different for all metrics
 
-[Http build cache](https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_configure_remote) errors:
+We use tags. And all metrics will have `build_type` and `env` tags which you set up in extension.
 
-- `<namespace>.[<prefix>].build.cache.errors.[load|store].<http status code>`: errors counter
-  
-Remote cache statistics:
+### What kinds of metrics does plugin send
 
-- `<namespace>.[<prefix>].build.cache.remote.[hit|miss]`: remote cache operations count by environments.  
-Shows count of cacheable tasks that were requested from the remote cache.  
+All actual kinds of metrics you could find by looking at `BuildMetric` inheritors.
+
+#### Gradle
+
+##### Build cache
+
+- [Http build cache](https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_configure_remote) errors:
+
+- Remote cache statistics:
+Shows count of cacheable tasks that were requested from the remote cache.
 This is the same as **Performance** | **Build cache** | **Remote cache** | **Operations** | **Hit\Miss** in build scan.
 
-### Common build metrics
+##### Common build metrics
 
-- `<namespace>.[<prefix>].id.<build status>.init_configuration.total` (time in ms): initialization with configuration time
-- `<namespace>.[<prefix>].id.<build status>.build-time.total` (time in ms): total build time
+- initialization with configuration time in ms
+- total build time in ms
 
-### Tasks metrics
+##### Tasks metrics
 
-- `<namespace>.[<prefix>].build.tasks.cumulative.any` (time in ms):  
-  cumulative time of all tasks
-  
-#### Slowest tasks
+- Cumulative time of all tasks in ms
+
+##### Slowest tasks
 
 These metrics give different aggregates for tasks to highlight the slowest ones.
 
-- `<namespace>.[<prefix>].build.tasks.slow.task.<module>.<task type>` (time in ms):  
-  top slowest tasks
-- `<namespace>.[<prefix>].build.tasks.slow.type.<task type>` (time in ms):  
-  cumulative time of top slowest task types
-- `<namespace>.[<prefix>].build.tasks.slow.module.<module>` (time in ms):  
-  cumulative time of tasks in top slowest modules
+- top slowest concrete tasks
+- cumulative time of top slowest task types
+- cumulative time of tasks in top slowest modules
 
-Example:
-
-```mermaid
-graph LR
-    lib_KotlinCompile(:lib:compileKotlin - 2s) --> lib_bundleAar(:lib:bundleAar - 1s)
-    lib_KotlinCompile --> app_KotlinCompile(:app:compileKotlin - 3s)
-    app_KotlinCompile --> app_bundleAar(:app:bundleAar - 1s)
-    lib_bundleAar --> app_bundleAar
-```
-
-- `.tasks.cumulative.any`: 7s
-- `.tasks.slow.task.app.KotlinCompile`: 3s
-- `.tasks.slow.type.KotlinCompile`: 5s
-- `.tasks.slow.module.app`: 4s
-
-#### Critical path
+##### Critical path
 
 These metrics describe a critical path.
-To understand the critical path better see a visualization in a [build trace](../BuildTrace.md#critical-path).
+To understand the critical path better read [critical path docs](CriticalPath.md).
 
-- `<namespace>.[<prefix>].build.tasks.critical.task.<module>.<task type>` (time in ms):  
-  tasks in the critical path
+Send tasks in the critical path in ms
 
-### JVM metrics
+##### PackageApplication
 
-`<namespace>.[<prefix>].jvm.memory.<jvm process name>.[heap|metaspace].[used|committed]` - in KiB
+Elapsed time from build start till Android app build task finished in ms
+
+#### Runtime
+
+##### JVM metrics
+
+We send heap and metaspace used and committed memory in KiB.
 
 This reflects what you can find by [jcmd PID GC.heap_info](https://www.baeldung.com/java-heap-size-cli#jcmd).  
 All values are measured in Kb and sent as time metrics.
 
-### OS metrics
+##### OS metrics
 
-`<namespace>.[<prefix>].os.memory.[used|total]` - in KiB
+Send used and total memory in KiB
 
-### Specific build events
+#### Teamcity
 
-- `<namespace>.[<prefix>].id.<build status>.app-build.<module path>.<task name>.finish` (time in ms): 
-  elapsed time from build start till Android app build task finished
+Send build elapsed time and by status
