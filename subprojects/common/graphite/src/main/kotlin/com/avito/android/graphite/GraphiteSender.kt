@@ -14,8 +14,14 @@ public interface GraphiteSender {
         public fun create(
             config: GraphiteConfig,
             loggerFactory: LoggerFactory,
+            isTest: Boolean,
         ): GraphiteSender {
-            return GraphiteSenderImpl(config, loggerFactory)
+            val transport = if (isTest) {
+                GraphiteTransport.Test()
+            } else {
+                GraphiteTransport.Real(config.host, config.port)
+            }
+            return GraphiteSenderImpl(config, transport, loggerFactory)
         }
     }
 }
