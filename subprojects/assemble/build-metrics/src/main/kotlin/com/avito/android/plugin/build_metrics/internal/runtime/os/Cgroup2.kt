@@ -1,0 +1,60 @@
+package com.avito.android.plugin.build_metrics.internal.runtime.os
+
+import com.avito.android.plugin.build_metrics.internal.runtime.os.Cgroup2.Available.Memory
+import org.gradle.internal.os.OperatingSystem
+import java.io.File
+
+/**
+ * [Control group](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
+ */
+internal sealed class Cgroup2 {
+
+    object Unavailable : Cgroup2()
+
+    class Available(
+        val memory: Memory
+    ) : Cgroup2() {
+
+        /**
+         * [control group - memory](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#memory)
+         */
+        class Memory(
+            private val memoryMax: File,
+            private val memoryCurrent: File,
+        ) {
+
+            val memoryMaxBytes: Long by lazy {
+                memoryMax.readText().trim().toLong()
+            }
+
+            val memoryCurrentBytes: Long
+                get() = memoryCurrent.readText().trim().toLong()
+        }
+    }
+
+    companion object {
+
+        fun resolve(): Cgroup2 {
+            if (!OperatingSystem.current().isLinux) return Unavailable
+
+            val cgroupDir = File("/sys/fs/cgroup")
+
+            return if (cgroupDir.exists()) {
+                val memoryMax = File(cgroupDir, "memory.max")
+                val memoryCurrent = File(cgroupDir, "memory.current")
+                if (memoryMax.exists() && memoryCurrent.exists()) {
+                    Available(
+                        memory = Memory(
+                            memoryMax = memoryMax,
+                            memoryCurrent = memoryCurrent
+                        )
+                    )
+                } else {
+                    Unavailable
+                }
+            } else {
+                Unavailable
+            }
+        }
+    }
+}

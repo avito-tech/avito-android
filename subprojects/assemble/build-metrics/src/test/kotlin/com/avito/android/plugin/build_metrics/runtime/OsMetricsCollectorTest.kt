@@ -1,7 +1,7 @@
 package com.avito.android.plugin.build_metrics.runtime
 
-import com.avito.android.plugin.build_metrics.internal.runtime.Cgroup2
-import com.avito.android.plugin.build_metrics.internal.runtime.OsMetricsCollector
+import com.avito.android.plugin.build_metrics.internal.runtime.os.Cgroup2
+import com.avito.android.plugin.build_metrics.internal.runtime.os.OsMetricsCollector
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

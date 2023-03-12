@@ -1,8 +1,8 @@
+@file:Suppress("MaxLineLength")
 package com.avito.android.plugin.build_metrics.tasks
 
 import com.avito.android.plugin.build_metrics.BuildMetricsRunner
 import com.avito.android.plugin.build_metrics.assertHasMetric
-import com.avito.android.stats.TimeMetric
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.plugin.plugins
@@ -21,7 +21,19 @@ internal class TasksMetricsTest {
         TestProjectGenerator(
             plugins = plugins {
                 id("com.avito.android.build-metrics")
+                id("com.avito.android.gradle-logger")
             },
+            imports = listOf(
+                "import com.avito.android.plugin.build_metrics.BuildEnvironment",
+                "import java.time.Duration",
+            ),
+            buildGradleExtra = """
+                |buildMetrics {
+                |   buildType.set("test")
+                |   environment.set(BuildEnvironment.CI)
+                |   slowTaskMinimumDuration.set(Duration.ofMillis(0))
+                |}
+            """.trimMargin(),
             modules = listOf(
                 KotlinModule(name = "lib")
             )
@@ -35,13 +47,14 @@ internal class TasksMetricsTest {
         result.assertThat()
             .buildSuccessful()
 
-        result.assertHasMetric<TimeMetric>(".build.tasks.cumulative.any")
+        result.assertHasMetric("build.metrics.test.builds.gradle.tasks;build_type=test;env=ci")
 
-        result.assertHasMetric<TimeMetric>(".build.tasks.slow.type.KotlinCompile")
-        result.assertHasMetric<TimeMetric>(".build.tasks.slow.module.lib")
-        result.assertHasMetric<TimeMetric>(".build.tasks.slow.task.lib.KotlinCompile")
+        result.assertHasMetric("build.metrics.test.builds.gradle.slow.task.type;build_type=test;env=ci;task_type=KotlinCompile")
+        result.assertHasMetric("build.metrics.test.builds.gradle.slow.module;build_type=test;env=ci;module_name=lib")
+        result.assertHasMetric("build.metrics.test.builds.gradle.slow.module.task.type;build_type=test;env=ci;module_name=lib;task_type=KotlinCompile")
 
-        result.assertHasMetric<TimeMetric>(".build.tasks.critical.task.lib.KotlinCompile")
+        result.assertHasMetric("build.metrics.test.builds.gradle.critical.module.task.type;build_type=test;env=ci;module_name=lib;task_type=KotlinCompile")
+        result.assertHasMetric("build.metrics.test.builds.gradle.critical.task.type;build_type=test;env=ci;task_type=KotlinCompile")
     }
 
     private fun build(vararg args: String) =

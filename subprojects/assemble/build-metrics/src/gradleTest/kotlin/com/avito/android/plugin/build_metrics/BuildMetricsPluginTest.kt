@@ -1,6 +1,6 @@
+@file:Suppress("MaxLineLength")
 package com.avito.android.plugin.build_metrics
 
-import com.avito.android.stats.TimeMetric
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
@@ -25,7 +25,17 @@ internal class BuildMetricsPluginTest {
             name = rootAppName,
             plugins = plugins {
                 id("com.avito.android.build-metrics")
+                id("com.avito.android.gradle-logger")
             },
+            imports = listOf(
+                "import com.avito.android.plugin.build_metrics.BuildEnvironment",
+            ),
+            buildGradleExtra = """
+                |buildMetrics {
+                |   buildType.set("test")
+                |   environment.set(BuildEnvironment.CI)
+                |}
+            """.trimMargin(),
             modules = listOf(
                 AndroidAppModule(name = "app")
             ),
@@ -39,7 +49,7 @@ internal class BuildMetricsPluginTest {
         result.assertThat()
             .buildSuccessful()
 
-        result.assertHasMetric<TimeMetric>(".init_configuration.total")
+        result.assertHasMetric("build.metrics.test.builds.gradle.build.init_configuration;build_type=test;env=ci")
     }
 
     @Test
@@ -49,7 +59,7 @@ internal class BuildMetricsPluginTest {
         result.assertThat()
             .buildSuccessful()
 
-        result.assertHasMetric<TimeMetric>(".build-time.total")
+        result.assertHasMetric("build.metrics.test.builds.gradle.build;build_type=test;env=ci")
     }
 
     @TestFactory
@@ -58,18 +68,21 @@ internal class BuildMetricsPluginTest {
         class Case(
             val description: String,
             val tasks: Array<String>,
-            val metricName: String
+            val metricName: String,
+            val count: Int,
         )
         return listOf(
             Case(
                 description = "build app",
                 tasks = arrayOf(":app:assembleDebug"),
-                metricName = "app-build.app.packageDebug.finish"
+                metricName = "build.metrics.test.builds.gradle.task.type.PackageApplication;build_type=test;env=ci;module_name=app;build_status=success",
+                count = 1,
             ),
             Case(
                 description = "run instrumentation tests",
                 tasks = arrayOf(":app:assembleDebug", ":app:assembleDebugAndroidTest"),
-                metricName = "app-build.app.packageDebugAndroidTest.finish"
+                metricName = "build.metrics.test.builds.gradle.task.type.PackageApplication;build_type=test;env=ci;module_name=app;build_status=success",
+                count = 2,
             ),
         ).map {
             dynamicTest("send total task time for app scenario - " + it.description) {
@@ -78,7 +91,7 @@ internal class BuildMetricsPluginTest {
                 result.assertThat()
                     .buildSuccessful()
 
-                result.assertHasMetric<TimeMetric>(it.metricName)
+                result.assertHasMetric(it.metricName) { hasSize(it.count) }
             }
         }
     }

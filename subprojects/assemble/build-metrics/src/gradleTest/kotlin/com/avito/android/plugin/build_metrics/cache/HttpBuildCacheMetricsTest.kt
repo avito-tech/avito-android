@@ -1,9 +1,8 @@
+@file:Suppress("MaxLineLength")
 package com.avito.android.plugin.build_metrics.cache
 
 import com.avito.android.plugin.build_metrics.assertNoMetric
-import com.avito.android.plugin.build_metrics.statsdMetrics
-import com.avito.android.stats.CountMetric
-import com.avito.android.stats.StatsMetric
+import com.avito.android.plugin.build_metrics.graphiteMetrics
 import com.avito.test.gradle.TestResult
 import com.google.common.truth.Truth.assertWithMessage
 import org.gradle.testkit.runner.TaskOutcome
@@ -19,7 +18,7 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             loadStatus = 404,
             storeStatus = 200,
             assertion = { result ->
-                result.assertNoMetric<StatsMetric>(".build.cache.errors.")
+                result.assertNoMetric("build.metrics.test.builds.gradle.cache.errors.")
             }
         ),
         TestCase(
@@ -27,7 +26,7 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             loadStatus = 500,
             storeStatus = 200,
             assertion = { result ->
-                result.assertHasEvents(".build.cache.errors.load.500")
+                result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=load;error_type=500 1")
             }
         ),
         TestCase(
@@ -35,7 +34,7 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             loadStatus = 404,
             storeStatus = 500,
             assertion = { result ->
-                result.assertHasEvents(".build.cache.errors.store.500")
+                result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=store;error_type=500 1")
             }
         ),
         TestCase(
@@ -43,7 +42,7 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             loadStatus = 404,
             storeStatus = invalidHttpStatus,
             assertion = { result ->
-                result.assertHasEvents(".build.cache.errors.store.unknown")
+                result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=store;error_type=unknown 1")
             }
         ),
         TestCase(
@@ -51,7 +50,7 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             loadStatus = invalidHttpStatus,
             storeStatus = 200,
             assertion = { result ->
-                result.assertHasEvents(".build.cache.errors.load.unknown")
+                result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=load;error_type=unknown 1")
             }
         ),
     )
@@ -59,8 +58,16 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
     override fun setupProject(projectDir: File) {
         File(projectDir, "build.gradle.kts").writeText(
             """
+            import com.avito.android.plugin.build_metrics.BuildEnvironment
+            
             plugins {
                 id("com.avito.android.build-metrics")
+                id("com.avito.android.gradle-logger")
+            }
+            
+            buildMetrics {
+               buildType.set("test")
+               environment.set(BuildEnvironment.CI)
             }
             
             @CacheableTask
@@ -117,11 +124,10 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
     }
 
     private fun TestResult.assertHasEvents(path: String) {
-        val metrics = statsdMetrics()
+        val metrics = graphiteMetrics()
         val filtered = metrics
-            .filterIsInstance(CountMetric::class.java)
             .filter {
-                it.name.toString().contains(path)
+                it.contains(path)
             }
 
         assertWithMessage("Expected metrics ($path) in $metrics. Logs: $output")

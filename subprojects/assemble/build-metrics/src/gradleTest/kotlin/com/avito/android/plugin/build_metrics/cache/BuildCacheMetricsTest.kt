@@ -1,9 +1,7 @@
 package com.avito.android.plugin.build_metrics.cache
 
 import com.avito.android.plugin.build_metrics.assertHasMetric
-import com.avito.android.stats.CountMetric
 import com.avito.test.gradle.TestResult
-import com.google.common.truth.Truth.assertThat
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -13,8 +11,16 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
     override fun setupProject(projectDir: File) {
         File(projectDir, "build.gradle.kts").writeText(
             """
+            import com.avito.android.plugin.build_metrics.BuildEnvironment
+            
             plugins {
                 id("com.avito.android.build-metrics")
+                id("com.avito.android.gradle-logger")
+            }
+            
+            buildMetrics {
+                   buildType.set("test")
+                   environment.set(BuildEnvironment.CI)
             }
             
             @CacheableTask
@@ -55,13 +61,15 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.FROM_CACHE
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
+        result.assertHasMetric(
+            "build.metrics.test.builds.gradle.cache.remote.hit;build_type=test;env=ci",
+            "0"
+        )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
+        result.assertHasMetric(
+            "build.metrics.test.builds.gradle.cache.remote.miss;build_type=test;env=ci",
+            "0"
+        )
     }
 
     @Test
@@ -72,13 +80,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
-
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
-            assertThat(it.delta).isEqualTo(1)
-        }
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.hit;build_type=test;env=ci", "0")
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.miss;build_type=test;env=ci", "1")
     }
 
     @Test
@@ -89,13 +92,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
-
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.hit;build_type=test;env=ci", "0")
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.miss;build_type=test;env=ci", "0")
     }
 
     @Test
@@ -106,13 +104,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.FROM_CACHE
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
-            assertThat(it.delta).isEqualTo(1)
-        }
-
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.hit;build_type=test;env=ci", "1")
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.miss;build_type=test;env=ci", "0")
     }
 
     @Test
@@ -123,13 +116,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
-
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
-            assertThat(it.delta).isEqualTo(1)
-        }
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.hit;build_type=test;env=ci", "0")
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.miss;build_type=test;env=ci", "1")
     }
 
     @Test
@@ -140,13 +128,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
-
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
-            assertThat(it.delta).isEqualTo(0)
-        }
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.hit;build_type=test;env=ci", "0")
+        result.assertHasMetric("build.metrics.test.builds.gradle.cache.remote.miss;build_type=test;env=ci", "0")
     }
 
     private fun warmupAndBuild(

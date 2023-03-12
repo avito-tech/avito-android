@@ -1,9 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal
 
 import com.avito.android.gradle.metric.BuildEventsListener
-import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheMetricsTracker
-import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksMetricsTracker
-import com.avito.android.stats.StatsDSender
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
@@ -129,8 +126,10 @@ internal class BuildOperationsResultProvider(
 
     private fun onBuildCacheLoadError(cause: Throwable): Boolean {
         val error = RemoteBuildCacheError(
-            type = BuildCacheOperationType.LOAD,
-            httpStatus = extractCacheLoadFailureStatusCode(cause),
+            selector = RemoteBuildCacheError.Selector(
+                type = BuildCacheOperationType.LOAD,
+                httpStatus = extractCacheLoadFailureStatusCode(cause),
+            ),
             cause = cause
         )
         return buildCacheErrors.add(error)
@@ -138,8 +137,10 @@ internal class BuildOperationsResultProvider(
 
     private fun onBuildCacheStoreError(cause: Throwable): Boolean {
         val error = RemoteBuildCacheError(
-            type = BuildCacheOperationType.STORE,
-            httpStatus = extractCacheStoreFailureStatusCode(cause),
+            selector = RemoteBuildCacheError.Selector(
+                type = BuildCacheOperationType.STORE,
+                httpStatus = extractCacheStoreFailureStatusCode(cause),
+            ),
             cause = cause
         )
         return buildCacheErrors.add(error)
@@ -188,22 +189,8 @@ internal class BuildOperationsResultProvider(
 
         fun register(
             project: Project,
-            metricsTracker: StatsDSender
+            listeners: List<BuildOperationsResultListener>
         ): BuildEventsListener {
-            val listeners = mutableListOf<BuildOperationsResultListener>()
-            if (canTrackRemoteCache(project)) {
-                listeners.add(
-                    BuildCacheMetricsTracker(
-                        metricsTracker = metricsTracker,
-                        logger = project.logger
-                    )
-                )
-            }
-            listeners.add(
-                SlowTasksMetricsTracker(
-                    metricsTracker = metricsTracker,
-                )
-            )
             val buildOperationListener = BuildOperationsResultProvider(
                 resultListener = CompositeBuildOperationsResultListener(listeners),
             )
@@ -212,7 +199,7 @@ internal class BuildOperationsResultProvider(
             return BuildOperationListenerCleaner(buildOperationListener)
         }
 
-        private fun canTrackRemoteCache(project: Project): Boolean {
+        fun canTrackRemoteCache(project: Project): Boolean {
             val remoteBuildCache = (project as ProjectInternal).gradle.settings.buildCache.remote
             return remoteBuildCache != null
                 && remoteBuildCache.isEnabled

@@ -14,7 +14,12 @@ internal class BuildMetricsRunner(
             *args.toTypedArray(),
             "-Pavito.build.metrics.enabled=true",
             "-Pavito.stats.enabled=false",
-            "-Pstatsd.test"
+            "-Pstatsd.test",
+            "-Pavito.graphite.enabled=true",
+            "-Pavito.graphite.namespace=build.metrics.test",
+            "-Pavito.graphite.host",
+            "-Pavito.graphite.port=80",
+            "-Pbuild.metrics.test"
         )
     }
 }

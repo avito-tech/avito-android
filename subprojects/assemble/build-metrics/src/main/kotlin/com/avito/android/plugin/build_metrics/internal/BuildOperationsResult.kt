@@ -10,11 +10,23 @@ internal class CacheOperations(
 )
 
 internal class RemoteBuildCacheError(
-    val type: BuildCacheOperationType,
-    val httpStatus: Int?,
+    val selector: Selector,
     val cause: Throwable
-)
+) {
+    data class Selector(
+        val type: BuildCacheOperationType,
+        val httpStatus: Int?,
+    ) {
+        val code: String
+            get() = type.code
 
-internal enum class BuildCacheOperationType {
-    LOAD, STORE
+        val errorType: String
+            get() = httpStatus?.toString() ?: "unknown"
+    }
+}
+
+internal enum class BuildCacheOperationType(
+    val code: String
+) {
+    LOAD("load"), STORE("store")
 }

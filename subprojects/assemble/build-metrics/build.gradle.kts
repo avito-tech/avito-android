@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.buildEnvironment)
     implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.assemble.criticalPath.api)
@@ -21,9 +22,7 @@ dependencies {
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
-    testImplementation(testFixtures(projects.subprojects.common.graphite))
     testImplementation(testFixtures(projects.subprojects.gradle.process))
-    testImplementation(testFixtures(projects.subprojects.common.statsd))
     testImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
 
     gradleTestImplementation(projects.subprojects.common.junitUtils)

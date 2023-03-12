@@ -1,22 +1,21 @@
 package com.avito.android.plugin.build_metrics.cache
 
+import com.avito.android.graphite.GraphiteMetric
+import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType
 import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.LOAD
-import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.STORE
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
 import com.avito.android.plugin.build_metrics.internal.CacheOperations
 import com.avito.android.plugin.build_metrics.internal.RemoteBuildCacheError
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
-import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheMetricsTracker
-import com.avito.android.stats.CountMetric
-import com.avito.android.stats.SeriesName
-import com.avito.android.stats.StatsMetric
-import com.avito.android.stats.StubStatsdSender
+import com.avito.android.plugin.build_metrics.internal.core.StubBuildMetricsSender
+import com.avito.android.plugin.build_metrics.internal.gradle.cache.BuildCacheMetricsTracker
+import com.avito.graphite.series.SeriesName
+import com.avito.logger.PrintlnLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
 import org.gradle.util.Path
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 
 internal class BuildCacheMetricsTrackerTest {
 
@@ -27,6 +26,11 @@ internal class BuildCacheMetricsTrackerTest {
                 tasksExecutions = listOf(
                     taskExecution(
                         path = ":lib:missRemote",
+                        type = CustomTask::class.java,
+                        cacheResult = TaskCacheResult.Miss(local = true, remote = true)
+                    ),
+                    taskExecution(
+                        path = ":lib:missRemote2",
                         type = CustomTask::class.java,
                         cacheResult = TaskCacheResult.Miss(local = true, remote = true)
                     ),
@@ -47,15 +51,15 @@ internal class BuildCacheMetricsTrackerTest {
             )
         )
         assertThat(metrics).contains(
-            CountMetric(
-                SeriesName.create("build", "cache", "remote", "hit"),
-                delta = 1
+            GraphiteMetric(
+                SeriesName.create("gradle", "cache", "remote", "hit"),
+                "1"
             )
         )
         assertThat(metrics).contains(
-            CountMetric(
-                SeriesName.create("build", "cache", "remote", "miss"),
-                delta = 1
+            GraphiteMetric(
+                SeriesName.create("gradle", "cache", "remote", "miss"),
+                "2"
             )
         )
     }
@@ -74,13 +78,17 @@ internal class BuildCacheMetricsTrackerTest {
                 cacheOperations = CacheOperations(
                     errors = listOf(
                         RemoteBuildCacheError(
-                            type = LOAD,
-                            httpStatus = 503,
+                            selector = RemoteBuildCacheError.Selector(
+                                type = LOAD,
+                                httpStatus = 503,
+                            ),
                             cause = RuntimeException("unknown")
                         ),
                         RemoteBuildCacheError(
-                            type = STORE,
-                            httpStatus = 500,
+                            selector = RemoteBuildCacheError.Selector(
+                                type = BuildCacheOperationType.STORE,
+                                httpStatus = 500,
+                            ),
                             cause = RuntimeException("unknown")
                         )
                     )
@@ -88,13 +96,19 @@ internal class BuildCacheMetricsTrackerTest {
             )
         )
         assertThat(metrics).contains(
-            CountMetric(
-                SeriesName.create("build", "cache", "errors", "load", "503")
+            GraphiteMetric(
+                SeriesName.create("gradle", "cache", "errors")
+                    .addTag("operation_type", "load")
+                    .addTag("error_type", "503"),
+                "1"
             )
         )
         assertThat(metrics).contains(
-            CountMetric(
-                SeriesName.create("build", "cache", "errors", "store", "500")
+            GraphiteMetric(
+                SeriesName.create("gradle", "cache", "errors")
+                    .addTag("operation_type", "store")
+                    .addTag("error_type", "500"),
+                "1"
             )
         )
     }
@@ -113,15 +127,15 @@ internal class BuildCacheMetricsTrackerTest {
         cacheResult = cacheResult
     )
 
-    private fun processResults(result: BuildOperationsResult): List<StatsMetric> {
-        val metricsTracker = StubStatsdSender()
+    private fun processResults(result: BuildOperationsResult): List<GraphiteMetric> {
+        val buildMetricSender = StubBuildMetricsSender()
 
         val listener = BuildCacheMetricsTracker(
-            metricsTracker, LoggerFactory.getLogger(BuildCacheMetricsTracker::class.java)
+            buildMetricSender, PrintlnLoggerFactory
         )
         listener.onBuildFinished(result)
 
-        return metricsTracker.getSentMetrics()
+        return buildMetricSender.getSentGraphiteMetrics()
     }
 
     private abstract class CustomTask : Task

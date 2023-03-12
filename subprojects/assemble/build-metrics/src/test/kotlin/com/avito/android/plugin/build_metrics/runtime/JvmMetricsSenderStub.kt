@@ -1,8 +1,8 @@
 package com.avito.android.plugin.build_metrics.runtime
 
-import com.avito.android.plugin.build_metrics.internal.runtime.HeapInfo
-import com.avito.android.plugin.build_metrics.internal.runtime.JvmMetricsSender
-import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.HeapInfo
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.JvmMetricsSender
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm
 
 internal class JvmMetricsSenderStub : JvmMetricsSender {
 

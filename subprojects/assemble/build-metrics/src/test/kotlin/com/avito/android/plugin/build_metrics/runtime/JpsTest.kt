@@ -1,9 +1,9 @@
 package com.avito.android.plugin.build_metrics.runtime
 
 import com.avito.android.Result
-import com.avito.android.plugin.build_metrics.internal.runtime.JavaHome
-import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm
-import com.avito.android.plugin.build_metrics.internal.runtime.command.Jps
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.JavaHome
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.command.Jps
 import com.avito.utils.ProcessRunner
 import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat

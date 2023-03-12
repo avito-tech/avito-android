@@ -1,7 +1,9 @@
 package com.avito.android.plugin.build_metrics.teamcity
 
-import com.avito.android.graphite.StubGraphiteSender
+import com.avito.android.graphite.GraphiteMetric
+import com.avito.android.plugin.build_metrics.internal.core.StubBuildMetricsSender
 import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsAction
+import com.avito.graphite.series.SeriesName
 import com.avito.teamcity.TeamcityApi
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -25,7 +27,6 @@ internal class CollectTeamcityMetricsActionTest {
     @Test
     fun `send build metric`() {
         val teamcity: TeamcityApi = mock()
-        val graphite = StubGraphiteSender()
 
         val build: Build = mock()
         whenever(build.id).thenReturn(BuildId(buildId))
@@ -42,17 +43,22 @@ internal class CollectTeamcityMetricsActionTest {
 
         whenever(teamcity.getBuild(buildId)).thenReturn(build)
 
-        val action = CollectTeamcityMetricsAction(buildId, teamcity, graphite)
+        val sender = StubBuildMetricsSender()
+        val action = CollectTeamcityMetricsAction(buildId, teamcity, sender)
         action.execute()
 
         assertWithMessage("Send a metric about one build")
-            .that(graphite.metrics).hasSize(1)
+            .that(sender.getSentGraphiteMetrics()).hasSize(1)
 
-        val metric = graphite.metrics.first()
-        assertThat(metric.path).isEqualTo(
-            "ci.builds.teamcity.duration.build_type_id.BUILD_TYPE.id.BUILD_ID.agent._.state._.status.SUCCESS._._._._"
+        val metric = sender.getSentGraphiteMetrics().first()
+        assertThat(metric).isEqualTo(
+            GraphiteMetric(
+                path = SeriesName.create("teamcity.build", multipart = true)
+                    .addTag("build_type", "BUILD_TYPE")
+                    .addTag("status", "success"),
+                value = "90",
+                time = startDate.toInstant()
+            )
         )
-        assertThat(metric.value).isEqualTo("90")
-        assertThat(metric.timestamp).isEqualTo(0)
     }
 }

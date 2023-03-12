@@ -1,9 +1,9 @@
 package com.avito.android.plugin.build_metrics.runtime
 
-import com.avito.android.plugin.build_metrics.internal.runtime.JvmMetricsCollector
-import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm.GradleDaemon
-import com.avito.android.plugin.build_metrics.internal.runtime.LocalVm.GradleWorker
-import com.avito.android.plugin.build_metrics.internal.runtime.VmResolver
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.JvmMetricsCollector
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm.GradleDaemon
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm.GradleWorker
+import com.avito.android.plugin.build_metrics.internal.runtime.jvm.VmResolver
 import com.google.common.truth.Truth.assertWithMessage
 import com.google.common.truth.TruthJUnit.assume
 import org.junit.jupiter.api.Test

@@ -3,31 +3,19 @@ package com.avito.android.plugin.build_metrics
 import com.avito.android.critical_path.CriticalPathRegistry
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.android.graphite.graphiteConfig
-import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
+import com.avito.android.plugin.build_metrics.internal.BuildMetricsPluginDI
+import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
+import com.avito.android.plugin.build_metrics.internal.BuildResultListener
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
-import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
-import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
-import com.avito.android.plugin.build_metrics.internal.runtime.Cgroup2
-import com.avito.android.plugin.build_metrics.internal.runtime.JavaHome
-import com.avito.android.plugin.build_metrics.internal.runtime.JvmMetricsCollector
-import com.avito.android.plugin.build_metrics.internal.runtime.JvmMetricsSenderImpl
-import com.avito.android.plugin.build_metrics.internal.runtime.OsMetricsCollector
-import com.avito.android.plugin.build_metrics.internal.runtime.OsMetricsSenderImpl
+import com.avito.android.plugin.build_metrics.internal.logger.LazyLoggerFactory
+import com.avito.android.plugin.build_metrics.internal.runtime.MetricsCollector
 import com.avito.android.plugin.build_metrics.internal.runtime.RuntimeMetricsListener
-import com.avito.android.plugin.build_metrics.internal.runtime.VmResolver
-import com.avito.android.plugin.build_metrics.internal.runtime.command.Jcmd
-import com.avito.android.plugin.build_metrics.internal.runtime.command.Jps
-import com.avito.android.plugin.build_metrics.internal.tasks.CriticalPathMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsTask
-import com.avito.android.stats.SeriesName
-import com.avito.android.stats.StatsDSender
-import com.avito.android.stats.statsd
-import com.avito.android.stats.withPrefix
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.teamcity.teamcityCredentials
-import com.avito.utils.ProcessRunner
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -52,60 +40,102 @@ public open class BuildMetricsPlugin : Plugin<Project> {
             this.teamcityCredentials.set(project.teamcityCredentials)
             this.graphiteConfig.set(project.graphiteConfig)
         }
-        project.afterEvaluate { // values from extension are not available earlier
-            registerListeners(project, extension)
+        // values from extension are not available earlier
+        project.afterEvaluate {
+            if (!extension.buildType.isPresent || !extension.environment.isPresent) {
+                project.logger.warn(
+                    """
+                    Build metrics plugin configuration error. Plugin can't work.
+                    Please configure buildType and environment at buildMetrics extension
+                """.trimIndent()
+                )
+            } else {
+                val di = BuildMetricsPluginDI(
+                    project,
+                    extension,
+                    LazyLoggerFactory(GradleLoggerPlugin.getLoggerFactory(project))
+                )
+                registerListeners(di, extension)
+            }
         }
     }
 
-    private fun registerListeners(project: Project, extension: BuildMetricsExtension) {
-        val metricsTracker: StatsDSender = if (extension.metricsPrefix.isPresent) {
-            val prefix = SeriesName.create(*extension.metricsPrefix.get().toTypedArray())
-            project.statsd.get().withPrefix(prefix)
-        } else {
-            project.statsd.get()
+    private fun registerListeners(
+        di: BuildMetricsPluginDI,
+        extension: BuildMetricsExtension,
+    ) {
+        if (extension.sendCriticalPathMetrics.get()) {
+            CriticalPathRegistry.addListener(di.project, di.criticalPathTracker)
         }
 
-        val buildOperationsListener = BuildOperationsResultProvider.register(project, metricsTracker)
+        val buildResultListeners = createBuildResultListeners(extension, di)
+        val buildOperationResultListeners = createBuildOperationsResultListeners(extension, di)
 
-        val criticalPathTracker = CriticalPathMetricsTracker(metricsTracker)
-        CriticalPathRegistry.addListener(project, criticalPathTracker)
-
-        val processRunner = ProcessRunner.create(workingDirectory = null)
-        val javaHome = JavaHome()
-
-        val runtimeMetricsListener = RuntimeMetricsListener(
-            collectors = listOf(
-                JvmMetricsCollector(
-                    vmResolver = VmResolver(
-                        jps = Jps(processRunner, javaHome)
-                    ),
-                    jcmd = Jcmd(processRunner, javaHome),
-                    sender = JvmMetricsSenderImpl(metricsTracker)
-                ),
-                OsMetricsCollector(
-                    cgroup = Cgroup2.resolve(),
-                    sender = OsMetricsSenderImpl(metricsTracker)
-                )
+        val eventListeners = buildList {
+            if (buildResultListeners.isNotEmpty()) {
+                add(CompositeBuildMetricsListener(buildResultListeners))
+            }
+            if (buildOperationResultListeners.isNotEmpty()) {
+                add(BuildOperationsResultProvider.register(di.project, buildOperationResultListeners))
+            }
+        }
+        if (eventListeners.isNotEmpty()) {
+            GradleCollector.initialize(
+                di.project,
+                eventListeners
             )
-        )
+        }
+    }
 
-        val buildListeners = listOf(
-            runtimeMetricsListener,
-            ConfigurationTimeListener(metricsTracker),
-            TotalBuildTimeListener(metricsTracker),
-            AppBuildTimeListener.from(project, metricsTracker)
-        )
+    private fun createBuildOperationsResultListeners(
+        extension: BuildMetricsExtension,
+        di: BuildMetricsPluginDI
+    ): List<BuildOperationsResultListener> {
+        return buildList {
+            if (extension.sendSlowTaskMetrics.get()) {
+                add(di.slowTasksMetricsTracker)
+            }
+            if (extension.sendBuildCacheMetrics.get() &&
+                BuildOperationsResultProvider.canTrackRemoteCache(di.project)
+            ) {
+                add(di.cacheMetricsTracker)
+            }
+        }
+    }
 
-        val eventsListeners = listOf(
-            CompositeBuildMetricsListener(
-                listeners = buildListeners,
-            ),
-            buildOperationsListener
-        )
-        GradleCollector.initialize(
-            project,
-            eventsListeners
-        )
+    private fun createBuildResultListeners(
+        extension: BuildMetricsExtension,
+        di: BuildMetricsPluginDI
+    ): List<BuildResultListener> {
+        return buildList {
+            val runtimeMetricsCollectors = createRuntimeMetricsCollectors(extension, di)
+            if (runtimeMetricsCollectors.isNotEmpty()) {
+                add(RuntimeMetricsListener(runtimeMetricsCollectors))
+            }
+            if (extension.sendBuildInitConfiguration.get()) {
+                add(di.initConfigurationListener)
+            }
+            if (extension.sendBuildTotal.get()) {
+                add(di.totalBuildTimeListener)
+            }
+            if (extension.sendAppBuildTime.get()) {
+                add(di.appBuildTimeListener)
+            }
+        }
+    }
+
+    private fun createRuntimeMetricsCollectors(
+        extension: BuildMetricsExtension,
+        di: BuildMetricsPluginDI
+    ): List<MetricsCollector> {
+        return buildList {
+            if (extension.sendJvmMetrics.get()) {
+                add(di.jvmMetricsCollector)
+            }
+            if (extension.sendOsMetrics.get()) {
+                add(di.osMetricsCollector)
+            }
+        }
     }
 }
 

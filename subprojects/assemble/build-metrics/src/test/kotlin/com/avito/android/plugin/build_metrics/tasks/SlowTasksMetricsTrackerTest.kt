@@ -1,14 +1,13 @@
 package com.avito.android.plugin.build_metrics.tasks
 
+import com.avito.android.graphite.GraphiteMetric
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
 import com.avito.android.plugin.build_metrics.internal.CacheOperations
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
-import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksMetricsTracker
-import com.avito.android.stats.SeriesName
-import com.avito.android.stats.StatsMetric
-import com.avito.android.stats.StubStatsdSender
-import com.avito.android.stats.TimeMetric
+import com.avito.android.plugin.build_metrics.internal.core.StubBuildMetricsSender
+import com.avito.android.plugin.build_metrics.internal.gradle.tasks.slow.SlowTasksMetricsTracker
+import com.avito.graphite.series.SeriesName
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
 import org.gradle.util.Path
@@ -33,9 +32,9 @@ internal class SlowTasksMetricsTrackerTest {
             ),
         )
         assertThat(metrics).contains(
-            TimeMetric(
-                SeriesName.create("build", "tasks", "cumulative", "any"),
-                timeInMs = 3_000
+            GraphiteMetric(
+                SeriesName.create("gradle.tasks", multipart = true),
+                "3000"
             )
         )
     }
@@ -47,25 +46,26 @@ internal class SlowTasksMetricsTrackerTest {
                 path = ":app:a1",
                 type = CustomTaskA::class.java,
                 startMs = 0,
-                endMs = 1_000
+                endMs = 10_000
             ),
             taskExecution(
                 path = ":app:a2",
                 type = CustomTaskA::class.java,
                 startMs = 0,
-                endMs = 2_000
+                endMs = 20_000
             ),
             taskExecution(
                 path = ":app:b",
                 type = CustomTaskB::class.java,
                 startMs = 0,
-                endMs = 2_000
+                endMs = 20_000
             ),
         )
         assertThat(metrics).contains(
-            TimeMetric(
-                SeriesName.create("build", "tasks", "slow", "type", "CustomTaskA"),
-                timeInMs = 3_000
+            GraphiteMetric(
+                SeriesName.create("gradle.slow.task.type", multipart = true)
+                    .addTag("task_type", "CustomTaskA"),
+                "30000"
             )
         )
     }
@@ -77,25 +77,26 @@ internal class SlowTasksMetricsTrackerTest {
                 path = ":app:a",
                 type = CustomTaskA::class.java,
                 startMs = 0,
-                endMs = 1_000
+                endMs = 11_000
             ),
             taskExecution(
                 path = ":app:b",
                 type = CustomTaskB::class.java,
                 startMs = 0,
-                endMs = 2_000
+                endMs = 12_000
             ),
             taskExecution(
                 path = ":lib:a",
                 type = CustomTaskA::class.java,
                 startMs = 0,
-                endMs = 2_000
+                endMs = 12_000
             ),
         )
         assertThat(metrics).contains(
-            TimeMetric(
-                SeriesName.create("build", "tasks", "slow", "module", "app"),
-                timeInMs = 3_000
+            GraphiteMetric(
+                SeriesName.create("gradle.slow.module", multipart = true)
+                    .addTag("module_name", "app"),
+                "23000"
             )
         )
     }
@@ -107,25 +108,27 @@ internal class SlowTasksMetricsTrackerTest {
                 path = ":app:a1",
                 type = CustomTaskA::class.java,
                 startMs = 0,
-                endMs = 1_000
+                endMs = 10_000
             ),
             taskExecution(
                 path = ":app:a2",
                 type = CustomTaskA::class.java,
                 startMs = 0,
-                endMs = 1_000
+                endMs = 10_000
             ),
             taskExecution(
                 path = ":lib:b",
                 type = CustomTaskB::class.java,
                 startMs = 0,
-                endMs = 2_000
+                endMs = 20_000
             )
         )
         assertThat(metrics).contains(
-            TimeMetric(
-                SeriesName.create("build", "tasks", "slow", "task", "app", "CustomTaskA"),
-                timeInMs = 2_000
+            GraphiteMetric(
+                SeriesName.create("gradle.slow.module.task.type", multipart = true)
+                    .addTag("module_name", "app")
+                    .addTag("task_type", "CustomTaskA"),
+                "20000"
             )
         )
     }
@@ -144,10 +147,9 @@ internal class SlowTasksMetricsTrackerTest {
         cacheResult = cacheResult
     )
 
-    private fun processResults(vararg tasks: TaskExecutionResult): List<StatsMetric> {
-        val metricsTracker = StubStatsdSender()
-
-        val listener = SlowTasksMetricsTracker(metricsTracker)
+    private fun processResults(vararg tasks: TaskExecutionResult): List<GraphiteMetric> {
+        val buildMetricSender = StubBuildMetricsSender()
+        val listener = SlowTasksMetricsTracker(buildMetricSender)
         val result = BuildOperationsResult(
             tasksExecutions = tasks.toList(),
             cacheOperations = CacheOperations(
@@ -156,7 +158,7 @@ internal class SlowTasksMetricsTrackerTest {
         )
         listener.onBuildFinished(result)
 
-        return metricsTracker.getSentMetrics()
+        return buildMetricSender.getSentGraphiteMetrics()
     }
 
     private abstract class CustomTaskA : Task
