@@ -76,6 +76,7 @@ nav:
             -   Testing: contributing/Testing.md
             -   Release: contributing/Release.md
             -   Remote cache: contributing/internal/RemoteCache.md
+            -   Repo sync: contributing/internal/RepoSync.md
     -   Projects:
             -   Build checks: projects/BuildChecks.md
             -   Build properties: projects/BuildProperties.md
