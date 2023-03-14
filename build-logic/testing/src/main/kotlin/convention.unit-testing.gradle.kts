@@ -2,10 +2,6 @@ import com.avito.android.withVersionCatalog
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
-plugins {
-    id("org.gradle.test-retry")
-}
-
 val isCi: Provider<Boolean> = providers.gradleProperty("ci").map { it.toBoolean() }
 
 tasks.withType<Test>().configureEach {
@@ -46,14 +42,6 @@ tasks.withType<Test>().configureEach {
         "isInvokedFromIde",
         gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
     )
-    if (isCi.getOrElse(false)) {
-        retry {
-            maxRetries.set(1)
-            filter {
-                includeAnnotationClasses.add("com.avito.test.Flaky")
-            }
-        }
-    }
 }
 
 project.withVersionCatalog { libs ->
