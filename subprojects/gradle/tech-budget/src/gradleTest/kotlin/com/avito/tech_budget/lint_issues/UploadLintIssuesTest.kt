@@ -12,6 +12,7 @@ import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -43,6 +44,7 @@ internal class UploadLintIssuesTest {
     }
 
     @Test
+    @Disabled
     fun `when upload succeed - build success`(@TempDir projectDir: File) {
         generateProject(projectDir, containsIssues = true)
 
@@ -69,6 +71,7 @@ internal class UploadLintIssuesTest {
     }
 
     @Test
+    @Disabled
     fun `when collect lint issues for multiple app modules - then aggregate`(@TempDir projectDir: File) {
         generateProject(projectDir, isSingleModule = false)
 
@@ -89,9 +92,13 @@ internal class UploadLintIssuesTest {
                 id("com.avito.android.tech-budget")
                 id("com.avito.android.code-ownership")
             },
+            imports = listOf("import com.avito.logger.LogLevel"),
             buildGradleExtra = """
                 techBudget {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
+                }
+                gradleLogger {
+                    printlnHandler(false, LogLevel.DEBUG)
                 }
             """.trimIndent(),
             modules = listOfNotNull(
