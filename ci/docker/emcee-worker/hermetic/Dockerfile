@@ -8,7 +8,7 @@ RUN mkdir /app
 COPY . /app
 WORKDIR /app
 
-RUN ./gradlew subprojects:emcee:worker:build -x test \
+RUN ./gradlew subprojects:emcee:worker:fatJar \
     -PartifactoryUrl=${ARTIFACTORY_URL} \
     -Pcom.avito.android.tools.buildCache.remote.url=unused \
     --no-build-cache \
