@@ -1,5 +1,8 @@
 package com.avito.emcee.worker.internal.consumer
 
+import com.avito.android.Problem
+import com.avito.android.Result
+import com.avito.android.asRuntimeException
 import com.avito.emcee.queue.BucketResult
 import com.avito.emcee.queue.BucketResultContainer
 import com.avito.emcee.queue.BuildArtifacts
@@ -21,8 +24,9 @@ import kotlinx.coroutines.flow.map
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 import java.util.UUID
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 @ExperimentalTime
 internal class RealTestJobConsumer(
@@ -39,13 +43,16 @@ internal class RealTestJobConsumer(
             with(job.bucket.payloadContainer.payload) {
                 bucketsStorage.add(job.bucket)
 
-                val startTime = BucketResult.UnfilteredResult.TestRunResult.StartTime(System.currentTimeMillis())
-                val results = executeTests(
-                    payload = testConfigurationContainer.payload,
-                    testEntries = testEntries,
-                    testExecutionBehavior = testExecutionBehavior,
-                )
-                sendTestResults(job, results, startTime)
+                val startTime = System.currentTimeMillis()
+                val results: List<TestExecutor.Result>
+                val executionTime = measureTime {
+                    results = executeTests(
+                        payload = testConfigurationContainer.payload,
+                        testEntries = testEntries,
+                        testExecutionBehavior = testExecutionBehavior,
+                    )
+                }
+                sendTestResults(job, results, startTime, executionTime)
 
                 bucketsStorage.remove(job.bucket)
 
@@ -97,25 +104,45 @@ internal class RealTestJobConsumer(
     private suspend fun sendTestResults(
         job: TestJobProducer.Job,
         results: List<TestExecutor.Result>,
-        startTime: BucketResult.UnfilteredResult.TestRunResult.StartTime
+        startTime: Long,
+        executionTime: Duration
     ) {
-        api.sendBucketResult(
-            createBucketResult(
-                workerId = job.workerId,
-                bucketId = job.bucket.bucketId,
-                signature = job.payloadSignature,
-                startTime = startTime,
-                payload = job.bucket.payloadContainer.payload,
-                results = results,
+        var result: Result<Unit>
+        var tries = 0
+        do {
+            result = api.sendBucketResult(
+                createBucketResult(
+                    workerId = job.workerId,
+                    bucketId = job.bucket.bucketId,
+                    signature = job.payloadSignature,
+                    startTime = startTime,
+                    executionTime = executionTime,
+                    payload = job.bucket.payloadContainer.payload,
+                    results = results,
+                )
             )
-        )
+            tries++
+        } while (result.isFailure() && tries <= 3) // TODO: move tries count to config file and OkHttp interceptor
+
+        result.onFailure { throwable ->
+            val problem = Problem.Builder(
+                shortDescription = "Failed to send test results.",
+                context = "Sending test results to the queue after test execution.",
+            ).apply {
+                addSolution("Check if result json is valid. Queue may not accept the test result.")
+                addSolution("Check if queue is running and available.")
+                throwable(throwable)
+            }.build()
+            throw problem.asRuntimeException()
+        }
     }
 
     private fun createBucketResult(
         workerId: String,
         bucketId: String,
         signature: PayloadSignature,
-        startTime: BucketResult.UnfilteredResult.TestRunResult.StartTime,
+        startTime: Long,
+        executionTime: Duration,
         payload: Payload,
         results: List<TestExecutor.Result>
     ) = SendBucketResultBody(
@@ -134,7 +161,7 @@ internal class RealTestJobConsumer(
                         testRunResults = listOf(
                             BucketResult.UnfilteredResult.TestRunResult(
                                 uuid = UUID.randomUUID().toString(),
-                                duration = 5.seconds, // TODO: calculate real execution time
+                                duration = executionTime,
                                 exceptions = emptyList(),
                                 hostName = "",
                                 logs = emptyList(),

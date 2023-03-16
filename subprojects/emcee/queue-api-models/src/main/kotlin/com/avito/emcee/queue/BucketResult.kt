@@ -23,7 +23,7 @@ public data class BucketResult(
             val exceptions: List<Exception>,
             val hostName: String,
             val logs: List<Log>,
-            val startTime: StartTime,
+            val startTime: Long,
             val succeeded: Boolean
         ) {
             @JsonClass(generateAdapter = true)
@@ -36,9 +36,6 @@ public data class BucketResult(
 
             @JsonClass(generateAdapter = true)
             public data class Log(val contents: String)
-
-            @JsonClass(generateAdapter = true)
-            public data class StartTime(val date: Long)
         }
     }
 

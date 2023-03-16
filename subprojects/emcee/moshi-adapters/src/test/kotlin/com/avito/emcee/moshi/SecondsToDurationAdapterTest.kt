@@ -46,16 +46,18 @@ internal class SecondsToDurationAdapterTest {
     companion object {
 
         data class TestEntry(
-            val seconds: Int,
+            val seconds: Double,
             val duration: Duration,
         )
 
         @JvmStatic
         fun dataSet() = listOf(
-            TestEntry(2, 2.seconds),
-            TestEntry(5 * 60, 5.minutes),
-            TestEntry(7 * 60 * 60, 7.hours),
-            TestEntry(10 * 24 * 60 * 60, 10.days),
+            TestEntry(2.0, 2.seconds),
+            TestEntry(5.0 * 60, 5.minutes),
+            TestEntry(7.0 * 60 * 60, 7.hours),
+            TestEntry(10.0 * 24 * 60 * 60, 10.days),
+            TestEntry(0.5, 0.5.seconds),
+            TestEntry(6.223344, 6.223344.seconds),
         )
     }
 }

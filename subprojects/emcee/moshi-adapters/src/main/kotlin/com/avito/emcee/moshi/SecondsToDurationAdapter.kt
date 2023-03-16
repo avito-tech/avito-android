@@ -14,11 +14,11 @@ public class SecondsToDurationAdapter : JsonAdapter<Duration>() {
     override fun toJson(writer: JsonWriter, value: Duration?) {
         when (value) {
             null -> writer.nullValue()
-            else -> writer.value(value.inWholeSeconds)
+            else -> writer.value(value.inWholeMicroseconds / 1_000_000.0) // respecting the microseconds
         }
     }
 
     override fun fromJson(reader: JsonReader): Duration {
-        return reader.nextLong().seconds
+        return reader.nextDouble().seconds
     }
 }

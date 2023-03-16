@@ -24,7 +24,7 @@ public interface WorkerQueueApi {
     public suspend fun getBucket(@Body body: GetBucketBody): Result<GetBucketResponse>
 
     @POST("bucketResult")
-    public suspend fun sendBucketResult(@Body body: SendBucketResultBody)
+    public suspend fun sendBucketResult(@Body body: SendBucketResultBody): Result<Unit>
 
     public companion object {
 

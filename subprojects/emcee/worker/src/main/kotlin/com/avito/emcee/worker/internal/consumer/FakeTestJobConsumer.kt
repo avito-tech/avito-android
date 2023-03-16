@@ -26,7 +26,7 @@ internal class FakeTestJobConsumer(
     override fun consume(jobs: Flow<TestJobProducer.Job>): Flow<TestJobConsumer.Result> = jobs.map { job ->
         bucketsStorage.add(job.bucket)
 
-        val startTime = BucketResult.UnfilteredResult.TestRunResult.StartTime(System.currentTimeMillis())
+        val startTime = System.currentTimeMillis()
         delay(5.seconds)
 
         api.sendBucketResult(
@@ -49,7 +49,7 @@ internal class FakeTestJobConsumer(
         workerId: String,
         bucketId: String,
         signature: PayloadSignature,
-        startTime: BucketResult.UnfilteredResult.TestRunResult.StartTime,
+        startTime: Long,
         payload: Payload,
     ) = SendBucketResultBody(
         bucketId = bucketId,
