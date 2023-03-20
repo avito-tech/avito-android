@@ -5,10 +5,6 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.util.Path
 
-internal fun Path.toSeriesName(): String {
-    return path.removePrefix(":").ifEmpty { "_" }
-}
-
 internal fun Path.toTagValue(): String {
     return if (Path.ROOT == this) {
         "root"

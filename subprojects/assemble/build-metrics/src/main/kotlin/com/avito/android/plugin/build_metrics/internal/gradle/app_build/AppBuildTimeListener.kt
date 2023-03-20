@@ -8,7 +8,8 @@ import com.avito.android.plugin.build_metrics.internal.BuildStatus
 import com.avito.android.plugin.build_metrics.internal.asSeriesName
 import com.avito.android.plugin.build_metrics.internal.core.BuildMetric
 import com.avito.android.plugin.build_metrics.internal.core.BuildMetricSender
-import com.avito.android.plugin.build_metrics.internal.toSeriesName
+import com.avito.android.plugin.build_metrics.internal.gradle.app_build.PackageApplicationMetric.ApplicationType
+import com.avito.android.plugin.build_metrics.internal.toTagValue
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.withType
 import org.gradle.api.Project
@@ -39,8 +40,16 @@ internal class AppBuildTimeListener private constructor(
         return PackageApplicationMetric(
             time = task.finish - report.buildStarted,
             status = status.asSeriesName(),
-            module = task.module.toSeriesName(),
+            module = task.module.toTagValue(),
+            appType = getPackageTaskAppType(task),
         )
+    }
+
+    private fun getPackageTaskAppType(task: TaskExecution): ApplicationType {
+        return when {
+            task.name.contains("AndroidTest") -> ApplicationType.TEST
+            else -> ApplicationType.MAIN
+        }
     }
 
     companion object {

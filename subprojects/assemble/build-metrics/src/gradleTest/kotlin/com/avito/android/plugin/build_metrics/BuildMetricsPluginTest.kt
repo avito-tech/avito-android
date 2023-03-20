@@ -64,25 +64,39 @@ internal class BuildMetricsPluginTest {
 
     @TestFactory
     fun `send app build time - build app`(): List<DynamicTest> {
-
+        class Metric(
+            val name: String,
+            val count: Int,
+        )
         class Case(
             val description: String,
             val tasks: Array<String>,
-            val metricName: String,
-            val count: Int,
+            val metrics: List<Metric>
         )
         return listOf(
             Case(
                 description = "build app",
                 tasks = arrayOf(":app:assembleDebug"),
-                metricName = "build.metrics.test.builds.gradle.task.type.PackageApplication;build_type=test;env=ci;module_name=app;build_status=success",
-                count = 1,
+                metrics = listOf(
+                    Metric(
+                        name = "build.metrics.test.builds.gradle.task.type.PackageApplication;build_type=test;env=ci;module_name=app;app_type=main;build_status=success",
+                        count = 1,
+                    )
+                ),
             ),
             Case(
                 description = "run instrumentation tests",
                 tasks = arrayOf(":app:assembleDebug", ":app:assembleDebugAndroidTest"),
-                metricName = "build.metrics.test.builds.gradle.task.type.PackageApplication;build_type=test;env=ci;module_name=app;build_status=success",
-                count = 2,
+                metrics = listOf(
+                    Metric(
+                        name = "build.metrics.test.builds.gradle.task.type.PackageApplication;build_type=test;env=ci;module_name=app;app_type=main;build_status=success",
+                        count = 1,
+                    ),
+                    Metric(
+                        name = "build.metrics.test.builds.gradle.task.type.PackageApplication;build_type=test;env=ci;module_name=app;app_type=test;build_status=success",
+                        count = 1,
+                    )
+                ),
             ),
         ).map {
             dynamicTest("send total task time for app scenario - " + it.description) {
@@ -91,7 +105,9 @@ internal class BuildMetricsPluginTest {
                 result.assertThat()
                     .buildSuccessful()
 
-                result.assertHasMetric(it.metricName) { hasSize(it.count) }
+                it.metrics.forEach { metric ->
+                    result.assertHasMetric(metric.name) { hasSize(metric.count) }
+                }
             }
         }
     }

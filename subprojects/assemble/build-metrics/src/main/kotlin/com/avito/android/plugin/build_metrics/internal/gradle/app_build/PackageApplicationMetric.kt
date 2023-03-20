@@ -8,7 +8,13 @@ internal class PackageApplicationMetric(
     private val time: Long,
     private val status: String,
     private val module: String,
+    private val appType: ApplicationType,
 ) : BuildMetric.Graphite() {
+
+    enum class ApplicationType(val code: String) {
+        MAIN("main"),
+        TEST("test")
+    }
 
     private val base: SeriesName = SeriesName.create(
         "gradle.task.type.PackageApplication",
@@ -18,6 +24,7 @@ internal class PackageApplicationMetric(
     override fun asGraphite(): GraphiteMetric {
         val series = base
             .addTag("module_name", module)
+            .addTag("app_type", appType.code)
             .addTag("build_status", status)
 
         return GraphiteMetric(
