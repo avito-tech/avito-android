@@ -32,6 +32,7 @@ internal class TasksMetricsTest {
                 |   buildType.set("test")
                 |   environment.set(BuildEnvironment.CI)
                 |   slowTaskMinimumDuration.set(Duration.ofMillis(0))
+                |   criticalTaskMinimumDuration.set(Duration.ofMillis(0))
                 |}
             """.trimMargin(),
             modules = listOf(

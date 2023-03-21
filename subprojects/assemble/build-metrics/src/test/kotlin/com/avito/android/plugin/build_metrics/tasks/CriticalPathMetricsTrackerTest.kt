@@ -10,6 +10,7 @@ import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
 import org.gradle.util.Path
 import org.junit.jupiter.api.Test
+import java.time.Duration
 
 internal class CriticalPathMetricsTrackerTest {
 
@@ -69,7 +70,7 @@ internal class CriticalPathMetricsTrackerTest {
     private fun processResults(vararg tasks: TaskOperation): List<GraphiteMetric> {
         val buildMetricSender = StubBuildMetricsSender()
 
-        val tracker = CriticalPathMetricsTracker(buildMetricSender)
+        val tracker = CriticalPathMetricsTracker(buildMetricSender, Duration.ZERO)
         tracker.onCriticalPathReady(
             OperationsPath(operations = tasks.toList())
         )

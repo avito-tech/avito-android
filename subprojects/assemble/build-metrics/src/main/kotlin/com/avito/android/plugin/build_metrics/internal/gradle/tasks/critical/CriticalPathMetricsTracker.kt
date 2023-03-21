@@ -9,7 +9,8 @@ import com.avito.math.sumByLong
 import java.time.Duration
 
 internal class CriticalPathMetricsTracker(
-    private val metricsTracker: BuildMetricSender
+    private val metricsTracker: BuildMetricSender,
+    private val minimalDuration: Duration,
 ) : CriticalPathListener {
 
     override fun onCriticalPathReady(path: OperationsPath<TaskOperation>) {
@@ -21,13 +22,15 @@ internal class CriticalPathMetricsTracker(
         path.operations.groupBy { taskOperation ->
             taskOperation.type.simpleName
         }.forEach { (taskType, tasks) ->
-            val durationMs = tasks.sumByLong { it.durationMs }
-            metricsTracker.send(
-                BuildCriticalPathTaskCumulativeMetric(
-                    taskType = taskType,
-                    tasksDuration = Duration.ofMillis(durationMs)
+            val duration = Duration.ofMillis(tasks.sumByLong { it.durationMs })
+            if (duration > minimalDuration) {
+                metricsTracker.send(
+                    BuildCriticalPathTaskCumulativeMetric(
+                        taskType = taskType,
+                        tasksDuration = duration
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -35,15 +38,17 @@ internal class CriticalPathMetricsTracker(
         path.operations.groupBy { taskOperation ->
             taskOperation.path.module to taskOperation.type.simpleName
         }.forEach { (moduleAndType, tasks) ->
-            val durationMs = tasks.sumByLong { it.durationMs }
             val (module, taskType) = moduleAndType
-            metricsTracker.send(
-                BuildCriticalPathModuleTaskMetric(
-                    moduleName = module,
-                    taskType = taskType,
-                    taskDuration = Duration.ofMillis(durationMs)
+            val duration = Duration.ofMillis(tasks.sumByLong { it.durationMs })
+            if (duration > minimalDuration) {
+                metricsTracker.send(
+                    BuildCriticalPathModuleTaskMetric(
+                        moduleName = module,
+                        taskType = taskType,
+                        taskDuration = duration
+                    )
                 )
-            )
+            }
         }
     }
 }

@@ -55,7 +55,7 @@ internal class BuildMetricsPluginDI(
     }
 
     val criticalPathTracker: CriticalPathMetricsTracker by lazy {
-        CriticalPathMetricsTracker(sender)
+        CriticalPathMetricsTracker(sender, extension.criticalTaskMinimumDuration.get())
     }
 
     val jvmMetricsCollector by lazy {
