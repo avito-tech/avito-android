@@ -1,3 +1,4 @@
+import com.avito.android.withVersionCatalog
 import java.util.jar.Attributes
 
 plugins {
@@ -9,8 +10,10 @@ plugins {
 kotlin {
     explicitApi()
     jvmToolchain {
-        (this as JavaToolchainSpec).apply {
-            languageVersion.set(JavaLanguageVersion.of(17))
+        withVersionCatalog { libs ->
+            (this as JavaToolchainSpec).apply {
+                languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
+            }
         }
     }
 }
