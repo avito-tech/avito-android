@@ -11,6 +11,7 @@ internal object HtmlVerdictCases {
         override fun compileKotlinFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>BuildFailed</title>
     <style>.logs {
     color: red;
@@ -31,6 +32,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
         override fun customTaskFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>BuildFailed</title>
     <style>.logs {
     color: red;
@@ -52,6 +54,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
         override fun buildVerdictTaskFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>BuildFailed</title>
     <style>.logs {
     color: red;
@@ -74,6 +77,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
         override fun kaptFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>BuildFailed</title>
     <style>.logs {
     color: red;
@@ -98,6 +102,7 @@ public abstract interface DaggerComponent {
         override fun kaptStubGeneratingFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>BuildFailed</title>
     <style>.logs {
     color: red;
@@ -118,6 +123,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
         override fun unitTestsFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>BuildFailed</title>
     <style>.logs {
     color: red;
@@ -143,6 +149,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
         override fun wrongProjectDependencyFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>Build failed</title>
   </head>
   <body>
@@ -159,6 +166,7 @@ A problem occurred evaluating project ':app'.
         override fun illegalMethodFails() = """
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>Build failed</title>
   </head>
   <body>

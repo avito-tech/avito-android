@@ -12,6 +12,7 @@ import kotlinx.html.h3
 import kotlinx.html.h4
 import kotlinx.html.head
 import kotlinx.html.html
+import kotlinx.html.meta
 import kotlinx.html.pre
 import kotlinx.html.stream.createHTML
 import kotlinx.html.style
@@ -24,6 +25,7 @@ internal fun BuildVerdict.Execution.html(): String {
     }
     return createHTML().html {
         head {
+            meta(charset = "UTF-8")
             title {
                 text("BuildFailed")
             }

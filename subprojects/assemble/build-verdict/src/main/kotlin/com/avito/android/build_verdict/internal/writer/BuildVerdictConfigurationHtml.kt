@@ -7,6 +7,7 @@ import kotlinx.html.h2
 import kotlinx.html.h3
 import kotlinx.html.head
 import kotlinx.html.html
+import kotlinx.html.meta
 import kotlinx.html.pre
 import kotlinx.html.stream.createHTML
 import kotlinx.html.title
@@ -19,6 +20,7 @@ private fun Error.html(): String {
     val error = this
     return createHTML().html {
         head {
+            meta(charset = "UTF-8")
             title {
                 text("Build failed")
             }
