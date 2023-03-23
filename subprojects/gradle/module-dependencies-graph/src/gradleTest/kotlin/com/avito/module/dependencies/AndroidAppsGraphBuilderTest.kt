@@ -1,9 +1,9 @@
 package com.avito.module.dependencies
 
 import com.avito.module.configurations.ConfigurationType
-import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
-import com.avito.module.internal.dependencies.DependenciesGraphBuilder
-import com.avito.module.internal.dependencies.ProjectConfigurationNode
+import com.avito.module.dependencies.graphbuilder.AndroidAppsGraphBuilder
+import com.avito.module.dependencies.graphbuilder.DependenciesGraphBuilder
+import com.avito.module.dependencies.graphbuilder.ProjectConfigurationNode
 import com.avito.module.internal.dependencies.ProjectWithDeps
 import com.avito.test.gradle.androidApp
 import com.avito.test.gradle.androidLib

@@ -1,7 +1,7 @@
 package com.avito.module.metrics.metrics
 
 import com.avito.module.configurations.ConfigurationType
-import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
+import com.avito.module.dependencies.graphbuilder.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.ProjectWithDeps
 import org.gradle.util.Path
 

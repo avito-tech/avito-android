@@ -1,8 +1,8 @@
 package com.avito.module.dependencies
 
 import com.avito.module.configurations.ConfigurationType
-import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
-import com.avito.module.internal.dependencies.DependenciesGraphBuilder
+import com.avito.module.dependencies.graphbuilder.AndroidAppsGraphBuilder
+import com.avito.module.dependencies.graphbuilder.DependenciesGraphBuilder
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction.Verdict.NoSuitableApps
 import com.avito.test.gradle.androidApp

@@ -1,26 +1,26 @@
-package com.avito.module.internal.dependencies
+package com.avito.module.dependencies.graphbuilder
 
 import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
 
-internal class ProjectConfigurationNode(
-    val project: Project,
-    val configurationType: ConfigurationType,
-    val configurations: Set<ConfigurationNode>
+public class ProjectConfigurationNode(
+    public val project: Project,
+    public val configurationType: ConfigurationType,
+    public val configurations: Set<ConfigurationNode>
 ) {
 
-    data class ConfigurationNode(
+    public data class ConfigurationNode(
         val gradleName: String,
         val dependencies: Set<ProjectConfigurationNode>
     )
 
-    fun directDependencies(): Set<ProjectConfigurationNode> {
+    public fun directDependencies(): Set<ProjectConfigurationNode> {
         return configurations
             .flatMap { it.dependencies }
             .toSet()
     }
 
-    fun allDependencies(): Set<Project> {
+    public fun allDependencies(): Set<Project> {
         val dependencies = mutableSetOf<Project>()
         // To avoid redundant revisiting the same nodes by different routes
         val visited = mutableSetOf<ProjectConfigurationNode>()
@@ -30,7 +30,7 @@ internal class ProjectConfigurationNode(
         return dependencies
     }
 
-    private fun ProjectConfigurationNode.traverseDependencies(
+    private fun traverseDependencies(
         visited: MutableSet<ProjectConfigurationNode>,
         visitor: (ProjectConfigurationNode) -> Unit
     ) {

@@ -1,12 +1,12 @@
-package com.avito.module.internal.dependencies
+package com.avito.module.dependencies.graphbuilder
 
 import com.avito.module.configurations.ConfigurationType
+import com.avito.module.dependencies.graphbuilder.ProjectConfigurationNode.ConfigurationNode
 import com.avito.module.internal.configurations.ConfigurationCoordinate
-import com.avito.module.internal.dependencies.ProjectConfigurationNode.ConfigurationNode
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 
-internal class DependenciesGraphBuilder(
+public class DependenciesGraphBuilder(
     private val root: Project,
 ) {
 
@@ -20,7 +20,7 @@ internal class DependenciesGraphBuilder(
 
     private val visited = mutableMapOf<ProjectConfigurationCoordinate, ProjectConfigurationNode>()
 
-    fun buildDependenciesGraph(configurationType: ConfigurationType): Set<ProjectConfigurationNode> {
+    public fun buildDependenciesGraph(configurationType: ConfigurationType): Set<ProjectConfigurationNode> {
         root.allprojects.forEach { project ->
             dependenciesOnProjects(project, configurationType)
         }

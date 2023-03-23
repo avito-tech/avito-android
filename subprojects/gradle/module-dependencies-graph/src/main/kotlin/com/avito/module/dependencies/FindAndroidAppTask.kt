@@ -4,8 +4,8 @@ import com.avito.module.configurations.ConfigurationType
 import com.avito.module.configurations.ConfigurationType.AndroidTests
 import com.avito.module.configurations.ConfigurationType.Main
 import com.avito.module.dependencies.FindAndroidAppTask.Options.CONFIGURATION
-import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
-import com.avito.module.internal.dependencies.DependenciesGraphBuilder
+import com.avito.module.dependencies.graphbuilder.AndroidAppsGraphBuilder
+import com.avito.module.dependencies.graphbuilder.DependenciesGraphBuilder
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAdvisor
 import org.gradle.api.DefaultTask
