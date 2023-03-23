@@ -14,7 +14,7 @@ internal abstract class BuildVerdictWriter(
         val destination = File(outputDir.value, fileName)
         destination.createNewFile()
         writeTo(buildVerdict, destination)
-        logger.warn("Build verdict at $destination")
+        logger.warn("Build verdict at ${destination.toURI()}")
     }
 
     protected abstract fun writeTo(buildVerdict: BuildVerdict, destination: File)
