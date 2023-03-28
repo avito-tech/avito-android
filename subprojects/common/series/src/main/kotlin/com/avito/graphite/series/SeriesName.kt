@@ -28,7 +28,7 @@ public class SeriesName private constructor(
 
     public fun addTags(tags: Map<String, String>): SeriesName {
         tags.forEach { (k, v) -> requireTag(k, v) }
-        return SeriesName(parts, tags.plus(tags))
+        return SeriesName(parts, this.tags.plus(tags))
     }
 
     public fun prefix(seriesName: SeriesName): SeriesName {

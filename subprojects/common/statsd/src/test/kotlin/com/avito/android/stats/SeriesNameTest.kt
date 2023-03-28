@@ -111,6 +111,22 @@ internal class SeriesNameTest {
     }
 
     @Test
+    fun `add tags to existing tags`() {
+        val series = SeriesName.create("one")
+            .addTag("tag01", "tagValue")
+            .addTag("tag02", "tagValue")
+
+        val result = series.addTags(
+            mapOf(
+                "tag1" to "tagValue",
+                "tag2" to "tagValue",
+            )
+        )
+
+        assertThat(result.toString()).isEqualTo("one;tag01=tagValue;tag02=tagValue;tag1=tagValue;tag2=tagValue")
+    }
+
+    @Test
     fun `add tags by two executions`() {
         val result = SeriesName.create("one")
             .addTag("tag1", "tagValue")
