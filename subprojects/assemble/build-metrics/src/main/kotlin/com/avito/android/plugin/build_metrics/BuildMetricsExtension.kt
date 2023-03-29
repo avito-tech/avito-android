@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics
 
 import com.android.build.gradle.internal.utils.setDisallowChanges
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -51,4 +52,8 @@ public abstract class BuildMetricsExtension @Inject constructor(
     public val sendBuildTotal: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
     public val sendAppBuildTime: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
+
+    public val writeModulesBuildTime: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
+
+    public val modulesBuildTimeFile: RegularFileProperty = objectFactory.fileProperty()
 }

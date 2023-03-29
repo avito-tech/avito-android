@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.common.techBudgetCommon)
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.gradle.buildEnvironment)
     implementation(projects.subprojects.assemble.gradleProfile)
@@ -19,6 +20,7 @@ dependencies {
     implementation(projects.subprojects.gradle.teamcity)
     implementation(projects.subprojects.gradle.workerExtensions)
     implementation(libs.kotlinGradle)
+    implementation(libs.moshi)
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)

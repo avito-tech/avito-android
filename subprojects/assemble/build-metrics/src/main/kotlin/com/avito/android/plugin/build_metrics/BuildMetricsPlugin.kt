@@ -49,6 +49,13 @@ public open class BuildMetricsPlugin : Plugin<Project> {
                     Please configure buildType and environment at buildMetrics extension
                 """.trimIndent()
                 )
+            } else if (extension.writeModulesBuildTime.get() && !extension.modulesBuildTimeFile.isPresent) {
+                project.logger.warn(
+                    """
+                    Build metrics plugin configuration error. 
+                    writeModulesBuildTime is enabled, but modulesBuildTimeFile location is not specified.
+                """.trimIndent()
+                )
             } else {
                 val di = BuildMetricsPluginDI(
                     project,
@@ -99,6 +106,9 @@ public open class BuildMetricsPlugin : Plugin<Project> {
                 BuildOperationsResultProvider.canTrackRemoteCache(di.project)
             ) {
                 add(di.cacheMetricsTracker)
+            }
+            if (extension.writeModulesBuildTime.get()) {
+                add(di.techBudgetBuildTimeWriter)
             }
         }
     }
