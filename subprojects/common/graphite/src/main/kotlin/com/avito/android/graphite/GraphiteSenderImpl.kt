@@ -20,6 +20,10 @@ internal class GraphiteSenderImpl(
     private fun sendInternal(metric: GraphiteMetric) {
         val withPrefix = metric.withPrefix(config.metricPrefix)
         transport.send(withPrefix)
-        logger.debug(withPrefix.toString())
+        if (config.enableDetailedLogs) {
+            logger.info(withPrefix.toString())
+        } else {
+            logger.debug(withPrefix.toString())
+        }
     }
 }

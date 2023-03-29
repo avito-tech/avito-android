@@ -18,7 +18,7 @@ private fun config(project: Project): GraphiteConfig {
     val namespace = project.getMandatoryStringProperty("avito.graphite.namespace")
     return GraphiteConfig(
         isEnabled = project.getBooleanProperty("avito.graphite.enabled", false),
-        debug = project.getBooleanProperty("avito.graphite.debug", false),
+        enableDetailedLogs = project.getBooleanProperty("avito.graphite.debug", false),
         host = project.getMandatoryStringProperty("avito.graphite.host"),
         port = project.getMandatoryIntProperty("avito.graphite.port"),
         metricPrefix = SeriesName.create(namespace, multipart = true),

@@ -11,7 +11,7 @@ public data class GraphiteConfig(
     /**
      * Debug mode with detailed logs
      */
-    val debug: Boolean,
+    val enableDetailedLogs: Boolean,
     val host: String,
     val port: Int,
     /**
