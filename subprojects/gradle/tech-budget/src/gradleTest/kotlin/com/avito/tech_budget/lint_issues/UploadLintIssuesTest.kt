@@ -5,14 +5,16 @@ import com.avito.tech_budget.utils.failureResponse
 import com.avito.tech_budget.utils.successResponse
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
+import com.avito.test.gradle.dir
+import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -44,14 +46,13 @@ internal class UploadLintIssuesTest {
     }
 
     @Test
-    @Disabled
     fun `when upload succeed - build success`(@TempDir projectDir: File) {
         generateProject(projectDir, containsIssues = true)
 
         uploadLintIssues(projectDir)
             .assertThat()
             .buildSuccessful()
-            .outputContains("Uploading 3 lint issues")
+            .outputContains("Uploading 2 lint issues")
     }
 
     @Test
@@ -71,14 +72,13 @@ internal class UploadLintIssuesTest {
     }
 
     @Test
-    @Disabled
     fun `when collect lint issues for multiple app modules - then aggregate`(@TempDir projectDir: File) {
         generateProject(projectDir, isSingleModule = false)
 
         uploadLintIssues(projectDir)
             .assertThat()
             .buildSuccessful()
-            .outputContains("Uploading 6 lint issues")
+            .outputContains("Uploading 4 lint issues")
     }
 
     private fun generateProject(
@@ -92,36 +92,23 @@ internal class UploadLintIssuesTest {
                 id("com.avito.android.tech-budget")
                 id("com.avito.android.code-ownership")
             },
-            imports = listOf("import com.avito.logger.LogLevel"),
             buildGradleExtra = """
                 techBudget {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
-                }
-                gradleLogger {
-                    printlnHandler(false, LogLevel.DEBUG)
                 }
             """.trimIndent(),
             modules = listOfNotNull(
                 AndroidAppModule(
                     name = "app",
-                    plugins = plugins {
-                        id("com.avito.android.tech-budget")
-                        id("com.avito.android.code-ownership")
-                    },
-                    buildGradleExtra = """
-                        android {
-                            lint {
-                                ${if (!containsIssues) "disable.add('GradleDependency')" else ""}
-                            }
-                        }
-                    """.trimIndent(),
+                    plugins = REQUIRED_PLUGINS,
+                    buildGradleExtra = DISABLE_GRADLE_DEPENDENCY_LINT_RULE,
+                    mutator = { if (containsIssues) warningResource() }
                 ),
                 AndroidAppModule(
                     name = "demoapp",
-                    plugins = plugins {
-                        id("com.avito.android.code-ownership")
-                        id("com.avito.android.tech-budget")
-                    }
+                    plugins = REQUIRED_PLUGINS,
+                    buildGradleExtra = DISABLE_GRADLE_DEPENDENCY_LINT_RULE,
+                    mutator = { if (containsIssues) warningResource() }
                 ).takeIf { !isSingleModule },
             )
         ).generateIn(projectDir)
@@ -138,5 +125,33 @@ internal class UploadLintIssuesTest {
             "-Pcom.avito.android.tech-budget.enable=$techBudgetFlagEnabled",
             expectFailure = expectFailure
         )
+    }
+
+    companion object {
+        // This content produces 2 issues: unused resources and hardcoded text
+        private val WARNING_CONTENT = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Error, try again" />
+        """.trimIndent()
+
+        private val REQUIRED_PLUGINS: PluginsSpec = plugins {
+            id("com.avito.android.tech-budget")
+            id("com.avito.android.code-ownership")
+        }
+
+        private val DISABLE_GRADLE_DEPENDENCY_LINT_RULE = """
+            android {
+                lint {
+                    disable.add('GradleDependency')
+                }
+            }
+        """.trimIndent()
+
+        private fun File.warningResource(): File = dir("src/main/res/layout/") {
+            file("sample_view.xml", WARNING_CONTENT)
+        }
     }
 }

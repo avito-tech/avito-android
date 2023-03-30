@@ -44,9 +44,6 @@ internal abstract class UploadLintIssuesTask : DefaultTask() {
 
         val logger = loggerFactory.get().create("LintIssues")
         if (lintIssues.isNotEmpty()) {
-            lintIssues.forEach { issue ->
-                logger.debug("Find lint issue ${issue.ruleId} ${issue.message} in ${issue.moduleName}")
-            }
             logger.info("Uploading ${lintIssues.size} lint issues")
             api.dumpLintIssues(
                 LintIssuesRequestBody(
