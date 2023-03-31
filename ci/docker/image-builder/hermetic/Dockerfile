@@ -1,6 +1,6 @@
 # See also details in README.md
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/android/openjdk:11 as BUILD
+FROM ${DOCKER_REGISTRY}/android/openjdk:17-bullseye as BUILD
 
 RUN mkdir /app
 COPY . /app
@@ -11,7 +11,7 @@ WORKDIR /app
 # We can't mount /var/run/docker.sock.
 RUN ./gradlew build -x integrationTest
 
-FROM ${DOCKER_REGISTRY}/android/openjdk:11
+FROM ${DOCKER_REGISTRY}/android/openjdk:17-bullseye
 
 RUN mkdir /app
 WORKDIR /app
