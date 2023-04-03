@@ -29,6 +29,7 @@ public object ElasticClientFactory {
                     endpoints = config.endpoints,
                     indexPattern = config.indexPattern,
                     buildId = config.buildId,
+                    authApiKey = config.authApiKey,
                     loggerFactory = loggerFactory
                 )
             }

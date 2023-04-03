@@ -19,12 +19,15 @@ import java.util.TimeZone
  * @param endpoints list of elastic endpoints to send logs
  *                  multiple endpoints used for stability, sometimes nodes may be unresponsive
  * @param indexPattern see https://www.elastic.co/guide/en/kibana/current/index-patterns.html
+ * @param authApiKey API key for Elastic auth
+ * see https://www.elastic.co/guide/en/elasticsearch/reference/current/token-authentication-services.html
  */
 internal class HttpElasticClient(
     private val timeProvider: TimeProvider,
     private val endpoints: List<URL>,
     private val indexPattern: String,
     private val buildId: String,
+    private val authApiKey: String?,
     loggerFactory: LoggerFactory
 ) : ElasticClient {
 
@@ -65,7 +68,10 @@ internal class HttpElasticClient(
 
             val formattedDate = isoDate.get().format(now)
 
+            val authApiKeyHeaderValue = authApiKey?.let { "ApiKey $it" }
+
             elasticApi.log(
+                authApiKeyHeaderValue = authApiKeyHeaderValue,
                 indexPattern = indexPattern,
                 date = formattedDate,
                 params = params

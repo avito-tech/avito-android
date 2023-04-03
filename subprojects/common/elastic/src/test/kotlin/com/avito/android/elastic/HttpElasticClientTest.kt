@@ -31,6 +31,7 @@ internal class HttpElasticClientTest {
             endpoints = listOf(mockWebServer.url("/").toUrl()),
             indexPattern = "doesnt-matter",
             buildId = "12345",
+            authApiKey = "testkey",
             loggerFactory = loggerFactory
         )
 
@@ -44,6 +45,7 @@ internal class HttpElasticClientTest {
         )
 
         capturedRequest.checks.singleRequestCaptured().apply {
+            containsHeader("Authorization", "ApiKey testkey")
             pathContains("doesnt-matter-2021-01-05/_doc")
             bodyContains(
                 "{\"@timestamp\":\"2021-01-05T14:56:34.000Z\"," +

@@ -19,7 +19,8 @@ internal object ElasticConfigFactory {
             ElasticConfig.Enabled(
                 endpoints = parseEndpoint(endpointsRawValue),
                 indexPattern = indexPattern,
-                buildId = buildId
+                buildId = buildId,
+                authApiKey = null
             )
         } else {
             ElasticConfig.Disabled
