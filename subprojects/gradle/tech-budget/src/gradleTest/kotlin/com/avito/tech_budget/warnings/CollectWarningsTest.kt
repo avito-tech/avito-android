@@ -144,7 +144,9 @@ internal class CollectWarningsTest {
     }
 
     @Test
-    fun `compile with warnings different modules - generated for each module `(@TempDir projectDir: File) {
+    fun `compile with warnings different modules - modules do not intersect when compiled in parallel `(
+        @TempDir projectDir: File
+    ) {
         TestProjectGenerator(
             plugins = plugins {
                 id("com.avito.android.tech-budget")
@@ -168,29 +170,31 @@ internal class CollectWarningsTest {
                         }
                     }
                 ),
-                AndroidLibModule(
-                    name = "feed",
-                    plugins = plugins {
-                        id("com.avito.android.tech-budget")
-                        id("com.avito.android.code-ownership")
-                    },
-                    mutator = {
-                        dir("src/main/kotlin/") {
-                            kotlinClass("DeprecatedClass") { WARNING_CONTENT }
-                        }
-                    }
-                )
-
+                libModule("feed"),
+                libModule("profile"),
+                libModule("adverts"),
             )
         ).generateIn(projectDir)
 
         collectWarnings(projectDir).assertThat().buildSuccessful()
 
-        val appWarningsDir = File(projectDir, "build/warnings/app")
-        val feedWarningsDir = File(projectDir, "build/warnings/feed")
+        val feedWarningsFile = File(projectDir, "build/warnings/feed/compileReleaseKotlin.log")
+        val profileWarningsFile = File(projectDir, "build/warnings/profile/compileReleaseKotlin.log")
+        val advertsWarningsFile = File(projectDir, "build/warnings/adverts/compileReleaseKotlin.log")
 
-        assert(appWarningsDir.exists())
-        assert(feedWarningsDir.exists())
+        assert(feedWarningsFile.exists())
+        assert(profileWarningsFile.exists())
+        assert(advertsWarningsFile.exists())
+
+        Truth
+            .assertThat(feedWarningsFile.readText())
+            .doesNotContainMatch("adverts|profile")
+        Truth
+            .assertThat(profileWarningsFile.readText())
+            .doesNotContainMatch("feed|adverts")
+        Truth
+            .assertThat(advertsWarningsFile.readText())
+            .doesNotContainMatch("feed|profile")
     }
 
     private fun collectWarnings(projectDir: File, expectFailure: Boolean = false) =
@@ -215,5 +219,18 @@ internal class CollectWarningsTest {
                 }
             }
         """.trimIndent()
+
+        private fun libModule(name: String) = AndroidLibModule(
+            name = name,
+            plugins = plugins {
+                id("com.avito.android.tech-budget")
+                id("com.avito.android.code-ownership")
+            },
+            mutator = {
+                dir("src/main/kotlin/") {
+                    kotlinClass("DeprecatedClass") { WARNING_CONTENT }
+                }
+            }
+        )
     }
 }

@@ -11,6 +11,7 @@ import com.avito.android.tech_budget.internal.warnings.log.LogFileProjectProvide
 import com.avito.android.tech_budget.internal.warnings.log.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.log.TaskLogsDumper
 import com.avito.android.tech_budget.internal.warnings.log.converter.ProjectInfoConverter
+import com.avito.android.tech_budget.internal.warnings.task.DefaultTaskBuildOperationIdProvider
 import com.avito.android.tech_budget.internal.warnings.upload.UploadWarningsTask
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.withType
@@ -21,9 +22,12 @@ import org.gradle.api.tasks.TaskCollection
 import org.gradle.internal.logging.LoggingManagerInternal
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
+import org.gradle.util.Path
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal class WarningsConfigurator : TechBudgetConfigurator {
+
+    private val taskBuildOperationProvider = DefaultTaskBuildOperationIdProvider
 
     override fun configure(project: Project) {
         if (project.isRoot()) {
@@ -47,6 +51,7 @@ internal class WarningsConfigurator : TechBudgetConfigurator {
             this.uploadWarningsBatchSize.set(extension.warnings.uploadWarningsBatchSize)
             this.uploadWarningsParallelRequestsCount.set(extension.warnings.uploadWarningsParallelRequestsCount)
         }
+        root.gradle.addBuildListener(taskBuildOperationProvider)
     }
 
     private fun configureCollect(subProject: Project) {
@@ -82,6 +87,7 @@ internal class WarningsConfigurator : TechBudgetConfigurator {
         compileTask: KotlinCompile
     ) {
         val loggingManager = compileTask.logging as LoggingManagerInternal
+
         val codeOwnershipExtension = subProject.requireCodeOwnershipExtension()
         val projectInfo = ProjectInfo(
             path = subProject.path,
@@ -99,7 +105,10 @@ internal class WarningsConfigurator : TechBudgetConfigurator {
         )
         loggingManager.addOutputEventListener(
             TaskLogsDumper(
-                targetLogLevel = LogLevel.WARN, logWriter = logSaver
+                targetLogLevel = LogLevel.WARN,
+                logWriter = logSaver,
+                taskPath = Path.path(compileTask.path),
+                taskBuildOperationIdProvider = taskBuildOperationProvider,
             )
         )
     }

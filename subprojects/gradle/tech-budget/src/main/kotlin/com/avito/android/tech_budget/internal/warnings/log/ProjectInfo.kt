@@ -6,5 +6,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 internal class ProjectInfo(
     val path: String,
-    val owners: Collection<Owner>
+    val owners: Collection<Owner>,
 )
