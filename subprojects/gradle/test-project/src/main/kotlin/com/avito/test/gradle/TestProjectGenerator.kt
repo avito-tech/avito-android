@@ -76,7 +76,8 @@ public class TestProjectGenerator(
      * https://github.com/gradle/gradle/issues/10527
      */
     public val gradleProperties: Map<String, String> = mapOf(
-        "org.gradle.jvmargs" to "-Xmx1g -XX:MaxMetaspaceSize=512m"
+        "org.gradle.jvmargs" to "-Xmx1g -XX:MaxMetaspaceSize=512m",
+        "android.useAndroidX" to "true"
     )
 ) : Module {
 

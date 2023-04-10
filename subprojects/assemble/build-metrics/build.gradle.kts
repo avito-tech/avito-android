@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.subprojects.gradle.teamcity)
     implementation(projects.subprojects.gradle.workerExtensions)
     implementation(libs.kotlinGradle)
+    implementation(libs.kspGradle)
     implementation(libs.moshi)
 
     testImplementation(libs.mockitoKotlin)

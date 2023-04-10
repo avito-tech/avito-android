@@ -27,6 +27,7 @@ public class AndroidAppModule(
     override val dependencies: Set<GradleDependency> = emptySet(),
     override val useKts: Boolean = false,
     private val enableKapt: Boolean = false,
+    private val enableKsp: Boolean = false,
     private val instrumentationTests: List<InstrumentationTest> = emptyList(),
     private val versionName: String = "",
     private val versionCode: Int = 1,
@@ -111,13 +112,22 @@ public class AndroidAppModule(
             if (enableKapt) {
                 """
                             implementation("com.google.dagger:dagger:2.29.1")
-                            kapt("com.google.dagger:dagger-compiler:2.29.1")
+                            kapt("com.google.dagger:dagger-compiler:2.29.1")                          
                             """.trimIndent()
             } else {
                 ""
             }
         }
-}"""
+        ${
+            if (enableKsp) {
+                """
+                 ksp("com.airbnb.android:paris-processor:2.0.0")
+             """.trimIndent()
+            } else {
+                ""
+            }
+        }
+    }"""
     }
 
     private fun androidExtension(useKts: Boolean): String {
@@ -208,8 +218,9 @@ public class AndroidAppModule(
     private fun plugins(): PluginsSpec =
         plugins {
             id("com.android.application")
-            if (enableKotlinAndroidPlugin || enableKapt) id("kotlin-android")
+            if (enableKotlinAndroidPlugin || enableKapt || enableKsp) id("kotlin-android")
             if (enableKapt) id("kotlin-kapt")
+            if (enableKsp) id("com.google.devtools.ksp")
         }
             .plus(plugins)
 }

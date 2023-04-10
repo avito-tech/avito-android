@@ -114,12 +114,14 @@ internal class BuildCacheMetricsTrackerTest {
     }
 
     private fun taskExecution(
+        name: String = "stub",
         path: String,
         type: Class<out Task>,
         startMs: Long = 0,
         endMs: Long = 1,
         cacheResult: TaskCacheResult
     ) = TaskExecutionResult(
+        name = name,
         path = Path.path(path),
         type = type,
         startMs = startMs,

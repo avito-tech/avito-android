@@ -39,10 +39,15 @@ public abstract class BuildMetricsExtension @Inject constructor(
 
     public val sendSlowTaskMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
+    public val sendCompileMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
+
     public val slowTaskMinimumDuration: Property<Duration> =
         objectFactory.property<Duration>().convention(Duration.ofSeconds(10))
 
     public val criticalTaskMinimumDuration: Property<Duration> =
+        objectFactory.property<Duration>().convention(Duration.ofSeconds(10))
+
+    public val compileMetricsMinimumDuration: Property<Duration> =
         objectFactory.property<Duration>().convention(Duration.ofSeconds(10))
 
     public val sendBuildCacheMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(true)

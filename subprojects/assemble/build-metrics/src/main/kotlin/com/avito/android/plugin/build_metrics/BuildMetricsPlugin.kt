@@ -99,6 +99,9 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         di: BuildMetricsPluginDI
     ): List<BuildOperationsResultListener> {
         return buildList {
+            if (extension.sendCompileMetrics.get()) {
+                add(di.compileMetricsTracker)
+            }
             if (extension.sendSlowTaskMetrics.get()) {
                 add(di.slowTasksMetricsTracker)
             }

@@ -7,6 +7,7 @@ import com.avito.android.plugin.build_metrics.internal.core.BuildMetricSender
 import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.gradle.cache.BuildCacheMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.configuration.ConfigurationTimeListener
+import com.avito.android.plugin.build_metrics.internal.gradle.tasks.compile.CompileMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.critical.CriticalPathMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.slow.SlowTasksMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.tech_budget.TechBudgetBuildTimeWriter
@@ -108,6 +109,10 @@ internal class BuildMetricsPluginDI(
         TechBudgetBuildTimeWriter(
             fileToWrite = extension.modulesBuildTimeFile,
         )
+    }
+
+    val compileMetricsTracker by lazy {
+        CompileMetricsTracker(sender, extension.compileMetricsMinimumDuration.get())
     }
 
     companion object {

@@ -61,6 +61,7 @@ internal class BuildOperationsResultProvider(
         val details = descriptor.details as ExecuteTaskBuildOperationDetails
 
         tasksExecutionsById[descriptor.id!!] = TaskExecutionIntermediateResult(
+            name = details.task.taskIdentity.name,
             path = details.taskPath,
             type = details.task.taskIdentity.type,
             startMs = event.startTime,
@@ -95,6 +96,7 @@ internal class BuildOperationsResultProvider(
                 val cacheResult = determineTaskCacheResult(taskId, intermediateResult.result)
 
                 TaskExecutionResult(
+                    name = intermediateResult.name,
                     path = Path.path(intermediateResult.path),
                     type = intermediateResult.type,
                     startMs = intermediateResult.startMs,
@@ -208,6 +210,7 @@ internal class BuildOperationsResultProvider(
 }
 
 private data class TaskExecutionIntermediateResult(
+    val name: String,
     val path: String,
     val type: Class<out Task>,
     val startMs: Long,

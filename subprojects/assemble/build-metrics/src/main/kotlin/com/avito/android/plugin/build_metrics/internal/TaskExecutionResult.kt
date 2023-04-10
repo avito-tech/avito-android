@@ -4,6 +4,7 @@ import org.gradle.api.Task
 import org.gradle.util.Path
 
 internal class TaskExecutionResult(
+    val name: String,
     val path: Path,
     val type: Class<out Task>,
     val startMs: Long,

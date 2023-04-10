@@ -9,7 +9,7 @@ dependencies {
     implementation(projects.testing)
     implementation(libs.kotlinGradle)
     implementation(libs.kotlinx.serialization.gradle)
-    implementation(libs.ksp)
+    implementation(libs.kspGradle)
     // workaround for https://github.com/gradle/gradle/issues/15383
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
