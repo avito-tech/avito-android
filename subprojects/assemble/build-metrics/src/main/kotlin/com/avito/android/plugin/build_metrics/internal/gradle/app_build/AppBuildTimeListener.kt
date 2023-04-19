@@ -20,6 +20,8 @@ internal class AppBuildTimeListener private constructor(
     private val metricTracker: BuildMetricSender
 ) : BuildResultListener {
 
+    override val name: String = "AppBuildTime"
+
     override fun onBuildFinished(status: BuildStatus, profile: BuildProfile) {
         val tasks: List<TaskExecution> = profile.getProjects()
             .flatMap { it.getTasks() }

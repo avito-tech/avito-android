@@ -15,6 +15,7 @@ internal class BuildCacheMetricsTracker(
 ) : BuildOperationsResultListener {
 
     private val logger = loggerFactory.create<BuildCacheMetricsTracker>()
+    override val name: String = "BuildCacheMetrics"
 
     override fun onBuildFinished(result: BuildOperationsResult) {
         trackCacheErrors(result.cacheOperations)

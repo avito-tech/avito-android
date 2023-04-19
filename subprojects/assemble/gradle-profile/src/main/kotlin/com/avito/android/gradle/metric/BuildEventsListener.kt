@@ -6,12 +6,14 @@ import com.avito.android.gradle.profile.TaskExecutionListener
 import org.gradle.BuildResult
 import org.gradle.api.Task
 
-public interface BuildEventsListener : TaskExecutionListener {
+public abstract class BuildEventsListener : TaskExecutionListener {
 
-    public fun buildFinished(buildResult: BuildResult, profile: BuildProfile)
+    protected abstract val name: String
+
+    public abstract fun buildFinished(buildResult: BuildResult, profile: BuildProfile)
 }
 
-public abstract class AbstractBuildEventsListener : BuildEventsListener {
+public abstract class AbstractBuildEventsListener : BuildEventsListener() {
 
     override fun buildFinished(buildResult: BuildResult, profile: BuildProfile) {
     }
@@ -23,4 +25,6 @@ public abstract class AbstractBuildEventsListener : BuildEventsListener {
     }
 }
 
-internal class NoOpBuildEventsListener : AbstractBuildEventsListener()
+internal class NoOpBuildEventsListener : AbstractBuildEventsListener() {
+    override val name: String = "NoOpBuildEventListener"
+}

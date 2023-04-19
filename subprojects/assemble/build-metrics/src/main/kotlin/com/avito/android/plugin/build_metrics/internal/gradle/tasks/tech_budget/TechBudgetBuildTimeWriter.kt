@@ -17,6 +17,8 @@ internal class TechBudgetBuildTimeWriter(
     private val fileToWrite: RegularFileProperty,
 ) : BuildOperationsResultListener {
 
+    override val name: String = "TechBudgetBuildTime"
+
     override fun onBuildFinished(result: BuildOperationsResult) {
         val data = computeTimePerModule(result.tasksExecutions)
         writeData(fileToWrite.get().asFile, data)

@@ -8,7 +8,6 @@ import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultList
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
 import com.avito.android.plugin.build_metrics.internal.BuildResultListener
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
-import com.avito.android.plugin.build_metrics.internal.logger.LazyLoggerFactory
 import com.avito.android.plugin.build_metrics.internal.runtime.MetricsCollector
 import com.avito.android.plugin.build_metrics.internal.runtime.RuntimeMetricsListener
 import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsTask
@@ -60,7 +59,7 @@ public open class BuildMetricsPlugin : Plugin<Project> {
                 val di = BuildMetricsPluginDI(
                     project,
                     extension,
-                    LazyLoggerFactory(GradleLoggerPlugin.getLoggerFactory(project))
+                    GradleLoggerPlugin.getLoggerFactory(project)
                 )
                 registerListeners(di, extension)
             }
@@ -80,14 +79,15 @@ public open class BuildMetricsPlugin : Plugin<Project> {
 
         val eventListeners = buildList {
             if (buildResultListeners.isNotEmpty()) {
-                add(CompositeBuildMetricsListener(buildResultListeners))
+                add(CompositeBuildMetricsListener(buildResultListeners, di.loggerFactory))
             }
             if (buildOperationResultListeners.isNotEmpty()) {
-                add(BuildOperationsResultProvider.register(di.project, buildOperationResultListeners))
+                add(BuildOperationsResultProvider.register(di.project, buildOperationResultListeners, di.loggerFactory))
             }
         }
         if (eventListeners.isNotEmpty()) {
             GradleCollector.initialize(
+                "BuildMetrics",
                 di.project,
                 eventListeners
             )

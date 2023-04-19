@@ -28,7 +28,7 @@ internal abstract class UploadLintIssuesTask : DefaultTask() {
     @get:Internal
     abstract val ownerSerializer: Property<OwnerSerializer>
 
-    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
     @TaskAction
     fun uploadWarnings() {

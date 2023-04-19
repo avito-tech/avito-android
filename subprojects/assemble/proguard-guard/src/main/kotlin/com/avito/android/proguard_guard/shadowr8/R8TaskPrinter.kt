@@ -4,7 +4,7 @@ import com.android.build.gradle.internal.tasks.R8Task
 import com.avito.logger.GradleLoggerPlugin
 
 internal fun R8Task.print() {
-    val logger = GradleLoggerPlugin.getLoggerFactory(this).get().create("R8TaskPrinter")
+    val logger = GradleLoggerPlugin.getLoggerFactory(this).create("R8TaskPrinter")
 
     with(logger) {
         info("enableDesugaring: ${enableDesugaring.orNull}")

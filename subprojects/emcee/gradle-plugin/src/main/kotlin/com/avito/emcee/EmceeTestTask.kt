@@ -67,7 +67,7 @@ public abstract class EmceeTestTask : DefaultTask() {
     @get:OutputDirectory
     public abstract val outputDir: DirectoryProperty
 
-    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
     @ExperimentalTime
     @TaskAction

@@ -10,7 +10,7 @@ import proguard.KeepClassSpecification
 import proguard.MemberSpecification
 
 internal fun Configuration.print(task: Task) {
-    val logger = GradleLoggerPlugin.getLoggerFactory(task).get().create("ProguardConfigurationPrinter")
+    val logger = GradleLoggerPlugin.provideLoggerFactory(task).get().create("ProguardConfigurationPrinter")
     logger.info(this.asString())
 }
 

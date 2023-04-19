@@ -12,6 +12,7 @@ dependencies {
     implementation(projects.subprojects.common.compositeException)
     implementation(projects.subprojects.common.problem)
     implementation(projects.subprojects.common.result)
+    implementation(projects.subprojects.logger.gradleLogger)
     implementation(gradleApi())
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)

@@ -15,6 +15,8 @@ internal class CompileMetricsTracker(
     private val minimumDuration: Duration,
 ) : BuildOperationsResultListener {
 
+    override val name: String = "CompileMetrics"
+
     private val aggregators = listOf(
         JavaCompileAggregator,
         KotlinCompileAggregator,

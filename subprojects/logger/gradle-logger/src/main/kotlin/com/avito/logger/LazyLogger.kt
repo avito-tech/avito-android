@@ -1,6 +1,4 @@
-package com.avito.android.plugin.build_metrics.internal.logger
-
-import com.avito.logger.Logger
+package com.avito.logger
 
 /**
  * Helps do not fail at configuration time when create logger via the GradleLoggerFactory

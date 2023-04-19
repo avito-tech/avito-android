@@ -17,6 +17,7 @@ internal class ConfigurationCacheCompatibilityTest {
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.build-trace")
+                id("com.avito.android.gradle-logger")
             },
             buildGradleExtra = """
                 buildTrace {

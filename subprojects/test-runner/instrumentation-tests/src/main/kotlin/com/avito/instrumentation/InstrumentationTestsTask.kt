@@ -217,7 +217,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         )
 
         if (!isGradleTestKitRun) {
-            val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
+            val loggerFactory = GradleLoggerPlugin.provideLoggerFactory(this).get()
             workerExecutor.inMemoryWork {
                 when (
                     val result = TestSchedulerFactoryProvider(loggerFactory)

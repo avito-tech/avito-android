@@ -9,16 +9,20 @@ import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
 import com.avito.android.trace.TraceReportFileAdapter
 import com.avito.graph.OperationsPath
+import com.avito.logger.LoggerFactory
 import org.gradle.BuildResult
 import org.gradle.api.Task
-import org.slf4j.Logger
 import java.io.File
+import java.time.Instant
 import java.util.Collections
 
 internal class BuildTraceListener(
     private val output: File,
-    private val logger: Logger
+    loggerFactory: LoggerFactory,
 ) : AbstractBuildEventsListener(), CriticalPathListener {
+
+    override val name: String = "BuildTrace"
+    private val logger = loggerFactory.create(name)
 
     private val eventProvider = TraceEventProvider()
     private val events: MutableList<TraceEvent> = Collections.synchronizedList(mutableListOf())
@@ -34,7 +38,9 @@ internal class BuildTraceListener(
     }
 
     override fun onCriticalPathReady(path: OperationsPath<TaskOperation>) {
+        logger.info("Start onCriticalPathReady ${Instant.now()}")
         writeReport(path)
+        logger.info("End onCriticalPathReady ${Instant.now()}")
     }
 
     private fun writeReport(criticalPath: OperationsPath<TaskOperation>) {

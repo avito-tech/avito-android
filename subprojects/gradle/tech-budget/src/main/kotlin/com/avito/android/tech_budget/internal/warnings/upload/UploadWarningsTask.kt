@@ -39,7 +39,7 @@ internal abstract class UploadWarningsTask : DefaultTask() {
     @get:Internal
     abstract val uploadWarningsParallelRequestsCount: Property<Int>
 
-    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
     @TaskAction
     fun uploadWarnings() {

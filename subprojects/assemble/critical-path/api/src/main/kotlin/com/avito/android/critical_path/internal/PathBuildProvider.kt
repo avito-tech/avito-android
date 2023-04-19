@@ -12,15 +12,22 @@ import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.graph.OperationsPath
 import com.avito.graph.ShortestPath
+import com.avito.logger.LoggerFactory
 import org.gradle.BuildResult
 import org.gradle.api.Task
 import org.gradle.util.Path
+import java.time.Instant
 
 /**
  * Using an obsolete TaskExecutionListener instead of OperationCompletionListener
  * due to https://github.com/gradle/gradle/issues/15824
  */
-internal class PathBuildProvider : AbstractBuildEventsListener() {
+internal class PathBuildProvider(
+    loggerFactory: LoggerFactory,
+) : AbstractBuildEventsListener() {
+
+    override val name: String = "PathBuildProvider"
+    private val logger = loggerFactory.create(name)
 
     private val operations = mutableSetOf<TaskOperation>()
     private val listeners = mutableListOf<CriticalPathListener>()
@@ -45,9 +52,15 @@ internal class PathBuildProvider : AbstractBuildEventsListener() {
     }
 
     override fun buildFinished(buildResult: BuildResult, profile: BuildProfile) {
+        val start = Instant.now()
+        logger.info("Start build finished $start")
+        logger.info("Start compute critical path $start")
+        val path = criticalPath
+        logger.info("End compute critical path ${Instant.now()}")
         listeners.forEach {
-            it.onCriticalPathReady(criticalPath)
+            it.onCriticalPathReady(path)
         }
+        logger.info("End build finished ${Instant.now()}")
     }
 
     private fun taskOperation(task: Task, state: TaskExecution): TaskOperation {

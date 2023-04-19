@@ -9,6 +9,8 @@ internal class BuildOperationListenerCleaner(
     private val listener: BuildOperationListener
 ) : AbstractBuildEventsListener() {
 
+    override val name: String = "BuildOperationListenerCleaner"
+
     override fun buildFinished(buildResult: BuildResult, profile: BuildProfile) {
         val gradle = buildResult.gradle ?: return
         gradle.buildOperationListenerManager().removeListener(listener)

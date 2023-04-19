@@ -33,7 +33,7 @@ internal abstract class UploadDeepLinksTask : DefaultTask() {
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
 
-    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
     @TaskAction
     fun uploadDeeplinks() {

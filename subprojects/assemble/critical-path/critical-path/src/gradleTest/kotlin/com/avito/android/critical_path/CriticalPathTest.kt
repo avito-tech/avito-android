@@ -140,6 +140,7 @@ internal class CriticalPathTest {
             """
             plugins {
                 id("com.avito.android.critical-path")
+                id("com.avito.android.gradle-logger")
             }
             criticalPath {
                 enabled.set($enabledPlugin)

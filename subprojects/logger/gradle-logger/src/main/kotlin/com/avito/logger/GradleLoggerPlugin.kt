@@ -30,16 +30,19 @@ public class GradleLoggerPlugin : Plugin<Project> {
 
         internal const val error = "com.avito.android.gradle-logger plugin must be added to the root project"
 
-        public fun getLoggerFactory(
+        public fun provideLoggerFactory(
             task: Task
         ): Provider<LoggerFactory> {
             val project = task.project
             return getLoggerFactory(project, GradleLoggerCoordinates(project.name, task.name))
         }
 
-        public fun getLoggerFactory(
+        public fun provideLoggerFactory(
             project: Project
         ): Provider<LoggerFactory> = getLoggerFactory(project, GradleLoggerCoordinates(project.path))
+
+        public fun getLoggerFactory(task: Task): LoggerFactory = LazyLoggerFactory(provideLoggerFactory(task))
+        public fun getLoggerFactory(project: Project): LoggerFactory = LazyLoggerFactory(provideLoggerFactory(project))
 
         private fun getLoggerService(project: Project): Provider<LoggerService> {
             val rootProject = project.rootProject

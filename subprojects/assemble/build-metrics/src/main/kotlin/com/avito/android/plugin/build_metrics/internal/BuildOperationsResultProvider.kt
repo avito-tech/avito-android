@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics.internal
 
 import com.avito.android.gradle.metric.BuildEventsListener
+import com.avito.logger.LoggerFactory
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
@@ -191,10 +192,11 @@ internal class BuildOperationsResultProvider(
 
         fun register(
             project: Project,
-            listeners: List<BuildOperationsResultListener>
+            listeners: List<BuildOperationsResultListener>,
+            loggerFactory: LoggerFactory,
         ): BuildEventsListener {
             val buildOperationListener = BuildOperationsResultProvider(
-                resultListener = CompositeBuildOperationsResultListener(listeners),
+                resultListener = CompositeBuildOperationsResultListener(listeners, loggerFactory),
             )
             project.gradle.buildOperationListenerManager().addListener(buildOperationListener)
 

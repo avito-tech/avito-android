@@ -49,7 +49,7 @@ internal abstract class CollectTeamcityMetricsTask @Inject constructor() : Defau
     private fun graphiteSender(): GraphiteSender {
         return GraphiteSender.create(
             config = graphiteConfig.get(),
-            loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get(),
+            loggerFactory = GradleLoggerPlugin.provideLoggerFactory(this).get(),
             isTest = project.hasProperty(isTestProperty)
         )
     }

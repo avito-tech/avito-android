@@ -49,7 +49,7 @@ public abstract class ArtifactoryBackupTask : DefaultTask() {
 
     @TaskAction
     public fun doWork() {
-        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
+        val loggerFactory = GradleLoggerPlugin.provideLoggerFactory(this).get()
 
         val httpClient = createArtifactoryHttpClient(
             user = artifactoryUser.get(),

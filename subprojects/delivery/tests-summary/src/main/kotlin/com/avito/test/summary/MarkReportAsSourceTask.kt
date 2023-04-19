@@ -18,7 +18,7 @@ public abstract class MarkReportAsSourceTask : DefaultTask() {
 
     @TaskAction
     public fun doWork() {
-        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
+        val loggerFactory = GradleLoggerPlugin.provideLoggerFactory(this).get()
         val di = TestSummaryDI(
             project.statsdConfig,
             loggerFactory

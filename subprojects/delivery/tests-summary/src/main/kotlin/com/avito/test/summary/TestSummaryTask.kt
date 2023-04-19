@@ -27,7 +27,7 @@ public abstract class TestSummaryTask : DefaultTask() {
 
     @TaskAction
     public fun doWork() {
-        val loggerFactory = GradleLoggerPlugin.getLoggerFactory(this).get()
+        val loggerFactory = GradleLoggerPlugin.provideLoggerFactory(this).get()
         val logger = loggerFactory.create("TestSummaryTask")
         logger.info("Executing testSummary task")
 

@@ -3,6 +3,7 @@ package com.avito.android.critical_path
 import com.avito.android.critical_path.internal.PathBuildProvider
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.kotlin.dsl.isRoot
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Project
 
 /**
@@ -26,9 +27,9 @@ public object CriticalPathRegistry {
         return if (project.extensions.extraProperties.has(listenerExtra)) {
             project.extensions.extraProperties.get(listenerExtra) as PathBuildProvider
         } else {
-            val buildListener = PathBuildProvider()
+            val buildListener = PathBuildProvider(GradleLoggerPlugin.getLoggerFactory(project))
 
-            GradleCollector.initialize(project, listOf(buildListener))
+            GradleCollector.initialize("CriticalPath", project, listOf(buildListener))
 
             project.extensions.extraProperties.set(listenerExtra, buildListener)
 

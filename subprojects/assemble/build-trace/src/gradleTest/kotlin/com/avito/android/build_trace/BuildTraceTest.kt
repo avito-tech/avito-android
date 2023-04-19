@@ -72,6 +72,7 @@ internal class BuildTraceTest {
         File(projectDir, "build.gradle.kts").writeText(
             """
             plugins {
+                id("com.avito.android.gradle-logger")
                 id("com.avito.android.build-trace")
             }
             buildTrace {

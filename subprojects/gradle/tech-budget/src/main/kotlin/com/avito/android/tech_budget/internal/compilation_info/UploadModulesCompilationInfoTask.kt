@@ -33,7 +33,7 @@ internal abstract class UploadModulesCompilationInfoTask : DefaultTask() {
     @get:InputFile
     abstract val compilationTimeFile: RegularFileProperty
 
-    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.getLoggerFactory(this)
+    private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
     @TaskAction
     fun uploadModulesCompileTime() {

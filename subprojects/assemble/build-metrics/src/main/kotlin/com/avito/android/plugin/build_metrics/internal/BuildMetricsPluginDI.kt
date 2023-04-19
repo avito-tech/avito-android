@@ -32,7 +32,7 @@ import org.gradle.api.Project
 internal class BuildMetricsPluginDI(
     val project: Project,
     private val extension: BuildMetricsExtension,
-    private val loggerFactory: LoggerFactory,
+    val loggerFactory: LoggerFactory,
 ) {
     private val pluginMetricsPrefix = SeriesName.create("builds")
         .addTag("build_type", extension.buildType.get())

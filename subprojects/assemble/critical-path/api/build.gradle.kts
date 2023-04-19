@@ -16,4 +16,5 @@ dependencies {
     implementation(projects.subprojects.assemble.gradleProfile)
     implementation(projects.subprojects.common.compositeException)
     implementation(projects.subprojects.common.problem)
+    implementation(projects.subprojects.logger.gradleLogger)
 }

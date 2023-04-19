@@ -14,6 +14,7 @@ internal class RuntimeMetricsListener(
     private val period: Duration = Duration.ofSeconds(30)
 ) : BuildResultListener {
 
+    override val name: String = "RuntimeMetrics"
     private val log = LoggerFactory.getLogger(RuntimeMetricsListener::class.java)
     private val timer: Timer = Timer("metrics-collector")
 

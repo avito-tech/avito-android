@@ -19,6 +19,8 @@ internal class SlowTasksMetricsTracker(
     minimumDuration: Duration = Duration.ofSeconds(10),
 ) : BuildOperationsResultListener {
 
+    override val name: String = "SlowTasksMetrics"
+
     private val minimumDurationMs: Long = minimumDuration.toMillis()
 
     override fun onBuildFinished(result: BuildOperationsResult) {

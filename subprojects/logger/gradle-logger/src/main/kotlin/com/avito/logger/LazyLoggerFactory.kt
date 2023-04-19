@@ -1,7 +1,5 @@
-package com.avito.android.plugin.build_metrics.internal.logger
+package com.avito.logger
 
-import com.avito.logger.Logger
-import com.avito.logger.LoggerFactory
 import org.gradle.api.provider.Provider
 
 /**

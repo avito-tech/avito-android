@@ -1,8 +1,6 @@
 package com.avito.android.gradle.profile
 
 import com.avito.android.gradle.profile.Operation.Companion.slowestFirst
-import java.util.ArrayList
-import java.util.LinkedHashMap
 
 /**
  * See [ProfileEventAdapter] to understand limitations.
@@ -42,22 +40,6 @@ public class BuildProfile {
 
     public var isSuccessful: Boolean = false
 
-    public val projectConfiguration: CompositeOperation<Operation>
-        get() {
-            val operations: MutableList<Operation> = ArrayList()
-            for (projectProfile in projects.values) {
-                operations.add(projectProfile.configurationOperation)
-            }
-            return CompositeOperation(operations.sortedWith(slowestFirst()))
-        }
-
-    /**
-     * Get the elapsed time (in mSec) between the start of profiling and the buildStarted event.
-     */
-    @Deprecated("Inaccurate value because of manual buildStarted invocation")
-    public val elapsedStartup: Long
-        get() = buildStarted - profilingStarted
-
     /**
      * Get the total elapsed time (in mSec) between the start of profiling and the buildFinished event.
      */
@@ -65,38 +47,8 @@ public class BuildProfile {
         get() = buildFinished - profilingStarted
 
     /**
-     * Get the elapsed time (in mSec) between the buildStarted event and the settingsEvaluated event.
-     * Note that this will include processing of buildSrc as well as the settings file.
-     */
-    @Deprecated("Can't intercept setting evaluated event")
-    public val elapsedSettings: Long
-        get() = settingsEvaluated - buildStarted
-
-    /**
      * Get the elapsed time (in mSec) between the settingsEvaluated event and the projectsLoaded event.
      */
-    @Deprecated("Can't intercept projects loaded event")
-    public val elapsedProjectsLoading: Long
-        get() = projectsLoaded - settingsEvaluated
-
-    /**
-     * Get the elapsed time (in mSec) between the projectsLoaded event and the projectsEvaluated event.
-     */
-    @Deprecated("Can't intercept projects loaded event")
-    public val elapsedProjectsConfiguration: Long
-        get() = projectsEvaluated - projectsLoaded
-
-    /**
-     * Get the total task execution time from all projects.
-     */
-    public val elapsedTotalExecutionTime: Long
-        get() {
-            var result: Long = 0
-            for (projectProfile in projects.values) {
-                result += projectProfile.elapsedTime
-            }
-            return result
-        }
 
     /**
      * Total time to initialize and configure the project to run tasks.
