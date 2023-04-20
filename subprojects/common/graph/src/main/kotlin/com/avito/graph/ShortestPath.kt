@@ -14,13 +14,13 @@ public class ShortestPath<T : Operation>(private val operations: Set<T>) {
     private val operationByKey: Map<String, Operation> = operations.map { it.id to it }.toMap()
     private val syntheticSource = SimpleOperation("source", duration = 0.toDouble())
     private val syntheticSink = SimpleOperation("sink", duration = 0.toDouble())
+    private val uniquePredecessors = operations.flatMap { it.predecessors }.toSet()
 
     public fun find(): OperationsPath<T> {
         if (operations.size <= 1) return OperationsPath(operations.toList())
 
         val graph = build()
         val path = graph.shortestPath()
-
         @Suppress("UNCHECKED_CAST")
         val operations = path.vertexList
             .filterNot { it.isSynthetic() } as List<T>
@@ -77,7 +77,6 @@ public class ShortestPath<T : Operation>(private val operations: Set<T>) {
         addNodes(graph)
         addSource(graph)
         addSink(graph)
-
         checkGraphStructure(graph)
 
         return graph
@@ -164,8 +163,7 @@ public class ShortestPath<T : Operation>(private val operations: Set<T>) {
     }
 
     private fun Operation.isSink(): Boolean {
-        return operations
-            .firstOrNull { it.predecessors.contains(this.id) } == null
+        return !uniquePredecessors.contains(this.id)
     }
 
     private fun Operation.isSource() =
