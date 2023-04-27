@@ -19,6 +19,7 @@ internal class DeleteK8SDeploymentsByNames(
                 try {
                     deployments
                         .withName(deployment)
+                        .withGracePeriod(0)
                         .delete()
                 } catch (e: Throwable) {
                     throw RuntimeException("Error when delete deployment=$deployment", e)

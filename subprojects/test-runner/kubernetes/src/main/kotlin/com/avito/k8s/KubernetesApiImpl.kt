@@ -20,7 +20,7 @@ internal class KubernetesApiImpl(
     override val namespace: String = kubernetesClient.namespace
 
     override suspend fun deletePod(podName: String): Boolean {
-        return kubernetesClient.pods().withName(podName).delete()
+        return kubernetesClient.pods().withName(podName).withGracePeriod(0).delete()
     }
 
     override suspend fun getPodLogs(podName: String): String {
@@ -44,7 +44,7 @@ internal class KubernetesApiImpl(
     override suspend fun deleteDeployment(deploymentName: String) {
         try {
             logger.info("Deleting deployment: $deploymentName")
-            kubernetesClient.apps().deployments().withName(deploymentName).delete()
+            kubernetesClient.apps().deployments().withName(deploymentName).withGracePeriod(0).delete()
             logger.info("Deployment: $deploymentName deleted")
         } catch (t: Throwable) {
             logger.warn("Failed to delete deployment $deploymentName", t)
