@@ -1,7 +1,6 @@
 import com.avito.logger.LogLevel
 
 plugins {
-    id("convention.gradle-properties")
     id("convention.lifecycle")
     // accessing version catalog here is blocked by IDE false-positive error
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
@@ -56,7 +55,6 @@ val checkAll = tasks.named("checkAll") {
     description = "Run all tests and static analysis tools"
 
     dependsOn(tasks.named("detektAll"))
-    dependsOn(tasks.named("checkCommonProperties"))
 }
 
 tasks.named("build") {
