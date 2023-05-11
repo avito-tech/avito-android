@@ -2,6 +2,7 @@ package com.avito.android.runner
 
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
@@ -19,7 +20,6 @@ import com.avito.android.runner.annotation.validation.CompositeTestMetadataValid
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
-import com.avito.android.sentry.sentryClient
 import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
@@ -52,7 +52,6 @@ import com.avito.logger.LogLevel
 import com.avito.logger.LoggerFactoryBuilder
 import com.avito.logger.create
 import com.avito.logger.destination.ElasticLoggingHandlerProvider
-import com.avito.logger.destination.SentryLoggingHandlerProvider
 import com.avito.logger.handler.AndroidLogcatLoggingHandlerProvider
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
@@ -132,12 +131,7 @@ abstract class InHouseInstrumentationTestRunner :
             .addLoggingHandlerProvider(AndroidLogcatLoggingHandlerProvider(LogLevel.DEBUG))
 
         if (sentryConfig is SentryConfig.Enabled) {
-            builder.addLoggingHandlerProvider(
-                SentryLoggingHandlerProvider(
-                    LogLevel.WARNING,
-                    sentryClient(sentryConfig)
-                )
-            )
+            Log.w("InHouseInstrumentationTestRunner", "sentry config unsupported")
         }
         builder
     }

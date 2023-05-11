@@ -3,9 +3,7 @@
 package com.avito.logger
 
 import com.avito.android.elastic.ElasticClientFactory
-import com.avito.android.sentry.sentryClient
 import com.avito.logger.destination.ElasticLoggingHandlerProvider
-import com.avito.logger.destination.SentryLoggingHandlerProvider
 import com.avito.logger.handler.FileLoggingHandlerProvider
 import com.avito.logger.handler.LoggingHandlerProvider
 import com.avito.logger.handler.PrintlnLoggingHandlerProvider
@@ -20,7 +18,6 @@ public abstract class LoggerService : BuildService<LoggerService.Params> {
         public val fileHandler: Property<LogLevel>
         public val fileHandlerRootDir: DirectoryProperty
         public val printlnHandler: Property<GradleLoggerExtension.PrintlnMode>
-        public val sentryHandler: Property<GradleLoggerExtension.Sentry>
         public val elasticHandler: Property<GradleLoggerExtension.Elastic>
         public val finalized: Property<Boolean>
     }
@@ -47,10 +44,6 @@ public abstract class LoggerService : BuildService<LoggerService.Params> {
                 providers.add(PrintlnLoggingHandlerProvider(config.level, config.printStackTrace))
             } else {
                 providers.add(PrintlnLoggingHandlerProvider(LogLevel.INFO, false))
-            }
-            if (sentryHandler.isPresent) {
-                val config = sentryHandler.get()
-                providers.add(SentryLoggingHandlerProvider(config.level, sentryClient(config.config)))
             }
             if (elasticHandler.isPresent) {
                 val config = elasticHandler.get()
