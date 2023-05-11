@@ -112,6 +112,19 @@ pluginManagement {
             forRepository {
                 maven {
                     setUrlOrProxy(
+                        artifactoryRepositoryName = "jitpack.io",
+                        originalRepo = "https://jitpack.io"
+                    )
+                }
+            }
+            filter {
+                includeModule("com.github.fkorotkov", "k8s-kotlin-dsl")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy(
                         artifactoryRepositoryName = "google-android",
                         originalRepo = "https://dl.google.com/dl/android/maven2/"
                     )

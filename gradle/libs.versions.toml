@@ -24,7 +24,7 @@ hamcrest = "2.2"
 moshi = "1.13.0"
 moshiX = "0.17.2"
 ktor = "2.1.2"
-jacksonDataformat = "2.13.0"
+jackson = "2.13.0"
 proguard = "6.2.2"
 
 [libraries]
@@ -67,7 +67,8 @@ retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars"
 
 gson = "com.google.code.gson:gson:2.8.9"
 kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
-jacksonDataformat-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jacksonDataformat" }
+jacksonDataformat-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
+jacksonCore = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 
 layoutLibApi = { module = "com.android.tools.layoutlib:layoutlib-api", version.ref = "androidTools" }
 androidSdkCommon = { module = "com.android.tools:sdk-common", version.ref = "androidTools" }
@@ -79,9 +80,9 @@ swipeRefreshLayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 androidAnnotations = "androidx.annotation:annotation:1.5.0"
 playServicesBase = "com.google.android.gms:play-services-base:17.0.0"
 
-officialKubernetesClient = "io.kubernetes:client-java:8.0.0"
-kubernetesClient = "io.fabric8:kubernetes-client:4.9.0"
-kubernetesDsl = "com.fkorotkov:kubernetes-dsl:2.7.1"
+officialKubernetesClient = "io.kubernetes:client-java:13.0.1"
+kubernetesClient = "io.fabric8:kubernetes-client:5.11.2"
+kubernetesDsl = "com.github.fkorotkov:k8s-kotlin-dsl:3.1.1"
 
 adam = "com.malinskiy.adam:adam:0.4.3"
 ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"

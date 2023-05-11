@@ -77,6 +77,7 @@ dependencyResolutionManagement {
                 }
             }
             filter {
+                includeModule("com.github.fkorotkov", "k8s-kotlin-dsl")
                 includeModule("com.github.tiann", "FreeReflection")
             }
         }
@@ -93,7 +94,6 @@ dependencyResolutionManagement {
             filter {
                 includeGroup("com.forkingcode.espresso.contrib")
                 includeGroup("org.jetbrains.trove4j")
-                includeModule("com.fkorotkov", "kubernetes-dsl")
                 includeModule("org.jetbrains.teamcity", "teamcity-rest-client")
             }
         }

@@ -74,11 +74,6 @@ params +=$(log_level)
 
 ifdef kubernetesContext
 params +=-PkubernetesContext=$(kubernetesContext)
-else
-params +=-PkubernetesUrl=$(KUBERNETES_URL)
-params +=-PkubernetesNamespace=android-emulator
-params +=-PkubernetesToken=$(KUBERNETES_TOKEN)
-params +=-PkubernetesCaCertData=$(KUBERNETES_CA_CERT_DATA)
 endif
 
 ifeq ($(gradle_debug),true)

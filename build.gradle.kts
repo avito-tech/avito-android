@@ -8,6 +8,7 @@ plugins {
     id("convention.dependency-updates")
     id("convention.detekt")
     id("com.avito.android.gradle-logger")
+    id("com.avito.android.build-verdict")
 }
 
 buildscript {
@@ -26,12 +27,13 @@ buildscript {
          */
         classpath(libs.okio)
         // TODO Delete when update sentry in infra
-        classpath("com.fasterxml.jackson.core:jackson-core:2.11.1")
+        classpath(libs.jacksonCore)
     }
 }
 
 gradleLogger {
     fileHandler.set(LogLevel.INFO)
+    printlnHandler(true, LogLevel.INFO)
 }
 
 val taskGroup = "Avito Android build"

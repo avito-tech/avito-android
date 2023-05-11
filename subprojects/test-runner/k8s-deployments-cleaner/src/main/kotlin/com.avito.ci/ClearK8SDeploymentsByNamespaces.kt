@@ -7,22 +7,13 @@ import com.avito.ci.DeploymentEnvironment.Teamcity
 import com.avito.ci.DeploymentEnvironment.Unknown
 import com.avito.teamcity.TeamcityApi
 import io.fabric8.kubernetes.api.model.apps.Deployment
-import io.fabric8.kubernetes.api.model.apps.DeploymentList
-import io.fabric8.kubernetes.api.model.apps.DoneableDeployment
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
-import io.fabric8.kubernetes.client.dsl.MixedOperation
-import io.fabric8.kubernetes.client.dsl.RollableScalableResource
 import org.jetbrains.teamcity.rest.BuildState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
-
-private typealias Deployments = MixedOperation<Deployment,
-    DeploymentList,
-    DoneableDeployment,
-    RollableScalableResource<Deployment, DoneableDeployment>>
 
 internal class ClearK8SDeploymentsByNamespaces(
     private val teamcity: TeamcityApi,
@@ -61,11 +52,22 @@ internal class ClearK8SDeploymentsByNamespaces(
                 val deployments = kubernetesClient.inNamespace(namespace)
                     .apps()
                     .deployments()
+
                 deployments
                     .list()
                     .items
                     .forEach { deployment ->
-                        deployments.checkDeploymentLeak(deployment)
+                        try {
+                            if (deployment.isLeaked) {
+                                val deleted = deployments
+                                    .withName(deployment.metadata.name)
+                                    .withGracePeriod(0)
+                                    .delete()
+                                println("${deployment.description} deleted is $deleted")
+                            }
+                        } catch (e: Throwable) {
+                            throw RuntimeException("Error when checked deployment=${deployment.description} leak", e)
+                        }
                     }
             } catch (e: Throwable) {
                 throw RuntimeException(
@@ -100,16 +102,6 @@ internal class ClearK8SDeploymentsByNamespaces(
                 BuildState.QUEUED,
                 BuildState.RUNNING -> false
             }
-        }
-    }
-
-    private fun Deployments.checkDeploymentLeak(deployment: Deployment) {
-        try {
-            if (deployment.isLeaked) {
-                delete(deployment)
-            }
-        } catch (e: Throwable) {
-            throw RuntimeException("Error when checked deployment=${deployment.description} leak", e)
         }
     }
 }
