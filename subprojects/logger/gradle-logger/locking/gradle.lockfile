@@ -2,7 +2,6 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 androidx.annotation:annotation:1.5.0=apiDependenciesMetadata,compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
-com.fasterxml.jackson.core:jackson-core:2.9.9=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.google.auto.value:auto-value-annotations:1.6.3=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.google.code.findbugs:jsr305:3.0.2=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.google.code.gson:gson:2.8.9=runtimeClasspath,testRuntimeClasspath
@@ -19,7 +18,6 @@ com.squareup.okio:okio-metadata:2.8.0=implementationDependenciesMetadata,testImp
 com.squareup.okio:okio:2.8.0=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 com.squareup.retrofit2:converter-gson:2.9.0=runtimeClasspath,testRuntimeClasspath
 com.squareup.retrofit2:retrofit:2.9.0=runtimeClasspath,testRuntimeClasspath
-io.sentry:sentry:1.7.23=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 junit:junit:4.13.2=testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
 net.bytebuddy:byte-buddy-agent:1.10.5=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 net.bytebuddy:byte-buddy:1.10.5=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
@@ -56,5 +54,4 @@ org.mockito:mockito-core:3.3.3=testCompileClasspath,testImplementationDependenci
 org.mockito:mockito-junit-jupiter:3.3.3=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 org.objenesis:objenesis:2.6=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 org.opentest4j:opentest4j:1.2.0=testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath,testRuntimeOnlyDependenciesMetadata
-org.slf4j:slf4j-api:1.7.24=compileClasspath,implementationDependenciesMetadata,runtimeClasspath,testCompileClasspath,testImplementationDependenciesMetadata,testRuntimeClasspath
 empty=annotationProcessor,compileOnlyDependenciesMetadata,intransitiveDependenciesMetadata,kotlinCompilerPluginClasspath,kotlinNativeCompilerPluginClasspath,kotlinScriptDef,kotlinScriptDefExtensions,runtimeOnlyDependenciesMetadata,signatures,testAnnotationProcessor,testApiDependenciesMetadata,testCompileOnlyDependenciesMetadata,testIntransitiveDependenciesMetadata,testKotlinScriptDef,testKotlinScriptDefExtensions
