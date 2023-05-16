@@ -11,6 +11,6 @@ if [[ -z "${ARTIFACTORY_URL+x}" ]]; then
     echo "WARN: ARTIFACTORY_URL env is not set. It's required for hermetic builds."
 fi
 
-IMAGE_ANDROID_BUILDER=${DOCKER_REGISTRY}/android/builder-hermetic:afd7aae9ea18
+IMAGE_ANDROID_BUILDER=${DOCKER_REGISTRY}/android/builder-hermetic:2348bebad525
 IMAGE_BUILDER=${DOCKER_REGISTRY}/android/image-builder:9502228da1d3
 DOCUMENTATION_IMAGE=${DOCKER_REGISTRY}/android/documentation:802502572f
