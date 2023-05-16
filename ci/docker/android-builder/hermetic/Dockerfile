@@ -38,8 +38,8 @@ COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 # Use different image layers to cache better more stable parts
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-7_0.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDROID_HOME
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux-32_0_0.zip $ANDROID_HOME
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms-32_0_1.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools_linux_33_0_2.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_33_0_2.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-33_0_2.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/ndk/ndk-linux-25_2_9519653.zip $ANDROID_HOME
 
