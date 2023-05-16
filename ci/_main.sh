@@ -77,18 +77,20 @@ if [ -n "$ELASTIC_ENDPOINTS" ]; then
     GRADLE_ARGS+="-Pavito.elastic.indexpattern=speed-android "
 fi
 
-GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL "
+if [[ ${IS_KUBERNETES_NEW_CLUSTER} == "true" ]]; then
+    GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN_NEW} "
+    GRADLE_ARGS+="-PkubernetesCaCertData=${KUBERNETES_CA_CERT_DATA} "
+    GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL_NEW} "
+else
+    GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN} "
+    GRADLE_ARGS+="-PkubernetesCaCertData=${KUBERNETES_CA_CERT_DATA} "
+    GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL} "
+fi
+
 GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "
-GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
-GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
 GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "
 GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
 GRADLE_ARGS+="-Pcom.avito.android.tools.buildCache.remote.url=$GRADLE_GITHUB_BUILD_CACHE_URL "
-
-GRADLE_ARGS+="-Pemcee.sample.artifactory.url=$ARTIFACTORY_URL "
-GRADLE_ARGS+="-Pemcee.sample.artifactory.repository=android-ci-no-backups "
-GRADLE_ARGS+="-Pemcee.sample.artifactory.user=$ARTIFACTORY_PUBLISH_USER "
-GRADLE_ARGS+="-Pemcee.sample.artifactory.password=$ARTIFACTORY_PUBLISH_PASSWORD "
 
 function runInBuilder() {
     COMMANDS=$@

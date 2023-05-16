@@ -67,7 +67,6 @@ public object ClearK8SDeploymentsMain {
                         ConfigBuilder()
                             .withOauthToken(kubernetesToken)
                             .withMasterUrl(kubernetesUrl)
-                            .withCaCertData(kubernetesCaCert)
                             .build()
                     )
                 ).clear(namespaces)
