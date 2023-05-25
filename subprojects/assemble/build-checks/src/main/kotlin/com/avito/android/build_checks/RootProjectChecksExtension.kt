@@ -33,13 +33,14 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
             public data class AndroidSdkVersion(
                 val compileSdkVersion: Int,
                 val revision: Int,
+                val strict: Boolean,
             ) : Serializable
 
             internal val versions = mutableSetOf<AndroidSdkVersion>()
 
-            public fun version(compileSdkVersion: Int, revision: Int) {
+            public fun version(compileSdkVersion: Int, revision: Int, strict: Boolean = false) {
                 versions.add(
-                    AndroidSdkVersion(compileSdkVersion, revision)
+                    AndroidSdkVersion(compileSdkVersion, revision, strict)
                 )
             }
 

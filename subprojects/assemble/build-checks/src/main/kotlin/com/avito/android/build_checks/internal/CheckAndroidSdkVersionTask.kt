@@ -44,6 +44,7 @@ internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
     private fun checkVersion(version: AndroidSdkVersion) {
         val localRevision = localRevision(version.compileSdkVersion)
         val expectedRevision = version.revision
+        val strict = version.strict
 
         if (localRevision < expectedRevision) {
             throw GradleException(
@@ -62,10 +63,9 @@ internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
             )
         }
         if (localRevision > expectedRevision) {
-            logger.error(
-                FailedCheckMessage(
-                    RootProjectChecksExtension::androidSdk,
-                    """
+            val message = FailedCheckMessage(
+                RootProjectChecksExtension::androidSdk,
+                """
                     You have a newer Android SDK Platform version.
                     API level: ${version.compileSdkVersion}, 
                     (actual revision $localRevision, expected revision: $expectedRevision).
@@ -73,8 +73,11 @@ internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
                     
                     How to fix: update it in buildChecks config or in build environment.
                     """.trimIndent()
-                ).toString()
-            )
+            ).toString()
+            when (strict) {
+                true -> throw GradleException(message)
+                false -> logger.error(message)
+            }
         }
     }
 
