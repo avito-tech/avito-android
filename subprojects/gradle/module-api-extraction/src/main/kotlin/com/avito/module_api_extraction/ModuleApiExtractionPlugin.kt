@@ -28,9 +28,9 @@ public class ModuleApiExtractionPlugin : Plugin<Project> {
             moduleNames.set(moduleToJsonFilePairs.map { it.first })
             syntheticProjectJsonFiles.setFrom(moduleToJsonFilePairs.map { it.second })
 
-            outputJson.set(
-                project.layout.buildDirectory.file(
-                    "reports/module-api-extraction/module-api-extraction.json"
+            outputDir.set(
+                project.layout.buildDirectory.dir(
+                    "reports/module-api-extraction/"
                 )
             )
         }

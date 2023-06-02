@@ -7,16 +7,20 @@ import java.io.File
 
 internal class ModuleApiExtractorTest {
     @Test
-    fun extract(@TempDir tempDir: File) {
-        val jsonFiles = INPUT_JSON_TEXTS.mapIndexed { i, jsonText ->
-            val jsonFile = tempDir.resolve("$i.json")
+    fun extract(@TempDir inputDir: File, @TempDir outputDir: File) {
+        val inputJsonFiles = INPUT_JSON_TEXTS.mapIndexed { i, jsonText ->
+            val jsonFile = inputDir.resolve("$i.json")
             jsonFile.writeText(jsonText)
             jsonFile
         }.toSet()
 
         val extractor = ModuleApiExtractor()
-        val actualOutputJsonText = extractor.extract(INPUT_MODULE_NAMES, jsonFiles)
-        assertEquals(EXPECTED_OUTPUT_JSON_TEXT, actualOutputJsonText)
+        extractor.extract(INPUT_MODULE_NAMES, inputJsonFiles, outputDir)
+
+        val actualOutputs = outputDir.listFiles()!!.map {
+            it.name to it.readText()
+        }.toMap()
+        assertEquals(EXPECTED_OUTPUTS, actualOutputs)
     }
 
     companion object {
@@ -115,13 +119,18 @@ internal class ModuleApiExtractorTest {
             """,
         )
 
-        private val EXPECTED_OUTPUT_JSON_TEXT = """
-        {
-          ":a": [
-            "com.avito.android.A"
-          ],
-          ":b": []
-        }
-        """.trimIndent()
+        private val EXPECTED_OUTPUTS = mapOf(
+            ":a.json" to """
+            {
+                "com.avito.android.A": [
+                    ":b"
+                ]
+            }
+            """.trimIndent(),
+
+            ":b.json" to """
+            {}
+            """.trimIndent(),
+        )
     }
 }

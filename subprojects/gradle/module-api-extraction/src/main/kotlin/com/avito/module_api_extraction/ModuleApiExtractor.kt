@@ -2,28 +2,29 @@ package com.avito.module_api_extraction
 
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
-import okio.Buffer
 import okio.buffer
+import okio.sink
 import okio.source
 import java.io.File
 
 internal open class ModuleApiExtractor {
     fun extract(
         moduleNames: List<String>,
-        jsonFiles: Set<File>
-    ): String {
-        val moduleToProjectsMap = readModuleToProjectsMap(moduleNames, jsonFiles)
+        inputJsonFiles: Set<File>,
+        outputDir: File
+    ) {
+        val moduleToProjectsMap = readModuleToProjectsMap(moduleNames, inputJsonFiles)
 
         val moduleToDeclaredClassesMap = computeModuleToDeclaredClassesMap(moduleToProjectsMap)
         val moduleToUsedClassesMap = computeModuleToUsedClassesMap(moduleToProjectsMap)
         val classToUsingModuleMap = computeClassToUsingModuleMap(moduleToUsedClassesMap)
 
-        val moduleToExposedClassesMap = computeModuleToExposedClassesMap(
+        val moduleToExposedClassesToUsingModules = computeModuleToExposedClassesToUsingModules(
             moduleToDeclaredClassesMap,
             classToUsingModuleMap
         )
 
-        return generateOutputJson(moduleToExposedClassesMap)
+        writeResultToFiles(moduleToExposedClassesToUsingModules, outputDir)
     }
 
     private fun readModuleToProjectsMap(
@@ -95,27 +96,41 @@ internal open class ModuleApiExtractor {
         return result
     }
 
-    private fun computeModuleToExposedClassesMap(
+    private fun computeModuleToExposedClassesToUsingModules(
         moduleToDeclaredClassesMap: Map<ModuleEntry, Set<ClassEntry>>,
         classToUsingModuleMap: Map<ClassEntry, Set<ModuleEntry>>
-    ): Map<ModuleEntry, List<ClassEntry>> {
+    ): Map<ModuleEntry, Map<ClassEntry, Set<ModuleEntry>>> {
         return moduleToDeclaredClassesMap.mapValues { (module, declaredClasses) ->
-            declaredClasses.filter { declaredClass ->
-                val usingModules = classToUsingModuleMap[declaredClass] ?: emptySet()
-                usingModules.any { it != module }
-            }
+            declaredClasses.asSequence().mapNotNull { declaredClass ->
+                val usingModules = classToUsingModuleMap[declaredClass] ?: return@mapNotNull null
+                if (usingModules.all { it == module }) return@mapNotNull null
+                declaredClass to usingModules - module
+            }.toMap()
         }
     }
 
-    private fun generateOutputJson(moduleToExposedClassesMap: Map<ModuleEntry, List<ClassEntry>>): String {
-        val output = Buffer()
+    private fun writeResultToFiles(
+        moduleToExposedClassesMap: Map<ModuleEntry, Map<ClassEntry, Set<ModuleEntry>>>,
+        outputDir: File
+    ) {
+        moduleToExposedClassesMap.forEach { (module, classToUsingModulesMap) ->
+            val outputFile = outputDir.resolve(module.name + ".json")
+            writeResultToFile(classToUsingModulesMap, outputFile)
+        }
+    }
 
-        JsonWriter.of(output).use { writer ->
-            writer.indent = "  "
+    private fun writeResultToFile(
+        classToUsingModulesMap: Map<ClassEntry, Set<ModuleEntry>>,
+        outputFile: File
+    ) {
+        val outputSink = outputFile.sink().buffer()
+
+        JsonWriter.of(outputSink).use { writer ->
+            writer.indent = "    "
             writer.beginObject()
 
-            moduleToExposedClassesMap.forEach { (module, classes) ->
-                writer.name(module.name)
+            classToUsingModulesMap.forEach { (usedClass, classes) ->
+                writer.name(usedClass.name)
                 writer.beginArray()
 
                 classes.forEach {
@@ -127,8 +142,6 @@ internal open class ModuleApiExtractor {
 
             writer.endObject()
         }
-
-        return output.readUtf8()
     }
 
     data class ModuleEntry(val name: String)
