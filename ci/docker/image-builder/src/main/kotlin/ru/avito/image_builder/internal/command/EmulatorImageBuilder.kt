@@ -33,7 +33,11 @@ internal class EmulatorImageBuilder(
         login.login()
 
         val imageId = buildImage()
-        val preparedImageId = emulatorPreparer.prepareEmulators(imageId, setOf(api))
+        val preparedImageId = emulatorPreparer.prepareEmulators(
+            imageId = imageId,
+            apis = setOf(api),
+            emulatorLocale = null
+        )
 
         return tag(preparedImageId)
     }

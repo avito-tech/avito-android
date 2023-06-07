@@ -25,6 +25,7 @@ internal class EmceeWorkerBuilder(
     private val login: RegistryLogin,
     private val tagger: ImageTagger,
     private val emulatorPreparer: EmulatorPreparer,
+    private val emulatorLocale: String?
 ) : ImageBuilder {
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
@@ -33,7 +34,11 @@ internal class EmceeWorkerBuilder(
         login.login()
 
         val imageId = buildImage()
-        val preparedImageId = emulatorPreparer.prepareEmulators(imageId, apis)
+        val preparedImageId = emulatorPreparer.prepareEmulators(
+            imageId = imageId,
+            apis = apis,
+            emulatorLocale = emulatorLocale
+        )
 
         return tag(preparedImageId)
     }

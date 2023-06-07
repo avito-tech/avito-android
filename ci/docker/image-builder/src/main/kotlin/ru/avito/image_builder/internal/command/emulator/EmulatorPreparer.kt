@@ -12,12 +12,12 @@ internal class EmulatorPreparer(
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
 
-    fun prepareEmulators(imageId: ImageId, apis: Set<Int>): ImageId {
+    fun prepareEmulators(imageId: ImageId, apis: Set<Int>, emulatorLocale: String?): ImageId {
         val containerId = runContainer(imageId)
 
         for (api in apis) {
             val architecture = if (api < 28) "x86" else "x86_64"
-            prepareEmulator(containerId, api, architecture)
+            prepareEmulator(containerId, api, architecture, emulatorLocale.orEmpty())
         }
 
         val preparedImageId = commitChanges(containerId)
@@ -46,12 +46,17 @@ internal class EmulatorPreparer(
         return ContainerId(containerId)
     }
 
-    private fun prepareEmulator(containerId: ContainerId, api: Int, architecture: String) {
+    private fun prepareEmulator(
+        containerId: ContainerId,
+        api: Int,
+        architecture: String,
+        emulatorLocale: String
+    ) {
         val result = docker.exec(
             containerId.value,
             "bash",
             "-c",
-            "./prepare_snapshot.sh $api $architecture",
+            "./prepare_snapshot.sh $api $architecture $emulatorLocale",
         )
         check(result.isSuccess) {
             "Failed to exec preparation script: ${result.exceptionOrNull()}"
