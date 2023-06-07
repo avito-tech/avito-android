@@ -2,7 +2,6 @@ package com.avito.android.plugin.build_metrics
 
 import com.avito.android.critical_path.CriticalPathRegistry
 import com.avito.android.gradle.metric.GradleCollector
-import com.avito.android.graphite.graphiteConfig
 import com.avito.android.plugin.build_metrics.internal.BuildMetricsPluginDI
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
@@ -10,15 +9,11 @@ import com.avito.android.plugin.build_metrics.internal.BuildResultListener
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.runtime.MetricsCollector
 import com.avito.android.plugin.build_metrics.internal.runtime.RuntimeMetricsListener
-import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsTask
-import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerPlugin
-import com.avito.teamcity.teamcityCredentials
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.register
 
 public open class BuildMetricsPlugin : Plugin<Project> {
 
@@ -32,12 +27,6 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         if (!project.pluginIsEnabled) {
             project.logger.lifecycle("Build metrics plugin is disabled")
             return
-        }
-
-        project.tasks.register<CollectTeamcityMetricsTask>("collectTeamcityMetrics") {
-            buildId.set(project.getOptionalStringProperty("avito.build.metrics.teamcityBuildId"))
-            this.teamcityCredentials.set(project.teamcityCredentials)
-            this.graphiteConfig.set(project.graphiteConfig)
         }
         // values from extension are not available earlier
         project.afterEvaluate {

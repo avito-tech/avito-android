@@ -17,7 +17,6 @@ dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.process)
     implementation(projects.subprojects.gradle.statsdConfig)
-    implementation(projects.subprojects.gradle.teamcity)
     implementation(projects.subprojects.gradle.workerExtensions)
     implementation(libs.kotlinGradle)
     implementation(libs.kspGradle)

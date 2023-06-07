@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -xeu
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
@@ -65,11 +65,8 @@ GRADLE_ARGS+="-Pavito.bitbucket.projectKey=AG "
 GRADLE_ARGS+="-Pavito.bitbucket.repositorySlug=avito-github "
 GRADLE_ARGS+="-PatlassianUser=test "
 GRADLE_ARGS+="-PatlassianPassword=test "
-GRADLE_ARGS+="-Pavito.stats.host=$AVITO_STATS_HOST "
-GRADLE_ARGS+="-Pavito.stats.fallbackHost=$AVITO_STATS_FALLBACK_HOST "
-GRADLE_ARGS+="-Pavito.stats.port=$AVITO_STATS_PORT "
-GRADLE_ARGS+="-Pavito.stats.namespace=$AVITO_STATS_NAMESPACE "
 GRADLE_ARGS+="-Pavito.build=teamcity "
+GRADLE_ARGS+="-PbuildMetrics.prefix=complex.delete_me.apps.mobile.statistic.android "
 
 if [ -n "$ELASTIC_ENDPOINTS" ]; then
     GRADLE_ARGS+="-Pavito.elastic.enabled=true "

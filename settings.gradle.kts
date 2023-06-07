@@ -163,3 +163,5 @@ include(":subprojects:delivery:qapps")
 include(":subprojects:delivery:sign-service")
 include(":subprojects:delivery:tests-summary")
 include(":subprojects:delivery:upload-cd-build-result")
+
+include(":subprojects:teamcity-metrics-collector")
