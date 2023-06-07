@@ -1,6 +1,9 @@
 package com.avito.teamcity
 
 import org.jetbrains.teamcity.rest.Build
+import org.jetbrains.teamcity.rest.BuildConfigurationId
+import org.jetbrains.teamcity.rest.BuildLocator
+import org.jetbrains.teamcity.rest.Project
 
 public interface TeamcityApi {
 
@@ -10,51 +13,22 @@ public interface TeamcityApi {
         public class SpecificBranch(public val branchName: String) : BranchSpec()
     }
 
-    public sealed class ListResult {
-        public data class OK(val builds: List<SimpleBuild>) : ListResult()
-        public object NoBuildsFound : ListResult()
-        public data class Failure(val exception: Exception) : ListResult()
-    }
-
     /**
      * @param finishDate epoch seconds
      */
     public data class SimpleBuild(val buildNumber: String, val commitHash: String, val finishDate: Long)
 
-    public fun getLastBuilds(
+    public fun getBuilds(
         buildType: String,
-        commit: String?,
-        branchSpec: BranchSpec,
-        limit: Int,
-        onlySuccess: Boolean
+        builder: BuildLocator.() -> Unit
     ): Sequence<Build>
 
-    public fun getLastSimpleBuilds(
-        buildType: String,
-        commit: String?,
-        branchSpec: BranchSpec,
-        limit: Int,
-        onlySuccess: Boolean
-    ): ListResult
-
-    public fun getLastBuildsId(
-        buildType: String,
-        commit: String?,
-        branchSpec: BranchSpec,
-        limit: Int = 20,
-        onlySuccess: Boolean = false
-    ): Sequence<String>
+    public fun getProjectByBuildConfiguration(id: BuildConfigurationId): Project
 
     public fun getBuild(buildId: String): Build
 
     @Deprecated("Use getBuild instead")
     public fun getBuildNumber(buildId: String): String?
-
-    public fun getPreviousBuildOnCommit(
-        buildType: String,
-        commit: String,
-        branchSpec: BranchSpec = BranchSpec.AllBranches
-    ): Build?
 
     public fun triggerBuild(
         buildType: String,
