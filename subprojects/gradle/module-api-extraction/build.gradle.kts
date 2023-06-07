@@ -9,6 +9,7 @@ dependencies {
     implementation(gradleApi())
 
     implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.moduleTypes)
 
     implementation(libs.moshiAdapters)
     implementation(libs.dependencyAnalysis)
