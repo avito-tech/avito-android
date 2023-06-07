@@ -6,8 +6,6 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 source "$DIR"/_environment.sh
 
-# shellcheck disable=SC2086
-USER_ID=$(id -u ${USER})
 GRADLE_HOME_DIR=$HOME/.gradle
 
 # only need dependencies: https://docs.gradle.org/current/userguide/dependency_resolution.html#sub:ephemeral-ci-cache
@@ -53,22 +51,17 @@ GRADLE_ARGS+="-PbuildNumber "
 GRADLE_ARGS+="-PgitBranch=$BUILD_BRANCH "
 GRADLE_ARGS+="-PbuildCommit=$BUILD_COMMIT "
 GRADLE_ARGS+="-PteamcityBuildId=$BUILD_ID "
-GRADLE_ARGS+="-Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL "
 GRADLE_ARGS+="-Pavito.repo.ssh.url "
 GRADLE_ARGS+="-Pavito.report.url=$AVITO_REPORT_URL "
-GRADLE_ARGS+="-Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL "
 GRADLE_ARGS+="-Pavito.report.viewerUrl=$AVITO_REPORT_VIEWER_URL "
 GRADLE_ARGS+="-Pavito.registry=$AVITO_REGISTRY "
 GRADLE_ARGS+="-Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL "
-GRADLE_ARGS+="-Pavito.bitbucket.url=$AVITO_BITBUCKET_URL "
-GRADLE_ARGS+="-Pavito.bitbucket.projectKey=AG "
-GRADLE_ARGS+="-Pavito.bitbucket.repositorySlug=avito-github "
 GRADLE_ARGS+="-PatlassianUser=test "
 GRADLE_ARGS+="-PatlassianPassword=test "
 GRADLE_ARGS+="-Pavito.build=teamcity "
 GRADLE_ARGS+="-PbuildMetrics.prefix=complex.delete_me.apps.mobile.statistic.android "
 
-if [ -n "$ELASTIC_ENDPOINTS" ]; then
+if [[ -v ELASTIC_ENDPOINTS ]]; then
     GRADLE_ARGS+="-Pavito.elastic.enabled=true "
     GRADLE_ARGS+="-Pavito.elastic.endpoints=$ELASTIC_ENDPOINTS "
     GRADLE_ARGS+="-Pavito.elastic.indexpattern=speed-android "
@@ -90,6 +83,9 @@ GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
 GRADLE_ARGS+="-Pcom.avito.android.tools.buildCache.remote.url=$GRADLE_GITHUB_BUILD_CACHE_URL "
 
 function runInBuilder() {
+    # shellcheck disable=SC2155
+    local USER_ID=$(id -u)
+
     COMMANDS=$@
 
     if [[ -z ${CONTAINER_MAX_CPUS+x} ]]; then
