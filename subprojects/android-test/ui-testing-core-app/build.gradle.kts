@@ -1,4 +1,3 @@
-
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.kotlin.dsl.getMandatoryStringProperty
@@ -215,6 +214,10 @@ fun emulatorImage(api: Int, label: String): String {
     }
 }
 
-tasks.check {
-    dependsOn(tasks.named("instrumentationUiKubernetes"))
+val isLocalCheck = project.providers.gradleProperty("localCheck").getOrElse("false").toBoolean()
+
+if (!isLocalCheck) {
+    tasks.check {
+        dependsOn(tasks.named("instrumentationUiKubernetes"))
+    }
 }
