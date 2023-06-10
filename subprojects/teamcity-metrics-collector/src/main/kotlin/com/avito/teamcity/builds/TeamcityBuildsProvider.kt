@@ -7,6 +7,7 @@ import org.jetbrains.teamcity.rest.Build
 import org.jetbrains.teamcity.rest.BuildConfigurationId
 import org.jetbrains.teamcity.rest.Project
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 internal interface TeamcityBuildsProvider {
     fun provide(metricsSourceBuildType: String): Sequence<Build>
@@ -35,16 +36,33 @@ internal interface TeamcityBuildsProvider {
             val since = project.getPreviousSendingTime()
             val until = Instant.now()
             project.saveSendingTime(until)
-            logger.info("Provide builds since $since until $until")
-            val builds = api.getBuilds(metricsSourceBuildType) {
-                withAllBranches()
-                    .includeFailed()
-                    .includeCanceled()
-                    .since(since)
-                    .until(until)
+            logger.info("Provide builds end since $since until $until")
+            val ranInLast3Hours = getBuild(
+                metricsSourceBuildType,
+                since.minus(3, ChronoUnit.HOURS),
+                until
+            )
+            val endAtLastHour = ranInLast3Hours.filter { build ->
+                val finishTime = requireNotNull(build.finishDateTime) {
+                    "Can't be null. Because we don't fetch running builds"
+                }
+                finishTime.toInstant().isAfter(since)
             }
-            logger.info("Found ${builds.count()} builds")
-            return builds
+
+            logger.info("Found ${endAtLastHour.count()} builds")
+            return endAtLastHour
+        }
+
+        private fun getBuild(
+            metricsSourceBuildType: String,
+            since: Instant,
+            until: Instant
+        ) = api.getBuilds(metricsSourceBuildType) {
+            withAllBranches()
+                .includeFailed()
+                .includeCanceled()
+                .since(since)
+                .until(until)
         }
 
         private fun Project.saveSendingTime(time: Instant) {
