@@ -59,7 +59,7 @@ GRADLE_ARGS+="-Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL "
 GRADLE_ARGS+="-PatlassianUser=test "
 GRADLE_ARGS+="-PatlassianPassword=test "
 GRADLE_ARGS+="-Pavito.build=teamcity "
-GRADLE_ARGS+="-PbuildMetrics.prefix=complex.delete_me.apps.mobile.statistic.android "
+GRADLE_ARGS+="-PbuildMetrics.prefix=apps.mobile.statistic.android "
 
 if [[ -v ELASTIC_ENDPOINTS ]]; then
     GRADLE_ARGS+="-Pavito.elastic.enabled=true "
