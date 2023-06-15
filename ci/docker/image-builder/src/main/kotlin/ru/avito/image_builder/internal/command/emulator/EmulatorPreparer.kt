@@ -12,12 +12,12 @@ internal class EmulatorPreparer(
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
 
-    fun prepareEmulators(imageId: ImageId, apis: Set<Int>, emulatorLocale: String?): ImageId {
+    fun prepareEmulators(imageId: ImageId, apis: Set<Int>, emulatorLocale: String): ImageId {
         val containerId = runContainer(imageId)
 
         for (api in apis) {
             val architecture = if (api < 28) "x86" else "x86_64"
-            prepareEmulator(containerId, api, architecture, emulatorLocale.orEmpty())
+            prepareEmulator(containerId, api, architecture, emulatorLocale)
         }
 
         val preparedImageId = commitChanges(containerId)

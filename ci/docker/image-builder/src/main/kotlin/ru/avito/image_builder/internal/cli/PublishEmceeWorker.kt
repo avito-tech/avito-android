@@ -32,10 +32,10 @@ internal class PublishEmceeWorker(
         description = "Space separated list of API versions"
     ).required()
 
-    private val emulatorLocale: String? by option(
+    private val emulatorLocale: String by option(
         type = ArgType.String,
-        description = "Emulator locale in BCP 47 format. Optional because emulator has default locale (en-US)."
-    )
+        description = "Emulator locale in BCP 47 format. en-US locale is default."
+    ).required()
 
     override fun execute() {
         val docker = CliDocker()
