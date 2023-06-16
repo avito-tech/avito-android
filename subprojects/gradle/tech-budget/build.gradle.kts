@@ -3,6 +3,7 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
     id("convention.ksp")
+    id("convention.test-fixtures")
 }
 
 dependencies {
@@ -18,6 +19,7 @@ dependencies {
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.common.compositeException)
     implementation(projects.subprojects.common.techBudgetCommon)
+    implementation(projects.subprojects.gradle.moduleTypes)
 
     ksp(libs.moshiCodegen)
 

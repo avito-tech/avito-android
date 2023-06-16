@@ -1,10 +1,12 @@
 package com.avito.android.tech_budget
 
+import com.avito.android.module_type.ModuleType
 import com.avito.android.tech_budget.ab_tests.CollectABTestsConfiguration
 import com.avito.android.tech_budget.deeplinks.CollectDeeplinksConfiguration
 import com.avito.android.tech_budget.feature_toggles.CollectFeatureTogglesConfiguration
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 
 public abstract class TechBudgetExtension {
@@ -25,6 +27,8 @@ public abstract class TechBudgetExtension {
     internal abstract val featureToggles: CollectFeatureTogglesConfiguration
 
     public abstract val compilationTimeFile: RegularFileProperty
+
+    public abstract val getModuleFunctionalTypeName: Property<(ModuleType) -> String>
 
     public fun collectWarnings(action: Action<CollectWarningsConfiguration>) {
         action.execute(warnings)

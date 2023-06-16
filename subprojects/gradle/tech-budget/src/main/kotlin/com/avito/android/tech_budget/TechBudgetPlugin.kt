@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.internal.deeplinks.DeepLinkConfigurator
 import com.avito.android.tech_budget.internal.feature_toggles.FeatureTogglesConfigurator
 import com.avito.android.tech_budget.internal.lint_issues.LintIssuesConfigurator
 import com.avito.android.tech_budget.internal.module_dependencies.ModuleDependenciesConfigurator
+import com.avito.android.tech_budget.internal.module_types.ModuleTypesConfigurator
 import com.avito.android.tech_budget.internal.owners.OwnersConfigurator
 import com.avito.android.tech_budget.internal.owners.dependencies.DependenciesConfigurator
 import com.avito.android.tech_budget.internal.warnings.WarningsConfigurator
@@ -35,6 +36,7 @@ public class TechBudgetPlugin : Plugin<Project> {
             LintIssuesConfigurator(),
             ModuleDependenciesConfigurator(),
             ModuleCompilationInfoConfigurator(),
+            ModuleTypesConfigurator(),
         )
         configurators.forEach { it.configure(target) }
     }
