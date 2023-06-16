@@ -59,11 +59,14 @@ internal class ClearK8SDeploymentsByNamespaces(
                     .forEach { deployment ->
                         try {
                             if (deployment.isLeaked) {
+                                println("Found leaky ${deployment.description}")
                                 val deleted = deployments
                                     .withName(deployment.metadata.name)
                                     .withGracePeriod(0)
                                     .delete()
                                 println("${deployment.description} deleted is $deleted")
+                            } else {
+                                println("Found not leaky ${deployment.description}")
                             }
                         } catch (e: Throwable) {
                             throw RuntimeException("Error when checked deployment=${deployment.description} leak", e)
