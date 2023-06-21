@@ -7,6 +7,7 @@ import com.avito.android.test.checks.ChecksDriver
 import com.avito.android.test.checks.ChecksImpl
 import com.avito.android.test.matcher.BottomSheetCollapsedMatcher
 import com.avito.android.test.matcher.BottomSheetExpandedMatcher
+import com.avito.android.test.matcher.BottomSheetHiddenMatcher
 
 open class BottomSheetElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
@@ -20,6 +21,10 @@ open class BottomSheetElement(interactionContext: InteractionContext) : ViewElem
 
         fun isCollapsed() {
             drivenChecks.check(ViewAssertions.matches(BottomSheetCollapsedMatcher()))
+        }
+
+        fun isHidden() {
+            drivenChecks.check(ViewAssertions.matches(BottomSheetHiddenMatcher()))
         }
     }
 }
