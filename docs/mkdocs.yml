@@ -84,6 +84,7 @@ nav:
             -   Internal:
                     - projects/internal/Internal.md
                     - projects/internal/BuildMetrics.md
+                    - projects/internal/TeamcityMetricsCollector.md
                     - projects/internal/CriticalPath.md
                     - projects/internal/Signer.md
 

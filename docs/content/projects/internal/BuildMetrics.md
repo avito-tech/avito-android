@@ -105,7 +105,3 @@ All values are measured in Kb and sent as time metrics.
 ##### OS metrics
 
 Send used and total memory in KiB
-
-#### Teamcity
-
-Send build elapsed time and by status
