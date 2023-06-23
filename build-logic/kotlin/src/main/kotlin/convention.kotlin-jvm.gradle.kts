@@ -4,14 +4,14 @@ import java.util.jar.Attributes
 plugins {
     id("kotlin")
     id("convention.kotlin-base")
-    id("convention.dependency-locking")
+    id("convention.dependency-locking-kotlin")
 }
 
 kotlin {
     explicitApi()
     jvmToolchain {
         withVersionCatalog { libs ->
-            (this as JavaToolchainSpec).apply {
+            this.apply {
                 languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
             }
         }

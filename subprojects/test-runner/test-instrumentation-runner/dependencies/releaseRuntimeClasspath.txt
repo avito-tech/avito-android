@@ -1,0 +1,16 @@
+androidx.annotation:annotation-experimental:1.1.0
+androidx.annotation:annotation:1.2.0
+androidx.test.services:storage:1.4.2
+androidx.test.uiautomator:uiautomator:2.2.0
+androidx.test:annotation:1.0.1
+androidx.test:monitor:1.6.1
+androidx.test:runner:1.5.2
+androidx.tracing:tracing:1.0.0
+com.google.code.findbugs:jsr305:2.0.2
+junit:junit:4.13.2
+org.hamcrest:hamcrest-core:1.3
+org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib:1.7.10
+org.jetbrains:annotations:13.0

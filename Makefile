@@ -260,6 +260,3 @@ internal_publish_gradle_cache_node_image:
 	docker pull gradle/build-cache-node:$(GRADLE_CACHE_NODE_TAG) && \
 	docker tag gradle/build-cache-node:$(GRADLE_CACHE_NODE_TAG) $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG) && \
 	docker push $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)
-
-write_locks:
-	./gradlew resolveAndLockAll --write-locks --no-configuration-cache --quiet > /dev/null

@@ -31,17 +31,6 @@ tasks.register("checkAll") {
     )
 }
 
-tasks.register("resolveAndLockAll") {
-    group = taskGroup
-    description = "Resolve all dependencies and write locks"
-
-    dependsOn(
-        subprojects
-            .filter { !it.isPlainDir() }
-            .map { "${it.path}:resolveAndLockAll" }
-    )
-}
-
 fun Project.isPlainDir(): Boolean {
     return !file("build.gradle").exists() && !file("build.gradle.kts").exists()
 }

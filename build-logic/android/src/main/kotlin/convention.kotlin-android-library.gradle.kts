@@ -6,7 +6,7 @@ plugins {
     id("kotlin-android")
     id("convention.kotlin-base")
     id("convention.android-base")
-    id("convention.dependency-locking")
+    id("convention.dependency-locking-android")
 }
 
 val generatedJavaResDir: Provider<RegularFile> = project.layout.buildDirectory.file("generated/avito/java_res")

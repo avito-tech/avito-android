@@ -1,0 +1,13 @@
+com.google.code.gson:gson:2.3.1
+com.jakewharton.retrofit:retrofit1-okhttp3-client:1.0.2
+com.squareup.okhttp3:okhttp:3.0.1
+com.squareup.okio:okio:1.6.0
+com.squareup.retrofit:retrofit:1.9.0
+commons-codec:commons-codec:1.10
+org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib:1.7.10
+org.jetbrains.teamcity:teamcity-rest-client:1.6.2
+org.jetbrains:annotations:13.0
+org.slf4j:slf4j-api:1.7.12
