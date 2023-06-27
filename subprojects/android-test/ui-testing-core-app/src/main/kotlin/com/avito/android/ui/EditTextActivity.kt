@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.telephony.PhoneNumberFormattingTextWatcher
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import java.util.Locale
 
 class EditTextActivity : AppCompatActivity() {
 
@@ -12,7 +13,7 @@ class EditTextActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edittext)
 
         findViewById<EditText>(R.id.phone_number_edit_text1).addTextChangedListener(
-            PhoneNumberFormattingTextWatcher()
+            PhoneNumberFormattingTextWatcher(Locale.US.country)
         )
     }
 }
