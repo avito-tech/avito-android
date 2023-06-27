@@ -72,18 +72,17 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
     private fun writeText(uiController: UiController, editText: EditText) {
         HiddenApiOpener.ensureUnseal()
 
-        // TODO replace 33 by Build.VERSION_CODES.TIRAMISU when compileSdk = 33
-        val inputFieldName = if (Build.VERSION.SDK_INT >= 33) {
-            "mFallbackInputConnection"
-        } else {
-            "mIInputContext"
-        }
+        val inputMethodManager = ApplicationProvider.getApplicationContext<Application>()
+            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        val context = (
-            ApplicationProvider.getApplicationContext<Application>()
-                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            )
-            .getFieldByReflectionWithAnyField(inputFieldName)
+        val context = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            inputMethodManager
+                .getFieldByReflectionWithAnyField("mFallbackInputConnection")
+                .getFieldByReflectionWithAnyField("mInputConnection")
+        } else {
+            inputMethodManager
+                .getFieldByReflectionWithAnyField("mIInputContext")
+        }
 
         var textChangedAtLeastOnce = false
         val textWatcher = object : SimpleTextWatcher() {
