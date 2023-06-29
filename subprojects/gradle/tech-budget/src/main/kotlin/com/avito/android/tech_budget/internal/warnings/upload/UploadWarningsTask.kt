@@ -5,27 +5,30 @@ import com.avito.android.owner.adapter.DefaultOwnerAdapter
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
-import com.avito.android.tech_budget.internal.warnings.log.FileLogReader
-import com.avito.android.tech_budget.internal.warnings.log.converter.LogToWarningConverter
-import com.avito.android.tech_budget.internal.warnings.log.converter.ProjectInfoConverter
+import com.avito.android.tech_budget.internal.warnings.report.ProjectInfo
+import com.avito.android.tech_budget.internal.warnings.report.converter.IssueToWarningConverter
 import com.avito.android.tech_budget.internal.warnings.upload.model.Warning
+import com.avito.android.tech_budget.parser.FileParser
+import com.avito.android.tech_budget.warnings.CompilerIssue
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 
 internal abstract class UploadWarningsTask : DefaultTask() {
 
-    @get:Internal
-    abstract val outputDirectory: DirectoryProperty
+    @get:Input
+    abstract val inputReports: MapProperty<ProjectInfo, RegularFileProperty>
 
     @get:Internal
-    abstract val warningsSeparator: Property<String>
+    abstract val issuesFileParser: Property<FileParser<CompilerIssue>>
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
@@ -43,16 +46,8 @@ internal abstract class UploadWarningsTask : DefaultTask() {
 
     @TaskAction
     fun uploadWarnings() {
-        val logToWarningConverter = LogToWarningConverter()
-        val logReader =
-            FileLogReader(
-                outputDirectory.get().asFile,
-                warningsSeparator.get(),
-                ProjectInfoConverter.default { ownerSerializer.get() }
-            )
-
-        val warnings = logReader.getAll()
-            .map(logToWarningConverter::convert)
+        val logToWarningConverter = IssueToWarningConverter(issuesFileParser.get())
+        val warnings = logToWarningConverter.convert(inputReports.get())
 
         val logger = loggerFactory.get().create("Warnings")
         if (warnings.isEmpty()) {

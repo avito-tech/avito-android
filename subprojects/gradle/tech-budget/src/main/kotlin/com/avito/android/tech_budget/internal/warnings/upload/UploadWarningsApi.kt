@@ -8,6 +8,6 @@ import retrofit2.http.POST
 
 internal interface UploadWarningsApi {
 
-    @POST("dumpWarnings/")
+    @POST("dumpDetektIssues/")
     fun dumpWarnings(@Body request: WarningsRequestBody): Call<DumpResponse>
 }

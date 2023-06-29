@@ -44,7 +44,7 @@ internal class UploadWarningsBatcherTest {
             .assertThat(fakeApiClient.requests)
             .hasSize(expectedRequestsCount)
 
-        fakeApiClient.requests.map { it.warnings }.forEach { uploadedWarnings ->
+        fakeApiClient.requests.map { it.detektIssues }.forEach { uploadedWarnings ->
             Truth
                 .assertThat(uploadedWarnings.size)
                 .isAtMost(batchSize)
@@ -96,7 +96,7 @@ internal class UploadWarningsBatcherTest {
 
     private fun createWarnings(count: Int) = mutableListOf<Warning>().apply {
         repeat(count) { i ->
-            add(Warning("app", emptyList(), null, "Warning $i"))
+            add(Warning("/test.kt", ":app", "Warning $i", "group", "rule", 10))
         }
     }
 

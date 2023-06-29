@@ -6,5 +6,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 internal class WarningsRequestBody(
     val dumpInfo: DumpInfo,
-    val warnings: List<Warning>
+    val detektIssues: List<Warning>
 )
