@@ -20,5 +20,9 @@ public data class GraphiteConfig(
      * For example: namespace "apps.android" with a metric "build_time"
      * will result in "app.android.build_time" in graphite.
      */
-    val metricPrefix: SeriesName
+    val metricPrefix: SeriesName,
+    /**
+     * If true then Exceptions while sending won't be thrown
+     */
+    val ignoreExceptions: Boolean,
 ) : Serializable

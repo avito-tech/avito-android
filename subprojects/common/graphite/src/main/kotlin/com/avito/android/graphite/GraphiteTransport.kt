@@ -1,5 +1,6 @@
 package com.avito.android.graphite
 
+import com.avito.logger.LoggerFactory
 import java.io.DataOutputStream
 import java.net.Socket
 
@@ -20,7 +21,11 @@ internal interface GraphiteTransport {
     class Real(
         private val host: String,
         private val port: Int,
+        private val ignoreExceptions: Boolean,
+        loggerFactory: LoggerFactory,
     ) : GraphiteTransport {
+
+        private val logger = loggerFactory.create("GraphiteTransport.Real")
 
         /**
          * Sends graphite message in plaintext protocol
@@ -28,12 +33,31 @@ internal interface GraphiteTransport {
          */
         override fun send(metric: GraphiteMetric) {
             val metricRaw = metric.toRaw()
-            socket().use { socket ->
-                val dos = DataOutputStream(socket.getOutputStream())
-                dos.writeBytes(metricRaw)
+            val socket = createSocketSafe()
+            when {
+                socket != null -> socket.use {
+                    val dos = DataOutputStream(it.getOutputStream())
+                    dos.writeBytes(metricRaw)
+                }
+                ignoreExceptions -> logger.warn("Fail to create Socket. Metric $metric lost")
+                else -> throw IllegalStateException("Fail to create Socket. See logs to find details")
             }
         }
 
-        private fun socket(): Socket = Socket(host, port)
+        private fun createSocketSafe(): Socket? {
+            var socket: Socket? = null
+            for (tryIndex in 0..3) {
+                if (socket != null) {
+                    break
+                }
+                socket = try {
+                    Socket(host, port)
+                } catch (e: Throwable) {
+                    logger.warn("Fail attempt $tryIndex to create Socket", e)
+                    null
+                }
+            }
+            return socket
+        }
     }
 }

@@ -19,7 +19,12 @@ public interface GraphiteSender {
             val transport = if (isTest) {
                 GraphiteTransport.Test()
             } else {
-                GraphiteTransport.Real(config.host, config.port)
+                GraphiteTransport.Real(
+                    config.host,
+                    config.port,
+                    config.ignoreExceptions,
+                    loggerFactory,
+                )
             }
             return GraphiteSenderImpl(config, transport, loggerFactory)
         }

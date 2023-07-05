@@ -22,5 +22,6 @@ private fun config(project: Project): GraphiteConfig {
         host = project.getMandatoryStringProperty("avito.graphite.host"),
         port = project.getMandatoryIntProperty("avito.graphite.port"),
         metricPrefix = SeriesName.create(namespace, multipart = true),
+        ignoreExceptions = false,
     )
 }

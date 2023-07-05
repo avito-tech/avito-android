@@ -46,9 +46,12 @@ internal class BuildMetricsPluginDI(
         val config = project.graphiteConfig.get()
         val metricPrefix = config.metricPrefix.append(pluginMetricsPrefix)
         GraphiteSender.create(
-            config = config.copy(metricPrefix = metricPrefix),
+            config = config.copy(
+                metricPrefix = metricPrefix,
+                ignoreExceptions = true
+            ),
             loggerFactory = loggerFactory,
-            isTest = project.hasProperty(isTestProperty)
+            isTest = project.hasProperty(isTestProperty),
         )
     }
 

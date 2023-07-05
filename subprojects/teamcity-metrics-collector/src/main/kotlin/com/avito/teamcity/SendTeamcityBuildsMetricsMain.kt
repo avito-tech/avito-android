@@ -49,10 +49,11 @@ internal object SendTeamcityBuildsMetricsMain {
                     enableDetailedLogs = true,
                     host = graphiteHost,
                     port = graphitePort,
-                    metricPrefix = SeriesName.create(metricsPrefix, true)
+                    metricPrefix = SeriesName.create(metricsPrefix, true),
+                    ignoreExceptions = false,
                 ),
                 loggerFactory = PrintlnLoggerFactory,
-                isTest = false
+                isTest = false,
             )
         }
 
