@@ -168,7 +168,7 @@ check:
 
 # Configuration cache fails in instrumentation tasks: MBS-11856
 local_check:
-	$(docker_command) ./gradlew $(params) checkAll --continue
+	$(docker_command) ./gradlew $(params) checkAll
 
 .PHONY: build
 build:

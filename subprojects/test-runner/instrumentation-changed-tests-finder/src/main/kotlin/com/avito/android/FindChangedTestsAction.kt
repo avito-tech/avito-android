@@ -6,14 +6,21 @@ import com.avito.impact.changes.GitChangesDetector
 import com.avito.impact.changes.IgnoreSettings
 import com.avito.instrumentation.impact.KotlinClassesFinder
 import com.avito.instrumentation.impact.KotlinClassesFinder.Companion.KOTLIN_FILE_EXTENSION
+import com.avito.logger.LoggerFactory
 import com.avito.utils.rewriteNewLineList
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
-import org.gradle.workers.WorkAction
-import org.gradle.workers.WorkParameters
 
-public abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params> {
+internal class FindChangedTestsAction(
+    private val rootDir: Directory,
+    private val targetCommit: Property<String>,
+    private val androidTestDir: DirectoryProperty,
+    private val changedTestsFile: RegularFile,
+    loggerFactory: LoggerFactory,
+) {
+    private val logger = loggerFactory.create("FindChangedTestsAction")
 
     private val kotlinClassesFinder: KotlinClassesFinder = KotlinClassesFinder.create()
 
@@ -26,15 +33,15 @@ public abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction
         ChangeType.COPIED
     )
 
-    override fun execute() {
+    fun execute() {
 
         val changesDetector: ChangesDetector = GitChangesDetector(
-            gitRootDir = parameters.rootDir.get().asFile,
-            targetCommit = parameters.targetCommit.get(),
+            gitRootDir = rootDir.asFile,
+            targetCommit = targetCommit.get(),
             ignoreSettings = IgnoreSettings(emptySet()),
         )
 
-        val androidTestDir = parameters.androidTestDir.get().asFile
+        val androidTestDir = androidTestDir.get().asFile
 
         changesDetector.computeChanges(
             targetDirectory = androidTestDir,
@@ -48,19 +55,13 @@ public abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction
                 .toList()
         }.fold(
             { changedTestNames ->
-                parameters.changedTestsFile
-                    .get()
+                changedTestsFile
                     .asFile
                     .rewriteNewLineList(changedTestNames)
             },
-            { throwable -> throw throwable }
+            { throwable ->
+                logger.warn("Can't compute changed tests", throwable)
+            }
         )
-    }
-
-    public interface Params : WorkParameters {
-        public val rootDir: RegularFileProperty
-        public val targetCommit: Property<String>
-        public val androidTestDir: DirectoryProperty
-        public val changedTestsFile: RegularFileProperty
     }
 }

@@ -81,7 +81,7 @@ internal class RealProcessRunner(
                 Result.Success(output)
             }
         } catch (e: IllegalThreadStateException) {
-            Result.Failure(Throwable("Process didn't exit in ${timeoutMs}ms; output=$output"))
+            Result.Failure(Throwable("Process didn't exit in ${timeoutMs}ms; output=$output", e))
         }
     } catch (t: Throwable) {
         Result.Failure(t)

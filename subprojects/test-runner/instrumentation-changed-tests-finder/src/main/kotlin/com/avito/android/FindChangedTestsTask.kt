@@ -1,5 +1,7 @@
 package com.avito.android
 
+import com.avito.gradle.worker.inMemoryWork
+import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
@@ -38,11 +40,15 @@ public abstract class FindChangedTestsTask @Inject constructor(
 
     @TaskAction
     public fun doWork() {
-        workerExecutor.noIsolation().submit(FindChangedTestsAction::class.java) { params ->
-            params.rootDir.set(project.rootDir)
-            params.targetCommit.set(targetCommit)
-            params.androidTestDir.set(androidTestDir)
-            params.changedTestsFile.set(changedTestsFile)
+        project.rootProject.layout.projectDirectory
+        workerExecutor.inMemoryWork {
+            FindChangedTestsAction(
+                project.rootProject.layout.projectDirectory,
+                targetCommit,
+                androidTestDir,
+                changedTestsFile.get(),
+                GradleLoggerPlugin.getLoggerFactory(this)
+            ).execute()
         }
     }
 }

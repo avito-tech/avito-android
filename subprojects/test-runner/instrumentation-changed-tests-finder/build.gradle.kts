@@ -11,9 +11,11 @@ dependencies {
     }
     implementation(projects.subprojects.common.files)
     implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.workerExtensions)
     implementation(projects.subprojects.gradle.impactShared) {
         because("ChangesDetector reuse")
     }
+    implementation(projects.subprojects.logger.gradleLogger)
 
     gradleTestImplementation(projects.subprojects.gradle.testProject)
     gradleTestImplementation(projects.subprojects.gradle.git)
