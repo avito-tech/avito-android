@@ -26,6 +26,10 @@ public abstract class TechBudgetExtension {
     @get:Nested
     internal abstract val featureToggles: CollectFeatureTogglesConfiguration
 
+    @get:Nested
+    internal abstract val owners: CollectOwnersConfiguration
+
+
     public abstract val compilationTimeFile: RegularFileProperty
 
     public abstract val getModuleFunctionalTypeName: Property<(ModuleType) -> String>
@@ -48,5 +52,9 @@ public abstract class TechBudgetExtension {
 
     public fun dumpInfo(action: Action<DumpInfoConfiguration>) {
         action.execute(dumpInfo)
+    }
+
+    public fun collectOwners(action: Action<CollectOwnersConfiguration>) {
+        action.execute(owners)
     }
 }

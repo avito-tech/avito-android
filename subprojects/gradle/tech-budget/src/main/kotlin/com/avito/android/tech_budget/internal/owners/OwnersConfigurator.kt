@@ -24,6 +24,7 @@ internal class OwnersConfigurator : TechBudgetConfigurator {
             owners.set(currentOwners)
             ownerSerializer.set(project.requireCodeOwnershipExtension().requireOwnersSerializer())
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
+            this.techBudgetOwnerMapper.set(techBudgetExtension.owners.techBudgetOwnerMapper)
         }
     }
 }

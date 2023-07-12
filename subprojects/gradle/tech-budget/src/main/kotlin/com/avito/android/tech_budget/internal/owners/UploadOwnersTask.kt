@@ -8,6 +8,7 @@ import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.owners.adapter.UploadOwnersAdapter
 import com.avito.android.tech_budget.internal.owners.models.UploadOwnersRequestBody
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
+import com.avito.android.tech_budget.owners.TechBudgetOwnerMapper
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
@@ -26,6 +27,9 @@ internal abstract class UploadOwnersTask : DefaultTask() {
     @get:Input
     abstract val ownerSerializer: Property<OwnerSerializer>
 
+    @get:Input
+    abstract val techBudgetOwnerMapper: Property<TechBudgetOwnerMapper>
+
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
 
@@ -41,7 +45,12 @@ internal abstract class UploadOwnersTask : DefaultTask() {
             loggerFactory = loggerFactory.get()
         ).provide<UploadOwnersApi>()
 
-        service.dumpOwners(UploadOwnersRequestBody(DumpInfo.fromExtension(dumpInfoConfig), owners.get()))
+        val requestBody = UploadOwnersRequestBody(
+            DumpInfo.fromExtension(dumpInfoConfig),
+            owners.get().map(techBudgetOwnerMapper.get()::map)
+        )
+
+        service.dumpOwners(requestBody)
             .executeWithHttpFailure(errorMessage = "Upload owners request failed")
     }
 

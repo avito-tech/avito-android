@@ -5,9 +5,9 @@ import org.intellij.lang.annotations.Language
 @Language("kts")
 val FAKE_OWNERSHIP_EXTENSION: String =
     """
-            public enum class FakeOwners: com.avito.android.model.Owner {
-                Speed,
-                Messenger
+            public enum class FakeOwners(val id: String): com.avito.android.model.Owner {
+                Speed("SpeedID"),
+                Messenger("MessengerID")
             }
         
             public class FakeOwnersSerializer : com.avito.android.OwnerSerializer {

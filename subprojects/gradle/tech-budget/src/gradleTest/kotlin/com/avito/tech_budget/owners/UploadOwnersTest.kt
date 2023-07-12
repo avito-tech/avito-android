@@ -41,7 +41,10 @@ internal class UploadOwnersTest {
 
         request.Checks().singleRequestCaptured().bodyContains(
             """
-                "owners":[{"name":"Speed"},{"name":"Messenger"}]
+                "owners":[{"teamID":"SpeedID","teamName":"Speed","unitID":"SpeedID","unitName":"Speed"},
+            """.trimIndent(),
+            """
+                {"teamID":"MessengerID","teamName":"Messenger","unitID":"MessengerID","unitName":"Messenger"}]
             """.trimIndent()
         )
     }
@@ -106,8 +109,34 @@ internal class UploadOwnersTest {
         buildGradleExtra = """
                 ${if (includeCodeOwnership) FAKE_OWNERSHIP_EXTENSION else ""}
                 ${if (includeCodeOwnership && includeOwnersProvider) FAKE_OWNERS_PROVIDER_EXTENSION else ""}
+                
+                object AvitoTechBudgetOwnerMapper : com.avito.android.tech_budget.owners.TechBudgetOwnerMapper {
+                        override fun map(
+                            owner: com.avito.android.model.Owner
+                       ): com.avito.android.tech_budget.owners.TechBudgetOwner {
+                ${
+            if (includeCodeOwnership) {
+                "require(owner is FakeOwners) { \"Unknown type of owner\" }\n" +
+                    " return com.avito.android.tech_budget.owners.TechBudgetOwner(\n" +
+                    "    teamID = owner.id,\n" +
+                    "    teamName = owner.name,\n" +
+                    "    unitID = owner.id,\n" +
+                    "    unitName = owner.name\n" +
+                    ")"
+            } else {
+                "error(\"Not implemented\")"
+            }
+        }       
+                            
+                           
+                        }
+                }
                 techBudget {
                     ${dumpInfoExtension(mockWebServer.url("/").toString())}
+                    
+                    collectOwners { 
+                        techBudgetOwnerMapper.set(AvitoTechBudgetOwnerMapper)
+                    }
                 }
             """.trimIndent(),
     ).generateIn(projectDir)
