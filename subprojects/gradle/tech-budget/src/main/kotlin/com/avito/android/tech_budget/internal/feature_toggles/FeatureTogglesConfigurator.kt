@@ -23,7 +23,7 @@ internal class FeatureTogglesConfigurator : TechBudgetConfigurator {
                 techBudgetExtension.featureToggles.collectProjectFeatureTogglesTaskName.get()
             )
 
-            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializer)
+            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.featureTogglesInput.set(collectProjectFeatureTogglesTask.flatMap { it.featureTogglesOutput })
             this.featureTogglesFileParser.set(

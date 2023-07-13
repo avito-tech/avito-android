@@ -1,6 +1,6 @@
 package com.avito.android.tech_budget.internal.feature_toggles
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.feature_toggles.FeatureToggle
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
@@ -28,7 +28,7 @@ internal abstract class UploadFeatureTogglesTask : DefaultTask() {
     abstract val featureTogglesInput: RegularFileProperty
 
     @get:Internal
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>

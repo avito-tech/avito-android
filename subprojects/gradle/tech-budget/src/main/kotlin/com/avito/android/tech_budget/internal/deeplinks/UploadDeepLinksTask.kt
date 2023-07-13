@@ -1,6 +1,6 @@
 package com.avito.android.tech_budget.internal.deeplinks
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.deeplinks.DeepLink
 import com.avito.android.tech_budget.internal.deeplinks.models.UploadDeepLinksRequest
@@ -28,7 +28,7 @@ internal abstract class UploadDeepLinksTask : DefaultTask() {
     abstract val deeplinksInput: RegularFileProperty
 
     @get:Internal
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>

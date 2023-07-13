@@ -1,6 +1,6 @@
 package com.avito.android.check.deps
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.diff.provider.OwnersProvider
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -26,7 +26,7 @@ public abstract class CheckExternalDepsCodeOwners : DefaultTask() {
     public abstract val libsVersionsFile: RegularFileProperty
 
     @get:Internal
-    public abstract val ownerSerializer: Property<OwnerSerializer>
+    public abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:Internal
     public abstract val expectedOwnersProvider: Property<OwnersProvider>
@@ -44,7 +44,7 @@ public abstract class CheckExternalDepsCodeOwners : DefaultTask() {
             ?: throwRequiredPropertyError("ownership.ownersSerializer")
         val validOwnersProvider = expectedOwnersProvider.orNull
             ?: throwRequiredPropertyError("codeOwnershipDiffReport.expectedOwnersProvider")
-        val checker = ExternalDepsCodeOwnersChecker(ownerSerializer, validOwnersProvider)
+        val checker = ExternalDepsCodeOwnersChecker(ownerSerializer.provideNameSerializer(), validOwnersProvider)
         checker.check(versionsFile, ownersFile)
         reportToFile("External owners check successful. No errors found.")
     }

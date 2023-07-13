@@ -1,6 +1,6 @@
 package com.avito.android.tech_budget.internal.ab_tests
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.ab_tests.ABTest
 import com.avito.android.tech_budget.internal.ab_tests.models.UploadABTestsRequest
@@ -28,7 +28,7 @@ internal abstract class UploadABTestsTask : DefaultTask() {
     abstract val abTestsInput: RegularFileProperty
 
     @get:Internal
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>

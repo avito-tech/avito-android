@@ -23,7 +23,7 @@ internal class ABTestsConfigurator : TechBudgetConfigurator {
                 techBudgetExtension.abTests.collectProjectABTestsTaskName.get()
             )
 
-            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializer)
+            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.abTestsInput.set(collectProjectABTestsTask.flatMap { it.abTestsOutput })
             this.abTestsFileParser.set(

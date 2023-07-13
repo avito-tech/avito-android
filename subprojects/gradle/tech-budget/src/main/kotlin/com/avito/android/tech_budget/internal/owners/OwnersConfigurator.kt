@@ -22,7 +22,7 @@ internal class OwnersConfigurator : TechBudgetConfigurator {
             }
             val currentOwners = codeOwnersExtension.expectedOwnersProvider.get().get()
             owners.set(currentOwners)
-            ownerSerializer.set(project.requireCodeOwnershipExtension().requireOwnersSerializer())
+            ownerSerializer.set(project.requireCodeOwnershipExtension().requireOwnersSerializerProvider())
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.techBudgetOwnerMapper.set(techBudgetExtension.owners.techBudgetOwnerMapper)
         }

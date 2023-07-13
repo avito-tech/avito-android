@@ -32,7 +32,7 @@ internal class LintIssuesConfigurator : TechBudgetConfigurator {
 
         root.tasks.register<UploadLintIssuesTask>(UploadLintIssuesTask.NAME) {
             dependsOn(collectLintIssues)
-            this.ownerSerializer.set(root.requireCodeOwnershipExtension().ownerSerializer)
+            this.ownerSerializer.set(root.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(extension.dumpInfo)
             this.outputXmlFiles.set(collectLintIssues.get().outputXmlFiles)
         }

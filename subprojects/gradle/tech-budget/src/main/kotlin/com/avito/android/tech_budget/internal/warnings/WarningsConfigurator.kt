@@ -27,7 +27,7 @@ internal class WarningsConfigurator : TechBudgetConfigurator {
         val extension = root.extensions.getByType<TechBudgetExtension>()
         root.tasks.register<UploadWarningsTask>(UploadWarningsTask.NAME) {
             this.dumpInfoConfiguration.set(extension.dumpInfo)
-            this.ownerSerializer.set(root.requireCodeOwnershipExtension().ownerSerializer)
+            this.ownerSerializer.set(root.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.uploadWarningsBatchSize.set(extension.warnings.uploadWarningsBatchSize)
             this.uploadWarningsParallelRequestsCount.set(extension.warnings.uploadWarningsParallelRequestsCount)
             this.issuesFileParser.set(extension.warnings.issuesFileParser)

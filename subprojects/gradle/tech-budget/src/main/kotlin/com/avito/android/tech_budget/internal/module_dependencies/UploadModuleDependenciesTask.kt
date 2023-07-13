@@ -1,6 +1,6 @@
 package com.avito.android.tech_budget.internal.module_dependencies
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
@@ -18,7 +18,7 @@ import org.gradle.api.tasks.TaskAction
 internal abstract class UploadModuleDependenciesTask : DefaultTask() {
 
     @get:Internal
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>

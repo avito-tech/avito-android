@@ -62,7 +62,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
             group = "documentation"
             description = "Exports code owners for all modules to JSON file"
 
-            ownerSerializer.set(codeOwnershipExtension.ownerSerializer)
+            ownerSerializer.set(codeOwnershipExtension.ownerSerializersProvider)
             outputFile.set(target.layout.buildDirectory.file("ownership/internal-dependencies-owners.json"))
         }
     }
@@ -74,7 +74,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
 
             libsVersionsFile.set(codeOwnershipExtension.externalDependencies.libsVersionsFile)
             libsOwnersFile.set(codeOwnershipExtension.externalDependencies.libsOwnersFile)
-            ownerSerializer.set(codeOwnershipExtension.ownerSerializer)
+            ownerSerializer.set(codeOwnershipExtension.ownerSerializersProvider)
             outputFile.set(target.layout.buildDirectory.file("ownership/external-dependencies-owners.json"))
         }
     }
@@ -91,7 +91,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
             libsVersionsFile.set(codeOwnershipExtension.externalDependencies.libsVersionsFile)
             libsOwnersFile.set(codeOwnershipExtension.externalDependencies.libsOwnersFile)
             expectedOwnersProvider.set(reportExtension.expectedOwnersProvider.get())
-            ownerSerializer.set(codeOwnershipExtension.ownerSerializer)
+            ownerSerializer.set(codeOwnershipExtension.ownerSerializersProvider)
             reportFile.set(target.layout.buildDirectory.file("reports/check_external_dependencies.report"))
         }
     }

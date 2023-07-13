@@ -16,7 +16,7 @@ internal class ModuleTypesConfigurator : TechBudgetConfigurator {
         project.tasks.register<UploadModuleTypesTask>(UploadModuleTypesTask.NAME) {
             val techBudgetExtension = project.extensions.getByType<TechBudgetExtension>()
 
-            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializer)
+            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
         }
     }

@@ -1,6 +1,6 @@
 package com.avito.android.tech_budget.internal.module_types
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.module_type.ModuleTypeExtension
 import com.avito.android.owner.adapter.DefaultOwnerAdapter
 import com.avito.android.tech_budget.DumpInfoConfiguration
@@ -26,7 +26,7 @@ internal abstract class UploadModuleTypesTask : DefaultTask() {
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
 
     @get:Internal
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 

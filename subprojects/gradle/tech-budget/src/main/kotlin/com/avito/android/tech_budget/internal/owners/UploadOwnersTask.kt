@@ -1,6 +1,6 @@
 package com.avito.android.tech_budget.internal.owners
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.model.Owner
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
@@ -25,7 +25,7 @@ internal abstract class UploadOwnersTask : DefaultTask() {
     abstract val owners: SetProperty<Owner>
 
     @get:Input
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:Input
     abstract val techBudgetOwnerMapper: Property<TechBudgetOwnerMapper>

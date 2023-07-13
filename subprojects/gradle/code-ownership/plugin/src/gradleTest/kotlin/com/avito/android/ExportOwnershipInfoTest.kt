@@ -33,21 +33,36 @@ internal class ExportOwnershipInfoTest {
             useKts = true,
             imports = listOf(
                 "import com.avito.android.model.Owner",
-                "import com.avito.android.OwnerSerializer"
+                "import com.avito.android.OwnerIdSerializer",
+                "import com.avito.android.OwnerNameSerializer",
+                "import com.avito.android.OwnerSerializerProvider",
             ),
             buildGradleExtra = """
-                        |object TestOwnerSerializer : OwnerSerializer {
-                        |   override fun deserialize(rawOwner: String): Owner {
-                        |       error("Can't deserialize owner!")
+                        |object TestOwnerSerializersProvider : OwnerSerializerProvider {
+                        |
+                        |   override fun provideIdSerializer() = object : OwnerIdSerializer {
+                        |       override fun deserialize(ownerName: String): com.avito.android.model.Owner {
+                        |           error("Can't deserialize owner!")
+                        |       }
+                        |       
+                        |       override fun serialize(owner: Owner): List<String> {
+                        |           return listOf("Test" + owner.toString())
+                        |       }
                         |   }
                         |   
-                        |   override fun serialize(owner: Owner): String {
-                        |       return "Test" + owner.toString()
+                        |   override fun provideNameSerializer() = object : OwnerNameSerializer { 
+                        |       override fun deserialize(ownerId: String): com.avito.android.model.Owner {
+                        |           error("Can't deserialize owner!")
+                        |       }
+                        |       
+                        |       override fun serialize(owner: Owner): String {
+                        |           return "Test" + owner.toString()
+                        |       }
                         |   }
                         |} 
                         |
                         |ownership {
-                        |    ownerSerializer.set(TestOwnerSerializer)
+                        |    ownerSerializersProvider.set(TestOwnerSerializersProvider)
                         |}
                     """.trimMargin(),
             modules = listOf(

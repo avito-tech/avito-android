@@ -1,7 +1,6 @@
 package com.avito.android.tech_budget.internal.lint_issues.upload
 
-import com.avito.android.OwnerSerializer
-import com.avito.android.owner.adapter.DefaultOwnerAdapter
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
@@ -26,7 +25,7 @@ internal abstract class UploadLintIssuesTask : DefaultTask() {
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
 
     @get:Internal
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 

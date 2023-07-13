@@ -5,7 +5,7 @@ import com.avito.android.info.ExportInternalDepsCodeOwners
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
-import com.avito.android.tech_budget.internal.owners.requireOwnersSerializer
+import com.avito.android.tech_budget.internal.owners.requireOwnersSerializerProvider
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.Project
@@ -25,7 +25,7 @@ internal class DependenciesConfigurator : TechBudgetConfigurator {
             val exportInternalDepsTask =
                 project.tasks.typedNamed<ExportInternalDepsCodeOwners>(ExportInternalDepsCodeOwners.NAME)
 
-            ownerSerializer.set(codeOwnershipExtension.requireOwnersSerializer())
+            ownerSerializer.set(codeOwnershipExtension.requireOwnersSerializerProvider())
             dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             externalDependencies.set(exportExternalDepsTask.get().outputFile)
             internalDependencies.set(exportInternalDepsTask.get().outputFile)

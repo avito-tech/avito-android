@@ -1,7 +1,8 @@
 package com.avito.android.info
 
 import com.avito.android.CodeOwnershipExtension
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerNameSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.model.Owner
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
@@ -17,7 +18,7 @@ import org.gradle.kotlin.dsl.findByType
 public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
 
     @get:Internal
-    public abstract val ownerSerializer: Property<OwnerSerializer>
+    public abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:OutputFile
     public abstract val outputFile: RegularFileProperty
@@ -37,7 +38,7 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
     }
 
     private fun saveOwnedDependencies(dependencies: List<OwnedDependency>) {
-        val ownerSerializer = ownerSerializer.orNull ?: ToStringOwnerSerializer()
+        val ownerSerializer = ownerSerializer.orNull?.provideNameSerializer() ?: ToStringOwnerSerializer()
         val dependencySerializer = JsonOwnedDependenciesSerializer(ownerSerializer)
         val output = outputFile.get().asFile
         output.writeText(dependencySerializer.serialize(dependencies))
@@ -53,9 +54,10 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
         )
     }
 
-    private class ToStringOwnerSerializer : OwnerSerializer {
-        override fun deserialize(rawOwner: String): Owner {
-            error("Can't parse $rawOwner to owner entity. This operation is unsupported in ToStringOwnersSerializer")
+    private class ToStringOwnerSerializer : OwnerNameSerializer {
+
+        override fun deserialize(ownerName: String): Owner {
+            error("Can't parse $ownerName to owner entity. This operation is unsupported in ToStringOwnersSerializer")
         }
 
         override fun serialize(owner: Owner): String {

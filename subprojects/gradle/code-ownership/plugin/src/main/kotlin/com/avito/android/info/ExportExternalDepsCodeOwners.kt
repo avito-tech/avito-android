@@ -1,6 +1,7 @@
 package com.avito.android.info
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerNameSerializer
+import com.avito.android.OwnerSerializerProvider
 import com.avito.android.check.deps.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCIES_SECTION_NAMES
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
@@ -29,18 +30,19 @@ public abstract class ExportExternalDepsCodeOwners : DefaultTask() {
     public abstract val libsVersionsFile: RegularFileProperty
 
     @get:Internal
-    public abstract val ownerSerializer: Property<OwnerSerializer>
+    public abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:OutputFile
     public abstract val outputFile: RegularFileProperty
 
     @TaskAction
     public fun printOwnership() {
-        val dependencies = extractOwnedDependencies()
+        val ownerSerializer = ownerSerializer.get().provideNameSerializer()
+        val dependencies = extractOwnedDependencies(ownerSerializer)
         saveOwnedDependencies(dependencies)
     }
 
-    private fun extractOwnedDependencies(): List<OwnedDependency> {
+    private fun extractOwnedDependencies(ownerSerializer: OwnerNameSerializer): List<OwnedDependency> {
         val versionsFile = libsVersionsFile.get().asFile
         val ownersFile = libsOwnersFile.get().asFile
 
@@ -49,13 +51,14 @@ public abstract class ExportExternalDepsCodeOwners : DefaultTask() {
         val ownersFileData = mapper.readTree(ownersFile)
 
         return DEPENDENCIES_SECTION_NAMES.flatMap { sectionName ->
-            extractOwnedDependencies(versionsFileData[sectionName], ownersFileData[sectionName])
+            extractOwnedDependencies(versionsFileData[sectionName], ownersFileData[sectionName], ownerSerializer)
         }
     }
 
     private fun extractOwnedDependencies(
         versionsFileSection: JsonNode,
-        ownersFileSection: JsonNode
+        ownersFileSection: JsonNode,
+        ownerSerializer: OwnerNameSerializer
     ): List<OwnedDependency> {
         val dependencies = mutableListOf<OwnedDependency>()
         versionsFileSection.fieldNames().forEach { dependencyName ->
@@ -70,7 +73,7 @@ public abstract class ExportExternalDepsCodeOwners : DefaultTask() {
             dependencies.add(
                 OwnedDependency(
                     name = fullDependencyName ?: dependencyName,
-                    owners = listOf(ownerSerializer.get().deserialize(owner)),
+                    owners = listOf(ownerSerializer.deserialize(owner)),
                     type = OwnedDependency.Type.EXTERNAL
                 )
             )

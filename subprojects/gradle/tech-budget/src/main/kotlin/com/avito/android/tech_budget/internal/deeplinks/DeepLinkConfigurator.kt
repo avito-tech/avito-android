@@ -23,7 +23,7 @@ internal class DeepLinkConfigurator : TechBudgetConfigurator {
                 techBudgetExtension.deepLinks.collectProjectDeeplinksTaskName.get()
             )
 
-            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializer)
+            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.deeplinksInput.set(collectProjectDeepLinksTask.flatMap { it.deeplinksOutput })
             this.deeplinksFileParser.set(

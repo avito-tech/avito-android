@@ -26,23 +26,38 @@ internal class ConfigurationCacheCompatibilityTest {
                     name = "lib",
                     imports = listOf(
                         "import com.avito.android.model.Owner",
-                        "import com.avito.android.OwnerSerializer"
+                        "import com.avito.android.OwnerIdSerializer",
+                        "import com.avito.android.OwnerNameSerializer",
+                        "import com.avito.android.OwnerSerializerProvider",
                     ),
                     buildGradleExtra = """
                         |object Speed : Owner { }
-                        |object SpeedOwnerSerializer : OwnerSerializer {
-                        |   override fun deserialize(rawOwner: String): com.avito.android.model.Owner {
-                        |       return Speed
+                        |object SpeedOwnerSerializersProvider : OwnerSerializerProvider {
+                        |
+                        |   override fun provideIdSerializer() = object : OwnerIdSerializer {
+                        |       override fun deserialize(ownerName: String): com.avito.android.model.Owner {
+                        |           return Speed
+                        |       }
+                        |       
+                        |       override fun serialize(owner: Owner): List<String> {
+                        |           return listOf("Speed")
+                        |       }
                         |   }
                         |   
-                        |   override fun serialize(owner: Owner): String {
-                        |       return "Speed"
+                        |   override fun provideNameSerializer() = object : OwnerNameSerializer { 
+                        |       override fun deserialize(ownerId: String): com.avito.android.model.Owner {
+                        |           return Speed
+                        |       }
+                        |       
+                        |       override fun serialize(owner: Owner): String {
+                        |           return "Speed"
+                        |       }
                         |   }
                         |} 
                         |
                         |ownership {
                         |    owners(Speed)
-                        |    ownerSerializer.set(SpeedOwnerSerializer)
+                        |    ownerSerializersProvider.set(SpeedOwnerSerializersProvider)
                         |}
                     """.trimMargin(),
                     useKts = true

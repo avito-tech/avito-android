@@ -16,7 +16,7 @@ internal class ModuleCompilationInfoConfigurator : TechBudgetConfigurator {
         project.tasks.register<UploadModulesCompilationInfoTask>(UploadModulesCompilationInfoTask.NAME) {
             val techBudgetExtension = project.extensions.getByType<TechBudgetExtension>()
 
-            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializer)
+            this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.compilationTimeFile.set(techBudgetExtension.compilationTimeFile)
         }

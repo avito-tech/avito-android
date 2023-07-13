@@ -29,7 +29,6 @@ public abstract class TechBudgetExtension {
     @get:Nested
     internal abstract val owners: CollectOwnersConfiguration
 
-
     public abstract val compilationTimeFile: RegularFileProperty
 
     public abstract val getModuleFunctionalTypeName: Property<(ModuleType) -> String>
