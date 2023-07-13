@@ -153,7 +153,7 @@ internal class UploadABTestsTest {
                    "key": "new-main",
                    "defaultGroup": "control",
                    "groups": [ "test", "control" ],
-                   "owners": [ "Speed"]
+                   "owners": [ "SpeedID"]
                  }
                ]  
            }
@@ -166,7 +166,7 @@ internal class UploadABTestsTest {
                "key": "new-main",
                "defaultGroup": "control",
                "groups": [ "test", "control" ],
-               "owners": [ "Speed"]
+               "owners": [ "SpeedID"]
             }
           ]     
         """.trimIndent()

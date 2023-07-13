@@ -34,7 +34,6 @@ internal abstract class UploadLintIssuesTask : DefaultTask() {
         val dumpConfiguration = dumpInfoConfiguration.get()
         val api: UploadLintIssuesApi = ApiServiceProvider(
             baseUrl = dumpConfiguration.baseUploadUrl.get(),
-            ownerAdapter = DefaultOwnerAdapter { ownerSerializer.get() },
             loggerFactory = loggerFactory.get()
         ).provide()
 

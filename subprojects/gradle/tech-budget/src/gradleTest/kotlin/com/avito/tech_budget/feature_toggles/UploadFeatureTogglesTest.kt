@@ -154,7 +154,7 @@ internal class UploadFeatureTogglesTest {
                       "description": "Whether to send Log.e as non fatals to analytics",
                       "isRemote": true,
                       "key": "send_log_errors_non_fatal_analytics",
-                      "owners": [ "Speed" ]
+                      "owners": [ "SpeedID" ]
                  }
                ]  
            }
@@ -168,7 +168,7 @@ internal class UploadFeatureTogglesTest {
               "description": "Whether to send Log.e as non fatals to analytics",
               "isRemote": true,
               "key": "send_log_errors_non_fatal_analytics",
-              "owners": [ "Speed" ]
+              "owners": [ "SpeedID" ]
             }
           ]     
         """.trimIndent()

@@ -5,7 +5,6 @@ import com.avito.android.model.Owner
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
-import com.avito.android.tech_budget.internal.owners.adapter.UploadOwnersAdapter
 import com.avito.android.tech_budget.internal.owners.models.UploadOwnersRequestBody
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
 import com.avito.android.tech_budget.owners.TechBudgetOwnerMapper
@@ -41,7 +40,6 @@ internal abstract class UploadOwnersTask : DefaultTask() {
 
         val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerAdapter = UploadOwnersAdapter(ownerSerializer.get()),
             loggerFactory = loggerFactory.get()
         ).provide<UploadOwnersApi>()
 

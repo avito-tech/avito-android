@@ -1,5 +1,6 @@
 package com.avito.android.tech_budget.internal.ab_tests
 
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.ab_tests.ABTest
 import com.avito.android.tech_budget.ab_tests.CollectProjectABTestsTask
@@ -26,9 +27,14 @@ internal class ABTestsConfigurator : TechBudgetConfigurator {
             this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.abTestsInput.set(collectProjectABTestsTask.flatMap { it.abTestsOutput })
+            val defaultJsonFileParser = JsonFileParser(
+                OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
+                ABTest::class
+            )
+
             this.abTestsFileParser.set(
                 techBudgetExtension.abTests.abTestsFileParser
-                    .orElse(JsonFileParser(ownerSerializer.get(), ABTest::class))
+                    .orElse(defaultJsonFileParser)
             )
         }
     }

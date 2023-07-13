@@ -154,7 +154,7 @@ internal class UploadDeepLinksTest {
                      "moduleName": ":avito-app:main",
                      "path": "/main",
                      "version": 1,
-                     "owners": ["Messenger"]
+                     "owners": ["MessengerID"]
                  }
                ]  
            }
@@ -168,7 +168,7 @@ internal class UploadDeepLinksTest {
                   "moduleName": ":avito-app:main",
                   "path": "/main",
                   "version": 1,
-                  "owners": ["Messenger"]
+                  "owners": ["MessengerID"]
               }
           ]     
         """.trimIndent()

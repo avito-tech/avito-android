@@ -3,6 +3,7 @@ package com.avito.android.info
 import com.avito.android.OwnerNameSerializer
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.check.deps.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCIES_SECTION_NAMES
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
 import com.fasterxml.jackson.databind.JsonNode
@@ -39,7 +40,7 @@ public abstract class ExportExternalDepsCodeOwners : DefaultTask() {
     public fun printOwnership() {
         val ownerSerializer = ownerSerializer.get().provideNameSerializer()
         val dependencies = extractOwnedDependencies(ownerSerializer)
-        saveOwnedDependencies(dependencies)
+        saveOwnedDependencies(dependencies, ownerSerializer)
     }
 
     private fun extractOwnedDependencies(ownerSerializer: OwnerNameSerializer): List<OwnedDependency> {
@@ -81,8 +82,8 @@ public abstract class ExportExternalDepsCodeOwners : DefaultTask() {
         return dependencies
     }
 
-    private fun saveOwnedDependencies(dependencies: List<OwnedDependency>) {
-        val dependencySerializer = JsonOwnedDependenciesSerializer(ownerSerializer.get())
+    private fun saveOwnedDependencies(dependencies: List<OwnedDependency>, ownerSerializer: OwnerNameSerializer) {
+        val dependencySerializer = JsonOwnedDependenciesSerializer(OwnerAdapterFactory(ownerSerializer))
         val output = outputFile.get().asFile
         output.writeText(dependencySerializer.serialize(dependencies))
     }

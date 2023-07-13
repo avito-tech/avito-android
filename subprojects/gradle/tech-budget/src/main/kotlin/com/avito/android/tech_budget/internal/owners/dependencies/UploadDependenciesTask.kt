@@ -1,6 +1,9 @@
 package com.avito.android.tech_budget.internal.owners.dependencies
 
-import com.avito.android.OwnerSerializer
+import com.avito.android.OwnerIdSerializer
+import com.avito.android.OwnerNameSerializer
+import com.avito.android.OwnerSerializerProvider
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
 import com.avito.android.tech_budget.DumpInfoConfiguration
@@ -33,7 +36,7 @@ internal abstract class UploadDependenciesTask : DefaultTask() {
     abstract val internalDependencies: RegularFileProperty
 
     @get:Input
-    abstract val ownerSerializer: Property<OwnerSerializer>
+    abstract val ownerSerializer: Property<OwnerSerializerProvider>
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
@@ -42,27 +45,34 @@ internal abstract class UploadDependenciesTask : DefaultTask() {
 
     @TaskAction
     fun uploadDependencies() {
-        val internalDeps = extractDependencies(internalDependencies.asFile.get())
-        val externalDeps = extractDependencies(externalDependencies.asFile.get())
+        val ownerSerializerProvider = ownerSerializer.get()
+        val ownerNameSerializer = ownerSerializerProvider.provideNameSerializer()
+        val ownerIdSerializer = ownerSerializerProvider.provideIdSerializer()
+        val internalDeps = extractDependencies(internalDependencies.asFile.get(), ownerNameSerializer)
+        val externalDeps = extractDependencies(externalDependencies.asFile.get(), ownerNameSerializer)
         val loggerFactory = loggerFactory.get()
         val logger = loggerFactory.create("Dependencies")
         logger.info("Found ${internalDeps.size} internal and ${externalDeps.size} external dependencies")
-        uploadDependencies(internalDeps + externalDeps, loggerFactory)
+        uploadDependencies(internalDeps + externalDeps, loggerFactory, ownerIdSerializer)
     }
 
-    private fun extractDependencies(file: File): List<OwnedDependency> {
-        val ownedDependenciesSerializer = JsonOwnedDependenciesSerializer(ownerSerializer.get())
+    private fun extractDependencies(file: File, ownerSerializer: OwnerNameSerializer): List<OwnedDependency> {
+        val ownedDependenciesSerializer = JsonOwnedDependenciesSerializer(OwnerAdapterFactory(ownerSerializer))
         val rawOwners = file.readText()
         return ownedDependenciesSerializer.deserialize(rawOwners)
     }
 
-    private fun uploadDependencies(dependencies: List<OwnedDependency>, loggerFactory: LoggerFactory) {
+    private fun uploadDependencies(
+        dependencies: List<OwnedDependency>,
+        loggerFactory: LoggerFactory,
+        ownerSerializer: OwnerIdSerializer,
+    ) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
         val ownedDependencies = dependencies.filter { it.owners.isNotEmpty() }
 
         val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = ownerSerializer.get(),
+            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer),
             loggerFactory = loggerFactory
         ).provide<UploadDependenciesApi>()
         service.dumpModules(UploadDependenciesRequestBody(DumpInfo.fromExtension(dumpInfoConfig), ownedDependencies))

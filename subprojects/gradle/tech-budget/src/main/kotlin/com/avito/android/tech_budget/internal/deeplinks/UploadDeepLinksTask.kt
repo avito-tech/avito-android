@@ -1,6 +1,7 @@
 package com.avito.android.tech_budget.internal.deeplinks
 
 import com.avito.android.OwnerSerializerProvider
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.deeplinks.DeepLink
 import com.avito.android.tech_budget.internal.deeplinks.models.UploadDeepLinksRequest
@@ -57,7 +58,7 @@ internal abstract class UploadDeepLinksTask : DefaultTask() {
 
         val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = ownerSerializer.get(),
+            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
             loggerFactory = loggerFactory.get()
         ).provide<UploadDeepLinksApi>()
 

@@ -1,5 +1,6 @@
 package com.avito.android.tech_budget.internal.deeplinks
 
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.deeplinks.CollectProjectDeeplinksTask
 import com.avito.android.tech_budget.deeplinks.DeepLink
@@ -26,9 +27,14 @@ internal class DeepLinkConfigurator : TechBudgetConfigurator {
             this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.deeplinksInput.set(collectProjectDeepLinksTask.flatMap { it.deeplinksOutput })
+
+            val defaultJsonFileParser = JsonFileParser(
+                OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
+                DeepLink::class
+            )
+
             this.deeplinksFileParser.set(
-                techBudgetExtension.deepLinks.deepLinksFileParser
-                    .orElse(JsonFileParser(ownerSerializer.get(), DeepLink::class))
+                techBudgetExtension.deepLinks.deepLinksFileParser.orElse(defaultJsonFileParser)
             )
         }
     }

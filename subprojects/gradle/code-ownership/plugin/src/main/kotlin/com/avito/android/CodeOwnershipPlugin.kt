@@ -1,5 +1,3 @@
-@file:Suppress("deprecation")
-
 package com.avito.android
 
 import com.avito.android.check.deps.CheckExternalDepsCodeOwners

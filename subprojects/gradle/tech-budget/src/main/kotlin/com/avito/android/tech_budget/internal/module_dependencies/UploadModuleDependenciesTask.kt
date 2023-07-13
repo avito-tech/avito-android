@@ -1,6 +1,7 @@
 package com.avito.android.tech_budget.internal.module_dependencies
 
 import com.avito.android.OwnerSerializerProvider
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
@@ -31,7 +32,7 @@ internal abstract class UploadModuleDependenciesTask : DefaultTask() {
 
         val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = ownerSerializer.get(),
+            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
             loggerFactory = loggerFactory.get()
         ).provide<UploadModuleDependenciesApi>()
 

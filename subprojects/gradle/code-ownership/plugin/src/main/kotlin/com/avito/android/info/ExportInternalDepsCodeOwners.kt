@@ -4,6 +4,7 @@ import com.avito.android.CodeOwnershipExtension
 import com.avito.android.OwnerNameSerializer
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.model.Owner
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
 import org.gradle.api.DefaultTask
@@ -39,7 +40,7 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
 
     private fun saveOwnedDependencies(dependencies: List<OwnedDependency>) {
         val ownerSerializer = ownerSerializer.orNull?.provideNameSerializer() ?: ToStringOwnerSerializer()
-        val dependencySerializer = JsonOwnedDependenciesSerializer(ownerSerializer)
+        val dependencySerializer = JsonOwnedDependenciesSerializer(OwnerAdapterFactory(ownerSerializer))
         val output = outputFile.get().asFile
         output.writeText(dependencySerializer.serialize(dependencies))
     }

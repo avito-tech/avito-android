@@ -1,6 +1,7 @@
 package com.avito.android.tech_budget.internal.compilation_info
 
 import com.avito.android.OwnerSerializerProvider
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.compilation_info.models.ModuleCompilationInfo
 import com.avito.android.tech_budget.internal.compilation_info.models.UploadModulesCompilationInfoRequest
@@ -41,7 +42,7 @@ internal abstract class UploadModulesCompilationInfoTask : DefaultTask() {
 
         val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = ownerSerializer.get(),
+            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
             loggerFactory = loggerFactory.get()
         ).provide<UploadModulesCompilationInfoApi>()
 

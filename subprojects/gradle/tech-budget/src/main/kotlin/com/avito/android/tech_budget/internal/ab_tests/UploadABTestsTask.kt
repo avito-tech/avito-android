@@ -1,6 +1,7 @@
 package com.avito.android.tech_budget.internal.ab_tests
 
 import com.avito.android.OwnerSerializerProvider
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.ab_tests.ABTest
 import com.avito.android.tech_budget.internal.ab_tests.models.UploadABTestsRequest
@@ -57,7 +58,7 @@ internal abstract class UploadABTestsTask : DefaultTask() {
 
         val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = ownerSerializer.get(),
+            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
             loggerFactory = loggerFactory.get()
         ).provide<UploadABTestsApi>()
 

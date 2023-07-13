@@ -144,35 +144,35 @@ internal class UploadDependenciesTest {
                   {
                      "moduleName":":app",
                      "owners":[
-                        "Speed"
+                        "SpeedID"
                      ],
                      "type":"internal"
                   },
                   {
                      "moduleName":"io.gitlab.arturbosch.detekt",
                      "owners":[
-                        "Speed"
+                        "SpeedID"
                      ],
                      "type":"external"
                   },
                   {
                      "moduleName":"com.google.code.gson:gson",
                      "owners":[
-                        "Speed"
+                        "SpeedID"
                      ],
                      "type":"external"
                   },
                   {
                      "moduleName":"androidx.core:core",
                      "owners":[
-                        "Messenger"
+                        "MessengerID"
                      ],
                      "type":"external"
                   },
                   {
                      "moduleName":"androidx.constraintlayout:constraintlayout",
                      "owners":[
-                        "Messenger"
+                        "MessengerID"
                      ],
                      "type":"external"
                   }

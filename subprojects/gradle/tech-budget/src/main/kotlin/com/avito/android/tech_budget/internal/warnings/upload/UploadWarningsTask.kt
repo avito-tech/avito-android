@@ -1,7 +1,6 @@
 package com.avito.android.tech_budget.internal.warnings.upload
 
 import com.avito.android.OwnerSerializerProvider
-import com.avito.android.owner.adapter.DefaultOwnerAdapter
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
@@ -66,7 +65,6 @@ internal abstract class UploadWarningsTask : DefaultTask() {
             parallelRequestsCount = uploadWarningsParallelRequestsCount.get(),
             apiClient = ApiServiceProvider(
                 baseUrl = dumpConfiguration.baseUploadUrl.get(),
-                ownerAdapter = DefaultOwnerAdapter { ownerSerializer.get() },
                 loggerFactory = loggerFactory.get()
             ).provide()
         )

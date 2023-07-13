@@ -1,6 +1,7 @@
 package com.avito.android.tech_budget.internal.feature_toggles
 
 import com.avito.android.OwnerSerializerProvider
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.feature_toggles.FeatureToggle
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
@@ -57,7 +58,7 @@ internal abstract class UploadFeatureTogglesTask : DefaultTask() {
 
         val service = ApiServiceProvider(
             baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerSerializer = ownerSerializer.get(),
+            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
             loggerFactory = loggerFactory.get()
         ).provide<UploadFeatureTogglesApi>()
 

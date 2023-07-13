@@ -1,5 +1,6 @@
 package com.avito.android.tech_budget.internal.feature_toggles
 
+import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.feature_toggles.CollectProjectFeatureTogglesTask
 import com.avito.android.tech_budget.feature_toggles.FeatureToggle
@@ -26,9 +27,14 @@ internal class FeatureTogglesConfigurator : TechBudgetConfigurator {
             this.ownerSerializer.set(project.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.featureTogglesInput.set(collectProjectFeatureTogglesTask.flatMap { it.featureTogglesOutput })
+
+            val defaultJsonFileParser = JsonFileParser(
+                OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
+                FeatureToggle::class
+            )
+
             this.featureTogglesFileParser.set(
-                techBudgetExtension.featureToggles.featureTogglesFileParser
-                    .orElse(JsonFileParser(ownerSerializer.get(), FeatureToggle::class))
+                techBudgetExtension.featureToggles.featureTogglesFileParser.orElse(defaultJsonFileParser)
             )
         }
     }
