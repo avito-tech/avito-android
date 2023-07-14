@@ -18,6 +18,7 @@ public abstract class CodeOwnershipExtension(
     public val emptyOwnersErrorMessage: Property<String> =
         objects.property<String>().convention(DEFAULT_EMPTY_OWNERS_ERROR_MESSAGE)
 
+    @Suppress("DEPRECATION")
     @Deprecated("Unused variable anymore", replaceWith = ReplaceWith("ownerSerializersProvider"))
     public abstract val ownerSerializer: Property<OwnerSerializer>
 

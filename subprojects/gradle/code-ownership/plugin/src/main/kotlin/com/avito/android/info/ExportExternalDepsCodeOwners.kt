@@ -1,11 +1,11 @@
 package com.avito.android.info
 
-import com.avito.android.OwnerNameSerializer
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.check.deps.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCIES_SECTION_NAMES
 import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
+import com.avito.android.serializers.OwnerNameSerializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.toml.TomlMapper
 import org.gradle.api.DefaultTask

@@ -1,12 +1,12 @@
 package com.avito.android.owner.adapter
 
-import com.avito.android.OwnerIdSerializer
-import com.avito.android.OwnerNameSerializer
-import com.avito.android.OwnerNoOpSerializer
-import com.avito.android.OwnerSerializer
+import com.avito.android.serializers.OwnerFieldSerializer
+import com.avito.android.serializers.OwnerIdSerializer
+import com.avito.android.serializers.OwnerNameSerializer
+import com.avito.android.serializers.OwnerNoOpSerializer
 
 public class OwnerAdapterFactory(
-    private val serializer: OwnerSerializer = OwnerNoOpSerializer
+    private val serializer: OwnerFieldSerializer = OwnerNoOpSerializer
 ) {
 
     public val adapter: OwnerAdapter = createAdapter()

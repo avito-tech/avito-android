@@ -1,11 +1,11 @@
 package com.avito.android.tech_budget.internal.owners.dependencies
 
-import com.avito.android.OwnerIdSerializer
-import com.avito.android.OwnerNameSerializer
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
+import com.avito.android.serializers.OwnerIdSerializer
+import com.avito.android.serializers.OwnerNameSerializer
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo

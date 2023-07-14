@@ -1,7 +1,7 @@
 package com.avito.android.owner.adapter
 
-import com.avito.android.OwnerIdSerializer
 import com.avito.android.model.Owner
+import com.avito.android.serializers.OwnerIdSerializer
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter

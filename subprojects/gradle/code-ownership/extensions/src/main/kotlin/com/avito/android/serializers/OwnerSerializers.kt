@@ -1,15 +1,15 @@
-package com.avito.android
+package com.avito.android.serializers
 
 import com.avito.android.model.Owner
 
-public sealed interface OwnerSerializer
+public sealed interface OwnerFieldSerializer
 
 /**
  * Serializer that can serializer Owner to plain string by his name.
  *
  * Serialization and deserialization performs by only name of owner.
  */
-public interface OwnerNameSerializer : OwnerSerializer {
+public interface OwnerNameSerializer : OwnerFieldSerializer {
 
     public fun deserialize(ownerName: String): Owner
 
@@ -25,11 +25,11 @@ public interface OwnerNameSerializer : OwnerSerializer {
  *
  * The deserialization operation must identify the Owner by an unambiguous identifier.
  */
-public interface OwnerIdSerializer : OwnerSerializer {
+public interface OwnerIdSerializer : OwnerFieldSerializer {
 
     public fun deserialize(ownerId: String): Owner
 
     public fun serialize(owner: Owner): List<String>
 }
 
-public object OwnerNoOpSerializer : OwnerSerializer
+public object OwnerNoOpSerializer : OwnerFieldSerializer

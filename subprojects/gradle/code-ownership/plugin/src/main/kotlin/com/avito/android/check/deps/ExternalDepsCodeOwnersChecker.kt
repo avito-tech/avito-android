@@ -1,7 +1,7 @@
 package com.avito.android.check.deps
 
-import com.avito.android.OwnerNameSerializer
 import com.avito.android.diff.provider.OwnersProvider
+import com.avito.android.serializers.OwnerNameSerializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.toml.TomlMapper
 import java.io.File

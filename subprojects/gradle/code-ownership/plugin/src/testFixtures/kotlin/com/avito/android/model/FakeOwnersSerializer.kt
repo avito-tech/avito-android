@@ -1,6 +1,6 @@
 package com.avito.android.model
 
-import com.avito.android.OwnerNameSerializer
+import com.avito.android.serializers.OwnerNameSerializer
 
 class FakeOwnersSerializer : OwnerNameSerializer {
 

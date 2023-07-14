@@ -10,7 +10,7 @@ val FAKE_OWNERSHIP_EXTENSION: String =
                 Messenger("MessengerID")
             }
         
-            public class FakeOwnerNameSerializer : com.avito.android.OwnerNameSerializer {
+            public class FakeOwnerNameSerializer : com.avito.android.serializers.OwnerNameSerializer {
                     override fun deserialize(rawOwner: String): com.avito.android.model.Owner {
                         return FakeOwners.valueOf(rawOwner)
                     }
@@ -20,7 +20,7 @@ val FAKE_OWNERSHIP_EXTENSION: String =
                     }
             }
         
-            public class FakeOwnersIdSerializer : com.avito.android.OwnerIdSerializer {
+            public class FakeOwnersIdSerializer : com.avito.android.serializers.OwnerIdSerializer {
                     override fun deserialize(ownerId: String): com.avito.android.model.Owner {
                         return FakeOwners.values().first { it.id == ownerId }
                     }
@@ -32,8 +32,9 @@ val FAKE_OWNERSHIP_EXTENSION: String =
             
             public class FakeOwnerSerializersProvider: com.avito.android.OwnerSerializerProvider {
                 
-                    override fun provideIdSerializer(): com.avito.android.OwnerIdSerializer = FakeOwnersIdSerializer()
-                    override fun provideNameSerializer(): com.avito.android.OwnerNameSerializer = 
+                    override fun provideIdSerializer(): com.avito.android.serializers.OwnerIdSerializer = 
+                            FakeOwnersIdSerializer()
+                    override fun provideNameSerializer(): com.avito.android.serializers.OwnerNameSerializer = 
                             FakeOwnerNameSerializer()
             
             }

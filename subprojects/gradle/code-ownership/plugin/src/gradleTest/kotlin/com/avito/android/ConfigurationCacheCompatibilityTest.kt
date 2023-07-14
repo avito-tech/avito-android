@@ -26,8 +26,8 @@ internal class ConfigurationCacheCompatibilityTest {
                     name = "lib",
                     imports = listOf(
                         "import com.avito.android.model.Owner",
-                        "import com.avito.android.OwnerIdSerializer",
-                        "import com.avito.android.OwnerNameSerializer",
+                        "import com.avito.android.serializers.OwnerIdSerializer",
+                        "import com.avito.android.serializers.OwnerNameSerializer",
                         "import com.avito.android.OwnerSerializerProvider",
                     ),
                     buildGradleExtra = """

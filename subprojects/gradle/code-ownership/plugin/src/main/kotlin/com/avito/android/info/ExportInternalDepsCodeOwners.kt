@@ -1,12 +1,12 @@
 package com.avito.android.info
 
 import com.avito.android.CodeOwnershipExtension
-import com.avito.android.OwnerNameSerializer
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.model.Owner
 import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
+import com.avito.android.serializers.OwnerNameSerializer
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
