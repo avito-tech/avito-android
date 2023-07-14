@@ -4,7 +4,6 @@ FROM ${DOCKER_REGISTRY}/avito/debian-minbase:11.3
 ARG ARTIFACTORY_URL
 ENV DEBIAN_FRONTEND=noninteractive
 
-# TODO: remove java 11 after full migration in MBSA-234
 RUN \
   apt-get update && \
   apt-get install -y \
@@ -17,7 +16,6 @@ RUN \
     build-essential \
     acl \
     sudo \
-    openjdk-11-jdk \
     openjdk-17-jdk \
     ca-certificates-java && \
   apt-get clean && \

@@ -1,5 +1,7 @@
-build-tools;31.0.0
-platforms;android-31
+build-tools;33.0.2
+platforms;android-33
 tools
 extras;google;google_play_services
 extras;google;m2repository
+ndk;25.2.9519653
+cmake;3.22.1

@@ -14,7 +14,8 @@ RUN \
     build-essential \
     acl \
     sudo \
-    openjdk-17-jdk && \
+    openjdk-17-jdk \
+    ca-certificates-java && \
   apt-get clean && \
   apt-get purge
 
@@ -48,7 +49,7 @@ ARG PROFILER_VERSION=0.19.0
 # Install gradle-profiler
 RUN \
   cd /opt/ && \
-  curl ${ARTIFACTORY_URL}android-build-env/gradle-profiler/gradle-profiler-${PROFILER_VERSION}.zip \
+  curl https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/${PROFILER_VERSION}/gradle-profiler-${PROFILER_VERSION}.zip \
     --progress-bar --location --output gradle-profiler.zip && \
   unzip gradle-profiler.zip && \
   mv gradle-profiler-${PROFILER_VERSION} gradle-profiler && \
