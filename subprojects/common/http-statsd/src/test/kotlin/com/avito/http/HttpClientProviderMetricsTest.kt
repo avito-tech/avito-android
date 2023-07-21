@@ -67,7 +67,7 @@ internal class HttpClientProviderMetricsTest : BaseHttpClientProviderMetricsTest
         val provider = createClientBuilder()
 
         val httpClient = provider
-            .addInterceptor(RetryInterceptor(tries = 3))
+            .addInterceptor(RetryInterceptor(retries = 3))
             .build()
 
         mockWebServer.enqueue(MockResponse().setResponseCode(502))

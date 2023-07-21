@@ -31,7 +31,7 @@ internal class ElasticRoundRobinHttpServiceFactory(
                     )
                     .addInterceptor(
                         RetryInterceptor(
-                            tries = 6,
+                            retries = 6,
                             allowedMethods = listOf("GET", "POST"),
                             delayMs = 500
                         ) { originalRequest ->

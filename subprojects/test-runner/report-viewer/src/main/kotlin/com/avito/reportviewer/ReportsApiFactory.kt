@@ -27,7 +27,7 @@ public object ReportsApiFactory {
                         if (retryRequests) {
                             addInterceptor(
                                 RetryInterceptor(
-                                    tries = 3,
+                                    retries = 3,
                                     allowedMethods = listOf("POST")
                                 )
                             )

@@ -1,8 +1,6 @@
 package com.avito.http
 
 import com.avito.android.Result
-import com.avito.logger.PrintlnLoggerFactory
-import com.avito.logger.create
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.truth.isInstanceOf
@@ -21,8 +19,6 @@ import java.io.IOException
 internal class RetryInterceptorTest {
 
     private lateinit var server: MockWebServer
-
-    private val logger = PrintlnLoggerFactory.create<RetryInterceptorTest>()
 
     private val errorResponseCases = mapOf(
         "500" to MockResponse().setResponseCode(500),
@@ -106,7 +102,7 @@ internal class RetryInterceptorTest {
         return createApi(baseUrl = server.url("/")) {
             addInterceptor(
                 RetryInterceptor(
-                    tries = maxAttempts,
+                    retries = maxAttempts,
                     allowedMethods = listOf("GET", "POST"),
                     delayMs = 1,
                     useIncreasingDelay = false

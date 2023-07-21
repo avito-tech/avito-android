@@ -20,7 +20,7 @@ public class K8SOkHttpClientFactory(
         super.additionalConfig(builder)
         val logger = loggerFactory.create("KubernetesHttpClient")
         builder
-            .addInterceptor(RetryInterceptor(tries = httpTries))
+            .addInterceptor(RetryInterceptor(retries = httpTries))
             .addInterceptor(HttpLoggingInterceptor(logger::debug).apply { level = HttpLoggingInterceptor.Level.BODY })
             .eventListenerFactory {
                 StatsHttpEventListener(

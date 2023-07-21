@@ -28,7 +28,7 @@ internal class AlertinoClient(
 
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(
         RetryInterceptor(
-            tries = 3, allowedMethods = listOf("POST")
+            retries = 3, allowedMethods = listOf("POST")
         )
     ).addInterceptor(
         HttpLoggingInterceptor { message ->

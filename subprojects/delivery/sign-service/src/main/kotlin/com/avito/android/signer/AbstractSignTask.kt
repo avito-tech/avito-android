@@ -52,7 +52,7 @@ public abstract class AbstractSignTask(
             .readTimeout(timeout, TimeUnit.SECONDS)
             .addInterceptor(
                 RetryInterceptor(
-                    tries = 3,
+                    retries = 3,
                     allowedMethods = listOf("GET", "POST")
                 )
             )
