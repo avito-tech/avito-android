@@ -2,6 +2,7 @@ package com.avito.android.module_type
 
 import com.avito.android.module_type.internal.CheckModuleDependenciesTask
 import com.avito.android.module_type.internal.ExtractModuleDescriptionTask
+import com.avito.android.module_type.internal.hasModuleTypePlugin
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.module.configurations.ConfigurationType
@@ -12,6 +13,10 @@ import org.gradle.api.Project
 public class ModuleTypesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
+        if (project.hasModuleTypePlugin()) {
+            return
+        }
+
         if (project.isRoot()) {
             configureRootProject(project)
         } else {
@@ -39,6 +44,10 @@ public class ModuleTypesPlugin : Plugin<Project> {
             "module",
             ModuleTypeExtension::class.java,
         )
+        project.registerExtractModuleDescriptionTask(extension)
+    }
+
+    private fun Project.registerExtractModuleDescriptionTask(extension: ModuleTypeExtension) {
         val checksTask = project.rootProject.tasks.typedNamedOrNull<CheckModuleDependenciesTask>(
             CheckModuleDependenciesTask.name
         )

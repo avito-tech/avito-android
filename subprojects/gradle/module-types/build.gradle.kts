@@ -22,5 +22,12 @@ gradlePlugin {
             implementationClass = "com.avito.android.module_type.ModuleTypesPlugin"
             displayName = "Module types"
         }
+
+        create("validationsModuleTypesPlugin") {
+            id = "com.avito.android.module-types-validator"
+            implementationClass =
+                "com.avito.android.module_type.validation.ModuleTypeValidationPlugin"
+            displayName = "Module types validations"
+        }
     }
 }
