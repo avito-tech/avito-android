@@ -1,3 +1,4 @@
+import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.kotlin.dsl.getMandatoryStringProperty
@@ -100,8 +101,14 @@ instrumentation {
         "jobSlug" to "FunctionalTests"
     )
 
-    filters.register("ci") {
-        fromSource.excludeFlaky = true
+    filters {
+        register("ci") {
+            fromSource.excludeFlaky = true
+        }
+
+        register("local") {
+            fromSource
+        }
     }
 
     environments {
@@ -131,74 +138,80 @@ instrumentation {
         memoryLimit = defaultMemoryLimit
     )
 
-    val emulator31 = Device.CloudEmulator(
-        name = "api31",
-        api = 31,
-        model = "sdk_gphone64_x86_64",
-        image = emulatorImage(31, "6a829b9c8932"),
+    val emulator33 = Device.CloudEmulator(
+        name = "api33",
+        api = 33,
+        model = "sdk_gphone_x86_64",
+        image = emulatorImage(33, "409d2b4839b7"),
         cpuCoresRequest = defaultCpuRequest,
         cpuCoresLimit = defaultCpuLimit,
         memoryLimit = "4.5Gi"
     )
 
     configurations {
-        register("ui") {
-            testRunnerExecutionTimeout = Duration.ofMinutes(10)
-            instrumentationTaskTimeout = Duration.ofMinutes(10)
-            reportSkippedTests = true
-            filter = "ci"
-
+        register("local") {
+            filter = "local"
             targets {
-                register("api24") {
-                    deviceName = "API24"
-
-                    scheduling {
-                        quota {
-                            retryCount = 1
-                            minimumSuccessCount = 1
-                        }
-
-                        testsCountBasedReservation {
-                            device = emulator24
-                            minimum = 1
-                            maximum = 10
-                            testsPerEmulator = 12
-                        }
-                    }
-                }
-
-                register("api31") {
-                    deviceName = "API31"
-
+                register("api33") {
+                    deviceName = "API33"
                     scheduling {
                         quota {
                             retryCount = 1
                             minimumSuccessCount = 1
                         }
                         testsCountBasedReservation {
-                            device = emulator31
-                            minimum = 1
-                            maximum = 10
-                            testsPerEmulator = 12
+                            device = Device.LocalEmulator.device(33, "sdk_gphone_x86_64")
+                            maximum = 1
+                            testsPerEmulator = 1
                         }
                     }
                 }
             }
         }
-        register("local") {
-            targets {
-                register("api30") {
-                    deviceName = "API30"
-                    scheduling {
-                        quota {
-                            retryCount = 1
-                            minimumSuccessCount = 1
-                        }
-                        testsCountBasedReservation {
-                            device = Device.LocalEmulator.device(30, "Android_SDK_built_for_x86_64")
-                            maximum = 1
-                            testsPerEmulator = 1
-                        }
+
+        register(
+            "uiApi24",
+            instrumentationConfiguration(
+                targetDevice = emulator24,
+                targetDeviceName = "API24"
+            )
+        )
+
+        register(
+            "uiApi33",
+            instrumentationConfiguration(
+                targetDevice = emulator33,
+                targetDeviceName = "API33"
+            )
+        )
+    }
+}
+
+fun instrumentationConfiguration(
+    targetDevice: Device,
+    targetDeviceName: String,
+): Action<InstrumentationConfiguration> {
+    return Action {
+        testRunnerExecutionTimeout = Duration.ofMinutes(10)
+        instrumentationTaskTimeout = Duration.ofMinutes(10)
+        reportSkippedTests = true
+        filter = "ci"
+
+        targets {
+            register(targetDevice.name) {
+                scheduling {
+                    deviceName = targetDeviceName
+
+                    quota {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
+
+                    testsCountBasedReservation {
+                        device = targetDevice
+                        minimum = 1
+                        maximum = 5
+                        testsPerEmulator = 12
                     }
                 }
             }
@@ -218,6 +231,7 @@ val isLocalCheck = project.providers.gradleProperty("localCheck").getOrElse("fal
 
 if (!isLocalCheck) {
     tasks.check {
-        dependsOn(tasks.named("instrumentationUiKubernetes"))
+        dependsOn(tasks.named("instrumentationUiApi24Kubernetes"))
+        dependsOn(tasks.named("instrumentationUiApi33Kubernetes"))
     }
 }

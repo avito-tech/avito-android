@@ -53,14 +53,13 @@ cd ci/docker
 
 ## How to test a new emulator image
 
-???+ warn
-    Ensure that app supports SDK level of your emulator. Simply run test against built from Android Studio emulator with same SDK level.
 
-1. Run [instrumentation dynamic](http://links.k.avito.ru/nl) for one test on one already supported emulators and your one
+1. Ensure that app supports SDK level of your emulator. Pass a correct `maximumSupportedSdk` version to the `DeviceSettingsChecker` instance and then simply run test against built from Android Studio emulator with same SDK level. Try to run it also with Orchestrator disabled.
+2. Run [instrumentation dynamic](http://links.k.avito.ru/nl) for one test on one already supported emulators and your one
    1. Compare the test status, time execution, steps
-2. Run [instrumentation dynamic](http://links.k.avito.ru/nl) for any component test with many executions i.e. 100
+3. Run [instrumentation dynamic](http://links.k.avito.ru/nl) for any component test with many executions i.e. 100
    1. It will help check memory leaks. If there are no strange errors everything is ok
-3. Run [prCheck](https://tmct.avito.ru/buildConfiguration/AvitoAndroid_Build)
+4. Run [prCheck](http://links.k.avito.ru/wsT)
    1. Compare amount of tests at all statuses. There should be no LOST,FAILED,ERROR tests
 
 ## How to check amount of resources consumed by an emulator image
