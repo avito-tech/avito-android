@@ -9,6 +9,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import com.avito.utils.ProcessRunner
+import java.time.Duration
 
 public class DeviceProviderFactoryProvider(
     private val loggerFactory: LoggerFactory,
@@ -18,7 +19,8 @@ public class DeviceProviderFactoryProvider(
     private val androidDebugBridgeProvider: AndroidDebugBridgeProvider,
     private val emulatorsLogsReporterProvider: EmulatorsLogsReporterProvider,
     private val metricsConfig: RunnerMetricsConfig,
-    private val processRunner: ProcessRunner
+    private val processRunner: ProcessRunner,
+    private val adbPullTimeout: Duration,
 ) {
     public fun provide(): DevicesProviderFactory {
         return DeviceProviderFactoryImpl(
@@ -29,7 +31,8 @@ public class DeviceProviderFactoryProvider(
             emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
             androidDebugBridgeProvider = androidDebugBridgeProvider,
             metricsConfig = metricsConfig,
-            processRunner = processRunner
+            processRunner = processRunner,
+            adbPullTimeout = adbPullTimeout
         )
     }
 }

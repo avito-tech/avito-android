@@ -9,14 +9,19 @@ import com.avito.utils.ProcessRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.nio.file.Paths
+import java.time.Duration
 
 public abstract class PullScreenshotsTask : DefaultTask() {
 
     @get:Input
     public abstract val applicationIdProperty: Property<String>
+
+    @get:Internal
+    public abstract val adbPullTimeout: Property<Duration>
 
     @TaskAction
     public fun pullScreenshots() {
@@ -30,7 +35,8 @@ public abstract class PullScreenshotsTask : DefaultTask() {
                 adb = adb,
                 timeProvider = DefaultTimeProvider(),
                 metricsConfig = null,
-                processRunner = ProcessRunner.create(null)
+                processRunner = ProcessRunner.create(null),
+                adbPullTimeout = adbPullTimeout.get(),
             )
         ).getDevice()
 

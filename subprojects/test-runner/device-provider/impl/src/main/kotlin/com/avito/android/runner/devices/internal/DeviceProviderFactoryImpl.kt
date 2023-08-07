@@ -15,6 +15,7 @@ import com.avito.utils.ProcessRunner
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import java.io.File
+import java.time.Duration
 
 internal class DeviceProviderFactoryImpl(
     private val loggerFactory: LoggerFactory,
@@ -24,7 +25,8 @@ internal class DeviceProviderFactoryImpl(
     private val androidDebugBridgeProvider: AndroidDebugBridgeProvider,
     private val emulatorsLogsReporterProvider: EmulatorsLogsReporterProvider,
     private val metricsConfig: RunnerMetricsConfig,
-    private val processRunner: ProcessRunner
+    private val processRunner: ProcessRunner,
+    private val adbPullTimeout: Duration,
 ) : DevicesProviderFactory {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -52,7 +54,8 @@ internal class DeviceProviderFactoryImpl(
                         adb = Adb(),
                         timeProvider = timeProvider,
                         metricsConfig = null,
-                        processRunner = processRunner
+                        processRunner = processRunner,
+                        adbPullTimeout = adbPullTimeout,
                     ),
                     loggerFactory = loggerFactory,
                     deviceWorkerPoolProvider = deviceWorkerPoolProvider
@@ -66,7 +69,8 @@ internal class DeviceProviderFactoryImpl(
                         adb = Adb(),
                         timeProvider = timeProvider,
                         metricsConfig = metricsConfig,
-                        processRunner = processRunner
+                        processRunner = processRunner,
+                        adbPullTimeout = adbPullTimeout
                     ),
                     devicesManager = AdbDevicesManager(
                         adb = Adb()

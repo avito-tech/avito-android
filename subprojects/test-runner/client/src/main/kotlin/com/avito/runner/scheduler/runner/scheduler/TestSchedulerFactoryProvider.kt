@@ -130,7 +130,8 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
                     ),
                     androidDebugBridgeProvider = androidDebugBridgeProvider,
                     emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
-                    metricsConfig = metricsConfig
+                    metricsConfig = metricsConfig,
+                    adbPullTimeout = params.adbPullTimeout
                 ).provide(),
                 metricsConfig = metricsConfig
             ),

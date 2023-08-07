@@ -9,13 +9,18 @@ import com.avito.utils.ProcessRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.nio.file.Paths
+import java.time.Duration
 
 public abstract class ClearScreenshotsTask : DefaultTask() {
 
     @get:Input
     public abstract val applicationIdProperty: Property<String>
+
+    @get:Internal
+    public abstract val adbPullTimeout: Property<Duration>
 
     @TaskAction
     public fun clearScreenshots() {
@@ -31,7 +36,8 @@ public abstract class ClearScreenshotsTask : DefaultTask() {
                 adb = adb,
                 timeProvider = DefaultTimeProvider(),
                 metricsConfig = null,
-                processRunner = ProcessRunner.create(null)
+                processRunner = ProcessRunner.create(null),
+                adbPullTimeout = adbPullTimeout.get(),
             )
         ).getDevice()
 

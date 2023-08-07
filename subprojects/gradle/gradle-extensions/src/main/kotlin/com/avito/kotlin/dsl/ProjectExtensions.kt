@@ -62,6 +62,16 @@ public fun Project.getOptionalIntProperty(name: String, default: Int): Int =
 public fun Project.getMandatoryIntProperty(name: String): Int =
     getOptionalIntProperty(name) ?: throw RuntimeException("Parameter: $name is required (must be digit)")
 
+public fun Project.getOptionalLongProperty(name: String): Long? =
+    try {
+        getOptionalStringProperty(name, nullIfBlank = true)?.toLong()
+    } catch (e: NumberFormatException) {
+        null
+    }
+
+public fun Project.getMandatoryLongProperty(name: String): Long =
+    getOptionalLongProperty(name) ?: throw RuntimeException("Parameter: $name is required (must be digit)")
+
 @JvmOverloads
 public fun Project.getBooleanProperty(name: String, default: Boolean = false): Boolean =
     getOptionalStringProperty(name, nullIfBlank = true)?.toBoolean() ?: default

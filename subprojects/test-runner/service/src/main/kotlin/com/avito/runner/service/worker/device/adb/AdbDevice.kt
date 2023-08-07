@@ -40,6 +40,7 @@ public data class AdbDevice(
     // MBS-8531: don't use "ADB" here to avoid possible recursion
     override val logger: Logger,
     private val eventsListener: AdbDeviceEventsListener,
+    private val adbPullTimeout: Duration
 ) : Device {
 
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
@@ -381,7 +382,8 @@ public data class AdbDevice(
                     "pull",
                     from.toString(),
                     to.toString()
-                )
+                ),
+                timeoutSeconds = adbPullTimeout.toSeconds()
             )
 
             when (val pullResult = validator.isPulledCompletely(to)) {

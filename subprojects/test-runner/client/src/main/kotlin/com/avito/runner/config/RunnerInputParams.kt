@@ -7,6 +7,7 @@ import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
 import java.io.Serializable
+import java.time.Duration
 
 public data class RunnerInputParams(
     val mainApk: File?,
@@ -31,6 +32,7 @@ public data class RunnerInputParams(
     val uploadTestArtifacts: Boolean,
     val saveTestArtifactsToOutputs: Boolean,
     val useLegacyExtensionsV1Beta: Boolean,
+    val adbPullTimeout: Duration,
 ) : Serializable {
 
     public companion object

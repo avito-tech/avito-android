@@ -13,12 +13,14 @@ import com.avito.instrumentation.internal.ConfiguratorsFactory
 import com.avito.instrumentation.internal.InstrumentationTaskConfigurator
 import com.avito.instrumentation.internal.TaskValidatorsFactory
 import com.avito.kotlin.dsl.getBooleanProperty
+import com.avito.kotlin.dsl.getMandatoryLongProperty
 import com.avito.utils.buildFailer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import java.time.Duration
 
 public class InstrumentationTestsPlugin : Plugin<Project> {
 
@@ -99,6 +101,13 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             logcatTags.set(extension.logcatTags)
             enableDeviceDebug.set(configuration.enableDeviceDebug)
             kubernetesHttpTries.set(extension.kubernetesHttpTries.convention(3))
+            adbPullTimeout.set(
+                Duration.ofSeconds(
+                    extension.adbPullTimeoutSeconds.getOrElse(
+                        project.getMandatoryLongProperty("avito.device.adbPullTimeoutSeconds")
+                    )
+                )
+            )
 
             configurators.forEach {
                 it.configure(this)

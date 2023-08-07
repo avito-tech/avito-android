@@ -77,7 +77,8 @@ public class TestProjectGenerator(
      */
     public val gradleProperties: Map<String, String> = mapOf(
         "org.gradle.jvmargs" to "-Xmx1g -XX:MaxMetaspaceSize=512m",
-        "android.useAndroidX" to "true"
+        "android.useAndroidX" to "true",
+        "avito.device.adbPullTimeoutSeconds" to "5",
     )
 ) : Module {
 

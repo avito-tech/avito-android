@@ -12,13 +12,15 @@ import com.avito.runner.service.worker.device.adb.listener.CompositeAdbDeviceEve
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import com.avito.utils.ProcessRunner
+import java.time.Duration
 
 public class AdbDeviceFactory(
     private val loggerFactory: LoggerFactory,
     private val adb: Adb,
     private val timeProvider: TimeProvider,
     private val metricsConfig: RunnerMetricsConfig?,
-    private val processRunner: ProcessRunner
+    private val processRunner: ProcessRunner,
+    private val adbPullTimeout: Duration,
 ) {
 
     public fun create(
@@ -37,7 +39,8 @@ public class AdbDeviceFactory(
                     adb = adb,
                     timeProvider = timeProvider,
                     logger = logger,
-                    eventsListener = listener
+                    eventsListener = listener,
+                    adbPullTimeout = adbPullTimeout,
                 )
             }
     }

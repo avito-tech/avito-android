@@ -7,6 +7,7 @@ import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.runner.scheduler.suite.filter.createStubInstance
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
+import java.time.Duration
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
@@ -60,5 +61,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     reportViewerConfig = null,
     saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
     useLegacyExtensionsV1Beta = useLegacyExtensionsV1Beta,
-    deviceDebug = deviceDebug
+    deviceDebug = deviceDebug,
+    adbPullTimeout = Duration.ofSeconds(5),
 )

@@ -30,6 +30,8 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
 
     public abstract val kubernetesHttpTries: Property<Int>
 
+    public abstract val adbPullTimeoutSeconds: Property<Long>
+
     @get:Nested
     public abstract val experimental: ExperimentalExtension
 

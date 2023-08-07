@@ -38,6 +38,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
+import java.time.Duration
 import javax.inject.Inject
 
 public abstract class InstrumentationTestsTask @Inject constructor(
@@ -129,6 +130,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:Internal
     public abstract val statsDConfig: Property<StatsDConfig>
 
+    @get:Internal
+    public abstract val adbPullTimeout: Property<Duration>
+
     @get:OutputDirectory
     public abstract val output: DirectoryProperty
 
@@ -207,6 +211,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportViewerConfig = reportViewerConfig,
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
             useLegacyExtensionsV1Beta = experiments.useLegacyExtensionsV1Beta,
+            adbPullTimeout = adbPullTimeout.get()
         )
 
         val isGradleTestKitRun = gradleTestKitRun.get()
