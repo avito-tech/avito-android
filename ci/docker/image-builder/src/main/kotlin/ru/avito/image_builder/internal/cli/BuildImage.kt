@@ -24,8 +24,7 @@ internal open class BuildImage(
     protected val dockerfilePath: String by option(
         type = ArgType.String,
         description = "Relative path to Dockerfile inside context (buildDir)"
-    )
-        .default("Dockerfile")
+    ).default("Dockerfile")
 
     protected val buildDir: String by option(
         type = ArgType.String,
