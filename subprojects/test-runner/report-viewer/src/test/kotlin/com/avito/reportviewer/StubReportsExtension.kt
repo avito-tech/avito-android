@@ -1,5 +1,6 @@
 package com.avito.reportviewer
 
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.http.MockDispatcher
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
@@ -22,6 +23,7 @@ internal class StubReportsExtension : BeforeEachCallback, AfterEachCallback, Par
                 realApi = ReportsApiFactory.create(
                     host = mockWebServer.url("/").toString(),
                     builder = OkHttpClient.Builder(),
+                    loggerFactory = PrintlnLoggerFactory,
                 ),
                 mockDispatcher = mockDispatcher
             )

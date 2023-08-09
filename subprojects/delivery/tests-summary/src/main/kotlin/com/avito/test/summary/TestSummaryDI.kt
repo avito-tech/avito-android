@@ -31,6 +31,7 @@ internal class TestSummaryDI(
                     loggerFactory = loggerFactory,
                 )
             },
+            loggerFactory = loggerFactory,
         )
     }
 }

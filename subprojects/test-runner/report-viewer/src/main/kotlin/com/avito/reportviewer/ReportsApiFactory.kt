@@ -2,6 +2,7 @@ package com.avito.reportviewer
 
 import com.avito.http.RetryInterceptor
 import com.avito.jsonrpc.JsonRpcClient
+import com.avito.logger.LoggerFactory
 import com.avito.report.serialize.createReportGson
 import com.avito.reportviewer.internal.ReportsApiImpl
 import okhttp3.OkHttpClient
@@ -15,7 +16,8 @@ public object ReportsApiFactory {
         host: String,
         builder: OkHttpClient.Builder,
         retryRequests: Boolean = true,
-        readWriteTimeoutSec: Long = DEFAULT_TIMEOUT_SEC
+        readWriteTimeoutSec: Long = DEFAULT_TIMEOUT_SEC,
+        loggerFactory: LoggerFactory,
     ): ReportsApi {
         return ReportsApiImpl(
             client = JsonRpcClient(
@@ -34,7 +36,8 @@ public object ReportsApiFactory {
                         }
                     }
                     .build(),
-                gson = createReportGson()
+                gson = createReportGson(),
+                loggerFactory = loggerFactory,
             )
         )
     }

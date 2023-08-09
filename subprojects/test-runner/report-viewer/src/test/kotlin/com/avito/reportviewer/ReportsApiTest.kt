@@ -1,5 +1,6 @@
 package com.avito.reportviewer
 
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.test.model.TestName
@@ -102,6 +103,7 @@ internal class ReportsApiTest {
     private fun createNoRetriesReportsApi(): ReportsApi = ReportsApiFactory.create(
         host = mockWebServer.url("/").toString(),
         builder = OkHttpClient.Builder(),
-        retryRequests = false
+        retryRequests = false,
+        loggerFactory = PrintlnLoggerFactory,
     )
 }

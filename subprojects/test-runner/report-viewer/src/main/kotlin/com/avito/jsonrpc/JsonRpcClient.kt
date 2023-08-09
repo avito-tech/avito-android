@@ -1,6 +1,8 @@
 package com.avito.jsonrpc
 
 import com.avito.http.RequestMetadata
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
@@ -12,10 +14,12 @@ import java.io.IOException
 internal class JsonRpcClient(
     private val host: String,
     private val httpClient: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
+    loggerFactory: LoggerFactory,
 ) {
 
     private val jsonMime = "application/json"
+    private val logger = loggerFactory.create<JsonRpcClient>()
 
     inline fun <reified T : Any> jsonRpcRequest(request: RfcRpcRequest): T = internalRequest(request)
 
@@ -23,11 +27,14 @@ internal class JsonRpcClient(
 
     private inline fun <reified Response : Any> internalRequest(jsonRpcRequest: Any): Response {
 
+        val requestBodyJson = gson.toJson(jsonRpcRequest)
+        logger.info(">>> Sending JSON-RPC request with body: $requestBodyJson")
+
         val httpRequest = Request.Builder()
             .url(host.removeSuffix("/"))
             .header("Accept", jsonMime)
             .header("Content-Type", jsonMime)
-            .post(gson.toJson(jsonRpcRequest).toRequestBody(jsonMime.toMediaType()))
+            .post(requestBodyJson.toRequestBody(jsonMime.toMediaType()))
 
         val jsonRpcMethod = getMethod(jsonRpcRequest)
 
@@ -41,8 +48,10 @@ internal class JsonRpcClient(
         val responseBody = response.body?.string()
         if (responseBody != null && response.isSuccessful) {
             return try {
+                logger.info("<<< Got response: $responseBody")
                 gson.fromJson(responseBody)
             } catch (e: Throwable) {
+                logger.info("<<< Can't parse response body")
                 throw IllegalStateException("Can't parse response body", e)
             }
         } else {

@@ -1,5 +1,6 @@
 package com.avito.reportviewer
 
+import com.avito.logger.PrintlnLoggerFactory
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
@@ -24,6 +25,7 @@ internal class ReportsApiRetryTest {
         reportsApi = ReportsApiFactory.create(
             host = host,
             builder = OkHttpClient.Builder(),
+            loggerFactory = PrintlnLoggerFactory,
         )
     }
 
