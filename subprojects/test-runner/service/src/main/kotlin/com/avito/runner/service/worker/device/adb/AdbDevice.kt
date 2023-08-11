@@ -293,6 +293,14 @@ public data class AdbDevice(
         )
     }
 
+    override fun pullFile(deviceFile: Path, hostDir: Path, validator: PullValidator): Result<File> {
+        return pullInternal(
+            from = deviceFile,
+            to = hostDir,
+            validator = validator
+        )
+    }
+
     override fun clearDirectory(remotePath: Path): Result<Unit> = retryAction.retry(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,

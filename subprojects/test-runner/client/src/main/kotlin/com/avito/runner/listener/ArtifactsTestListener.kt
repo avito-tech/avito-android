@@ -22,6 +22,7 @@ internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
     private val outputDirectory: File,
     private val saveTestArtifactsToOutputs: Boolean,
+    private val uploadTestArtifacts: Boolean,
     private val reportArtifactsPullValidator: PullValidator,
     loggerFactory: LoggerFactory,
 ) : TestListener {
@@ -108,11 +109,19 @@ internal class ArtifactsTestListener(
     ): TestResult {
         return artifactsDir
             .flatMap { dir ->
-                device.pullDir(
-                    deviceDir = dir.toPath(),
-                    hostDir = tempDirectory,
-                    validator = reportArtifactsPullValidator
-                )
+                if (uploadTestArtifacts) {
+                    device.pullDir(
+                        deviceDir = dir.toPath(),
+                        hostDir = tempDirectory,
+                        validator = reportArtifactsPullValidator
+                    )
+                } else {
+                    device.pullFile(
+                        deviceFile = dir.resolve("report.json").toPath(),
+                        hostDir = tempDirectory,
+                        validator = reportArtifactsPullValidator
+                    )
+                }
             }
             .fold(
                 onSuccess = { dir ->

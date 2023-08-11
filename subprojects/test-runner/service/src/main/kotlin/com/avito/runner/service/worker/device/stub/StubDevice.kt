@@ -147,6 +147,10 @@ public open class StubDevice(
         TODO("Not yet implemented")
     }
 
+    override fun pullFile(deviceFile: Path, hostDir: Path, validator: PullValidator): Result<File> {
+        TODO("Not yet implemented")
+    }
+
     override fun clearDirectory(remotePath: Path): Result<Unit> = Result.tryCatch {}
 
     override fun list(remotePath: String): Result<List<String>> = Result.tryCatch { emptyList() }

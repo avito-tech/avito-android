@@ -46,6 +46,8 @@ public interface Device {
      */
     public fun pullDir(deviceDir: Path, hostDir: Path, validator: PullValidator): Result<File>
 
+    public fun pullFile(deviceFile: Path, hostDir: Path, validator: PullValidator): Result<File>
+
     public fun clearDirectory(remotePath: Path): Result<Unit>
 
     public fun list(remotePath: String): Result<List<String>>
