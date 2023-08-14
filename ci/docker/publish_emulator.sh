@@ -15,14 +15,14 @@ if [[ -z "${DOCKER_REGISTRY_PASSWORD+x}" ]]; then
     exit 1
 fi
 
-if [[ "$#" -ne 3 ]]; then
+if [[ "$#" -ne 4 ]]; then
     echo "ERROR: Wrong number of arguments $#. Expected ones:
     You should pass a path to a directory with Dockerfile and image name to publish:
-    ./publish_emulator.sh <relative path to Dockerfile and image name> <API level> <debug>
+    ./publish_emulator.sh <relative path to Dockerfile and image name> <API level> <Emulator type: google_apis or google_atd> <debug>
     See documentation about dir conventions \`./ci/docker/README.md##Docker dir structure conventions\`
 
     Example:
-    ./publish_emulator.sh hermetic 30 true
+    ./publish_emulator.sh hermetic 30 google_apis true
     "
     exit 1
 fi
@@ -50,7 +50,7 @@ if [ ! -f "$IMAGE_NAME_FILE" ]; then
 fi
 readonly TMP_IMAGE_NAME=$(cat "$IMAGE_NAME_FILE")
 
-readonly DEBUG=$3
+readonly DEBUG=$4
 if [[ $DEBUG = true ]]; then
   readonly IMAGE_NAME=$TMP_IMAGE_NAME-debug
 else
@@ -58,6 +58,7 @@ else
 fi
 
 readonly API=$2
+readonly TYPE=$3
 
 docker run --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \
@@ -70,4 +71,5 @@ docker run --rm \
         --registry "${DOCKER_REGISTRY}" \
         --artifactoryUrl "${ARTIFACTORY_URL}" \
         --imageName "${IMAGE_NAME}" \
-        --api "${API}"
+        --api "${API}" \
+        --type "${TYPE}"

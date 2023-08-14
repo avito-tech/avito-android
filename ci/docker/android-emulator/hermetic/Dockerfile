@@ -4,9 +4,11 @@ FROM ${DOCKER_REGISTRY}/avito/debian-minbase:9.13
 ARG ARTIFACTORY_URL
 ARG SDK_VERSION
 ARG EMULATOR_ARCH
+ARG EMULATOR_TYPE
 
 ENV EMULATOR_ARCH=${EMULATOR_ARCH}
 ENV SDK_VERSION=${SDK_VERSION}
+ENV EMULATOR_TYPE=${EMULATOR_TYPE}
 
 # -------------------- Common -------------------
 # net-tools             basic network primitives
@@ -53,18 +55,18 @@ RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-
     unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/emulator/emulator_linux_32_1_14.zip $ANDROID_HOME && \
     unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-33_0_2.zip $ANDROID_HOME && \
     unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDROID_HOME && \
-    unzip_from_url.sh "${ANDROID_SDK_BASE_URL}/system-images/system-images-android-${SDK_VERSION}-${EMULATOR_ARCH}.zip" $ANDROID_HOME && \
+    unzip_from_url.sh "${ANDROID_SDK_BASE_URL}/system-images/system-images-android-${SDK_VERSION}-${EMULATOR_ARCH}-${EMULATOR_TYPE}.zip" $ANDROID_HOME && \
     rm /usr/local/bin/unzip_from_url.sh
 
 # ------------------ Emulators ------------------
 # Create emulator and increase internal storage
 RUN echo "no" | avdmanager create avd \
     --name emulator_${SDK_VERSION} \
-    --package "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" \
-    --abi google_apis/${EMULATOR_ARCH} && \
+    --package "system-images;android-${SDK_VERSION};${EMULATOR_TYPE};${EMULATOR_ARCH}" \
+    --abi ${EMULATOR_TYPE}/${EMULATOR_ARCH} && \
     mksdcard -l e 512M /sdcard.img
 
-COPY hardware/config_${SDK_VERSION}.ini /root/.android/avd/emulator_${SDK_VERSION}.avd/config.ini
+COPY hardware/config_${SDK_VERSION}_${EMULATOR_TYPE}.ini /root/.android/avd/emulator_${SDK_VERSION}.avd/config.ini
 # -----------------------------------------------
 
 # ----------------- Entrypoint ------------------

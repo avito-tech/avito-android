@@ -37,6 +37,7 @@ internal class EmceeWorkerBuilder(
         val preparedImageId = emulatorPreparer.prepareEmulators(
             imageId = imageId,
             apis = apis,
+            type = EmulatorType.google_apis,
             emulatorLocale = emulatorLocale
         )
 

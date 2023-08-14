@@ -19,6 +19,7 @@ internal class EmulatorImageBuilder(
      */
     private val buildDir: File,
     private val api: Int,
+    private val type: EmulatorType,
     private val registry: String,
     private val imageName: String,
     private val artifactoryUrl: String,
@@ -36,6 +37,7 @@ internal class EmulatorImageBuilder(
         val preparedImageId = emulatorPreparer.prepareEmulators(
             imageId = imageId,
             apis = setOf(api),
+            type = type,
             emulatorLocale = "en-US"
         )
 
@@ -50,6 +52,7 @@ internal class EmulatorImageBuilder(
         val buildResult = docker.build(
             "--build-arg", "DOCKER_REGISTRY=$registry",
             "--build-arg", "SDK_VERSION=$api",
+            "--build-arg", "EMULATOR_TYPE=$type",
             "--build-arg", "EMULATOR_ARCH=$emulatorArch",
             "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
             "--file", File(buildDir, dockerfilePath).canonicalPath,

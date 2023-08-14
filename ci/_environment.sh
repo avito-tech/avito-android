@@ -12,5 +12,5 @@ if [[ -z "${ARTIFACTORY_URL+x}" ]]; then
 fi
 
 IMAGE_ANDROID_BUILDER=${DOCKER_REGISTRY}/android/builder-hermetic:78633b8380a9
-IMAGE_BUILDER=${DOCKER_REGISTRY}/android/image-builder:9502228da1d3
+IMAGE_BUILDER=${DOCKER_REGISTRY}/android/image-builder:6258016ea33d
 DOCUMENTATION_IMAGE=${DOCKER_REGISTRY}/android/documentation:802502572f

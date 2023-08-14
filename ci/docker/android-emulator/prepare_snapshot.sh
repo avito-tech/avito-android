@@ -28,12 +28,12 @@ function requireAtLeast() {
     fi
 }
 
-if [[ "$#" -ne 2 ]]; then
+if [[ "$#" -ne 4 ]]; then
     echo "ERROR: Wrong number of arguments $#. Expected ones:
-    SDK version, emulator architecture.
+    SDK version, emulator type, emulator architecture.
 
     For example:
-    ./prepare_snapshot.sh 24 x86
+    ./prepare_snapshot.sh 24 google_apis x86
     "
     exit 1
 fi
@@ -43,15 +43,16 @@ if ! [[ $1 =~ ^[0-9]+$ ]]; then
     exit 1
 fi
 
-if ! [[ $2 =~ ^x86(_64)?$ ]]; then
+if ! [[ $3 =~ ^x86(_64)?$ ]]; then
     echo_error "ERROR: Incorrect emulator architecture passed. x86 and x86_64 are supported."
     exit 1
 fi
 
 readonly SDK_VERSION=$1
-readonly EMULATOR_ARCH=$2
+readonly EMULATOR_TYPE=$2
+readonly EMULATOR_ARCH=$3
 
-readonly AVD_IMAGE_DIR=/opt/android-sdk/system-images/android-${SDK_VERSION}/google_apis/${EMULATOR_ARCH}
+readonly AVD_IMAGE_DIR=/opt/android-sdk/system-images/android-${SDK_VERSION}/${EMULATOR_TYPE}/${EMULATOR_ARCH}
 if [ ! -d "$AVD_IMAGE_DIR" ]; then
   echo "Error: avd image dir ${AVD_IMAGE_DIR} not found."
   exit 1

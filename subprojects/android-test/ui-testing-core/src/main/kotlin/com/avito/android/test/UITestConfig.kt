@@ -58,8 +58,10 @@ object UITestConfig {
      * Pattern for launcher package in Android 11+ devices.
      * Hardcoded values due to package visibility restrictions:
      * https://developer.android.com/training/package-visibility/declaring
+     * Also we match "com.android.fakesystemapp" because ATD emulators use it instead of launcher
+     * So matching "com.android.fakesystemapp" allows us to pass custom waitForLauncher check for ATD emulators
      */
-    var deviceLauncherPackage: Pattern = Pattern.compile(".+launcher.*")
+    var deviceLauncherPackage: Pattern = Pattern.compile(".+launcher.*|com.android.fakesystemapp")
 
     sealed class ClickType {
         /**

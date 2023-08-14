@@ -1,5 +1,6 @@
 package ru.avito.image_builder.internal.command.emulator
 
+import ru.avito.image_builder.internal.command.EmulatorType
 import ru.avito.image_builder.internal.docker.ContainerId
 import ru.avito.image_builder.internal.docker.Docker
 import ru.avito.image_builder.internal.docker.ImageId
@@ -12,12 +13,12 @@ internal class EmulatorPreparer(
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
 
-    fun prepareEmulators(imageId: ImageId, apis: Set<Int>, emulatorLocale: String): ImageId {
+    fun prepareEmulators(imageId: ImageId, apis: Set<Int>, type: EmulatorType, emulatorLocale: String): ImageId {
         val containerId = runContainer(imageId)
 
         for (api in apis) {
             val architecture = if (api < 28) "x86" else "x86_64"
-            prepareEmulator(containerId, api, architecture, emulatorLocale)
+            prepareEmulator(containerId, api, type, architecture, emulatorLocale)
         }
 
         val preparedImageId = commitChanges(containerId)
@@ -49,6 +50,7 @@ internal class EmulatorPreparer(
     private fun prepareEmulator(
         containerId: ContainerId,
         api: Int,
+        type: EmulatorType,
         architecture: String,
         emulatorLocale: String
     ) {
@@ -56,7 +58,7 @@ internal class EmulatorPreparer(
             containerId.value,
             "bash",
             "-c",
-            "./prepare_snapshot.sh $api $architecture $emulatorLocale",
+            "./prepare_snapshot.sh $api $type $architecture $emulatorLocale",
         )
         check(result.isSuccess) {
             "Failed to exec preparation script: ${result.exceptionOrNull()}"

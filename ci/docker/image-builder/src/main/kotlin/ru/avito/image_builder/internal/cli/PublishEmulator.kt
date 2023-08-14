@@ -3,6 +3,7 @@ package ru.avito.image_builder.internal.cli
 import kotlinx.cli.ArgType
 import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.EmulatorImageBuilder
+import ru.avito.image_builder.internal.command.EmulatorType
 import ru.avito.image_builder.internal.command.ImagePublisher
 import ru.avito.image_builder.internal.command.ImageTagger
 import ru.avito.image_builder.internal.command.RegistryLoginImpl
@@ -32,6 +33,11 @@ internal class PublishEmulator(
         description = "API version"
     ).required()
 
+    private val type: EmulatorType by option(
+        type = ArgType.Choice<EmulatorType>(),
+        description = "Emulator type"
+    ).required()
+
     override fun execute() {
         val docker = CliDocker()
 
@@ -40,6 +46,7 @@ internal class PublishEmulator(
             dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
             api = api,
+            type = type,
             registry = registry,
             imageName = imageName,
             artifactoryUrl = artifactoryUrl,

@@ -4,6 +4,7 @@ FROM ${DOCKER_REGISTRY}/android/ubuntu:20.04
 ARG ARTIFACTORY_URL
 ARG SDK_VERSION
 ARG EMULATOR_ARCH
+ARG EMULATOR_TYPE
 
 # -------------------- Common -------------------
 # net-tools             basic network primitives
@@ -59,15 +60,15 @@ RUN mkdir $HOME/.android && touch $HOME/.android/repositories.cfg && \
     "platforms;android-${SDK_VERSION}" \
     "emulator" \
     "platform-tools" \
-    "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" && \
+    "system-images;android-${SDK_VERSION};${EMULATOR_TYPE};${EMULATOR_ARCH}" && \
     chmod -R o+rwX ${ANDROID_SDK_ROOT}
 
 # ------------------ Emulators ------------------
 # Create emulator and increase internal storage
 RUN echo "no" | avdmanager create avd \
     --name emulator_${SDK_VERSION} \
-    --package "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" \
-    --abi google_apis/${EMULATOR_ARCH} && \
+    --package "system-images;android-${SDK_VERSION};${EMULATOR_TYPE};${EMULATOR_ARCH}" \
+    --abi ${EMULATOR_TYPE}/${EMULATOR_ARCH} && \
     mksdcard -l e 512M /sdcard.img
 
 COPY hardware/config_${SDK_VERSION}.ini /root/.android/avd/emulator_${SDK_VERSION}.avd/config.ini
