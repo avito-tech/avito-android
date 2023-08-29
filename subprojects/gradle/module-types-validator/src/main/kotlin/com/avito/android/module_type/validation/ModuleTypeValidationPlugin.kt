@@ -2,9 +2,9 @@ package com.avito.android.module_type.validation
 
 import com.avito.android.module_type.DefaultModuleType
 import com.avito.android.module_type.ModuleTypeExtension
-import com.avito.android.module_type.internal.hasModuleTypePlugin
-import com.avito.android.module_type.internal.moduleTypeExtension
-import com.avito.android.module_type.pluginId
+import com.avito.android.module_type.ModuleTypesPlugin
+import com.avito.android.module_type.validation.internal.hasModuleTypePlugin
+import com.avito.android.module_type.validation.internal.moduleTypeExtension
 import com.avito.android.module_type.validation.publicimpl.ValidatePublicDependenciesImplementedTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -17,7 +17,7 @@ public class ModuleTypeValidationPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         if (!target.hasModuleTypePlugin()) {
-            target.plugins.apply(pluginId)
+            target.plugins.apply(ModuleTypesPlugin::class.java)
         }
 
         val moduleTypeExtension = target.moduleTypeExtension()

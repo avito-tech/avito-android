@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.moduleDependencies)
+    api(projects.subprojects.gradle.moduleTypes)
 
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.common.problem)
@@ -17,10 +17,11 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("moduleTypes") {
-            id = "com.avito.android.module-types"
-            implementationClass = "com.avito.android.module_type.ModuleTypesPlugin"
-            displayName = "Module types"
+        create("validationsModuleTypes") {
+            id = "com.avito.android.module-types-validator"
+            implementationClass =
+                "com.avito.android.module_type.validation.ModuleTypeValidationPlugin"
+            displayName = "Module types validations"
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.avito.android.module_type.validation
 
 import com.avito.android.module_type.FunctionalType
-import com.avito.android.module_type.pluginId
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.module.FolderModule
@@ -55,7 +54,7 @@ internal object DependenciesValidationProjectGenerator {
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
-                id(pluginId)
+                id("com.avito.android.module-types")
             },
             modules = listOf(
                 FolderModule(
@@ -133,7 +132,7 @@ internal object DependenciesValidationProjectGenerator {
             packageName = logicalModuleName,
             imports = listOf("import com.avito.android.module_type.*"),
             plugins = plugins {
-                id(pluginId)
+                id("com.avito.android.module-types")
             },
             buildGradleExtra = """
                 module {
@@ -159,7 +158,7 @@ internal object DependenciesValidationProjectGenerator {
             packageName = "$logicalModuleName.demo",
             imports = listOf("import com.avito.android.module_type.*", "import kotlin.collections.SetsKt"),
             plugins = plugins {
-                id(pluginId)
+                id("com.avito.android.module-types")
                 id("com.avito.android.module-types-validator")
             },
             dependencies = dependentModules.map {

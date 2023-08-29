@@ -2,7 +2,6 @@ package com.avito.android.module_type
 
 import com.avito.android.module_type.internal.CheckModuleDependenciesTask
 import com.avito.android.module_type.internal.ExtractModuleDescriptionTask
-import com.avito.android.module_type.internal.hasModuleTypePlugin
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.module.configurations.ConfigurationType
@@ -13,7 +12,7 @@ import org.gradle.api.Project
 public class ModuleTypesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        if (project.hasModuleTypePlugin()) {
+        if (project.plugins.hasPlugin(ModuleTypesPlugin::class.java)) {
             return
         }
 

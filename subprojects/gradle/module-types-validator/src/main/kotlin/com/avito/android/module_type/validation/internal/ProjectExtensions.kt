@@ -1,4 +1,4 @@
-package com.avito.android.module_type.internal
+package com.avito.android.module_type.validation.internal
 
 import com.avito.android.module_type.ModuleTypeExtension
 import com.avito.android.module_type.ModuleTypesPlugin

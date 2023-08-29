@@ -3,13 +3,14 @@ package com.avito.android.module_type.validation.publicimpl.internal
 import com.avito.android.module_type.FunctionalType
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class DependenciesFileReaderTest {
 
     @Test
-    fun `read file - return correct dependencies`() {
-        val inputFile = prepareReportFile()
+    fun `read file - return correct dependencies`(@TempDir reportDirectory: File) {
+        val inputFile = prepareReportFile(reportDirectory)
 
         val dependenciesFileReader = DependenciesFileReader(inputFile, "lib-c:demo")
         val dependencies = dependenciesFileReader.readProjectDependencies()
@@ -25,7 +26,7 @@ class DependenciesFileReaderTest {
         )
     }
 
-    private fun prepareReportFile(): File {
+    private fun prepareReportFile(directory: File): File {
         val text = """
             
             ------------------------------------------------------------
@@ -52,7 +53,7 @@ class DependenciesFileReaderTest {
 
             A web-based, searchable dependency report is available by adding the --scan option.
         """.trimIndent()
-        val reportFile = File("report.txt")
+        val reportFile = File(directory, "report.txt")
         reportFile.writeText(text)
         return reportFile
     }
