@@ -37,6 +37,7 @@ public class ModuleTypeValidationPlugin : Plugin<Project> {
         moduleTypeExtension: ModuleTypeExtension,
         validationExtension: PublicImplValidationExtension
     ) {
+        val project = this
         val projectConfigurations = this.configurations
 
         val dependenciesTask = tasks.register<DependencyReportTask>("extractDependencies") {
@@ -59,8 +60,9 @@ public class ModuleTypeValidationPlugin : Plugin<Project> {
             }
             functionalType.set(moduleType.type)
             projectDependencies.set(dependenciesTask.map { requireNotNull(it.outputFile) })
-            projectPath.set(path)
+            projectPath.set(project.path)
             rootProjectDir.set(rootProject.projectDir)
+            buildFile.set(getBuildFile())
             reportFile.set(layout.buildDirectory.file("report/public_impl_validation.txt"))
         }
     }

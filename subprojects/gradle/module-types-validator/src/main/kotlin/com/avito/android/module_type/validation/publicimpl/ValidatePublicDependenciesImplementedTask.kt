@@ -4,6 +4,7 @@ import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.validation.publicimpl.internal.DependenciesFileReader
 import com.avito.android.module_type.validation.publicimpl.internal.ProjectDependencyInfo
 import com.avito.android.module_type.validation.publicimpl.internal.asRegex
+import com.avito.capitalize
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -28,6 +29,9 @@ public abstract class ValidatePublicDependenciesImplementedTask : DefaultTask() 
 
     @get:Internal
     public abstract val rootProjectDir: Property<File>
+
+    @get:Internal
+    public abstract val buildFile: Property<File>
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -56,12 +60,9 @@ public abstract class ValidatePublicDependenciesImplementedTask : DefaultTask() 
 
     private fun reportError(publicModules: Map<String, List<ProjectDependencyInfo>>) {
         val errorText = buildString {
-            appendLine(
-                "Project ${projectPath.get()} must include all implementations/fakes " +
-                        "for public dependencies of logical modules.\n" +
-                        publicModules.entries.joinToString(transform = ::createDetailedInformation)
-            )
-            appendLine("------\n")
+            appendLine("Public dependencies validation failed. Unable to find implementation for all public.")
+            appendLine()
+            appendLine(publicModules.entries.joinToString(transform = ::createDetailedInformation))
         }
 
         reportFile.get().asFile.writeText(errorText)
@@ -71,19 +72,30 @@ public abstract class ValidatePublicDependenciesImplementedTask : DefaultTask() 
     private fun createDetailedInformation(dependency: Map.Entry<String, List<ProjectDependencyInfo>>): String {
         val (logicalModule, availablePaths) = dependency
         val fullModulePath = availablePaths.first(ProjectDependencyInfo::isPublicType).modulePath
-        val possibleImplementations = findPublicImplementation(logicalModule)
+        val possibleImplementationModules = findPublicImplementationModules(logicalModule)
         val breadcrumbsPaths = availablePaths.joinToString(separator = "\n") { it.fullPath }
 
+        val possibleImplementations = possibleImplementationModules.joinToString(separator = "\n") { modulePath ->
+            val projectReferenceText = convertModulePathToProjectReference(modulePath)
+            "\timplementation(projects.$projectReferenceText)"
+        }
+
         return buildString {
-            appendLine("Such modules are: * $fullModulePath")
-                .appendLine("Dependency appears from: ")
-                .appendLine(breadcrumbsPaths)
-                .appendLine()
-                .appendLine("Possible implementations: $possibleImplementations")
+            appendLine("Please, add impl/fake dependencies to the build file")
+            appendLine("file://" + buildFile.get().absolutePath)
+            appendLine("Possible implementations:")
+            appendLine(possibleImplementations)
+            appendLine()
+            appendLine("Missing implementations for module:")
+            appendLine("\t **$fullModulePath**")
+            appendLine("Dependency appears from: ")
+            appendLine("\t" + breadcrumbsPaths)
+            appendLine("-------")
         }
     }
 
-    private fun findPublicImplementation(logicalModule: String): List<String> {
+
+    private fun findPublicImplementationModules(logicalModule: String): List<String> {
         val implementationTypes = setOf(FunctionalType.Impl, FunctionalType.Fake)
 
         val logicalModuleDirectory = File(
@@ -100,6 +112,16 @@ public abstract class ValidatePublicDependenciesImplementedTask : DefaultTask() 
             .orEmpty()
             .filter { it.name.matches(implementationTypes.asRegex()) }
             .map { "$logicalModule:${it.name}" }
+    }
+
+    private fun convertModulePathToProjectReference(modulePath: String): String {
+        return modulePath
+            .removePrefix(":")
+            .split(":").joinToString(separator = ".") { moduleName ->
+                moduleName.split("-")
+                    .joinToString(separator = "") { it.capitalize() }
+                    .replaceFirstChar { it.lowercase() }
+            }
     }
 
     public companion object {

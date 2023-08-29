@@ -38,8 +38,9 @@ internal class ValidateProjectDependenciesTest {
         runCheck(projectDir, expectFailure = true)
             .assertThat()
             .buildFailed()
-            .outputContains("must include all implementations/fakes for public dependencies of logical modules.")
-            .outputDoesNotContain("Possible implementations: []")
+            .outputContains("Please, add impl/fake dependencies to the build file")
+            .outputContains("implementation(projects.libA.impl)")
+            .outputContains("implementation(projects.libA.fake)")
     }
 
     private fun runCheck(projectDir: File, expectFailure: Boolean = false) = gradlew(
