@@ -49,12 +49,14 @@ internal object DependenciesValidationProjectGenerator {
 
     fun generateProject(
         projectDir: File,
-        connectedFunctionalType: FunctionalType? = null
+        connectedFunctionalType: FunctionalType? = null,
+        applyPluginToImpl: Boolean = false
     ) {
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.module-types")
+                id("com.avito.android.module-types-validator")
             },
             modules = listOf(
                 FolderModule(
@@ -67,7 +69,8 @@ internal object DependenciesValidationProjectGenerator {
                         createModule(
                             logicalModuleName = "lib-a",
                             functionalType = FunctionalType.Impl,
-                            dependentModules = setOf(":lib-a:public")
+                            dependentModules = setOf(":lib-a:public"),
+                            applyPlugin = applyPluginToImpl
                         ),
                         createModule(
                             logicalModuleName = "lib-a",
@@ -125,7 +128,8 @@ internal object DependenciesValidationProjectGenerator {
     private fun createModule(
         logicalModuleName: String,
         functionalType: FunctionalType,
-        dependentModules: Set<String> = emptySet()
+        dependentModules: Set<String> = emptySet(),
+        applyPlugin: Boolean = false
     ): KotlinModule {
         return KotlinModule(
             name = functionalType.name.lowercase(),
@@ -133,6 +137,9 @@ internal object DependenciesValidationProjectGenerator {
             imports = listOf("import com.avito.android.module_type.*"),
             plugins = plugins {
                 id("com.avito.android.module-types")
+                if (applyPlugin) {
+                    id("com.avito.android.module-types-validator")
+                }
             },
             buildGradleExtra = """
                 module {

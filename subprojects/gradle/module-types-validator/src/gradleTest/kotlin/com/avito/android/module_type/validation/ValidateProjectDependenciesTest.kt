@@ -43,6 +43,15 @@ internal class ValidateProjectDependenciesTest {
             .outputContains("implementation(projects.libA.fake)")
     }
 
+    @Test
+    internal fun `apply validation plugin to library module - failure`(@TempDir projectDir: File) {
+        DependenciesValidationProjectGenerator.generateProject(projectDir, applyPluginToImpl = true)
+        runCheck(projectDir, expectFailure = true)
+            .assertThat()
+            .buildFailed()
+            .outputContains("This validation check should be performed only on demo or application modules")
+    }
+
     private fun runCheck(projectDir: File, expectFailure: Boolean = false) = gradlew(
         projectDir,
         ValidatePublicDependenciesImplementedTask.NAME,
