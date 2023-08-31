@@ -2,26 +2,33 @@ package com.avito.android.rule.base
 
 import android.app.Activity
 import android.content.Intent
-import androidx.annotation.CallSuper
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.rule.SimpleRule
+import com.avito.android.runner.InHouseInstrumentationTestRunner
 
-open class BaseActivityScenarioRule<A : Activity>(
+abstract class BaseActivityScenarioRule<A : Activity>(
     private val activityClass: Class<A>,
     private val initialTouchMode: Boolean,
     private val launchActivity: Boolean,
 ) : SimpleRule() {
 
+    private val shouldCloseScenario: Boolean =
+        (InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner)
+            .testRunEnvironment
+            .asRunEnvironmentOrThrow()
+            .shouldCloseScenarioInRule
+
     private var _scenario: ActivityScenario<A>? = null
 
-    val scenario: ActivityScenario<A> get() = checkNotNull(_scenario) {
-        buildString {
-            append("Activity $activityClass has not been launched. ")
-            append("Start activity using `launchActivity(...)` function first ")
-            append("or pass `launchActivity = true` parameter to constructor.")
+    val scenario: ActivityScenario<A>
+        get() = checkNotNull(_scenario) {
+            buildString {
+                append("Activity $activityClass has not been launched. ")
+                append("Start activity using `launchActivity(...)` function first ")
+                append("or pass `launchActivity = true` parameter to constructor.")
+            }
         }
-    }
 
     override fun before() {
         super.before()
@@ -32,13 +39,19 @@ open class BaseActivityScenarioRule<A : Activity>(
 
     override fun after() {
         super.after()
-        val scenario = checkNotNull(_scenario) {
+        checkNotNull(_scenario) {
             buildString {
                 append("Activity $activityClass has not been launched during the test. ")
                 append("Make sure that there are no unused ScreenRules declared in the test but never used.")
             }
         }
-        scenario.close()
+        if (shouldCloseScenario) {
+            /**
+             * Closing it's time consuming some tests waiting for 45 sec
+             * And we don't know do we really have to close it
+             */
+            scenario.close()
+        }
         afterActivityFinished()
     }
 
@@ -66,13 +79,7 @@ open class BaseActivityScenarioRule<A : Activity>(
         return scenario
     }
 
-    @CallSuper
-    protected open fun afterActivityLaunched() {
-        // empty
-    }
+    protected abstract fun afterActivityLaunched()
 
-    @CallSuper
-    protected open fun afterActivityFinished() {
-        // empty
-    }
+    protected abstract fun afterActivityFinished()
 }

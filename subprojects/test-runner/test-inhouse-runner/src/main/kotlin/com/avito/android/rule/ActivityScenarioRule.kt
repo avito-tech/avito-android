@@ -11,7 +11,7 @@ import com.avito.android.rule.base.BaseActivityScenarioRule
  */
 internal class ActivityScenarioRule<T : Activity>(
     activityClass: Class<T>,
-    private val stubIntents: Boolean
+    private val stubIntents: Boolean,
 ) : BaseActivityScenarioRule<T>(
     activityClass = activityClass,
     initialTouchMode = true,
@@ -23,11 +23,9 @@ internal class ActivityScenarioRule<T : Activity>(
         if (stubIntents) {
             com.avito.android.test.Intents.stubEverything()
         }
-        super.afterActivityLaunched()
     }
 
     override fun afterActivityFinished() {
-        super.afterActivityFinished()
         Intents.release()
     }
 }

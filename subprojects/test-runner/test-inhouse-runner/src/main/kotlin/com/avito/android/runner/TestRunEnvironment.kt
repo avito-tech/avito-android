@@ -57,38 +57,8 @@ sealed class TestRunEnvironment {
         internal val statsDConfig: StatsDConfig,
         internal val fileStorageUrl: HttpUrl,
         internal val mockDispatcherIsStrict: Boolean,
+        internal val shouldCloseScenarioInRule: Boolean,
     ) : TestRunEnvironment()
-}
-
-@Deprecated("Use parseEnvironment, fun will be deleted", replaceWith = ReplaceWith("parseEnvironment"))
-@Suppress("UnusedPrivateMember", "UNUSED_PARAMETER")
-fun provideEnvironment(
-    apiUrlParameterKey: String = "unnecessaryUrl",
-    mockWebServerUrl: String = "localhost",
-    argumentsProvider: ArgsProvider,
-): TestRunEnvironment {
-    return try {
-        val coordinates = ReportCoordinates(
-            planSlug = argumentsProvider.getArgumentOrThrow("planSlug"),
-            jobSlug = argumentsProvider.getArgumentOrThrow("jobSlug"),
-            runId = argumentsProvider.getArgumentOrThrow("runId")
-        )
-        TestRunEnvironment.RunEnvironment(
-            testMetadata = argumentsProvider.getSerializableArgumentOrThrow(TEST_METADATA_KEY),
-            videoRecordingFeature = provideVideoRecordingFeature(
-                argumentsProvider = argumentsProvider
-            ),
-            elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
-            sentryConfig = parseSentryConfig(argumentsProvider),
-            statsDConfig = parseStatsDConfig(argumentsProvider),
-            fileStorageUrl = argumentsProvider.getArgumentOrThrow("fileStorageUrl").toHttpUrl(),
-            testRunCoordinates = coordinates,
-            reportDestination = parseReportDestination(argumentsProvider),
-            mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: true,
-        )
-    } catch (e: Throwable) {
-        TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
-    }
 }
 
 fun parseEnvironment(
@@ -100,6 +70,7 @@ fun parseEnvironment(
             jobSlug = argumentsProvider.getArgumentOrThrow("jobSlug"),
             runId = argumentsProvider.getArgumentOrThrow("runId")
         )
+        val shouldCloseScenarioInRule = argumentsProvider.getArgument("shouldCloseScenarioInRule")?.toBoolean() ?: false
         TestRunEnvironment.RunEnvironment(
             testMetadata = argumentsProvider.getSerializableArgumentOrThrow(TEST_METADATA_KEY),
             videoRecordingFeature = provideVideoRecordingFeature(
@@ -112,6 +83,7 @@ fun parseEnvironment(
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
             mockDispatcherIsStrict = argumentsProvider.getArgument("mockDispatcherIsStrict")?.toBoolean() ?: true,
+            shouldCloseScenarioInRule = shouldCloseScenarioInRule,
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
