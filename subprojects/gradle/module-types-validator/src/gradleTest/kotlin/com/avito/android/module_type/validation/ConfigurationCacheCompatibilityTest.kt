@@ -1,7 +1,7 @@
 package com.avito.android.module_type.validation
 
 import com.avito.android.module_type.FunctionalType
-import com.avito.android.module_type.validation.publicimpl.ValidatePublicDependenciesImplementedTask
+import com.avito.android.module_type.validation.configurations.missings.implementations.MissingImplementationDependencyTask
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -16,21 +16,19 @@ internal class ConfigurationCacheCompatibilityTest {
             connectedFunctionalType = FunctionalType.Impl
         )
 
-        runCheck(projectDir, expectFailure = false)
+        runCheck(projectDir)
             .assertThat()
             .buildSuccessful()
 
-        runCheck(projectDir, expectFailure = false)
+        runCheck(projectDir)
             .assertThat()
             .buildSuccessful()
             .configurationCachedReused()
     }
 
-    private fun runCheck(projectDir: File, expectFailure: Boolean = false) = gradlew(
+    private fun runCheck(projectDir: File) = gradlew(
         projectDir,
-        ValidatePublicDependenciesImplementedTask.NAME,
-        "-Dorg.gradle.caching=true",
-        expectFailure = expectFailure,
+        MissingImplementationDependencyTask.NAME,
         useTestFixturesClasspath = true,
         configurationCache = true
     )

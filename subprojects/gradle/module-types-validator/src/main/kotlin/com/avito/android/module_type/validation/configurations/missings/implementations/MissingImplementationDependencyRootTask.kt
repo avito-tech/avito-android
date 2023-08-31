@@ -1,22 +1,26 @@
-package com.avito.android.module_type.validation.publicimpl
+package com.avito.android.module_type.validation.configurations.missings.implementations
 
 import com.avito.android.module_type.FunctionalType
-import com.avito.android.module_type.validation.publicimpl.internal.MissingPublicDependencies
-import com.avito.android.module_type.validation.publicimpl.internal.ProjectDependencyInfo
-import com.avito.android.module_type.validation.publicimpl.internal.asRegex
-import com.avito.android.module_type.validation.publicimpl.internal.isPublicType
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.MissingPublicDependencies
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.ProjectDependencyInfo
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.asRegex
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.isPublicType
 import com.avito.capitalize
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-public abstract class ValidatePublicDependenciesImplementedRootTask : DefaultTask() {
+@CacheableTask
+public abstract class MissingImplementationDependencyRootTask : DefaultTask() {
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -25,34 +29,43 @@ public abstract class ValidatePublicDependenciesImplementedRootTask : DefaultTas
     @get:Internal
     public abstract val rootProjectDir: Property<File>
 
+    @get:OutputFile
+    public abstract val outputFile: RegularFileProperty
+
     @TaskAction
     public fun check() {
         val adapter = MissingPublicDependencies.adapter()
-        reports.files
+        val errorMessage = reports.files
             .mapNotNull { adapter.fromJson(it.readText()) }
-            .forEach(::reportError)
+            .map(::createModuleErrorReport)
+            .filter(String::isNotBlank)
+            .joinToString(separator = "\n-------------------\n")
+
+        if (errorMessage.isEmpty()) {
+            outputFile.get().asFile.writeText("OK")
+        } else {
+            val placeHolder = "Public dependencies validation failed. Unable to find implementation for all public.\n"
+            error(placeHolder + errorMessage)
+        }
     }
 
-    private fun reportError(
+    private fun createModuleErrorReport(
         missingDependenciesInfo: MissingPublicDependencies
-    ) {
+    ): String {
         val buildFilePath = File(rootProjectDir.get(), missingDependenciesInfo.buildFilePath)
         val dependencies = missingDependenciesInfo.dependencies
         if (dependencies.isEmpty()) {
-            return
+            return ""
         }
 
         val errorText = buildString {
-            appendLine("Public dependencies validation failed. Unable to find implementation for all public.")
-            appendLine()
             appendLine("Please, add impl/fake dependencies to the build file")
             appendLine("file://" + buildFilePath.absolutePath)
             appendLine(
                 dependencies.entries.joinToString(transform = ::createDetailedInformation)
             )
         }
-
-        error(errorText)
+        return errorText
     }
 
     private fun createDetailedInformation(
@@ -76,7 +89,6 @@ public abstract class ValidatePublicDependenciesImplementedRootTask : DefaultTas
             appendLine("\t **$fullModulePath**")
             appendLine("Dependency appears from: ")
             appendLine("\t" + breadcrumbsPaths)
-            appendLine("-------")
         }
     }
 
@@ -85,7 +97,7 @@ public abstract class ValidatePublicDependenciesImplementedRootTask : DefaultTas
 
         val logicalModuleDirectory = File(
             rootProjectDir.get(),
-            logicalModule.removePrefix(":").replace(":", "/")
+            logicalModule.removePrefix(":").replace(":", File.pathSeparator)
         )
 
         if (!logicalModuleDirectory.exists()) {

@@ -12,6 +12,7 @@ import org.gradle.api.Project
 public class ModuleTypesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
+        // The plugin may already be applied by other plugins, such as [ModuleTypeValidationPlugin].
         if (project.plugins.hasPlugin(ModuleTypesPlugin::class.java)) {
             return
         }

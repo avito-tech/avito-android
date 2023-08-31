@@ -1,10 +1,10 @@
-package com.avito.android.module_type.validation
+package com.avito.android.module_type.validation.configurations.missings.implementations
 
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.SetProperty
 import javax.inject.Inject
 
-public open class PublicImplValidationExtension @Inject constructor(
+public abstract class MissingImplementationDependencyExtension @Inject constructor(
     objects: ObjectFactory
 ) {
 

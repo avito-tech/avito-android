@@ -5,6 +5,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.module.FolderModule
 import com.avito.test.gradle.module.KotlinModule
+import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
@@ -22,6 +23,7 @@ internal object DependenciesValidationProjectGenerator {
      *      - :public
      *      - :impl
      *      - :fake
+     *      - :demo
      *  - :lib-c
      *      - :impl
      *      - :demo
@@ -30,34 +32,38 @@ internal object DependenciesValidationProjectGenerator {
      * Dependencies between generated modules
      * ```mermaid
      * graph LR
-     *  :lib-c:demo --> :lib-c:impl
-     *  :lib-c:demo --> :lib-b:fake
-     *
-     *  :lib-c:demo -.-> :lib-a:fake
-     *  :lib-c:demo -.-> :lib-a:impl
-     *
-     *  :lib-c:impl --> :lib-b:public
-     *  :lib-b:public --> :lib-a:public
-     *  :lib-b:impl --> :lib-b:public
-     *  :lib-b:fake --> :lib-b:public
-     *  :lib-a:impl --> :lib-a:public
-     *  :lib-a:fake --> :lib-a:public
+     * :lib-c:demo --> :lib-c:impl
+     * :lib-c:demo --> :lib-b:fake
+     * :lib-c:demo -.-> :lib-a:fake
+     * :lib-c:demo -.-> :lib-a:impl
+     * :lib-c:impl --> :lib-b:public
+     * :lib-b:public --> :lib-a:public
+     * :lib-b:impl --> :lib-b:public
+     * :lib-b:fake --> :lib-b:public
+     * :lib-b:demo --> :lib-b:impl
+     * :lib-b:demo -.-> :lib-a:fake
+     * :lib-b:demo -.-> :lib-a:impl
+     * :lib-a:impl --> :lib-a:public
+     * :lib-a:fake --> :lib-a:public
      * ```
      *
-     * > Use [mermaid](https://mermaid-js.github.io/mermaid/#/) for visualization
+     * > Use [mermaid](https://mermaid.live/edit#) for visualization
      */
 
     fun generateProject(
         projectDir: File,
         connectedFunctionalType: FunctionalType? = null,
-        applyPluginToImpl: Boolean = false
+        rootPlugins: PluginsSpec = plugins {
+            id("com.avito.android.module-types")
+            id("com.avito.android.module-types-validator")
+        },
+        implModulePlugins: PluginsSpec = plugins {
+            id("com.avito.android.module-types")
+        },
     ) {
         TestProjectGenerator(
             name = "rootapp",
-            plugins = plugins {
-                id("com.avito.android.module-types")
-                id("com.avito.android.module-types-validator")
-            },
+            plugins = rootPlugins,
             modules = listOf(
                 FolderModule(
                     name = "lib-a",
@@ -70,7 +76,7 @@ internal object DependenciesValidationProjectGenerator {
                             logicalModuleName = "lib-a",
                             functionalType = FunctionalType.Impl,
                             dependentModules = setOf(":lib-a:public"),
-                            applyPlugin = applyPluginToImpl
+                            plugins = implModulePlugins
                         ),
                         createModule(
                             logicalModuleName = "lib-a",
@@ -90,6 +96,7 @@ internal object DependenciesValidationProjectGenerator {
                         createModule(
                             logicalModuleName = "lib-b",
                             functionalType = FunctionalType.Impl,
+                            plugins = implModulePlugins,
                             dependentModules = setOf(
                                 ":lib-b:public"
                             )
@@ -101,6 +108,13 @@ internal object DependenciesValidationProjectGenerator {
                                 ":lib-b:impl",
                             )
                         ),
+                        createDemoModule(
+                            logicalModuleName = "lib-b",
+                            dependentModules = setOfNotNull(
+                                ":lib-b:impl",
+                                connectedFunctionalType?.let { ":lib-a:${it.name.lowercase()}" }
+                            )
+                        ),
                     )
                 ),
                 FolderModule(
@@ -109,6 +123,7 @@ internal object DependenciesValidationProjectGenerator {
                         createModule(
                             logicalModuleName = "lib-c",
                             functionalType = FunctionalType.Impl,
+                            plugins = implModulePlugins,
                             dependentModules = setOf(":lib-b:public")
                         ),
                         createDemoModule(
@@ -129,18 +144,15 @@ internal object DependenciesValidationProjectGenerator {
         logicalModuleName: String,
         functionalType: FunctionalType,
         dependentModules: Set<String> = emptySet(),
-        applyPlugin: Boolean = false
+        plugins: PluginsSpec = plugins {
+            id("com.avito.android.module-types")
+        },
     ): KotlinModule {
         return KotlinModule(
             name = functionalType.name.lowercase(),
             packageName = logicalModuleName,
             imports = listOf("import com.avito.android.module_type.*"),
-            plugins = plugins {
-                id("com.avito.android.module-types")
-                if (applyPlugin) {
-                    id("com.avito.android.module-types-validator")
-                }
-            },
+            plugins = plugins,
             buildGradleExtra = """
                 module {
                     type = new DefaultModuleType(new StubApplication(), FunctionalType.${functionalType.name})
@@ -179,7 +191,7 @@ internal object DependenciesValidationProjectGenerator {
                         FunctionalType.${FunctionalType.Application.name}
                     )
                     validation { 
-                        publicImpl {
+                        missingImplementations {
                             configurationNames.set(SetsKt.setOf("implementation"))
                         }
                     }

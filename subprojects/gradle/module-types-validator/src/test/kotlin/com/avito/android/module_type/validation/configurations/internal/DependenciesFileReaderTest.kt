@@ -1,6 +1,8 @@
-package com.avito.android.module_type.validation.publicimpl.internal
+package com.avito.android.module_type.validation.configurations.internal
 
 import com.avito.android.module_type.FunctionalType
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.DependenciesFileReader
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.ProjectDependencyInfo
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir

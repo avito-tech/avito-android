@@ -1,4 +1,4 @@
-package com.avito.android.module_type.validation.publicimpl.internal
+package com.avito.android.module_type.validation.configurations.missings.implementations.internal
 
 import com.avito.android.module_type.FunctionalType
 import com.avito.capitalize

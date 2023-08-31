@@ -1,4 +1,4 @@
-package com.avito.android.module_type.validation.publicimpl.internal
+package com.avito.android.module_type.validation.configurations.missings.implementations.internal
 
 internal class ProjectPathBuilder(
     basePath: String
