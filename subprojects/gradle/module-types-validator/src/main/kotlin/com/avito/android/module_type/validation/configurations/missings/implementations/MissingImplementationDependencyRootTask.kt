@@ -19,6 +19,19 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
+/**
+ * The task checks if the module has implementations of all public dependencies.
+ *
+ * Applications or demo module must have all implementations of public dependencies,
+ * otherwise we may encounter unrecognized problems like ClassNotFoundException, etc. at runtime.
+ * This can happen, for example, due to Anvil, when we connect an implementation by the ContributesTo annotation
+ * inside an impl module, but do not connect it.
+ *
+ * This check is intended to help at the customization stage to avoid such problems.
+ * You can find more information about patterns in the documentation:
+ *
+ * https://docs.k.avito.ru/mobile/android/architecture/modules-2/Patterns/
+ */
 @CacheableTask
 public abstract class MissingImplementationDependencyRootTask : DefaultTask() {
 
