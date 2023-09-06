@@ -84,6 +84,25 @@ public fun Project.getOptionalFloatProperty(name: String, default: Float? = null
         default
     }
 
+@JvmOverloads
+public fun Project.getMandatoryFilePropertyContent(name: String, allowBlankValue: Boolean = false): String {
+    val path = getMandatoryStringProperty(name, true)
+    if (path.isBlank()) {
+        return when (allowBlankValue) {
+            true -> ""
+            false -> throw RuntimeException(
+                """
+                    Property $name contains a blank value. Pass a correct path to file
+                    or return an empty string in this case using `allowBlankValue` parameter.
+                """.trimIndent()
+            )
+        }
+    }
+    val file = File(path)
+    if (!file.exists()) throw RuntimeException("File with '$path' does not exist")
+    return file.readText()
+}
+
 public fun Project.fileProperty(file: File): RegularFileProperty = objects.fileProperty().apply { set { file } }
 
 public fun Project.isRoot(): Boolean = project == project.rootProject
