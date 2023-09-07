@@ -550,7 +550,7 @@ public data class AdbDevice(
 
     private fun Map<String, String>.formatInstrumentationOptions(): String = when (isEmpty()) {
         true -> ""
-        false -> " " + entries.joinToString(separator = " ") { "-e ${it.key} ${it.value}" }
+        false -> " " + entries.joinToString(separator = " ") { "-e ${it.key} '${it.value}'" }
     }
 
     private inline fun <reified T> loadProperty(
