@@ -127,11 +127,13 @@ public data class AdbDevice(
                                 testName = it.name.toString(),
                                 durationMs = timeProvider.nowInMillis() - startTime
                             )
+
                             TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(
                                 device = this,
                                 testName = it.name.toString(),
                                 durationMs = timeProvider.nowInMillis() - startTime
                             )
+
                             is Failed.InRun ->
                                 eventsListener.onRunTestRunError(
                                     device = this,
@@ -139,6 +141,7 @@ public data class AdbDevice(
                                     errorMessage = it.result.errorMessage,
                                     durationMs = timeProvider.nowInMillis() - startTime
                                 )
+
                             is Failed.InfrastructureError ->
                                 eventsListener.onRunTestInfrastructureError(
                                     device = this,
@@ -161,6 +164,7 @@ public data class AdbDevice(
                             device = this.getData()
                         )
                     }
+
                     is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
                         eventsListener.onRunTestFailedOnStart(
                             device = this,
@@ -179,6 +183,7 @@ public data class AdbDevice(
                             device = this.getData()
                         )
                     }
+
                     is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
                         eventsListener.onRunTestFailedOnInstrumentationParse(
                             device = this,
@@ -481,16 +486,23 @@ public data class AdbDevice(
             )
         }
 
+        val command = listOf(
+            "am",
+            "instrument",
+            "-w", // wait for instrumentation to finish before returning.  Required for test runners.
+            "-r", // raw mode is necessary for parsing
+            "-e debug $enableDeviceDebug",
+            instrumentationArguments.formatInstrumentationOptions(),
+            "$testPackageName/$testRunnerClass"
+        )
+
+        File(logsDir, "instrumentation-${test.name}-cmd.txt").apply {
+            createNewFile()
+            writeText(command.joinToString(separator = " "))
+        }
+
         val output = executeShellCommand(
-            command = listOf(
-                "am",
-                "instrument",
-                "-w", // wait for instrumentation to finish before returning.  Required for test runners.
-                "-r", // raw mode is necessary for parsing
-                "-e debug $enableDeviceDebug",
-                instrumentationArguments.formatInstrumentationOptions(),
-                "$testPackageName/$testRunnerClass"
-            ),
+            command = command,
             redirectOutputTo = File(logsDir, "instrumentation-${test.name}.txt")
         ).ofType(Notification.Output::class.java)
 
