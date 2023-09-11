@@ -19,5 +19,7 @@ public interface ReportsFetchApi {
      * RunTest.List
      * получение краткого списка результатов тестов по запуску
      */
-    public fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>>
+    public fun getTestsForRunCoordinates(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>>
+
+    public fun getTestsForRunId(reportId: String): Result<List<SimpleRunTest>>
 }

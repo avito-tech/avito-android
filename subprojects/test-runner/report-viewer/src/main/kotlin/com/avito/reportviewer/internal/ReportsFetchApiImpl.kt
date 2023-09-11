@@ -34,7 +34,7 @@ internal class ReportsFetchApiImpl(
         }
     }
 
-    override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
+    override fun getTestsForRunCoordinates(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
         return when (val result = getReportInternal(reportCoordinates)) {
             is GetReportResult.Found -> getTestData(result.report.id)
             is GetReportResult.NotFound -> Result.Failure(
@@ -42,6 +42,10 @@ internal class ReportsFetchApiImpl(
             )
             is GetReportResult.Error -> Result.Failure(result.exception)
         }
+    }
+
+    override fun getTestsForRunId(reportId: String): Result<List<SimpleRunTest>> {
+        return getTestData(reportId)
     }
 
     private fun getReportInternal(reportCoordinates: ReportCoordinates): GetReportResult {

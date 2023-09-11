@@ -88,7 +88,7 @@ internal class FilterFactoryImplTest {
 
     @Suppress("MaxLineLength")
     @Test
-    fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
+    fun `when filterData includePrevious statuses and Report returns list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
         val factory = StubFilterFactoryFactory.create(
             filter = InstrumentationFilterData.createStub(
                 previousStatuses = Filter.Value(
@@ -115,7 +115,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData - includePrevious statuses and Report failed - then filters contain defaults`() {
         val report = StubReport()
-        report.getTestsResult = Result.Failure(IllegalStateException("something went wrong"))
+        report.previousRunResults = Result.Failure(IllegalStateException("something went wrong"))
 
         val factory = StubFilterFactoryFactory.create(
             filter = InstrumentationFilterData.createStub(
@@ -178,19 +178,57 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData report is present and statuses empty then filters don't contain Report filter`() {
         val report = StubReport()
-        report.getTestsResult = Result.Success(
+        val reportId = "report#1"
+        report.reportIdToRunResults = Result.Success(
             mapOf(
-                TestCase(TestName("", "test1"), DeviceName("25")) to TestStatus.Success,
-                TestCase(TestName("", "test2"), DeviceName("25")) to TestStatus.Lost
+                reportId to mapOf(
+                    TestCase(TestName("", "test1"), DeviceName("25")) to TestStatus.Success,
+                    TestCase(TestName("", "test2"), DeviceName("25")) to TestStatus.Lost
+                )
             )
         )
 
         val factory = StubFilterFactoryFactory.create(
             filter = InstrumentationFilterData.createStub(
                 report = ReportFilter(
+                    reportId = reportId,
                     statuses = Filter.Value(
                         included = emptySet(),
                         excluded = emptySet()
+                    )
+                )
+            )
+        )
+
+        val compositionFilter = factory.createFilter() as CompositionFilter
+
+        compositionFilter.filters.forEach { filter ->
+            assertThat(filter).run {
+                isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
+                isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
+            }
+        }
+    }
+
+    @Test
+    fun `when report for required id is not present then filters don't contain Report filter`() {
+        val report = StubReport()
+        report.reportIdToRunResults = Result.Success(
+            mapOf(
+                "report#1" to mapOf(
+                    TestCase(TestName("", "test1"), DeviceName("25")) to TestStatus.Success,
+                    TestCase(TestName("", "test2"), DeviceName("25")) to TestStatus.Lost
+                )
+            )
+        )
+
+        val factory = StubFilterFactoryFactory.create(
+            filter = InstrumentationFilterData.createStub(
+                report = ReportFilter(
+                    reportId = "report#2",
+                    statuses = Filter.Value(
+                        included = setOf(RunStatus.Success),
+                        excluded = setOf(RunStatus.Lost)
                     )
                 )
             )

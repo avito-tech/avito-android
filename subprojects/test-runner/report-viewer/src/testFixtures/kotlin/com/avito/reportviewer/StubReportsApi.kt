@@ -9,17 +9,19 @@ import com.google.gson.JsonElement
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
-public class StubReportsApi : ReportsApi {
+class StubReportsApi : ReportsApi {
 
     private val markAsSuccessfulRequests = mutableListOf<MarkAsRequest>()
 
-    private val testsForRunId = mutableMapOf<ReportCoordinates, Result<List<SimpleRunTest>>>()
+    private val testsForRunCoordinates = mutableMapOf<ReportCoordinates, Result<List<SimpleRunTest>>>()
 
-    public lateinit var getReportResult: Result<Report>
+    private val testsForRunId = mutableMapOf<String, Result<List<SimpleRunTest>>>()
 
-    public lateinit var finished: Result<Unit>
+    lateinit var getReportResult: Result<Report>
 
-    public val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
+    lateinit var finished: Result<Unit>
+
+    val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
 
     override fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): Result<String> {
         TODO("not implemented")
@@ -37,13 +39,22 @@ public class StubReportsApi : ReportsApi {
     @Synchronized
     override fun getReport(reportCoordinates: ReportCoordinates): Result<Report> = getReportResult
 
-    public fun enqueueTestsForRunId(reportCoordinates: ReportCoordinates, value: Result<List<SimpleRunTest>>) {
-        testsForRunId[reportCoordinates] = value
+    fun enqueueTestsForRunCoordinates(reportCoordinates: ReportCoordinates, value: Result<List<SimpleRunTest>>) {
+        testsForRunCoordinates[reportCoordinates] = value
+    }
+
+    fun enqueueTestsForRunId(reportId: String, value: Result<List<SimpleRunTest>>) {
+        testsForRunId[reportId] = value
     }
 
     @Synchronized
-    override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
-        return testsForRunId[reportCoordinates] ?: error("no stub ready for $reportCoordinates")
+    override fun getTestsForRunCoordinates(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
+        return testsForRunCoordinates[reportCoordinates] ?: error("no stub ready for $reportCoordinates")
+    }
+
+    @Synchronized
+    override fun getTestsForRunId(reportId: String): Result<List<SimpleRunTest>> {
+        return testsForRunId[reportId] ?: error("no stub ready for id $reportId")
     }
 
     @Synchronized
@@ -70,13 +81,13 @@ public class StubReportsApi : ReportsApi {
         TODO("not implemented")
     }
 
-    public data class MarkAsRequest(
+    data class MarkAsRequest(
         val testRunId: String,
         val author: String,
         val comment: String
     )
 
-    public data class AddTestsRequest(
+    data class AddTestsRequest(
         val reportCoordinates: ReportCoordinates,
         val buildId: String?,
         val tests: Collection<AndroidTest>

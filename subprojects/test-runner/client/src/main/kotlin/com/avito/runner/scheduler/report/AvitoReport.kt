@@ -14,6 +14,7 @@ import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
+import com.avito.reportviewer.model.SimpleRunTest
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
@@ -129,14 +130,21 @@ internal class AvitoReport(
     }
 
     override fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>> {
-        return reportsApi.getTestsForRunId(reportCoordinates).map { results ->
-            results
+        return reportsApi.getTestsForRunCoordinates(reportCoordinates).mapToRunResults()
+    }
+
+    override fun getRunResultsById(id: String): Result<Map<TestCase, TestStatus>> {
+        return reportsApi.getTestsForRunId(id).mapToRunResults()
+    }
+
+    private fun Result<List<SimpleRunTest>>.mapToRunResults(): Result<Map<TestCase, TestStatus>> =
+        map { simpleResults ->
+            simpleResults
                 .map { simpleRunTest ->
                     TestCase(simpleRunTest.name, DeviceName(simpleRunTest.deviceName)) to simpleRunTest.status
                 }
                 .toMap()
         }
-    }
 
     private fun finish() {
         if (hasAtLeastOneTestReported) {

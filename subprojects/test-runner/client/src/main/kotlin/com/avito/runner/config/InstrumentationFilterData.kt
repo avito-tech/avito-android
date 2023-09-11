@@ -21,6 +21,7 @@ public data class InstrumentationFilterData(
     ) : Serializable {
 
         public data class ReportFilter(
+            val reportId: String,
             val statuses: Filter.Value<RunStatus>
         ) : Serializable
     }

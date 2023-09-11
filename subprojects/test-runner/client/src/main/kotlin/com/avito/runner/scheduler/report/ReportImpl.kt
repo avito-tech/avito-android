@@ -46,4 +46,8 @@ internal class ReportImpl(
     override fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>> {
         return externalReportService?.getPreviousRunsResults() ?: inMemoryReport.getPreviousRunsResults()
     }
+
+    override fun getRunResultsById(id: String): Result<Map<TestCase, TestStatus>> {
+        return externalReportService?.getRunResultsById(id) ?: inMemoryReport.getRunResultsById(id)
+    }
 }

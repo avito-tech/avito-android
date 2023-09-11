@@ -165,6 +165,7 @@ internal class InstrumentationConfigurator(
             ),
             reportFilter = fromRunHistory.reportFilter?.let { filter ->
                 InstrumentationFilterData.FromRunHistory.ReportFilter(
+                    reportId = filter.id,
                     statuses = Filter.Value(
                         included = filter.statuses.value.included.map { it.map() }.toSet(),
                         excluded = filter.statuses.value.excluded.map { it.map() }.toSet()

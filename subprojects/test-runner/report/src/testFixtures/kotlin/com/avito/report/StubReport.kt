@@ -7,17 +7,17 @@ import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStatus
 import com.avito.test.model.TestCase
 
-public class StubReport : Report {
+class StubReport : Report {
 
-    public var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
+    var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
 
-    public var reportedMissingTests: Collection<AndroidTest.Lost>? = null
+    var reportedMissingTests: Collection<AndroidTest.Lost>? = null
 
-    public var reportId: String? = null
+    var previousRunResults: Result<Map<TestCase, TestStatus>> = Result.Success(emptyMap())
 
-    public var getTestsResult: Result<Map<TestCase, TestStatus>> = Result.Success(emptyMap())
+    var getTests: List<AndroidTest> = emptyList()
 
-    public var getTests: List<AndroidTest> = emptyList()
+    var reportIdToRunResults: Result<Map<String, Map<TestCase, TestStatus>>> = Result.Success(emptyMap())
 
     override val reportLinksGenerator: ReportLinksGenerator
         get() = NoOpReportLinksGenerator()
@@ -42,6 +42,14 @@ public class StubReport : Report {
     }
 
     override fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>> {
-        return getTestsResult
+        return previousRunResults
+    }
+
+    override fun getRunResultsById(id: String): Result<Map<TestCase, TestStatus>> {
+        return reportIdToRunResults.map {
+            it.getOrElse(id) {
+                throw NoSuchElementException("No stub for report id: $id")
+            }
+        }
     }
 }

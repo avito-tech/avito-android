@@ -70,7 +70,7 @@ internal class ReportsApiTest {
             MockResponse().setBody(ResourcesReader.readText("getTestsForRunId.json"))
         )
 
-        val result = createNoRetriesReportsApi().getTestsForRunId(
+        val result = createNoRetriesReportsApi().getTestsForRunCoordinates(
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "")
         )
 

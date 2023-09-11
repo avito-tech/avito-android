@@ -81,5 +81,9 @@ internal class InMemoryReport(
         return Result.Success(emptyMap())
     }
 
+    override fun getRunResultsById(id: String): Result<Map<TestCase, TestStatus>> {
+        return Result.Success(emptyMap())
+    }
+
     private data class TestKey(val testName: TestName, val deviceName: DeviceName)
 }

@@ -21,11 +21,14 @@ internal class AvitoReportAwareFilterFactoryImplTest {
     @Test
     fun `when filterData report is present and has excludes then filters contain Report exclude filter`() {
         val report = StubReport()
+        val reportId = "report#1"
 
-        report.getTestsResult = Result.Success(
+        report.reportIdToRunResults = Result.Success(
             mapOf(
-                TestCase(TestName("Test", "test1"), DeviceName("25")) to TestStatus.Success,
-                TestCase(TestName("Test", "test2"), DeviceName("25")) to TestStatus.Lost,
+                reportId to mapOf(
+                    TestCase(TestName("Test", "test1"), DeviceName("25")) to TestStatus.Success,
+                    TestCase(TestName("Test", "test2"), DeviceName("25")) to TestStatus.Lost,
+                )
             )
         )
 
@@ -33,6 +36,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
             report = report,
             filter = InstrumentationFilterData.createStub(
                 report = InstrumentationFilterData.FromRunHistory.ReportFilter(
+                    reportId = reportId,
                     statuses = Filter.Value(
                         included = emptySet(),
                         excluded = setOf(RunStatus.Success)
@@ -64,7 +68,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
     fun `when filterData excludePrevious statuses and Report return list then filters contain ExcludeTestSignaturesFilters#Previous with included statuses`() {
         val report = StubReport()
 
-        report.getTestsResult = Result.Success(
+        report.previousRunResults = Result.Success(
             mapOf(
                 TestCase(TestName("Test", "test1"), DeviceName("25")) to TestStatus.Success,
                 TestCase(TestName("Test", "test2"), DeviceName("25")) to TestStatus.Lost,
@@ -102,11 +106,14 @@ internal class AvitoReportAwareFilterFactoryImplTest {
     @Test
     fun `when filterData report is present and has includes then filters contain Report include filter`() {
         val report = StubReport()
+        val reportId = "report#1"
 
-        report.getTestsResult = Result.Success(
+        report.reportIdToRunResults = Result.Success(
             mapOf(
-                TestCase(TestName("Test", "test1"), DeviceName("25")) to TestStatus.Success,
-                TestCase(TestName("Test", "test2"), DeviceName("25")) to TestStatus.Lost,
+                reportId to mapOf(
+                    TestCase(TestName("Test", "test1"), DeviceName("25")) to TestStatus.Success,
+                    TestCase(TestName("Test", "test2"), DeviceName("25")) to TestStatus.Lost,
+                )
             )
         )
 
@@ -114,6 +121,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
             report = report,
             filter = InstrumentationFilterData.createStub(
                 report = InstrumentationFilterData.FromRunHistory.ReportFilter(
+                    reportId = reportId,
                     statuses = Filter.Value(
                         included = setOf(RunStatus.Success),
                         excluded = emptySet()
@@ -145,7 +153,7 @@ internal class AvitoReportAwareFilterFactoryImplTest {
     fun `when filterData includePrevious statuses and Report return list then filters contain IncludeTestSignaturesFilters#Previous with included statuses`() {
         val report = StubReport()
 
-        report.getTestsResult = Result.Success(
+        report.previousRunResults = Result.Success(
             mapOf(
                 TestCase(TestName("Test", "test1"), DeviceName("25")) to TestStatus.Success,
                 TestCase(TestName("Test", "test2"), DeviceName("25")) to TestStatus.Lost

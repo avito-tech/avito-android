@@ -121,7 +121,7 @@ internal class FilterFactoryImpl(
         ) {
             val statuses = reportFilter.statuses
 
-            report.getPreviousRunsResults()
+            report.getRunResultsById(reportFilter.reportId)
                 .fold(
                     onSuccess = { previousRunTests ->
                         if (statuses.included.isNotEmpty()) {

@@ -27,11 +27,13 @@ public interface Report {
 
     /**
      * single result for each test, where attempts aggregated by
-     * [com.avito.android.runner.report.internal.TestAttemptsAggregateStrategy]
+     * [com.avito.report.inmemory.TestAttemptsAggregateStrategy]
      */
     public fun getTestResults(): Collection<AndroidTest>
 
     public fun getPreviousRunsResults(): Result<Map<TestCase, TestStatus>>
+
+    public fun getRunResultsById(id: String): Result<Map<TestCase, TestStatus>>
 
     public companion object
 }

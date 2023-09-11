@@ -31,7 +31,7 @@ internal class AlertinoTestSummarySender(
     private val testSummaryComposer: TestSummaryComposer = TestSummaryComposerImpl(reportViewerUrl)
 
     override fun send() {
-        reportsApi.getTestsForRunId(reportCoordinates)
+        reportsApi.getTestsForRunCoordinates(reportCoordinates)
             .map { ToCrossDeviceSuiteConverter.convert(it) }
             .fold(
                 { suite -> send(suite, requireNotNull(reportsApi.tryGetId(reportCoordinates))) },
