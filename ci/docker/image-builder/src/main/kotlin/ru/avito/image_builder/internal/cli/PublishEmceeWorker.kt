@@ -5,11 +5,11 @@ import kotlinx.cli.required
 import ru.avito.image_builder.internal.command.EmceeWorkerBuilder
 import ru.avito.image_builder.internal.command.ImagePublisher
 import ru.avito.image_builder.internal.command.ImageTagger
-import ru.avito.image_builder.internal.command.RegistryLoginImpl
+import ru.avito.image_builder.internal.command.RegistryLogin
+import ru.avito.image_builder.internal.command.RegistryType
 import ru.avito.image_builder.internal.command.emulator.EmulatorPreparer
 import ru.avito.image_builder.internal.command.emulator.EmulatorTester
 import ru.avito.image_builder.internal.docker.CliDocker
-import ru.avito.image_builder.internal.docker.RegistryCredentials
 import java.io.File
 
 internal class PublishEmceeWorker(
@@ -37,6 +37,11 @@ internal class PublishEmceeWorker(
         description = "Emulator locale in BCP 47 format. en-US locale is default."
     ).required()
 
+    private val publishRegistryType: RegistryType by option(
+        type = ArgType.Choice<RegistryType>(),
+        description = "Registry for publishing"
+    ).required()
+
     override fun execute() {
         val docker = CliDocker()
 
@@ -56,14 +61,14 @@ internal class PublishEmceeWorker(
         ImagePublisher(
             docker = docker,
             builder = builder,
-            login = RegistryLoginImpl(
-                docker = docker,
-                credentials = RegistryCredentials(
-                    registry = registry,
-                    username = registryUsername,
-                    password = registryPassword,
-                )
-            )
+            login = getPublishingRegistryLogin(docker)
         ).publish()
+    }
+
+    private fun getPublishingRegistryLogin(docker: CliDocker): RegistryLogin {
+        return when (publishRegistryType) {
+            RegistryType.DOCKER_HUB -> dockerHubLogin(docker)
+            RegistryType.CONFIGURED -> configuredRegistryLogin(docker, registryUsername, registryPassword)
+        }
     }
 }

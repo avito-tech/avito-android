@@ -94,4 +94,19 @@ internal open class BuildImage(
             )
         }
     }
+
+    protected fun configuredRegistryLogin(
+        docker: CliDocker,
+        registryUsername: String,
+        registryPassword: String
+    ): RegistryLogin {
+        return RegistryLoginImpl(
+            docker = docker,
+            credentials = RegistryCredentials(
+                registry = registry,
+                username = registryUsername,
+                password = registryPassword,
+            )
+        )
+    }
 }
