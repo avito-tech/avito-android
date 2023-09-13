@@ -6,11 +6,18 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 source "$DIR"/_environment.sh
 
-GRADLE_HOME_DIR=$HOME/.gradle
+if [[ "$CI" == "true" ]]; then
+    GRADLE_HOME_DIR=/opt/buildAgent/.gradle
+elif [[ -n "$GRADLE_USER_HOME" ]]; then
+    GRADLE_HOME_DIR=$GRADLE_USER_HOME
+else
+    GRADLE_HOME_DIR=~/.gradle
+fi
 
 # only need dependencies: https://docs.gradle.org/current/userguide/dependency_resolution.html#sub:ephemeral-ci-cache
 GRADLE_CACHE_DIR=$GRADLE_HOME_DIR/caches/modules-2
 GRADLE_WRAPPER_DIR=$GRADLE_HOME_DIR/wrapper
+CONTAINER_GRADLE_HOME_DIR="/Users/Shared/gradle"
 
 # Warning. Hack!
 # Мы можем удалять эти локи, т.к. гарантированно никакие другие процессы не используют этот шаренный кеш на начало новой сборки
@@ -101,13 +108,13 @@ function runInBuilder() {
         --cpus="$CONTAINER_MAX_CPUS" \
         --volume "$(pwd)":/app \
         --volume /var/run/docker.sock:/var/run/docker.sock \
-        --volume "${GRADLE_CACHE_DIR}":/gradle/caches/modules-2 \
-        --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
-        --volume "$DIR/gradle.properties":/gradle/gradle.properties \
+        --volume "${GRADLE_CACHE_DIR}":${CONTAINER_GRADLE_HOME_DIR}/caches/modules-2 \
+        --volume "${GRADLE_WRAPPER_DIR}":${CONTAINER_GRADLE_HOME_DIR}/wrapper \
+        --volume "$DIR/gradle.properties":${CONTAINER_GRADLE_HOME_DIR}/gradle.properties \
         --workdir /app \
         --env TZ="Europe/Moscow" \
         --env LOCAL_USER_ID="$USER_ID" \
-        --env GRADLE_USER_HOME=/gradle \
+        --env GRADLE_USER_HOME=${CONTAINER_GRADLE_HOME_DIR} \
         "${IMAGE_ANDROID_BUILDER}" \
         bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }
