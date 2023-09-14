@@ -16,6 +16,14 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.device.adb.listener.AdbDeviceEventsListener
+import com.avito.runner.service.worker.device.adb.request.AdbRequest
+import com.avito.runner.service.worker.device.adb.request.adb.LogcatAdbRequest
+import com.avito.runner.service.worker.device.adb.request.adb.PullAdbRequest
+import com.avito.runner.service.worker.device.adb.request.shell.ClearDirectoryAdbShellRequest
+import com.avito.runner.service.worker.device.adb.request.shell.ClearPackageAdbShellRequest
+import com.avito.runner.service.worker.device.adb.request.shell.GetPropAdbShellRequest
+import com.avito.runner.service.worker.device.adb.request.shell.ListDirectoryAdbShellRequest
+import com.avito.runner.service.worker.device.adb.request.shell.RunTestsAdbShellRequest
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
@@ -238,8 +246,8 @@ public data class AdbDevice(
         retriesCount = 10,
         delaySeconds = 1,
         action = {
-            val result = executeBlockingShellCommand(
-                command = listOf("pm", "clear", name),
+            val result = executeBlockingAdbRequest(
+                request = ClearPackageAdbShellRequest(name),
                 // was seeing ~20% error rate at 5s
                 timeoutSeconds = 20
             )
@@ -305,13 +313,7 @@ public data class AdbDevice(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,
         action = {
-            executeBlockingShellCommand(
-                command = listOf(
-                    "rm",
-                    "-rf",
-                    remotePath.toString()
-                )
-            )
+            executeBlockingAdbRequest(request = ClearDirectoryAdbShellRequest(remotePath))
         },
         onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
             eventsListener.onClearDirectoryError(
@@ -340,22 +342,19 @@ public data class AdbDevice(
         }
     ).map { }
 
-    override fun list(remotePath: String): Result<List<String>> = retryAction.retry(
+    override fun list(remotePath: Path): Result<List<String>> = retryAction.retry(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,
         action = {
-            executeBlockingShellCommand(
-                command = listOf(
-                    "ls",
-                    remotePath
-                )
+            executeBlockingAdbRequest(
+                request = ListDirectoryAdbShellRequest(remotePath)
             ).output.lines()
         },
         onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
             eventsListener.onListError(
                 device = this,
                 attempt = attempt,
-                remotePath = remotePath,
+                remotePath = remotePath.toString(),
                 throwable = throwable,
                 durationMs = durationMs
             )
@@ -363,7 +362,7 @@ public data class AdbDevice(
         onFailure = { throwable: Throwable, durationMs: Long ->
             eventsListener.onListFailure(
                 device = this,
-                remotePath = remotePath,
+                remotePath = remotePath.toString(),
                 throwable = throwable,
                 durationMs = durationMs
             )
@@ -371,7 +370,7 @@ public data class AdbDevice(
         onSuccess = { _: Int, _: List<String>, durationMs: Long ->
             eventsListener.onListSuccess(
                 device = this,
-                remotePath = remotePath,
+                remotePath = remotePath.toString(),
                 durationMs = durationMs
             )
         }
@@ -385,13 +384,9 @@ public data class AdbDevice(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,
         action = {
-            executeBlockingCommand(
-                command = listOf(
-                    "pull",
-                    from.toString(),
-                    to.toString()
-                ),
-                timeoutSeconds = adbPullTimeout.toSeconds()
+            executeBlockingAdbRequest(
+                request = PullAdbRequest(from, to),
+                timeoutSeconds = adbPullTimeout.toSeconds(),
             )
 
             when (val pullResult = validator.isPulledCompletely(to)) {
@@ -433,16 +428,8 @@ public data class AdbDevice(
             retriesCount = 3,
             delaySeconds = 1,
             action = {
-                val command = mutableListOf("logcat")
-                if (lines != null) {
-                    command += "-t"
-                    command += "$lines"
-                    listOf("-t", "$lines")
-                } else {
-                    command += "-d"
-                }
-                executeBlockingShellCommand(
-                    command = command,
+                executeBlockingAdbRequest(
+                    request = LogcatAdbRequest(lines),
                     timeoutSeconds = 10
                 ).output
             },
@@ -481,15 +468,12 @@ public data class AdbDevice(
             )
         }
 
-        val output = executeShellCommand(
-            command = listOf(
-                "am",
-                "instrument",
-                "-w", // wait for instrumentation to finish before returning.  Required for test runners.
-                "-r", // raw mode is necessary for parsing
-                "-e debug $enableDeviceDebug",
-                instrumentationArguments.formatInstrumentationOptions(),
-                "$testPackageName/$testRunnerClass"
+        val output = executeAdbRequest(
+            request = RunTestsAdbShellRequest(
+                testPackageName = testPackageName,
+                testRunnerClass = testRunnerClass,
+                instrumentationArguments = instrumentationArguments,
+                enableDeviceDebug = enableDeviceDebug,
             ),
             redirectOutputTo = File(logsDir, "instrumentation-${test.name}.txt")
         ).ofType(Notification.Output::class.java)
@@ -548,18 +532,11 @@ public data class AdbDevice(
         }
     }
 
-    private fun Map<String, String>.formatInstrumentationOptions(): String = when (isEmpty()) {
-        true -> ""
-        false -> " " + entries.joinToString(separator = " ") { "-e ${it.key} '${it.value}'" }
-    }
-
     private inline fun <reified T> loadProperty(
         key: String,
         crossinline cast: (result: String) -> T
     ): T {
-        val commandResult = executeBlockingShellCommand(
-            command = listOf("getprop", key)
-        )
+        val commandResult = executeBlockingAdbRequest(request = GetPropAdbShellRequest(key))
 
         val output = commandResult.output.trim()
 
@@ -570,49 +547,38 @@ public data class AdbDevice(
         }
     }
 
-    private fun executeBlockingShellCommand(
-        command: List<String>,
+    private fun executeBlockingAdbRequest(
+        request: AdbRequest,
         timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
-    ): Notification.Exit = executeBlockingCommand(
-        command = listOf("shell") + command,
-        timeoutSeconds = timeoutSeconds
-    )
-
-    private fun executeBlockingCommand(
-        command: List<String>,
-        timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
-    ): Notification.Exit = executeCommand(
-        command = command
-    )
-        .ofType(Notification.Exit::class.java)
-        .timeout(
-            timeoutSeconds,
-            TimeUnit.SECONDS,
-            Observable.error(
-                RuntimeException(
-                    "Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $coordinate"
+    ): Notification.Exit {
+        return executeAdbRequest(request = request)
+            .ofType(Notification.Exit::class.java)
+            .timeout(
+                timeoutSeconds,
+                TimeUnit.SECONDS,
+                Observable.error(
+                    RuntimeException(
+                        buildString {
+                            append("Timeout: $timeoutSeconds seconds. ")
+                            append("Failed to execute command: ${request.serialize(coordinate.serial.value)} ")
+                            append("on device $coordinate")
+                        }
+                    )
                 )
             )
-        )
-        .toBlocking()
-        .first()
+            .toBlocking()
+            .first()
+    }
 
-    private fun executeShellCommand(
-        command: List<String>,
-        redirectOutputTo: File? = null
-    ): Observable<Notification> = executeCommand(
-        command = listOf("shell") + command,
-        redirectOutputTo = redirectOutputTo
-    )
-
-    private fun executeCommand(
-        command: List<String>,
-        redirectOutputTo: File? = null
-    ): Observable<Notification> =
-        RxCommandLine(
+    private fun executeAdbRequest(
+        request: AdbRequest,
+        redirectOutputTo: File? = null,
+    ): Observable<Notification> {
+        return RxCommandLine(
             command = adb.adbPath,
-            args = listOf("-s", coordinate.serial.value) + command,
+            args = request.serialize(coordinate.serial.value)
         ).start(redirectOutputTo)
+    }
 
     override fun toString(): String = "Device ${coordinate.serial}"
 }

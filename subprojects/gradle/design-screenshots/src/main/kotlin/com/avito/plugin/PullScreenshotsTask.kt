@@ -43,7 +43,7 @@ public abstract class PullScreenshotsTask : DefaultTask() {
         val referencePath = Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
 
-        currentDevice.list(remotePath.toString()).fold(
+        currentDevice.list(remotePath).fold(
             onSuccess = { result ->
                 result.firstOrNull { it.trim().isNotEmpty() }
                     ?.let { directory ->

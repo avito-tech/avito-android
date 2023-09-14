@@ -50,7 +50,7 @@ public interface Device {
 
     public fun clearDirectory(remotePath: Path): Result<Unit>
 
-    public fun list(remotePath: String): Result<List<String>>
+    public fun list(remotePath: Path): Result<List<String>>
 
     public fun deviceStatus(): DeviceStatus
 

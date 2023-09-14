@@ -153,7 +153,7 @@ public open class StubDevice(
 
     override fun clearDirectory(remotePath: Path): Result<Unit> = Result.tryCatch {}
 
-    override fun list(remotePath: String): Result<List<String>> = Result.tryCatch { emptyList() }
+    override fun list(remotePath: Path): Result<List<String>> = Result.tryCatch { emptyList() }
 
     override fun deviceStatus(): Device.DeviceStatus {
         resultQueuePrecondition(

@@ -85,7 +85,6 @@ officialKubernetesClient = "io.kubernetes:client-java:13.0.1"
 kubernetesClient = "io.fabric8:kubernetes-client:5.11.2"
 kubernetesDsl = "com.github.fkorotkov:k8s-kotlin-dsl:3.1.1"
 
-adam = "com.malinskiy.adam:adam:0.4.3"
 ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"
 uiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 testOrchestrator = "androidx.test:orchestrator:1.4.2"
@@ -102,7 +101,6 @@ rx3Ilder = "com.squareup.rx.idler:rx3-idler:0.11.0"
 proguardRetrace = { module = "net.sf.proguard:proguard-retrace", version.ref = "proguard" }
 proguardBase = { module = "net.sf.proguard:proguard-base", version.ref = "proguard" }
 dexlib = "org.smali:dexlib2:2.3"
-dextestparser = "com.linkedin.dextestparser:parser:2.3.4"
 
 junit = "junit:junit:4.13"
 truth = "com.google.truth:truth:1.0"
