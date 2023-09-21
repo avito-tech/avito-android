@@ -15,6 +15,7 @@ import com.avito.k8s.KubernetesApiFactory
 import com.avito.k8s.KubernetesClientFactory
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportFactory
+import com.avito.report.ReportViewerTestStaticDataParser
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.FinalizerFactoryImpl
 import com.avito.runner.scheduler.TestRunnerFactoryProvider
@@ -78,13 +79,20 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
             report = report,
             testSuiteProvider = TestSuiteProvider.Impl(
                 report = report,
-                targets = params.instrumentationConfiguration.targets,
                 reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
                 filterFactory = FilterFactory.create(
                     filterData = params.instrumentationConfiguration.filter,
                     impactAnalysisResult = params.impactAnalysisResult,
                     report = report,
                     loggerFactory = loggerFactory
+                ),
+                testStaticParser = ReportViewerTestStaticDataParser.Impl(
+                    targets = params.instrumentationConfiguration.targets.map {
+                        ReportViewerTestStaticDataParser.TargetDevice(
+                            it.deviceName,
+                            it.reservation.device.api
+                        )
+                    }
                 )
             ),
             testRunnerFactoryProvider = TestRunnerFactoryProvider(

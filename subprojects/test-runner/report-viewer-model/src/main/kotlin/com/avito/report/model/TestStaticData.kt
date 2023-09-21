@@ -2,17 +2,15 @@ package com.avito.report.model
 
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.test.model.DeviceName
-import com.avito.test.model.TestName
 
 /**
  * Test data that can be parsed even without actual test run
  */
 public interface TestStaticData {
 
-    public val name: TestName
+    public val name: com.avito.test.model.TestName
 
-    public val device: DeviceName
+    public val device: com.avito.test.model.DeviceName
 
     public val description: String?
 

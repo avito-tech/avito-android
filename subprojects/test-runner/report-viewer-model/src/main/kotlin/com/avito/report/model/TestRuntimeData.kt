@@ -20,7 +20,7 @@ public interface TestRuntimeData {
     public val video: Video?
     public val preconditions: List<Step>
     public val steps: List<Step>
-}
 
-public val TestRuntimeData.duration: Long
-    get() = endTime - startTime
+    public val duration: Long
+        get() = endTime - startTime
+}

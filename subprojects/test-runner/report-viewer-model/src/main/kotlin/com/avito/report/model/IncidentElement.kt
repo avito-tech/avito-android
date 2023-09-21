@@ -1,7 +1,5 @@
 package com.avito.report.model
 
-import com.google.gson.JsonElement
-
 /**
  * Atomic error for Incident.chain
  *
@@ -17,5 +15,5 @@ public data class IncidentElement(
     val type: String? = null,
     val origin: String? = null,
     val className: String? = null,
-    val data: JsonElement? = null
+    val data: com.google.gson.JsonElement? = null
 )

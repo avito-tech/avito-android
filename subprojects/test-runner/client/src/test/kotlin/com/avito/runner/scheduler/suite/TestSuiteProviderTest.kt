@@ -3,6 +3,8 @@ package com.avito.runner.scheduler.suite
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.report.Report
+import com.avito.report.ReportViewerTestStaticDataParser
+import com.avito.report.ReportViewerTestStaticDataParser.TargetDevice
 import com.avito.report.StubReport
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
@@ -65,9 +67,13 @@ internal class TestSuiteProviderTest {
     ): TestSuiteProvider {
         return TestSuiteProvider.Impl(
             report = report,
-            targets = targets,
             reportSkippedTests = reportSkippedTests,
-            filterFactory = filterFactory
+            filterFactory = filterFactory,
+            testStaticParser = ReportViewerTestStaticDataParser.Impl(
+                targets = targets.map {
+                    TargetDevice(it.deviceName, it.reservation.device.api)
+                }
+            )
         )
     }
 }

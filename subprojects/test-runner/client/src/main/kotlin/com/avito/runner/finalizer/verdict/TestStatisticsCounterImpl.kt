@@ -2,7 +2,6 @@ package com.avito.runner.finalizer.verdict
 
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestRuntimeData
-import com.avito.report.model.duration
 
 internal class TestStatisticsCounterImpl(private val verdict: Verdict) : TestStatisticsCounter {
 

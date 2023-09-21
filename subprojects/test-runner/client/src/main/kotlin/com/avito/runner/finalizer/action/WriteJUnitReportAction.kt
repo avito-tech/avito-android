@@ -4,7 +4,6 @@ import com.avito.report.ReportLinksGenerator
 import com.avito.report.TestSuiteNameProvider
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestRuntimeData
-import com.avito.report.model.duration
 import com.avito.runner.finalizer.verdict.TestStatisticsCounterFactory
 import com.avito.runner.finalizer.verdict.Verdict
 import org.apache.commons.text.StringEscapeUtils

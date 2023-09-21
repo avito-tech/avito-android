@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.runnerApi)
     implementation(projects.subprojects.testRunner.testAnnotations)
     implementation(projects.subprojects.testRunner.testReportArtifacts)
+    implementation(projects.subprojects.testRunner.reportViewerTestStaticDataParser)
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
     implementation(libs.commonsText) {

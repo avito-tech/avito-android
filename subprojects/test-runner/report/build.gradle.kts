@@ -12,15 +12,7 @@ dependencies {
     api(projects.subprojects.common.result)
     api(projects.subprojects.common.time)
     api(projects.subprojects.logger.logger)
-    api(libs.okhttp) {
-        because("HttpUrl used to type urls more strict")
-    }
-    api(libs.gson) {
-        // todo hide parsing
-        // todo replace JsonElement with something more generic if possible
-        because("module provides TypeAdapterFactory for Entries; JsonElement in the IncidentElement")
-    }
-    api(projects.subprojects.testRunner.testModel)
+    api(projects.subprojects.testRunner.reportViewerModel)
 
     implementation(projects.subprojects.common.okhttp) {
         because("Result extension used")

@@ -2,7 +2,7 @@ package com.avito.runner.scheduler.suite
 
 import com.avito.android.TestInApk
 import com.avito.report.Report
-import com.avito.runner.config.TargetConfigurationData
+import com.avito.report.ReportViewerTestStaticDataParser
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.TestsFilter
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Excluded
@@ -13,9 +13,9 @@ internal interface TestSuiteProvider {
 
     class Impl(
         private val report: Report,
-        private val targets: List<TargetConfigurationData>,
         private val reportSkippedTests: Boolean,
-        private val filterFactory: FilterFactory
+        private val filterFactory: FilterFactory,
+        private val testStaticParser: ReportViewerTestStaticDataParser,
     ) : TestSuiteProvider {
 
         override fun getTestSuite(tests: List<TestInApk>): TestSuite {
@@ -45,20 +45,18 @@ internal interface TestSuiteProvider {
             tests: List<TestInApk>,
             filter: TestsFilter
         ): TestSuite {
-            val source = targets.flatMap { target ->
-                val deviceName = target.deviceName
-                tests.map { testInApk ->
-                    val testStaticData = parseTest(testInApk, deviceName, target.reservation.device.api)
-                    testStaticData to filter.filter(
-                        TestsFilter.Test(
-                            name = testInApk.testName.name,
-                            annotations = testInApk.annotations,
-                            deviceName = deviceName,
-                            api = target.reservation.device.api,
-                            flakiness = testStaticData.flakiness
-                        )
+            val source = testStaticParser.getTestSuite(tests).map { rawParsedTest ->
+                val testStaticData = rawParsedTest.testStaticData
+                val target = rawParsedTest.target
+                testStaticData to filter.filter(
+                    TestsFilter.Test(
+                        name = testStaticData.name.name,
+                        annotations = rawParsedTest.annotations,
+                        deviceName = target.name,
+                        api = target.api,
+                        flakiness = testStaticData.flakiness
                     )
-                }
+                )
             }
 
             val skippedTests =

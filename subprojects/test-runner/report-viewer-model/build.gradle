@@ -1,0 +1,16 @@
+plugins {
+    id("convention.kotlin-jvm")
+    id("convention.publish-kotlin-library")
+}
+
+dependencies {
+    api(libs.gson) {
+        // todo hide parsing
+        // todo replace JsonElement with something more generic if possible
+        because("module provides TypeAdapterFactory for Entries; JsonElement in the IncidentElement")
+    }
+    api(libs.okhttp) {
+        because("HttpUrl used to type urls more strict")
+    }
+    api(projects.subprojects.testRunner.testModel)
+}
