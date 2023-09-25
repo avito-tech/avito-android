@@ -24,7 +24,7 @@ internal class ImagePublisher(
         val imageName = "${image.name}:${image.tag}"
         log.info("Publishing an image $imageName ...")
 
-        val result = docker.push(imageName)
+        val result = docker.push(image.name, "--all-tags")
         require(result.isSuccess) {
             "Failed to push the image: ${result.exceptionOrNull()}"
         }

@@ -42,6 +42,11 @@ internal class PublishEmceeWorker(
         description = "Registry for publishing"
     ).required()
 
+    private val imageVersionTag: String? by option(
+        type = ArgType.String,
+        description = "Docker image version tag. Default value is a shorten image id"
+    )
+
     override fun execute() {
         val docker = CliDocker()
 
@@ -54,7 +59,7 @@ internal class PublishEmceeWorker(
             imageName = imageName,
             artifactoryUrl = artifactoryUrl,
             login = dockerHubLogin(docker),
-            tagger = ImageTagger(docker),
+            tagger = ImageTagger(docker, imageVersionTag),
             emulatorPreparer = EmulatorPreparer(docker, EmulatorTester(docker)),
             emulatorLocale = emulatorLocale
         )

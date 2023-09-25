@@ -6,7 +6,8 @@ import ru.avito.image_builder.internal.docker.ImageId
 import java.util.logging.Logger
 
 internal class ImageTagger(
-    private val docker: Docker
+    private val docker: Docker,
+    private val imageVersionTag: String? = null
 ) {
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
@@ -15,12 +16,19 @@ internal class ImageTagger(
         // Image ID is different in registries and can't be used as unique and stable identifier
         // https://github.com/distribution/distribution/issues/1662#issuecomment-213079540
         // Thus, we fixing it as an unique tag
-        @Suppress("UnnecessaryVariable")
-        val tag = id.value.take(12)
+        val tag = when (imageVersionTag) {
+            null -> id.value.take(12)
+            else -> imageVersionTag
+        }
 
         val result = docker.tag(id.value, "$name:$tag")
         check(result.isSuccess) {
             "Unable to tag image ${id.value}: ${result.exceptionOrNull()}"
+        }
+
+        val latestResult = docker.tag(id.value, "$name:latest")
+        check(result.isSuccess) {
+            "Unable to tag image ${id.value}: ${latestResult.exceptionOrNull()}"
         }
 
         log.info("Image $id tagged as $name:$tag")
