@@ -110,7 +110,7 @@ public abstract class MissingImplementationDependencyRootTask : DefaultTask() {
 
         val logicalModuleDirectory = File(
             rootProjectDir.get(),
-            logicalModule.removePrefix(":").replace(":", File.pathSeparator)
+            logicalModule.removePrefix(":").replace(":", File.separator)
         )
 
         if (!logicalModuleDirectory.exists()) {
