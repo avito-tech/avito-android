@@ -102,5 +102,5 @@ Some additional info:
 ## CI integration configurations
 
 - [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request's builds
-- [integration check](http://links.k.avito.ru/ZA) - currently, contains the biggest amount of integration checks
+- [integration check](http://links.k.avito.ru/A8) - currently, contains the biggest amount of integration checks
 - [nightly integration check](http://links.k.avito.ru/gZ) - the same as `integration check` but uses more Android emulators
