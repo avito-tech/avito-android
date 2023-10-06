@@ -3,7 +3,7 @@ package com.avito.runner.scheduler.suite.filter
 import androidx.annotation.VisibleForTesting
 
 internal class CompositionFilter(
-    @VisibleForTesting
+    @get:VisibleForTesting
     internal val filters: List<TestsFilter>
 ) : TestsFilter {
 

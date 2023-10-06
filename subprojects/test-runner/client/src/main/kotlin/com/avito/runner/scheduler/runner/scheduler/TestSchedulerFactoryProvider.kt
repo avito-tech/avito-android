@@ -78,12 +78,10 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
             ),
             report = report,
             testSuiteProvider = TestSuiteProvider.Impl(
-                report = report,
-                reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
                 filterFactory = FilterFactory.create(
                     filterData = params.instrumentationConfiguration.filter,
                     impactAnalysisResult = params.impactAnalysisResult,
-                    report = report,
+                    runResultsProvider = RunResultsProviderImpl(report),
                     loggerFactory = loggerFactory
                 ),
                 testStaticParser = ReportViewerTestStaticDataParser.Impl(
@@ -151,6 +149,7 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
             filter = params.instrumentationConfiguration.filter,
             testApk = params.testApk,
             outputDir = params.outputDir,
+            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
         )
     }
 

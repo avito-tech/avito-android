@@ -13,7 +13,6 @@ import com.avito.report.model.Kind
 class NetworkIsMockedValidator : TestMetadataValidator {
 
     override fun validate(test: TestMethodOrClass) {
-        @Suppress("NON_EXHAUSTIVE_WHEN")
         when (TestKindExtractor.extract(test)) {
             Kind.UI_COMPONENT -> validateNoRealNetwork(test.testClass)
             else -> {

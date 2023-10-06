@@ -9,11 +9,12 @@ import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfi
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.runner.config.InstrumentationConfigurationData
-import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.config.InstrumentationParameters
 import com.avito.runner.config.Reservation
 import com.avito.runner.config.SchedulingConfigurationData
 import com.avito.runner.config.TargetConfigurationData
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.Filter
 import com.avito.test.model.DeviceName
 import org.gradle.api.file.Directory
@@ -175,13 +176,13 @@ internal class InstrumentationConfigurator(
         )
     }
 
-    private fun InstrumentationFilter.FromRunHistory.RunStatus.map(): com.avito.runner.config.RunStatus {
+    private fun InstrumentationFilter.FromRunHistory.RunStatus.map(): RunStatus {
         return when (this) {
-            InstrumentationFilter.FromRunHistory.RunStatus.Failed -> com.avito.runner.config.RunStatus.Failed
-            InstrumentationFilter.FromRunHistory.RunStatus.Success -> com.avito.runner.config.RunStatus.Success
-            InstrumentationFilter.FromRunHistory.RunStatus.Lost -> com.avito.runner.config.RunStatus.Lost
-            InstrumentationFilter.FromRunHistory.RunStatus.Skipped -> com.avito.runner.config.RunStatus.Skipped
-            InstrumentationFilter.FromRunHistory.RunStatus.Manual -> com.avito.runner.config.RunStatus.Manual
+            InstrumentationFilter.FromRunHistory.RunStatus.Failed -> RunStatus.Failed
+            InstrumentationFilter.FromRunHistory.RunStatus.Success -> RunStatus.Success
+            InstrumentationFilter.FromRunHistory.RunStatus.Lost -> RunStatus.Lost
+            InstrumentationFilter.FromRunHistory.RunStatus.Skipped -> RunStatus.Skipped
+            InstrumentationFilter.FromRunHistory.RunStatus.Manual -> RunStatus.Manual
         }
     }
 }

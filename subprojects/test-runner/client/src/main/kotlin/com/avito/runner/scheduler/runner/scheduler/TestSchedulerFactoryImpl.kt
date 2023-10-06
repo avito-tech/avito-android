@@ -3,10 +3,10 @@ package com.avito.runner.scheduler.runner.scheduler
 import com.avito.android.TestSuiteLoader
 import com.avito.logger.LoggerFactory
 import com.avito.report.Report
-import com.avito.runner.config.InstrumentationFilterData
 import com.avito.runner.finalizer.FinalizerFactory
 import com.avito.runner.scheduler.TestRunnerFactoryProvider
 import com.avito.runner.scheduler.suite.TestSuiteProvider
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
 import java.io.File
 
@@ -21,6 +21,7 @@ internal class TestSchedulerFactoryImpl(
     private val filter: InstrumentationFilterData,
     private val testApk: File,
     private val outputDir: File,
+    private val reportSkippedTests: Boolean,
 ) : TestSchedulerFactory {
 
     override fun create(): TestScheduler {
@@ -35,6 +36,7 @@ internal class TestSchedulerFactoryImpl(
             filter = filter,
             testApk = testApk,
             outputDir = outputDir,
+            reportSkippedTests = reportSkippedTests,
         )
     }
 }

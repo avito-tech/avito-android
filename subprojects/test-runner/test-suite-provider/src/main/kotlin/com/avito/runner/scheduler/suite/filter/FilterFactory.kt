@@ -1,28 +1,27 @@
 package com.avito.runner.scheduler.suite.filter
 
 import com.avito.logger.LoggerFactory
-import com.avito.report.Report
-import com.avito.runner.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 
-internal interface FilterFactory {
+public interface FilterFactory {
 
-    fun createFilter(): TestsFilter
+    public fun createFilter(): TestsFilter
 
-    companion object {
+    public companion object {
 
         internal const val JUNIT_IGNORE_ANNOTATION = "org.junit.Ignore"
 
-        fun create(
+        public fun create(
             filterData: InstrumentationFilterData,
             impactAnalysisResult: ImpactAnalysisResult,
             loggerFactory: LoggerFactory,
-            report: Report
+            runResultsProvider: RunResultsProvider,
         ): FilterFactory {
             return FilterFactoryImpl(
                 filterData = filterData,
                 impactAnalysisResult = impactAnalysisResult,
                 loggerFactory = loggerFactory,
-                report = report
+                runResultsProvider = runResultsProvider,
             )
         }
     }

@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.suite.filter
 
 import com.avito.report.model.Flakiness
-import com.avito.runner.config.InstrumentationFilterData
-import com.avito.runner.config.createStub
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.config.createStub
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

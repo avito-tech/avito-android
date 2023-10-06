@@ -8,7 +8,7 @@ internal val includeAll = object : TestsFilter {
     }
 }
 
-internal fun excludedFilter(reason: TestsFilter.Result.Excluded): TestsFilter {
+public fun excludedFilter(reason: TestsFilter.Result.Excluded): TestsFilter {
     return object : TestsFilter {
         override val name: String = "StubExclude"
 
@@ -18,7 +18,7 @@ internal fun excludedFilter(reason: TestsFilter.Result.Excluded): TestsFilter {
     }
 }
 
-internal class StubFilterFactory(
+public class StubFilterFactory(
     private val filter: TestsFilter = includeAll
 ) : FilterFactory {
 

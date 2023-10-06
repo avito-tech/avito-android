@@ -2,10 +2,8 @@ package com.avito.runner.scheduler.suite.filter
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.Report
-import com.avito.report.model.TestStatus
-import com.avito.runner.config.InstrumentationFilterData
-import com.avito.runner.config.RunStatus
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.test.model.TestCase
@@ -13,7 +11,7 @@ import com.avito.test.model.TestCase
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilterData,
     private val impactAnalysisResult: ImpactAnalysisResult,
-    private val report: Report,
+    private val runResultsProvider: RunResultsProvider,
     loggerFactory: LoggerFactory
 ) : FilterFactory {
 
@@ -86,7 +84,7 @@ internal class FilterFactoryImpl(
         val previousStatuses = filterData.fromRunHistory.previousStatuses
         if (previousStatuses.included.isNotEmpty() || previousStatuses.excluded.isNotEmpty()) {
 
-            report.getPreviousRunsResults()
+            runResultsProvider.getPreviousRunsResults()
                 .fold(
                     onSuccess = { previousRunTests ->
                         if (previousStatuses.included.isNotEmpty()) {
@@ -121,7 +119,7 @@ internal class FilterFactoryImpl(
         ) {
             val statuses = reportFilter.statuses
 
-            report.getRunResultsById(reportFilter.reportId)
+            runResultsProvider.getRunResultsById(reportFilter.reportId)
                 .fold(
                     onSuccess = { previousRunTests ->
                         if (statuses.included.isNotEmpty()) {
@@ -148,9 +146,9 @@ internal class FilterFactoryImpl(
         }
     }
 
-    private fun Map<TestCase, TestStatus>.filterBy(statuses: Set<RunStatus>): Set<TestSignature> {
+    private fun Map<TestCase, RunStatus>.filterBy(statuses: Set<RunStatus>): Set<TestSignature> {
         return asSequence()
-            .filter { (_, status) -> statuses.any { it.statusClass.isInstance(status) } }
+            .filter { (_, status) -> statuses.contains(status) }
             .map { (testCase, _) ->
                 TestSignature(
                     name = testCase.name.name,

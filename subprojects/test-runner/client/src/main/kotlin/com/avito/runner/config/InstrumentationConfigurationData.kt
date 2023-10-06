@@ -2,6 +2,7 @@ package com.avito.runner.config
 
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 import java.io.File
 import java.io.Serializable
 import java.time.Duration

@@ -14,6 +14,7 @@ dependencies {
     api(projects.subprojects.testRunner.reportViewer) {
         because("ReportViewerConfig exposes ReportCoordinates; also RunId")
     }
+    api(projects.subprojects.testRunner.testSuiteProvider)
 
     implementation(projects.subprojects.common.compositeException)
     implementation(projects.subprojects.common.coroutinesExtension)
@@ -54,4 +55,5 @@ dependencies {
     testFixturesImplementation(testFixtures(projects.subprojects.testRunner.deviceProvider.impl))
     testFixturesImplementation(testFixtures(projects.subprojects.testRunner.report))
     testFixturesImplementation(testFixtures(projects.subprojects.testRunner.service))
+    testFixturesImplementation(testFixtures(projects.subprojects.testRunner.testSuiteProvider))
 }

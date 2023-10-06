@@ -1,12 +1,9 @@
 package com.avito.runner.scheduler.suite.filter
 
 import com.avito.android.Result
-import com.avito.report.StubReport
-import com.avito.report.model.TestStatus
-import com.avito.runner.config.InstrumentationFilterData
-import com.avito.runner.config.InstrumentationFilterData.FromRunHistory.ReportFilter
-import com.avito.runner.config.RunStatus
-import com.avito.runner.config.createStub
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.config.RunStatus
+import com.avito.runner.scheduler.suite.config.createStub
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.Source
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.test.model.DeviceName
@@ -114,10 +111,11 @@ internal class FilterFactoryImplTest {
     @Suppress("MaxLineLength")
     @Test
     fun `when filterData - includePrevious statuses and Report failed - then filters contain defaults`() {
-        val report = StubReport()
-        report.previousRunResults = Result.Failure(IllegalStateException("something went wrong"))
+        val runResultsProvider = StubRunResultsProvider()
+        runResultsProvider.previousRunResults = Result.Failure(IllegalStateException("something went wrong"))
 
         val factory = StubFilterFactoryFactory.create(
+            runResultsProvider = runResultsProvider,
             filter = InstrumentationFilterData.createStub(
                 previousStatuses = Filter.Value(
                     included = setOf(RunStatus.Success),
@@ -177,20 +175,21 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData report is present and statuses empty then filters don't contain Report filter`() {
-        val report = StubReport()
+        val runResultsProvider = StubRunResultsProvider()
         val reportId = "report#1"
-        report.reportIdToRunResults = Result.Success(
+        runResultsProvider.reportIdToRunResults = Result.Success(
             mapOf(
                 reportId to mapOf(
-                    TestCase(TestName("", "test1"), DeviceName("25")) to TestStatus.Success,
-                    TestCase(TestName("", "test2"), DeviceName("25")) to TestStatus.Lost
+                    TestCase(TestName("", "test1"), DeviceName("25")) to RunStatus.Success,
+                    TestCase(TestName("", "test2"), DeviceName("25")) to RunStatus.Lost
                 )
             )
         )
 
         val factory = StubFilterFactoryFactory.create(
+            runResultsProvider = runResultsProvider,
             filter = InstrumentationFilterData.createStub(
-                report = ReportFilter(
+                report = InstrumentationFilterData.FromRunHistory.ReportFilter(
                     reportId = reportId,
                     statuses = Filter.Value(
                         included = emptySet(),
@@ -212,19 +211,20 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when report for required id is not present then filters don't contain Report filter`() {
-        val report = StubReport()
-        report.reportIdToRunResults = Result.Success(
+        val runResultsProvider = StubRunResultsProvider()
+        runResultsProvider.reportIdToRunResults = Result.Success(
             mapOf(
                 "report#1" to mapOf(
-                    TestCase(TestName("", "test1"), DeviceName("25")) to TestStatus.Success,
-                    TestCase(TestName("", "test2"), DeviceName("25")) to TestStatus.Lost
+                    TestCase(TestName("", "test1"), DeviceName("25")) to RunStatus.Success,
+                    TestCase(TestName("", "test2"), DeviceName("25")) to RunStatus.Lost
                 )
             )
         )
 
         val factory = StubFilterFactoryFactory.create(
+            runResultsProvider = runResultsProvider,
             filter = InstrumentationFilterData.createStub(
-                report = ReportFilter(
+                report = InstrumentationFilterData.FromRunHistory.ReportFilter(
                     reportId = "report#2",
                     statuses = Filter.Value(
                         included = setOf(RunStatus.Success),

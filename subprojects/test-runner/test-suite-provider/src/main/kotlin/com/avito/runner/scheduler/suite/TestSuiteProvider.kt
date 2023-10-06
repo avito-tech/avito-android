@@ -1,19 +1,16 @@
 package com.avito.runner.scheduler.suite
 
 import com.avito.android.TestInApk
-import com.avito.report.Report
 import com.avito.report.ReportViewerTestStaticDataParser
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.TestsFilter
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Excluded
 
-internal interface TestSuiteProvider {
+public interface TestSuiteProvider {
 
-    fun getTestSuite(tests: List<TestInApk>): TestSuite
+    public fun getTestSuite(tests: List<TestInApk>): TestSuite
 
-    class Impl(
-        private val report: Report,
-        private val reportSkippedTests: Boolean,
+    public class Impl(
         private val filterFactory: FilterFactory,
         private val testStaticParser: ReportViewerTestStaticDataParser,
     ) : TestSuiteProvider {
@@ -24,19 +21,6 @@ internal interface TestSuiteProvider {
                 tests = tests,
                 filter = filterFactory.createFilter()
             )
-
-            if (reportSkippedTests) {
-                val skippedTests = suite.skippedTests
-                    // do not report skip here, to prevent final test status rewrite (green from last run - ok)
-                    .filter { (_, verdict) ->
-                        verdict !is Excluded.BySignatures || verdict.source != TestsFilter.Signatures.Source.PreviousRun
-                    }
-                    .map { (test, verdict) ->
-                        test to verdict.reason
-                    }
-
-                report.addSkippedTests(skippedTests)
-            }
 
             return suite
         }

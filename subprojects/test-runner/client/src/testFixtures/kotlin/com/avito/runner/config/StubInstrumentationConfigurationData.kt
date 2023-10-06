@@ -1,5 +1,7 @@
 package com.avito.runner.config
 
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.Filter
 import java.io.File
 import java.time.Duration

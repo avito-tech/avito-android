@@ -24,6 +24,7 @@ dependencies {
     implementation(projects.subprojects.testRunner.report)
     implementation(projects.subprojects.testRunner.reportViewer)
     implementation(projects.subprojects.testRunner.testAnnotations)
+    implementation(projects.subprojects.testRunner.testSuiteProvider)
 
     testImplementation(projects.subprojects.common.truthExtensions)
     testImplementation(testFixtures(projects.subprojects.testRunner.report))

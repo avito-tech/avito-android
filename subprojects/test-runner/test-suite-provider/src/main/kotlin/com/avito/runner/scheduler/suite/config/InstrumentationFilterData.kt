@@ -1,4 +1,4 @@
-package com.avito.runner.config
+package com.avito.runner.scheduler.suite.config
 
 import com.avito.runner.scheduler.suite.filter.Filter
 import java.io.Serializable

@@ -8,10 +8,8 @@ import com.avito.runner.scheduler.suite.filter.createStubInstance
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
 import java.time.Duration
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
-@OptIn(ExperimentalPathApi::class)
 public fun RunnerInputParams.Companion.createStubInstance(
     mainApk: File = File(""),
     testApk: File = File(""),
