@@ -176,7 +176,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         val output = output.get().asFile
 
         val testRunParams = RunnerInputParams(
-            mainApk = application.orNull?.getApk(),
+            mainApk = requireNotNull(application.orNull?.getApk()) {
+                "Unable to create valid RunnerInputParams - mainApk cannot be null."
+            },
             testApk = testApplication.get().getApkOrThrow(),
             instrumentationConfiguration = configuration,
             executionParameters = ExecutionParameters(

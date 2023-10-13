@@ -10,7 +10,7 @@ import java.io.Serializable
 import java.time.Duration
 
 public data class RunnerInputParams(
-    val mainApk: File?,
+    val mainApk: File,
     val testApk: File,
     val instrumentationConfiguration: InstrumentationConfigurationData,
     val executionParameters: ExecutionParameters,

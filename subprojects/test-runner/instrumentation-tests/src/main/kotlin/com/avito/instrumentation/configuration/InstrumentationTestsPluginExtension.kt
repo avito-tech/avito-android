@@ -35,15 +35,14 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
     @get:Nested
     public abstract val experimental: ExperimentalExtension
 
+    @get:Nested
+    public abstract val macrobenchmark: MacrobenchmarkInstrumentationExtension
+
     // todo internal
     public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
     // todo nested
     public val testReport: InstrumentationTestsReportExtension = InstrumentationTestsReportExtension()
-
-    // todo remove
-    public val configurations: List<InstrumentationConfiguration>
-        get() = configurationsContainer.toList()
 
     // todo MapProperty
     public var instrumentationParams: Map<String, String> = emptyMap()
@@ -74,5 +73,10 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
 
     public fun environments(action: Action<PolymorphicDomainObjectContainer<ExecutionEnvironment>>) {
         action.execute(environmentsContainer)
+    }
+
+    public fun macrobenchmark(action: Action<MacrobenchmarkInstrumentationExtension>) {
+        action.execute(macrobenchmark)
+        macrobenchmark.finalizeValues()
     }
 }

@@ -32,7 +32,7 @@ internal class ConfiguratorsFactory(
 
     private val reportResolver = ReportResolver(extension, runIdResolver)
 
-    private val androidVariantConfiguratorFactory = AndroidVariantConfiguratorFactory()
+    private val androidVariantConfiguratorFactory = AndroidVariantConfiguratorFactory(extension)
 
     private val planSlugResolver = PlanSlugResolver
 

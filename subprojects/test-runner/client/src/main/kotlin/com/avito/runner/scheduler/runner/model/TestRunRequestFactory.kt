@@ -7,7 +7,7 @@ import com.avito.test.model.TestCase
 import java.io.File
 
 internal class TestRunRequestFactory(
-    private val application: File?,
+    private val application: File,
     private val testApplication: File,
     private val deviceDebug: Boolean,
     private val executionParameters: ExecutionParameters,
@@ -34,7 +34,7 @@ internal class TestRunRequestFactory(
                 minimumFailedCount = quota.minimumFailedCount,
                 minimumSuccessCount = quota.minimumSuccessCount
             ),
-            application = application?.absolutePath,
+            application = application.absolutePath,
             applicationPackage = executionParameters.applicationPackageName,
             testApplication = testApplication.absolutePath,
             testPackage = executionParameters.applicationTestPackageName,
