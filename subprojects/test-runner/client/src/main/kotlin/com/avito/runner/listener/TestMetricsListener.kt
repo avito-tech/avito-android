@@ -47,7 +47,8 @@ internal class TestMetricsListener(
             TestCaseRun.Result.Ignored -> {
             }
 
-            TestCaseRun.Result.Passed -> {
+            TestCaseRun.Result.Passed.Regular,
+            is TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs -> {
             }
         }
     }

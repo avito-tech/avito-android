@@ -194,7 +194,7 @@ internal class SchedulingBasedRetryManagerTest {
 
         private val SUCCESS_RUN = DeviceTestCaseRun.createStubInstance(
             testCaseRun = TestCaseRun.createStubInstance(
-                result = TestCaseRun.Result.Passed
+                result = TestCaseRun.Result.Passed.Regular
             )
         )
     }

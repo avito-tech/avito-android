@@ -88,7 +88,7 @@ internal class DeviceWorkerTest {
                 gettingDeviceStatusResults = List(1 + intentions.size) { DeviceStatus.Alive },
                 runTestsResults = intentions.map {
                     StubActionResult.Success(
-                        TestCaseRun.Result.Passed
+                        TestCaseRun.Result.Passed.Regular
                     )
                 }
             )
@@ -173,7 +173,7 @@ internal class DeviceWorkerTest {
                 gettingDeviceStatusResults = List(1 + intentions.size) { DeviceStatus.Alive },
                 runTestsResults = intentions.map {
                     StubActionResult.Success(
-                        TestCaseRun.Result.Passed
+                        TestCaseRun.Result.Passed.Regular
                     )
                 }
             )

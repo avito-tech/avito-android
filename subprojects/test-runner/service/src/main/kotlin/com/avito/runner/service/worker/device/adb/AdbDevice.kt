@@ -130,16 +130,19 @@ public data class AdbDevice(
                 when (it) {
                     is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
                         when (it.result) {
-                            TestCaseRun.Result.Passed -> eventsListener.onRunTestPassed(
-                                device = this,
-                                testName = it.name.toString(),
-                                durationMs = timeProvider.nowInMillis() - startTime
-                            )
-                            TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(
-                                device = this,
-                                testName = it.name.toString(),
-                                durationMs = timeProvider.nowInMillis() - startTime
-                            )
+                            TestCaseRun.Result.Passed.Regular,
+                            is TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs ->
+                                eventsListener.onRunTestPassed(
+                                    device = this,
+                                    testName = it.name.toString(),
+                                    durationMs = timeProvider.nowInMillis() - startTime
+                                )
+                            TestCaseRun.Result.Ignored ->
+                                eventsListener.onRunTestIgnored(
+                                    device = this,
+                                    testName = it.name.toString(),
+                                    durationMs = timeProvider.nowInMillis() - startTime
+                                )
                             is Failed.InRun ->
                                 eventsListener.onRunTestRunError(
                                     device = this,

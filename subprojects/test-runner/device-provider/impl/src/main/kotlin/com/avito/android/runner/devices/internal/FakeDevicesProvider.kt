@@ -90,7 +90,7 @@ internal class FakeDevicesProvider(
 
     private fun testPassed(): StubActionResult.Success<TestCaseRun.Result> {
         return StubActionResult.Success(
-            TestCaseRun.Result.Passed
+            TestCaseRun.Result.Passed.Regular
         )
     }
 

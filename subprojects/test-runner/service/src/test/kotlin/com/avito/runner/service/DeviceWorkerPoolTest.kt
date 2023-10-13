@@ -86,7 +86,7 @@ internal class DeviceWorkerPoolTest {
                 },
                 runTestsResults = intentions.map {
                     StubActionResult.Success(
-                        TestCaseRun.Result.Passed
+                        TestCaseRun.Result.Passed.Regular
                     )
                 }
             )
@@ -112,7 +112,7 @@ internal class DeviceWorkerPoolTest {
                             it.actionResult.testCaseRun.testCaseRun.result
                         }
                 )
-                .isEqualTo(intentions.map { TestCaseRun.Result.Passed })
+                .isEqualTo(intentions.map { TestCaseRun.Result.Passed.Regular })
         }
 
     @Test
@@ -167,7 +167,7 @@ internal class DeviceWorkerPoolTest {
                 ),
                 runTestsResults = intentions.map {
                     StubActionResult.Success(
-                        TestCaseRun.Result.Passed
+                        TestCaseRun.Result.Passed.Regular
                     )
                 }
             )
@@ -192,7 +192,7 @@ internal class DeviceWorkerPoolTest {
                             it.actionResult.testCaseRun.testCaseRun.result
                         }
                 )
-                .isEqualTo(intentions.map { TestCaseRun.Result.Passed })
+                .isEqualTo(intentions.map { TestCaseRun.Result.Passed.Regular })
         }
 
     private fun provideDeviceWorkerPool(

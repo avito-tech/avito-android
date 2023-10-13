@@ -29,7 +29,8 @@ internal class LogListener : TestListener {
         testArtifactsDir: Result<File>
     ) {
         val status = when (result) {
-            is TestCaseRun.Result.Passed -> "PASSED"
+            is TestCaseRun.Result.Passed.Regular,
+            is TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs -> "PASSED"
             is TestCaseRun.Result.Ignored -> "IGNORED"
             is TestCaseRun.Result.Failed.InRun -> "FAILED"
             is TestCaseRun.Result.Failed.InfrastructureError -> {

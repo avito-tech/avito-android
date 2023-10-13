@@ -12,7 +12,14 @@ public data class TestCaseRun(
         get() = timestampCompletedMilliseconds - timestampStartedMilliseconds
 
     public sealed class Result {
-        public object Passed : Result()
+        public sealed class Passed : Result() {
+            public object Regular : Passed()
+
+            public data class WithMacrobenchmarkOutputs(
+                public val outputFiles: List<String> = emptyList()
+            ) : Passed()
+        }
+
         public object Ignored : Result()
         public sealed class Failed : Result() {
             public data class InRun(val errorMessage: String) : Failed()

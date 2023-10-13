@@ -205,9 +205,12 @@ internal interface InstrumentationTestCaseRunParser {
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         name = TestName(first.clazz, first.test),
                         result = when (second.statusCode) {
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok,
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok ->
+                                TestCaseRun.Result.Passed.Regular
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput ->
-                                TestCaseRun.Result.Passed
+                                TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs(
+                                    outputFiles = listOfNotNull(second.baselineProfileFile)
+                                )
 
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ignored ->
                                 TestCaseRun.Result.Ignored
@@ -224,7 +227,6 @@ internal interface InstrumentationTestCaseRunParser {
                         },
                         timestampStartedMilliseconds = first.timestampMilliseconds,
                         timestampCompletedMilliseconds = second.timestampMilliseconds,
-                        baselineProfileFile = second.baselineProfileFile ?: "",
                     )
                 }
         }

@@ -9,8 +9,7 @@ internal sealed class InstrumentationTestCaseRun {
         val name: TestName,
         val result: TestCaseRun.Result,
         val timestampStartedMilliseconds: Long,
-        val timestampCompletedMilliseconds: Long,
-        val baselineProfileFile: String = "",
+        val timestampCompletedMilliseconds: Long
     ) : InstrumentationTestCaseRun() {
         val durationMilliseconds: Long = timestampCompletedMilliseconds - timestampStartedMilliseconds
     }

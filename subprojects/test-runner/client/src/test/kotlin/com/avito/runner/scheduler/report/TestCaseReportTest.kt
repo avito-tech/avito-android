@@ -15,8 +15,8 @@ internal class TestCaseReportTest {
     fun `success runs - returns number of passed test runs`() {
         val report = createTestCaseReport(
             runResults = listOf(
-                TestCaseRun.Result.Passed,
-                TestCaseRun.Result.Passed,
+                TestCaseRun.Result.Passed.Regular,
+                TestCaseRun.Result.Passed.Regular,
                 TestCaseRun.Result.Failed.InRun("")
             )
         )
@@ -28,7 +28,7 @@ internal class TestCaseReportTest {
     fun `failed runs - returns number of failed test runs`() {
         val report = createTestCaseReport(
             runResults = listOf(
-                TestCaseRun.Result.Passed,
+                TestCaseRun.Result.Passed.Regular,
                 TestCaseRun.Result.Failed.InRun(""),
                 TestCaseRun.Result.Failed.InRun("")
             )
@@ -41,7 +41,7 @@ internal class TestCaseReportTest {
     fun `total runs - returns number of test runs`() {
         val report = createTestCaseReport(
             runResults = listOf(
-                TestCaseRun.Result.Passed,
+                TestCaseRun.Result.Passed.Regular,
                 TestCaseRun.Result.Failed.InRun(""),
                 TestCaseRun.Result.Failed.InRun("")
             )

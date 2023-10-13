@@ -57,9 +57,9 @@ internal class ReportCreatorTest {
         val summary = createSummary(
             runs = listOf(
                 TestRunRequest.Companion.createStubInstance() to createTestSuiteRuns(
-                    TestCaseRun.Result.Passed,
-                    TestCaseRun.Result.Passed,
-                    TestCaseRun.Result.Passed
+                    TestCaseRun.Result.Passed.Regular,
+                    TestCaseRun.Result.Passed.Regular,
+                    TestCaseRun.Result.Passed.Regular
                 )
             )
         )
@@ -113,7 +113,7 @@ internal class ReportCreatorTest {
                     minimumFailedCount = 0
                 )
             ) to createTestSuiteRuns(
-                TestCaseRun.Result.Passed,
+                TestCaseRun.Result.Passed.Regular,
                 TestCaseRun.Result.Failed.InRun(""),
                 TestCaseRun.Result.Failed.InRun("")
             )
@@ -136,7 +136,7 @@ internal class ReportCreatorTest {
                     minimumFailedCount = 0
                 )
             ) to createTestSuiteRuns(
-                TestCaseRun.Result.Passed,
+                TestCaseRun.Result.Passed.Regular,
                 TestCaseRun.Result.Failed.InRun(""),
                 TestCaseRun.Result.Failed.InRun("")
             )
@@ -159,8 +159,8 @@ internal class ReportCreatorTest {
                     minimumFailedCount = 0
                 )
             ) to createTestSuiteRuns(
-                TestCaseRun.Result.Passed,
-                TestCaseRun.Result.Passed,
+                TestCaseRun.Result.Passed.Regular,
+                TestCaseRun.Result.Passed.Regular,
                 TestCaseRun.Result.Failed.InRun("")
             )
         )

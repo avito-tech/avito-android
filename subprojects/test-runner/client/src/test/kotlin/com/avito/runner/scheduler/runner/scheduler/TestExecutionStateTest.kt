@@ -382,7 +382,7 @@ internal class TestExecutionStateTest {
     private fun createPassedTestCaseRun(): DeviceTestCaseRun {
         return DeviceTestCaseRun.createStubInstance(
             testCaseRun = TestCaseRun.createStubInstance(
-                result = TestCaseRun.Result.Passed
+                result = TestCaseRun.Result.Passed.Regular
             )
         )
     }

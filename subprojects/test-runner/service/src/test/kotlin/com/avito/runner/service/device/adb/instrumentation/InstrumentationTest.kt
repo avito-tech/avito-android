@@ -295,19 +295,19 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test2"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test3"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test4"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 )
@@ -561,19 +561,19 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             listOf<InstrumentationTestCaseRun>(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test1"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test2"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test3"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 )
@@ -713,7 +713,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             listOf<InstrumentationTestCaseRun>(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test1"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
@@ -890,7 +890,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             listOf(
                 InstrumentationTestCaseRun.CompletedTestCaseRun(
                     name = TestName("com.example.test.TestClass", "test1"),
-                    result = TestCaseRun.Result.Passed,
+                    result = TestCaseRun.Result.Passed.Regular,
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 ),
@@ -1010,6 +1010,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     @Test
     fun `read instrumentation output - completes stream - with additional outputs`() {
         val outputWithFailedTest = ResourcesReader.readFile("instrumentation-output-additional-outputs.txt")
+        val outputFilePathFromSampleOutput = "/storage/emulated/0/Android/media/com.example.test.package/file.txt"
 
         val subscriber = instrumentationParser
             .parse(
@@ -1025,8 +1026,9 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                         "com.example.test.TestClass",
                         "testMethodName"
                     ),
-                    result = TestCaseRun.Result.Passed,
-                    baselineProfileFile = "/storage/emulated/0/Android/media/com.example.test.package/file.txt",
+                    result = TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs(
+                        outputFiles = listOf(outputFilePathFromSampleOutput)
+                    ),
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
                 )

@@ -686,7 +686,7 @@ internal class RunnerIntegrationTest {
         return deviceTestCaseRun(
             device = device,
             test = this,
-            result = TestCaseRun.Result.Passed
+            result = TestCaseRun.Result.Passed.Regular
         )
     }
 
@@ -737,7 +737,7 @@ internal class RunnerIntegrationTest {
 
     private fun testPassed(): StubActionResult.Success<TestCaseRun.Result> {
         return StubActionResult.Success(
-            TestCaseRun.Result.Passed
+            TestCaseRun.Result.Passed.Regular
         )
     }
 
