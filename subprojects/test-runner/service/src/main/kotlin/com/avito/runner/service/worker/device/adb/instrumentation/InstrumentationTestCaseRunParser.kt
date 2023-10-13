@@ -69,31 +69,42 @@ internal interface InstrumentationTestCaseRunParser {
                 .scan<InstrumentationEntry?>(null) { previous, new ->
                     val entry = parseInstrumentationEntry(new.buffer)
 
-                    // Check current test doesn't have test field
-                    if (entry is InstrumentationEntry.InstrumentationTestEntry &&
-                        entry.test.isEmpty()
-                    ) {
+                    when {
+                        // Check current test doesn't have test field
+                        entry is InstrumentationEntry.InstrumentationTestEntry &&
+                            entry.test.isEmpty() -> {
 
-                        // Check previous test entry is Start and has test name
-                        if (previous is InstrumentationEntry.InstrumentationTestEntry &&
-                            previous.statusCode == InstrumentationEntry.InstrumentationTestEntry.StatusCode.Start &&
-                            previous.test.isNotEmpty()
-                        ) {
-                            // Copy test field from previous Start entry
-                            entry.copy(
-                                id = previous.id,
-                                test = previous.test,
-                                clazz = previous.clazz
-                            )
-                        } else {
-                            throw Exception(
-                                "Something wrong with instrumentation output:" +
-                                    "Current entry doesn't have test field and previous entry is not run" +
-                                    "or doesn't have test field too."
+                            // Check previous test entry is Start and has test name
+                            if (previous is InstrumentationEntry.InstrumentationTestEntry &&
+                                previous.statusCode == InstrumentationEntry.InstrumentationTestEntry.StatusCode.Start &&
+                                previous.test.isNotEmpty()
+                            ) {
+                                // Copy test field from previous Start entry
+                                entry.copy(
+                                    id = previous.id,
+                                    test = previous.test,
+                                    clazz = previous.clazz
+                                )
+                            } else {
+                                throw Exception(
+                                    "Something wrong with instrumentation output:" +
+                                        "Current entry doesn't have test field and previous entry is not run" +
+                                        "or doesn't have test field too."
+                                )
+                            }
+                        }
+                        // Attach additional output to actual test entry
+                        entry is InstrumentationEntry.InstrumentationMacrobenchmarkOutputEntry -> {
+                            check(previous is InstrumentationEntry.InstrumentationTestEntry) {
+                                "Wrong instrumentation output order - additional output entry (code=2) must " +
+                                    "be followed by tests start entry (code = 1)."
+                            }
+                            previous.copy(
+                                statusCode = entry.statusCode,
+                                baselineProfileFile = entry.outputFilePath
                             )
                         }
-                    } else {
-                        entry
+                        else -> entry
                     }
                 }
                 .filterNotNull()
@@ -194,7 +205,8 @@ internal interface InstrumentationTestCaseRunParser {
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         name = TestName(first.clazz, first.test),
                         result = when (second.statusCode) {
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok ->
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok,
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput ->
                                 TestCaseRun.Result.Passed
 
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ignored ->
@@ -211,7 +223,8 @@ internal interface InstrumentationTestCaseRunParser {
                                 )
                         },
                         timestampStartedMilliseconds = first.timestampMilliseconds,
-                        timestampCompletedMilliseconds = second.timestampMilliseconds
+                        timestampCompletedMilliseconds = second.timestampMilliseconds,
+                        baselineProfileFile = second.baselineProfileFile ?: "",
                     )
                 }
         }
@@ -246,6 +259,34 @@ internal interface InstrumentationTestCaseRunParser {
 
         private fun parseInstrumentationEntry(str: String): InstrumentationEntry {
             if (str.isTestEntry()) {
+                val statusCode =
+                    str.substringBetween("INSTRUMENTATION_STATUS_CODE: ", "INSTRUMENTATION_STATUS")
+                        .trim()
+                        .toInt()
+                        .let { code ->
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.values()
+                                .firstOrNull { it.code == code }
+                        }
+                        .let { code ->
+                            when (code) {
+                                null -> throw IllegalStateException(
+                                    "Unknown test result status code [$code] ($str)"
+                                )
+
+                                else -> code
+                            }
+                        }
+                if (statusCode == InstrumentationEntry.InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput) {
+                    val filePath = str
+                        .parseInstrumentationStatusValue("additionalTestOutputFile_baseline-profile")
+                    check(filePath.isNotBlank()) {
+                        "Received status code indicating additional output files, but file path was empty."
+                    }
+                    return InstrumentationEntry.InstrumentationMacrobenchmarkOutputEntry(
+                        outputFilePath = filePath,
+                    )
+                }
+
                 return InstrumentationEntry.InstrumentationTestEntry(
                     numTests = str.parseInstrumentationStatusValue("numtests").toInt(),
                     stream = str.parseInstrumentationStatusValue("stream"),
@@ -254,21 +295,7 @@ internal interface InstrumentationTestCaseRunParser {
                     test = str.parseInstrumentationStatusValue("test"),
                     clazz = str.parseInstrumentationStatusValue("class"),
                     current = str.parseInstrumentationStatusValue("current").toInt(),
-                    statusCode = str.substringBetween("INSTRUMENTATION_STATUS_CODE: ", "INSTRUMENTATION_STATUS")
-                        .trim()
-                        .toInt()
-                        .let { code ->
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.values()
-                                .firstOrNull { it.code == code }
-                        }
-                        .let { statusCode ->
-                            when (statusCode) {
-                                null -> throw IllegalStateException(
-                                    "Unknown test result status code [$statusCode] ($str)"
-                                )
-                                else -> statusCode
-                            }
-                        },
+                    statusCode = statusCode,
                     timestampMilliseconds = System.currentTimeMillis()
                 )
             } else {
@@ -282,12 +309,12 @@ internal interface InstrumentationTestCaseRunParser {
                             InstrumentationEntry.InstrumentationResultEntry.StatusCode.values()
                                 .firstOrNull { it.code == code }
                         }
-                        .let { statusCode ->
-                            when (statusCode) {
+                        .let { code ->
+                            when (code) {
                                 null -> throw IllegalStateException(
-                                    "Unknown instrumentation result status code [$statusCode] ($str)"
+                                    "Unknown instrumentation result status code [$code] ($str)"
                                 )
-                                else -> statusCode
+                                else -> code
                             }
                         },
                     timestampMilliseconds = System.currentTimeMillis()

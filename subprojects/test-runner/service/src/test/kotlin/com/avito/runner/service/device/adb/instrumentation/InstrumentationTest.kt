@@ -1007,6 +1007,33 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .isEmpty()
     }
 
+    @Test
+    fun `read instrumentation output - completes stream - with additional outputs`() {
+        val outputWithFailedTest = ResourcesReader.readFile("instrumentation-output-additional-outputs.txt")
+
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
+
+        val entries = subscriber.onNextEvents.eraseDuration()
+        assertThat(entries).containsExactlyElementsIn(
+            listOf<InstrumentationTestCaseRun>(
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    name = TestName(
+                        "com.example.test.TestClass",
+                        "testMethodName"
+                    ),
+                    result = TestCaseRun.Result.Passed,
+                    baselineProfileFile = "/storage/emulated/0/Android/media/com.example.test.package/file.txt",
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                )
+            )
+        )
+    }
+
     private fun <T> Observable<T>.subscribeAndWait() = TestSubscriber<T>()
         .apply {
             subscribeOn(Schedulers.immediate())
@@ -1021,6 +1048,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         when (it) {
             is InstrumentationTestEntry -> it.copy(timestampMilliseconds = 0)
             is InstrumentationEntry.InstrumentationResultEntry -> it.copy(timestampMilliseconds = 0)
+            is InstrumentationEntry.InstrumentationMacrobenchmarkOutputEntry -> it
         }
     }
 

@@ -11,10 +11,12 @@ internal sealed class InstrumentationEntry {
         val current: Int,
         val stack: String,
         val statusCode: StatusCode,
-        val timestampMilliseconds: Long
+        val timestampMilliseconds: Long,
+        val baselineProfileFile: String? = null,
     ) : InstrumentationEntry() {
 
         enum class StatusCode(val code: Int) {
+            MacrobenchmarkOutput(2),
             Start(1),
             Ok(0),
             Failure(-2),
@@ -22,6 +24,11 @@ internal sealed class InstrumentationEntry {
             AssumptionFailure(-4)
         }
     }
+
+    data class InstrumentationMacrobenchmarkOutputEntry(
+        val outputFilePath: String,
+        val statusCode: InstrumentationTestEntry.StatusCode = InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput
+    ) : InstrumentationEntry()
 
     data class InstrumentationResultEntry(
         val shortMessage: String = "",
