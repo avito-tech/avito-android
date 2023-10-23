@@ -20,6 +20,7 @@ internal class EmceeWorkerBuilder(
     private val buildDir: File,
     private val apis: Set<Int>,
     private val registry: String,
+    private val imageRegistryTagName: String,
     private val imageName: String,
     private val artifactoryUrl: String,
     private val login: RegistryLogin,
@@ -62,5 +63,5 @@ internal class EmceeWorkerBuilder(
         return id
     }
 
-    private fun tag(id: ImageId): Image = tagger.tag(id, "$registry/$imageName")
+    private fun tag(id: ImageId): Image = tagger.tag(id, "$imageRegistryTagName/$imageName")
 }

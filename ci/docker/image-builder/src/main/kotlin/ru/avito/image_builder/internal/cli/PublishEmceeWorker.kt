@@ -42,6 +42,11 @@ internal class PublishEmceeWorker(
         description = "Registry for publishing"
     ).required()
 
+    private val imageRegistryTagName: String by option(
+        type = ArgType.String,
+        description = "Docker image registry name which will be used in image tag name"
+    ).required()
+
     private val imageVersionTag: String? by option(
         type = ArgType.String,
         description = "Docker image version tag. Default value is a shorten image id"
@@ -56,6 +61,7 @@ internal class PublishEmceeWorker(
             buildDir = File(buildDir),
             apis = apis.split(' ').mapNotNull { it.toIntOrNull() }.toSet(),
             registry = registry,
+            imageRegistryTagName = imageRegistryTagName,
             imageName = imageName,
             artifactoryUrl = artifactoryUrl,
             login = dockerHubLogin(docker),
