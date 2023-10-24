@@ -22,6 +22,7 @@ import kotlin.io.path.createTempDirectory
 internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
     private val outputDirectory: File,
+    private val macrobenchmarkOutputDirectory: File?,
     private val saveTestArtifactsToOutputs: Boolean,
     private val uploadTestArtifacts: Boolean,
     private val reportArtifactsPullValidator: PullValidator,
@@ -162,9 +163,11 @@ internal class ArtifactsTestListener(
         val outputFile = outputs.firstOrNull()
             ?: return Result.Success(tempDirectory.toFile())
 
+        val hostDirectory = macrobenchmarkOutputDirectory?.toPath()
+            ?: outputDirectory.toPath()
         return device.pullFile(
             deviceFile = outputFile,
-            hostDir = outputDirectory.toPath(),
+            hostDir = hostDirectory,
             validator = AlwaysSuccessPullValidator
         )
     }

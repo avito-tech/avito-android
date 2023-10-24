@@ -140,6 +140,10 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:OutputDirectory
     public abstract val output: DirectoryProperty
 
+    @get:OutputDirectory
+    @get:Optional
+    public abstract val macrobenchmarkOutputDirectory: DirectoryProperty
+
     private val verdictFile = objects.fileProperty().convention(output.file("verdict.json"))
 
     @get:Internal
@@ -218,7 +222,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportViewerConfig = reportViewerConfig,
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
             useLegacyExtensionsV1Beta = experiments.useLegacyExtensionsV1Beta,
-            adbPullTimeout = adbPullTimeout.get()
+            adbPullTimeout = adbPullTimeout.get(),
+            macrobenchmarkOutputDir = macrobenchmarkOutputDirectory.orNull?.asFile,
         )
 
         val isGradleTestKitRun = gradleTestKitRun.get()

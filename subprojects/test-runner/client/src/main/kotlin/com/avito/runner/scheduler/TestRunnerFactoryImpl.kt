@@ -99,6 +99,7 @@ internal class TestRunnerFactoryImpl(
                         uploadTestArtifacts = params.uploadTestArtifacts,
                     ),
                     outputDirectory = testRunnerOutputDir,
+                    macrobenchmarkOutputDirectory = params.macrobenchmarkOutputDir,
                     loggerFactory = loggerFactory,
                     saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
                     uploadTestArtifacts = params.uploadTestArtifacts,

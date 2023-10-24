@@ -84,6 +84,7 @@ internal class ConfiguratorsFactory(
             )
 
             val outputDirConfigurator = OutputDirConfigurator(
+                extension = extension,
                 reportResolver = reportResolver,
                 outputDirResolver = outputDirResolver,
                 configuration = configuration

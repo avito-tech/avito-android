@@ -24,6 +24,7 @@ public data class RunnerInputParams(
     val suppressFlaky: Boolean,
     val impactAnalysisResult: ImpactAnalysisResult,
     val outputDir: File,
+    val macrobenchmarkOutputDir: File?,
     val verdictFile: File,
     val fileStorageUrl: String,
     val statsDConfig: StatsDConfig,
