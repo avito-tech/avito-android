@@ -33,6 +33,7 @@ internal class BuildEmceeWorker(
             buildDir = File(buildDir),
             apis = apis.split(' ').mapNotNull { it.toIntOrNull() }.toSet(),
             registry = registry,
+            imageRegistryTagName = registry,
             imageName = imageName,
             artifactoryUrl = artifactoryUrl,
             login = dockerHubLogin(docker),
