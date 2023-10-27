@@ -20,6 +20,12 @@ internal class SimpleImageBuilder(
     private val login: RegistryLogin,
     private val tagger: ImageTagger,
     private val registry: String,
+    /**
+     * Image registry name which will be used in image tag name.
+     * Use case: when we want to build image with internal registry dependencies, but then push image to other registry.
+     * If null or empty then @param [registry] name will be used
+     */
+    private val imageRegistryTagName: String?,
     private val artifactoryUrl: String,
     private val imageName: String,
 ) : ImageBuilder {
@@ -51,6 +57,12 @@ internal class SimpleImageBuilder(
         return id
     }
 
-    private fun tag(id: ImageId): Image =
-        tagger.tag(id, "$registry/$imageName")
+    private fun tag(id: ImageId): Image {
+        val registryName = if (!imageRegistryTagName.isNullOrEmpty()) {
+            imageRegistryTagName
+        } else {
+            registry
+        }
+        return tagger.tag(id, "$registryName/$imageName")
+    }
 }
