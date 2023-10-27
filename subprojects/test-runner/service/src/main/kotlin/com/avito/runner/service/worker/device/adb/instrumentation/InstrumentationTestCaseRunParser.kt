@@ -9,37 +9,61 @@ import rx.Observable
 
 internal interface InstrumentationTestCaseRunParser {
 
-    fun parse(output: Observable<Notification.Output>): Observable<InstrumentationTestCaseRun>
+    fun parse(instrumentationOutput: Observable<Notification>): Observable<InstrumentationTestCaseRun>
 
     class Impl : InstrumentationTestCaseRunParser {
 
-        override fun parse(output: Observable<Notification.Output>): Observable<InstrumentationTestCaseRun> {
-            return readInstrumentationOutput(output)
+        override fun parse(
+            instrumentationOutput: Observable<Notification>
+        ): Observable<InstrumentationTestCaseRun> {
+            return readInstrumentationOutput(instrumentationOutput)
                 .asTests()
         }
 
         @VisibleForTesting
         internal fun readInstrumentationOutput(
-            output: Observable<Notification.Output>
+            instrumentationOutput: Observable<Notification>
         ): Observable<InstrumentationEntry> {
             data class Result(val buffer: String = "", val readyForProcessing: Boolean = false)
 
-            return output.map { it.line }
-                .map { it.trim() }
+            return instrumentationOutput
                 // `INSTRUMENTATION_CODE: -1` is last line printed by instrumentation, even if 0 tests were run.
                 // if invalid command last line starts with Error:
-                .takeUntil { it.startsWith("INSTRUMENTATION_CODE") || it.startsWith("Error:") }
-                .scan(Result()) { previousResult, newLine ->
-                    val buffer = when (previousResult.readyForProcessing) {
-                        true -> newLine
-                        false -> "${previousResult.buffer}${System.lineSeparator()}$newLine"
+                .takeUntil { notification ->
+                    when (notification) {
+                        is Notification.Output -> {
+                            val line = notification.line.trim()
+                            line.startsWith("INSTRUMENTATION_CODE") || line.startsWith("Error:")
+                        }
+
+                        // We use Notification.Exit only for cases when instrumentation unexpectedly exit
+                        // For example, when emulator process crashed during test
+                        is Notification.Exit -> true
                     }
+                }
+                .scan(Result()) { previousResult, notification ->
+                    when (notification) {
+                        is Notification.Output -> {
+                            val newLine = notification.line.trim()
+                            val buffer = when (previousResult.readyForProcessing) {
+                                true -> newLine
+                                false -> "${previousResult.buffer}${System.lineSeparator()}$newLine"
+                            }
 
-                    val isEntryEnd = newLine.startsWith("INSTRUMENTATION_STATUS_CODE")
-                        || newLine.startsWith("INSTRUMENTATION_CODE")
-                        || newLine.startsWith("Error:")
+                            val isEntryEnd = newLine.startsWith("INSTRUMENTATION_STATUS_CODE")
+                                || newLine.startsWith("INSTRUMENTATION_CODE")
+                                || newLine.startsWith("Error:")
 
-                    Result(buffer = buffer, readyForProcessing = isEntryEnd)
+                            Result(buffer = buffer, readyForProcessing = isEntryEnd)
+                        }
+
+                        is Notification.Exit -> throw RuntimeException(
+                            """
+                                |Unexpected instrumentation exit:
+                                |${notification.output.ifEmpty { "<empty instrumentation output>" }}
+                            """.trimMargin()
+                        )
+                    }
                 }
                 .filter { it.readyForProcessing }
                 .scan<InstrumentationEntry?>(null) { previous, new ->
