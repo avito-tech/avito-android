@@ -480,11 +480,10 @@ public data class AdbDevice(
 
         return instrumentationParser
             .parse(instrumentationOutput)
-            .toSingle()
             .timeout(
                 timeoutMinutes,
                 TimeUnit.MINUTES,
-                Single.just(
+                Observable.just(
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         name = test.name,
                         result = Failed.InfrastructureError.Timeout(
@@ -496,6 +495,8 @@ public data class AdbDevice(
                     )
                 )
             )
+            .first()
+            .toSingle()
     }
 
     private fun getAdbDevice(): Result<IDevice> = Result.tryCatch {
