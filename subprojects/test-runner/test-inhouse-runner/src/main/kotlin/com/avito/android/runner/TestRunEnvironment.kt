@@ -32,19 +32,6 @@ sealed class TestRunEnvironment {
         }
     }
 
-    /**
-     * We use TestOrchestrator when run tests from Android Studio, for consistency with CI runs (isolated app processes)
-     * Orchestrator runs this runner before any test to determine which tests to run and spawn separate processes
-     *
-     * If it is this special run, we don't need to run any of our special moves here, better skip all of them
-     *
-     * @link https://developer.android.com/training/testing/junit-runner#using-android-test-orchestrator
-     */
-    object OrchestratorFakeRunEnvironment : TestRunEnvironment() {
-
-        override fun toString(): String = this::class.java.simpleName
-    }
-
     data class InitError(val error: String) : TestRunEnvironment()
 
     data class RunEnvironment internal constructor(

@@ -139,11 +139,7 @@ abstract class InHouseInstrumentationTestRunner :
     // Public for *TestApp to skip on orchestrator runs
     @Suppress("MemberVisibilityCanBePrivate")
     val testRunEnvironment: TestRunEnvironment by lazy {
-        if (isRealRun(instrumentationArguments)) {
-            createRunnerEnvironment(instrumentationArguments)
-        } else {
-            TestRunEnvironment.OrchestratorFakeRunEnvironment
-        }
+        createRunnerEnvironment(instrumentationArguments)
     }
 
     // Public for synth monitoring
@@ -272,12 +268,9 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     private fun injectTestMetadata(arguments: Bundle) {
-        if (isRealRun(arguments)) {
-            val test = getTest(arguments)
-
-            metadataToBundleInjector.inject(test, arguments)
-            testMetadataValidator.validate(test)
-        }
+        val test = getTest(arguments)
+        metadataToBundleInjector.inject(test, arguments)
+        testMetadataValidator.validate(test)
     }
 
     private fun getTest(instrumentationArguments: Bundle): TestMethodOrClass {

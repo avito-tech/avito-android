@@ -30,19 +30,6 @@ android {
 
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
-
-        unitTests {
-            isIncludeAndroidResources = true
-
-            all {
-                val args = mapOf(
-                    "android.junit.runner" to "com.avito.robolectric.runner.InHouseRobolectricTestRunner",
-                    "planSlug" to "AndroidTestApp",
-                    "jobSlug" to "FunctionalTests",
-                )
-                it.systemProperties.putAll(args)
-            }
-        }
     }
 
     packagingOptions {

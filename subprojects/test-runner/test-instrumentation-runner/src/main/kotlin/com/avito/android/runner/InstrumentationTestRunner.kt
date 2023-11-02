@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.test.runner.AndroidJUnitRunner
 import com.avito.logger.LoggerFactory
 
-abstract class InstrumentationTestRunner : AndroidJUnitRunner(), OrchestratorDelegate {
+abstract class InstrumentationTestRunner : AndroidJUnitRunner() {
 
     abstract val loggerFactory: LoggerFactory
 
@@ -22,20 +22,14 @@ abstract class InstrumentationTestRunner : AndroidJUnitRunner(), OrchestratorDel
      */
     final override fun onCreate(arguments: Bundle) {
         instrumentationArguments = arguments
-        val isRealRun = isRealRun(arguments)
-        if (isRealRun) {
-            beforeOnCreate(arguments)
-            delegateRegistry = DelegatesRegistry(
-                getDelegates(arguments) + SystemDialogsManagerDelegate(loggerFactory)
-            )
-            delegateRegistry?.beforeOnCreate(arguments)
-        }
-
+        beforeOnCreate(arguments)
+        delegateRegistry = DelegatesRegistry(
+            getDelegates(arguments) + SystemDialogsManagerDelegate(loggerFactory)
+        )
+        delegateRegistry?.beforeOnCreate(arguments)
         super.onCreate(arguments)
-        if (isRealRun) {
-            afterOnCreate(arguments)
-            delegateRegistry?.afterOnCreate(arguments)
-        }
+        afterOnCreate(arguments)
+        delegateRegistry?.afterOnCreate(arguments)
     }
 
     protected open fun beforeOnCreate(arguments: Bundle) {
