@@ -19,6 +19,8 @@ internal class TestVariantConfigurator(
         task.testApplication.set(variant.artifacts.get(SingleArtifact.APK))
         task.testApplicationPackageName.set(variant.applicationId)
         task.instrumentationRunner.set(variant.instrumentationRunner.get())
+        // Instrumentation used with android test plugin is using test application package name to store artifacts
+        task.testArtifactsDirectoryPackageName.set(variant.applicationId)
 
         val applicationBuildDir = macrobenchmarkExtension.applicationBuildDir
         require(applicationBuildDir.isPresent) {

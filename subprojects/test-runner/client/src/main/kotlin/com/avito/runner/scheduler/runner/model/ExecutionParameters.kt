@@ -5,6 +5,7 @@ import java.io.Serializable
 public data class ExecutionParameters(
     val applicationPackageName: String,
     val applicationTestPackageName: String,
+    val testArtifactsDirectoryPackageName: String,
     val testRunner: String,
     val logcatTags: Collection<String>,
 ) : Serializable {

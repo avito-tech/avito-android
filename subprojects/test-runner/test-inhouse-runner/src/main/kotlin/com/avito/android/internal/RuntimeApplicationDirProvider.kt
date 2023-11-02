@@ -29,7 +29,7 @@ internal class RuntimeApplicationDirProvider(context: Context) : ApplicationDirP
     private fun ensureConformsContract(runtimeDir: File, context: Context) {
         val nonRuntimeDir = ApplicationDirProviderFactory.create(
             api = Build.VERSION.SDK_INT,
-            appPackage = context.packageName,
+            packageName = context.packageName,
         ).dir
 
         require(nonRuntimeDir.canonicalPath == runtimeDir.canonicalPath) {

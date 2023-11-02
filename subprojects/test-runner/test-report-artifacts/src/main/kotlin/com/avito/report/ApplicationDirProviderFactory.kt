@@ -7,12 +7,12 @@ public object ApplicationDirProviderFactory {
     @Suppress("SdCardPath")
     public fun create(
         api: Int,
-        appPackage: String
+        packageName: String
     ): ApplicationDirProvider {
         val dataPath = if (api >= 30) {
-            "/storage/emulated/0/Android/media/$appPackage"
+            "/storage/emulated/0/Android/media/$packageName"
         } else {
-            "/sdcard/Android/data/$appPackage/files"
+            "/sdcard/Android/data/$packageName/files"
         }
         return object : ApplicationDirProvider {
             override val dir: File = File(dataPath)

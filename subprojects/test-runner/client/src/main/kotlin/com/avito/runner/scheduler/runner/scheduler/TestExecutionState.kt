@@ -97,6 +97,7 @@ internal class TestExecutionStateImplementation(
                 test = request.testCase,
                 testPackage = request.testPackage,
                 targetPackage = request.applicationPackage,
+                testArtifactsDirectoryPackage = request.testArtifactsDirectoryPackage,
                 testRunner = request.testRunner,
                 instrumentationParams = request.instrumentationParameters,
                 timeoutMinutes = request.timeoutMinutes,

@@ -38,6 +38,7 @@ internal class TestRunRequestFactory(
             applicationPackage = executionParameters.applicationPackageName,
             testApplication = testApplication.absolutePath,
             testPackage = executionParameters.applicationTestPackageName,
+            testArtifactsDirectoryPackage = executionParameters.testArtifactsDirectoryPackageName,
             testRunner = executionParameters.testRunner,
             timeoutMinutes = TEST_TIMEOUT_MINUTES,
             instrumentationParameters = target.instrumentationParams,

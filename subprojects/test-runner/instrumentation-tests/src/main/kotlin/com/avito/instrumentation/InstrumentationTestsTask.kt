@@ -60,6 +60,10 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:Input
     public abstract val testApplicationPackageName: Property<String>
 
+    @get:Optional
+    @get:Input
+    public abstract val testArtifactsDirectoryPackageName: Property<String>
+
     @get:Input
     public abstract val runOnlyChangedTests: Property<Boolean>
 
@@ -184,6 +188,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             executionParameters = ExecutionParameters(
                 applicationPackageName.get(),
                 testApplicationPackageName.get(),
+                testArtifactsDirectoryPackageName.getOrElse(applicationPackageName.get()),
                 instrumentationRunner.get(),
                 logcatTags.get(),
             ),

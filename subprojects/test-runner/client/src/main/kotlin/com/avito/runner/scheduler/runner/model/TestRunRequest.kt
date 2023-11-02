@@ -8,6 +8,7 @@ internal data class TestRunRequest(
     val configuration: DeviceConfiguration,
     val application: String,
     val applicationPackage: String,
+    val testArtifactsDirectoryPackage: String,
     val testApplication: String,
     val testPackage: String,
     val testRunner: String,

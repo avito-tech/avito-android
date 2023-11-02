@@ -163,7 +163,7 @@ internal class DeviceWorker(
 
             val appDirProvider = ApplicationDirProviderFactory.create(
                 api = device.api,
-                appPackage = action.targetPackage,
+                packageName = action.testArtifactsDirectoryPackage,
             )
             val reportFileProvider = TestArtifactsProviderFactory.createForAdb(
                 appDirProvider = appDirProvider,

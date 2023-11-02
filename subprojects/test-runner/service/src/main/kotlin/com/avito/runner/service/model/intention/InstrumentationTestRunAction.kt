@@ -6,6 +6,7 @@ public data class InstrumentationTestRunAction(
     public val test: TestCase,
     public val testPackage: String,
     public val targetPackage: String,
+    public val testArtifactsDirectoryPackage: String,
     public val testRunner: String,
     public val instrumentationParams: Map<String, String>,
     public val executionNumber: Int,
