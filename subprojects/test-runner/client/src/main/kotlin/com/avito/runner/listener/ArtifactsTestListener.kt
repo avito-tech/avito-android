@@ -11,6 +11,7 @@ import com.avito.runner.model.TestCaseRun.Result.Passed
 import com.avito.runner.model.TestResult
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.adb.AlwaysSuccessPullValidator
 import com.avito.runner.service.worker.device.adb.PullValidator
 import com.avito.test.model.TestCase
 import com.avito.utils.deleteRecursively
@@ -66,10 +67,16 @@ internal class ArtifactsTestListener(
 
         val testResult = when (result) {
 
-            Passed, is Failed.InRun -> handleFinishedTest(
+            is Failed.InRun, Passed.Regular -> handleFinishedTest(
                 device = device,
                 artifactsDir = testArtifactsDir,
-                tempDirectory = tempDirectory
+                tempDirectory = tempDirectory,
+            )
+            is Passed.WithMacrobenchmarkOutputs -> handleFinishedTest(
+                device = device,
+                artifactsDir = testArtifactsDir,
+                tempDirectory = tempDirectory,
+                macrobenchmarkOutputs = result.outputFiles,
             )
 
             is InfrastructureError -> handleIncompleteTest(
@@ -105,23 +112,15 @@ internal class ArtifactsTestListener(
     private fun handleFinishedTest(
         device: Device,
         artifactsDir: Result<File>,
-        tempDirectory: Path
+        tempDirectory: Path,
+        macrobenchmarkOutputs: List<Path> = emptyList()
     ): TestResult {
         return artifactsDir
             .flatMap { dir ->
-                if (uploadTestArtifacts) {
-                    device.pullDir(
-                        deviceDir = dir.toPath(),
-                        hostDir = tempDirectory,
-                        validator = reportArtifactsPullValidator
-                    )
-                } else {
-                    device.pullFile(
-                        deviceFile = dir.resolve("report.json").toPath(),
-                        hostDir = tempDirectory,
-                        validator = reportArtifactsPullValidator
-                    )
-                }
+                pullArtifacts(device, dir, tempDirectory)
+            }
+            .combine(pullMacrobenchmarkOutputs(macrobenchmarkOutputs, device, tempDirectory)) { _, _ ->
+                tempDirectory.toFile()
             }
             .fold(
                 onSuccess = { dir ->
@@ -135,6 +134,39 @@ internal class ArtifactsTestListener(
                     )
                 }
             )
+    }
+
+    private fun pullArtifacts(
+        device: Device,
+        artifactsDir: File,
+        tempDirectory: Path
+    ): Result<File> = if (uploadTestArtifacts) {
+        device.pullDir(
+            deviceDir = artifactsDir.toPath(),
+            hostDir = tempDirectory,
+            validator = reportArtifactsPullValidator
+        )
+    } else {
+        device.pullFile(
+            deviceFile = artifactsDir.resolve("report.json").toPath(),
+            hostDir = tempDirectory,
+            validator = reportArtifactsPullValidator
+        )
+    }
+
+    private fun pullMacrobenchmarkOutputs(
+        outputs: List<Path>,
+        device: Device,
+        tempDirectory: Path
+    ): Result<File> {
+        val outputFile = outputs.firstOrNull()
+            ?: return Result.Success(tempDirectory.toFile())
+
+        return device.pullFile(
+            deviceFile = outputFile,
+            hostDir = outputDirectory.toPath(),
+            validator = AlwaysSuccessPullValidator
+        )
     }
 
     private fun handleIncompleteTest(

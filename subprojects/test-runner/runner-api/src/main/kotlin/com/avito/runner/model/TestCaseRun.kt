@@ -1,6 +1,7 @@
 package com.avito.runner.model
 
 import com.avito.test.model.TestCase
+import java.nio.file.Path
 
 public data class TestCaseRun(
     val test: TestCase,
@@ -16,7 +17,7 @@ public data class TestCaseRun(
             public object Regular : Passed()
 
             public data class WithMacrobenchmarkOutputs(
-                public val outputFiles: List<String> = emptyList()
+                public val outputFiles: List<Path> = emptyList()
             ) : Passed()
         }
 

@@ -6,6 +6,7 @@ import com.avito.runner.model.TestCaseRun
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.test.model.TestName
 import rx.Observable
+import java.io.File
 
 internal interface InstrumentationTestCaseRunParser {
 
@@ -209,7 +210,8 @@ internal interface InstrumentationTestCaseRunParser {
                                 TestCaseRun.Result.Passed.Regular
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput ->
                                 TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs(
-                                    outputFiles = listOfNotNull(second.baselineProfileFile)
+                                    outputFiles = listOfNotNull(second.macrobenchmarkOutputFile)
+                                        .map { File(it).toPath() }
                                 )
 
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ignored ->
