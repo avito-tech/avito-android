@@ -102,7 +102,7 @@ internal interface InstrumentationTestCaseRunParser {
                             }
                             previous.copy(
                                 statusCode = entry.statusCode,
-                                baselineProfileFile = entry.outputFilePath
+                                macrobenchmarkOutputFile = entry.outputFilePath
                             )
                         }
                         else -> entry

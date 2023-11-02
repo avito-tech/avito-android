@@ -12,7 +12,7 @@ internal sealed class InstrumentationEntry {
         val stack: String,
         val statusCode: StatusCode,
         val timestampMilliseconds: Long,
-        val baselineProfileFile: String? = null,
+        val macrobenchmarkOutputFile: String? = null,
     ) : InstrumentationEntry() {
 
         enum class StatusCode(val code: Int) {
