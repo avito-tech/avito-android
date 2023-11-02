@@ -10,6 +10,7 @@ import com.avito.instrumentation.configuration.KubernetesViaContext
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.configuration.LocalAdb
 import com.avito.instrumentation.internal.ConfiguratorsFactory
+import com.avito.instrumentation.internal.ExtensionCorrectnessChecker
 import com.avito.instrumentation.internal.InstrumentationTaskConfigurator
 import com.avito.instrumentation.internal.TaskValidatorsFactory
 import com.avito.kotlin.dsl.getBooleanProperty
@@ -30,6 +31,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         val factory = ConfiguratorsFactory(project, extension)
 
         val filtersFactory = TaskValidatorsFactory()
+
+        val extensionCorrectnessChecker = ExtensionCorrectnessChecker(extension)
 
         project.plugins.withType<BasePlugin> {
 
@@ -55,6 +58,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     // todo how to write "only testBuildType" selector?
 
                     androidComponents.onVariants { variant ->
+
+                        extensionCorrectnessChecker.check(variant)
 
                         val configurators = factory.createTaskConfigurators(
                             configuration = configuration,

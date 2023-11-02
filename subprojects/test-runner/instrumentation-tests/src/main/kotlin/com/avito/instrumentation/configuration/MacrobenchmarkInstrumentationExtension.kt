@@ -12,6 +12,13 @@ public abstract class MacrobenchmarkInstrumentationExtension(
 
     public val applicationBuildDir: DirectoryProperty = objects.directoryProperty()
 
+    public fun isAnyPropertyConfigured(): Boolean {
+        return listOf(
+            applicationPackageName,
+            applicationBuildDir
+        ).any { it.isPresent }
+    }
+
     public fun finalizeValues() {
         listOf(
             applicationPackageName,
