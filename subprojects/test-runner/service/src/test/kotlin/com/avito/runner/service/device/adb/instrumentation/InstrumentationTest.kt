@@ -1027,7 +1027,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                         "testMethodName"
                     ),
                     result = TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs(
-                        outputFiles = listOf(outputFilePathFromSampleOutput)
+                        outputFiles = listOf(outputFilePathFromSampleOutput).map { File(it).toPath() }
                     ),
                     timestampStartedMilliseconds = 0,
                     timestampCompletedMilliseconds = 0
