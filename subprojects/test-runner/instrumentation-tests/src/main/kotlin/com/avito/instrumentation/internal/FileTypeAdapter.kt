@@ -14,8 +14,8 @@ import java.io.File
  */
 internal class FileTypeAdapter : TypeAdapter<File>() {
 
-    override fun write(writer: JsonWriter, file: File) {
-        writer.value(file.canonicalPath)
+    override fun write(writer: JsonWriter, file: File?) {
+        writer.value(file?.canonicalPath)
     }
 
     override fun read(reader: JsonReader): File {
