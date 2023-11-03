@@ -11,6 +11,16 @@ plugins {
     id("convention-dependencies")
 }
 
+val parentBuild = gradle.parent
+
+/**
+ * --dry-run on root build executes tasks in a composite build
+ * Workaround to https://github.com/gradle/gradle/issues/2517
+ */
+if (parentBuild != null && parentBuild.startParameter.isDryRun) {
+    gradle.startParameter.isDryRun = true
+}
+
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {

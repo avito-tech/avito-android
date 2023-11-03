@@ -1,4 +1,5 @@
 plugins {
+    base
     id("com.dropbox.dependency-guard")
 }
 

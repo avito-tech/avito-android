@@ -1,12 +1,11 @@
 import com.avito.logger.LogLevel
 
 plugins {
-    id("convention.lifecycle")
+    base
     // accessing version catalog here is blocked by IDE false-positive error
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
     id("com.autonomousapps.dependency-analysis") version "0.78.0"
     id("convention.dependency-updates")
-    id("convention.detekt")
     id("com.avito.android.gradle-logger")
     id("com.avito.android.build-verdict")
 }
@@ -49,19 +48,7 @@ tasks.register<Exec>("installGitHooks") {
 val initialTaskNames: List<String> = project.gradle.startParameter.taskNames
 project.gradle.startParameter.setTaskNames(initialTaskNames + listOf("installGitHooks"))
 
-// Register lifecycle tasks in this umbrella build.
-// A user/CI usually only needs these.
-
-val checkAll = tasks.named("checkAll") {
-    group = taskGroup
-    description = "Run all tests and static analysis tools"
-
-    dependsOn(tasks.named("detektAll"))
-}
-
-tasks.named("build") {
-    group = taskGroup
-    description = "Build and run all tests (without publishing)"
-
-    dependsOn(tasks.named("assembleAll"), checkAll)
+tasks.named("check") {
+    dependsOn(gradle.includedBuild("build-logic").task(":check"))
+    dependsOn(gradle.includedBuild("build-logic-settings").task(":check"))
 }

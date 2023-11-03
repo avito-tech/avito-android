@@ -1,30 +1,22 @@
 import com.avito.android.withVersionCatalog
-import java.util.jar.Attributes
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("kotlin")
-    id("convention.kotlin-base")
-    id("convention.dependency-locking-kotlin")
+    id("convention.kotlin-jvm-base")
+    id("convention.detekt")
 }
 
-kotlin {
-    explicitApi()
-    jvmToolchain {
-        withVersionCatalog { libs ->
-            this.apply {
-                languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
-            }
-        }
+withVersionCatalog { libs ->
+    val javaTarget = JavaLanguageVersion.of(libs.versions.java.get()).toString()
+
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = javaTarget
+        targetCompatibility = javaTarget
     }
-}
 
-tasks.withType<Jar>().configureEach {
-    manifest {
-        attributes(
-            mapOf(
-                // To access a build version in runtime through class.java.`package`.implementationVersion
-                Attributes.Name.IMPLEMENTATION_VERSION.toString() to project.version
-            )
-        )
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = javaTarget
+        }
     }
 }

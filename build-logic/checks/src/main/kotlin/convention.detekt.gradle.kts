@@ -17,10 +17,15 @@ project.withVersionCatalog { libs ->
     }
 }
 
-val detektAll = tasks.register<Detekt>("detektAll") {
-    description = "Runs over whole code base without the starting overhead for each module."
+val detekt = tasks.named<Detekt>("detekt") {
+    description = "Check kt and kts files in a module"
     parallel = true
-    setSource(files(projectDir))
+    setSource(
+        files(
+            project.layout.projectDirectory.dir("src"),
+            project.layout.projectDirectory.file("build.gradle.kts"),
+        )
+    )
 
     /**
      * About config:
@@ -32,8 +37,6 @@ val detektAll = tasks.register<Detekt>("detektAll") {
 
     include("**/*.kt")
     include("**/*.kts")
-    exclude("**/resources/**")
-    exclude("**/build/**")
     reports {
         xml.enabled = false
         html.enabled = false
@@ -41,5 +44,5 @@ val detektAll = tasks.register<Detekt>("detektAll") {
 }
 
 tasks.named("check").configure {
-    dependsOn(detektAll)
+    dependsOn(detekt)
 }

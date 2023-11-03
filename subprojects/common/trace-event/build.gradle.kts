@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(libs.gson)
 
-    testImplementation(libs.kotlinStdlibJdk7) {
+    testImplementation(libs.kotlinStdlib) {
         because("kotlin.io.path experimental; consider replacing")
     }
 }

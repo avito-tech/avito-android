@@ -1,8 +1,9 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("convention.kotlin-base")
+    id("convention.kotlin-android-base")
     id("convention.android-base")
+    id("convention.detekt")
+    id("convention.dependency-locking-android-app")
 }
 
 android {
@@ -16,7 +17,7 @@ android {
     variantFilter {
         if (name != testBuildType) {
             ignore = true
-            logger.debug("Build variant $name is omitted for module: $path")
+            logger.lifecycle("Build variant $name is omitted for module: $path")
         }
     }
 

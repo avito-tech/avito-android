@@ -7,6 +7,7 @@ group = "com.avito.android.buildlogic"
 dependencies {
     implementation(projects.gradleExt)
     implementation(projects.testing)
+    implementation(projects.checks)
     implementation(libs.kotlinGradle)
     implementation(libs.kotlinx.serialization.gradle)
     implementation(libs.kspGradle)

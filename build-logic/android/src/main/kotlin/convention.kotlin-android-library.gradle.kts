@@ -3,10 +3,10 @@ import java.util.jar.Attributes
 
 plugins {
     id("com.android.library")
-    id("kotlin-android")
-    id("convention.kotlin-base")
+    id("convention.kotlin-android-base")
     id("convention.android-base")
-    id("convention.dependency-locking-android")
+    id("convention.detekt")
+    id("convention.dependency-locking-android-lib")
 }
 
 val generatedJavaResDir: Provider<RegularFile> = project.layout.buildDirectory.file("generated/avito/java_res")

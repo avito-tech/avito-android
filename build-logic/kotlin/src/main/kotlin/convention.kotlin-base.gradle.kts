@@ -19,10 +19,7 @@ project.withVersionCatalog { libs ->
     val kotlinLanguageVersion = libs.versions.kotlinLanguageVersion.get()
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-
             allWarningsAsErrors = true
-
             languageVersion = kotlinLanguageVersion
             apiVersion = kotlinLanguageVersion
 

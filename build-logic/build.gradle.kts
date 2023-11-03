@@ -3,6 +3,8 @@ import io.gitlab.arturbosch.detekt.Detekt
 plugins {
     // accessing version catalog here is blocked by IDE false-positive error
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
+    base
+    // # Update detekt version in gradle/libs.versions.toml
     id("io.gitlab.arturbosch.detekt") version "1.18.1"
 }
 
@@ -23,7 +25,7 @@ buildscript {
     }
 }
 
-val detektAllTask = tasks.register<Detekt>("detektAll") {
+val detekt = tasks.named<Detekt>("detekt") {
     description = "Runs over whole code base without the starting overhead for each module."
     parallel = true
     setSource(files(projectDir))
@@ -46,42 +48,6 @@ val detektAllTask = tasks.register<Detekt>("detektAll") {
     }
 }
 
-val taskGroup = "Avito Android build"
-
-tasks.register("compileAll") {
-    group = taskGroup
-    description = "Compile all code of the '${project.path}' component"
-
-    dependsOn(
-        subprojects
-            .filter { !it.isPlainDir() }
-            .map { "${it.path}:compileKotlin" }
-    )
-}
-
-tasks.register("assembleAll") {
-    group = taskGroup
-    description = "Assemble '${project.path}' component"
-    dependsOn(
-        subprojects
-            .filter { !it.isPlainDir() }
-            .map { "${it.path}:assemble" }
-    )
-}
-
-tasks.register("checkAll") {
-    group = taskGroup
-    description = "Run all tests and static analysis tools on '${project.path}' component"
-
-    dependsOn(
-        subprojects
-            .filter { !it.isPlainDir() }
-            .map { "${it.path}:check" }
-    )
-
-    dependsOn(detektAllTask)
-}
-
-fun Project.isPlainDir(): Boolean {
-    return !file("build.gradle").exists() && !file("build.gradle.kts").exists()
+tasks.named("check") {
+    dependsOn(detekt)
 }

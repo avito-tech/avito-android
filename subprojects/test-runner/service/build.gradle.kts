@@ -25,7 +25,7 @@ dependencies {
     }
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
-    implementation(libs.kotlinStdlibJdk7) {
+    implementation(libs.kotlinStdlib) {
         because("java.nio.file.Path extensions")
     }
 

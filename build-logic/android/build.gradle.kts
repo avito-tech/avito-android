@@ -7,6 +7,7 @@ group = "com.avito.android.buildlogic"
 dependencies {
     implementation(projects.kotlin)
     implementation(projects.gradleExt)
+    implementation(projects.checks)
     implementation(libs.kotlinGradle)
     implementation(libs.androidGradle)
     // workaround for https://github.com/gradle/gradle/issues/15383
