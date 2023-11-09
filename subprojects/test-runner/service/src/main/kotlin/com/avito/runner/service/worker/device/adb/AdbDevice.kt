@@ -483,10 +483,12 @@ public data class AdbDevice(
 
         return instrumentationParser
             .parse(instrumentationOutput)
+            .first() // example of multiple items is app process crashed after test completed
+            .toSingle()
             .timeout(
                 timeoutMinutes,
                 TimeUnit.MINUTES,
-                Observable.just(
+                Single.just(
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         name = test.name,
                         result = Failed.InfrastructureError.Timeout(
@@ -498,8 +500,6 @@ public data class AdbDevice(
                     )
                 )
             )
-            .first()
-            .toSingle()
     }
 
     private fun getAdbDevice(): Result<IDevice> = Result.tryCatch {
