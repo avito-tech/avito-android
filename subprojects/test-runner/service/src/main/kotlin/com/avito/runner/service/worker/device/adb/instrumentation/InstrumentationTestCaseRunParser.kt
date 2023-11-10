@@ -88,17 +88,22 @@ internal interface InstrumentationTestCaseRunParser {
                                 )
                             } else {
                                 throw Exception(
-                                    "Something wrong with instrumentation output:" +
-                                        "Current entry doesn't have test field and previous entry is not run" +
-                                        "or doesn't have test field too."
+                                    buildString {
+                                        append("Something wrong with instrumentation output: ")
+                                        append("Current entry doesn't have test field and previous entry is not run ")
+                                        append("or doesn't have test field too.")
+                                    }
                                 )
                             }
                         }
                         // Attach additional output to actual test entry
                         entry is InstrumentationEntry.InstrumentationMacrobenchmarkOutputEntry -> {
                             check(previous is InstrumentationEntry.InstrumentationTestEntry) {
-                                "Wrong instrumentation output order - additional output entry (code=2) must " +
-                                    "be followed by tests start entry (code = 1)."
+                                buildString {
+                                    append("Wrong instrumentation output order: ")
+                                    append("additional output entry (code=2) must ")
+                                    append("be followed by tests start entry (code = 1).")
+                                }
                             }
                             previous.copy(
                                 statusCode = entry.statusCode,

@@ -11,9 +11,11 @@ internal class ExtensionCorrectnessChecker(
         val isTestVariantPropertiesConfigured = extension.macrobenchmark.isAnyPropertyConfigured()
         if (isTestVariantPropertiesConfigured) {
             check(variant is TestVariant) {
-                "Instrumentation plugin's macrobenchmark section is declared, but cannot be applied. " +
-                    "Macrobenchmark properties only make sense when using " +
-                    "Android Test Variant (`com.android.test` plugin)."
+                buildString {
+                    append("Instrumentation plugin's macrobenchmark section is declared, but cannot be applied. ")
+                    append("Macrobenchmark properties only make sense when using ")
+                    append("Android Test Variant (`com.android.test` plugin).")
+                }
             }
         }
     }
