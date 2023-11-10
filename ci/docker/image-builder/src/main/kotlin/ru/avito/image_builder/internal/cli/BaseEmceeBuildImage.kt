@@ -7,6 +7,7 @@ import ru.avito.image_builder.internal.command.ImagePublisher
 import ru.avito.image_builder.internal.command.RegistryLogin
 import ru.avito.image_builder.internal.command.RegistryType
 import ru.avito.image_builder.internal.docker.CliDocker
+import java.time.Duration
 
 internal abstract class BaseEmceeBuildImage(
     name: String,
@@ -42,7 +43,8 @@ internal abstract class BaseEmceeBuildImage(
         ImagePublisher(
             docker = docker,
             builder = imageBuilder,
-            login = getPublishingRegistryLogin(docker)
+            login = getPublishingRegistryLogin(docker),
+            publishTimeout = Duration.ofMinutes(20)
         ).publish()
     }
 

@@ -65,5 +65,5 @@ internal interface Docker {
     ): Result<Unit>
 }
 
+internal val LONG_OPERATION_TIMEOUT = Duration.ofMinutes(10)
 private val FAST_OPERATION_TIMEOUT = Duration.ofSeconds(30)
-private val LONG_OPERATION_TIMEOUT = Duration.ofMinutes(10)
