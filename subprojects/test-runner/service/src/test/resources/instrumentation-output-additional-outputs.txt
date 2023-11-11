@@ -8,3 +8,11 @@ INSTRUMENTATION_STATUS: test=testMethodName
 INSTRUMENTATION_STATUS_CODE: 1
 INSTRUMENTATION_STATUS: additionalTestOutputFile_baseline-profile=/storage/emulated/0/Android/media/com.example.test.package/file.txt
 INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 0
+
+OK (0 tests)
+
+
+INSTRUMENTATION_CODE: -1
