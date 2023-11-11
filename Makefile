@@ -25,6 +25,7 @@ dry_run=false
 instrumentation=Ui
 stacktrace?=
 local_check=true
+offline?=
 
 # see Logging.md#Verbose-mode
 verbose?=
@@ -49,6 +50,10 @@ endef
 endif
 
 params?=
+
+ifdef offline
+params +=--offline
+endif
 
 ifdef testFilter
 params +=-PcustomFilter=$(testFilter)
