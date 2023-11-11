@@ -3,32 +3,27 @@ package com.avito.runner.scheduler
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.LoggerFactory
-import com.avito.report.Report
 import com.avito.runner.config.RunnerInputParams
-import com.avito.runner.listener.TestListenerFactory
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
 import com.avito.runner.scheduler.metrics.TestRunnerMetricsListener
 import com.avito.runner.scheduler.metrics.TestRunnerMetricsSenderImpl
+import com.avito.runner.scheduler.report.ReportModule
 import com.avito.runner.scheduler.runner.TestRunnerExecutionState
 import com.avito.runner.scheduler.runner.model.TestRunRequestFactory
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
-import okhttp3.OkHttpClient
 import java.io.File
-import java.nio.file.Files
 
-public class TestRunnerFactoryProvider(
+internal class TestRunnerFactoryProvider(
     private val params: RunnerInputParams,
     private val timeProvider: TimeProvider,
-    private val httpClientBuilder: OkHttpClient.Builder,
-    private val report: Report,
+    private val reportModule: ReportModule,
     private val devicesProviderFactory: DevicesProviderFactory,
     private val loggerFactory: LoggerFactory,
+    private val testRunnerOutputDir: File,
+    private val tempLogcatDir: File,
     metricsConfig: RunnerMetricsConfig,
 ) {
-
-    private val outputDir = params.outputDir
-    private val tempLogcatDir = Files.createTempDirectory(null).toFile()
     private val testRunnerExecutionState = TestRunnerExecutionState()
 
     private val statsDSender: StatsDSender = StatsDSender.create(
@@ -50,16 +45,6 @@ public class TestRunnerFactoryProvider(
         loggerFactory = loggerFactory
     )
 
-    /**
-     * i.e {projectDir}/output/test-runner/
-     */
-    private val testRunnerOutputDir: File by lazy {
-        File(
-            outputDir,
-            "test-runner"
-        ).apply { mkdirs() }
-    }
-
     internal fun provide(): TestRunnerFactory {
         return TestRunnerFactoryImpl(
             testRunnerOutputDir = testRunnerOutputDir,
@@ -72,14 +57,9 @@ public class TestRunnerFactoryProvider(
             executionState = testRunnerExecutionState,
             params = params,
             tempLogcatDir = tempLogcatDir,
-            testListenerFactory = TestListenerFactory(
-                loggerFactory = loggerFactory,
-                timeProvider = timeProvider,
-                httpClientBuilder = httpClientBuilder
-            ),
-            report = report,
             targets = params.instrumentationConfiguration.targets,
             metricsSender = metricsSender,
+            artifactsTestListenerProvider = reportModule.artifactsTestListenerProvider
         )
     }
 

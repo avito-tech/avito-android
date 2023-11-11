@@ -3,6 +3,7 @@ package com.avito.runner.finalizer
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.LoggerFactory
 import com.avito.report.Report
+import com.avito.runner.config.RunnerReportConfig
 import com.avito.runner.finalizer.action.FinalizeAction
 import com.avito.runner.finalizer.action.ReportLostTestsAction
 import com.avito.runner.finalizer.action.SendMetricsAction
@@ -12,7 +13,6 @@ import com.avito.runner.finalizer.action.WriteTaskVerdictAction
 import com.avito.runner.finalizer.verdict.VerdictDeterminer
 import com.avito.runner.finalizer.verdict.VerdictDeterminerImpl
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
-import com.avito.runner.scheduler.report.ReportViewerConfig
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import java.io.File
@@ -22,7 +22,7 @@ internal class FinalizerFactoryImpl(
     private val metricsConfig: RunnerMetricsConfig,
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
-    private val reportViewerConfig: ReportViewerConfig?,
+    private val reportConfig: RunnerReportConfig,
     private val suppressFailure: Boolean,
     private val suppressFlaky: Boolean,
     private val verdictFile: File,
@@ -66,14 +66,18 @@ internal class FinalizerFactoryImpl(
             testSuiteNameProvider = report.testSuiteNameProvider
         )
 
-        if (reportViewerConfig != null) {
+        when (reportConfig) {
+            is RunnerReportConfig.ReportViewer -> {
+                actions += ReportLostTestsAction(report = report)
 
-            actions += ReportLostTestsAction(report = report)
-
-            actions += WriteReportViewerLinkFile(
-                outputDir = outputDir,
-                reportLinksGenerator = report.reportLinksGenerator
-            )
+                actions += WriteReportViewerLinkFile(
+                    outputDir = outputDir,
+                    reportLinksGenerator = report.reportLinksGenerator
+                )
+            }
+            RunnerReportConfig.None -> {
+                // no-op
+            }
         }
 
         return FinalizerImpl(

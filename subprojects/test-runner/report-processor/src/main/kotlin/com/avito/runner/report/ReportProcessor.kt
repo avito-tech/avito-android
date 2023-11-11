@@ -5,9 +5,6 @@ import com.avito.runner.logcat.LogcatAccessor
 import com.avito.runner.model.TestResult
 import com.avito.test.model.TestCase
 
-/**
- * todo remove in favour of TestArtifactsProcessorImpl after uploadAllArtifacts flag removed
- */
 internal interface ReportProcessor {
 
     fun createTestReport(

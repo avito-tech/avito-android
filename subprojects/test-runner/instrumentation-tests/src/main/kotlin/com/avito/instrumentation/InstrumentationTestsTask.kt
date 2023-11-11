@@ -9,13 +9,11 @@ import com.avito.android.getApkOrThrow
 import com.avito.android.stats.StatsDConfig
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
-import com.avito.instrumentation.configuration.ReportViewer
 import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
-import com.avito.runner.scheduler.report.ReportViewerConfig
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
@@ -113,10 +111,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val enableDeviceDebug: Property<Boolean>
 
     @get:Input
-    @get:Optional
-    public abstract val reportViewerProperty: Property<ReportViewer>
-
-    @get:Input
     public abstract val gradleTestKitRun: Property<Boolean>
 
     @get:Input
@@ -149,38 +143,26 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:Internal
     override val verdict: SpannedString
         get() {
-            val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-            val verdictRaw = verdictFile.asFile.get().reader()
-            val verdict = gson.fromJson(verdictRaw, InstrumentationTestsTaskVerdict::class.java)
-            return multiline(
-                mutableListOf<SpannedString>()
-                    .apply {
-                        add(link(verdict.reportUrl, verdict.title))
-                        addAll(verdict.problemTests.map { test ->
+            val verdictFile = verdictFile.asFile.get()
+            return if (verdictFile.exists()) {
+                val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+                val verdictRaw = verdictFile.reader()
+                val verdict = gson.fromJson(verdictRaw, InstrumentationTestsTaskVerdict::class.java)
+                return multiline(
+                    lines = listOf(link(verdict.reportUrl, verdict.title)) +
+                        verdict.problemTests.map { test ->
                             link(test.testUrl, test.title)
-                        })
-                    }
-            )
+                        }
+                )
+            } else {
+                SpannedString("Can't find verdict file $verdictFile")
+            }
         }
 
     @TaskAction
     public fun doWork() {
         val configuration = instrumentationConfiguration.get()
-        val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
-
-        val reportViewerData = reportViewerProperty.orNull
-        val reportViewerConfig = if (reportViewerData != null) {
-            ReportViewerConfig(
-                apiUrl = reportViewerData.reportApiUrl,
-                viewerUrl = reportViewerData.reportViewerUrl,
-                reportCoordinates = reportCoordinates
-            )
-        } else {
-            null
-        }
-
         val experiments = experiments.get()
-
         val output = output.get().asFile
 
         val testRunParams = RunnerInputParams(
@@ -212,14 +194,11 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             ),
             outputDir = output,
             verdictFile = verdictFile.get().asFile,
-            fileStorageUrl = getFileStorageUrl(),
             statsDConfig = statsDConfig.get(),
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
             ).mapNotNull { it.orNull?.asFile },
-            uploadTestArtifacts = experiments.uploadArtifactsFromRunner,
-            reportViewerConfig = reportViewerConfig,
             saveTestArtifactsToOutputs = experiments.saveTestArtifactsToOutputs,
             useLegacyExtensionsV1Beta = experiments.useLegacyExtensionsV1Beta,
             adbPullTimeout = adbPullTimeout.get(),
@@ -249,12 +228,5 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 }
             }
         }
-    }
-
-    /**
-     * todo FileStorage needed only for ReportViewer
-     */
-    private fun getFileStorageUrl(): String {
-        return reportViewerProperty.orNull?.fileStorageUrl ?: "http://stub"
     }
 }

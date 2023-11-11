@@ -24,7 +24,6 @@ internal class ArtifactsTestListener(
     private val outputDirectory: File,
     private val macrobenchmarkOutputDirectory: File?,
     private val saveTestArtifactsToOutputs: Boolean,
-    private val uploadTestArtifacts: Boolean,
     private val reportArtifactsPullValidator: PullValidator,
     loggerFactory: LoggerFactory,
 ) : TestListener {
@@ -141,14 +140,8 @@ internal class ArtifactsTestListener(
         device: Device,
         artifactsDir: File,
         tempDirectory: Path
-    ): Result<File> = if (uploadTestArtifacts) {
-        device.pullDir(
-            deviceDir = artifactsDir.toPath(),
-            hostDir = tempDirectory,
-            validator = reportArtifactsPullValidator
-        )
-    } else {
-        device.pullFile(
+    ): Result<File> {
+        return device.pullFile(
             deviceFile = artifactsDir.resolve("report.json").toPath(),
             hostDir = tempDirectory,
             validator = reportArtifactsPullValidator

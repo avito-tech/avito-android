@@ -1,12 +1,13 @@
 package com.avito.instrumentation
 
-internal val kotlinStubConfig = """
+import com.avito.instrumentation.configuration.report.ReportConfig
+
+internal fun kotlinStubConfig(reportConfig: ReportConfig) = """
   |android {
   |    defaultConfig {
   |        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   |        testInstrumentationRunnerArguments(
   |            mapOf(
-  |                "planSlug" to "AppAndroid",
   |                "override" to "createdInInstrumentationRunnerArguments",
   |                "expectedCustomParam" to "value"
   |            )
@@ -16,22 +17,34 @@ internal val kotlinStubConfig = """
   |
   |instrumentation {
   |  
-  |    output = rootProject.file("outputs").path
-  |    sentryDsn = "stub"
+  |    outputDir.set(rootProject.file("outputs"))
   |
   |    instrumentationParams = mapOf(
-  |        "jobSlug" to "FunctionalTests",
   |        "override" to "overrideInPlugin"
   |    )
-  |                             
-  |    testReport {
-  |        reportViewer {
-  |            reportApiUrl = "http://stub"
-  |            reportViewerUrl = "http://stub"
-  |            reportRunIdPrefix = "stub"
-  |            fileStorageUrl = "http://stub"
-  |        }
-  |    }
+  |    report.set(${
+    when (reportConfig) {
+        ReportConfig.NoOp -> "ReportConfig.NoOp"
+        is ReportConfig.ReportViewer.SendFromDevice -> """
+  |      ReportConfig.ReportViewer.SendFromDevice(  
+  |         reportApiUrl = "${reportConfig.reportApiUrl}",
+  |         reportViewerUrl = "${reportConfig.reportViewerUrl}",
+  |         fileStorageUrl = "${reportConfig.fileStorageUrl}",
+  |         planSlug = "${reportConfig.planSlug}",
+  |         jobSlug = "${reportConfig.jobSlug}"
+  |    )
+    """.trimMargin()
+        is ReportConfig.ReportViewer.SendFromRunner -> """
+  |      ReportConfig.ReportViewer.SendFromRunner(  
+  |         reportApiUrl = "${reportConfig.reportApiUrl}",
+  |         reportViewerUrl = "${reportConfig.reportViewerUrl}",
+  |         fileStorageUrl = "${reportConfig.fileStorageUrl}",
+  |         planSlug = "${reportConfig.planSlug}",
+  |         jobSlug = "${reportConfig.jobSlug}"
+  |    )
+    """.trimMargin()
+    }
+})
   |
   |    configurations {
   |        register("functional") {
@@ -39,7 +52,7 @@ internal val kotlinStubConfig = """
   |                "configuration" to "functional",
   |                "override" to "overrideInConfiguration"
   |            )
-  |
+  |            jobSlug.set("override jobSlug")
   |            suppressFlaky.set(true)
   |            suppressFailure.set(true)
   |            
@@ -79,86 +92,6 @@ internal val kotlinStubConfig = """
   |         url.set("myk8s.com")
   |         namespace.set("default")
   |       }
-  |    }
-  |}
-  |""".trimMargin()
-
-internal val groovyStubConfig = """
-  |android {
-  |    defaultConfig {
-  |        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-  |        testInstrumentationRunnerArguments([
-  |            "planSlug" : "AppAndroid",
-  |            "override": "createdInInstrumentationRunnerArguments",
-  |            "expectedCustomParam": "value"
-  |        ])
-  |    }
-  |}
-  |
-  |instrumentation {
-  |    output = rootProject.file("outputs").path
-  |    sentryDsn = "stub"
-  |
-  |    instrumentationParams = [
-  |        "jobSlug": "FunctionalTests",
-  |        "override": "overrideInPlugin"
-  |    ]
-  |     
-  |    testReport {
-  |        reportViewer {
-  |            reportApiUrl = "http://stub"
-  |            reportViewerUrl = "http://stub"
-  |            reportRunIdPrefix = "stub"
-  |            fileStorageUrl = "http://stub"
-  |        }
-  |    }
-  |
-  |    configurations {
-  |        functional {
-  |            instrumentationParams = [
-  |                "configuration": "functional",
-  |                "override": "overrideInConfiguration"
-  |            ]
-  |            
-  |            suppressFlaky.set(true)
-  |            suppressFailure.set(true)
-  |
-  |            targets {
-  |                api22 {
-  |                    instrumentationParams = [
-  |                        "deviceName": "invalid",
-  |                        "target": "yes",
-  |                        "override": "overrideInTarget"
-  |                    ]
-  |
-  |                    deviceName = "api22"
-  |
-  |                    scheduling {
-  |                        quota {
-  |                            minimumSuccessCount = 1
-  |                        }
-  |
-  |                        staticDevicesReservation {
-  |                            device = LocalEmulator.device(27)
-  |                            count = 1
-  |                        }
-  |                    }
-  |                }
-  |            }
-  |        }
-  |    }
-  |    
-  |    environments {
-  |        register("k8sContext", com.avito.instrumentation.configuration.KubernetesViaContext) {
-  |            context.set("beta")
-  |            namespace.set("default")
-  |        }
-  |        register("k8sCredentials", com.avito.instrumentation.configuration.KubernetesViaCredentials) {
-  |            token.set("q1w2e3")
-  |            caCertData.set("12345")
-  |            url.set("myk8s.com")
-  |            namespace.set("default")
-  |        }
   |    }
   |}
   |""".trimMargin()

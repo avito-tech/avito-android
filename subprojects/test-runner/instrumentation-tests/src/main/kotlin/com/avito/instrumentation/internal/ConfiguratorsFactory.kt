@@ -8,8 +8,6 @@ import com.avito.git.gitState
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
-import com.avito.time.DefaultTimeProvider
-import com.avito.time.TimeProvider
 import com.avito.utils.gradle.envArgs
 import org.gradle.api.Project
 
@@ -17,15 +15,12 @@ internal class ConfiguratorsFactory(
     private val project: Project,
     private val extension: InstrumentationTestsPluginExtension,
 ) {
-    private val timeProvider: TimeProvider = DefaultTimeProvider()
-
     private val gitResolver = GitResolver(project.gitState())
 
     // todo envArgs should be lazy, see [com.avito.kotlin.dsl.ProjectProperty]
     private val buildEnvResolver = BuildEnvResolver(project.provider { project.envArgs })
 
     private val runIdResolver = RunIdResolver(
-        timeProvider = timeProvider,
         gitResolver = gitResolver,
         buildEnvResolver = buildEnvResolver
     )
@@ -34,30 +29,20 @@ internal class ConfiguratorsFactory(
 
     private val androidVariantConfiguratorFactory = AndroidVariantConfiguratorFactory(extension)
 
-    private val planSlugResolver = PlanSlugResolver
-
-    private val sentryResolver = SentryResolver(extension, project.providers)
-
     private val outputDirResolver = OutputDirResolver(
         extension = extension,
-        rootProjectLayout = project.rootProject.layout,
-        providers = project.providers,
-        logger = project.logger,
     )
 
     private val argsTester = LocalRunArgsChecker(outputDirResolver)
 
     private val androidDslInteractor = AndroidDslInteractor
 
-    private val experimentsConfigurator = ExperimentsConfigurator(project, extension)
+    private val experimentsConfigurator = ExperimentsConfigurator(extension)
 
     val instrumentationArgsResolver = InstrumentationArgsResolver(
         extension = extension,
-        sentryResolver = sentryResolver,
         reportResolver = reportResolver,
-        planSlugResolver = planSlugResolver,
         runIdResolver = runIdResolver,
-        buildEnvResolver = buildEnvResolver,
         androidDslInteractor = androidDslInteractor,
     )
 
@@ -96,7 +81,8 @@ internal class ConfiguratorsFactory(
                 extension = extension,
                 configuration = configuration,
                 instrumentationArgsResolver = instrumentationArgsResolver,
-                outputDir = outputDir
+                outputDir = outputDir,
+                reportResolver = reportResolver,
             )
 
             listOf(
@@ -107,7 +93,6 @@ internal class ConfiguratorsFactory(
                 outputDirConfigurator,
                 EnvironmentConfigurator(environment),
                 GitConfigurator(gitResolver),
-                ReportViewerConfigurator(reportResolver),
                 CIArgsConfigurator(buildEnvResolver),
             )
         } else {

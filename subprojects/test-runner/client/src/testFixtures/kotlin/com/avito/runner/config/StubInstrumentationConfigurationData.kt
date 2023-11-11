@@ -43,5 +43,6 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
             reportFilter = null
         )
     ),
-    outputFolder = outputFolder
+    outputFolder = outputFolder,
+    reportConfig = RunnerReportConfig.None
 )

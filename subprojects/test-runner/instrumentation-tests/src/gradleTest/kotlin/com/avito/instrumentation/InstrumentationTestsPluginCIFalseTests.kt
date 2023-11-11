@@ -129,11 +129,12 @@ internal class InstrumentationTestsPluginCIFalseTests {
     |import com.avito.instrumentation.reservation.request.Device
     |import com.avito.instrumentation.configuration.KubernetesViaCredentials
     |import com.avito.kotlin.dsl.getOptionalStringProperty
+    |import com.avito.instrumentation.configuration.report.ReportConfig
     |
     |instrumentation {
     |
-    |    output = rootProject.file("outputs").path
-    |    
+    |    outputDir.set(rootProject.file("outputs"))
+    |    report.set(ReportConfig.NoOp)
     |    environments {
     |       register<KubernetesViaCredentials>("test") {
     |           url.set("http://stub")

@@ -4,7 +4,6 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -27,6 +26,7 @@ internal class LocalEnvironmentTest {
                     },
                     imports = listOf(
                         "import com.avito.instrumentation.reservation.request.Device",
+                        "import com.avito.instrumentation.configuration.report.ReportConfig",
                     ),
                     buildGradleExtra = instrumentationConfigurationWithCloudEmulator(),
                     useKts = true
@@ -44,19 +44,14 @@ internal class LocalEnvironmentTest {
             }
     }
 
-    @Language("kotlin")
     private fun instrumentationConfigurationWithCloudEmulator(): String = """
     |instrumentation {
-    |    output = project.file("outputs").path
+    |    outputDir.set(project.file("outputs"))
+    |    report.set(ReportConfig.NoOp)
     |
     |    instrumentationParams = mapOf(
     |        "jobSlug" to "FunctionalTests"
     |    )
-    |
-    |    experimental {
-    |        useService.set(true)
-    |        useInMemoryReport.set(true)
-    |    }
     |
     |    configurations {
     |

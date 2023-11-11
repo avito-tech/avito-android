@@ -249,9 +249,11 @@ internal fun instrumentationConfiguration(): String = """
     |import com.avito.instrumentation.reservation.request.Device
     |import com.avito.instrumentation.configuration.KubernetesViaCredentials
     |import com.avito.kotlin.dsl.getOptionalStringProperty
+    |import com.avito.instrumentation.configuration.report.ReportConfig
     |
     |instrumentation {
-    |    output = project.file("outputs").path
+    |    outputDir.set(project.file("outputs"))
+    |    report.set(ReportConfig.NoOp)
     |    environments {
     |       register<KubernetesViaCredentials>("test") {
     |           url.set("http://stub")
@@ -265,11 +267,6 @@ internal fun instrumentationConfiguration(): String = """
     |        "jobSlug" to "FunctionalTests"
     |    )
     |    
-    |    experimental {
-    |        useService.set(true)
-    |        useInMemoryReport.set(true)
-    |    }
-    |
     |    configurations {
     |
     |        register("functional") {

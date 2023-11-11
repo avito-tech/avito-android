@@ -16,6 +16,8 @@ public abstract class InstrumentationConfiguration @Inject constructor(
 
     internal abstract val targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
 
+    public abstract val jobSlug: Property<String>
+
     public var instrumentationParams: Map<String, String> = emptyMap()
 
     public var reportSkippedTests: Boolean = false

@@ -11,15 +11,11 @@ package com.avito.reportviewer.model
  * todo internal
  */
 public data class RunId(
-    private val prefix: String? = null,
     private val identifier: String,
     private val buildTypeId: String
 ) {
 
-    public fun toReportViewerFormat(): String = when {
-        prefix.isNullOrBlank() -> "$identifier$DELIMITER$buildTypeId"
-        else -> "$prefix$DELIMITER$identifier$DELIMITER$buildTypeId"
-    }
+    public fun toReportViewerFormat(): String = "$identifier$DELIMITER$buildTypeId"
 
     public companion object {
         internal const val DELIMITER = '.'

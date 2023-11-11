@@ -41,7 +41,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             androidComponents.finalizeDsl { androidExtension ->
 
                 val instrumentationArgs = factory.instrumentationArgsResolver.resolvePluginLevelArgs(
-                    project = project,
                     androidExtension = androidExtension
                 )
 

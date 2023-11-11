@@ -2,15 +2,11 @@ package com.avito.runner.scheduler
 
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.logger.LoggerFactory
-import com.avito.report.Report
-import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.TestStaticData
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.config.TargetConfigurationData
-import com.avito.runner.listener.ArtifactsTestListener
 import com.avito.runner.listener.LogListener
-import com.avito.runner.listener.ReportAwarePullValidator
-import com.avito.runner.listener.TestListenerFactory
+import com.avito.runner.listener.ReportArtifactsTestListenerProvider
 import com.avito.runner.listener.TestMetricsListener
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
@@ -27,7 +23,6 @@ import com.avito.runner.service.DeviceWorkerPoolProvider
 import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.worker.listener.DeviceListener
-import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
 import java.io.File
 
@@ -42,10 +37,9 @@ internal class TestRunnerFactoryImpl(
     private val executionState: TestRunnerExecutionState,
     private val params: RunnerInputParams,
     private val tempLogcatDir: File,
-    private val testListenerFactory: TestListenerFactory,
     private val metricsSender: InstrumentationMetricsSender,
-    private val report: Report,
-    private val targets: List<TargetConfigurationData>
+    private val targets: List<TargetConfigurationData>,
+    private val artifactsTestListenerProvider: ReportArtifactsTestListenerProvider,
 ) : TestRunnerFactory {
 
     override fun createTestRunner(
@@ -88,26 +82,7 @@ internal class TestRunnerFactoryImpl(
     private fun testListener(tests: List<TestStaticData>) = CompositeListener(
         listeners = mutableListOf<TestListener>().apply {
             add(LogListener())
-            add(
-                ArtifactsTestListener(
-                    lifecycleListener = testListenerFactory.createReportTestListener(
-                        testStaticDataByTestCase = testStaticDataByTestCase(tests),
-                        tempLogcatDir = tempLogcatDir,
-                        report = report,
-                        proguardMappings = params.proguardMappings,
-                        fileStorageUrl = params.fileStorageUrl,
-                        uploadTestArtifacts = params.uploadTestArtifacts,
-                    ),
-                    outputDirectory = testRunnerOutputDir,
-                    macrobenchmarkOutputDirectory = params.macrobenchmarkOutputDir,
-                    loggerFactory = loggerFactory,
-                    saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
-                    uploadTestArtifacts = params.uploadTestArtifacts,
-                    reportArtifactsPullValidator = ReportAwarePullValidator(
-                        testArtifactsProviderFactory = TestArtifactsProviderFactory
-                    )
-                )
-            )
+            add(artifactsTestListenerProvider.provide(tests))
             add(TestMetricsListener(metricsSender))
         }
     )
@@ -125,16 +100,5 @@ internal class TestRunnerFactoryImpl(
             deviceSignals = executionState.deviceSignals,
             testListener = testListener
         )
-    }
-
-    private fun testStaticDataByTestCase(
-        testsToRun: List<TestStaticData>
-    ): Map<TestCase, TestStaticData> {
-        return testsToRun.associateBy { test ->
-            TestCase(
-                name = test.name,
-                deviceName = test.device
-            )
-        }
     }
 }

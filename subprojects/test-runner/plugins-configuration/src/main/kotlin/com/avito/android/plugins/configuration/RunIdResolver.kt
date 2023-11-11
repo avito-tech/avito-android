@@ -1,35 +1,21 @@
 package com.avito.android.plugins.configuration
 
 import com.avito.reportviewer.model.RunId
-import com.avito.time.TimeProvider
-import java.util.concurrent.TimeUnit
 
 public class RunIdResolver(
-    private val timeProvider: TimeProvider,
     private val gitResolver: GitResolver,
     private val buildEnvResolver: BuildEnvResolver,
 ) {
 
-    public fun getCiRunId(reportRunIdPrefix: String?): RunId {
+    public fun getRunId(): RunId {
 
-        val gitCommitHash = gitResolver.getGitCommit().orNull
-
-        return if (gitCommitHash != null) {
-            RunId(
-                prefix = reportRunIdPrefix,
-                identifier = gitResolver.getGitCommit().getOrElse("local"),
-                buildTypeId = buildEnvResolver.getBuildType()
-            )
-        } else {
-            getLocalRunId()
+        val gitCommitHash = checkNotNull(gitResolver.getGitCommit().orNull) {
+            "Failed to create runId. Git commit is null"
         }
-    }
 
-    public fun getLocalRunId(): RunId {
         return RunId(
-            prefix = null,
-            identifier = TimeUnit.MILLISECONDS.toDays(timeProvider.nowInMillis()).toString(),
-            buildTypeId = "LOCAL"
+            identifier = gitCommitHash,
+            buildTypeId = buildEnvResolver.getBuildType()
         )
     }
 }

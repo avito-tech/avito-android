@@ -20,7 +20,13 @@ internal class OutputDirConfigurator(
 
     fun resolve(configuration: InstrumentationConfiguration): Provider<Directory> {
         return outputDirResolver.resolveWithDeprecatedProperty().map {
-            it.dir("${reportResolver.getRunId()}/${configuration.name}")
+            val runId = reportResolver.getRunId()
+            val dir = if (runId.isBlank()) {
+                configuration.name
+            } else {
+                "$runId/${configuration.name}"
+            }
+            it.dir(dir)
         }
     }
 }

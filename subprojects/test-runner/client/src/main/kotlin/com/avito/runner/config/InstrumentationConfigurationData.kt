@@ -16,6 +16,7 @@ public data class InstrumentationConfigurationData(
     val instrumentationTaskTimeout: Duration,
     val filter: InstrumentationFilterData,
     val outputFolder: File,
+    val reportConfig: RunnerReportConfig,
 ) : Serializable {
 
     val requestedDeviceType: DeviceType = determineRequestedDeviceType(targets.map { it.reservation.device })

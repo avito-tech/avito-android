@@ -4,13 +4,16 @@ import com.avito.instrumentation.InstrumentationTestsTask
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
+import com.avito.instrumentation.configuration.report.ReportConfig
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.InstrumentationParameters
 import com.avito.runner.config.Reservation
+import com.avito.runner.config.RunnerReportConfig
 import com.avito.runner.config.SchedulingConfigurationData
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
@@ -18,6 +21,7 @@ import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.Filter
 import com.avito.test.model.DeviceName
 import org.gradle.api.file.Directory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
 
@@ -26,6 +30,7 @@ internal class InstrumentationConfigurator(
     private val configuration: InstrumentationConfiguration,
     private val instrumentationArgsResolver: InstrumentationArgsResolver,
     private val outputDir: Provider<Directory>,
+    private val reportResolver: ReportResolver,
 ) : InstrumentationTaskConfigurator {
 
     override fun configure(task: InstrumentationTestsTask) {
@@ -51,10 +56,13 @@ internal class InstrumentationConfigurator(
         filters: List<InstrumentationFilterData>,
         outputFolder: File,
     ): InstrumentationConfigurationData {
+        val jobSlug = validateJobSlug(configuration.jobSlug)
 
-        val mergedInstrumentationParameters: InstrumentationParameters =
-            parentInstrumentationParameters
-                .applyParameters(configuration.instrumentationParams)
+        val mergedInstrumentationParameters = getConfigurationInstrumentationParameters(
+            parentInstrumentationParameters,
+            configuration.instrumentationParams,
+            jobSlug,
+        )
 
         return InstrumentationConfigurationData(
             name = configuration.name,
@@ -65,8 +73,62 @@ internal class InstrumentationConfigurator(
             instrumentationTaskTimeout = configuration.instrumentationTaskTimeout,
             filter = filters.singleOrNull { it.name == configuration.filter }
                 ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
-            outputFolder = outputFolder
+            outputFolder = outputFolder,
+            reportConfig = getRunnerReportConfig(jobSlug)
         )
+    }
+
+    private fun getConfigurationInstrumentationParameters(
+        plugin: InstrumentationParameters,
+        configuration: Map<String, String>,
+        jobSlug: String?,
+    ): InstrumentationParameters {
+        val result = plugin.applyParameters(configuration)
+        val report = checkNotNull(reportResolver.getReport())
+        val shouldBeApplied = report is ReportConfig.ReportViewer.SendFromDevice
+        return if (shouldBeApplied && jobSlug != null) {
+            result.applyParameters(mapOf("jobSlug" to jobSlug))
+        } else {
+            result
+        }
+    }
+
+    private fun getRunnerReportConfig(
+        jobSlug: String?,
+    ): RunnerReportConfig {
+        return when (val config = checkNotNull(reportResolver.getReport())) {
+            ReportConfig.NoOp,
+            is ReportConfig.ReportViewer.SendFromDevice -> RunnerReportConfig.None
+            is ReportConfig.ReportViewer.SendFromRunner -> {
+                val dslReportConfig = if (jobSlug != null) {
+                    config.copy(jobSlug = jobSlug)
+                } else {
+                    config
+                }
+                RunnerReportConfig.ReportViewer(
+                    reportApiUrl = dslReportConfig.reportApiUrl,
+                    reportViewerUrl = dslReportConfig.reportViewerUrl,
+                    fileStorageUrl = dslReportConfig.fileStorageUrl,
+                    coordinates = ReportCoordinates(
+                        planSlug = dslReportConfig.planSlug,
+                        jobSlug = dslReportConfig.jobSlug,
+                        runId = reportResolver.getRunId()
+                    )
+                )
+            }
+        }
+    }
+
+    private fun validateJobSlug(jobSlug: Property<String>): String? {
+        return if (jobSlug.isPresent) {
+            val checkedJobSlug = jobSlug.get()
+            check(checkedJobSlug.isNotBlank()) {
+                "Failed to create RunnerReportConfig. Blank jobSlug"
+            }
+            checkedJobSlug
+        } else {
+            null
+        }
     }
 
     private fun validate(targetConfiguration: TargetConfiguration) {

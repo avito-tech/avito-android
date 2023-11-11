@@ -1,9 +1,6 @@
 package com.avito.instrumentation
 
 import com.avito.capitalize
-import com.avito.reportviewer.model.ReportCoordinates
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
 
 internal fun instrumentationTaskName(
     configuration: String,
@@ -18,20 +15,6 @@ internal fun instrumentationTaskName(
         append(configuration.capitalize())
         if (environment.isNotBlank()) {
             append(environment.capitalize())
-        }
-    }
-
-public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
-    flatMap { task ->
-        task.instrumentationConfiguration.map { config ->
-            config.instrumentationParams.reportCoordinates()
-        }
-    }
-
-public fun TaskProvider<InstrumentationTestsTask>.extractReportViewerUrl(): Provider<String> =
-    flatMap { task ->
-        task.reportViewerProperty.map { reportViewer ->
-            reportViewer.reportViewerUrl
         }
     }
 

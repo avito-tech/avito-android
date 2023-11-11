@@ -1,6 +1,5 @@
 package com.avito.runner.config
 
-import com.avito.reportviewer.model.ReportCoordinates
 import java.io.Serializable
 
 /**
@@ -30,10 +29,4 @@ public data class InstrumentationParameters(
             }
         }
     }
-
-    public fun reportCoordinates(): ReportCoordinates = ReportCoordinates(
-        planSlug = getValue("planSlug"),
-        jobSlug = getValue("jobSlug"),
-        runId = getValue("runId")
-    )
 }

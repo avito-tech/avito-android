@@ -9,7 +9,6 @@ import com.avito.retrace.ProguardRetracer
 import com.avito.runner.artifacts.AvitoFileStorageUploader
 import com.avito.runner.artifacts.LegacyTestArtifactsProcessor
 import com.avito.runner.artifacts.TestArtifactsProcessor
-import com.avito.runner.artifacts.TestArtifactsProcessorImpl
 import com.avito.runner.artifacts.TestArtifactsUploader
 import com.avito.runner.logcat.LogcatProcessor
 import com.avito.runner.report.ReportProcessor
@@ -34,7 +33,6 @@ public class TestListenerFactory(
         report: Report,
         proguardMappings: List<File>,
         fileStorageUrl: String,
-        uploadTestArtifacts: Boolean,
     ): TestLifecycleListener {
         return ReportTestListener(
             logcatDir = tempLogcatDir,
@@ -42,7 +40,6 @@ public class TestListenerFactory(
                 testSuite = testStaticDataByTestCase,
                 proguardMappings = proguardMappings,
                 fileStorageUrl = fileStorageUrl,
-                uploadTestArtifacts = uploadTestArtifacts,
             ),
             report = report,
         )
@@ -52,7 +49,6 @@ public class TestListenerFactory(
         testSuite: Map<TestCase, TestStaticData>,
         proguardMappings: List<File>,
         fileStorageUrl: String,
-        uploadTestArtifacts: Boolean,
     ): ReportProcessor {
 
         val dispatcher = Dispatchers.IO
@@ -76,11 +72,9 @@ public class TestListenerFactory(
             loggerFactory = loggerFactory,
             testSuite = testSuite,
             testArtifactsProcessor = createTestArtifactsProcessor(
-                uploadTestArtifacts = uploadTestArtifacts,
                 reportSerializer = ReportSerializer(),
                 dispatcher = dispatcher,
                 logcatProcessor = logcatUploader,
-                testArtifactsUploader = artifactsUploader
             ),
             logcatProcessor = logcatUploader,
             timeProvider = timeProvider,
@@ -89,26 +83,12 @@ public class TestListenerFactory(
     }
 
     private fun createTestArtifactsProcessor(
-        uploadTestArtifacts: Boolean,
         reportSerializer: ReportSerializer,
         dispatcher: CoroutineDispatcher,
         logcatProcessor: LogcatProcessor,
-        testArtifactsUploader: TestArtifactsUploader
-    ): TestArtifactsProcessor {
-
-        return if (uploadTestArtifacts) {
-            TestArtifactsProcessorImpl(
-                reportSerializer = reportSerializer,
-                testArtifactsUploader = testArtifactsUploader,
-                dispatcher = dispatcher,
-                logcatProcessor = logcatProcessor
-            )
-        } else {
-            LegacyTestArtifactsProcessor(
-                reportSerializer = reportSerializer,
-                logcatProcessor = logcatProcessor,
-                dispatcher = dispatcher
-            )
-        }
-    }
+    ): TestArtifactsProcessor = LegacyTestArtifactsProcessor(
+        reportSerializer = reportSerializer,
+        logcatProcessor = logcatProcessor,
+        dispatcher = dispatcher
+    )
 }

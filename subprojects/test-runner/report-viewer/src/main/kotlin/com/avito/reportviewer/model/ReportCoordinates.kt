@@ -3,9 +3,7 @@ package com.avito.reportviewer.model
 import java.io.Serializable
 
 /**
- * Один уникальный запуск тест сьюта
- *
- * todo internal
+ * Report id
  */
 public data class ReportCoordinates(
     val planSlug: String,
