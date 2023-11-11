@@ -18,10 +18,11 @@ android {
         testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
 
         val instrumentationArgs = mapOf(
+            "videoRecording" to "failed",
             "planSlug" to "AndroidTestApp",
             "jobSlug" to "FunctionalTests",
             "fileStorageUrl" to (getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"),
-            "teamcityBuildId" to (getOptionalStringProperty("teamcityBuildId") ?: "0"),
+            "avito.report.transport" to "legacy"
         )
 
         // These arguments are updated in IDE configuration only after sync!
@@ -81,11 +82,6 @@ instrumentation {
         "AndroidJUnitRunner:*",
         "ito.android.de:*", // по этому тэгу система пишет логи об использовании hidden/restricted api https://developer.android.com/distribute/best-practices/develop/restrictions-non-sdk-interfaces
         "*:E"
-    )
-
-    instrumentationParams = mapOf(
-        "videoRecording" to "failed",
-        "jobSlug" to "FunctionalTests"
     )
 
     filters {

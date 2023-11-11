@@ -2,7 +2,6 @@ package com.avito.android.runner
 
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
@@ -19,11 +18,14 @@ import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
-import com.avito.android.sentry.SentryConfig
+import com.avito.android.runner.environment.TestRunEnvironment
+import com.avito.android.runner.environment.TestRunEnvironmentBuilder
+import com.avito.android.runner.environment.TestRunEnvironmentBuilderImpl
 import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
+import com.avito.android.test.report.BundleArgsProvider
 import com.avito.android.test.report.InternalReport
 import com.avito.android.test.report.ReportFactory
 import com.avito.android.test.report.ReportFriendlyFailureHandler
@@ -43,10 +45,9 @@ import com.avito.android.test.report.troubleshooting.dump.MainLooperQueueDumper
 import com.avito.android.test.report.troubleshooting.dump.ViewHierarchyDumper
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.test.step.StepDslDelegateImpl
+import com.avito.android.transport.ReportDestination
 import com.avito.android.transport.ReportTransportFactory
 import com.avito.android.util.DeviceSettingsChecker
-import com.avito.filestorage.RemoteStorage
-import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.StatsHttpEventListener
 import com.avito.logger.LogLevel
 import com.avito.logger.LoggerFactoryBuilder
@@ -62,20 +63,17 @@ import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
 
-abstract class InHouseInstrumentationTestRunner :
-    InstrumentationTestRunner(),
-    ReportProvider,
-    RemoteStorageProvider {
+abstract class InHouseInstrumentationTestRunner(
+    private val mockDispatcherIsStrict: Boolean = true,
+    internal val shouldCloseScenarioInRule: Boolean = false,
+) : InstrumentationTestRunner(), ReportProvider {
 
     private val activityProvider: ActivityProvider by lazy { ActivityProviderFactory.create() }
-
-    private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
-
-    private val sentryConfig: SentryConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().sentryConfig }
 
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
@@ -112,13 +110,11 @@ abstract class InHouseInstrumentationTestRunner :
         ReportTransportFactory(
             timeProvider = timeProvider,
             loggerFactory = loggerFactory,
-            remoteStorage = remoteStorage,
             okHttpClientBuilder = httpClientBuilder,
             testArtifactsProvider = testArtifactsProvider,
             reportViewerQuery = ReportViewerQuery { Base64.encodeToString(it, Base64.DEFAULT) },
             reportSerializer = ReportSerializer()
         ).create(
-            testRunCoordinates = runEnvironment.testRunCoordinates,
             reportDestination = runEnvironment.reportDestination
         )
     }
@@ -129,17 +125,15 @@ abstract class InHouseInstrumentationTestRunner :
         val builder = LoggerFactoryBuilder()
             .metadataProvider(AndroidTestLoggerMetadataProvider(testName))
             .addLoggingHandlerProvider(AndroidLogcatLoggingHandlerProvider(LogLevel.DEBUG))
-
-        if (sentryConfig is SentryConfig.Enabled) {
-            Log.w("InHouseInstrumentationTestRunner", "sentry config unsupported")
-        }
         builder
     }
 
-    // Public for *TestApp to skip on orchestrator runs
     @Suppress("MemberVisibilityCanBePrivate")
     val testRunEnvironment: TestRunEnvironment by lazy {
-        createRunnerEnvironment(instrumentationArguments)
+        overrideTestRunEnvironmentBuilder(TestRunEnvironmentBuilderImpl())
+            .build(
+                BundleArgsProvider(bundle = instrumentationArguments)
+            )
     }
 
     // Public for synth monitoring
@@ -149,6 +143,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override val loggerFactory by lazy {
+        val elasticConfig = testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig
         val builder = baseLoggerFactoryBuilder.newBuilder()
         if (elasticConfig is ElasticConfig.Enabled) {
             builder.addLoggingHandlerProvider(
@@ -159,14 +154,6 @@ abstract class InHouseInstrumentationTestRunner :
             )
         }
         builder.build()
-    }
-
-    override val remoteStorage: RemoteStorage by lazy {
-        RemoteStorageFactory.create(
-            endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
-            builder = httpClientBuilder,
-            isAndroidRuntime = true
-        )
     }
 
     override val report: InternalReport by lazy {
@@ -182,12 +169,20 @@ abstract class InHouseInstrumentationTestRunner :
 
     // used in avito
     @Suppress("unused")
-    val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
+    val reportViewerHttpInterceptor: Interceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
-        ReportViewerHttpInterceptor(
-            report = report,
-            remoteFileStorageEndpointHost = runEnvironment.fileStorageUrl.host
-        )
+        when (val destination = runEnvironment.reportDestination) {
+            is ReportDestination.Backend -> ReportViewerHttpInterceptor(
+                report = report,
+                remoteFileStorageEndpointHost = destination.fileStorageUrl.host
+            )
+            is ReportDestination.Legacy -> ReportViewerHttpInterceptor(
+                report = report,
+                remoteFileStorageEndpointHost = destination.fileStorageUrl.host
+            )
+            ReportDestination.File,
+            ReportDestination.NoOp -> Interceptor { chain -> chain.proceed(chain.request()) }
+        }
     }
 
     // used in avito
@@ -201,7 +196,7 @@ abstract class InHouseInstrumentationTestRunner :
     val mockDispatcher by lazy {
         MockDispatcher(
             loggerFactory = loggerFactory,
-            strictMode = testRunEnvironment.asRunEnvironmentOrThrow().mockDispatcherIsStrict
+            strictMode = mockDispatcherIsStrict
         )
     }
 
@@ -220,7 +215,9 @@ abstract class InHouseInstrumentationTestRunner :
             .build()
     }
 
-    abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
+    protected open fun overrideTestRunEnvironmentBuilder(
+        builder: TestRunEnvironmentBuilder
+    ): TestRunEnvironmentBuilder = builder
 
     protected open fun beforeApplicationCreated(
         runEnvironment: TestRunEnvironment.RunEnvironment,

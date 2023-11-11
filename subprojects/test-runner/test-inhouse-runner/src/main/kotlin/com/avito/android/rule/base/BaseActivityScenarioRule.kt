@@ -15,8 +15,6 @@ abstract class BaseActivityScenarioRule<A : Activity>(
 
     private val shouldCloseScenario: Boolean =
         (InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner)
-            .testRunEnvironment
-            .asRunEnvironmentOrThrow()
             .shouldCloseScenarioInRule
 
     private var _scenario: ActivityScenario<A>? = null
