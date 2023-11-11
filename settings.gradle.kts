@@ -113,7 +113,6 @@ include(":subprojects:android-test:ui-testing-core")
 include(":subprojects:android-test:instrumentation")
 include(":subprojects:android-test:toast-rule")
 include(":subprojects:android-test:snackbar-rule")
-include(":subprojects:android-test:test-screenshot")
 include(":subprojects:android-test:rx3-idler")
 
 include(":subprojects:android-lib:proxy-toast")
