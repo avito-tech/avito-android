@@ -1,6 +1,6 @@
 package com.avito.android.tls.test
 
-import com.avito.android.tls.credentials.TlsCredentialsFactory
+import com.avito.android.tls.TlsCredentialsService
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -10,7 +10,7 @@ import org.gradle.api.tasks.TaskAction
 abstract class TestTask : DefaultTask() {
 
     @get:Input
-    abstract val credentialsFactory: Property<TlsCredentialsFactory>
+    abstract val credentialsFactory: Property<TlsCredentialsService>
 
     @TaskAction
     fun action() {

@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics.runtime
 
 import com.avito.android.Result
+import com.avito.android.isSuccess
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.HeapInfo
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.command.Jcmd
 import com.avito.utils.ProcessRunner

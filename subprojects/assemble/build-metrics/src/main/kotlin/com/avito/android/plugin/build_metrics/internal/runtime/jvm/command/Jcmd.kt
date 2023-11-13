@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics.internal.runtime.jvm.command
 
 import com.avito.android.Result
+import com.avito.android.isFailure
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.HeapInfo
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.JavaHome
 import com.avito.utils.ProcessRunner
@@ -23,7 +24,7 @@ internal class Jcmd(
         }
         val result = processRunner.run("$jcmd $pid GC.heap_info", timeout)
         if (result.isFailure()) {
-            return Result.Failure((result as Result.Failure).throwable)
+            return Result.Failure(result.throwable)
         }
         return GCHeapInfoParser.parseHeapInfo(result.getOrThrow())
     }

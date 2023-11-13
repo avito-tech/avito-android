@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics.internal.runtime.jvm
 
 import com.avito.android.Result
+import com.avito.android.isFailure
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm.GradleDaemon
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm.GradleWorker
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm.KotlinDaemon
@@ -18,7 +19,7 @@ internal class VmResolver(
     fun localVMs(): Result<Set<LocalVm>> {
         val allVmsResult = jps.run()
         if (allVmsResult.isFailure()) {
-            return Result.Failure((allVmsResult as Result.Failure).throwable)
+            return Result.Failure(allVmsResult.throwable)
         }
         val allVms = allVmsResult.getOrThrow()
             .map { it.recoverType() }

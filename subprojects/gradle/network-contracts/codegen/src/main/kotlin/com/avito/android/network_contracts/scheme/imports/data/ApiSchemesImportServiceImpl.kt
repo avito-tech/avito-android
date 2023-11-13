@@ -38,7 +38,7 @@ internal class ApiSchemesImportServiceImpl(
 
 internal suspend fun HttpClient.fetchApiScheme(
     apiPath: String
-): HttpResponse = post() {
+): HttpResponse = post {
     url(path = "service-api-composition-storage/getSchemaForPath/")
     contentType(ContentType.Application.Json)
     setBody(ApiSchemesImportRequest(path = apiPath))

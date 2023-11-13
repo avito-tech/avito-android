@@ -1,6 +1,6 @@
 package com.avito.android.network_contracts.scheme.imports
 
-import com.avito.android.network_contracts.internal.http.HttpClientBuilder
+import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.imports.data.ApiSchemesImportServiceImpl
 import com.avito.android.network_contracts.scheme.imports.data.models.areSchemesExist
 import com.avito.android.network_contracts.scheme.imports.data.models.entriesList
@@ -25,7 +25,7 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
     public abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
-    internal abstract val httpClientBuilder: Property<HttpClientBuilder>
+    internal abstract val httpClientBuilder: Property<HttpClientService>
 
     @get:Internal
     internal abstract val loggerFactory: Property<LoggerFactory>
@@ -35,11 +35,13 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
     @TaskAction
     public fun fetch() {
         if (!apiPath.isPresent || apiPath.get().isEmpty()) {
-            error("Unable to import api schemes as apiPath is not defined. " +
-                "Please, provide url by parameter `apiSchemesUrl`")
+            error(
+                "Unable to import api schemes as apiPath is not defined. " +
+                    "Please, provide url by parameter `apiSchemesUrl`"
+            )
         }
 
-        val apiImportService = ApiSchemesImportServiceImpl(httpClientBuilder.get().buildClient())
+        val apiImportService = ApiSchemesImportServiceImpl(httpClientBuilder.get().buildClient(logger))
 
         val rootDirectory = outputDirectory.asFile.get()
         val schemaFilesGenerator = ApiSchemesFilesGenerator(rootDirectory)

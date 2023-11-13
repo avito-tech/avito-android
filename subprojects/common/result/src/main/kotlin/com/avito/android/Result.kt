@@ -1,6 +1,8 @@
 package com.avito.android
 
 import com.avito.composite_exception.CompositeException
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Why not [kotlin.Result]?
@@ -108,10 +110,6 @@ public sealed class Result<T> {
         }
     }
 
-    public fun isSuccess(): Boolean = this is Success
-
-    public fun isFailure(): Boolean = this is Failure
-
     public class Success<T>(public val value: T) : Result<T>() {
 
         override fun equals(other: Any?): Boolean = when (other) {
@@ -144,4 +142,20 @@ public sealed class Result<T> {
             Failure(e)
         }
     }
+}
+
+@OptIn(ExperimentalContracts::class)
+public fun <T> Result<T>.isFailure(): Boolean {
+    contract {
+        returns(true) implies (this@isFailure is Result.Failure)
+    }
+    return this is Result.Failure
+}
+
+@OptIn(ExperimentalContracts::class)
+public fun <T> Result<T>.isSuccess(): Boolean {
+    contract {
+        returns(true) implies (this@isSuccess is Result.Success)
+    }
+    return this is Result.Success
 }

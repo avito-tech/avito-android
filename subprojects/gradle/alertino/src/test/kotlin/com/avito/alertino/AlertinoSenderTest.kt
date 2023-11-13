@@ -2,6 +2,8 @@ package com.avito.alertino
 
 import com.avito.alertino.model.AlertinoRecipient
 import com.avito.alertino.model.CreatedMessage
+import com.avito.android.isFailure
+import com.avito.android.isSuccess
 import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.MockResponse

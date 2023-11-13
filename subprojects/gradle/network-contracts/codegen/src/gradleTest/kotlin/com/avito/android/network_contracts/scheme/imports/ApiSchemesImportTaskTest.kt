@@ -111,7 +111,7 @@ internal class ApiSchemesImportTaskTest {
     ): TestResultSubject {
         val packagePath = packageName.replace(".", "/")
         var result = this
-        paths.forEach { result = result.outputContains("$packagePath$apiPath/$it") }
+        paths.forEach { result = result.outputContains("$packagePath/api-clients$apiPath/$it") }
         return result
     }
 

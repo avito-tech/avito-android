@@ -1,7 +1,7 @@
 package com.avito.android.plugin.build_metrics.internal.runtime.jvm
 
 import com.avito.android.Result
-import com.avito.android.Result.Failure
+import com.avito.android.isFailure
 import com.avito.android.plugin.build_metrics.internal.runtime.MetricsCollector
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.command.Jcmd
 import org.slf4j.LoggerFactory
@@ -51,7 +51,7 @@ internal class JvmMetricsCollector(
     private fun getHeapInfo(vm: LocalVm): HeapInfo? {
         val result = jcmd.gcHeapInfo(vm.id)
         return if (result.isFailure()) {
-            log.warn("Failed to get heap info for $vm", (result as Failure).throwable)
+            log.warn("Failed to get heap info for $vm", result.throwable)
             null
         } else {
             result.getOrThrow()

@@ -1,6 +1,5 @@
 package com.avito.android.network_contracts
 
-import com.avito.android.network_contracts.extension.NetworkContractsModuleExtension
 import com.avito.android.tls.test.createMtlsExtensionString
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.KotlinModule
@@ -11,17 +10,26 @@ object NetworkCodegenProjectGenerator {
 
     fun generate(
         projectDir: File,
-        serviceUrl: String,
+        serviceUrl: String = "www.avito.ru/",
         generatedClassesPackage: String = "com.example",
+        skipValidation: Boolean = true,
     ) {
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.gradle-logger")
+                id("com.avito.android.network-contracts")
                 id("com.avito.android.tls-configuration")
             },
+            imports = listOf(),
             buildGradleExtra = """
-                ${createMtlsExtensionString()}
+                ${createMtlsExtensionString()}   
+                networkContractsRoot {
+                    useTls.set(false)
+                    serviceUrl.set("$serviceUrl")
+                    crtEnvName.set("test_env")
+                    keyEnvName.set("test_key")
+                }
             """.trimIndent(),
             modules = listOf(
                 KotlinModule(
@@ -29,25 +37,12 @@ object NetworkCodegenProjectGenerator {
                     plugins = plugins {
                         id("com.avito.android.network-contracts")
                     },
-                    imports = listOf(
-                        "import com.avito.android.network_contracts.extension.urls.ServiceUrlConfiguration"
-                    ),
                     buildGradleExtra = """
                         networkContracts { 
-                            kind.set("kotlin")
+                            kind.set("test-kind")
                             projectName.set("avito-app")
-                            codegenFilePath.set("${projectDir.path}/tmp/codegen.yml")
                             packageName.set("$generatedClassesPackage")
-                            version.set("1.0.0")
-                            useTls.set(false)
-                            urls {
-                                register(
-                                    "${NetworkContractsModuleExtension.SERVICE_URL_NAME}", 
-                                    ServiceUrlConfiguration::class.java
-                                ) { 
-                                    serviceUrl.set("$serviceUrl")
-                                }
-                            }
+                            skipValidation.set($skipValidation)
                         } 
                     """.trimIndent(),
                     useKts = true

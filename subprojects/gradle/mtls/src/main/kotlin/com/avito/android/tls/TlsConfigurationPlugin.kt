@@ -9,6 +9,8 @@ import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.getByType
 
 public class TlsConfigurationPlugin : Plugin<Project> {
 
@@ -19,6 +21,23 @@ public class TlsConfigurationPlugin : Plugin<Project> {
 
         val extension = target.extensions.create("tls", TlsConfigurationExtension::class.java)
         extension.credentials.registerTlsCredentialsConfigurationsFactory(target.objects)
+    }
+
+    public companion object {
+
+        public fun provideCredentialsService(project: Project): Provider<TlsCredentialsService> {
+            val service = project.gradle.sharedServices.registerIfAbsent(
+                TlsCredentialsService::class.java.name,
+                TlsCredentialsService::class.java,
+            ) {
+                val tlsExtension = project.rootProject.extensions.getByType<TlsConfigurationExtension>()
+                it.parameters { params ->
+                    params.configurations.set(tlsExtension.credentials.tlsCredentialsProviders)
+                }
+            }
+
+            return service
+        }
     }
 }
 

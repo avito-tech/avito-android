@@ -1,6 +1,7 @@
 package com.avito.android.runner.devices.internal
 
 import com.avito.android.Result
+import com.avito.android.isSuccess
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClient
 import com.avito.android.runner.devices.model.ReservationData

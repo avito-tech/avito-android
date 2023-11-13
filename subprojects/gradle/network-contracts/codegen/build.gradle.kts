@@ -7,8 +7,11 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.subprojects.gradle.git)
     implementation(projects.subprojects.gradle.gradleExtensions)
     implementation(projects.subprojects.gradle.mtls)
+    implementation(projects.subprojects.gradle.process)
+    implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.common.okhttp)
 
     implementation(libs.okhttp)
@@ -26,10 +29,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("networkContractsModule") {
+        create("networkContracts") {
             id = "com.avito.android.network-contracts"
-            implementationClass = "com.avito.android.network_contracts.NetworkContractsModulePlugin"
-            displayName = "Network Contracts Module Plugin"
+            implementationClass = "com.avito.android.network_contracts.NetworkContractsPlugin"
+            displayName = "Network Contracts Plugin"
         }
     }
 }

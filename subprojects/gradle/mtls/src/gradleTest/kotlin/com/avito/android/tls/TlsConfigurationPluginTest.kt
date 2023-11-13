@@ -127,12 +127,12 @@ class TlsConfigurationPluginTest {
                 KotlinModule(
                     name = "lib",
                     imports = listOf(
-                        "import com.avito.android.tls.TlsProjectCredentialsFactory",
+                        "import com.avito.android.tls.TlsConfigurationPlugin",
                         "import com.avito.android.tls.test.TestTask",
                     ),
                     buildGradleExtra = """
                         tasks.register<TestTask>("testTask") { 
-                            credentialsFactory.set(TlsProjectCredentialsFactory.createInstance(rootProject))
+                            credentialsFactory.set(TlsConfigurationPlugin.provideCredentialsService(rootProject))
                         }
                     """.trimIndent(),
                     useKts = true,

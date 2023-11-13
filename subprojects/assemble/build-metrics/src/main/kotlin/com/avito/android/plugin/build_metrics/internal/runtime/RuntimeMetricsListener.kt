@@ -1,7 +1,7 @@
 package com.avito.android.plugin.build_metrics.internal.runtime
 
-import com.avito.android.Result
 import com.avito.android.gradle.profile.BuildProfile
+import com.avito.android.isFailure
 import com.avito.android.plugin.build_metrics.internal.BuildResultListener
 import com.avito.android.plugin.build_metrics.internal.BuildStatus
 import org.slf4j.LoggerFactory
@@ -36,7 +36,7 @@ internal class RuntimeMetricsListener(
             val result = collector.collect()
 
             if (result.isFailure()) {
-                log.warn("Disable collecting runtime metrics due to a failure", (result as Result.Failure).throwable)
+                log.warn("Disable collecting runtime metrics due to a failure", result.throwable)
                 cancel()
             }
         }

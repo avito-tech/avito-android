@@ -1,6 +1,8 @@
 package com.avito.android.plugin.build_metrics.runtime
 
 import com.avito.android.Result
+import com.avito.android.isFailure
+import com.avito.android.isSuccess
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.JavaHome
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.LocalVm
 import com.avito.android.plugin.build_metrics.internal.runtime.jvm.command.Jps
