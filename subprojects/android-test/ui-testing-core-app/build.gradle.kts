@@ -1,5 +1,6 @@
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
+import com.avito.instrumentation.configuration.report.ReportConfig
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -19,10 +20,6 @@ android {
 
         val instrumentationArgs = mapOf(
             "videoRecording" to "failed",
-            "planSlug" to "AndroidTestApp",
-            "jobSlug" to "FunctionalTests",
-            "fileStorageUrl" to (getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"),
-            "avito.report.transport" to "legacy"
         )
 
         // These arguments are updated in IDE configuration only after sync!
@@ -61,14 +58,20 @@ dependencies {
 val avitoRegistry = getOptionalStringProperty("avito.registry")
 
 instrumentation {
-
-    testReport {
-        reportViewer {
-            reportApiUrl = getOptionalStringProperty("avito.report.url") ?: "http://stub"
-            reportViewerUrl = getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
-            fileStorageUrl = getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
-        }
+    val reportKey = "avito.report.sender"
+    val reportConfig = when (getOptionalStringProperty(reportKey, "noop")) {
+        "noop" -> ReportConfig.NoOp
+        "runner" -> ReportConfig.ReportViewer.SendFromRunner(
+            reportApiUrl = getMandatoryStringProperty("avito.report.url"),
+            reportViewerUrl = getMandatoryStringProperty("avito.report.viewerUrl"),
+            fileStorageUrl = getMandatoryStringProperty("avito.fileStorage.url"),
+            planSlug = "UiTestingCoreApp",
+            jobSlug = "FunctionalTests"
+        )
+        else -> throw IllegalArgumentException("Invalid value for $reportKey property")
     }
+
+    report.set(reportConfig)
 
     logcatTags = setOf(
         "UITestRunner:*",
