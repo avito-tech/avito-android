@@ -14,9 +14,11 @@ import com.fkorotkov.kubernetes.metadata
 import com.fkorotkov.kubernetes.newContainer
 import com.fkorotkov.kubernetes.newEnvVar
 import com.fkorotkov.kubernetes.newToleration
+import com.fkorotkov.kubernetes.newTopologySpreadConstraint
 import com.fkorotkov.kubernetes.resources
 import com.fkorotkov.kubernetes.securityContext
 import com.fkorotkov.kubernetes.spec
+import io.fabric8.kubernetes.api.model.LabelSelector
 import io.fabric8.kubernetes.api.model.PodSpec
 import io.fabric8.kubernetes.api.model.Quantity
 import io.fabric8.kubernetes.api.model.apps.Deployment
@@ -67,11 +69,13 @@ internal class ReservationDeploymentFactoryImpl(
         deploymentName: String,
         count: Int
     ): Deployment {
+        val deploymentMatchLabels = deviceMatchLabels(emulator)
         return deviceDeployment(
-            deploymentMatchLabels = deviceMatchLabels(emulator),
+            deploymentMatchLabels = deploymentMatchLabels,
             deploymentName = deploymentName,
             count = count
         ) {
+
             containers = listOf(
                 newContainer {
                     name = emulator.name.toValidKubernetesName()
@@ -123,6 +127,17 @@ internal class ReservationDeploymentFactoryImpl(
                     value = "android"
                     effect = "NoSchedule"
                 }
+            )
+
+            topologySpreadConstraints = listOf(
+                newTopologySpreadConstraint {
+                    labelSelector = LabelSelector().apply {
+                        matchLabels = deploymentMatchLabels.plus("deploymentName" to deploymentName)
+                    }
+                    maxSkew = 1
+                    topologyKey = "kubernetes.io/hostname"
+                    whenUnsatisfiable = "ScheduleAnyway"
+                },
             )
         }
     }
