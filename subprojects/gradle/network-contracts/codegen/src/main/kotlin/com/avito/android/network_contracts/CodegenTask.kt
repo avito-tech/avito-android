@@ -7,9 +7,9 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -22,10 +22,10 @@ internal abstract class CodegenTask @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {
 
-    @get:Internal
+    @get:Input
     abstract val kind: Property<String>
 
-    @get:Internal
+    @get:Input
     abstract val projectName: Property<String>
 
     @get:InputFile
