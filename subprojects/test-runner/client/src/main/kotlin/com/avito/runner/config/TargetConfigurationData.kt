@@ -7,7 +7,7 @@ public data class TargetConfigurationData(
     val name: String,
     val reservation: Reservation,
     val deviceName: DeviceName,
-    val instrumentationParams: InstrumentationParameters
+    val instrumentationParams: InstrumentationParameters,
 ) : Serializable {
 
     override fun toString(): String = "$name with device name: $deviceName"

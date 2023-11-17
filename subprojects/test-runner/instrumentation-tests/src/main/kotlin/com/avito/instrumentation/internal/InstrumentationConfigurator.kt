@@ -9,72 +9,77 @@ import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.reportviewer.model.ReportCoordinates
-import com.avito.runner.config.InstrumentationConfigurationData
+import com.avito.runner.config.InstrumentationConfigurationCacheableData
 import com.avito.runner.config.InstrumentationParameters
 import com.avito.runner.config.Reservation
 import com.avito.runner.config.RunnerReportConfig
 import com.avito.runner.config.SchedulingConfigurationData
-import com.avito.runner.config.TargetConfigurationData
+import com.avito.runner.config.TargetConfigurationCacheableData
 import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.Filter
 import com.avito.test.model.DeviceName
-import org.gradle.api.file.Directory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import java.io.File
 
 internal class InstrumentationConfigurator(
     private val extension: InstrumentationTestsPluginExtension,
     private val configuration: InstrumentationConfiguration,
     private val instrumentationArgsResolver: InstrumentationArgsResolver,
-    private val outputDir: Provider<Directory>,
     private val reportResolver: ReportResolver,
+    loggerFactory: LoggerFactory,
 ) : InstrumentationTaskConfigurator {
+
+    val logger = loggerFactory.create<InstrumentationConfigurator>()
 
     override fun configure(task: InstrumentationTestsTask) {
 
-        val instrumentationParameters = instrumentationArgsResolver.getInstrumentationArgsForTestTask()
+        val jobSlug: String? by lazy { validateJobSlug(configuration.jobSlug) }
+        val mergedInstrumentationParameters = getMergedInstrumentationParameters(jobSlug)
+        val targets = getTargets(configuration, mergedInstrumentationParameters)
 
         task.instrumentationConfiguration.set(
             getInstrumentationConfiguration(
                 configuration = configuration,
-                parentInstrumentationParameters = instrumentationParameters,
                 filters = extension.filters.map { getInstrumentationFilter(it) },
-                outputFolder = outputDir.get().asFile,
+                targets = targets.keys.toList(),
             )
         )
 
         task.suppressFailure.set(configuration.suppressFailure)
         task.suppressFlaky.set(configuration.suppressFlaky)
+        task.mergedInstrumentationParams.set(mergedInstrumentationParameters)
+        task.reportConfig.set(getRunnerReportConfig(jobSlug))
+        task.targetInstrumentationParams.set(targets.mapKeys { it.key.deviceName })
     }
 
     private fun getInstrumentationConfiguration(
         configuration: InstrumentationConfiguration,
-        parentInstrumentationParameters: InstrumentationParameters,
         filters: List<InstrumentationFilterData>,
-        outputFolder: File,
-    ): InstrumentationConfigurationData {
-        val jobSlug = validateJobSlug(configuration.jobSlug)
+        targets: List<TargetConfigurationCacheableData>,
+    ): InstrumentationConfigurationCacheableData {
 
-        val mergedInstrumentationParameters = getConfigurationInstrumentationParameters(
-            parentInstrumentationParameters,
-            configuration.instrumentationParams,
-            jobSlug,
-        )
-
-        return InstrumentationConfigurationData(
+        return InstrumentationConfigurationCacheableData(
             name = configuration.name,
-            instrumentationParams = mergedInstrumentationParameters,
             reportSkippedTests = configuration.reportSkippedTests,
-            targets = getTargets(configuration, mergedInstrumentationParameters),
+            targets = targets,
             testRunnerExecutionTimeout = configuration.testRunnerExecutionTimeout,
             instrumentationTaskTimeout = configuration.instrumentationTaskTimeout,
             filter = filters.singleOrNull { it.name == configuration.filter }
                 ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
-            outputFolder = outputFolder,
-            reportConfig = getRunnerReportConfig(jobSlug)
+        )
+    }
+
+    private fun getMergedInstrumentationParameters(jobSlug: String?): InstrumentationParameters {
+        val parentInstrumentationParameters =
+            instrumentationArgsResolver.getInstrumentationArgsForTestTask()
+
+        return getConfigurationInstrumentationParameters(
+            parentInstrumentationParameters,
+            configuration.instrumentationParams,
+            jobSlug,
         )
     }
 
@@ -99,6 +104,7 @@ internal class InstrumentationConfigurator(
         return when (val config = checkNotNull(reportResolver.getReport())) {
             ReportConfig.NoOp,
             is ReportConfig.ReportViewer.SendFromDevice -> RunnerReportConfig.None
+
             is ReportConfig.ReportViewer.SendFromRunner -> {
                 val dslReportConfig = if (jobSlug != null) {
                     config.copy(jobSlug = jobSlug)
@@ -145,22 +151,23 @@ internal class InstrumentationConfigurator(
     private fun getTargets(
         configuration: InstrumentationConfiguration,
         parentInstrumentationParameters: InstrumentationParameters
-    ): List<TargetConfigurationData> {
-        val result = configuration.targetsContainer.toList()
+    ): Map<TargetConfigurationCacheableData, InstrumentationParameters> {
+        val data = configuration.targetsContainer.toList()
             .filter { it.enabled }
             .map { getTargetConfiguration(it, parentInstrumentationParameters) }
+            .toTypedArray()
 
-        require(result.isNotEmpty()) {
+        require(data.isNotEmpty()) {
             "configuration ${configuration.name} must have at least one target"
         }
 
-        return result
+        return mapOf(*data)
     }
 
     private fun getTargetConfiguration(
         targetConfiguration: TargetConfiguration,
         parentInstrumentationParameters: InstrumentationParameters
-    ): TargetConfigurationData {
+    ): Pair<TargetConfigurationCacheableData, InstrumentationParameters> {
 
         validate(targetConfiguration)
 
@@ -168,16 +175,19 @@ internal class InstrumentationConfigurator(
 
         require(deviceName.isNotBlank()) { "target.deviceName should be set" }
 
-        return TargetConfigurationData(
+        val targetConfigurationData = TargetConfigurationCacheableData(
             name = targetConfiguration.name,
             reservation = getScheduling(targetConfiguration.scheduling).reservation,
             deviceName = DeviceName(deviceName),
-            instrumentationParams = parentInstrumentationParameters
-                .applyParameters(targetConfiguration.instrumentationParams)
-                .applyParameters(
-                    mapOf("deviceName" to deviceName)
-                )
         )
+
+        val instrumentationParams = parentInstrumentationParameters
+            .applyParameters(targetConfiguration.instrumentationParams)
+            .applyParameters(
+                mapOf("deviceName" to deviceName)
+            )
+
+        return targetConfigurationData to instrumentationParams
     }
 
     private fun getScheduling(schedulingConfiguration: SchedulingConfiguration): SchedulingConfigurationData {
@@ -190,6 +200,7 @@ internal class InstrumentationConfigurator(
                     count = currentReservation.count,
                     quota = schedulingConfiguration.quota.data()
                 )
+
                 is TestsBasedDevicesReservationConfiguration -> Reservation.TestsCountBasedReservation(
                     device = currentReservation.device,
                     quota = schedulingConfiguration.quota.data(),
@@ -197,6 +208,7 @@ internal class InstrumentationConfigurator(
                     maximum = currentReservation.maximum!!,
                     minimum = currentReservation.minimum
                 )
+
                 else -> throw RuntimeException("Unknown type of reservation")
             }
         )

@@ -11,13 +11,17 @@ import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.Experiments
 import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.logger.GradleLoggerPlugin
-import com.avito.runner.config.InstrumentationConfigurationData
+import com.avito.runner.config.InstrumentationConfigurationCacheableData
+import com.avito.runner.config.InstrumentationConfigurationDataFactory
+import com.avito.runner.config.InstrumentationParameters
 import com.avito.runner.config.RunnerInputParams
+import com.avito.runner.config.RunnerReportConfig
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.test.model.DeviceName
 import com.avito.utils.BuildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.Gson
@@ -26,19 +30,24 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import java.time.Duration
 import javax.inject.Inject
 
+@CacheableTask
 public abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
@@ -46,6 +55,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     @get:Optional
     @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val application: DirectoryProperty
 
     @get:Optional
@@ -53,6 +63,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val applicationPackageName: Property<String>
 
     @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val testApplication: DirectoryProperty
 
     @get:Input
@@ -67,26 +78,29 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     @get:Optional
     @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val changedTests: RegularFileProperty
 
     @get:Optional
     @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val applicationProguardMapping: RegularFileProperty
 
     @get:Optional
     @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val testProguardMapping: RegularFileProperty
 
-    @get:Input
+    @get:Internal
     public abstract val buildId: Property<String>
 
-    @get:Input
+    @get:Internal
     public abstract val buildType: Property<String>
 
-    @get:Input
+    @get:Internal
     public abstract val gitCommit: Property<String>
 
-    @get:Input
+    @get:Internal
     public abstract val gitBranch: Property<String>
 
     @get:Input
@@ -99,7 +113,16 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val suppressFlaky: Property<Boolean>
 
     @get:Input
-    public abstract val instrumentationConfiguration: Property<InstrumentationConfigurationData>
+    public abstract val instrumentationConfiguration: Property<InstrumentationConfigurationCacheableData>
+
+    @get:Internal
+    public abstract val mergedInstrumentationParams: MapProperty<String, String>
+
+    @get:Internal
+    public abstract val reportConfig: Property<RunnerReportConfig>
+
+    @get:Internal
+    public abstract val targetInstrumentationParams: MapProperty<DeviceName, InstrumentationParameters>
 
     @get:Input
     public abstract val instrumentationRunner: Property<String>
@@ -170,7 +193,12 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 "Unable to create valid RunnerInputParams - mainApk cannot be null."
             },
             testApk = testApplication.get().getApkOrThrow(),
-            instrumentationConfiguration = configuration,
+            instrumentationConfiguration = InstrumentationConfigurationDataFactory(
+                instrumentationConfigurationCacheableData = configuration,
+                mergedInstrumentationParams = InstrumentationParameters(mergedInstrumentationParams.get()),
+                reportConfig = reportConfig.get(),
+                targetInstrumentationParams = targetInstrumentationParams.get(),
+            ).create(),
             executionParameters = ExecutionParameters(
                 applicationPackageName.get(),
                 testApplicationPackageName.get(),
@@ -224,6 +252,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                     TestSchedulerResult.Ok -> {
                         // do nothing
                     }
+
                     is TestSchedulerResult.Failure -> buildFailer.get().failBuild(result.message)
                 }
             }

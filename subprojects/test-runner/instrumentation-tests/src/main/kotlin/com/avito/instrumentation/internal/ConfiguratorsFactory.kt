@@ -8,12 +8,14 @@ import com.avito.git.gitState
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
+import com.avito.logger.GradleLoggerPlugin
 import com.avito.utils.gradle.envArgs
 import org.gradle.api.Project
 
 internal class ConfiguratorsFactory(
     private val project: Project,
     private val extension: InstrumentationTestsPluginExtension,
+    private val buildCacheEnabled: Boolean,
 ) {
     private val gitResolver = GitResolver(project.gitState())
 
@@ -75,14 +77,16 @@ internal class ConfiguratorsFactory(
                 configuration = configuration
             )
 
-            val outputDir = outputDirConfigurator.resolve(configuration)
-
             val instrumentationConfigurator = InstrumentationConfigurator(
                 extension = extension,
                 configuration = configuration,
                 instrumentationArgsResolver = instrumentationArgsResolver,
-                outputDir = outputDir,
                 reportResolver = reportResolver,
+                loggerFactory = GradleLoggerPlugin.getLoggerFactory(project),
+            )
+
+            val buildCacheConfigurator = BuildCacheConfigurator(
+                buildCacheEnabled = buildCacheEnabled,
             )
 
             listOf(
@@ -91,6 +95,7 @@ internal class ConfiguratorsFactory(
                 instrumentationConfigurator,
                 experimentsConfigurator,
                 outputDirConfigurator,
+                buildCacheConfigurator,
                 EnvironmentConfigurator(environment),
                 GitConfigurator(gitResolver),
                 CIArgsConfigurator(buildEnvResolver),

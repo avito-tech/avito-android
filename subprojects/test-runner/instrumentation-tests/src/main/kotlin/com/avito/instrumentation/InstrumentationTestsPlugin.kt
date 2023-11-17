@@ -28,7 +28,13 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.createInstrumentationPluginExtension()
 
-        val factory = ConfiguratorsFactory(project, extension)
+        // cache enabled only on pr's
+        val buildCacheEnabled = project.getBooleanProperty(
+            name = "avito.instrumentation.buildCacheEnabled",
+            default = false,
+        )
+
+        val factory = ConfiguratorsFactory(project, extension, buildCacheEnabled)
 
         val filtersFactory = TaskValidatorsFactory()
 

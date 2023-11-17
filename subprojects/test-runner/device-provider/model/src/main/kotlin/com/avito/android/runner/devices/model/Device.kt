@@ -35,7 +35,7 @@ public sealed class Device : Serializable {
         }
     }
 
-    public class MockEmulator(
+    public data class MockEmulator(
         override val name: String,
         override val model: String,
         override val api: Int

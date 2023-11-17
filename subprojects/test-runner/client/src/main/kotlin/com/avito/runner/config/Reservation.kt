@@ -4,18 +4,18 @@ import com.avito.android.runner.devices.model.ReservationData
 import com.avito.instrumentation.reservation.request.Device
 import java.io.Serializable
 
-public sealed class Reservation(
-    public val device: Device,
-    public val quota: QuotaConfigurationData
-) : Serializable {
+public sealed class Reservation : Serializable {
+
+    public abstract val device: Device
+    public abstract val quota: QuotaConfigurationData
 
     public abstract fun data(testsCount: Int): ReservationData
 
-    public class StaticReservation(
-        device: Device,
-        quota: QuotaConfigurationData,
+    public data class StaticReservation(
+        override val device: Device,
+        override val quota: QuotaConfigurationData,
         private val count: Int
-    ) : Reservation(device, quota) {
+    ) : Reservation() {
 
         override fun data(testsCount: Int): ReservationData =
             ReservationData(
@@ -24,13 +24,13 @@ public sealed class Reservation(
             )
     }
 
-    public class TestsCountBasedReservation(
-        device: Device,
-        quota: QuotaConfigurationData,
+    public data class TestsCountBasedReservation(
+        override val device: Device,
+        override val quota: QuotaConfigurationData,
         private val testsPerEmulator: Int,
         private val maximum: Int,
         private val minimum: Int = 1
-    ) : Reservation(device, quota) {
+    ) : Reservation() {
 
         override fun data(testsCount: Int): ReservationData {
             val guaranteedTries = quota.minimumSuccessCount + quota.minimumFailedCount

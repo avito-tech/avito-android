@@ -3,7 +3,6 @@ package com.avito.runner.config
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
-import java.io.File
 import java.io.Serializable
 import java.time.Duration
 
@@ -15,7 +14,6 @@ public data class InstrumentationConfigurationData(
     val testRunnerExecutionTimeout: Duration,
     val instrumentationTaskTimeout: Duration,
     val filter: InstrumentationFilterData,
-    val outputFolder: File,
     val reportConfig: RunnerReportConfig,
 ) : Serializable {
 

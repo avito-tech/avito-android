@@ -24,4 +24,18 @@ public abstract class TargetConfiguration(public val name: String) : Serializabl
     public fun scheduling(action: Action<SchedulingConfiguration>) {
         action.execute(scheduling)
     }
+
+    override fun toString(): String {
+        return buildString {
+            append("TargetConfiguration(name='")
+            append(name)
+            append("', deviceName='")
+            append(deviceName)
+            append("', enabled=")
+            append(enabled)
+            append(", instrumentationParams=")
+            append(instrumentationParams)
+            append(")")
+        }
+    }
 }

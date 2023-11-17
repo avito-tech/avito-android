@@ -11,7 +11,7 @@ internal class TestRunRequestFactory(
     private val testApplication: File,
     private val deviceDebug: Boolean,
     private val executionParameters: ExecutionParameters,
-    private val targets: Map<DeviceName, TargetConfigurationData>
+    private val targets: Map<DeviceName, TargetConfigurationData>,
 ) {
 
     fun create(test: TestCase): TestRunRequest {

@@ -69,7 +69,7 @@ internal class TestRunnerFactoryProvider(
             testApplication = params.testApk,
             deviceDebug = params.deviceDebug,
             executionParameters = params.executionParameters,
-            targets = params.instrumentationConfiguration.targets.associateBy { it.deviceName }
+            targets = params.instrumentationConfiguration.targets.associateBy { it.deviceName },
         )
     }
 }

@@ -22,5 +22,5 @@ public fun TargetConfigurationData.Companion.createStubInstance(
     name = "${deviceName}Configuration",
     reservation = reservation,
     deviceName = deviceName,
-    instrumentationParams = instrumentationParams
+    instrumentationParams = instrumentationParams,
 )
