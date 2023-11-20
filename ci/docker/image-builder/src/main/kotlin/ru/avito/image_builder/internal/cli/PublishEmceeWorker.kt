@@ -41,6 +41,6 @@ internal class PublishEmceeWorker(
             emulatorPreparer = EmulatorPreparer(docker, EmulatorTester(docker)),
             emulatorLocale = emulatorLocale
         )
-        publishImage(docker, builder)
+        buildOrPublishImage(docker, builder)
     }
 }

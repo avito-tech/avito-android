@@ -24,6 +24,6 @@ internal class PublishEmceeImage(
             artifactoryUrl = artifactoryUrl,
             imageName = imageName,
         )
-        publishImage(docker, builder)
+        buildOrPublishImage(docker, builder)
     }
 }

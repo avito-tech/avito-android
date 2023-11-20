@@ -4,4 +4,6 @@ internal enum class RegistryType {
     CONFIGURED,
 
     DOCKER_HUB,
+
+    NONE
 }

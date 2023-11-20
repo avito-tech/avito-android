@@ -39,19 +39,30 @@ internal abstract class BaseEmceeBuildImage(
         description = "Docker image version tag. Default value is a shorten image id"
     )
 
-    protected fun publishImage(docker: CliDocker, imageBuilder: ImageBuilder) {
-        ImagePublisher(
-            docker = docker,
-            builder = imageBuilder,
-            login = getPublishingRegistryLogin(docker),
-            publishTimeout = Duration.ofMinutes(20)
-        ).publish()
+    /**
+     * Build or build and publish image.
+     * The logic will depend on publishRegistryType argument.
+     */
+    protected fun buildOrPublishImage(docker: CliDocker, imageBuilder: ImageBuilder) {
+        if (publishRegistryType == RegistryType.NONE) {
+            imageBuilder.build()
+        } else {
+            ImagePublisher(
+                docker = docker,
+                builder = imageBuilder,
+                login = getPublishingRegistryLogin(docker),
+                publishTimeout = Duration.ofMinutes(20)
+            ).publish()
+        }
     }
 
     private fun getPublishingRegistryLogin(docker: CliDocker): RegistryLogin {
         return when (publishRegistryType) {
             RegistryType.DOCKER_HUB -> dockerHubLogin(docker)
             RegistryType.CONFIGURED -> configuredRegistryLogin(docker, registryUsername, registryPassword)
+            RegistryType.NONE -> throw IllegalStateException(
+                "Registry type ${RegistryType.NONE} doesn't have RegistryLogin"
+            )
         }
     }
 }
