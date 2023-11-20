@@ -12,7 +12,9 @@ public interface Git {
 
     public fun addAll(): Result<Unit>
 
-    public fun commit(message: String): Result<Unit>
+    public fun add(filePath: String): Result<Unit>
+
+    public fun commit(message: String, allFiles: Boolean = true, escapeMessage: Boolean = false): Result<Unit>
 
     public fun checkout(branchName: String, create: Boolean): Result<Unit>
 
@@ -22,10 +24,24 @@ public interface Git {
 
     public fun resetHard(revision: String): Result<Unit>
 
+    public fun push(branchName: String): Result<Unit>
+
+    public fun tag(tagName: String, force: Boolean = false): Result<Unit>
+
+    public fun pushTag(tagName: String, delete: Boolean = false): Result<Unit>
+
     /**
      * @param abbrevRef Use a non-ambiguous short name of the objects name
      */
-    public fun tryParseRev(branchName: String, abbrevRef: Boolean = false): Result<String>
+    public fun tryParseRev(
+        branchName: String,
+        abbrevRef: Boolean = false,
+        short: Boolean = false,
+    ): Result<String>
+
+    public fun tryParseTags(commitHash: String): Result<String>
+
+    public fun log(options: String = "--oneline"): Result<String>
 
     public fun config(option: String): Result<String>
 

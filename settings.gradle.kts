@@ -29,6 +29,7 @@ includeBuild("build-logic")
 
 include(":subprojects:gradle:alertino")
 include(":subprojects:gradle:android")
+include(":subprojects:gradle:apply-baseline-profile")
 include(":subprojects:gradle:bitbucket")
 include(":subprojects:gradle:build-environment")
 include(":subprojects:gradle:build-failer")

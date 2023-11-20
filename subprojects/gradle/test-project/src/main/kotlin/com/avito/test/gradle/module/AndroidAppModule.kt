@@ -31,6 +31,7 @@ public class AndroidAppModule(
     private val instrumentationTests: List<InstrumentationTest> = emptyList(),
     private val versionName: String = "",
     private val versionCode: Int = 1,
+    private val buildTypeName: String = "staging",
     private val mutator: File.(AndroidAppModule) -> Unit = {}
 ) : AndroidModule {
 
@@ -177,9 +178,9 @@ public class AndroidAppModule(
             |       val debug = getByName("debug") {
             |           applicationIdSuffix = ".debug"
             |       }
-            |       register("staging") {
+            |       register("$buildTypeName") {
             |           initWith(debug)
-            |           applicationIdSuffix = ".staging"
+            |           applicationIdSuffix = ".$buildTypeName"
             |           matchingFallbacks += listOf("debug")
             |       }
             |   }
@@ -202,9 +203,9 @@ public class AndroidAppModule(
             |       debug {
             |           applicationIdSuffix = ".debug"
             |       }
-            |       staging {
+            |       $buildTypeName {
             |           initWith(debug)
-            |           applicationIdSuffix = ".staging"
+            |           applicationIdSuffix = ".$buildTypeName"
             |           matchingFallbacks = ["debug"]
             |       }
             |   }

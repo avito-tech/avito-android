@@ -79,17 +79,20 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 var compileSdkVersion: Int? = null
 var buildToolsVersion: String? = null
 var targetSdk: Int? = null
+var minSdk: Int? = null
 
 project.withVersionCatalog { libs ->
     compileSdkVersion = libs.versions.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
     targetSdk = libs.versions.targetSdk.get().toInt()
+    minSdk = libs.versions.minSdk.get().toInt()
 }
 
 gradleTestTask.configure {
     compileSdkVersion?.let { systemProperty("compileSdkVersion", it) }
     buildToolsVersion?.let { systemProperty("buildToolsVersion", it) }
     targetSdk?.let { systemProperty("targetSdk", it) }
+    minSdk?.let { systemProperty("minSdk", it) }
 }
 
 dependencies {

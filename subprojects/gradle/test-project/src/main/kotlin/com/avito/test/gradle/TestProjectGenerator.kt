@@ -21,6 +21,7 @@ import java.util.Properties
  */
 internal val sdkVersion: Int by lazy { System.getProperty("compileSdkVersion").toInt() }
 internal val targetSdk: Int by lazy { System.getProperty("targetSdk").toInt() }
+internal val minSdkVersion: Int by lazy { System.getProperty("minSdk").toInt() }
 internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
 internal val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
 
@@ -171,7 +172,7 @@ buildCache {
         }
 
         with(file) {
-            git("init --quiet")
+            git("init --quiet --initial-branch=master")
             commit("initial_state")
         }
     }
