@@ -42,6 +42,7 @@ com.android:zipflinger:7.4.1
 com.fasterxml.jackson.core:jackson-annotations:2.13.0
 com.fasterxml.jackson.core:jackson-core:2.13.0
 com.fasterxml.jackson.core:jackson-databind:2.13.0
+com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0
 com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.13.0
 com.fasterxml.jackson:jackson-bom:2.13.0
 com.github.gundy:semver4j:0.16.4
@@ -146,6 +147,8 @@ org.jetbrains.kotlin:kotlin-util-io:1.7.10
 org.jetbrains.kotlin:kotlin-util-klib:1.7.10
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0
 org.jetbrains:annotations:13.0
+org.jgrapht:jgrapht-core:1.5.1
+org.jheaps:jheaps:0.13
 org.json:json:20180813
 org.jvnet.staxex:stax-ex:1.8.1
 org.ow2.asm:asm-analysis:9.2

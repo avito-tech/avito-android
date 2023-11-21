@@ -69,6 +69,7 @@ retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars"
 gson = "com.google.code.gson:gson:2.8.9"
 kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
 jacksonDataformat-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
+jacksonDataformat-csv = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv", version.ref = "jackson" }
 jacksonCore = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 
 layoutLibApi = { module = "com.android.tools.layoutlib:layoutlib-api", version.ref = "androidTools" }

@@ -10,6 +10,8 @@ dependencies {
     api(projects.subprojects.gradle.moduleDependencies)
     implementation(projects.subprojects.common.math)
     implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(libs.jdgraphtCore)
+    implementation(libs.jacksonDataformat.csv)
 
     gradleTestImplementation(projects.subprojects.common.truthExtensions)
     gradleTestImplementation(projects.subprojects.gradle.testProject)
