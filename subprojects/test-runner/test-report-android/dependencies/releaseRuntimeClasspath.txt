@@ -39,9 +39,10 @@ com.google.code.findbugs:jsr305:2.0.2
 com.google.code.gson:gson:2.8.9
 com.google.guava:listenablefuture:1.0
 com.squareup.curtains:curtains:1.2.2
-com.squareup.okhttp3:logging-interceptor:4.9.0
-com.squareup.okhttp3:okhttp:4.9.0
-com.squareup.okio:okio:2.8.0
+com.squareup.okhttp3:logging-interceptor:4.10.0
+com.squareup.okhttp3:okhttp:4.10.0
+com.squareup.okio:okio-jvm:3.0.0
+com.squareup.okio:okio:3.0.0
 com.squareup.radiography:radiography:2.4.1
 com.squareup.retrofit2:converter-gson:2.9.0
 com.squareup.retrofit2:retrofit:2.9.0

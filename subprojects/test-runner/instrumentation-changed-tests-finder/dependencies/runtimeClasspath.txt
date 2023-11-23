@@ -58,9 +58,10 @@ com.google.protobuf:protobuf-java-util:3.17.2
 com.google.protobuf:protobuf-java:3.17.2
 com.google.testing.platform:core-proto:0.0.8-alpha08
 com.googlecode.juniversalchardet:juniversalchardet:1.0.3
-com.squareup.okhttp3:logging-interceptor:4.9.0
-com.squareup.okhttp3:okhttp:4.9.0
-com.squareup.okio:okio:2.8.0
+com.squareup.okhttp3:logging-interceptor:4.10.0
+com.squareup.okhttp3:okhttp:4.10.0
+com.squareup.okio:okio-jvm:3.0.0
+com.squareup.okio:okio:3.0.0
 com.squareup.retrofit2:converter-gson:2.9.0
 com.squareup.retrofit2:retrofit:2.9.0
 com.squareup:javapoet:1.10.0

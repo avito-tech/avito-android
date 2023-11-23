@@ -20,9 +20,10 @@ com.google.http-client:google-http-client-jackson2:1.19.0
 com.google.http-client:google-http-client:1.19.0
 com.google.j2objc:j2objc-annotations:1.1
 com.google.protobuf:protobuf-java:3.17.3
-com.squareup.okhttp3:logging-interceptor:4.9.1
-com.squareup.okhttp3:okhttp:4.9.1
-com.squareup.okio:okio:2.8.0
+com.squareup.okhttp3:logging-interceptor:4.10.0
+com.squareup.okhttp3:okhttp:4.10.0
+com.squareup.okio:okio-jvm:3.0.0
+com.squareup.okio:okio:3.0.0
 com.timgroup:java-statsd-client:3.1.0
 commons-codec:commons-codec:1.15
 commons-io:commons-io:2.11.0
