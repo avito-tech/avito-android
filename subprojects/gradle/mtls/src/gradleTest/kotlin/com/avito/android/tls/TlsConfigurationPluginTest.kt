@@ -1,5 +1,6 @@
 package com.avito.android.tls
 
+import com.avito.android.tls.test.stubs.StubRawConfigurationData
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew

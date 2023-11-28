@@ -1,4 +1,4 @@
-package com.avito.android.tls
+package com.avito.android.tls.test.stubs
 
 data class StubRawConfigurationData(
     val name: String = "stubProvider",
