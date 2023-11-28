@@ -7,10 +7,12 @@ plugins {
 
 dependencies {
     implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(projects.subprojects.gradle.mtls)
     implementation(projects.subprojects.common.okhttp)
 
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
+    implementation(libs.bundles.ktor)
 
     implementation(projects.subprojects.logger.gradleLogger)
 

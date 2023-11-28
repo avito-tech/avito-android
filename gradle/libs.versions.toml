@@ -23,7 +23,7 @@ xmlUnit = "2.9.0"
 hamcrest = "2.2"
 moshi = "1.13.0"
 moshiX = "0.17.2"
-ktor = "2.1.2"
+ktor = "2.0.3"
 jackson = "2.13.0"
 proguard = "6.2.2"
 
@@ -150,12 +150,15 @@ moshiSealedCodegen = { module = "dev.zacsweers.moshix:moshi-sealed-codegen", ver
 ktorCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktorNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktorContentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktorSerializationGson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
+ktorKotlinSerialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktorClient = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktorOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
 # https://mvnrepository.com/artifact/com.autonomousapps.dependency-analysis/com.autonomousapps.dependency-analysis.gradle.plugin
 dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.18.0"
 
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]
-ktor = ["ktorCore", "ktorNetty", "ktorContentNegotiation", "ktorSerializationGson"]
+ktor = ["ktorCore", "ktorNetty", "ktorContentNegotiation", "ktorSerializationGson", "ktorOkhttp", "ktorKotlinSerialization", "ktorClientContentNegotiation"]
