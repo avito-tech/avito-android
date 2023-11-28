@@ -41,7 +41,7 @@ public class TlsProjectCredentialsFactory(
 
         @JvmStatic
         public fun createInstance(project: Project): TlsProjectCredentialsFactory {
-            val extension = project.extensions.getByType<TlsConfigurationExtension>()
+            val extension = project.rootProject.extensions.getByType<TlsConfigurationExtension>()
             return TlsProjectCredentialsFactory(
                 configurations = extension.credentials.tlsCredentialsProviders,
             )

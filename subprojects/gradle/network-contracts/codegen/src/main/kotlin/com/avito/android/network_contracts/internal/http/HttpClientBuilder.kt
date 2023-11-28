@@ -51,10 +51,12 @@ internal class HttpClientBuilder(
 
 internal fun Project.provideHttpClientBuilder(
     builder: HttpClientConfiguration.() -> Unit = {}
-): HttpClientBuilder {
-    val configuration = objects.newInstance(HttpClientConfiguration::class.java)
-    builder.invoke(configuration)
-    return HttpClientBuilder(configuration)
+): Provider<HttpClientBuilder> {
+    return provider {
+        val configuration = objects.newInstance(HttpClientConfiguration::class.java)
+        builder.invoke(configuration)
+        HttpClientBuilder(configuration)
+    }
 }
 
 internal fun Project.provideTlsManager(useTls: Provider<Boolean>): Provider<TlsManager> {
