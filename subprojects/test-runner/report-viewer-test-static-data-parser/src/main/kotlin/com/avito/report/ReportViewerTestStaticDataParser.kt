@@ -5,6 +5,7 @@ import com.avito.android.TestInApk
 import com.avito.android.test.annotations.Behavior
 import com.avito.android.test.annotations.CaseId
 import com.avito.android.test.annotations.DataSetNumber
+import com.avito.android.test.annotations.Description
 import com.avito.android.test.annotations.E2EStub
 import com.avito.android.test.annotations.E2ETest
 import com.avito.android.test.annotations.ExternalId
@@ -26,7 +27,6 @@ import com.avito.report.model.Kind
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.test.model.DeviceName
-import jdk.jfr.Description
 
 public interface ReportViewerTestStaticDataParser {
 
