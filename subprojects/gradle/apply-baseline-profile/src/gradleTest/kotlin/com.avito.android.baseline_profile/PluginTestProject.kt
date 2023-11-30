@@ -18,18 +18,21 @@ object PluginTestProject {
             |def artifactsOutputsDirectory = layout.buildDirectory.dir("macrobenchmark-test-outputs").get()
             |
             |applyBaselineProfile {
-            |    taskName.set("${setup.pluginTaskName}")
-            |    instrumentationTaskName.set("${setup.instrumentationTaskName}")
-            |    applicationModuleName.set(":${setup.appModuleName}")
-            |    applicationVariantName.set("${setup.applicationVariant}")
-            |    macrobenchmarksOutputDirectory.set(artifactsOutputsDirectory)
+            |   taskConfiguration {
+            |       register("${setup.pluginTaskName}") {
+            |           instrumentationTaskName.set("${setup.instrumentationTaskName}")
+            |           applicationModuleName.set(":${setup.appModuleName}")
+            |           applicationVariantName.set("${setup.applicationVariant}")
+            |           macrobenchmarksOutputDirectory.set(artifactsOutputsDirectory)
             |
-            |    saveToVersionControl {
-            |        enable.set(${setup.saveToVersionControl})
-            |        enableRemoteOperations.set(false)
-            |        includeDetailsInCommitMessage.set(false)
-            |        commitMessage.set("Update baseline profile for latest code changes")
-            |    }
+            |           saveToVersionControl {
+            |               enable.set(${setup.saveToVersionControl})
+            |               enableRemoteOperations.set(false)
+            |               includeDetailsInCommitMessage.set(false)
+            |               commitMessage.set("Update baseline profile for latest code changes")
+            |           }
+            |       }
+            |    }   
             |}
             |
             |tasks.register("${setup.instrumentationTaskName}") {

@@ -15,27 +15,30 @@ import org.gradle.configurationcache.extensions.capitalized
 import java.io.File
 
 internal class ProfileTaskConfigurator(
+    private val taskName: String,
     private val targetProject: Project,
     private val applicationProject: Provider<Project>,
     private val rootProject: Project,
-    private val extension: ApplyBaselineProfileExtension,
+    private val configuration: ApplyBaselineProfileConfiguration,
 ) {
     private val loggerFactory = GradleLoggerPlugin.provideLoggerFactory(rootProject).get()
     private val logger = loggerFactory.create<ProfileTaskConfigurator>()
     private val gitOperations = GitClient(
         rootProjectDir = rootProject.projectDir,
-        extension = extension.saveToVersionControl,
+        extension = configuration.saveToVersionControl,
         loggerFactory = loggerFactory,
     )
 
     internal fun configure() {
         val assembleApplicationApkTask = configureAssembleApkTask()
-        val instrumentationTask =
-            targetProject.tasks.named(extension.instrumentationTaskName.get())
+        val instrumentationTask: Provider<TaskProvider<Task>> =
+            configuration.instrumentationTaskName.map { targetProject.tasks.named(it) }
         val copyProfileTask = configureCopyToSourcesTask()
         val pushProfileTask = configureSaveToVersionControlTask()
 
-        rootProject.tasks.register(extension.taskName.get()) { task ->
+        rootProject.tasks.register(taskName) { task ->
+            configuration.validateValues()
+
             task.description = "Apply baseline profile using instrumentation test run"
 
             if (gitOperations.isHeadCommitWithProfile()) {
@@ -43,11 +46,11 @@ internal class ProfileTaskConfigurator(
                 return@register
             }
 
-            instrumentationTask.dependsOn(assembleApplicationApkTask.get())
-            copyProfileTask.dependsOn(instrumentationTask)
+            instrumentationTask.get().dependsOn(assembleApplicationApkTask.get())
+            copyProfileTask.dependsOn(instrumentationTask.get())
             task.dependsOn(copyProfileTask)
 
-            val shouldSaveToVersionControl = extension.saveToVersionControl.enable.getOrElse(false)
+            val shouldSaveToVersionControl = configuration.saveToVersionControl.enable.getOrElse(false)
             if (shouldSaveToVersionControl) {
                 task.finalizedBy(pushProfileTask)
             }
@@ -55,12 +58,14 @@ internal class ProfileTaskConfigurator(
     }
 
     private fun configureAssembleApkTask(): Provider<TaskProvider<Task>> {
-        val taskName = "assemble" + extension.applicationVariantName.get().capitalized()
-        return applicationProject.map { project -> project.tasks.named(taskName) }
+        return applicationProject.map { project ->
+            val taskName = "assemble" + configuration.applicationVariantName.get().capitalized()
+            project.tasks.named(taskName)
+        }
     }
 
     private fun configureCopyToSourcesTask(): TaskProvider<Task> {
-        val profileFromTestOutputs: Provider<File> = extension.macrobenchmarksOutputDirectory
+        val profileFromTestOutputs: Provider<File> = configuration.macrobenchmarksOutputDirectory
             .map { outputs -> outputs.findProfileOrThrow() }
         val profileTargetLocation = applicationProject.map { prj -> prj.mainSrcDirectory() }
 

@@ -16,22 +16,20 @@ public abstract class ApplyBaselineProfilePlugin : Plugin<Project> {
         val extension = target.extensions
             .create<ApplyBaselineProfileExtension>("applyBaselineProfile")
 
-        // afterEvaluate is required to resolve instrumentation task
-        target.afterEvaluate {
-            extension.validateValues()
-
-            val applicationProject = extension.applicationModuleName
+        extension.taskConfiguration.all { configuration ->
+            val applicationProject = configuration.applicationModuleName
                 .map { name ->
                     requireNotNull(target.rootProject.findProject(name)) {
-                        "Could not resolve application project directory for ${extension.applicationModuleName}"
+                        "Could not resolve application project directory for ${configuration.applicationModuleName}"
                     }
                 }
 
             ProfileTaskConfigurator(
+                taskName = configuration.name,
                 targetProject = target,
                 applicationProject = applicationProject,
                 rootProject = target.rootProject,
-                extension = extension,
+                configuration = configuration,
             ).configure()
         }
     }

@@ -24,6 +24,6 @@ public abstract class MacrobenchmarkInstrumentationExtension(
 
     public fun finalizeValues() {
         properties()
-            .forEach { it.finalizeValue() }
+            .forEach { it.finalizeValueOnRead() }
     }
 }
