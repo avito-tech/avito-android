@@ -1,10 +1,12 @@
-ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/android/ubuntu:20.04
+FROM ubuntu:22.04
 
-ARG ARTIFACTORY_URL
 ARG SDK_VERSION
 ARG EMULATOR_ARCH
 ARG EMULATOR_TYPE
+
+ENV EMULATOR_ARCH=${EMULATOR_ARCH}
+ENV SDK_VERSION=${SDK_VERSION}
+ENV EMULATOR_TYPE=${EMULATOR_TYPE}
 
 # -------------------- Common -------------------
 # net-tools             basic network primitives
@@ -16,7 +18,7 @@ RUN apt-get update && \
 	apt-get install --no-install-recommends -y \
 	        curl \
     	    unzip \
-    	    openjdk-11-jdk && \
+    	    openjdk-17-jdk && \
     apt-get install -y \
             net-tools \
             socat \
@@ -31,7 +33,7 @@ ARG ANDROID_HOME=/opt/android-sdk
 # DEBIAN_FRONTEND - to prevent timezone questions
 ENV LANG=C.UTF-8 \
     SHELL=/bin/bash \
-    JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 \
+    JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 \
     DEBIAN_FRONTEND=noninteractive \
     VERSION=${SDK_VERSION} \
     ANDROID_SDK_ROOT=$ANDROID_HOME \
@@ -42,7 +44,7 @@ ENV LANG=C.UTF-8 \
 # ----------------- Android SDK -----------------
 # https://developer.android.com/studio/index.html#command-tools
 # Additional info about directory structure: https://stackoverflow.com/a/61176718/981330
-ARG COMMANDLINE_TOOLS_URL=$ARTIFACTORY_URL/android-build-env/android_sdk/commandlinetools/commandlinetools-linux-8092744_latest.zip
+ARG COMMANDLINE_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
 ARG ANDROID_SDK_FILE_NAME=commandlinetools.zip
 
 RUN curl $COMMANDLINE_TOOLS_URL --progress-bar --location --output $ANDROID_SDK_FILE_NAME && \
@@ -71,7 +73,7 @@ RUN echo "no" | avdmanager create avd \
     --abi ${EMULATOR_TYPE}/${EMULATOR_ARCH} && \
     mksdcard -l e 512M /sdcard.img
 
-COPY hardware/config_${SDK_VERSION}.ini /root/.android/avd/emulator_${SDK_VERSION}.avd/config.ini
+COPY hardware/config_${SDK_VERSION}_${EMULATOR_TYPE}.ini /root/.android/avd/emulator_${SDK_VERSION}.avd/config.ini
 # -----------------------------------------------
 
 # ----------------- Entrypoint ------------------
