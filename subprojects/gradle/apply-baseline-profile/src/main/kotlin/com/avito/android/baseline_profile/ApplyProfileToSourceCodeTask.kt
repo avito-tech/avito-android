@@ -11,11 +11,15 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
 internal abstract class ApplyProfileToSourceCodeTask : DefaultTask() {
-    @get:Input
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val testOutputsDirectory: DirectoryProperty
 
     @get:Input
@@ -23,18 +27,6 @@ internal abstract class ApplyProfileToSourceCodeTask : DefaultTask() {
 
     @get:Input
     abstract val extension: Property<SaveProfileToVersionControlExtension>
-
-    private val loggerFactory by lazy {
-        GradleLoggerPlugin.provideLoggerFactory(project.rootProject).get()
-    }
-
-    private val gitClient by lazy {
-        GitClient(
-            rootProjectDir = project.rootProject.projectDir,
-            loggerFactory = loggerFactory,
-            extension = extension.get(),
-        )
-    }
 
     override fun getDescription() =
         """
@@ -51,7 +43,13 @@ internal abstract class ApplyProfileToSourceCodeTask : DefaultTask() {
         val profile = testOutputsDirectory.get().findProfileOrThrow()
         profile.copyTo(targetProfileLocation, overwrite = true)
 
-        if (extension.get().enable.getOrElse(false)) {
+        val shouldSaveToVcs = extension.get().enable.getOrElse(false)
+        if (shouldSaveToVcs) {
+            val gitClient = GitClient(
+                rootProjectDir = project.rootProject.projectDir,
+                loggerFactory = GradleLoggerPlugin.provideLoggerFactory(project.rootProject).get(),
+                extension = extension.get(),
+            )
             gitClient.commitAndPushProfile(targetProfileLocation.toPath())
         }
     }

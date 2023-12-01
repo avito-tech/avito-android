@@ -1,6 +1,7 @@
 package com.avito.android.baseline_profile.internal
 
 import com.avito.android.Result
+import com.avito.android.baseline_profile.configuration.SaveProfileToVersionControlExtension
 import com.avito.git.Git
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
