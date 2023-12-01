@@ -1,5 +1,7 @@
 package com.avito.android.baseline_profile
 
+import com.avito.android.baseline_profile.configuration.ApplyBaselineProfileExtension
+import com.avito.android.baseline_profile.internal.ProfileTaskConfigurator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create

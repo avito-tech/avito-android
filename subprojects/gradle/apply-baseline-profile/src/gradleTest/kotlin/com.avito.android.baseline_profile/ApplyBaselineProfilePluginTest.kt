@@ -195,8 +195,7 @@ class ApplyBaselineProfilePluginTest {
     private fun pluginTasksPipeline(projectSetup: ProjectSetup) = listOf(
         ":${projectSetup.appModuleName}:assembleBenchmark",
         ":${projectSetup.testModuleName}:${projectSetup.instrumentationTaskName}",
-        ":${projectSetup.testModuleName}:copyBaselineProfile",
-        ":${projectSetup.testModuleName}:saveProfileToVersionControl",
+        ":${projectSetup.testModuleName}:copyProfileToSourcesAndSaveToVcs",
     )
 
     private fun applicationMainDirectory(projectSetup: ProjectSetup): Path =

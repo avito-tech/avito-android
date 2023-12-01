@@ -1,4 +1,4 @@
-package com.avito.android.baseline_profile
+package com.avito.android.baseline_profile.internal
 
 import com.avito.android.Result
 import com.avito.git.Git
@@ -45,7 +45,7 @@ internal class GitClient(
         val profileCommitHash = git.tryParseRev("HEAD", short = false).getOrThrow()
         logger.warn("Successfully pushed updated profile to $branch (commit hash - $profileCommitHash)")
 
-        updateProfileCommitTag(profileTag)
+        updateHeadCommitTag(profileTag)
         logger.warn("Successfully updated profile tag, it is now pointing at $profileCommitHash")
     }
 
@@ -65,7 +65,7 @@ internal class GitClient(
         }
     }
 
-    private fun updateProfileCommitTag(profileTag: String) {
+    private fun updateHeadCommitTag(profileTag: String) {
         git.tag(profileTag, force = true).getOrThrow()
 
         if (extension.enableRemoteOperations.get()) {

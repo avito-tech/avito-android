@@ -1,4 +1,4 @@
-package com.avito.android.baseline_profile
+package com.avito.android.baseline_profile.configuration
 
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property

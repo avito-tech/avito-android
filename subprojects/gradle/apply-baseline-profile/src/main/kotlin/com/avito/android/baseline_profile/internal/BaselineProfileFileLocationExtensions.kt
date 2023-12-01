@@ -1,18 +1,16 @@
-package com.avito.android.baseline_profile
+package com.avito.android.baseline_profile.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import java.io.File
 
-internal object BaselineProfileFiles {
-    internal const val baselineProfileFileName = "baseline-prof.txt"
+internal object BaselineProfileFileLocationExtensions {
+    private const val baselineProfileFileName = "baseline-prof.txt"
 
-    internal fun Project.mainSrcDirectory(): Directory = layout.projectDirectory
+    internal fun Project.baselineProfileTargetLocation(): RegularFile = layout.projectDirectory
         .dir("src")
         .dir("main")
-
-    internal fun Project.baselineProfileLocation(): RegularFile = mainSrcDirectory()
         .file(baselineProfileFileName)
 
     internal fun Directory.findProfileOrThrow(): File {

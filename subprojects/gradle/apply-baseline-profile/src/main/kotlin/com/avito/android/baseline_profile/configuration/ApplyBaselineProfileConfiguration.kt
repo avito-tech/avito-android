@@ -1,18 +1,9 @@
-package com.avito.android.baseline_profile
+package com.avito.android.baseline_profile.configuration
 
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
-
-public abstract class ApplyBaselineProfileExtension {
-    internal abstract val taskConfiguration: NamedDomainObjectContainer<ApplyBaselineProfileConfiguration>
-
-    public fun taskConfiguration(action: Action<NamedDomainObjectContainer<ApplyBaselineProfileConfiguration>>) {
-        action.execute(taskConfiguration)
-    }
-}
 
 public abstract class ApplyBaselineProfileConfiguration(
     public val name: String,
