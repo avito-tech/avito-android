@@ -22,10 +22,3 @@ public class TlsCredentialsRegister constructor(
         return tlsCredentialsProviders.register(name, cls, configuration)
     }
 }
-
-public inline fun <reified T : TlsCredentialsProviderConfiguration> TlsCredentialsRegister.registerProvider(
-    name: String,
-    configuration: Action<T>
-): NamedDomainObjectProvider<T> {
-    return registerProvider(name, T::class.java, configuration)
-}

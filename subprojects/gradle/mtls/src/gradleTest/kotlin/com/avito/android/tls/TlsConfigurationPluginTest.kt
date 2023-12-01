@@ -110,7 +110,6 @@ class TlsConfigurationPluginTest {
             imports = listOf(
                 "import com.avito.android.tls.extensions.configuration.RawContentTlsCredentialsConfiguration",
                 "import com.avito.android.tls.TlsProjectCredentialsFactory",
-                "import com.avito.android.tls.extensions.registerProvider",
                 "import com.avito.android.tls.test.TestTask",
             ),
             plugins = plugins {
@@ -152,7 +151,8 @@ class TlsConfigurationPluginTest {
     private fun registerProvider(provider: StubRawConfigurationData): String {
         return """
             registerProvider<RawContentTlsCredentialsConfiguration>(
-                "${provider.name}"
+                "${provider.name}",
+                RawContentTlsCredentialsConfiguration::class.java,
             ) { 
                 crtContent.set("${provider.crtContent}")
                 keyContent.set("${provider.keyContent}")
