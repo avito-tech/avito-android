@@ -63,8 +63,8 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
         )
     )
 
-    minHeapSize = "128m"
-    maxHeapSize = "256m"
+    minHeapSize = "64m"
+    maxHeapSize = "128m"
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("buildDir", "$buildDir")
