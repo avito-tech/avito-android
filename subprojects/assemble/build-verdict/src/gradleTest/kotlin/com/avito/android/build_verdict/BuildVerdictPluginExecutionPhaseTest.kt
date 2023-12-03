@@ -302,15 +302,19 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
             .assertThat()
             .buildFailed()
 
-        assertBuildVerdict(
-            failedApp = "",
-            failedTask = "customTask",
-            expectedPlainTextVerdict = plainTextVerdicts.customTaskFails(),
-            expectedHtmlVerdict = htmlVerdicts.customTaskFails(),
-            expectedErrorLogs = listOf(
-                "No error logs"
+        try {
+            assertBuildVerdict(
+                failedApp = "",
+                failedTask = "customTask",
+                expectedPlainTextVerdict = plainTextVerdicts.customTaskFails(),
+                expectedHtmlVerdict = htmlVerdicts.customTaskFails(),
+                expectedErrorLogs = listOf(
+                    "No error logs"
+                )
             )
-        )
+        } catch (e: Throwable) {
+            throw RuntimeException(result.output, e)
+        }
     }
 
     private fun assertBuildVerdict(
