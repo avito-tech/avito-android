@@ -24,7 +24,6 @@ includeAnnotation?=
 dry_run=false
 instrumentation=Ui
 stacktrace?=
-local_check=true
 offline?=
 
 # see Logging.md#Verbose-mode
@@ -104,10 +103,6 @@ endif
 
 ifdef ARTIFACTORY_URL
 params +=-PartifactoryUrl=$(ARTIFACTORY_URL)
-endif
-
-ifdef local_check
-params +=-PlocalCheck=$(local_check)
 endif
 
 # from: https://stackoverflow.com/questions/10858261/abort-makefile-if-variable-not-set
