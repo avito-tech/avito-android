@@ -13,6 +13,9 @@ tasks.withType<Test>().configureEach {
 
     failFast = false
 
+    minHeapSize = "64m"
+    maxHeapSize = "128m"
+
     /**
      * fix for multiple `WARNING: Illegal reflective access`
      */
