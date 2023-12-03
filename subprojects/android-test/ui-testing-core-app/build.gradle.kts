@@ -156,26 +156,16 @@ instrumentation {
         }
 
         register(
-            "uiApi24",
+            "PRCheck",
             instrumentationConfiguration(
-                targetDevice = emulator24,
-                targetDeviceName = "API24"
-            )
-        )
-
-        register(
-            "uiApi33",
-            instrumentationConfiguration(
-                targetDevice = emulator33,
-                targetDeviceName = "API33"
+                targetDevices = setOf(emulator24, emulator33),
             )
         )
     }
 }
 
 fun instrumentationConfiguration(
-    targetDevice: Device,
-    targetDeviceName: String,
+    targetDevices: Set<Device>,
 ): Action<InstrumentationConfiguration> {
     return Action {
         testRunnerExecutionTimeout = Duration.ofMinutes(10)
@@ -183,21 +173,23 @@ fun instrumentationConfiguration(
         reportSkippedTests = true
         filter = "ci"
 
-        targets {
-            register(targetDevice.name) {
-                scheduling {
-                    deviceName = targetDeviceName
+        targetDevices.forEach { targetDevice ->
+            targets {
+                register(targetDevice.name) {
+                    scheduling {
+                        deviceName = targetDevice.name
 
-                    quota {
-                        retryCount = 1
-                        minimumSuccessCount = 1
-                    }
+                        quota {
+                            retryCount = 1
+                            minimumSuccessCount = 1
+                        }
 
-                    testsCountBasedReservation {
-                        device = targetDevice
-                        minimum = 1
-                        maximum = 5
-                        testsPerEmulator = 12
+                        testsCountBasedReservation {
+                            device = targetDevice
+                            minimum = 1
+                            maximum = 5
+                            testsPerEmulator = 12
+                        }
                     }
                 }
             }
@@ -217,7 +209,6 @@ val isLocalCheck = project.providers.gradleProperty("localCheck").getOrElse("fal
 
 if (!isLocalCheck) {
     tasks.check {
-        dependsOn(tasks.named("instrumentationUiApi24Kubernetes"))
-        dependsOn(tasks.named("instrumentationUiApi33Kubernetes"))
+        dependsOn(tasks.named("instrumentationPRCheckKubernetes"))
     }
 }
