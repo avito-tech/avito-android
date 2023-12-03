@@ -79,6 +79,8 @@ public class TestProjectGenerator(
         "org.gradle.jvmargs" to "-Xmx1g -XX:MaxMetaspaceSize=512m",
         "android.useAndroidX" to "true",
         "avito.device.adbPullTimeoutSeconds" to "5",
+        "org.gradle.daemon" to "false",
+        "org.gradle.workers.max" to "1",
     )
 ) : Module {
 
