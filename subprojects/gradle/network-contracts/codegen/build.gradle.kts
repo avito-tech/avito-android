@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.subprojects.gradle.process)
     implementation(projects.subprojects.logger.gradleLogger)
     implementation(projects.subprojects.common.okhttp)
+    implementation(projects.subprojects.assemble.buildVerdictTasksApi)
 
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
@@ -24,6 +25,7 @@ dependencies {
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 
+    testImplementation(libs.mockitoKotlin)
     testFixturesImplementation(testFixtures(projects.subprojects.gradle.mtls))
 }
 

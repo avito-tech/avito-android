@@ -1,5 +1,6 @@
 package com.avito.android.network_contracts
 
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test
@@ -55,6 +56,19 @@ class ConfigurationTestCompatibilityTest {
             .buildSuccessful()
 
         runTask("makeFilesExecutable", projectDir)
+            .assertThat()
+            .buildSuccessful()
+            .configurationCachedReused()
+    }
+
+    @Test
+    fun `configuration with applied plugin and contracts validation task - ok`(@TempDir projectDir: File) {
+        generateProject(projectDir)
+        runTask(ValidateNetworkContractsRootTask.NAME, projectDir)
+            .assertThat()
+            .buildSuccessful()
+
+        runTask(ValidateNetworkContractsRootTask.NAME, projectDir)
             .assertThat()
             .buildSuccessful()
             .configurationCachedReused()

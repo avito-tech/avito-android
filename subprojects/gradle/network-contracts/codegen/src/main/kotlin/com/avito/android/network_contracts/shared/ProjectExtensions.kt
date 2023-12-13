@@ -5,6 +5,7 @@ import com.avito.android.network_contracts.extension.NetworkContractsRootExtensi
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.getByType
 import java.io.File
@@ -34,4 +35,11 @@ internal fun Project.findApiSchemes(): FileCollection {
             "**/api-clients/**/*.yaml",
         )
     }
+}
+
+internal fun Project.reportFile(directory: String, reportFileName: String): Provider<RegularFile> {
+    return project.layout.buildDirectory
+        .dir("reports")
+        .map { it.dir(directory) }
+        .map { it.file(reportFileName) }
 }

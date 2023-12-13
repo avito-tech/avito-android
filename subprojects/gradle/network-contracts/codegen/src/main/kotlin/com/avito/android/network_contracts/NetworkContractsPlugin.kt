@@ -11,17 +11,23 @@ import com.avito.android.network_contracts.shared.findApiSchemes
 import com.avito.android.network_contracts.shared.findPackageDirectory
 import com.avito.android.network_contracts.shared.networkContractsExtension
 import com.avito.android.network_contracts.shared.networkContractsRootExtension
+import com.avito.android.network_contracts.shared.reportFile
+import com.avito.android.network_contracts.snapshot.PrepareGeneratedCodeSnapshotTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsTask
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.isRoot
+import com.avito.kotlin.dsl.typedNamed
+import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
-import java.io.File
 
 public class NetworkContractsPlugin : Plugin<Project> {
 
@@ -32,9 +38,12 @@ public class NetworkContractsPlugin : Plugin<Project> {
             createCodegenConfigurations(target)
             configureMakeCodegenFileExecutableTask(target)
             configureSetupMtlsVariablesTask(target)
+            configureVerificationRootTask(target)
         } else {
             configureAddEndpointTask(target)
+            configureSnapshotTask(target)
             configureCodegenTask(target)
+            configureValidationTask(target)
         }
     }
 
@@ -54,12 +63,29 @@ public class NetworkContractsPlugin : Plugin<Project> {
         }
     }
 
+    private fun configureSnapshotTask(
+        project: Project
+    ) {
+        val networkContractsExtension = project.networkContractsExtension
+
+        project.tasks.register<PrepareGeneratedCodeSnapshotTask>(PrepareGeneratedCodeSnapshotTask.NAME) {
+            val codegenSourcesDir = project
+                .findPackageDirectory(networkContractsExtension.packageName)
+                .map { it.dir("generated") }
+
+            from(codegenSourcesDir.get().asFile.path) {
+                include("**/*.kt")
+            }
+
+            outputDirectory.set(project.layout.buildDirectory.dir("prepareCodegenSnapshot"))
+        }
+    }
+
     private fun configureCodegenTask(
         target: Project,
     ) {
         val networkContractsExtension = target.networkContractsExtension
         val rootExtension = target.networkContractsRootExtension
-
         val setupMtlsTask = target.rootProject.tasks
             .named(
                 SetupTmpMtlsFilesTask.NAME,
@@ -72,16 +98,16 @@ public class NetworkContractsPlugin : Plugin<Project> {
                 MakeFilesExecutableTask::class.java
             )
 
+        val snapshotTask = target.tasks.typedNamed<Copy>("prepareCodegenSnapshot")
         target.tasks.register<CodegenTask>(CodegenTask.NAME) {
-            val packagePath = networkContractsExtension.packageName.map { it.replace(".", File.separator) }
-            val codegenSourcesDir = project.findPackageDirectory(packagePath)
+            val codegenSourcesDir = project.findPackageDirectory(networkContractsExtension.packageName)
 
             this.kind.set(networkContractsExtension.kind)
             this.projectName.set(networkContractsExtension.projectName)
-            this.packagePath.set(packagePath)
             this.skipValidation.set(networkContractsExtension.skipValidation)
             this.schemes.setFrom(project.findApiSchemes())
-            this.outputDirectory.set(codegenSourcesDir)
+            this.packageDirectory.set(codegenSourcesDir)
+            this.outputDirectory.set(packageDirectory.map { it.dir("generated") })
             this.codegenBinaryFiles.setFrom(makeFilesExecutableTask.map { it.files })
 
             this.crtEnvName.set(rootExtension.crtEnvName)
@@ -91,6 +117,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             this.tmpKeyFile.set(setupMtlsTask.flatMap { it.tmpKey })
 
             this.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(this))
+            this.snapshot.setFrom(snapshotTask.map { it.destinationDir })
 
             onlyIf { (it as? CodegenTask)?.schemes?.isEmpty == false }
         }
@@ -139,6 +166,45 @@ public class NetworkContractsPlugin : Plugin<Project> {
             this.tmpKey.set(buildDirectory.dir(SetupTmpMtlsFilesTask.NAME).map { it.file("tmp_mtls_key.key") })
             this.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(this))
             this.tlsCredentialsService.set(TlsConfigurationPlugin.provideCredentialsService(project))
+        }
+    }
+
+    private fun configureValidationTask(
+        project: Project
+    ) {
+        val rootTask = project.rootProject.tasks.withType<ValidateNetworkContractsRootTask>()
+        val codegenTasks = project.tasks
+            .typedNamed<CodegenTask>(CodegenTask.NAME)
+
+        val snapshotTask = project.tasks
+            .typedNamed<PrepareGeneratedCodeSnapshotTask>(PrepareGeneratedCodeSnapshotTask.NAME)
+
+        project.tasks.register<ValidateNetworkContractsTask>(ValidateNetworkContractsTask.NAME) {
+            // Enable validation regardless of the setting in the extension,
+            // as we need to validate codegen schemas also.
+            project.networkContractsExtension.skipValidation.set(false)
+
+            this.generatedFilesDirectory.set(snapshotTask.flatMap { it.outputDirectory })
+            this.referenceFilesDirectory.set(codegenTasks.flatMap { it.outputDirectory })
+
+            resultFile.set(
+                project.reportFile(
+                    directory = "networkContracts",
+                    reportFileName = "codegenValidationReport.json"
+                )
+            )
+
+            rootTask.configureEach { it.reports.from(resultFile) }
+        }
+    }
+
+    private fun configureVerificationRootTask(
+        project: Project
+    ) {
+        project.tasks.register<ValidateNetworkContractsRootTask>(ValidateNetworkContractsRootTask.NAME) {
+            this.rootDir.set(project.rootDir)
+            this.projectPath.set(project.path)
+            this.verdictFile.set(project.reportFile("networkContracts", "validation.txt"))
         }
     }
 }

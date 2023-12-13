@@ -18,6 +18,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -35,9 +36,6 @@ internal abstract class CodegenTask : DefaultTask() {
     abstract val projectName: Property<String>
 
     @get:Input
-    abstract val packagePath: Property<String>
-
-    @get:Input
     abstract val skipValidation: Property<Boolean>
 
     @get:Input
@@ -45,6 +43,11 @@ internal abstract class CodegenTask : DefaultTask() {
 
     @get:Input
     abstract val keyEnvName: Property<String>
+
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val snapshot: ConfigurableFileCollection
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -58,12 +61,16 @@ internal abstract class CodegenTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     abstract val codegenBinaryFiles: ConfigurableFileCollection
 
+    @Suppress("unused")
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val schemes: ConfigurableFileCollection
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
+
+    @get:Internal
+    abstract val packageDirectory: DirectoryProperty
 
     @get:Internal
     internal abstract val loggerFactory: Property<LoggerFactory>
@@ -75,7 +82,7 @@ internal abstract class CodegenTask : DefaultTask() {
         val arch = findOperatingSystemArchitecture(outputDirectory.get().asFile)
         check(arch !is Arch.Unknown) { "Unsupported OS system: ${arch.rawValue}" }
 
-        val srcDir = outputDirectory.get().asFile
+        val srcDir = packageDirectory.get().asFile
         val kind = kind.get()
         val name = projectName.get()
 

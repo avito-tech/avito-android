@@ -13,6 +13,7 @@ object NetworkCodegenProjectGenerator {
         serviceUrl: String = "www.avito.ru/",
         generatedClassesPackage: String = "com.example",
         skipValidation: Boolean = true,
+        buildExtra: String = ""
     ) {
         TestProjectGenerator(
             name = "rootapp",
@@ -44,11 +45,36 @@ object NetworkCodegenProjectGenerator {
                             packageName.set("$generatedClassesPackage")
                             skipValidation.set($skipValidation)
                         } 
+                        $buildExtra
                     """.trimIndent(),
                     useKts = true
                 ),
             ),
             useKts = true
         ).generateIn(projectDir)
+    }
+
+    internal fun generateCodegenFiles(
+        projectDir: File,
+        generatedClassesPackage: String,
+        generatedFiles: List<File> = emptyList(),
+    ): List<File> {
+        if (generatedFiles.isEmpty()) {
+            return emptyList()
+        }
+
+        val generatedDir = File(
+            projectDir,
+            "app/src/main/kotlin/" + generatedClassesPackage.replace(".", "/") + "/generated"
+        )
+
+        return generatedFiles.map {
+            File(generatedDir, it.path).apply {
+                parentFile.mkdirs()
+                if (!exists()) {
+                    createNewFile()
+                }
+            }
+        }
     }
 }
