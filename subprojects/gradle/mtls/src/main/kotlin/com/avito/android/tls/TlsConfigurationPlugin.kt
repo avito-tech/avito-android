@@ -26,11 +26,18 @@ public class TlsConfigurationPlugin : Plugin<Project> {
     public companion object {
 
         public fun provideCredentialsService(project: Project): Provider<TlsCredentialsService> {
+            if (!project.rootProject.plugins.hasPlugin(TlsConfigurationPlugin::class.java)) {
+                throw IllegalStateException(
+                    "Failed to provideCredentialsService for project ${project.name}." +
+                        "Apply com.avito.android.tls-configuration plugin to the root project"
+                )
+            }
+
+            val tlsExtension = project.rootProject.extensions.getByType<TlsConfigurationExtension>()
             val service = project.gradle.sharedServices.registerIfAbsent(
                 TlsCredentialsService::class.java.name,
                 TlsCredentialsService::class.java,
             ) {
-                val tlsExtension = project.rootProject.extensions.getByType<TlsConfigurationExtension>()
                 it.parameters { params ->
                     params.configurations.set(tlsExtension.credentials.tlsCredentialsProviders)
                 }
