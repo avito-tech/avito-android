@@ -3,6 +3,8 @@ package com.avito.android.network_contracts.scheme.imports.mocks
 import okhttp3.mockwebserver.MockResponse
 
 @Suppress("MaxLineLength")
+internal val mockBase64ContentFile = "Y29tcG9uZW50czogc2NoZW1hczogaW5mbzogdGl0bGU6IF9fY29tcG9uZW50c19maWxlX18gdmVyc2lvbjogMS4wLjAgb3BlbmFwaTogMy4wLjAgcGF0aHM6IHt9Cg=="
+
 internal fun apiSchemaImportResponseMock(
     path: String = "",
     filePaths: List<String> = emptyList()
@@ -11,7 +13,7 @@ internal fun apiSchemaImportResponseMock(
         separator = ",\n"
     ) { filePath ->
         """
-            "$path/$filePath": "Y29tcG9uZW50czogc2NoZW1hczogaW5mbzogdGl0bGU6IF9fY29tcG9uZW50c19maWxlX18gdmVyc2lvbjogMS4wLjAgb3BlbmFwaTogMy4wLjAgcGF0aHM6IHt9Cg=="
+            "$path/$filePath": "$mockBase64ContentFile"
         """.trimIndent()
     }
 

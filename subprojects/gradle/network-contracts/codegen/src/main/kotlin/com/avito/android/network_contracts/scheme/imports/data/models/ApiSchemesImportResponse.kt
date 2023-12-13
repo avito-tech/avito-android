@@ -24,7 +24,7 @@ internal fun ApiSchemeImportResponse.Schema.entriesList(): List<SchemaEntry> {
 
 internal data class SchemaEntry(
     val path: String,
-    private val content: String,
+    val content: String,
 ) {
 
     val decodedContent: String

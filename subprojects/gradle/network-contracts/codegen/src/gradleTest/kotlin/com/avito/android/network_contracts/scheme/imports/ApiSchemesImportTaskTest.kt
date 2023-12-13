@@ -1,5 +1,6 @@
 package com.avito.android.network_contracts.scheme.imports
 
+import com.avito.android.network_contracts.DEFAULT_GENERATED_PACKAGE
 import com.avito.android.network_contracts.NetworkCodegenProjectGenerator
 import com.avito.android.network_contracts.scheme.imports.mocks.apiSchemaImportResponseMock
 import com.avito.android.network_contracts.scheme.imports.mocks.apiSchemeEmptyResponse
@@ -107,17 +108,18 @@ internal class ApiSchemesImportTaskTest {
     private fun TestResultSubject.outputContainsFilePaths(
         packageName: String,
         apiPath: String,
-        paths: List<String>
+        paths: List<String>,
+        schemesDirName: String = "api-clients",
     ): TestResultSubject {
         val packagePath = packageName.replace(".", "/")
         var result = this
-        paths.forEach { result = result.outputContains("$packagePath/api-clients$apiPath/$it") }
+        paths.forEach { result = result.outputContains("$packagePath/$schemesDirName$apiPath/$it") }
         return result
     }
 
     private fun generateProject(
         projectDir: File,
-        generatedClassesPackage: String = "com.example"
+        generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE
     ) {
         NetworkCodegenProjectGenerator.generate(
             projectDir = projectDir,

@@ -36,7 +36,7 @@ internal class ApiSchemesImportServiceImpl(
     }
 }
 
-internal suspend fun HttpClient.fetchApiScheme(
+private suspend fun HttpClient.fetchApiScheme(
     apiPath: String
 ): HttpResponse = post {
     url(path = "service-api-composition-storage/getSchemaForPath/")

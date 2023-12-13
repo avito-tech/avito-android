@@ -2,6 +2,7 @@ package com.avito.android.network_contracts.validation
 
 import com.avito.android.network_contracts.NetworkCodegenProjectGenerator
 import com.avito.android.network_contracts.codegen.CodegenTask
+import com.avito.android.network_contracts.defaultModule
 import com.avito.android.network_contracts.test.ChangeReferencesFilesTask
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -16,10 +17,14 @@ class ValidateNetworkContractsTaskTest {
     fun `when root validation task is invoked - then invoke modules validation report task with codegen`(
         @TempDir projectDir: File
     ) {
-        NetworkCodegenProjectGenerator.generate(projectDir)
+        val projectName = "feature"
+        NetworkCodegenProjectGenerator.generate(projectDir, modules = defaultModule(name = projectName))
         runTask(ValidateNetworkContractsRootTask.NAME, projectDir, dryRun = true)
             .assertThat()
-            .tasksShouldBeTriggered(":app:${ValidateNetworkContractsTask.NAME}", ":app:${CodegenTask.NAME}")
+            .tasksShouldBeTriggered(
+                ":$projectName:${ValidateNetworkContractsTask.NAME}",
+                ":$projectName:${CodegenTask.NAME}"
+            )
     }
 
     @Test
@@ -70,6 +75,7 @@ class ValidateNetworkContractsTaskTest {
     private fun generateProjectWithGeneratedFiles(
         projectDir: File,
         generatedFiles: List<File>,
+        moduleName: String = "app",
     ): List<File> {
         val packageName = "com.avito.android"
 
@@ -77,10 +83,13 @@ class ValidateNetworkContractsTaskTest {
 
         NetworkCodegenProjectGenerator.generate(
             projectDir,
-            generatedClassesPackage = packageName,
-            buildExtra = validateTaskExtraConfiguration
+            modules = defaultModule(
+                name = moduleName,
+                generatedClassesPackage = packageName,
+                buildExtra = validateTaskExtraConfiguration
+            )
         )
-        return NetworkCodegenProjectGenerator.generateCodegenFiles(projectDir, packageName, generatedFiles)
+        return NetworkCodegenProjectGenerator.generateCodegenFiles(moduleName, projectDir, packageName, generatedFiles)
     }
 
     private fun runTask(

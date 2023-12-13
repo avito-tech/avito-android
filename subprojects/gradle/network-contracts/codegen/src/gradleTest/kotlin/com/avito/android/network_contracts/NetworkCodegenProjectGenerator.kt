@@ -1,18 +1,53 @@
 package com.avito.android.network_contracts
 
+import com.avito.android.network_contracts.scheme.imports.ApiSchemesFilesGenerator
+import com.avito.android.network_contracts.scheme.imports.data.models.SchemaEntry
 import com.avito.android.tls.test.createMtlsExtensionString
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.KotlinModule
+import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.plugin.plugins
 import java.io.File
+
+internal const val DEFAULT_APP_NAME = "avito-android-test-app"
+internal const val DEFAULT_GENERATED_PACKAGE = "com.example.test"
+
+internal fun defaultModule(
+    name: String = "impl",
+    appName: String = DEFAULT_APP_NAME,
+    generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
+    skipValidation: Boolean = true,
+    buildExtra: String = "",
+) = listOf(
+    KotlinModule(
+        name = name,
+        plugins = plugins {
+            id("com.avito.android.network-contracts")
+        },
+        buildGradleExtra = """
+               networkContracts { 
+                   kind.set("test-kind")
+                   projectName.set("$appName")
+                   packageName.set("$generatedClassesPackage")
+                   skipValidation.set($skipValidation)
+               }
+               $buildExtra
+        """.trimIndent(),
+        useKts = true
+    ),
+)
 
 object NetworkCodegenProjectGenerator {
 
     fun generate(
         projectDir: File,
         serviceUrl: String = "www.avito.ru/",
-        generatedClassesPackage: String = "com.example",
+        generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
         skipValidation: Boolean = true,
+        modules: List<Module> = defaultModule(
+            generatedClassesPackage = generatedClassesPackage,
+            skipValidation = skipValidation,
+        ),
         buildExtra: String = ""
     ) {
         TestProjectGenerator(
@@ -31,32 +66,37 @@ object NetworkCodegenProjectGenerator {
                     crtEnvName.set("test_env")
                     keyEnvName.set("test_key")
                 }
+                $buildExtra
             """.trimIndent(),
-            modules = listOf(
-                KotlinModule(
-                    name = "app",
-                    plugins = plugins {
-                        id("com.avito.android.network-contracts")
-                    },
-                    buildGradleExtra = """
-                        networkContracts { 
-                            kind.set("test-kind")
-                            projectName.set("avito-app")
-                            packageName.set("$generatedClassesPackage")
-                            skipValidation.set($skipValidation)
-                        } 
-                        $buildExtra
-                    """.trimIndent(),
-                    useKts = true
-                ),
-            ),
+            modules = modules,
             useKts = true
         ).generateIn(projectDir)
     }
 
-    internal fun generateCodegenFiles(
+    internal fun generateSchemes(
         projectDir: File,
-        generatedClassesPackage: String,
+        generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
+        apiSchemesDir: String = "api-clients",
+        schemes: List<SchemaEntry> = emptyList(),
+    ): List<File> {
+        if (schemes.isEmpty()) {
+            return emptyList()
+        }
+
+        val packageDir = File(
+            projectDir,
+            "src/main/kotlin/" + generatedClassesPackage.replace(".", "/") + "/$apiSchemesDir"
+        )
+        val generatedFiles = ApiSchemesFilesGenerator(packageDir).generateFiles(schemes)
+        val codegenFile = File(packageDir.parentFile, "codegen.toml")
+        codegenFile.createNewFile()
+        return generatedFiles + codegenFile
+    }
+
+    internal fun generateCodegenFiles(
+        moduleName: String,
+        projectDir: File,
+        generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
         generatedFiles: List<File> = emptyList(),
     ): List<File> {
         if (generatedFiles.isEmpty()) {
@@ -65,7 +105,7 @@ object NetworkCodegenProjectGenerator {
 
         val generatedDir = File(
             projectDir,
-            "app/src/main/kotlin/" + generatedClassesPackage.replace(".", "/") + "/generated"
+            "$moduleName/src/main/kotlin/" + generatedClassesPackage.replace(".", "/") + "/generated"
         )
 
         return generatedFiles.map {

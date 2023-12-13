@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.subprojects.logger.gradleLogger)
 
     gradleTestImplementation(libs.jsonAssert)
+    gradleTestImplementation(libs.junitJupiterParams)
     gradleTestImplementation(projects.subprojects.common.testOkhttp)
     gradleTestImplementation(projects.subprojects.gradle.testProject)
 

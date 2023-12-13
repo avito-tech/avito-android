@@ -34,7 +34,7 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
 
     @TaskAction
     public fun fetch() {
-        if (!apiPath.isPresent || apiPath.get().isEmpty()) {
+        if (apiPath.get().isEmpty()) {
             error(
                 "Unable to import api schemes as apiPath is not defined. " +
                     "Please, provide url by parameter `apiSchemesUrl`"
@@ -43,7 +43,7 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
 
         val apiImportService = ApiSchemesImportServiceImpl(httpClientBuilder.get().buildClient(logger))
 
-        val rootDirectory = outputDirectory.asFile.get()
+        val rootDirectory = outputDirectory.get().asFile
         val schemaFilesGenerator = ApiSchemesFilesGenerator(rootDirectory)
 
         val schema = runBlocking {
@@ -66,6 +66,11 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
                 appendLine("file://${file.absolutePath}")
             }
         }
-        logger.warn(resultMessage)
+        logger.info(resultMessage)
+    }
+
+    public companion object {
+
+        internal const val NAME: String = "addEndpoint"
     }
 }
