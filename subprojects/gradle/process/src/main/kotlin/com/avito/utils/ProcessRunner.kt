@@ -11,7 +11,7 @@ public interface ProcessRunner {
      *
      * @return output команды, если exit code = 0
      */
-    public fun run(command: String, timeout: Duration): Result<String>
+    public fun run(command: String, timeout: Duration = Duration.ofSeconds(5)): Result<String>
 
     public fun spawn(command: String, outputTo: File?): Process
 

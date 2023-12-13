@@ -3,7 +3,6 @@ package com.avito.android.network_contracts.codegen
 import com.avito.android.Result
 import com.avito.android.isFailure
 import com.avito.android.network_contracts.codegen.executor.Codegen
-import com.avito.android.network_contracts.shared.runCommand
 import com.avito.android.network_contracts.shared.throwGradleError
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
@@ -119,6 +118,6 @@ internal abstract class CodegenTask : DefaultTask() {
 }
 
 private fun ProcessRunner.getOsxArchProcessor() =
-    runCommand("/usr/bin/uname -m")
+    run("/usr/bin/uname -m")
         .map(String::trim)
         .map(Arch.Companion::getArch)

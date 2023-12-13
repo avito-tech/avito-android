@@ -2,7 +2,6 @@ package com.avito.android.network_contracts.codegen.executor
 
 import com.avito.android.Result
 import com.avito.android.network_contracts.codegen.Arch
-import com.avito.android.network_contracts.shared.runCommand
 import com.avito.logger.Logger
 import com.avito.utils.ProcessRunner
 import org.gradle.api.file.FileCollection
@@ -70,7 +69,7 @@ internal interface Codegen {
             logger.info("Codegen Command is about to run:")
             logger.info(rawCommand)
 
-            return runCommand(rawCommand)
+            return run(rawCommand)
         }
     }
 
