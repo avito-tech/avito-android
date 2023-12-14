@@ -33,9 +33,6 @@ public object ClearK8SDeploymentsMain {
 
         protected val kubernetesUrl: String by option(ArgType.String)
             .required()
-
-        protected val kubernetesCaCert: String by option(ArgType.String)
-            .required()
     }
 
     private val parser = ArgParser("clear-k8s-deployments")
@@ -94,7 +91,6 @@ public object ClearK8SDeploymentsMain {
                         ConfigBuilder()
                             .withOauthToken(kubernetesToken)
                             .withMasterUrl(kubernetesUrl)
-                            .withCaCertData(kubernetesCaCert)
                             .build()
                     )
                 ).delete(namespace, deploymentNames)

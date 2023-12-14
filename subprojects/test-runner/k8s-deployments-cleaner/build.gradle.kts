@@ -17,7 +17,6 @@ tasks.register("clearByNamespaces", JavaExec::class.java) {
         project.hasProperty("teamcityApiPassword")
         project.hasProperty("kubernetesToken")
         project.hasProperty("kubernetesUrl")
-        project.hasProperty("kubernetesCaCertData")
     }
     args(
         "clearByNamespaces",
@@ -26,7 +25,6 @@ tasks.register("clearByNamespaces", JavaExec::class.java) {
         "--teamcityApiPassword", project.getOptionalStringProperty("teamcityApiPassword", ""),
         "--kubernetesToken", project.getOptionalStringProperty("kubernetesToken", ""),
         "--kubernetesUrl", project.getOptionalStringProperty("kubernetesUrl", ""),
-        "--kubernetesCaCert", project.getOptionalStringProperty("kubernetesCaCertData", ""),
         "--namespaces", "android-emulator"
     )
 }
