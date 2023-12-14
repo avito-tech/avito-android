@@ -22,6 +22,10 @@ import org.gradle.api.services.BuildServiceParameters
 
 internal abstract class HttpClientService : BuildService<HttpClientService.Params> {
 
+    private val predefinedOkHttpBuilder: OkHttpClient.Builder by lazy {
+        prepareDefaultHttpClient()
+    }
+
     internal interface Params : BuildServiceParameters {
         val serviceUrl: Property<String>
         val tlsCredentialsService: Property<TlsCredentialsService>
@@ -32,17 +36,11 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
         logger: Logger? = null,
         builder: HttpClientConfig<OkHttpConfig>.() -> Unit = {}
     ): HttpClient = with(parameters) {
-        val okHttpClientBuilder = OkHttpClient.Builder().apply {
+        val okHttpClientBuilder = predefinedOkHttpBuilder.apply {
             if (logger != null) {
                 addInterceptor(
                     HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC)
                 )
-            }
-
-            if (useTls.get()) {
-                val tlsManager = TlsManager(tlsCredentialsService.get().createCredentials())
-                val handshakeCertificates = tlsManager.handshakeCertificates()
-                sslSocketFactory(handshakeCertificates.sslSocketFactory(), handshakeCertificates.trustManager)
             }
         }
 
@@ -55,6 +53,16 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
 
             engine {
                 preconfigured = okHttpClientBuilder.build()
+            }
+        }
+    }
+
+    private fun prepareDefaultHttpClient(): OkHttpClient.Builder {
+        return OkHttpClient.Builder().apply {
+            if (parameters.useTls.get()) {
+                val tlsManager = TlsManager(parameters.tlsCredentialsService.get().createCredentials())
+                val handshakeCertificates = tlsManager.handshakeCertificates()
+                sslSocketFactory(handshakeCertificates.sslSocketFactory(), handshakeCertificates.trustManager)
             }
         }
     }
