@@ -43,7 +43,6 @@ resolveGradleArg "avito.fileStorage.url" "AVITO_FILESTORAGE_URL"
 resolveGradleArg "avito.registry" "AVITO_REGISTRY"
 resolveGradleArg "kubernetesUrl" "KUBERNETES_URL"
 resolveGradleArg "kubernetesToken" "KUBERNETES_TOKEN"
-resolveGradleArg "kubernetesCaCertData" "KUBERNETES_CA_CERT_DATA"
 GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "
 
 function runInBuilder() {

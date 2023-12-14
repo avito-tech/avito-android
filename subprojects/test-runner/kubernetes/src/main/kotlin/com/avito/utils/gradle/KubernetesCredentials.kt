@@ -13,7 +13,6 @@ public sealed class KubernetesCredentials : Serializable {
 
     public class Service(
         public val token: String,
-        public val caCertData: String,
         public val url: String,
         public val namespace: String,
     ) : KubernetesCredentials() {

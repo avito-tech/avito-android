@@ -259,7 +259,6 @@ internal fun instrumentationConfiguration(): String = """
     |           url.set("http://stub")
     |           namespace.set("android-emulator")
     |           token.set(getOptionalStringProperty("kubernetesToken"))
-    |           caCertData.set(getOptionalStringProperty("kubernetesCaCertData"))
     |       }
     |    }
     |    

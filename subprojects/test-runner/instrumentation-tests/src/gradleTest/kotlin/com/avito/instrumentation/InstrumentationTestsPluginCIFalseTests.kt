@@ -40,7 +40,6 @@ internal class InstrumentationTestsPluginCIFalseTests {
             false,
             "-PkubernetesToken=stub",
             "-PkubernetesUrl=stub",
-            "-PkubernetesCaCertData=stub"
         ).assertThat()
             .buildSuccessful()
             .tasksShouldBeTriggered(instrumentationTask)
@@ -140,7 +139,6 @@ internal class InstrumentationTestsPluginCIFalseTests {
     |           url.set("http://stub")
     |           namespace.set("android-emulator")
     |           token.set(getOptionalStringProperty("kubernetesToken"))
-    |           caCertData.set(getOptionalStringProperty("kubernetesCaCertData"))
     |       }
     |    }
     |

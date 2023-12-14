@@ -88,7 +88,6 @@ internal fun kotlinStubConfig(reportConfig: ReportConfig) = """
   |       }
   |       register<com.avito.instrumentation.configuration.KubernetesViaCredentials>("k8sCredentials") {
   |         token.set("q1w2e3")
-  |         caCertData.set("12345")
   |         url.set("myk8s.com")
   |         namespace.set("default")
   |       }

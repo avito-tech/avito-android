@@ -176,10 +176,6 @@ abstract class Case {
                     .isEqualTo("q1w2e3")
             },
             Assertion("kubernetes credentials ca cert data") {
-                Truth.assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).caCertData)
-                    .isEqualTo("12345")
-            },
-            Assertion("kubernetes credentials ca cert data") {
                 Truth.assertThat((it.kubernetesCredentials as KubernetesCredentials.Service).namespace)
                     .isEqualTo("default")
             },

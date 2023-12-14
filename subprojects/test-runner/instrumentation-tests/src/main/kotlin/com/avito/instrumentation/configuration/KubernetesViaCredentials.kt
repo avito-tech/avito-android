@@ -7,8 +7,6 @@ public abstract class KubernetesViaCredentials @Inject constructor() : Execution
 
     public abstract val token: Property<String>
 
-    public abstract val caCertData: Property<String>
-
     public abstract val url: Property<String>
 
     public abstract val namespace: Property<String>

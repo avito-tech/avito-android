@@ -17,7 +17,6 @@ internal class EnvironmentConfigurator(
                 task.kubernetesCredentials.set(
                     KubernetesCredentials.Service(
                         token = environment.token.get(),
-                        caCertData = environment.caCertData.get(),
                         url = environment.url.get(),
                         namespace = environment.namespace.get()
                     )

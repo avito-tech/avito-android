@@ -20,7 +20,6 @@ public fun RunnerInputParams.Companion.createStubInstance(
     buildType: String = "teamcity",
     kubernetesCredentials: KubernetesCredentials = KubernetesCredentials.Service(
         token = "empty",
-        caCertData = "empty",
         url = "empty",
         namespace = "kubernetesNamespace",
     ),
