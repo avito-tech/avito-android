@@ -21,7 +21,7 @@ internal class RetrofitProvider(
 
         val logger = loggerFactory.create("OkHttp")
         val okHttpClient = OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(2, TimeUnit.MINUTES)
             .addInterceptor(
                 HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC)
             )
