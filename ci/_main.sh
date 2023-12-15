@@ -75,7 +75,6 @@ if [[ -v ELASTIC_ENDPOINTS ]]; then
 fi
 
 GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN} "
-GRADLE_ARGS+="-PkubernetesCaCertData=${KUBERNETES_CA_CERT_DATA} "
 GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL} "
 
 GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "

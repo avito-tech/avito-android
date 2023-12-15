@@ -100,7 +100,6 @@ instrumentation {
     environments {
         register<KubernetesViaCredentials>("kubernetes") {
             token.set(getMandatoryStringProperty("kubernetesToken"))
-            caCertData.set(getMandatoryStringProperty("kubernetesCaCertData"))
             url.set(getMandatoryStringProperty("kubernetesUrl"))
             namespace.set(getMandatoryStringProperty("kubernetesNamespace"))
         }
