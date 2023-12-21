@@ -97,7 +97,7 @@ internal abstract class CodegenTask : DefaultTask() {
         )
 
         if (result.isFailure()) {
-            throw GradleException("Network contracts generation failed.", result.throwable)
+            throw GradleException("Network contracts generation failed:\n${result.throwable.message}", result.throwable)
         }
     }
 

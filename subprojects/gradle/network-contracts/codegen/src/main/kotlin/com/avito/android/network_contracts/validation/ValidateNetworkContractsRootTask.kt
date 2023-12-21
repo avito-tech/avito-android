@@ -2,7 +2,7 @@ package com.avito.android.network_contracts.validation
 
 import com.avito.android.build_verdict.BuildVerdictTask
 import com.avito.android.build_verdict.span.SpannedString
-import com.avito.android.network_contracts.validation.diagnostic.NetworkContractsDiagnostic
+import com.avito.android.network_contracts.validation.analyzer.diagnostic.NetworkContractsDiagnostic
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.gradle.api.DefaultTask
@@ -42,22 +42,24 @@ public abstract class ValidateNetworkContractsRootTask : DefaultTask(), BuildVer
 
     @TaskAction
     public fun validate() {
-        val corruptedFilePaths = reports
+        val diagnosticsMap = reports
             .filter(File::exists)
             .flatMap { Json.decodeFromStream<List<NetworkContractsDiagnostic>>(it.inputStream()) }
-            .filterIsInstance<NetworkContractsDiagnostic.Failure>()
-            .map { it.corruptedFilePaths }
-            .flatten()
+            .groupBy { diagnostic -> diagnostic.issue.key }
 
         var verdict = OK
 
-        if (corruptedFilePaths.isNotEmpty()) {
+        if (diagnosticsMap.isNotEmpty()) {
             verdict = buildString {
-                appendLine("Validation of the generated files failed:")
-                appendLine("- Found corrupted files:")
-                corruptedFilePaths.forEach { filePath ->
-                    appendLine("\t- file://${rootDir.asFile.get().path}/$filePath")
+                appendLine("Validation of the network contracts plugin failed:")
+
+                diagnosticsMap.forEach { (key, diagnosticsList) ->
+                    appendLine("- $key")
+                    diagnosticsList.forEach { diagnostic ->
+                        appendLine("\t- ${diagnostic.message}")
+                    }
                 }
+
                 appendLine()
                 appendLine("You can locally run task to check corrupted files:")
                 appendLine("`./gradlew $NAME`")
@@ -72,7 +74,7 @@ public abstract class ValidateNetworkContractsRootTask : DefaultTask(), BuildVer
 
     internal companion object {
 
-        internal const val NAME = ValidateNetworkContractsTask.NAME
+        internal const val NAME = "validateNetworkContracts"
         private const val OK = "OK"
     }
 }

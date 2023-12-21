@@ -7,6 +7,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.plugin.plugins
+import org.intellij.lang.annotations.Language
 import java.io.File
 
 internal const val DEFAULT_APP_NAME = "avito-android-test-app"
@@ -48,7 +49,7 @@ object NetworkCodegenProjectGenerator {
             generatedClassesPackage = generatedClassesPackage,
             skipValidation = skipValidation,
         ),
-        buildExtra: String = ""
+        @Language("kotlin") buildExtra: String = ""
     ) {
         TestProjectGenerator(
             name = "rootapp",
@@ -75,17 +76,20 @@ object NetworkCodegenProjectGenerator {
 
     internal fun generateSchemes(
         projectDir: File,
+        moduleName: String? = null,
         generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
-        apiSchemesDir: String = "api-clients",
         schemes: List<SchemaEntry> = emptyList(),
     ): List<File> {
         if (schemes.isEmpty()) {
             return emptyList()
         }
 
+        val modulePath = moduleName?.let { "$it/" }.orEmpty()
         val packageDir = File(
             projectDir,
-            "src/main/kotlin/" + generatedClassesPackage.replace(".", "/") + "/$apiSchemesDir"
+            "${modulePath}src/main/kotlin/" +
+                generatedClassesPackage.replace(".", "/") +
+                "/api-clients"
         )
         val generatedFiles = ApiSchemesFilesGenerator(packageDir).generateFiles(schemes)
         val codegenFile = File(packageDir.parentFile, "codegen.toml")
@@ -105,7 +109,9 @@ object NetworkCodegenProjectGenerator {
 
         val generatedDir = File(
             projectDir,
-            "$moduleName/src/main/kotlin/" + generatedClassesPackage.replace(".", "/") + "/generated"
+            "$moduleName/src/main/kotlin/" +
+                generatedClassesPackage.replace(".", "/") +
+                "/generated"
         )
 
         return generatedFiles.map {

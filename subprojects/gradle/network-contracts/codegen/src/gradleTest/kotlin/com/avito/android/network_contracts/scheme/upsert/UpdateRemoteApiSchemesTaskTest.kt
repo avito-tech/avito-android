@@ -10,6 +10,7 @@ import com.avito.android.network_contracts.scheme.imports.data.models.SchemaEntr
 import com.avito.android.network_contracts.scheme.imports.mocks.apiSchemaImportResponseMock
 import com.avito.android.network_contracts.scheme.imports.mocks.mockBase64ContentFile
 import com.avito.android.network_contracts.scheme.upsert.mocks.generateExpectedJson
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
 import com.avito.git.Git
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -54,6 +55,22 @@ internal class UpdateRemoteApiSchemesTaskTest {
     @BeforeEach
     fun startup() {
         mockWebServer.start()
+    }
+
+    @Test
+    fun `when contracts fixation task is invoked - then order tasks is correct`(
+        @TempDir projectDir: File
+    ) {
+        val moduleName = "feature"
+        generateProject(projectDir, moduleName, disableValidationTask = false)
+        runTask(projectDir, dryRun = true)
+            .assertThat()
+            .tasksShouldBeTriggered(
+                ":${ValidateNetworkContractsRootTask.NAME}",
+                ":$moduleName:${CollectApiSchemesTask.NAME}",
+                ":${UpdateRemoteApiSchemesTask.NAME}"
+            )
+            .inOrder()
     }
 
     @ParameterizedTest
@@ -143,28 +160,19 @@ internal class UpdateRemoteApiSchemesTaskTest {
             .outputContains("<-- 500")
     }
 
-    @Test
-    fun `when schemes is empty - then upsert task is success with info message`() {
-        generateProject(
-            projectDir = projectDir,
-        )
-
-        runTask(projectDir)
-            .assertThat()
-            .buildSuccessful()
-            .outputContains("Schemes not found")
-    }
-
     private fun generateProject(
         projectDir: File,
+        moduleName: String = "upsert",
         generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
-        modules: List<Module> = upsertContractsModule(generatedClassesPackage = generatedClassesPackage)
+        disableValidationTask: Boolean = true,
+        modules: List<Module> = upsertContractsModule(moduleName, generatedClassesPackage = generatedClassesPackage)
     ) {
         NetworkCodegenProjectGenerator.generate(
             projectDir = projectDir,
             serviceUrl = mockWebServer.url("/").toString(),
             generatedClassesPackage = generatedClassesPackage,
             modules = modules,
+            buildExtra = disableValidationTask(projectDir).takeIf { disableValidationTask }.orEmpty()
         )
     }
 
@@ -184,17 +192,35 @@ internal class UpdateRemoteApiSchemesTaskTest {
         tempDir: File,
         author: String = "test-client",
         failure: Boolean = false,
+        dryRun: Boolean = false,
     ): TestResult {
         return gradlew(
             tempDir,
             UpdateRemoteApiSchemesTask.NAME, "-Pavito.networkContracts.fixation.author=$author",
             useTestFixturesClasspath = true,
-            expectFailure = failure
+            expectFailure = failure,
+            dryRun = dryRun
         )
     }
 
     private fun MockDispatcher.registerDefaultMock(code: Int) {
         registerMock(Mock(upsertPathMatcher, MockResponse().setResponseCode(code)))
+    }
+
+    private fun disableValidationTask(projectDir: File): String {
+        val reportFile = File(projectDir, "reports/report.txt").apply {
+            parentFile.mkdirs()
+            createNewFile()
+            writeText("OK")
+        }
+        return """
+            tasks.named(
+                "${UpdateRemoteApiSchemesTask.NAME}", 
+                ${UpdateRemoteApiSchemesTask::class.qualifiedName}::class.java
+            ).configure {
+                validationReport.set(project.file("${reportFile.path}"))
+            }
+        """.trimIndent()
     }
 }
 

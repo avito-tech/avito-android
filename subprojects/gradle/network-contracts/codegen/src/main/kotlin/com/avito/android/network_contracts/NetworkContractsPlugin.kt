@@ -15,8 +15,9 @@ import com.avito.android.network_contracts.shared.networkContractsExtension
 import com.avito.android.network_contracts.shared.networkContractsRootExtension
 import com.avito.android.network_contracts.shared.reportFile
 import com.avito.android.network_contracts.snapshot.PrepareGeneratedCodeSnapshotTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsGeneratedFilesTask
 import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsSchemesTask
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.git.gitState
 import com.avito.kotlin.dsl.getMandatoryStringProperty
@@ -177,14 +178,18 @@ public class NetworkContractsPlugin : Plugin<Project> {
     private fun configureValidationTask(
         project: Project
     ) {
-        val rootTask = project.rootProject.tasks.withType<ValidateNetworkContractsRootTask>()
+        val rootTask = project.rootProject.tasks
+            .withType<ValidateNetworkContractsRootTask>()
+
         val codegenTasks = project.tasks
             .typedNamed<CodegenTask>(CodegenTask.NAME)
 
         val snapshotTask = project.tasks
             .typedNamed<PrepareGeneratedCodeSnapshotTask>(PrepareGeneratedCodeSnapshotTask.NAME)
 
-        project.tasks.register<ValidateNetworkContractsTask>(ValidateNetworkContractsTask.NAME) {
+        val validateGeneratedFilesTask = project.tasks.register<ValidateNetworkContractsGeneratedFilesTask>(
+            ValidateNetworkContractsGeneratedFilesTask.NAME
+        ) {
             // Enable validation regardless of the setting in the extension,
             // as we need to validate codegen schemas also.
             project.networkContractsExtension.skipValidation.set(false)
@@ -195,11 +200,33 @@ public class NetworkContractsPlugin : Plugin<Project> {
             resultFile.set(
                 project.reportFile(
                     directory = "networkContracts",
-                    reportFileName = "codegenValidationReport.json"
+                    reportFileName = "codegenValidationGeneratedFilesReport.json"
                 )
             )
 
-            rootTask.configureEach { it.reports.from(resultFile) }
+            onlyIf {
+                val generatedFilesDirectory = generatedFilesDirectory.orNull?.asFile ?: return@onlyIf false
+                val referencesFilesDirectory = referenceFilesDirectory.orNull?.asFile ?: return@onlyIf false
+                generatedFilesDirectory.exists() && referencesFilesDirectory.exists()
+            }
+        }
+
+        val validateSchemesTask = project.tasks
+            .register<ValidateNetworkContractsSchemesTask>(ValidateNetworkContractsSchemesTask.NAME) {
+                this.projectPath.set(project.path)
+                this.schemes.from(codegenTasks.map { it.schemes })
+
+                resultFile.set(
+                    project.reportFile(
+                        directory = "networkContracts",
+                        reportFileName = "codegenValidationSchemesReport.json"
+                    )
+                )
+            }
+
+        rootTask.configureEach {
+            it.reports.from(validateGeneratedFilesTask.map { it.resultFile })
+            it.reports.from(validateSchemesTask.map { it.resultFile })
         }
     }
 
@@ -214,11 +241,15 @@ public class NetworkContractsPlugin : Plugin<Project> {
     }
 
     private fun configureContractFixationTask(project: Project) {
+        val validationTask = project.rootProject.tasks
+            .typedNamed<ValidateNetworkContractsRootTask>(ValidateNetworkContractsRootTask.NAME)
+
         project.tasks.register(UpdateRemoteApiSchemesTask.NAME, UpdateRemoteApiSchemesTask::class.java) {
             it.httpClientService.set(HttpClientService.provideHttpClientService(project))
             it.author.set(project.getMandatoryStringProperty("avito.networkContracts.fixation.author"))
             it.branchName.set(project.gitState().get().currentBranch.name)
             it.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(project))
+            it.validationReport.set(validationTask.flatMap { it.verdictFile })
         }
     }
 
@@ -232,19 +263,13 @@ public class NetworkContractsPlugin : Plugin<Project> {
         val collectApiSchemesTask = project.tasks.register<CollectApiSchemesTask>(CollectApiSchemesTask.NAME) {
             projectPath.set(project.path)
             projectName.set(extension.projectName)
-            codegenTomlFile.set(codegenDirectoryProvider.flatMap {
-                project.provider { it.file("codegen.toml").takeIf { it.asFile.exists() } }
-            })
-            schemesDirectory.set(
-                codegenDirectoryProvider
-                    .flatMap { it.dir(extension.schemesDirName) }
-                    .flatMap { project.provider { it.takeIf { it.asFile.exists() } } }
-            )
+            codegenTomlFile.set(codegenDirectoryProvider.map { it.file("codegen.toml") })
+            schemesDirectory.set(codegenDirectoryProvider.flatMap { it.dir(extension.schemesDirName) })
 
             jsonSchemeMetadataFile.set(
                 project.reportFile(
                     directory = "networkContracts",
-                    reportFileName = "contracts.json"
+                    reportFileName = "${CollectApiSchemesTask.NAME}.json"
                 )
             )
         }

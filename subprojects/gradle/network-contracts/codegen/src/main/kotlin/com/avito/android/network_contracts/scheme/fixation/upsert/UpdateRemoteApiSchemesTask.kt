@@ -11,8 +11,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
@@ -32,6 +34,9 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val schemes: ConfigurableFileCollection
 
+    @get:InputFile
+    public abstract val validationReport: RegularFileProperty
+
     @get:Internal
     internal abstract val httpClientService: Property<HttpClientService>
 
@@ -42,6 +47,12 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
 
     @TaskAction
     public fun upsert() {
+        val validationResult = validationReport.get().asFile.readText()
+
+        if (validationResult != "OK") {
+            error("Validation schemes failed.")
+        }
+
         val schemes = schemes.filter(File::exists)
         if (schemes.isEmpty) {
             logger.warn("Schemes not found")

@@ -1,12 +1,11 @@
-package com.avito.android.network_contracts.validation.analyzer
+package com.avito.android.network_contracts.validation.analyzer.rules
 
-import com.avito.android.network_contracts.validation.diagnostic.NetworkContractsDiagnostic
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class NetworkContractsProblemsAnalyzerTest {
+class CorruptedFilesDiagnosticRuleTest {
 
     @Test
     fun `when generated files are not equals - return analyze problem`(@TempDir projectDir: File) {
@@ -16,17 +15,16 @@ class NetworkContractsProblemsAnalyzerTest {
         val referenceFile = File(referencesDir, "file.txt").generateWith("reference")
         val generatedFile = File(generatedDir, referenceFile.name).generateWith("generated")
 
-        val analyzer = NetworkContractsProblemsAnalyzer(
+        val rule = CorruptedFilesDiagnosticRule(
             generatedFilesDir = generatedDir,
             referencesFilesDir = referencesDir,
         )
 
-        val result = analyzer.analyze()
-        assertThat(result).isNotEmpty()
-        assertThat(result.first()).isInstanceOf(NetworkContractsDiagnostic.Failure::class.java)
+        rule.analyze()
+        assertThat(rule.findings).isNotEmpty()
 
-        val diagnostic = result.first() as NetworkContractsDiagnostic.Failure
-        assertThat(diagnostic.corruptedFilePaths).containsExactlyElementsIn(listOf(generatedFile.path))
+        val diagnostic = rule.findings.first()
+        assertThat(diagnostic.message).contains(generatedFile.path)
     }
 
     @Test
@@ -37,17 +35,17 @@ class NetworkContractsProblemsAnalyzerTest {
         File(referencesDir, "file.txt").generateWith("reference")
         val generatedRedundantFile = File(generatedDir, "folder/file.txt").generateWith("redundant")
 
-        val analyzer = NetworkContractsProblemsAnalyzer(
+        val rule = CorruptedFilesDiagnosticRule(
             generatedFilesDir = generatedDir,
             referencesFilesDir = referencesDir,
         )
 
-        val result = analyzer.analyze()
-        assertThat(result).isNotEmpty()
-        assertThat(result.first()).isInstanceOf(NetworkContractsDiagnostic.Failure::class.java)
+        rule.analyze()
 
-        val diagnostic = result.first() as NetworkContractsDiagnostic.Failure
-        assertThat(diagnostic.corruptedFilePaths).containsExactlyElementsIn(listOf(generatedRedundantFile.path))
+        assertThat(rule.findings).isNotEmpty()
+
+        val diagnostic = rule.findings.first()
+        assertThat(diagnostic.message).contains(generatedRedundantFile.path)
     }
 
     @Test
@@ -58,11 +56,12 @@ class NetworkContractsProblemsAnalyzerTest {
         File(referencesDir, "file.txt").generateWith("generated")
         File(generatedDir, "file.txt").generateWith("generated")
 
-        val analyzer = NetworkContractsProblemsAnalyzer(
+        val rule = CorruptedFilesDiagnosticRule(
             generatedFilesDir = generatedDir,
             referencesFilesDir = referencesDir,
         )
-        assertThat(analyzer.analyze()).isEmpty()
+        rule.analyze()
+        assertThat(rule.findings).isEmpty()
     }
 
     @Test
@@ -70,11 +69,12 @@ class NetworkContractsProblemsAnalyzerTest {
         val generatedDir = File(projectDir, "generated")
         val referencesDir = File(projectDir, "references")
 
-        val analyzer = NetworkContractsProblemsAnalyzer(
+        val rule = CorruptedFilesDiagnosticRule(
             generatedFilesDir = generatedDir,
             referencesFilesDir = referencesDir,
         )
-        assertThat(analyzer.analyze()).isEmpty()
+        rule.analyze()
+        assertThat(rule.findings).isEmpty()
     }
 
     private fun File.generateWith(text: String): File {

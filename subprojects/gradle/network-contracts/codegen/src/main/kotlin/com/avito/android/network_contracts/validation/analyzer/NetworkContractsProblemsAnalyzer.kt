@@ -1,23 +1,24 @@
 package com.avito.android.network_contracts.validation.analyzer
 
-import com.avito.android.network_contracts.validation.diagnostic.NetworkContractsDiagnostic
-import com.avito.android.network_contracts.validation.subtractFilesFrom
-import java.io.File
+import com.avito.android.network_contracts.validation.analyzer.diagnostic.NetworkContractsDiagnostic
+import com.avito.android.network_contracts.validation.analyzer.rules.NetworkContractsDiagnosticRule
 
 internal class NetworkContractsProblemsAnalyzer(
-    private val generatedFilesDir: File,
-    private val referencesFilesDir: File,
+    private val rules: List<NetworkContractsDiagnosticRule>
 ) {
 
     fun analyze(): List<NetworkContractsDiagnostic> {
-        val validationDetections = mutableListOf<NetworkContractsDiagnostic>()
-
-        val changedFiles = generatedFilesDir.subtractFilesFrom(referencesFilesDir)
-        if (changedFiles.isNotEmpty()) {
-            val corruptedFiles = changedFiles.map(File::getPath)
-            validationDetections += NetworkContractsDiagnostic.Failure(corruptedFiles)
+        val detections = rules.flatMap {
+            it.analyze()
+            it.findings
         }
+        return detections
+    }
 
-        return validationDetections
+    companion object {
+
+        fun create(vararg rules: NetworkContractsDiagnosticRule): NetworkContractsProblemsAnalyzer {
+            return NetworkContractsProblemsAnalyzer(rules.toList())
+        }
     }
 }

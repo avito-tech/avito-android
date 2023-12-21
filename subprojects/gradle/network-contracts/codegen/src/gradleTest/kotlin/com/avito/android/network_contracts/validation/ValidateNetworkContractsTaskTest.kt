@@ -3,10 +3,11 @@ package com.avito.android.network_contracts.validation
 import com.avito.android.network_contracts.NetworkCodegenProjectGenerator
 import com.avito.android.network_contracts.codegen.CodegenTask
 import com.avito.android.network_contracts.defaultModule
+import com.avito.android.network_contracts.scheme.imports.data.models.SchemaEntry
+import com.avito.android.network_contracts.snapshot.PrepareGeneratedCodeSnapshotTask
 import com.avito.android.network_contracts.test.ChangeReferencesFilesTask
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
-import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -22,8 +23,11 @@ class ValidateNetworkContractsTaskTest {
         runTask(ValidateNetworkContractsRootTask.NAME, projectDir, dryRun = true)
             .assertThat()
             .tasksShouldBeTriggered(
-                ":$projectName:${ValidateNetworkContractsTask.NAME}",
-                ":$projectName:${CodegenTask.NAME}"
+                ":$projectName:${PrepareGeneratedCodeSnapshotTask.NAME}",
+                ":$projectName:${CodegenTask.NAME}",
+                ":$projectName:${ValidateNetworkContractsGeneratedFilesTask.NAME}",
+                ":$projectName:${ValidateNetworkContractsSchemesTask.NAME}",
+                ":${ValidateNetworkContractsRootTask.NAME}",
             )
     }
 
@@ -39,7 +43,19 @@ class ValidateNetworkContractsTaskTest {
     }
 
     @Test
-    fun `when run validation task and files is corrupted - then throw validation error - then add it to git`(
+    fun `when run validation task and schemes is empty -  then throw validation error`(
+        @TempDir projectDir: File
+    ) {
+        val moduleName = "app"
+        generateProjectWithGeneratedFiles(projectDir, emptyList(), schemes = emptyList(), moduleName = moduleName)
+        runTask(ValidateNetworkContractsRootTask.NAME, projectDir, failed = true)
+            .assertThat()
+            .buildFailed()
+            .outputContains("Module `:$moduleName` applies plugin, but does not contain any network contracts schemes.")
+    }
+
+    @Test
+    fun `when run validation task and files is corrupted - then throw validation error - then fix them`(
         @TempDir projectDir: File
     ) {
         // given: generated files
@@ -57,8 +73,7 @@ class ValidateNetworkContractsTaskTest {
         // then: report fail result
         taskAssert.assertThat()
             .buildFailed()
-            .outputContains("Validation of the generated files failed")
-            .outputContains("Found corrupted files")
+            .outputContains("Validation of the network contracts plugin failed")
             .apply {
                 codegenFiles.forEach { outputContains(it.path) }
             }
@@ -76,6 +91,9 @@ class ValidateNetworkContractsTaskTest {
         projectDir: File,
         generatedFiles: List<File>,
         moduleName: String = "app",
+        schemes: List<SchemaEntry> = listOf(
+            SchemaEntry("test/path.yaml", "content")
+        )
     ): List<File> {
         val packageName = "com.avito.android"
 
@@ -89,6 +107,7 @@ class ValidateNetworkContractsTaskTest {
                 buildExtra = validateTaskExtraConfiguration
             )
         )
+        NetworkCodegenProjectGenerator.generateSchemes(projectDir, moduleName = moduleName, schemes = schemes)
         return NetworkCodegenProjectGenerator.generateCodegenFiles(moduleName, projectDir, packageName, generatedFiles)
     }
 
@@ -101,7 +120,7 @@ class ValidateNetworkContractsTaskTest {
     ): TestResult {
         return gradlew(
             tempDir,
-            name, "-PcorruptFile=$corruptFile",
+            ":$name", "-PcorruptFile=$corruptFile",
             expectFailure = failed,
             dryRun = dryRun,
             configurationCache = true,
@@ -109,7 +128,6 @@ class ValidateNetworkContractsTaskTest {
         )
     }
 
-    @Language("kotlin")
     private fun configureTestValidationTask(
         packageName: String,
     ): String {
@@ -125,12 +143,19 @@ class ValidateNetworkContractsTaskTest {
                 referencesFiles.setFrom($generatedDirGradlePath)
                 outputDirectory.set($generatedDirGradlePath)
                 isEnabled = project.property("corruptFile") == "true"
-                dependsOn("prepareCodegenSnapshot")
+                dependsOn("${CodegenTask.NAME}")
             }
             
             tasks.named(
-                "${ValidateNetworkContractsTask.NAME}", 
-                ${ValidateNetworkContractsTask::class.qualifiedName}::class.java
+                "${CodegenTask.NAME}", 
+                DefaultTask::class.java
+            ).configure {
+                isEnabled = false
+            }
+            
+            tasks.named(
+                "${ValidateNetworkContractsGeneratedFilesTask.NAME}", 
+                ${ValidateNetworkContractsGeneratedFilesTask::class.qualifiedName}::class.java
             ).configure {
                 referenceFilesDirectory.set(changeReferencesFilesTask.flatMap { it.outputDirectory })
             }

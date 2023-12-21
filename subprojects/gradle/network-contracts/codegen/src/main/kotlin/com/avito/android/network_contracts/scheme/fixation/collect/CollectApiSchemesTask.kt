@@ -10,7 +10,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.util.Base64
@@ -24,11 +23,9 @@ public abstract class CollectApiSchemesTask : DefaultTask() {
     public abstract val projectName: Property<String>
 
     @get:InputDirectory
-    @get:Optional
     public abstract val schemesDirectory: DirectoryProperty
 
     @get:InputFile
-    @get:Optional
     public abstract val codegenTomlFile: RegularFileProperty
 
     @get:OutputFile
@@ -36,9 +33,6 @@ public abstract class CollectApiSchemesTask : DefaultTask() {
 
     @TaskAction
     public fun upsert() {
-        if (!codegenTomlFile.isPresent || !schemesDirectory.isPresent) {
-            return
-        }
         val schemesCollector = ApiSchemesCollector(projectPath.get())
 
         val schemesFile = schemesCollector.collect(codegenTomlFile.get().asFile, schemesDirectory.get().asFile)
