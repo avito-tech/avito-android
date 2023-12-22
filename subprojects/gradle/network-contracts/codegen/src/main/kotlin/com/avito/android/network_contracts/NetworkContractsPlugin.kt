@@ -21,6 +21,7 @@ import com.avito.android.network_contracts.validation.ValidateNetworkContractsSc
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.git.gitState
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.kotlin.dsl.withType
@@ -134,13 +135,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
     ) {
         val httpClientService = HttpClientService.provideHttpClientService(project)
         project.tasks.register(ApiSchemesImportTask.NAME, ApiSchemesImportTask::class.java) {
-            if (!project.hasProperty("apiSchemesUrl")) {
-                error(
-                    "Parameter `apiSchemesUrl` is not specified. " +
-                        "Run task with parameter `-PapiSchemesUrl` with desired path."
-                )
-            }
-            it.apiPath.set(project.getMandatoryStringProperty("apiSchemesUrl"))
+            it.apiPath.set(project.getOptionalStringProperty("apiSchemesUrl", ""))
             it.outputDirectory.set(
                 project
                     .findPackageDirectory(project.networkContractsExtension.packageName)
