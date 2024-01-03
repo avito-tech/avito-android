@@ -11,6 +11,8 @@ plugins {
     id("convention-dependencies")
 }
 
+apply(from = "../build-logic-settings/cache-plugin/convention-cache.settings.gradle.kts")
+
 val parentBuild = gradle.parent
 
 /**
@@ -33,6 +35,7 @@ include("kotlin")
 include("android")
 include("testing")
 include("checks")
+include("dependency-locking")
 
 /**
  * renamed from 'gradle' to prevent IDE resolution conflict:

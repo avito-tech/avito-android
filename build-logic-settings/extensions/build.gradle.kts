@@ -1,3 +1,7 @@
 plugins {
-    `kotlin-dsl`
+    java
+}
+
+dependencies {
+    compileOnly(gradleApi())
 }

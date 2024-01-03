@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
-    id("convention.serialization")
+    id("convention.kotlin-serialization")
 }
 
 dependencies {

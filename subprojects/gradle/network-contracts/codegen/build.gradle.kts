@@ -3,7 +3,7 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
     id("convention.test-fixtures")
-    id("convention.serialization")
+    id("convention.kotlin-serialization")
 }
 
 dependencies {

@@ -14,16 +14,15 @@ pluginManagement {
     // See rationale inside these scripts
     apply(from = "build-logic-settings/scan-plugin/buildScan-disableAutoApplyFix.settings.gradle.kts")
     apply(from = "build-logic-settings/dependency-plugin/pluginManagement-shared.settings.gradle.kts")
-
     @Suppress("UnstableApiUsage")
     includeBuild("build-logic-settings")
 }
-
 plugins {
-    id("convention-scan")
-    id("convention-cache")
+    id("scan-settings")
     id("convention-dependencies")
 }
+
+apply(from = "build-logic-settings/cache-plugin/convention-cache.settings.gradle.kts")
 
 includeBuild("build-logic")
 
