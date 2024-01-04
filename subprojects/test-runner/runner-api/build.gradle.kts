@@ -5,6 +5,6 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.result)
-    api(projects.subprojects.testRunner.testModel)
+    api(project(":subprojects:common:result"))
+    api(project(":subprojects:test-runner:test-model"))
 }

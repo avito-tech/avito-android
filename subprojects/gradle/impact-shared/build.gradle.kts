@@ -5,25 +5,25 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.moduleDependencies)
+    api(project(":subprojects:gradle:module-dependencies"))
 
     implementation(gradleApi())
 
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.git)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.process)
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:process"))
 
     implementation(libs.antPattern)
     implementation(libs.kotlinGradle)
 
     testImplementation(libs.mockitoKotlin)
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.gradle.testProject)
-    testImplementation(testFixtures(projects.subprojects.gradle.git))
-    testImplementation(projects.subprojects.logger.logger)
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(testFixtures(project(":subprojects:gradle:git")))
+    testImplementation(project(":subprojects:logger:logger"))
 
-    testFixturesApi(projects.subprojects.common.result)
-    testFixturesApi(projects.subprojects.gradle.testProject)
+    testFixturesApi(project(":subprojects:common:result"))
+    testFixturesApi(project(":subprojects:gradle:test-project"))
     testFixturesImplementation(libs.truth)
 }

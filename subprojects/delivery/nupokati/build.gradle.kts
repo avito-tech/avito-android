@@ -8,23 +8,23 @@ plugins {
 dependencies {
     implementation(libs.androidGradle)
 
-    implementation(projects.subprojects.delivery.qapps)
-    implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.problem)
-    implementation(projects.subprojects.logger.gradleLogger)
-    implementation(projects.subprojects.gradle.git)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.slf4jGradleLogger)
-    implementation(projects.subprojects.testRunner.instrumentationTests)
-    implementation(projects.subprojects.testRunner.reportViewer)
+    implementation(project(":subprojects:delivery:qapps"))
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:logger:gradle-logger"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:logger:slf4j-gradle-logger"))
+    implementation(project(":subprojects:test-runner:instrumentation-tests"))
+    implementation(project(":subprojects:test-runner:report-viewer"))
 
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.common.resources)
-    testImplementation(projects.subprojects.common.testOkhttp)
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:common:resources"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(libs.jsonAssert)
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(projects.subprojects.common.testOkhttp)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
 }
 
 gradlePlugin {

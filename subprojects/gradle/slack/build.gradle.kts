@@ -5,16 +5,16 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:common:result"))
 
-    implementation(projects.subprojects.common.time)
-    implementation(projects.subprojects.common.okhttp)
+    implementation(project(":subprojects:common:time"))
+    implementation(project(":subprojects:common:okhttp"))
     implementation(libs.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(libs.okhttp)
     implementation(libs.coroutinesCore)
 
-    testImplementation(projects.subprojects.gradle.testProject)
-    testImplementation(testFixtures(projects.subprojects.common.statsd))
-    testImplementation(testFixtures(projects.subprojects.common.time))
-    testImplementation(testFixtures(projects.subprojects.gradle.slack))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(testFixtures(project(":subprojects:common:statsd")))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
+    testImplementation(testFixtures(project(":subprojects:gradle:slack")))
 }

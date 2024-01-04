@@ -5,14 +5,14 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.testRunner.service)
-    implementation(projects.subprojects.logger.slf4jGradleLogger)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:test-runner:service"))
+    implementation(project(":subprojects:logger:slf4j-gradle-logger"))
 
-    implementation(projects.subprojects.common.result)
+    implementation(project(":subprojects:common:result"))
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

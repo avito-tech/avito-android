@@ -9,18 +9,18 @@ publish {
 }
 
 dependencies {
-    api(projects.subprojects.common.coroutinesExtension)
-    api(projects.subprojects.common.statsd)
-    api(projects.subprojects.common.time)
-    api(projects.subprojects.gradle.process)
-    api(projects.subprojects.common.commandLineRx)
-    api(projects.subprojects.testRunner.deviceProvider.api)
-    api(projects.subprojects.testRunner.testModel)
-    api(projects.subprojects.testRunner.runnerApi)
+    api(project(":subprojects:common:coroutines-extension"))
+    api(project(":subprojects:common:statsd"))
+    api(project(":subprojects:common:time"))
+    api(project(":subprojects:gradle:process"))
+    api(project(":subprojects:common:command-line-rx"))
+    api(project(":subprojects:test-runner:device-provider:api"))
+    api(project(":subprojects:test-runner:test-model"))
+    api(project(":subprojects:test-runner:runner-api"))
 
-    implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.common.problem)
-    implementation(projects.subprojects.testRunner.testReportArtifacts) {
+    implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:test-runner:test-report-artifacts")) {
         because("DeviceWorker pulls test artifacts")
     }
     implementation(libs.ddmlib)
@@ -30,10 +30,10 @@ dependencies {
     }
 
     testImplementation(libs.coroutinesTest)
-    testImplementation(projects.subprojects.common.files)
-    testImplementation(projects.subprojects.common.resources)
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.logger.logger)
-    testImplementation(testFixtures(projects.subprojects.common.time))
-    testImplementation(testFixtures(projects.subprojects.testRunner.deviceProvider.model))
+    testImplementation(project(":subprojects:common:files"))
+    testImplementation(project(":subprojects:common:resources"))
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:logger:logger"))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
+    testImplementation(testFixtures(project(":subprojects:test-runner:device-provider:model")))
 }

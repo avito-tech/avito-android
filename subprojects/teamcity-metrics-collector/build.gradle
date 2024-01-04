@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.common.teamcityCommon)
+    implementation(project(":subprojects:common:teamcity-common"))
     implementation(libs.kotlinXCli)
-    implementation(projects.subprojects.common.graphite)
+    implementation(project(":subprojects:common:graphite"))
 }
 
 tasks.register("sendTeamcityBuildsMetrics", JavaExec) {

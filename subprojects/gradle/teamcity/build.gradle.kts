@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.teamcityCommon)
+    api(project(":subprojects:common:teamcity-common"))
     implementation(gradleApi())
-    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
 
-    testImplementation(projects.subprojects.gradle.testProject)
+    testImplementation(project(":subprojects:gradle:test-project"))
 }

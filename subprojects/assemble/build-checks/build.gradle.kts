@@ -5,14 +5,14 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.buildFailer)
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.impactShared)
-    implementation(projects.subprojects.gradle.buildEnvironment)
-    implementation(projects.subprojects.common.files)
-    implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.gradle.statsdConfig)
-    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(project(":subprojects:gradle:build-failer"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:impact-shared"))
+    implementation(project(":subprojects:gradle:build-environment"))
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:gradle:statsd-config"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(libs.kotlinGradle)
     implementation(libs.layoutLibApi) {
         because("com.android.resources.ResourceType")
@@ -24,9 +24,9 @@ dependencies {
     // for Gradle tests
     // TODO: find a way to provide external plugins only to Gradle tests.
     //      One probable workaround to avoid this dependency at all: MBS-12338
-    implementation(projects.subprojects.gradle.impact)
+    implementation(project(":subprojects:gradle:impact"))
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

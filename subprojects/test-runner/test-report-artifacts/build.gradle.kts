@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.testRunner.report)
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:test-runner:report"))
+    api(project(":subprojects:common:result"))
 }

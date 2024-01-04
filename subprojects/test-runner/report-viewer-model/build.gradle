@@ -12,5 +12,5 @@ dependencies {
     api(libs.okhttp) {
         because("HttpUrl used to type urls more strict")
     }
-    api(projects.subprojects.testRunner.testModel)
+    api(project(":subprojects:test-runner:test-model"))
 }

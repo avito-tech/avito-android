@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(libs.truth)
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:common:result"))
 }

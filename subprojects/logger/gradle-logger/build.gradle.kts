@@ -6,12 +6,12 @@ plugins {
 dependencies {
     compileOnly(gradleApi())
 
-    api(projects.subprojects.logger.logger)
-    api(projects.subprojects.common.time)
+    api(project(":subprojects:logger:logger"))
+    api(project(":subprojects:common:time"))
 
-    implementation(projects.subprojects.gradle.buildEnvironment)
-    implementation(projects.subprojects.logger.elasticLogger)
-    implementation(projects.subprojects.logger.sentryLogger)
+    implementation(project(":subprojects:gradle:build-environment"))
+    implementation(project(":subprojects:logger:elastic-logger"))
+    implementation(project(":subprojects:logger:sentry-logger"))
 
     testImplementation(libs.mockitoJUnitJupiter)
 }

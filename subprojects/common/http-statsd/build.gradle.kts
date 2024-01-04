@@ -4,13 +4,13 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.time)
-    api(projects.subprojects.common.statsd)
-    api(projects.subprojects.logger.logger)
-    api(projects.subprojects.common.okhttp)
+    api(project(":subprojects:common:time"))
+    api(project(":subprojects:common:statsd"))
+    api(project(":subprojects:logger:logger"))
+    api(project(":subprojects:common:okhttp"))
 
-    testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.common.junitUtils)
-    testImplementation(testFixtures(projects.subprojects.common.statsd))
+    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:common:junit-utils"))
+    testImplementation(testFixtures(project(":subprojects:common:statsd")))
 }

@@ -6,12 +6,12 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(projects.subprojects.assemble.criticalPath.api)
+    implementation(project(":subprojects:assemble:critical-path:api"))
     implementation(libs.gson)
-    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
 
-    gradleTestImplementation(projects.subprojects.common.junitUtils)
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:common:junit-utils"))
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

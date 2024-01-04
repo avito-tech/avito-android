@@ -5,14 +5,14 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.common.diffUtil)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(project(":subprojects:common:diff-util"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:logger:gradle-logger"))
     implementation(libs.proguardBase)
 
-    gradleTestImplementation(projects.subprojects.common.resources)
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:common:resources"))
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(libs.truth)
 }
 

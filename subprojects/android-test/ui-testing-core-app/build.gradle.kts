@@ -42,15 +42,15 @@ dependencies {
     implementation(libs.recyclerView)
     implementation(libs.swipeRefreshLayout)
 
-    implementation(projects.subprojects.androidLib.proxyToast)
+    implementation(project(":subprojects:android-lib:proxy-toast"))
 
-    androidTestImplementation(projects.subprojects.testRunner.testInhouseRunner)
-    androidTestImplementation(projects.subprojects.testRunner.testReportAndroid)
-    androidTestImplementation(projects.subprojects.testRunner.testAnnotations)
-    androidTestImplementation(projects.subprojects.testRunner.reportViewer)
-    androidTestImplementation(projects.subprojects.androidTest.uiTestingCore)
-    androidTestImplementation(projects.subprojects.androidTest.toastRule)
-    androidTestImplementation(projects.subprojects.common.truthExtensions)
+    androidTestImplementation(project(":subprojects:test-runner:test-inhouse-runner"))
+    androidTestImplementation(project(":subprojects:test-runner:test-report-android"))
+    androidTestImplementation(project(":subprojects:test-runner:test-annotations"))
+    androidTestImplementation(project(":subprojects:test-runner:report-viewer"))
+    androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
+    androidTestImplementation(project(":subprojects:android-test:toast-rule"))
+    androidTestImplementation(project(":subprojects:common:truth-extensions"))
 
     androidTestUtil(libs.testOrchestrator)
 }

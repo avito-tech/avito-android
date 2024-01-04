@@ -8,9 +8,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttpLogging)
-    implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.logger.logger)
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:logger:logger"))
 
-    testImplementation(projects.subprojects.common.testOkhttp)
+    testImplementation(project(":subprojects:common:test-okhttp"))
 }

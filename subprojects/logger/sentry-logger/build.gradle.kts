@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.logger.logger)
+    api(project(":subprojects:logger:logger"))
 }

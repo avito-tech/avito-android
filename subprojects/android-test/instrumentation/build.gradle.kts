@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:common:result"))
 
     implementation(libs.androidXTestCore)
 }

@@ -6,10 +6,10 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
-    implementation(projects.gradleExt)
-    implementation(projects.testing)
-    implementation(projects.dependencyLocking)
-    implementation(projects.checks)
+    implementation(project(":gradle-ext"))
+    implementation(project(":testing"))
+    implementation(project(":dependency-locking"))
+    implementation(project(":checks"))
     implementation(libs.kotlinGradle)
     implementation(libs.kotlinx.serialization.gradle)
     implementation(libs.kspGradle)

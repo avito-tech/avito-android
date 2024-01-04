@@ -5,17 +5,17 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.assemble.criticalPath.api)
-    implementation(projects.subprojects.common.traceEvent)
-    implementation(projects.subprojects.assemble.gradleProfile)
-    implementation(projects.subprojects.common.compositeException)
-    implementation(projects.subprojects.common.problem)
-    implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:assemble:critical-path:api"))
+    implementation(project(":subprojects:common:trace-event"))
+    implementation(project(":subprojects:assemble:gradle-profile"))
+    implementation(project(":subprojects:common:composite-exception"))
+    implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:logger:gradle-logger"))
     implementation(gradleApi())
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

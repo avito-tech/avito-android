@@ -5,17 +5,17 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.testRunner.service)
-    api(projects.subprojects.testRunner.deviceProvider.api)
-    api(projects.subprojects.testRunner.kubernetes)
+    api(project(":subprojects:test-runner:service"))
+    api(project(":subprojects:test-runner:device-provider:api"))
+    api(project(":subprojects:test-runner:kubernetes"))
 
-    implementation(projects.subprojects.gradle.process)
-    implementation(projects.subprojects.logger.logger)
-    implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.common.waiter)
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:logger:logger"))
+    implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:common:waiter"))
 
     testImplementation(libs.coroutinesTest)
-    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
 
-    testFixturesApi(testFixtures(projects.subprojects.testRunner.kubernetes))
+    testFixturesApi(testFixtures(project(":subprojects:test-runner:kubernetes")))
 }

@@ -4,22 +4,22 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.testRunner.testReportDsl)
-    api(projects.subprojects.testRunner.fileStorage)
+    api(project(":subprojects:test-runner:test-report-dsl"))
+    api(project(":subprojects:test-runner:file-storage"))
 
-    implementation(projects.subprojects.common.reflectionExtensions)
-    implementation(projects.subprojects.common.time)
-    implementation(projects.subprojects.testRunner.testReportArtifacts) {
+    implementation(project(":subprojects:common:reflection-extensions"))
+    implementation(project(":subprojects:common:time"))
+    implementation(project(":subprojects:test-runner:test-report-artifacts")) {
         because("ExternalStorageTransport need to know where to store artifacts")
     }
-    implementation(projects.subprojects.logger.logger)
-    implementation(projects.subprojects.logger.elasticLogger)
-    implementation(projects.subprojects.common.sentry)
-    implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.testRunner.testAnnotations)
-    implementation(projects.subprojects.common.throwableUtils)
-    implementation(projects.subprojects.androidTest.resourceManagerExceptions)
-    implementation(projects.subprojects.androidTest.websocketReporter)
+    implementation(project(":subprojects:logger:logger"))
+    implementation(project(":subprojects:logger:elastic-logger"))
+    implementation(project(":subprojects:common:sentry"))
+    implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:test-runner:test-annotations"))
+    implementation(project(":subprojects:common:throwable-utils"))
+    implementation(project(":subprojects:android-test:resource-manager-exceptions"))
+    implementation(project(":subprojects:android-test:websocket-reporter"))
     implementation(libs.okio)
     implementation(libs.kotson)
     implementation(libs.okhttp)
@@ -27,7 +27,7 @@ dependencies {
     testImplementation(libs.jsonPathAssert)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.okhttpMock)
-    testImplementation(projects.subprojects.common.junitUtils)
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(project(":subprojects:common:junit-utils"))
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
 }

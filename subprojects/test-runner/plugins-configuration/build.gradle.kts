@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.testRunner.reportViewer)
+    api(project(":subprojects:test-runner:report-viewer"))
 
     implementation(gradleApi())
-    api(projects.subprojects.gradle.buildEnvironment)
-    api(projects.subprojects.gradle.git)
+    api(project(":subprojects:gradle:build-environment"))
+    api(project(":subprojects:gradle:git"))
 }

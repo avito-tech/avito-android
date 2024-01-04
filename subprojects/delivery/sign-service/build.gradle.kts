@@ -5,24 +5,24 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.common.files)
-    implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.result)
-    implementation(projects.subprojects.common.problem)
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.workerExtensions)
-    implementation(projects.subprojects.gradle.statsdConfig)
-    implementation(projects.subprojects.gradle.buildFailer)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.slf4jGradleLogger)
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:worker-extensions"))
+    implementation(project(":subprojects:gradle:statsd-config"))
+    implementation(project(":subprojects:gradle:build-failer"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:logger:slf4j-gradle-logger"))
 
     implementation(libs.okhttp)
 
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.common.testOkhttp)
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(projects.subprojects.common.testOkhttp)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
 }
 
 gradlePlugin {

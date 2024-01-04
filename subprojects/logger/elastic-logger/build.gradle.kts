@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.logger.logger)
-    api(projects.subprojects.common.elastic)
+    api(project(":subprojects:logger:logger"))
+    api(project(":subprojects:common:elastic"))
 }

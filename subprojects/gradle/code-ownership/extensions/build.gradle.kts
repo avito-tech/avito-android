@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.codeOwnership.api)
+    api(project(":subprojects:gradle:code-ownership:api"))
     compileOnly(gradleApi())
-    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
 }
 
 publish {

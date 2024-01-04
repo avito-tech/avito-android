@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.series)
+    api(project(":subprojects:common:series"))
     implementation(libs.statsd)
-    implementation(projects.subprojects.logger.logger)
+    implementation(project(":subprojects:logger:logger"))
 }

@@ -7,14 +7,14 @@ plugins {
 dependencies {
     compileOnly(gradleApi())
 
-    api(projects.subprojects.gradle.moduleDependencies)
-    implementation(projects.subprojects.common.math)
-    implementation(projects.subprojects.gradle.gradleExtensions)
+    api(project(":subprojects:gradle:module-dependencies"))
+    implementation(project(":subprojects:common:math"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(libs.jdgraphtCore)
     implementation(libs.jacksonDataformat.csv)
 
-    gradleTestImplementation(projects.subprojects.common.truthExtensions)
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:common:truth-extensions"))
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

@@ -5,27 +5,27 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.delivery.signService) {
+    implementation(project(":subprojects:delivery:sign-service")) {
         because("Creates qappsUploadSigned<Variant> tasks which is directly depends on corresponding signer task")
     }
 
-    implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.result)
-    api(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.buildFailer)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.statsdConfig)
-    implementation(projects.subprojects.logger.slf4jGradleLogger)
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:result"))
+    api(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:build-failer"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:statsd-config"))
+    implementation(project(":subprojects:logger:slf4j-gradle-logger"))
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttpLogging)
 
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(projects.subprojects.logger.logger)
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":subprojects:logger:logger"))
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(projects.subprojects.common.testOkhttp)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
 }
 
 gradlePlugin {

@@ -7,27 +7,27 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.git)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.mtls)
-    implementation(projects.subprojects.gradle.process)
-    implementation(projects.subprojects.logger.gradleLogger)
-    implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.assemble.buildVerdictTasksApi)
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:mtls"))
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:logger:gradle-logger"))
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:assemble:build-verdict-tasks-api"))
 
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.bundles.ktor)
 
-    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(project(":subprojects:logger:gradle-logger"))
 
     gradleTestImplementation(libs.jsonAssert)
     gradleTestImplementation(libs.junitJupiterParams)
-    gradleTestImplementation(projects.subprojects.common.testOkhttp)
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 
     testImplementation(libs.mockitoKotlin)
-    testFixturesImplementation(testFixtures(projects.subprojects.gradle.mtls))
+    testFixturesImplementation(testFixtures(project(":subprojects:gradle:mtls")))
 }
 
 gradlePlugin {

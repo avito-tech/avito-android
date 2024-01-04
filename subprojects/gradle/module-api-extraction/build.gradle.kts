@@ -8,8 +8,8 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.moduleTypes)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:module-types"))
 
     implementation(libs.moshiAdapters)
     implementation(libs.dependencyAnalysis)

@@ -5,6 +5,6 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:logger:gradle-logger"))
 }

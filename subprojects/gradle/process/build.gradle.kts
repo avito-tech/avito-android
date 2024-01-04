@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:common:result"))
 
     // todo used only for Commandline.translateCommandline(source)
     implementation(gradleApi())
-    implementation(projects.subprojects.logger.logger)
+    implementation(project(":subprojects:logger:logger"))
 }

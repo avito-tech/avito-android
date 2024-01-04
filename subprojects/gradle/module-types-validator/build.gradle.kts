@@ -7,16 +7,16 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.moduleTypes)
+    api(project(":subprojects:gradle:module-types"))
 
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.common.problem)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:common:problem"))
     implementation(libs.kotlinGradle)
 
     implementation(libs.moshi)
     ksp(libs.moshiCodegen)
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

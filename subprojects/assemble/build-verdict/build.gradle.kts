@@ -5,15 +5,15 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.assemble.buildVerdictTasksApi)
+    api(project(":subprojects:assemble:build-verdict-tasks-api"))
 
     implementation(gradleApi())
-    implementation(projects.subprojects.common.throwableUtils)
-    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(project(":subprojects:common:throwable-utils"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(libs.gson)
     implementation(libs.kotlinHtml)
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

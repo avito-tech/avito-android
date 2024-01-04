@@ -6,14 +6,14 @@ plugins {
 dependencies {
     api(libs.okhttp)
 
-    implementation(projects.subprojects.common.time)
-    implementation(projects.subprojects.common.okhttp)
+    implementation(project(":subprojects:common:time"))
+    implementation(project(":subprojects:common:okhttp"))
 
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
 
-    testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(projects.subprojects.logger.logger)
-    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":subprojects:logger:logger"))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
 }

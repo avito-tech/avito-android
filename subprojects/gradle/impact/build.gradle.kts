@@ -5,25 +5,25 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.impactShared)
+    api(project(":subprojects:gradle:impact-shared"))
 
     implementation(gradleApi())
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.common.files)
-    implementation(projects.subprojects.common.math)
-    implementation(projects.subprojects.gradle.git)
-    implementation(projects.subprojects.gradle.buildEnvironment)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.statsdConfig)
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:common:math"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:build-environment"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:statsd-config"))
 
     implementation(libs.antPattern)
     implementation(libs.kotlinGradle)
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(testFixtures(projects.subprojects.common.statsd))
-    gradleTestImplementation(testFixtures(projects.subprojects.gradle.buildEnvironment))
-    gradleTestImplementation(testFixtures(projects.subprojects.gradle.impactShared))
-    gradleTestImplementation(testFixtures(projects.subprojects.gradle.impactShared))
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(testFixtures(project(":subprojects:common:statsd")))
+    gradleTestImplementation(testFixtures(project(":subprojects:gradle:build-environment")))
+    gradleTestImplementation(testFixtures(project(":subprojects:gradle:impact-shared")))
+    gradleTestImplementation(testFixtures(project(":subprojects:gradle:impact-shared")))
 }
 
 gradlePlugin {

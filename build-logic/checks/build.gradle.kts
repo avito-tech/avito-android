@@ -6,7 +6,7 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
-    implementation(projects.gradleExt)
+    implementation(project(":gradle-ext"))
     implementation(libs.versionsGradle)
     implementation(libs.detektGradle)
     // to access LibrariesForLibs

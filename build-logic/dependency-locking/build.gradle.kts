@@ -6,7 +6,7 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
-    implementation(projects.gradleExt)
+    implementation(project(":gradle-ext"))
     implementation(libs.dependencyGuard)
     // to access LibrariesForLibs
     // workaround for https://github.com/gradle/gradle/issues/15383

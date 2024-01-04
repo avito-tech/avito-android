@@ -7,17 +7,17 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.gradle.buildEnvironment)
-    implementation(projects.subprojects.gradle.git)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.impactShared)
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:gradle:build-environment"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttpLogging)
     implementation(libs.sentry)
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(projects.subprojects.common.testOkhttp)
-    gradleTestImplementation(projects.subprojects.common.truthExtensions)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
+    gradleTestImplementation(project(":subprojects:common:truth-extensions"))
 }

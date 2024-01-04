@@ -7,10 +7,10 @@ plugins {
 dependencies {
     api(gradleTestKit())
 
-    implementation(projects.subprojects.gradle.process)
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.common.truthExtensions)
-    implementation(projects.subprojects.logger.logger)
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:common:truth-extensions"))
+    implementation(project(":subprojects:logger:logger"))
 
     implementation(libs.androidToolsCommon)
     implementation(libs.kotlinReflect)

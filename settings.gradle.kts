@@ -1,5 +1,3 @@
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 rootProject.name = "avito-android-infra"
 
 if (gradle.startParameter.isOffline) {

@@ -7,23 +7,23 @@ plugins {
 dependencies {
     api(libs.gson)
 
-    api(projects.subprojects.common.okhttp)
-    api(projects.subprojects.common.result)
-    api(projects.subprojects.testRunner.report)
+    api(project(":subprojects:common:okhttp"))
+    api(project(":subprojects:common:result"))
+    api(project(":subprojects:test-runner:report"))
     api(libs.androidAnnotations)
 
     implementation(libs.kotson)
-    implementation(projects.subprojects.common.httpStatsd) {
+    implementation(project(":subprojects:common:http-statsd")) {
         because("RequestMetadata")
     }
-    implementation(projects.subprojects.testRunner.testModel)
+    implementation(project(":subprojects:test-runner:test-model"))
 
     testImplementation(libs.jsonPathAssert)
     testImplementation(libs.okhttpMockWebServer)
-    testImplementation(projects.subprojects.common.files)
-    testImplementation(projects.subprojects.common.resources)
-    testImplementation(projects.subprojects.common.testOkhttp)
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(testFixtures(projects.subprojects.testRunner.report))
-    testImplementation(testFixtures(projects.subprojects.testRunner.reportViewer))
+    testImplementation(project(":subprojects:common:files"))
+    testImplementation(project(":subprojects:common:resources"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(testFixtures(project(":subprojects:test-runner:report")))
+    testImplementation(testFixtures(project(":subprojects:test-runner:report-viewer")))
 }

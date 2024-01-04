@@ -6,20 +6,20 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(projects.subprojects.common.kotlinAstParser) {
+    implementation(project(":subprojects:common:kotlin-ast-parser")) {
         because("Need to know all classes in files")
     }
-    implementation(projects.subprojects.common.files)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.gradle.workerExtensions)
-    implementation(projects.subprojects.gradle.impactShared) {
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:worker-extensions"))
+    implementation(project(":subprojects:gradle:impact-shared")) {
         because("ChangesDetector reuse")
     }
-    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(project(":subprojects:logger:gradle-logger"))
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(projects.subprojects.gradle.git)
-    gradleTestImplementation(projects.subprojects.logger.logger)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:gradle:git"))
+    gradleTestImplementation(project(":subprojects:logger:logger"))
 }
 
 gradlePlugin {

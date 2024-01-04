@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.series)
-    api(projects.subprojects.logger.logger)
+    api(project(":subprojects:common:series"))
+    api(project(":subprojects:logger:logger"))
 }

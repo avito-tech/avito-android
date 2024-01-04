@@ -4,17 +4,17 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.testRunner.testReport)
+    api(project(":subprojects:test-runner:test-report"))
     api(libs.espressoCore)
     api(libs.appcompat)
 
-    implementation(projects.subprojects.testRunner.testReportArtifacts) {
+    implementation(project(":subprojects:test-runner:test-report-artifacts")) {
         because("ExternalStorageTransport need to know where to store artifacts")
     }
-    implementation(projects.subprojects.common.reflectionExtensions)
-    implementation(projects.subprojects.common.waiter)
-    implementation(projects.subprojects.androidTest.instrumentation)
+    implementation(project(":subprojects:common:reflection-extensions"))
+    implementation(project(":subprojects:common:waiter"))
+    implementation(project(":subprojects:android-test:instrumentation"))
     implementation(libs.radiography)
 
-    testImplementation(projects.subprojects.common.resources)
+    testImplementation(project(":subprojects:common:resources"))
 }

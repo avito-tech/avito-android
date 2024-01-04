@@ -8,16 +8,16 @@ plugins {
 
 dependencies {
     api(libs.moshi)
-    api(projects.subprojects.gradle.codeOwnership.extensions)
+    api(project(":subprojects:gradle:code-ownership:extensions"))
 
     implementation(libs.jacksonDataformat.toml)
-    implementation(projects.subprojects.gradle.preBuild)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.common.okhttp)
+    implementation(project(":subprojects:gradle:pre-build"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:common:okhttp"))
 
     ksp(libs.moshiCodegen)
     gradleTestImplementation(libs.jsonAssert)
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

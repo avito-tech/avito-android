@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.gradle.moduleDependencies)
+    api(project(":subprojects:gradle:module-dependencies"))
 
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.common.problem)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:common:problem"))
     implementation(libs.kotlinGradle)
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

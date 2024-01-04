@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     compileOnly(gradleApi())
-    api(projects.subprojects.logger.logger)
+    api(project(":subprojects:logger:logger"))
 }

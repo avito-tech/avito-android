@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.commandLine)
+    api(project(":subprojects:common:command-line"))
     api(libs.coroutinesCore)
 }

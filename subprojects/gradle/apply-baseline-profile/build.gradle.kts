@@ -5,16 +5,16 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.gradle.android)
-    implementation(projects.subprojects.gradle.git)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:logger:gradle-logger"))
 
     // required for gradleTest code
-    implementation(projects.subprojects.testRunner.instrumentationTests)
+    implementation(project(":subprojects:test-runner:instrumentation-tests"))
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
-    gradleTestImplementation(projects.subprojects.common.truthExtensions)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:common:truth-extensions"))
 }
 
 gradlePlugin {

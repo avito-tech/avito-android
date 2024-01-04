@@ -39,7 +39,7 @@ include("dependency-locking")
 
 /**
  * renamed from 'gradle' to prevent IDE resolution conflict:
- * usages of "typesafe project accessors", e.g. `projects.gradle.someProject` was red in IDE
+ * usages of "typesafe project accessors", e.g. `project(":gradle:some-project` was red in -i-d-e")
  * build was fine however
  */
 include("gradle-ext")

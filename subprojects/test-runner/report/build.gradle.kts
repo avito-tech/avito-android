@@ -9,15 +9,15 @@ publish {
 }
 
 dependencies {
-    api(projects.subprojects.common.result)
-    api(projects.subprojects.common.time)
-    api(projects.subprojects.logger.logger)
-    api(projects.subprojects.testRunner.reportViewerModel)
+    api(project(":subprojects:common:result"))
+    api(project(":subprojects:common:time"))
+    api(project(":subprojects:logger:logger"))
+    api(project(":subprojects:test-runner:report-viewer-model"))
 
-    implementation(projects.subprojects.common.okhttp) {
+    implementation(project(":subprojects:common:okhttp")) {
         because("Result extension used")
     }
 
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(testFixtures(projects.subprojects.common.time))
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
 }

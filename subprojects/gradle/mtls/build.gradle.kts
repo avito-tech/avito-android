@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.common.okhttp)
+    api(project(":subprojects:common:okhttp"))
     api(libs.okhttpTls)
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.common.problem)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:common:problem"))
     implementation(libs.kotlinGradle)
 
-    gradleTestImplementation(projects.subprojects.gradle.testProject)
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

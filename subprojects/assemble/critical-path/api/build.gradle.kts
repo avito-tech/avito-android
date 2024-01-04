@@ -8,13 +8,13 @@ publish {
 }
 
 dependencies {
-    api(projects.subprojects.common.graph)
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:common:graph"))
+    api(project(":subprojects:common:result"))
 
     implementation(gradleApi())
-    implementation(projects.subprojects.gradle.gradleExtensions)
-    implementation(projects.subprojects.assemble.gradleProfile)
-    implementation(projects.subprojects.common.compositeException)
-    implementation(projects.subprojects.common.problem)
-    implementation(projects.subprojects.logger.gradleLogger)
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:assemble:gradle-profile"))
+    implementation(project(":subprojects:common:composite-exception"))
+    implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:logger:gradle-logger"))
 }

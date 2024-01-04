@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.subprojects.testRunner.reportViewer)
+    implementation(project(":subprojects:test-runner:report-viewer"))
 }

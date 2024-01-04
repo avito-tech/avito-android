@@ -8,15 +8,15 @@ dependencies {
         excludeTransitiveAgpDependencies()
     }
 
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:common:result"))
 
     implementation(gradleApi())
-    implementation(projects.subprojects.common.files)
-    implementation(projects.subprojects.gradle.process)
-    implementation(projects.subprojects.gradle.gradleExtensions)
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
 
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(testFixtures(projects.subprojects.gradle.process))
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(testFixtures(project(":subprojects:gradle:process")))
 }
 
 /**

@@ -5,18 +5,18 @@ plugins {
 
 dependencies {
     api(libs.okhttpMockWebServer)
-    api(projects.subprojects.common.okhttp)
-    api(projects.subprojects.logger.logger)
+    api(project(":subprojects:common:okhttp"))
+    api(project(":subprojects:logger:logger"))
 
     implementation(libs.bundles.hamcrest)
     implementation(libs.truth)
     implementation(libs.kotson)
     implementation(libs.commonsLang)
 
-    implementation(projects.subprojects.common.junitUtils)
-    implementation(projects.subprojects.common.resources)
-    implementation(projects.subprojects.common.waiter)
-    implementation(projects.subprojects.common.result)
+    implementation(project(":subprojects:common:junit-utils"))
+    implementation(project(":subprojects:common:resources"))
+    implementation(project(":subprojects:common:waiter"))
+    implementation(project(":subprojects:common:result"))
 
     implementation(libs.jsonAssert)
 }

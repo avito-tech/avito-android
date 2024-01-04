@@ -4,36 +4,36 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.testRunner.testInstrumentationRunner)
-    api(projects.subprojects.common.junitUtils)
-    api(projects.subprojects.testRunner.testReportDslApi)
-    api(projects.subprojects.testRunner.testReportAndroid) // TODO: use as implementation
-    api(projects.subprojects.common.statsd)
-    api(projects.subprojects.common.elastic)
-    api(projects.subprojects.common.testOkhttp)
+    api(project(":subprojects:test-runner:test-instrumentation-runner"))
+    api(project(":subprojects:common:junit-utils"))
+    api(project(":subprojects:test-runner:test-report-dsl-api"))
+    api(project(":subprojects:test-runner:test-report-android")) // TODO: use as implementation
+    api(project(":subprojects:common:statsd"))
+    api(project(":subprojects:common:elastic"))
+    api(project(":subprojects:common:test-okhttp"))
     api(libs.okhttpMockWebServer)
 
-    implementation(projects.subprojects.common.buildMetadata)
-    implementation(projects.subprojects.logger.androidLogger)
-    implementation(projects.subprojects.logger.elasticLogger)
-    implementation(projects.subprojects.common.httpStatsd)
-    implementation(projects.subprojects.common.okhttp)
-    implementation(projects.subprojects.common.resources)
-    implementation(projects.subprojects.testRunner.reportViewer) {
+    implementation(project(":subprojects:common:build-metadata"))
+    implementation(project(":subprojects:logger:android-logger"))
+    implementation(project(":subprojects:logger:elastic-logger"))
+    implementation(project(":subprojects:common:http-statsd"))
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:resources"))
+    implementation(project(":subprojects:test-runner:report-viewer")) {
         because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
     }
-    implementation(projects.subprojects.testRunner.testReportArtifacts) {
+    implementation(project(":subprojects:test-runner:test-report-artifacts")) {
         because("uses factory to create TestArtifactsProvider")
     }
-    implementation(projects.subprojects.testRunner.shared.loggerProviders)
-    implementation(projects.subprojects.testRunner.transport)
-    implementation(projects.subprojects.logger.logger)
-    implementation(projects.subprojects.common.junitUtils)
-    implementation(projects.subprojects.testRunner.testAnnotations)
-    implementation(projects.subprojects.testRunner.fileStorage)
-    implementation(projects.subprojects.common.time)
-    implementation(projects.subprojects.androidTest.uiTestingCore)
-    implementation(projects.subprojects.androidTest.instrumentation)
+    implementation(project(":subprojects:test-runner:shared:logger-providers"))
+    implementation(project(":subprojects:test-runner:transport"))
+    implementation(project(":subprojects:logger:logger"))
+    implementation(project(":subprojects:common:junit-utils"))
+    implementation(project(":subprojects:test-runner:test-annotations"))
+    implementation(project(":subprojects:test-runner:file-storage"))
+    implementation(project(":subprojects:common:time"))
+    implementation(project(":subprojects:android-test:ui-testing-core"))
+    implementation(project(":subprojects:android-test:instrumentation"))
 
     implementation(libs.playServicesBase)
     implementation(libs.androidXTestRunner)
@@ -44,5 +44,5 @@ dependencies {
 
     testImplementation(libs.kotlinPoet)
     testImplementation(libs.kotlinCompileTesting)
-    testImplementation(projects.subprojects.common.truthExtensions)
+    testImplementation(project(":subprojects:common:truth-extensions"))
 }

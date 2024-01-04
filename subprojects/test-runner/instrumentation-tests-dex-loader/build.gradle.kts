@@ -5,14 +5,14 @@ plugins {
 }
 
 dependencies {
-    api(projects.subprojects.testRunner.testModel)
-    api(projects.subprojects.common.result)
+    api(project(":subprojects:test-runner:test-model"))
+    api(project(":subprojects:common:result"))
 
     implementation(gradleApi())
     implementation(libs.dexlib)
 
-    testImplementation(projects.subprojects.common.truthExtensions)
-    testImplementation(projects.subprojects.common.resources)
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:common:resources"))
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
 }
