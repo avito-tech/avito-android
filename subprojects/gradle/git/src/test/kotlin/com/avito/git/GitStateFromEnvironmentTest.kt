@@ -39,7 +39,7 @@ class GitStateFromEnvironmentTest {
 
     private fun initSampleRepository(dir: File) {
         with(dir) {
-            git("init --quiet")
+            git("init --quiet --initial-branch=master")
             file("data")
             commit("initial")
             git("branch develop")

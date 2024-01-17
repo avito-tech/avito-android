@@ -1,9 +1,10 @@
 package com.avito.android.baseline_profile
 
+import com.avito.android.baseline_profile.configuration.SaveProfileToVcsSettingsFromExtension
 import com.avito.android.baseline_profile.configuration.SaveProfileToVersionControlExtension
 import com.avito.android.baseline_profile.internal.BaselineProfileFileLocationExtensions.baselineProfileTargetLocation
 import com.avito.android.baseline_profile.internal.BaselineProfileFileLocationExtensions.findProfileOrThrow
-import com.avito.android.baseline_profile.internal.GitClient
+import com.avito.android.baseline_profile.internal.BaselineProfileGitClient
 import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -45,10 +46,10 @@ internal abstract class ApplyProfileToSourceCodeTask : DefaultTask() {
 
         val shouldSaveToVcs = extension.get().enable.getOrElse(false)
         if (shouldSaveToVcs) {
-            val gitClient = GitClient(
+            val gitClient = BaselineProfileGitClient(
                 rootProjectDir = project.rootProject.projectDir,
                 loggerFactory = GradleLoggerPlugin.provideLoggerFactory(project.rootProject).get(),
-                extension = extension.get(),
+                settings = SaveProfileToVcsSettingsFromExtension(extension.get()),
             )
             gitClient.commitAndPushProfile(targetProfileLocation.toPath())
         }

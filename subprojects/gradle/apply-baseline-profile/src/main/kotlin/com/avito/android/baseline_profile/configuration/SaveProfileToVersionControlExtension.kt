@@ -27,3 +27,23 @@ public abstract class SaveProfileToVersionControlExtension(
         }
     }
 }
+
+public interface SaveProfileToVersionControlSettings {
+    public val enable: Boolean
+    public val enableRemoteOperations: Boolean
+    public val commitMessage: String
+    public val includeDetailsInCommitMessage: Boolean
+}
+
+internal class SaveProfileToVcsSettingsFromExtension(
+    private val extension: SaveProfileToVersionControlExtension,
+) : SaveProfileToVersionControlSettings {
+    override val enable: Boolean
+        get() = extension.enable.get()
+    override val enableRemoteOperations: Boolean
+        get() = extension.enableRemoteOperations.get()
+    override val commitMessage: String
+        get() = extension.commitMessage.get()
+    override val includeDetailsInCommitMessage: Boolean
+        get() = extension.includeDetailsInCommitMessage.get()
+}

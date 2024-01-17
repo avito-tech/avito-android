@@ -3,6 +3,7 @@ package com.avito.android.baseline_profile.internal
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.android.baseline_profile.ApplyProfileToSourceCodeTask
 import com.avito.android.baseline_profile.configuration.ApplyBaselineProfileConfiguration
+import com.avito.android.baseline_profile.configuration.SaveProfileToVcsSettingsFromExtension
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.create
 import org.gradle.api.Project
@@ -21,9 +22,9 @@ internal class ProfileTaskConfigurator(
 ) {
     private val loggerFactory = GradleLoggerPlugin.provideLoggerFactory(rootProject).get()
     private val logger = loggerFactory.create<ProfileTaskConfigurator>()
-    private val gitOperations = GitClient(
+    private val gitOperations = BaselineProfileGitClient(
         rootProjectDir = rootProject.projectDir,
-        extension = configuration.saveToVersionControl,
+        settings = SaveProfileToVcsSettingsFromExtension(configuration.saveToVersionControl),
         loggerFactory = loggerFactory,
     )
 

@@ -10,6 +10,8 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:logger:gradle-logger"))
 
+    testImplementation(project(":subprojects:gradle:test-project"))
+
     // required for gradleTest code
     implementation(project(":subprojects:test-runner:instrumentation-tests"))
 
