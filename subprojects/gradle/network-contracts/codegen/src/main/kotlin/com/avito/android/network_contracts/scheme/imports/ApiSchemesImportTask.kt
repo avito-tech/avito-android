@@ -1,9 +1,6 @@
 package com.avito.android.network_contracts.scheme.imports
 
 import com.avito.android.network_contracts.internal.http.HttpClientService
-import com.avito.android.network_contracts.scheme.imports.data.ApiSchemesImportServiceImpl
-import com.avito.android.network_contracts.scheme.imports.data.models.areSchemesExist
-import com.avito.android.network_contracts.scheme.imports.data.models.entriesList
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import kotlinx.coroutines.runBlocking
@@ -41,21 +38,16 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
             )
         }
 
-        val apiImportService = ApiSchemesImportServiceImpl(httpClientBuilder.get().buildClient(logger))
+        val facade = ApiSchemesImportFacade.createInstance(
+            httpClient = httpClientBuilder.get().buildClient(logger)
+        )
 
         val rootDirectory = outputDirectory.get().asFile
-        val schemaFilesGenerator = ApiSchemesFilesGenerator(rootDirectory)
 
-        val schema = runBlocking {
-            val schemes = apiImportService.importScheme(apiPath.get()).result
-            if (!schemes.areSchemesExist) {
-                error("Did not find any schemes for `${apiPath.get()}`.")
-            }
-
-            schemes.entriesList()
+        val generatedFiles = runBlocking {
+            facade.importSchemes(apiPath.get(), rootDirectory)
         }
 
-        val generatedFiles = schemaFilesGenerator.generateFiles(schema)
         logGeneratedFiles(generatedFiles)
     }
 

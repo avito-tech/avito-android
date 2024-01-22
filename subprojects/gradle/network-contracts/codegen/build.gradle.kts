@@ -27,6 +27,7 @@ dependencies {
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
 
     testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.coroutinesTest)
     testFixturesImplementation(testFixtures(project(":subprojects:gradle:mtls")))
 }
 
