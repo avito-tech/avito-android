@@ -10,6 +10,7 @@ dependencies {
     api(project(":subprojects:gradle:module-dependencies"))
     implementation(project(":subprojects:common:math"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:code-ownership:extensions"))
     implementation(libs.jdgraphtCore)
     implementation(libs.jacksonDataformat.csv)
 
