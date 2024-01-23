@@ -169,7 +169,7 @@ internal class UploadWarningsTest {
                 }
                 subprojects.forEach { subproject -> 
                     subproject.tasks.register("$taskName", ReportTask::class) {
-                        warnings.set(subproject.file("build/reports/detekt/report.csv"))
+                        warningsReports.from(subproject.file("build/reports/detekt/report.csv"))
                     }
                 }
                 techBudget {

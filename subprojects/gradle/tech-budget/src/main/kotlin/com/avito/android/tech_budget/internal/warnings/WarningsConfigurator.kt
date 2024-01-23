@@ -47,13 +47,19 @@ internal class WarningsConfigurator : TechBudgetConfigurator {
         subProject: Project,
         extension: TechBudgetExtension,
     ) {
+        subProject.tasks.withType<CollectWarningsTask>().configureEach {
+            if (it.warnings.isPresent) {
+                it.warningsReports.from(it.warnings)
+            }
+        }
+
         root.tasks.withType<UploadWarningsTask>().configureEach { uploadWarningsTask ->
             val collectWarningsTask = subProject.tasks
                 .typedNamed<CollectWarningsTask>(extension.warnings.compileWarningsTaskName.get())
 
             uploadWarningsTask.inputReports.put(
                 ProjectInfo.fromProject(subProject),
-                collectWarningsTask.map { it.warnings }
+                collectWarningsTask.map { it.warningsReports }
             )
         }
     }

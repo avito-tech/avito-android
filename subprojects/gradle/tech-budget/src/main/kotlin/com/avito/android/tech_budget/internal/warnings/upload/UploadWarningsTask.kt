@@ -12,7 +12,7 @@ import com.avito.android.tech_budget.warnings.CompilerIssue
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -24,7 +24,7 @@ import org.gradle.api.tasks.TaskAction
 internal abstract class UploadWarningsTask : DefaultTask() {
 
     @get:Input
-    abstract val inputReports: MapProperty<ProjectInfo, RegularFileProperty>
+    abstract val inputReports: MapProperty<ProjectInfo, FileCollection>
 
     @get:Internal
     abstract val issuesFileParser: Property<FileParser<CompilerIssue>>
