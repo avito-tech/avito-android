@@ -8,6 +8,8 @@ import com.avito.ci.DeploymentEnvironment.Unknown
 import com.avito.teamcity.TeamcityApi
 import io.fabric8.kubernetes.api.model.apps.Deployment
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
+import io.fabric8.kubernetes.client.dsl.MixedOperation
+import io.fabric8.kubernetes.client.dsl.Resource
 import org.jetbrains.teamcity.rest.BuildState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -53,6 +55,27 @@ internal class ClearK8SDeploymentsByNamespaces(
                     .apps()
                     .deployments()
 
+                val replicas = kubernetesClient.inNamespace(namespace)
+                    .apps()
+                    .replicaSets()
+
+                val deploymentToReplicas = replicas
+                    .list()
+                    .items
+                    .groupBy {
+                        it.metadata.labels["deploymentName"]
+                    }
+
+                val pods = kubernetesClient.inNamespace(namespace)
+                    .pods()
+
+                val deploymentToPods = pods
+                    .list()
+                    .items
+                    .groupBy {
+                        it.metadata.labels["deploymentName"]
+                    }
+
                 deployments
                     .list()
                     .items
@@ -60,11 +83,28 @@ internal class ClearK8SDeploymentsByNamespaces(
                         try {
                             if (deployment.isLeaked) {
                                 println("Found leaky ${deployment.description}")
-                                val deleted = deployments
-                                    .withName(deployment.metadata.name)
-                                    .withGracePeriod(0)
-                                    .delete()
+                                val deleted = deleteResource(deployments, deployment.metadata.name)
                                 println("${deployment.description} deleted is $deleted")
+
+                                deploymentToReplicas[deployment.metadata.name]?.let { replicasToDelete ->
+                                    val deletedCount = replicasToDelete
+                                        .map { deleteResource(replicas, it.metadata.name) }
+                                        .count { it }
+                                    println(
+                                        "$deletedCount of ${replicasToDelete.count()} replicas " +
+                                            "of ${deployment.description} are deleted"
+                                    )
+                                }
+
+                                deploymentToPods[deployment.metadata.name]?.let { podsToDelete ->
+                                    val deletedCount = podsToDelete
+                                        .map { deleteResource(pods, it.metadata.name) }
+                                        .count { it }
+                                    println(
+                                        "$deletedCount of ${podsToDelete.count()} pods " +
+                                            "of ${deployment.description} are deleted"
+                                    )
+                                }
                             } else {
                                 println("Found not leaky ${deployment.description}")
                             }
@@ -80,6 +120,16 @@ internal class ClearK8SDeploymentsByNamespaces(
                 )
             }
         }
+    }
+
+    private fun <T, L, R : Resource<T>> deleteResource(
+        resource: MixedOperation<T, L, R>,
+        nameToDelete: String
+    ): Boolean {
+        return resource
+            .withName(nameToDelete)
+            .withGracePeriod(0)
+            .delete()
     }
 
     private fun minutesAgo(minutes: Long): Date {
