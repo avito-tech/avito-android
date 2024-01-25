@@ -55,27 +55,6 @@ internal class ClearK8SDeploymentsByNamespaces(
                     .apps()
                     .deployments()
 
-                val replicas = kubernetesClient.inNamespace(namespace)
-                    .apps()
-                    .replicaSets()
-
-                val deploymentToReplicas = replicas
-                    .list()
-                    .items
-                    .groupBy {
-                        it.metadata.labels["deploymentName"]
-                    }
-
-                val pods = kubernetesClient.inNamespace(namespace)
-                    .pods()
-
-                val deploymentToPods = pods
-                    .list()
-                    .items
-                    .groupBy {
-                        it.metadata.labels["deploymentName"]
-                    }
-
                 deployments
                     .list()
                     .items
@@ -85,31 +64,52 @@ internal class ClearK8SDeploymentsByNamespaces(
                                 println("Found leaky ${deployment.description}")
                                 val deleted = deleteResource(deployments, deployment.metadata.name)
                                 println("${deployment.description} deleted is $deleted")
-
-                                deploymentToReplicas[deployment.metadata.name]?.let { replicasToDelete ->
-                                    val deletedCount = replicasToDelete
-                                        .map { deleteResource(replicas, it.metadata.name) }
-                                        .count { it }
-                                    println(
-                                        "$deletedCount of ${replicasToDelete.count()} replicas " +
-                                            "of ${deployment.description} are deleted"
-                                    )
-                                }
-
-                                deploymentToPods[deployment.metadata.name]?.let { podsToDelete ->
-                                    val deletedCount = podsToDelete
-                                        .map { deleteResource(pods, it.metadata.name) }
-                                        .count { it }
-                                    println(
-                                        "$deletedCount of ${podsToDelete.count()} pods " +
-                                            "of ${deployment.description} are deleted"
-                                    )
-                                }
                             } else {
                                 println("Found not leaky ${deployment.description}")
                             }
                         } catch (e: Throwable) {
                             throw RuntimeException("Error when checked deployment=${deployment.description} leak", e)
+                        }
+                    }
+
+                val replicasOperation = kubernetesClient.inNamespace(namespace)
+                    .apps()
+                    .replicaSets()
+
+                replicasOperation
+                    .list()
+                    .items
+                    .groupBy {
+                        // deployment name
+                        it.metadata.ownerReferences[0].name
+                    }
+                    .forEach { (deploymentName, replicaSets) ->
+                        val deployment = deployments.withName(deploymentName).get()
+                        if (deployment == null) {
+                            val deleted = replicaSets.map { replicaSet ->
+                                deleteResource(replicasOperation, replicaSet.metadata.name)
+                            }.count { it }
+                            println("$deleted of ${replicaSets.size} rs deleted from $deploymentName")
+                        }
+                    }
+
+                val podsOperation = kubernetesClient.inNamespace(namespace)
+                    .pods()
+
+                podsOperation
+                    .list()
+                    .items
+                    .groupBy {
+                        // replica set name
+                        it.metadata.ownerReferences[0].name
+                    }
+                    .forEach { (replicaSetName, pods) ->
+                        val replicaSet = replicasOperation.withName(replicaSetName).get()
+                        if (replicaSet == null) {
+                            val deleted = pods.map { pod ->
+                                deleteResource(podsOperation, pod.metadata.name)
+                            }.count { it }
+                            println("$deleted of ${pods.size} pods deleted from $replicaSetName")
                         }
                     }
             } catch (e: Throwable) {
