@@ -1,6 +1,7 @@
 com.fasterxml.jackson.core:jackson-annotations:2.13.0
 com.fasterxml.jackson.core:jackson-core:2.13.0
 com.fasterxml.jackson.core:jackson-databind:2.13.0
+com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0
 com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.13.0
 com.fasterxml.jackson:jackson-bom:2.13.0
 com.squareup.moshi:moshi:1.13.0
@@ -13,3 +14,5 @@ org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
 org.jetbrains.kotlin:kotlin-stdlib:1.7.10
 org.jetbrains:annotations:13.0
+org.jgrapht:jgrapht-core:1.5.1
+org.jheaps:jheaps:0.13

@@ -7,6 +7,7 @@ import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
 import com.avito.android.serializers.OwnerNameSerializer
+import com.avito.module.metrics.CollectModuleBetweennessCentralityAction
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
@@ -32,8 +33,9 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
 
     private fun extractOwnedDependencies(): List<OwnedDependency> {
         val dependencies = mutableListOf<OwnedDependency>()
+        val betweennessCentrality = CollectModuleBetweennessCentralityAction().collect(project)
         project.subprojects { subproject ->
-            dependencies += extractOwnedDependency(subproject)
+            dependencies += extractOwnedDependency(subproject, betweennessCentrality)
         }
         return dependencies
     }
@@ -45,13 +47,14 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
         output.writeText(dependencySerializer.serialize(dependencies))
     }
 
-    private fun extractOwnedDependency(project: Project): OwnedDependency {
+    private fun extractOwnedDependency(project: Project, betweennessCentrality: Map<Project, Double>): OwnedDependency {
         val extension = project.extensions.findByType<CodeOwnershipExtension>()
         val owners = extension?.owners?.orNull ?: emptySet()
         return OwnedDependency(
             name = project.path,
             owners = owners,
-            type = OwnedDependency.Type.INTERNAL
+            type = OwnedDependency.Type.INTERNAL,
+            betweennessCentrality = betweennessCentrality.getOrDefault(project, null)
         )
     }
 

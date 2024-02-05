@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.jacksonDataformat.toml)
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:module-dependencies-graph"))
     implementation(project(":subprojects:common:okhttp"))
 
     ksp(libs.moshiCodegen)

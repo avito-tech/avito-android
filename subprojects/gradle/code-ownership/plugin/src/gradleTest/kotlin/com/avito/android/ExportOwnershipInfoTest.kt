@@ -200,14 +200,16 @@ internal class ExportOwnershipInfoTest {
                   "owners":[
                      "TestSpeed"
                   ],
-                  "type":"internal"
+                  "type":"internal",
+                  "betweennessCentrality": 0.0
                },
                {
                   "moduleName":":common",
                   "owners":[
                      
                   ],
-                  "type":"internal"
+                  "type":"internal",
+                  "betweennessCentrality": 0.0
                },
                {
                   "moduleName":":feature",
@@ -215,7 +217,8 @@ internal class ExportOwnershipInfoTest {
                      "TestSpeed",
                      "TestPerformance"
                   ],
-                  "type":"internal"
+                  "type":"internal",
+                  "betweennessCentrality": 0.0
                }
             ]
         """.trimIndent()

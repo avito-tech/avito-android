@@ -75,7 +75,8 @@ public abstract class ExportExternalDepsCodeOwners : DefaultTask() {
                 OwnedDependency(
                     name = fullDependencyName ?: dependencyName,
                     owners = listOf(ownerSerializer.deserialize(owner)),
-                    type = OwnedDependency.Type.EXTERNAL
+                    type = OwnedDependency.Type.EXTERNAL,
+                    betweennessCentrality = null // not supported for external dependencies
                 )
             )
         }
