@@ -9,17 +9,15 @@ import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.collect.CollectApiSchemesTask
 import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
 import com.avito.android.network_contracts.scheme.imports.ApiSchemesImportTask
-import com.avito.android.network_contracts.shared.findApiSchemes
 import com.avito.android.network_contracts.shared.findPackageDirectory
 import com.avito.android.network_contracts.shared.networkContractsExtension
 import com.avito.android.network_contracts.shared.networkContractsRootExtension
 import com.avito.android.network_contracts.shared.reportFile
-import com.avito.android.network_contracts.snapshot.PrepareGeneratedCodeSnapshotTask
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsGeneratedFilesTask
 import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
 import com.avito.android.network_contracts.validation.ValidateNetworkContractsSchemesTask
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.git.gitState
+import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
@@ -29,10 +27,10 @@ import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 
 public class NetworkContractsPlugin : Plugin<Project> {
 
@@ -47,10 +45,10 @@ public class NetworkContractsPlugin : Plugin<Project> {
             configureContractFixationTask(target)
         } else {
             configureAddEndpointTask(target)
-            configureSnapshotTask(target)
             configureCodegenTask(target)
             configureValidationTask(target)
             configureCollectSchemesTask(target)
+            configureGeneratedSources(target)
         }
     }
 
@@ -67,24 +65,6 @@ public class NetworkContractsPlugin : Plugin<Project> {
     ): Configuration {
         return target.configurations.create("codegen") {
             it.isTransitive = false
-        }
-    }
-
-    private fun configureSnapshotTask(
-        project: Project
-    ) {
-        val networkContractsExtension = project.networkContractsExtension
-
-        project.tasks.register<PrepareGeneratedCodeSnapshotTask>(PrepareGeneratedCodeSnapshotTask.NAME) {
-            val codegenSourcesDir = project
-                .findPackageDirectory(networkContractsExtension.packageName)
-                .map { it.dir("generated") }
-
-            from(codegenSourcesDir.get().asFile.path) {
-                include("**/*.kt")
-            }
-
-            outputDirectory.set(project.layout.buildDirectory.dir("prepareCodegenSnapshot"))
         }
     }
 
@@ -105,28 +85,26 @@ public class NetworkContractsPlugin : Plugin<Project> {
                 MakeFilesExecutableTask::class.java
             )
 
-        val snapshotTask = target.tasks.typedNamed<Copy>("prepareCodegenSnapshot")
-        target.tasks.register<CodegenTask>(CodegenTask.NAME) {
-            val codegenSourcesDir = project.findPackageDirectory(networkContractsExtension.packageName)
+        target.tasks.register(CodegenTask.NAME, CodegenTask::class.java) {
+            it.packageName.set(networkContractsExtension.packageName)
+            it.moduleName.set(it.project.path)
+            it.kind.set(networkContractsExtension.kind)
+            it.codegenProjectName.set(networkContractsExtension.projectName)
+            it.skipValidation.set(networkContractsExtension.skipValidation)
+            it.moduleDirectory.set(it.project.layout.projectDirectory)
+            it.outputDirectory.set(networkContractsExtension.generatedDirectory)
+            it.codegenExecutableFiles.setFrom(makeFilesExecutableTask.map { it.files })
+            it.schemesDir.set(networkContractsExtension.apiSchemesDirectory)
 
-            this.kind.set(networkContractsExtension.kind)
-            this.projectName.set(networkContractsExtension.projectName)
-            this.skipValidation.set(networkContractsExtension.skipValidation)
-            this.schemes.setFrom(project.findApiSchemes())
-            this.packageDirectory.set(codegenSourcesDir)
-            this.outputDirectory.set(packageDirectory.map { it.dir("generated") })
-            this.codegenBinaryFiles.setFrom(makeFilesExecutableTask.map { it.files })
+            it.crtEnvName.set(rootExtension.crtEnvName)
+            it.keyEnvName.set(rootExtension.keyEnvName)
 
-            this.crtEnvName.set(rootExtension.crtEnvName)
-            this.keyEnvName.set(rootExtension.keyEnvName)
+            it.tmpCrtFile.set(setupMtlsTask.flatMap { it.tmpCrt })
+            it.tmpKeyFile.set(setupMtlsTask.flatMap { it.tmpKey })
 
-            this.tmpCrtFile.set(setupMtlsTask.flatMap { it.tmpCrt })
-            this.tmpKeyFile.set(setupMtlsTask.flatMap { it.tmpKey })
+            it.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(it))
 
-            this.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(this))
-            this.snapshot.setFrom(snapshotTask.map { it.destinationDir })
-
-            onlyIf { (it as? CodegenTask)?.schemes?.isEmpty == false }
+            it.onlyIf { (it as? CodegenTask)?.schemesDir?.get()?.asFileTree?.isEmpty == false }
         }
     }
 
@@ -134,12 +112,13 @@ public class NetworkContractsPlugin : Plugin<Project> {
         project: Project,
     ) {
         val httpClientService = HttpClientService.provideHttpClientService(project)
+        val networkContractsModuleExtension = project.networkContractsExtension
         project.tasks.register(ApiSchemesImportTask.NAME, ApiSchemesImportTask::class.java) {
             it.apiPath.set(project.getOptionalStringProperty("apiSchemesUrl", ""))
             it.outputDirectory.set(
-                project
-                    .findPackageDirectory(project.networkContractsExtension.packageName)
-                    .map { it.dir("api-clients") }
+                networkContractsModuleExtension
+                    .apiSchemesDirectory
+                    .flatMap { it.dir(networkContractsModuleExtension.schemesDirName) }
             )
 
             it.httpClientBuilder.set(httpClientService)
@@ -179,37 +158,10 @@ public class NetworkContractsPlugin : Plugin<Project> {
         val codegenTasks = project.tasks
             .typedNamed<CodegenTask>(CodegenTask.NAME)
 
-        val snapshotTask = project.tasks
-            .typedNamed<PrepareGeneratedCodeSnapshotTask>(PrepareGeneratedCodeSnapshotTask.NAME)
-
-        val validateGeneratedFilesTask = project.tasks.register<ValidateNetworkContractsGeneratedFilesTask>(
-            ValidateNetworkContractsGeneratedFilesTask.NAME
-        ) {
-            // Enable validation regardless of the setting in the extension,
-            // as we need to validate codegen schemas also.
-            project.networkContractsExtension.skipValidation.set(false)
-
-            this.generatedFilesDirectory.set(snapshotTask.flatMap { it.outputDirectory })
-            this.referenceFilesDirectory.set(codegenTasks.flatMap { it.outputDirectory })
-
-            resultFile.set(
-                project.reportFile(
-                    directory = "networkContracts",
-                    reportFileName = "codegenValidationGeneratedFilesReport.json"
-                )
-            )
-
-            onlyIf {
-                val generatedFilesDirectory = generatedFilesDirectory.orNull?.asFile ?: return@onlyIf false
-                val referencesFilesDirectory = referenceFilesDirectory.orNull?.asFile ?: return@onlyIf false
-                generatedFilesDirectory.exists() && referencesFilesDirectory.exists()
-            }
-        }
-
         val validateSchemesTask = project.tasks
             .register<ValidateNetworkContractsSchemesTask>(ValidateNetworkContractsSchemesTask.NAME) {
                 this.projectPath.set(project.path)
-                this.schemes.from(codegenTasks.map { it.schemes })
+                this.schemes.from(codegenTasks.map { it.schemesDir })
 
                 resultFile.set(
                     project.reportFile(
@@ -220,7 +172,6 @@ public class NetworkContractsPlugin : Plugin<Project> {
             }
 
         rootTask.configureEach {
-            it.reports.from(validateGeneratedFilesTask.map { it.resultFile })
             it.reports.from(validateSchemesTask.map { it.resultFile })
         }
     }
@@ -254,7 +205,6 @@ public class NetworkContractsPlugin : Plugin<Project> {
         val updateApiSchemesTask = project.rootProject.tasks
             .typedNamed<UpdateRemoteApiSchemesTask>(UpdateRemoteApiSchemesTask.NAME)
 
-        val codegenDirectoryProvider = project.findPackageDirectory(extension.packageName)
         val collectApiSchemesTask = project.tasks.register<CollectApiSchemesTask>(CollectApiSchemesTask.NAME) {
             projectPath.set(project.path)
             projectName.set(extension.projectName)
@@ -272,5 +222,27 @@ public class NetworkContractsPlugin : Plugin<Project> {
         updateApiSchemesTask.configure {
             it.schemes.from(collectApiSchemesTask.flatMap(CollectApiSchemesTask::jsonSchemeMetadataFile))
         }
+    }
+
+    private fun configureGeneratedSources(project: Project) {
+        if (!project.getBooleanProperty(COMPILE_GENERATED_SOURCES_KEY)) {
+            return
+        }
+
+        val codegenTask = project.tasks.typedNamed<CodegenTask>(CodegenTask.NAME)
+
+        project.tasks.withType<KotlinCompileTool>().configureEach {
+            it.source(codegenTask.flatMap { it.outputDirectory })
+        }
+    }
+
+    public companion object {
+
+        /**
+         * Flag to enable or disable the compilation of generated sources.
+         *
+         * Used for including files in the compilation that are generated by tasks into separate directories.
+         */
+        public const val COMPILE_GENERATED_SOURCES_KEY: String = "networkContracts.generated.compile"
     }
 }

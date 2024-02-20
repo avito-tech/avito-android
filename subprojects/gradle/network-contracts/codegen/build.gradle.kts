@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.bundles.ktor)
+    implementation(libs.kotlinGradle)
 
     implementation(project(":subprojects:logger:gradle-logger"))
 

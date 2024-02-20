@@ -21,7 +21,6 @@ class ValidateNetworkContractsTaskTest {
         runTask(ValidateNetworkContractsRootTask.NAME, projectDir, dryRun = true)
             .assertThat()
             .tasksShouldBeTriggered(
-                ":$projectName:${PrepareGeneratedCodeSnapshotTask.NAME}",
                 ":$projectName:${CodegenTask.NAME}",
                 ":$projectName:${ValidateNetworkContractsSchemesTask.NAME}",
                 ":${ValidateNetworkContractsRootTask.NAME}",
