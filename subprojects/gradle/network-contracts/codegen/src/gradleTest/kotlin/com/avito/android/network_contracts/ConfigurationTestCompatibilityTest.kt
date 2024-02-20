@@ -6,6 +6,7 @@ import com.avito.android.network_contracts.scheme.imports.ApiSchemesImportTask
 import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.Module
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -40,8 +41,8 @@ class ConfigurationTestCompatibilityTest {
     @Test
     fun `configuration with applied plugin and upsert contracts task - ok`(@TempDir projectDir: File) {
         checkConfigurationCacheCompatibility(
-            projectDir,
-            UpdateRemoteApiSchemesTask.NAME,
+            projectDir = projectDir,
+            taskName = UpdateRemoteApiSchemesTask.NAME,
             "-Pavito.networkContracts.fixation.author="
         )
     }
@@ -51,12 +52,28 @@ class ConfigurationTestCompatibilityTest {
         checkConfigurationCacheCompatibility(projectDir, ValidateNetworkContractsRootTask.NAME)
     }
 
+    @Test
+    fun `configuration with applied plugin and compile task - ok`(@TempDir projectDir: File) {
+        checkConfigurationCacheCompatibility(projectDir, "compileKotlin", "-PnetworkContracts.generated.compile=true")
+    }
+
     private fun checkConfigurationCacheCompatibility(
         projectDir: File,
         taskName: String,
         vararg args: String,
     ) {
-        generateProject(projectDir)
+        checkConfigurationCacheCompatibility(
+            projectDir, listOf(defaultModule()), taskName, *args
+        )
+    }
+
+    private fun checkConfigurationCacheCompatibility(
+        projectDir: File,
+        modules: List<Module>,
+        taskName: String,
+        vararg args: String,
+    ) {
+        generateProject(projectDir, modules)
         runTask(taskName, projectDir, *args)
             .assertThat()
             .buildSuccessful()
@@ -68,11 +85,13 @@ class ConfigurationTestCompatibilityTest {
     }
 
     private fun generateProject(
-        projectDir: File
+        projectDir: File,
+        modules: List<Module>,
     ) {
         NetworkCodegenProjectGenerator.generate(
             projectDir = projectDir,
             serviceUrl = "/",
+            modules = modules,
         )
     }
 

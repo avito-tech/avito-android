@@ -56,7 +56,10 @@ public class NetworkContractsPlugin : Plugin<Project> {
         if (project.isRoot()) {
             project.extensions.create<NetworkContractsRootExtension>(NetworkContractsRootExtension.NAME)
         } else {
-            project.extensions.create<NetworkContractsModuleExtension>(NetworkContractsModuleExtension.NAME)
+            project.extensions.create<NetworkContractsModuleExtension>(NetworkContractsModuleExtension.NAME).apply {
+                generatedDirectory.convention(project.findPackageDirectory(packageName))
+                apiSchemesDirectory.convention(project.findPackageDirectory(packageName))
+            }
         }
     }
 
@@ -208,8 +211,13 @@ public class NetworkContractsPlugin : Plugin<Project> {
         val collectApiSchemesTask = project.tasks.register<CollectApiSchemesTask>(CollectApiSchemesTask.NAME) {
             projectPath.set(project.path)
             projectName.set(extension.projectName)
-            codegenTomlFile.set(codegenDirectoryProvider.map { it.file("codegen.toml") })
-            schemesDirectory.set(codegenDirectoryProvider.flatMap { it.dir(extension.schemesDirName) })
+            codegenTomlFile.set(
+                project.layout.projectDirectory
+                    .asFileTree
+                    .matching { it.include("**/codegen.toml") }
+                    .firstOrNull()
+            )
+            schemesDirectory.set(extension.apiSchemesDirectory.flatMap { it.dir(extension.schemesDirName) })
 
             jsonSchemeMetadataFile.set(
                 project.reportFile(

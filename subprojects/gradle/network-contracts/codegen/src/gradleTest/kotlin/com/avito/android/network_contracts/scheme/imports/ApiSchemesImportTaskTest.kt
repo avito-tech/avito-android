@@ -1,7 +1,7 @@
 package com.avito.android.network_contracts.scheme.imports
 
-import com.avito.android.network_contracts.DEFAULT_GENERATED_PACKAGE
 import com.avito.android.network_contracts.NetworkCodegenProjectGenerator
+import com.avito.android.network_contracts.defaultModule
 import com.avito.android.network_contracts.scheme.imports.mocks.apiSchemaImportResponseMock
 import com.avito.android.network_contracts.scheme.imports.mocks.apiSchemeEmptyResponse
 import com.avito.test.gradle.TestResult
@@ -43,10 +43,10 @@ internal class ApiSchemesImportTaskTest {
             "v2/schema.yaml",
             "schema.yaml"
         )
-        val packageName = "com.example"
+        val apiSchemesDirectory = "src/main/resources"
         generateProject(
             projectDir = projectDir,
-            generatedClassesPackage = packageName
+            apiSchemesDirectory = apiSchemesDirectory
         )
 
         mockDispatcher.registerMock(Mock(
@@ -62,7 +62,7 @@ internal class ApiSchemesImportTaskTest {
         runTask(projectDir, apiPath)
             .assertThat()
             .buildSuccessful()
-            .outputContainsFilePaths(packageName, apiPath, files)
+            .outputContainsFilePaths(apiSchemesDirectory, apiPath, files)
 
         request.checks.singleRequestCaptured()
             .bodyContains(apiPath)
@@ -119,12 +119,12 @@ internal class ApiSchemesImportTaskTest {
 
     private fun generateProject(
         projectDir: File,
-        generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE
+        apiSchemesDirectory: String = "src/main/resources"
     ) {
         NetworkCodegenProjectGenerator.generate(
             projectDir = projectDir,
             serviceUrl = mockWebServer.url("/").toString(),
-            generatedClassesPackage = generatedClassesPackage
+            modules = listOf(defaultModule(apiSchemesDirectory = apiSchemesDirectory))
         )
     }
 

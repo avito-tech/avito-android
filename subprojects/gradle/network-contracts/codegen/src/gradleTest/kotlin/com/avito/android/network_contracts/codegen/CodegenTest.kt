@@ -1,6 +1,7 @@
 package com.avito.android.network_contracts.codegen
 
 import com.avito.android.network_contracts.NetworkCodegenProjectGenerator
+import com.avito.android.network_contracts.defaultModule
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth
@@ -9,6 +10,21 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal class CodegenTest {
+
+    @Test
+    fun `compile task - applies subtasks in the correct order`(@TempDir projectDir: File) {
+        val module = defaultModule()
+        NetworkCodegenProjectGenerator.generate(projectDir, modules = listOf(module))
+        runTask(projectDir, "compileKotlin", dryRun = true, addGeneratedSourcesToCompile = true)
+            .assertThat()
+            .buildSuccessful()
+            .tasksShouldBeTriggered(
+                ":${MakeFilesExecutableTask.NAME}",
+                ":${SetupTmpMtlsFilesTask.NAME}",
+                ":${module.name}:${CodegenTask.NAME}",
+            )
+            .inOrder()
+    }
 
     @Test
     fun `codegen task - applies subtasks in the correct order`(@TempDir projectDir: File) {
@@ -37,12 +53,18 @@ internal class CodegenTest {
         }
     }
 
-    private fun runTask(tempDir: File, name: String, dryRun: Boolean = false): TestResult {
+    private fun runTask(
+        tempDir: File,
+        name: String,
+        dryRun: Boolean = false,
+        addGeneratedSourcesToCompile: Boolean = false,
+    ): TestResult {
         return gradlew(
             tempDir,
             name,
             "-Pavito.ownership.mtlsCrt=\"\${OWNERSHIP_MTLS_CRT_CI}\"",
             "-Pavito.ownership.mtlsKey=\"\${OWNERSHIP_MTLS_CRT_KEY_CI}\"\n",
+            "-PnetworkContracts.generated.compile=$addGeneratedSourcesToCompile",
             useTestFixturesClasspath = true,
             dryRun = dryRun
         )

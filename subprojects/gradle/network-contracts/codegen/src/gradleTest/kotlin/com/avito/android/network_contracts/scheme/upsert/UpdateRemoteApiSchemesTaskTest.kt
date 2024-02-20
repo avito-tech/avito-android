@@ -141,7 +141,7 @@ internal class UpdateRemoteApiSchemesTaskTest {
         val moduleName = "lib"
         generateProject(
             projectDir = projectDir,
-            modules = defaultModule(moduleName)
+            modules = listOf(defaultModule(moduleName))
         )
 
         NetworkCodegenProjectGenerator.generateSchemes(
@@ -181,10 +181,12 @@ internal class UpdateRemoteApiSchemesTaskTest {
         appName: String = DEFAULT_APP_NAME,
         generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
     ): List<KotlinModule> {
-        return defaultModule(
-            name = name,
-            appName = appName,
-            generatedClassesPackage = generatedClassesPackage,
+        return listOf(
+            defaultModule(
+                name = name,
+                appName = appName,
+                generatedClassesPackage = generatedClassesPackage,
+            )
         )
     }
 

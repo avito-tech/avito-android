@@ -2,6 +2,7 @@ package com.avito.android.network_contracts.codegen
 
 import com.avito.android.Result
 import com.avito.android.isFailure
+import com.avito.android.network_contracts.codegen.config.CodegenConfig
 import com.avito.android.network_contracts.codegen.executor.Codegen
 import com.avito.android.network_contracts.shared.throwGradleError
 import com.avito.logger.Logger
@@ -15,10 +16,10 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -33,7 +34,13 @@ internal abstract class CodegenTask : DefaultTask() {
     abstract val kind: Property<String>
 
     @get:Input
-    abstract val projectName: Property<String>
+    abstract val codegenProjectName: Property<String>
+
+    @get:Input
+    abstract val packageName: Property<String>
+
+    @get:Input
+    abstract val moduleName: Property<String>
 
     @get:Input
     abstract val skipValidation: Property<Boolean>
@@ -43,11 +50,6 @@ internal abstract class CodegenTask : DefaultTask() {
 
     @get:Input
     abstract val keyEnvName: Property<String>
-
-    @get:InputFiles
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val snapshot: ConfigurableFileCollection
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -59,18 +61,17 @@ internal abstract class CodegenTask : DefaultTask() {
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
-    abstract val codegenBinaryFiles: ConfigurableFileCollection
+    abstract val codegenExecutableFiles: ConfigurableFileCollection
 
-    @Suppress("unused")
-    @get:InputFiles
+    @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val schemes: ConfigurableFileCollection
+    abstract val schemesDir: DirectoryProperty
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
-    abstract val packageDirectory: DirectoryProperty
+    abstract val moduleDirectory: DirectoryProperty
 
     @get:Internal
     internal abstract val loggerFactory: Property<LoggerFactory>
@@ -82,13 +83,19 @@ internal abstract class CodegenTask : DefaultTask() {
         val arch = findOperatingSystemArchitecture(outputDirectory.get().asFile)
         check(arch !is Arch.Unknown) { "Unsupported OS system: ${arch.rawValue}" }
 
-        val srcDir = packageDirectory.get().asFile
-        val kind = kind.get()
-        val name = projectName.get()
-
-        val codegen = Codegen.create(arch, codegenBinaryFiles, logger, srcDir, name, kind)
-
-        logger.info("Running codegen tasks. Kind: $kind. Name of the project: $name.\n")
+        val config = CodegenConfig(
+            packageName = packageName.get(),
+            schemesDirectoryRelativePath = schemesDir.get().asFile.toRelativeString(moduleDirectory.get().asFile),
+            buildDirectoryRelativePath = outputDirectory.get().asFile.toRelativeString(moduleDirectory.get().asFile),
+            moduleName = moduleName.get(),
+            kind = kind.get(),
+            name = codegenProjectName.get(),
+            moduleDir = moduleDirectory.get().asFile,
+            skipValidation = skipValidation.get(),
+            crtEnv = crtEnvName.get() to tmpCrtFile.get().asFile.toPath(),
+            keyEnv = keyEnvName.get() to tmpKeyFile.get().asFile.toPath()
+        )
+        val codegen = Codegen.create(arch, codegenExecutableFiles, logger, config)
 
         val result = codegen.execute(
             crtEnv = crtEnvName.get() to tmpCrtFile.get().asFile.toPath(),
