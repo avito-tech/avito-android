@@ -21,8 +21,8 @@ internal class ConfigurationCacheCompatibilityTest {
                  buildChecks {
                     androidSdk {
                         version(
-                            compileSdkVersion = 33,
-                            revision = 1
+                            compileSdkVersion = 34,
+                            revision = 3
                         )
                     }
                     preventKotlinDaemonFallback {
