@@ -18,6 +18,16 @@ internal class TestNameUnitParsingTest {
     }
 
     @Test
+    fun `testName unit - parsed for design-app data`() {
+        assertThat(
+            TestName(
+                "com.avito.android.design.app.test.design_system.MyTest",
+                "test"
+            ).team
+        ).isEqualTo(Team("design-system"))
+    }
+
+    @Test
     fun `unit parsed with subpackages`() {
         assertThat(TestName("com.avito.android.test.auto.some_feature.MyTest", "test").team)
             .isEqualTo(Team("auto"))

@@ -21,8 +21,16 @@ public val TestName.team: Team
             } catch (e: Exception) {
                 Team.UNDEFINED
             }
+        packageName.startsWith(designAppPrefix) ->
+            try {
+                val unitPrefix = packageName.substringAfter("$designAppPrefix.").substringBefore(delimiter)
+                Team(unitPrefix.replace("_", "-"))
+            } catch (e: Exception) {
+                Team.UNDEFINED
+            }
         else -> Team.UNDEFINED
     }
 
 private const val avitoPrefix = "com.avito.android.test"
 private const val domofondPrefix = "ru.domofond.test"
+private const val designAppPrefix = "com.avito.android.design.app.test"
