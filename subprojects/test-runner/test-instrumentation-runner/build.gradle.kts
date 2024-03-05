@@ -3,6 +3,10 @@ plugins {
     id("convention.publish-android-library")
 }
 
+android {
+    namespace = "com.avito.android.test.instrumentation.runner"
+}
+
 dependencies {
     api(libs.androidXTestRunner)
     implementation(libs.uiAutomator)

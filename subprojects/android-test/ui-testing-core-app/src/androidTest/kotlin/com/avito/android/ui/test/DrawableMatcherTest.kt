@@ -7,7 +7,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
-class DrawableMatcherTest {
+internal class DrawableMatcherTest {
 
     @get:Rule
     val rule = screenRule<DrawableActivity>(launchActivity = true)

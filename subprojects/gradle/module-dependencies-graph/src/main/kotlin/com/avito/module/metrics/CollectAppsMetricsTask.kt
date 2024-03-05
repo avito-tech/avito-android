@@ -13,7 +13,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.Path
-import java.io.File
 import javax.inject.Inject
 
 public abstract class CollectAppsMetricsTask @Inject constructor(
@@ -24,21 +23,21 @@ public abstract class CollectAppsMetricsTask @Inject constructor(
         description = "Collect Android applications modules health metrics"
     }
 
-    private val outputDir = File(project.buildDir, "reports/app-modules-health")
+    private val outputDir = project.layout.buildDirectory.dir("reports/app-modules-health")
 
     @OutputFile
     public val uniqueAppsMetrics: Property<RegularFile> = objects.fileProperty().apply {
-        set(File(outputDir, "apps.csv"))
+        set(outputDir.map { it.file("apps.csv") })
     }
 
     @OutputFile
     public val commonModulesComparison: Property<RegularFile> = objects.fileProperty().apply {
-        set(File(outputDir, "apps-common-modules-comparison.csv"))
+        set(outputDir.map { it.file("apps-common-modules-comparison.csv") })
     }
 
     @OutputFile
     public val commonModulesDetails: Property<RegularFile> = objects.fileProperty().apply {
-        set(File(outputDir, "apps-common-modules-details.log"))
+        set(outputDir.map { it.file("apps-common-modules-details.log") })
     }
 
     @TaskAction

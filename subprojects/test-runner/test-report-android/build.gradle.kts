@@ -3,6 +3,10 @@ plugins {
     id("convention.publish-android-library")
 }
 
+android {
+    namespace = "com.avito.android.test.report"
+}
+
 dependencies {
     api(project(":subprojects:test-runner:test-report"))
     api(libs.espressoCore)

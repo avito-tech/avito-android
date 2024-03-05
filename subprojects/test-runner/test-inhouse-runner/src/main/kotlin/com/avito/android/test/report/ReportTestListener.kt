@@ -4,7 +4,7 @@ import com.avito.android.runner.InHouseInstrumentationTestRunner
 import com.avito.logger.Logger
 import com.avito.logger.create
 
-class ReportTestListener : AbstractReportTestListener() {
+public class ReportTestListener : AbstractReportTestListener() {
 
     override val report: ReportTestLifecycle<*> by lazy {
         InHouseInstrumentationTestRunner.instance.report

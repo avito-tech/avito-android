@@ -14,7 +14,7 @@ import com.google.gson.JsonElement
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 
-class MockWebServerApiRule : SimpleRule() {
+public class MockWebServerApiRule : SimpleRule() {
 
     private val mockWebServer: MockWebServer
         get() = (InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner).mockWebServer
@@ -26,11 +26,11 @@ class MockWebServerApiRule : SimpleRule() {
         mockWebServer.shutdown()
     }
 
-    fun registerMock(mock: Mock) {
+    public fun registerMock(mock: Mock) {
         mockDispatcher.registerMock(mock)
     }
 
-    fun captureRequest(requestMatcher: RequestData.() -> Boolean): RequestCapturer {
+    public fun captureRequest(requestMatcher: RequestData.() -> Boolean): RequestCapturer {
         return mockDispatcher.captureRequest(requestMatcher)
     }
 }
@@ -41,7 +41,7 @@ class MockWebServerApiRule : SimpleRule() {
  * @param fileName specify file path, relative to assets dir
  *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
  */
-fun MockResponse.setBodyFromFile(fileName: String): MockResponse = apply {
+public fun MockResponse.setBodyFromFile(fileName: String): MockResponse = apply {
     val gson = (InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner).gson
     val text = ResourcesReader.readText(fileName)
     if (fileName.endsWith(".json")) {

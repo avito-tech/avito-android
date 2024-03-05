@@ -32,16 +32,16 @@ import org.junit.Assert.assertTrue
  * Abstraction of android phone from user's perspective
  * Contains actions and checks not associated with apps
  */
-object Device {
+public object Device {
 
     private val uiDevice by lazy { UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()) }
 
-    val keyboard = KeyboardElement()
+    public val keyboard: KeyboardElement = KeyboardElement()
 
     /**
      * Changes device orientation between portrait and landscape
      */
-    fun rotate() {
+    public fun rotate() {
         if (Build.VERSION.SDK_INT >= 30) {
             // ViewAction with default root matcher is flaky
             // It can pick wrong window in case of opened dialog
@@ -54,7 +54,7 @@ object Device {
     /**
      * short press on back button, ignore application under test boundaries
      */
-    fun pressBack(failTestIfAppUnderTestClosed: Boolean = false) {
+    public fun pressBack(failTestIfAppUnderTestClosed: Boolean = false) {
         if (failTestIfAppUnderTestClosed) {
             Espresso.pressBack()
         } else {
@@ -65,7 +65,7 @@ object Device {
     /**
      * short press on home button
      */
-    fun pressHome() {
+    public fun pressHome() {
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressHome()
     }
 
@@ -74,16 +74,16 @@ object Device {
      * Used only in screenshot tests as a temp hack. Don't use it in component or functional tests
      * todo consider remove
      */
-    fun waitForIdle() {
+    public fun waitForIdle() {
         onView(ViewMatchers.isRoot()).perform(OrientationChangeAction.toggle())
     }
 
-    fun getLauncherIntentForAppUnderTest(appContext: Context): Intent {
+    public fun getLauncherIntentForAppUnderTest(appContext: Context): Intent {
         val launchIntent = requireNotNull(appContext.packageManager.getLaunchIntentForPackage(appContext.packageName))
         return launchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) // Clear out any previous instances
     }
 
-    fun waitForLauncher(timeout: Long = UITestConfig.activityLaunchTimeoutMilliseconds) {
+    public fun waitForLauncher(timeout: Long = UITestConfig.activityLaunchTimeoutMilliseconds) {
         assertTrue(
             "Waiting for launcher screen was exceeded timeout: $timeout milliseconds",
             uiDevice.wait(Until.hasObject(getLauncherPackageNameSelector().depth(0)), timeout)
@@ -109,7 +109,7 @@ object Device {
         }
     }
 
-    fun waitForAppLaunchAndReady(
+    public fun waitForAppLaunchAndReady(
         appContext: Context,
         timeout: Long = UITestConfig.activityLaunchTimeoutMilliseconds
     ) {
@@ -121,11 +121,11 @@ object Device {
         }
     }
 
-    fun killApp(appContext: Context) {
+    public fun killApp(appContext: Context) {
         Runtime.getRuntime().exec(arrayOf("am", "force-stop", appContext.packageName))
     }
 
-    fun grantPermissions(vararg permissions: String) {
+    public fun grantPermissions(vararg permissions: String) {
         val requester = PermissionRequester()
         requester.addPermissions(*permissions)
         requester.requestPermissions()
@@ -142,15 +142,15 @@ object Device {
     /**
      * WARNING: Currently not working correctly while app is running. Use only on app with no processes alive
      */
-    fun clearApplicationData(appContext: Context = ApplicationProvider.getApplicationContext()) {
+    public fun clearApplicationData(appContext: Context = ApplicationProvider.getApplicationContext()) {
         Cache(appContext).clear()
         SQLiteDB(appContext).clearAll()
         SharedPreferences(appContext).clear()
     }
 
-    object Push {
+    public object Push {
 
-        fun openNotification(
+        public fun openNotification(
             expectedTitle: String,
             timeoutMillis: Long = UITestConfig.openNotificationTimeoutMilliseconds
         ) {
@@ -171,7 +171,7 @@ object Device {
             titleObject.click()
         }
 
-        fun receiveNotification(init: Notification.() -> Unit) {
+        public fun receiveNotification(init: Notification.() -> Unit) {
             val notification = Notification()
             notification.init()
             val command = "am broadcast" +
@@ -184,12 +184,12 @@ object Device {
                 .executeShellCommand(command)
         }
 
-        class Notification {
-            var intent: String = "com.google.android.c2dm.intent.RECEIVE"
-            var packageName: String = ApplicationProvider.getApplicationContext<Application>().packageName
-            var receiverName = "com.google.android.gms.gcm.GcmReceiver"
-            var uri: String = ""
-            var messageBody: String = ""
+        public class Notification {
+            public var intent: String = "com.google.android.c2dm.intent.RECEIVE"
+            public var packageName: String = ApplicationProvider.getApplicationContext<Application>().packageName
+            public var receiverName: String = "com.google.android.gms.gcm.GcmReceiver"
+            public var uri: String = ""
+            public var messageBody: String = ""
                 set(value) {
                     assertThat(
                         "Value must not contains spaces",
@@ -198,7 +198,7 @@ object Device {
                     )
                     field = value
                 }
-            var phash: String? = null
+            public var phash: String? = null
         }
     }
 }

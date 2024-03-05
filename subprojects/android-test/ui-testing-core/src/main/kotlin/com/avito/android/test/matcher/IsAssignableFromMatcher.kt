@@ -7,7 +7,7 @@ import org.hamcrest.TypeSafeMatcher
 /**
  * Implementation from ViewMatchers, with custom error message
  */
-class IsAssignableFromMatcher(
+public class IsAssignableFromMatcher(
     private val clazz: Class<out View>,
     private val errorMessage: (Class<out View>) -> String = { "is assignable from class: $it" }
 ) : TypeSafeMatcher<View>() {

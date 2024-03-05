@@ -6,8 +6,8 @@ com.squareup.okhttp3:okhttp:4.10.0
 com.squareup.okio:okio-jvm:3.0.0
 com.squareup.okio:okio:3.0.0
 com.timgroup:java-statsd-client:3.1.0
-org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib:1.9.22
 org.jetbrains:annotations:13.0

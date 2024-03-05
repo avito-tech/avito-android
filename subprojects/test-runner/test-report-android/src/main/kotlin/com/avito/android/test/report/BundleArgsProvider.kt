@@ -4,7 +4,7 @@ import android.os.Bundle
 import java.io.Serializable
 
 // TODO: consider of using as a wrapper above "bundle" to protect from collisions, empty values, ...
-class BundleArgsProvider(
+public class BundleArgsProvider(
     private val bundle: Bundle
 ) : ArgsProvider {
 
@@ -26,7 +26,7 @@ class BundleArgsProvider(
 
     override fun getArgumentOrThrow(name: String): String {
         val result: String? = bundle.getString(name)
-        if (result == null || result.isBlank()) {
+        if (result.isNullOrBlank()) {
             throw IllegalStateException(
                 "$name is a mandatory argument; all values=$bundle"
             )

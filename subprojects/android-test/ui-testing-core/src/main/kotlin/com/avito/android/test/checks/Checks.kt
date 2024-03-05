@@ -6,7 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Matcher
 
-interface Checks : LabelChecks {
+public interface Checks : LabelChecks {
 
     /**
      * Accepts a view so long as a given percentage of that view's area is
@@ -15,7 +15,7 @@ interface Checks : LabelChecks {
      * @param areaPercentage an integer ranging from (0, 100] indicating how much percent of the
      *   surface area of the view must be shown to the user to be accepted.
      */
-    fun isDisplayingAtLeast(areaPercentage: Int)
+    public fun isDisplayingAtLeast(areaPercentage: Int)
 
     /**
      * Accepts a view whose height and width fit perfectly within
@@ -24,7 +24,7 @@ interface Checks : LabelChecks {
      * There exist views (such as ScrollViews) whose height and width are larger then the physical
      * device screen by design. Such views will _never_ be completely displayed.
      */
-    fun isCompletelyDisplayed()
+    public fun isCompletelyDisplayed()
 
     /**
      * Matches [View]s that are currently displayed on the screen to the
@@ -34,7 +34,7 @@ interface Checks : LabelChecks {
      * the view is greater then the height/width of the visible rectangle). If you wish to ensure the
      * entire rectangle this view draws is displayed to the user use isCompletelyDisplayed.
      */
-    fun isDisplayed()
+    public fun isDisplayed()
 
     /**
      * Matches [View]s that are NOT currently displayed on the screen to the
@@ -42,61 +42,61 @@ interface Checks : LabelChecks {
      *
      * Note: isNotDisplayed inverts the logic by isDisplayed().
      */
-    fun isNotDisplayed()
+    public fun isNotDisplayed()
 
     /**
      * Accepts a [View] that overlapped with another view by at least one pixel
      */
-    fun isOverlapped()
+    public fun isOverlapped()
 
     /**
      * Accepts a [View] that not overlapped with another view even by one pixel
      */
-    fun isNotOverlapped()
+    public fun isNotOverlapped()
 
     // checked the property Visible of the PageObject and his parent hierarchy
-    fun isVisible()
+    public fun isVisible()
 
-    fun isNotVisible()
+    public fun isNotVisible()
 
-    fun hasVisibility(visibility: ViewMatchers.Visibility)
+    public fun hasVisibility(visibility: ViewMatchers.Visibility)
 
-    fun isEnabled()
+    public fun isEnabled()
 
-    fun isDisabled()
+    public fun isDisabled()
 
     /**
      * You can use it to check if a tab is active
      */
-    fun isSelected()
+    public fun isSelected()
 
-    fun withChildCount(countMatcher: Matcher<Int>)
+    public fun withChildCount(countMatcher: Matcher<Int>)
 
-    fun withChildCountEquals(count: Int)
+    public fun withChildCountEquals(count: Int)
 
     /**
      * Checking that element does not exist by matcher is fragile.
      * Positive scenario for the expected state is more reliable
      */
-    fun doesNotExist()
+    public fun doesNotExist()
 
-    fun exists()
+    public fun exists()
 
-    fun isChecked()
+    public fun isChecked()
 
-    fun isNotChecked()
+    public fun isNotChecked()
 
     /**
      * Asserts that view displayed is completely left of
      * the view matching the given matcher.
      */
-    fun isLeftOf(matcher: Matcher<View>)
+    public fun isLeftOf(matcher: Matcher<View>)
 
     /**
      * Asserts that view displayed is completely right of
      * the view matching the given matcher.
      */
-    fun isRightOf(matcher: Matcher<View>)
+    public fun isRightOf(matcher: Matcher<View>)
 
     /**
      * Asserts that view displayed is completely aligned
@@ -105,7 +105,7 @@ interface Checks : LabelChecks {
      * <p>The left 'x' coordinate of the view displayed must equal the left 'x'
      * coordinate of the view matching the given matcher.
      */
-    fun isLeftAlignedWith(matcher: Matcher<View>)
+    public fun isLeftAlignedWith(matcher: Matcher<View>)
 
     /**
      * Asserts that view displayed is completely aligned
@@ -114,19 +114,19 @@ interface Checks : LabelChecks {
      * <p>The right 'x' coordinate of the view displayed must equal the right 'x'
      * coordinate of the view matching the given matcher.
      */
-    fun isRightAlignedWith(matcher: Matcher<View>)
+    public fun isRightAlignedWith(matcher: Matcher<View>)
 
     /**
      * Asserts that view displayed is completely above
      * the view matching the given matcher.
      */
-    fun isAbove(matcher: Matcher<View>)
+    public fun isAbove(matcher: Matcher<View>)
 
     /**
      * Asserts that view displayed is completely
      * below the view matching the given matcher.
      */
-    fun isBelow(matcher: Matcher<View>)
+    public fun isBelow(matcher: Matcher<View>)
 
     /**
      * Asserts that view displayed is completely
@@ -135,7 +135,7 @@ interface Checks : LabelChecks {
      * The bottom 'y' coordinate of the view displayed must equal the bottom 'y'
      * coordinate of the view matching the given matcher.
      */
-    fun isBottomAlignedWith(matcher: Matcher<View>)
+    public fun isBottomAlignedWith(matcher: Matcher<View>)
 
     /**
      * Asserts that view displayed is completely
@@ -144,32 +144,32 @@ interface Checks : LabelChecks {
      * The top 'y' coordinate of the view displayed must equal the top 'y'
      * coordinate of the view matching the given matcher.
      */
-    fun isTopAlignedWith(matcher: Matcher<View>)
+    public fun isTopAlignedWith(matcher: Matcher<View>)
 
-    fun isCenteredVerticallyWith(matcher: Matcher<View>)
+    public fun isCenteredVerticallyWith(matcher: Matcher<View>)
 
-    fun isCenteredVerticallyWithBottomOf(matcher: Matcher<View>)
+    public fun isCenteredVerticallyWithBottomOf(matcher: Matcher<View>)
 
-    fun isDisplayedWithAlpha(alpha: Float)
+    public fun isDisplayedWithAlpha(alpha: Float)
 
-    fun isFocusable()
+    public fun isFocusable()
 
-    fun isNotFocusable()
+    public fun isNotFocusable()
 
-    fun isFocusableInTouchMode()
+    public fun isFocusableInTouchMode()
 
-    fun isNotFocusableInTouchMode()
+    public fun isNotFocusableInTouchMode()
 
     /**
      * Accepts a view whose height and width fit *perfectly outside* of the currently displayed region of this view.
      */
-    fun isNotCompletelyDisplayed()
+    public fun isNotCompletelyDisplayed()
 
-    fun isClickable()
+    public fun isClickable()
 
-    fun isNotClickable()
+    public fun isNotClickable()
 
-    fun hasFocus()
+    public fun hasFocus()
 
-    fun hasBackground(@DrawableRes drawable: Int? = null, @ColorRes tint: Int? = null)
+    public fun hasBackground(@DrawableRes drawable: Int? = null, @ColorRes tint: Int? = null)
 }

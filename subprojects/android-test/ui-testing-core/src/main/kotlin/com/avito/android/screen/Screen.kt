@@ -6,21 +6,21 @@ import android.view.View
  * Single "screen" of an app
  * Could be activity, fragment, dialog or view
  */
-interface Screen {
+public interface Screen {
 
     /**
      * R.id of root view in hierarchy of a screen
      * Used to determine if screen is presented to user (opened)
      */
-    val rootId: Int
+    public val rootId: Int
 
-    val checks: ScreenChecks
+    public val checks: ScreenChecks
 
-    companion object {
+    public companion object {
 
         /**
          * means that all tests that calls this screen will be run regardless of code changes (no impact analysis)
          */
-        const val UNKNOWN_ROOT_ID: Int = View.NO_ID
+        public const val UNKNOWN_ROOT_ID: Int = View.NO_ID
     }
 }

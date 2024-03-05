@@ -2,7 +2,7 @@ package com.avito.android.test.screenshot
 
 import android.graphics.Bitmap
 
-interface ScreenshotConsumer {
+public interface ScreenshotConsumer {
 
-    fun onScreenshotIsReady(screenshot: Bitmap, description: String)
+    public fun onScreenshotIsReady(screenshot: Bitmap, description: String)
 }

@@ -5,7 +5,7 @@ import com.avito.android.ui.MovingButtonActivity
 import org.junit.Rule
 import org.junit.Test
 
-class MovingButtonTest {
+internal class MovingButtonTest {
 
     @get:Rule
     val rule = screenRule<MovingButtonActivity>(launchActivity = true)

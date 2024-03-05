@@ -1,19 +1,19 @@
 [versions]
 java = "17"
-kotlin = "1.7.10"
-kotlinLanguageVersion = "1.7"
-kspVersion = "1.7.10-1.0.6"
-agp = "7.4.1"
+kotlin = "1.9.22"
+kotlinLanguageVersion = "1.9"
+kspVersion = "1.9.22-1.0.17"
+agp = "8.2.2"
 # formula: 23 + agp version
 # check versions https://mvnrepository.com/artifact/com.android.tools.external.com-intellij
-androidTools = "30.4.1"
+androidTools = "31.2.2"
 okhttp = "4.10.0"
 retrofit = "2.9.0"
 androidX = "1.3.0"
 espresso = "3.5.1"
 coroutines = "1.3.8"
 # Update detekt version in build-logic/build.gradle.kts
-detekt = "1.18.1"
+detekt = "1.23.5"
 buildTools = "34.0.0"
 compileSdk = "34"
 targetSdk = "33"
@@ -34,7 +34,7 @@ kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.r
 kspGradle = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
-dependencyGuard = "com.dropbox.dependency-guard:dependency-guard:0.4.3"
+dependencyGuard = "com.dropbox.dependency-guard:dependency-guard:0.5.0"
 
 detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
@@ -157,7 +157,7 @@ ktorClient = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktorOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
 # https://mvnrepository.com/artifact/com.autonomousapps.dependency-analysis/com.autonomousapps.dependency-analysis.gradle.plugin
-dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.18.0"
+dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.28.0"
 
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]

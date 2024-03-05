@@ -2,7 +2,7 @@ package com.avito.android.runner.annotation.resolver
 
 import java.lang.reflect.Method
 
-object Annotations {
+public object Annotations {
 
     /**
      * Get unique (by annotation class) list of runtime retained annotations from (class + method).filter(subset)
@@ -26,7 +26,7 @@ object Annotations {
      *     Annotation1()          <- from class
      * )
      */
-    fun getAnnotationsSubset(
+    public fun getAnnotationsSubset(
         aClass: Class<*>,
         method: Method? = null,
         vararg subset: Class<out Annotation>

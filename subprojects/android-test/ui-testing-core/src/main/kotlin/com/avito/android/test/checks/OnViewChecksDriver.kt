@@ -12,7 +12,7 @@ import org.hamcrest.Matcher
 /**
  * use interactionContext instead
  */
-class OnViewChecksDriver(private val matcher: Matcher<View>) : ChecksDriver {
+public class OnViewChecksDriver(private val matcher: Matcher<View>) : ChecksDriver {
 
     private val interaction: ViewInteraction
         get() = Espresso.onView(matcher)

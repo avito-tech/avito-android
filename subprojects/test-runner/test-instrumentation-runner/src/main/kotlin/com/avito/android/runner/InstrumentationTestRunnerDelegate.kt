@@ -2,25 +2,25 @@ package com.avito.android.runner
 
 import android.os.Bundle
 
-abstract class InstrumentationTestRunnerDelegate {
+public abstract class InstrumentationTestRunnerDelegate {
 
-    open fun beforeOnStart() {
+    public open fun beforeOnStart() {
         // empty
     }
 
-    open fun beforeOnCreate(arguments: Bundle) {
+    public open fun beforeOnCreate(arguments: Bundle) {
         // empty
     }
 
-    open fun afterOnCreate(arguments: Bundle) {
+    public open fun afterOnCreate(arguments: Bundle) {
         // empty
     }
 
-    open fun beforeFinish(resultCode: Int, results: Bundle?) {
+    public open fun beforeFinish(resultCode: Int, results: Bundle?) {
         // empty
     }
 
-    open fun afterFinish(resultCode: Int, results: Bundle?) {
+    public open fun afterFinish(resultCode: Int, results: Bundle?) {
         // empty
     }
 }

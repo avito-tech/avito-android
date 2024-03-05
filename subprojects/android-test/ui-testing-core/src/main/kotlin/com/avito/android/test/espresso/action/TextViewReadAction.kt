@@ -9,7 +9,7 @@ import com.avito.android.waiter.waitFor
 import org.hamcrest.Matcher
 import org.junit.Assert.assertFalse
 
-class TextViewReadAction : ViewAction {
+public class TextViewReadAction : ViewAction {
 
     private var result: String? = null
 
@@ -24,7 +24,7 @@ class TextViewReadAction : ViewAction {
 
     private fun View.readText(): String = (this as TextView).text.toString()
 
-    companion object {
+    internal companion object {
 
         /**
          * @param perform use suitable driver to perform this view action

@@ -2,6 +2,6 @@ package com.avito.android.runner.args
 
 import com.avito.android.test.report.ArgsProvider
 
-fun interface ArgProvider<out T> {
-    fun parse(args: ArgsProvider): T
+public fun interface ArgProvider<out T> {
+    public fun parse(args: ArgsProvider): T
 }

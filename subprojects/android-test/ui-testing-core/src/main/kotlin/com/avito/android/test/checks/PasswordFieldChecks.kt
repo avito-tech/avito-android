@@ -1,8 +1,8 @@
 package com.avito.android.test.checks
 
-interface PasswordFieldChecks : Checks {
+public interface PasswordFieldChecks : Checks {
 
-    fun isPasswordVisible()
+    public fun isPasswordVisible()
 
-    fun isPasswordHidden()
+    public fun isPasswordHidden()
 }

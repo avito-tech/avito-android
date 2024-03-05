@@ -14,19 +14,19 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.`is`
 
-class ToolbarMenuElement(
+public class ToolbarMenuElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext) {
 
     override val checks: ToolbarMenuElementChecks = ToolbarMenuElementChecksImpl(interactionContext)
 
     // TODO: use element() and remove this constructor
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 }
 
-interface ToolbarMenuElementChecks : Checks
+public interface ToolbarMenuElementChecks : Checks
 
-class ToolbarMenuElementChecksImpl(
+internal class ToolbarMenuElementChecksImpl(
     private val driver: ChecksDriver
 ) : ToolbarMenuElementChecks,
     Checks by ChecksImpl(driver) {
@@ -40,7 +40,8 @@ class ToolbarMenuElementChecksImpl(
     }
 }
 
-class ToolbarMenuElementCheckedMatcher(
+@SuppressLint("RestrictedApi")
+internal class ToolbarMenuElementCheckedMatcher(
     private val checkedMatcher: Matcher<Boolean>
 ) : BoundedMatcher<View, View>(View::class.java, MenuView.ItemView::class.java) {
 

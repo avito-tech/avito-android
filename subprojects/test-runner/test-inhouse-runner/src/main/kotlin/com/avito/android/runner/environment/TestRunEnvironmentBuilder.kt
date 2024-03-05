@@ -8,11 +8,11 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
 import com.avito.android.transport.ReportDestination
 
-interface TestRunEnvironmentBuilder {
-    fun elastic(argProvider: ArgProvider<ElasticConfig>): TestRunEnvironmentBuilder
-    fun statsD(argProvider: ArgProvider<StatsDConfig>): TestRunEnvironmentBuilder
-    fun testMetadata(argProvider: ArgProvider<TestMetadata>): TestRunEnvironmentBuilder
-    fun reportDestination(argProvider: ArgProvider<ReportDestination>): TestRunEnvironmentBuilder
-    fun videoRecording(argProvider: ArgProvider<VideoFeatureValue>): TestRunEnvironmentBuilder
-    fun build(argumentsProvider: ArgsProvider): TestRunEnvironment
+public interface TestRunEnvironmentBuilder {
+    public fun elastic(argProvider: ArgProvider<ElasticConfig>): TestRunEnvironmentBuilder
+    public fun statsD(argProvider: ArgProvider<StatsDConfig>): TestRunEnvironmentBuilder
+    public fun testMetadata(argProvider: ArgProvider<TestMetadata>): TestRunEnvironmentBuilder
+    public fun reportDestination(argProvider: ArgProvider<ReportDestination>): TestRunEnvironmentBuilder
+    public fun videoRecording(argProvider: ArgProvider<VideoFeatureValue>): TestRunEnvironmentBuilder
+    public fun build(argumentsProvider: ArgsProvider): TestRunEnvironment
 }

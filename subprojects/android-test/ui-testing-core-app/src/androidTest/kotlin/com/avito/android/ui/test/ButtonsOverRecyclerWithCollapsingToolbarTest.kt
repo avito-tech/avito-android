@@ -5,7 +5,7 @@ import com.avito.android.ui.ButtonsOverRecyclerWithCollapsingToolbarActivity
 import org.junit.Rule
 import org.junit.Test
 
-class ButtonsOverRecyclerWithCollapsingToolbarTest {
+internal class ButtonsOverRecyclerWithCollapsingToolbarTest {
 
     @get:Rule
     val rule = screenRule<ButtonsOverRecyclerWithCollapsingToolbarActivity>(launchActivity = true)

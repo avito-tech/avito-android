@@ -12,7 +12,7 @@ import org.hamcrest.TypeSafeMatcher
 /**
  * High-level checked matcher, anything that somehow can be "checked" must be handled by this matcher
  */
-class UniversalCheckedMatcher(private val checkedStateMatcher: Matcher<Boolean>) :
+public class UniversalCheckedMatcher(private val checkedStateMatcher: Matcher<Boolean>) :
     TypeSafeMatcher<View>() {
 
     override fun describeTo(description: Description) {

@@ -7,7 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.viewpager.widget.ViewPager
 import org.hamcrest.Matcher
 
-class ViewPagersFlipAction(private val direction: Direction) : ViewAction {
+internal class ViewPagersFlipAction(private val direction: Direction) : ViewAction {
 
     enum class Direction { LEFT, RIGHT }
 

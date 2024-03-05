@@ -10,7 +10,7 @@ import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 
-class RecyclerWithSingleLongItemTest {
+internal class RecyclerWithSingleLongItemTest {
 
     @get:Rule
     val rule = screenRule<RecyclerWithLongItemsActivity>()

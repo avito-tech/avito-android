@@ -3,18 +3,18 @@ package com.avito.android.api
 import android.util.Log
 
 @ApiDsl
-abstract class RequestRegistry {
+public abstract class RequestRegistry {
 
-    val registeredMocks = mutableMapOf<String, ApiRequest>()
+    internal val registeredMocks = mutableMapOf<String, ApiRequest>()
 
-    fun reset() {
+    public fun reset() {
         resetApi()
         registeredMocks.clear()
     }
 
     protected abstract fun resetApi()
 
-    fun <T : ApiRequest> T.register(): T {
+    public fun <T : ApiRequest> T.register(): T {
         Log.d("TestRunner", "${javaClass.simpleName} registered")
         registeredMocks[javaClass.simpleName] = this
         return this

@@ -16,7 +16,7 @@ internal class LocalRunInteractor(
     private val logger: Logger
 ) {
 
-    fun setupLocalRunInstrumentationArgs(androidExtension: CommonExtension<*, *, *, *>, args: Map<String, String>) {
+    fun setupLocalRunInstrumentationArgs(androidExtension: CommonExtension<*, *, *, *, *>, args: Map<String, String>) {
         val filteredArgs = filterNotBlankValues(args) { key ->
             logger.warn("Runner argument '$key' was filtered out for local ui tests run because of a blank value")
         }

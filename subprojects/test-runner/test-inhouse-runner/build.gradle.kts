@@ -3,6 +3,10 @@ plugins {
     id("convention.publish-android-library")
 }
 
+android {
+    namespace = "com.avito.android.test.inhouse"
+}
+
 dependencies {
     api(project(":subprojects:test-runner:test-instrumentation-runner"))
     api(project(":subprojects:common:junit-utils"))

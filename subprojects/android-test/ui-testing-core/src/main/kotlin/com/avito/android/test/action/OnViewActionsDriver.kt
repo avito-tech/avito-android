@@ -10,7 +10,7 @@ import com.avito.android.test.waitToPerform
 import org.hamcrest.Matcher
 
 @Deprecated("use interaction context")
-class OnViewActionsDriver(private val matcher: Matcher<View>) : ActionsDriver {
+public class OnViewActionsDriver(private val matcher: Matcher<View>) : ActionsDriver {
 
     private val interaction: ViewInteraction
         get() = Espresso.onView(matcher)

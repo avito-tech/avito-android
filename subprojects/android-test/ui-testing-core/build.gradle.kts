@@ -3,6 +3,10 @@ plugins {
     id("convention.publish-android-library")
 }
 
+android {
+    namespace = "com.avito.android.test.ui"
+}
+
 dependencies {
     api(libs.androidXTestCore)
     api(libs.espressoCore)

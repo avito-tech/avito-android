@@ -4,7 +4,7 @@ import radiography.Radiography
 import radiography.ScanScopes.AllWindowsScope
 import radiography.ViewStateRenderers
 
-class ViewHierarchyDumper : Dumper {
+public class ViewHierarchyDumper : Dumper {
 
     override val label: String = "View hierarchy dump"
 

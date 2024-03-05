@@ -4,7 +4,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 
-class DrawableBackgroundMatcher(
+public class DrawableBackgroundMatcher(
     @DrawableRes private val src: Int? = null,
     @ColorRes private val tint: Int? = null
 ) :

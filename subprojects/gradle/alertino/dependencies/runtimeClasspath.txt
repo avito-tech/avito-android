@@ -5,8 +5,8 @@ com.squareup.okio:okio-jvm:3.0.0
 com.squareup.okio:okio:3.0.0
 com.squareup.retrofit2:converter-gson:2.9.0
 com.squareup.retrofit2:retrofit:2.9.0
-org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib:1.9.22
 org.jetbrains:annotations:13.0

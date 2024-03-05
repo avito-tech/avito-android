@@ -11,11 +11,11 @@ import org.hamcrest.Matcher
  * Register your interceptors in [com.avito.android.test.UITestConfig]
  * intercept() will be called before any action during tests
  */
-interface ActionInterceptor {
+public interface ActionInterceptor {
 
-    fun intercept(action: ViewAction, description: String, view: View)
+    public fun intercept(action: ViewAction, description: String, view: View)
 
-    class Proxy(
+    public class Proxy(
         private val source: ViewAction,
         private val interceptors: List<ActionInterceptor>
     ) : ViewAction {
@@ -35,15 +35,15 @@ interface ActionInterceptor {
  * Register your interceptors in [com.avito.android.test.UITestConfig]
  * intercept() will be called before any action during tests
  */
-interface AssertionInterceptor {
+public interface AssertionInterceptor {
 
-    fun intercept(
+    public fun intercept(
         assertion: ViewAssertion,
         view: View?,
         noViewFoundException: NoMatchingViewException?
     )
 
-    class Proxy(
+    public class Proxy(
         private val source: ViewAssertion,
         private val interceptors: List<AssertionInterceptor>
     ) : ViewAssertion {

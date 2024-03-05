@@ -7,9 +7,9 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Matcher
 
-class RatingBarAction(private val rating: Float) : ViewAction {
+public class RatingBarAction(private val rating: Float) : ViewAction {
 
-    override fun getDescription() = "select rating"
+    override fun getDescription(): String = "select rating"
 
     override fun getConstraints(): Matcher<View> = ViewMatchers.isAssignableFrom(AppCompatRatingBar::class.java)
 

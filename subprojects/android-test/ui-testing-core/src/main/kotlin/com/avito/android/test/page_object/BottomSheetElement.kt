@@ -9,21 +9,21 @@ import com.avito.android.test.matcher.BottomSheetCollapsedMatcher
 import com.avito.android.test.matcher.BottomSheetExpandedMatcher
 import com.avito.android.test.matcher.BottomSheetHiddenMatcher
 
-open class BottomSheetElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
+public open class BottomSheetElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
-    override val checks = ElementChecks(interactionContext)
+    override val checks: ElementChecks = ElementChecks(interactionContext)
 
-    inner class ElementChecks(private val drivenChecks: ChecksDriver) : Checks by ChecksImpl(drivenChecks) {
+    public inner class ElementChecks(private val drivenChecks: ChecksDriver) : Checks by ChecksImpl(drivenChecks) {
 
-        fun isExpanded() {
+        public fun isExpanded() {
             drivenChecks.check(ViewAssertions.matches(BottomSheetExpandedMatcher()))
         }
 
-        fun isCollapsed() {
+        public fun isCollapsed() {
             drivenChecks.check(ViewAssertions.matches(BottomSheetCollapsedMatcher()))
         }
 
-        fun isHidden() {
+        public fun isHidden() {
             drivenChecks.check(ViewAssertions.matches(BottomSheetHiddenMatcher()))
         }
     }

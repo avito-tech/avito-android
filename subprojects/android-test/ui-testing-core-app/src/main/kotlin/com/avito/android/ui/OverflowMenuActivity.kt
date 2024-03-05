@@ -6,7 +6,7 @@ import android.view.Menu
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class OverflowMenuActivity : AppCompatActivity() {
+internal class OverflowMenuActivity : AppCompatActivity() {
     lateinit var textView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {

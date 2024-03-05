@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class InterceptorTest {
+internal class InterceptorTest {
 
     @get:Rule
     val rule = screenRule<VisibilityActivity>(true)

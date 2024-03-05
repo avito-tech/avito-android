@@ -5,7 +5,7 @@ import com.avito.android.ui.RecyclerDescendantLevelsActivity
 import org.junit.Rule
 import org.junit.Test
 
-class RecyclerDescendantLevelsActivityTest {
+internal class RecyclerDescendantLevelsActivityTest {
 
     @get:Rule
     val rule = screenRule<RecyclerDescendantLevelsActivity>()

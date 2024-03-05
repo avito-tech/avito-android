@@ -6,7 +6,7 @@ import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import org.hamcrest.Matchers.`is`
 
-class ViewExistsAssertion : ViewAssertion {
+internal class ViewExistsAssertion : ViewAssertion {
 
     override fun check(view: View?, noView: NoMatchingViewException?) {
         if (view == null) {

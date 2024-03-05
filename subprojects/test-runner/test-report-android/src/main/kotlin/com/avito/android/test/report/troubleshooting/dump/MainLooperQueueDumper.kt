@@ -2,7 +2,7 @@ package com.avito.android.test.report.troubleshooting.dump
 
 import android.os.Looper
 
-class MainLooperQueueDumper : Dumper {
+public class MainLooperQueueDumper : Dumper {
 
     override val label: String = "Main looper queue dump"
 

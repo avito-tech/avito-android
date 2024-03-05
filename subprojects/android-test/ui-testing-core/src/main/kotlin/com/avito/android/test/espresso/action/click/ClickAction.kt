@@ -13,7 +13,7 @@ import androidx.test.espresso.action.ViewActions.actionWithAssertions
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class ClickAction(
+internal class ClickAction(
     private val event: Event,
     private val coordinatesProvider: CoordinatesProvider,
     private val precisionDescriber: PrecisionDescriber,

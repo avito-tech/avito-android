@@ -7,7 +7,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @Suppress("MaxLineLength")
-class StatefulRecyclerViewAdapterTest {
+internal class StatefulRecyclerViewAdapterTest {
 
     @get:Rule
     val rule = screenRule<StatefulRecyclerViewAdapterActivity>(launchActivity = false)

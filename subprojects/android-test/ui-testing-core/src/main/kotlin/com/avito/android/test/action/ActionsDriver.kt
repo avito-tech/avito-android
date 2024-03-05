@@ -2,7 +2,7 @@ package com.avito.android.test.action
 
 import androidx.test.espresso.ViewAction
 
-interface ActionsDriver {
+public interface ActionsDriver {
 
-    fun perform(vararg actions: ViewAction)
+    public fun perform(vararg actions: ViewAction)
 }

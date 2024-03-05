@@ -17,7 +17,7 @@ import com.avito.android.test.matcher.TabLayoutTabsCountMatcher
 import com.google.android.material.tabs.TabLayout
 import org.hamcrest.Matcher
 
-class TabLayoutElement(
+public class TabLayoutElement(
     interactionContext: InteractionContext
 ) :
     ViewElement(interactionContext),
@@ -26,24 +26,24 @@ class TabLayoutElement(
     override val checks: TabLayoutChecks = TabLayoutChecksImpl(interactionContext)
 }
 
-interface TabLayoutActions {
-    fun select(position: Int)
+public interface TabLayoutActions {
+    public fun select(position: Int)
 }
 
-class TabLayoutActionsImpl(private val actionsDriver: ActionsDriver) : TabLayoutActions {
+internal class TabLayoutActionsImpl(private val actionsDriver: ActionsDriver) : TabLayoutActions {
     override fun select(position: Int) {
         actionsDriver.perform(TabLayoutSelectAction(position))
     }
 }
 
-interface TabLayoutChecks : Checks {
+public interface TabLayoutChecks : Checks {
 
-    fun withSelectedPosition(position: Int)
+    public fun withSelectedPosition(position: Int)
 
-    fun withTabsCount(count: Int)
+    public fun withTabsCount(count: Int)
 }
 
-class TabLayoutChecksImpl(private val driver: ChecksDriver) : TabLayoutChecks,
+internal class TabLayoutChecksImpl(private val driver: ChecksDriver) : TabLayoutChecks,
     Checks by ChecksImpl(driver) {
 
     override fun withSelectedPosition(position: Int) {

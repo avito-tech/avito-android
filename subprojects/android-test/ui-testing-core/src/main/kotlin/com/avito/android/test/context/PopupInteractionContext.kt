@@ -5,7 +5,7 @@ import androidx.test.espresso.matcher.RootMatchers
 import com.avito.android.test.SimpleInteractionContext
 import org.hamcrest.Matcher
 
-class PopupInteractionContext(
+public class PopupInteractionContext(
     matcher: Matcher<View>,
     precondition: () -> Unit = {}
 ) : SimpleInteractionContext(

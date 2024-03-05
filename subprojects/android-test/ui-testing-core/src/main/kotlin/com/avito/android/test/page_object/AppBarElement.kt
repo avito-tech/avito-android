@@ -12,20 +12,20 @@ import com.avito.android.test.action.ActionsImpl
 import com.google.android.material.appbar.AppBarLayout
 import org.hamcrest.Matcher
 
-class AppBarElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
+public class AppBarElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
     override val actions: AppBarActions = AppBarActionsImpl(interactionContext)
 
     // TODO: remove this constructor and use element fabric method to create an instance
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 }
 
-interface AppBarActions : Actions {
-    fun collapse()
-    fun expand()
+public interface AppBarActions : Actions {
+    public fun collapse()
+    public fun expand()
 }
 
-class AppBarActionsImpl(private val driver: ActionsDriver) : AppBarActions, Actions by ActionsImpl(driver) {
+internal class AppBarActionsImpl(private val driver: ActionsDriver) : AppBarActions, Actions by ActionsImpl(driver) {
 
     override fun collapse() {
         driver.perform(SetExpandedAction(isExpanded = false))

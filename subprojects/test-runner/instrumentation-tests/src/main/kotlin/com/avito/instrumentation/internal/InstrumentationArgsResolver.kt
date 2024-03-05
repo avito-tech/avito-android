@@ -26,7 +26,7 @@ internal class InstrumentationArgsResolver(
      * Will be resolved early in configuration even if test task is not in execution graph
      * These params will be set as instrumentation args for local run
      */
-    fun resolvePluginLevelArgs(androidExtension: CommonExtension<*, *, *, *>): Map<String, String> {
+    fun resolvePluginLevelArgs(androidExtension: CommonExtension<*, *, *, *, *>): Map<String, String> {
         val argsFromDsl = mutableMapOf<String, String>()
 
         argsFromDsl.putAll(filterNotBlankValues(androidDslInteractor.getInstrumentationArgs(androidExtension)))

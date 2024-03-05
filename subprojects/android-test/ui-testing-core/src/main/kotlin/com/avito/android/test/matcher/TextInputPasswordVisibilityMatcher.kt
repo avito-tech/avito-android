@@ -6,7 +6,7 @@ import com.google.android.material.textfield.TextInputLayout
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 
-class TextInputPasswordVisibilityMatcher(val boolMatcher: Matcher<Boolean?>) :
+internal class TextInputPasswordVisibilityMatcher(val boolMatcher: Matcher<Boolean?>) :
     BoundedMatcher<View, TextInputLayout>(TextInputLayout::class.java) {
 
     override fun describeTo(description: Description) {

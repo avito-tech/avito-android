@@ -4,7 +4,7 @@ import android.widget.ImageView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 
-class DrawableMatcherImageView(
+public class DrawableMatcherImageView(
     @DrawableRes private val src: Int? = null,
     @ColorRes private val tint: Int? = null
 ) :

@@ -6,7 +6,7 @@ import androidx.test.espresso.action.Swiper
 import androidx.test.espresso.web.sugar.Web
 import androidx.test.espresso.web.webdriver.DriverAtoms
 
-class WebElementActions(private val interaction: Web.WebInteraction<Void>) : Actions {
+public class WebElementActions(private val interaction: Web.WebInteraction<Void>) : Actions {
 
     override fun click() {
         interaction.perform(DriverAtoms.webScrollIntoView())
@@ -32,7 +32,7 @@ class WebElementActions(private val interaction: Web.WebInteraction<Void>) : Act
         return interaction.perform(DriverAtoms.getText()).get()
     }
 
-    fun write(text: String) {
+    public fun write(text: String) {
         interaction.perform(DriverAtoms.webKeys(text))
     }
 }

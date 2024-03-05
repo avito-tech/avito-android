@@ -58,7 +58,7 @@ private fun buildProject(name: String, parent: Project): Project {
         .build()
 
     // workaround for https://github.com/gradle/gradle/issues/16774
-    parent.serviceOf<GradlePropertiesController>().loadGradlePropertiesFrom(parent.rootDir)
+    parent.serviceOf<GradlePropertiesController>().loadGradlePropertiesFrom(parent.rootDir, true)
 
     return project
 }

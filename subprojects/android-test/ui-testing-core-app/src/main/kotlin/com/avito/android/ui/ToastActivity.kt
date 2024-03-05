@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.avito.android.util.ProxyToast
 import com.avito.android.util.showToast
 
-class ToastActivity : AppCompatActivity() {
+internal class ToastActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

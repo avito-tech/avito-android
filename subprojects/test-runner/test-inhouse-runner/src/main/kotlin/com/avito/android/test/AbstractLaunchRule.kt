@@ -10,7 +10,7 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 @Suppress("unused")
-abstract class AbstractLaunchRule : TestRule {
+public abstract class AbstractLaunchRule : TestRule {
 
     private val instrumentationContext = InstrumentationRegistry.getInstrumentation().context
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
@@ -20,7 +20,7 @@ abstract class AbstractLaunchRule : TestRule {
     /**
      * Grants permissions needed to go through test scenarios without permission requests.
      */
-    abstract fun grantPermissionsNeededForTesting()
+    public abstract fun grantPermissionsNeededForTesting()
 
     private inner class LaunchStatement(private val base: Statement) : Statement() {
 
@@ -30,7 +30,7 @@ abstract class AbstractLaunchRule : TestRule {
         }
     }
 
-    fun startFromHomeScreen() {
+    public fun startFromHomeScreen() {
         beforeAppStart()
         targetContext.startActivity(
             Device.getLauncherIntentForAppUnderTest(targetContext)
@@ -38,7 +38,7 @@ abstract class AbstractLaunchRule : TestRule {
         Device.waitForAppLaunchAndReady(targetContext)
     }
 
-    fun startFromDeeplink(url: String) {
+    public fun startFromDeeplink(url: String) {
         beforeAppStart()
         targetContext.startActivity(
             Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -48,13 +48,13 @@ abstract class AbstractLaunchRule : TestRule {
         Device.waitForAppLaunchAndReady(targetContext)
     }
 
-    fun openDeeplink(url: String) {
+    public fun openDeeplink(url: String) {
         getCurrentActivity().startActivity(
             Intent(Intent.ACTION_VIEW, Uri.parse(url))
         )
     }
 
-    fun openDeeplinkWithAppContext(url: String) {
+    public fun openDeeplinkWithAppContext(url: String) {
         targetContext.startActivity(
             Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

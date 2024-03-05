@@ -2,7 +2,7 @@ package com.avito.android.runner
 
 import com.avito.logger.LoggerFactory
 
-class SystemDialogsManagerDelegate(loggerFactory: LoggerFactory) : InstrumentationTestRunnerDelegate() {
+internal class SystemDialogsManagerDelegate(loggerFactory: LoggerFactory) : InstrumentationTestRunnerDelegate() {
 
     private val systemDialogsManager = SystemDialogsManager(
         loggerFactory = loggerFactory

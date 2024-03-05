@@ -14,7 +14,7 @@ import com.avito.android.test.checks.ChecksImpl
 import junit.framework.AssertionFailedError
 import org.hamcrest.Matcher
 
-class RatingBarElement(
+public class RatingBarElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext),
     RatingBarActions by RatingBarActionsImpl(interactionContext) {
@@ -22,24 +22,24 @@ class RatingBarElement(
     override val checks: RatingBarChecks = RatingBarChecksImpl(interactionContext)
 }
 
-interface RatingBarActions {
+public interface RatingBarActions {
 
-    fun setRating(rating: Float)
+    public fun setRating(rating: Float)
 }
 
-class RatingBarActionsImpl(private val driver: ActionsDriver) : RatingBarActions {
+internal class RatingBarActionsImpl(private val driver: ActionsDriver) : RatingBarActions {
 
     override fun setRating(rating: Float) {
         driver.perform(SetRatingAction(rating))
     }
 }
 
-interface RatingBarChecks : Checks {
+public interface RatingBarChecks : Checks {
 
-    fun withRating(rating: Float)
+    public fun withRating(rating: Float)
 }
 
-class RatingBarChecksImpl(
+internal class RatingBarChecksImpl(
     private val driver: ChecksDriver
 ) : RatingBarChecks,
     Checks by ChecksImpl(driver) {
@@ -61,7 +61,7 @@ class RatingBarChecksImpl(
     }
 }
 
-class SetRatingAction(private val rating: Float) : ViewAction {
+internal class SetRatingAction(private val rating: Float) : ViewAction {
 
     override fun getConstraints(): Matcher<View> =
         ViewMatchers.isAssignableFrom(RatingBar::class.java)

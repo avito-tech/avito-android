@@ -25,7 +25,7 @@ import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.test.model.TestName
 
-class TestMetadataAnnotationResolver : TestMetadataResolver {
+public class TestMetadataAnnotationResolver : TestMetadataResolver {
 
     override val key: String = TEST_METADATA_KEY
 
@@ -101,4 +101,4 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
     }
 }
 
-const val TEST_METADATA_KEY = "testMetadata"
+public const val TEST_METADATA_KEY: String = "testMetadata"

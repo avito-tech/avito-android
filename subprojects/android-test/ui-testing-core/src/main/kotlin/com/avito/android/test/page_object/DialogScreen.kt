@@ -9,7 +9,7 @@ import com.avito.android.test.InteractionContext
 import com.avito.android.test.context.DialogInteractionContext
 import org.hamcrest.Matcher
 
-abstract class DialogScreen(
+public abstract class DialogScreen(
     matcher: Matcher<View>
 ) : PageObject(), Screen {
 
@@ -26,9 +26,9 @@ abstract class DialogScreen(
     override val checks: ScreenChecks =
         DialogScreenChecks(screen = this, checkOnEachScreenInteraction = true)
 
-    val rootElement = element<ViewElement>()
+    public val rootElement: ViewElement = element<ViewElement>()
 
-    open class DialogScreenChecks<T : DialogScreen>(
+    public open class DialogScreenChecks<T : DialogScreen>(
         screen: T,
         override val checkOnEachScreenInteraction: Boolean = true
     ) : BaseScreenChecks<T>(screen) {

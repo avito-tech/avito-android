@@ -8,7 +8,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 
-class OverflowMenuTest {
+internal class OverflowMenuTest {
 
     @get:Rule
     val rule = screenRule<OverflowMenuActivity>()

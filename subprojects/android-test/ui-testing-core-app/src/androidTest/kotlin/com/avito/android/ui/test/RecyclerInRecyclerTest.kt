@@ -7,7 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
-class RecyclerInRecyclerTest {
+internal class RecyclerInRecyclerTest {
 
     @get:Rule
     val rule = screenRule<RecyclerInRecyclerActivity>()

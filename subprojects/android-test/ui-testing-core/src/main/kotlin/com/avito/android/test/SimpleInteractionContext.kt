@@ -12,7 +12,7 @@ import com.avito.android.test.interceptor.AssertionInterceptor
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-open class SimpleInteractionContext(
+public open class SimpleInteractionContext(
     private val matcher: Matcher<View>,
     private val rootMatcher: Matcher<Root>? = null,
     private val precondition: () -> Unit = {}

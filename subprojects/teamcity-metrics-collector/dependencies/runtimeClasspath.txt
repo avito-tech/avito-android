@@ -4,10 +4,10 @@ com.squareup.okhttp3:okhttp:3.0.1
 com.squareup.okio:okio:1.6.0
 com.squareup.retrofit:retrofit:1.9.0
 commons-codec:commons-codec:1.10
-org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib:1.9.22
 org.jetbrains.kotlinx:kotlinx-cli-jvm:0.3.3
 org.jetbrains.kotlinx:kotlinx-cli:0.3.3
 org.jetbrains.teamcity:teamcity-rest-client:1.6.2

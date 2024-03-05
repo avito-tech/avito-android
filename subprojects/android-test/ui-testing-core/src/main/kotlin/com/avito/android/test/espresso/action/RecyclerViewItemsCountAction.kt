@@ -7,9 +7,9 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Matcher
 
-class RecyclerViewItemsCountAction : ViewAction {
+public class RecyclerViewItemsCountAction : ViewAction {
 
-    var result: Int = Int.MIN_VALUE
+    public var result: Int = Int.MIN_VALUE
         get() {
             if (field == Int.MIN_VALUE) {
                 throw UninitializedPropertyAccessException()
@@ -18,7 +18,7 @@ class RecyclerViewItemsCountAction : ViewAction {
         }
         private set
 
-    override fun getDescription() = "getting items count from recycler view adapter"
+    override fun getDescription(): String = "getting items count from recycler view adapter"
 
     override fun getConstraints(): Matcher<View> =
         ViewMatchers.isAssignableFrom(RecyclerView::class.java)

@@ -40,21 +40,21 @@ import com.avito.android.test.matcher.ViewGroupMatcher
 import com.forkingcode.espresso.contrib.DescendantViewActions
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.greaterThan
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.TypeSafeMatcher
 
-open class ListElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
+public open class ListElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
     @Suppress("LeakingThis") // no problem with leaking this here
-    override val checks = CheckLibrary(interactionContext)
+    override val checks: CheckLibrary = CheckLibrary(interactionContext)
 
-    override val actions = ListActions(interactionContext)
+    override val actions: ListActions = ListActions(interactionContext)
 
     // TODO: remove this constructor and use element fabric method to create an instance
     @Deprecated("Use primary constructor with InteractionContext. This will be removed.")
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 
     /**
      * @param position if null search until first matching by [matcher]
@@ -89,26 +89,26 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
     protected inline fun <reified T : PageObjectElement> element(): T =
         throw RuntimeException("Use listElement() instead of element()")
 
-    class ListActions private constructor(
+    public class ListActions private constructor(
         private val driver: ActionsDriver,
         private val actions: Actions
     ) : Actions by actions {
 
-        val translationY
+        public val translationY: Float
             get() = ViewGetTranslationYAction().also { driver.perform(it) }.translationY
 
-        val items: Int
+        public val items: Int
             get() = RecyclerViewItemsCountAction().also { driver.perform(it) }.result
 
-        val verticalOffset: Int
+        public val verticalOffset: Int
             get() = RecyclerViewVerticalOffsetAction().also { driver.perform(it) }.result
 
-        val horizontalOffset: Int
+        public val horizontalOffset: Int
             get() = RecyclerViewHorizontalOffsetAction().also { driver.perform(it) }.result
 
-        constructor(driver: ActionsDriver) : this(driver, ActionsImpl(driver))
+        public constructor(driver: ActionsDriver) : this(driver, ActionsImpl(driver))
 
-        fun scrollToPosition(position: Int) {
+        public fun scrollToPosition(position: Int) {
             driver.perform(
                 com.avito.android.test.espresso.action.recycler.scrollToPosition(
                     position
@@ -116,17 +116,17 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        fun smoothScrollToPosition(position: Int = 0) {
+        public fun smoothScrollToPosition(position: Int = 0) {
             driver.perform(SmoothScrollToPositionViewAction(position))
         }
 
-        fun scrollToEnd() = scrollToPosition(items - 1)
+        public fun scrollToEnd(): Unit = scrollToPosition(items - 1)
 
         /**
          * @param position if null search until first matching by [matcher]
          * if not null search matches by [matcher] at [position] in original item list
          */
-        fun <VH : RecyclerView.ViewHolder> scrollToHolder(
+        public fun <VH : RecyclerView.ViewHolder> scrollToHolder(
             holder: TypeSafeMatcher<VH>,
             position: Int? = null
         ) {
@@ -138,7 +138,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        fun <VH : RecyclerView.ViewHolder> clickOnHolder(
+        public fun <VH : RecyclerView.ViewHolder> clickOnHolder(
             holder: TypeSafeMatcher<VH>,
             position: Int? = null,
             needScroll: Boolean = true
@@ -153,7 +153,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        fun scrollToChild(
+        public fun scrollToChild(
             position: Int = 0,
             targetChildViewId: Int
         ) {
@@ -165,7 +165,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        fun actionOnChild(
+        public fun actionOnChild(
             position: Int = 0,
             targetChildViewId: Int,
             childMatcher: Matcher<View>,
@@ -181,13 +181,13 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
         }
 
         @Deprecated("Use getItems instead")
-        fun countItems() = RecyclerViewItemsCountAction().also { driver.perform(it) }.result
+        public fun countItems(): Int = RecyclerViewItemsCountAction().also { driver.perform(it) }.result
 
         /**
          * Refreshes recycler view by pressing in it's center and pulling down. Note: it does not perform
          * [scrollToPosition] operation before - developer should do it himself!
          */
-        fun pullToRefresh() = actions.swipe(
+        public fun pullToRefresh(): Unit = actions.swipe(
             object : SwipeDirection {
                 override fun toCoordinateProvider(): Pair<CoordinatesProvider, CoordinatesProvider> {
                     return GeneralLocation.CENTER to GeneralLocation.BOTTOM_CENTER
@@ -225,26 +225,26 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
         /**
          * Use only for recyclers with GridLayoutManager
          */
-        fun getSpanCount() = RecyclerSpanCountAction().also { driver.perform(it) }.result
+        public fun getSpanCount(): Int = RecyclerSpanCountAction().also { driver.perform(it) }.result
     }
 
-    class CheckLibrary(private val driver: ChecksDriver) : Checks by ChecksImpl(driver) {
+    public class CheckLibrary(private val driver: ChecksDriver) : Checks by ChecksImpl(driver) {
 
         override fun withChildCount(countMatcher: Matcher<Int>) {
             driver.check(ViewAssertions.matches(ViewGroupMatcher().hasChildren(countMatcher)))
         }
 
-        override fun withChildCountEquals(count: Int) = withChildCount(`is`(count))
+        override fun withChildCountEquals(count: Int): Unit = withChildCount(`is`(count))
 
-        fun withItemsCount(countMatcher: Matcher<Int>) {
+        public fun withItemsCount(countMatcher: Matcher<Int>) {
             driver.check(ViewAssertions.matches(RecyclerViewMatcher().itemsInList(countMatcher)))
         }
 
-        fun withItemsCount(count: Int) {
+        public fun withItemsCount(count: Int) {
             withItemsCount(equalTo(count))
         }
 
-        fun firstVisiblePosition(positionMatcher: Matcher<Int>) {
+        public fun firstVisiblePosition(positionMatcher: Matcher<Int>) {
             driver.check(
                 ViewAssertions.matches(
                     RecyclerViewMatcher().firstVisibleItemPosition(
@@ -254,7 +254,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        fun hasViewTypeAtPosition(position: Int, viewType: Int) {
+        public fun hasViewTypeAtPosition(position: Int, viewType: Int) {
             driver.check(
                 ViewAssertions.matches(
                     RecyclerViewMatcher().hasViewTypeAtPosition(
@@ -265,7 +265,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int) {
+        public fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int) {
             driver.check(
                 ViewAssertions.matches(
                     RecyclerViewMatcher().doesNotHaveViewTypeAtPosition(
@@ -276,6 +276,6 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        fun isNotEmpty() = withItemsCount(greaterThan(0))
+        public fun isNotEmpty(): Unit = withItemsCount(greaterThan(0))
     }
 }

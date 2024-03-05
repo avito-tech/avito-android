@@ -77,7 +77,7 @@ internal object MethodStringRepresentation {
     }
 }
 
-data class TestMethodOrClass(val testClass: Class<*>, val testMethod: Method? = null)
+public data class TestMethodOrClass(val testClass: Class<*>, val testMethod: Method? = null)
 
 internal fun Resolution.getTestOrThrow(): TestMethodOrClass {
     return when (this) {

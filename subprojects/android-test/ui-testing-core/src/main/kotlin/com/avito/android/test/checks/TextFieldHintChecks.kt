@@ -1,6 +1,6 @@
 package com.avito.android.test.checks
 
-interface TextFieldHintChecks {
+public interface TextFieldHintChecks {
 
-    fun withHintText(text: String)
+    public fun withHintText(text: String)
 }

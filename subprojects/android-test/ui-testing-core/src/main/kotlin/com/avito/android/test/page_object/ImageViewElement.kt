@@ -15,26 +15,26 @@ import com.avito.android.test.matcher.DrawableMatcherImageView
 import com.avito.android.test.matcher.ImageShownMatcher
 import org.hamcrest.Matcher
 
-open class ImageViewElement(
+public open class ImageViewElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext) {
 
     override val checks: ImageViewChecks = ImageViewChecksImpl(interactionContext)
 
     // TODO: remove this constructor and use element fabric method to create an instance
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 }
 
-interface ImageViewChecks : Checks {
+public interface ImageViewChecks : Checks {
 
-    fun withSourceDrawable(@DrawableRes src: Int? = null, @ColorRes tint: Int? = null)
+    public fun withSourceDrawable(@DrawableRes src: Int? = null, @ColorRes tint: Int? = null)
 
-    fun withShownImage()
+    public fun withShownImage()
 
-    fun withImage(bitmap: Bitmap)
+    public fun withImage(bitmap: Bitmap)
 }
 
-class ImageViewChecksImpl(private val driver: ChecksDriver) : ImageViewChecks,
+public class ImageViewChecksImpl(private val driver: ChecksDriver) : ImageViewChecks,
     Checks by ChecksImpl(driver) {
 
     override fun withSourceDrawable(@DrawableRes src: Int?, @ColorRes tint: Int?) {

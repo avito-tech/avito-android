@@ -13,6 +13,8 @@ plugins {
 
 android {
 
+    namespace = "com.avito.android.ui"
+
     defaultConfig {
         versionName = "1.0"
         versionCode = 1

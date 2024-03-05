@@ -7,7 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.rule.SimpleRule
 import com.avito.android.runner.InHouseInstrumentationTestRunner
 
-abstract class BaseActivityScenarioRule<A : Activity>(
+public abstract class BaseActivityScenarioRule<A : Activity>(
     private val activityClass: Class<A>,
     private val initialTouchMode: Boolean,
     private val launchActivity: Boolean,
@@ -19,7 +19,7 @@ abstract class BaseActivityScenarioRule<A : Activity>(
 
     private var _scenario: ActivityScenario<A>? = null
 
-    val scenario: ActivityScenario<A>
+    public val scenario: ActivityScenario<A>
         get() = checkNotNull(_scenario) {
             buildString {
                 append("Activity $activityClass has not been launched. ")
@@ -53,7 +53,7 @@ abstract class BaseActivityScenarioRule<A : Activity>(
         afterActivityFinished()
     }
 
-    fun launchActivity(intent: Intent? = null): ActivityScenario<A> {
+    public fun launchActivity(intent: Intent? = null): ActivityScenario<A> {
         InstrumentationRegistry.getInstrumentation().setInTouchMode(initialTouchMode)
         _scenario = when (intent) {
             null -> ActivityScenario.launch(activityClass)
@@ -65,7 +65,7 @@ abstract class BaseActivityScenarioRule<A : Activity>(
         return scenario
     }
 
-    fun launchActivityForResult(intent: Intent? = null): ActivityScenario<A> {
+    public fun launchActivityForResult(intent: Intent? = null): ActivityScenario<A> {
         InstrumentationRegistry.getInstrumentation().setInTouchMode(initialTouchMode)
         _scenario = when (intent) {
             null -> ActivityScenario.launchActivityForResult(activityClass)

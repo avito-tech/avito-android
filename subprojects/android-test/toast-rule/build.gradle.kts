@@ -3,6 +3,10 @@ plugins {
     id("convention.publish-android-library")
 }
 
+android {
+    namespace = "com.avito.android.toastrule"
+}
+
 dependencies {
     implementation(libs.androidAnnotations)
     implementation(libs.junit)

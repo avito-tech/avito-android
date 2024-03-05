@@ -9,25 +9,25 @@ import com.avito.android.test.InteractionContext
 import com.avito.android.test.action.ActionsDriver
 import org.hamcrest.Matcher
 
-class SwitchElement(
+public class SwitchElement(
     interactionContext: InteractionContext
 ) :
     ViewElement(interactionContext),
     SwitchElementActions by SwitchElementActionsImpl(interactionContext)
 
-interface SwitchElementActions {
+public interface SwitchElementActions {
 
-    fun setIsChecked(isChecked: Boolean)
+    public fun setIsChecked(isChecked: Boolean)
 }
 
-class SwitchElementActionsImpl(private val driver: ActionsDriver) : SwitchElementActions {
+internal class SwitchElementActionsImpl(private val driver: ActionsDriver) : SwitchElementActions {
 
     override fun setIsChecked(isChecked: Boolean) {
         driver.perform(SetSwitchIsCheckedAction(isChecked))
     }
 }
 
-class SetSwitchIsCheckedAction(private val isChecked: Boolean) : ViewAction {
+internal class SetSwitchIsCheckedAction(private val isChecked: Boolean) : ViewAction {
 
     override fun getConstraints(): Matcher<View> =
         ViewMatchers.isAssignableFrom(SwitchCompat::class.java)

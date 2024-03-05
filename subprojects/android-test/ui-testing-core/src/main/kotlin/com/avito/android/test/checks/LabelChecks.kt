@@ -5,49 +5,49 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import org.hamcrest.Matcher
 
-interface LabelChecks {
+public interface LabelChecks {
 
-    fun withText(text: String)
+    public fun withText(text: String)
 
-    fun withText(@StringRes textResId: Int)
+    public fun withText(@StringRes textResId: Int)
 
-    fun withText(matcher: Matcher<String>)
+    public fun withText(matcher: Matcher<String>)
 
-    fun displayedWithText(text: String)
+    public fun displayedWithText(text: String)
 
-    fun displayedWithText(@StringRes textResId: Int)
+    public fun displayedWithText(@StringRes textResId: Int)
 
-    fun displayedWithText(matcher: Matcher<String>)
+    public fun displayedWithText(matcher: Matcher<String>)
 
-    fun withTextStartingWith(text: String)
+    public fun withTextStartingWith(text: String)
 
-    fun displayedWithTextStartingWith(text: String)
+    public fun displayedWithTextStartingWith(text: String)
 
-    fun displayedWithTextEndingWith(text: String)
+    public fun displayedWithTextEndingWith(text: String)
 
-    fun withTextIgnoringCase(text: String)
+    public fun withTextIgnoringCase(text: String)
 
-    fun displayedWithTextIgnoringCase(text: String)
+    public fun displayedWithTextIgnoringCase(text: String)
 
-    fun withEmptyText()
+    public fun withEmptyText()
 
-    fun containsText(text: String)
+    public fun containsText(text: String)
 
-    fun displayedWithEmptyText()
+    public fun displayedWithEmptyText()
 
-    fun withLinesCount(count: Int)
+    public fun withLinesCount(count: Int)
 
-    fun withLinesCount(matcher: Matcher<Int>)
+    public fun withLinesCount(matcher: Matcher<Int>)
 
-    fun endsWithHint(hint: String)
+    public fun endsWithHint(hint: String)
 
-    fun hasEllipsizedText()
+    public fun hasEllipsizedText()
 
-    fun hasNotEllipsizedText()
+    public fun hasNotEllipsizedText()
 
-    fun hasTag(tag: Any)
+    public fun hasTag(tag: Any)
 
-    fun withIcons(
+    public fun withIcons(
         @DrawableRes left: Int? = null,
         @DrawableRes top: Int? = null,
         @DrawableRes right: Int? = null,

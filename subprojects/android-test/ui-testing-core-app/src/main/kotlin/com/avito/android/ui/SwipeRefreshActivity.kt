@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
-class SwipeRefreshActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+internal class SwipeRefreshActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     lateinit var recycler: SwipeRefreshLayout
     var refreshedTimes = 0

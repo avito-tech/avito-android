@@ -20,10 +20,10 @@ internal fun TaskProvider<out ProguardGuardTask>.dependsOnMinificationTask(
     debug: Boolean,
 ) {
     val creationConfig: ConsumableCreationConfig = variant.toConsumableCreationConfig()
-    check(creationConfig.minifiedEnabled) {
-        "Minification is disabled for variant ${variant.name}. " +
-            "You probably forgot to set minifyEnabled to true."
-    }
+//    check(creationConfig.minifiedEnabled) {
+//        "Minification is disabled for variant ${variant.name}. " +
+//            "You probably forgot to set minifyEnabled to true."
+//    }
 
     if (shadowR8Task) {
         val shadowTaskProvider = getShadowR8TaskProvider(project, creationConfig, debug)

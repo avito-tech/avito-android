@@ -5,7 +5,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-class ClicksTypeRule(private val clickType: UITestConfig.ClickType) : TestRule {
+public class ClicksTypeRule(private val clickType: UITestConfig.ClickType) : TestRule {
 
     override fun apply(base: Statement, description: Description): Statement =
         object : Statement() {
@@ -29,4 +29,4 @@ class ClicksTypeRule(private val clickType: UITestConfig.ClickType) : TestRule {
         }
 }
 
-annotation class ChangeClickType
+public annotation class ChangeClickType

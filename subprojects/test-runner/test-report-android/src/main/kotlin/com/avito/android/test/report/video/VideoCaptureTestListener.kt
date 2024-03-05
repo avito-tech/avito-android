@@ -11,7 +11,7 @@ import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
 
-class VideoCaptureTestListener(
+public class VideoCaptureTestListener(
     videoFeatureValue: VideoFeatureValue,
     testArtifactsProvider: TestArtifactsProvider,
     loggerFactory: LoggerFactory,

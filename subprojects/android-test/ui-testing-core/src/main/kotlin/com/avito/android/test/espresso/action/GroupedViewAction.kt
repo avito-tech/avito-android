@@ -6,7 +6,7 @@ import androidx.test.espresso.ViewAction
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class GroupedViewAction(
+public class GroupedViewAction(
     private val actions: List<ViewAction>
 ) : ViewAction {
 

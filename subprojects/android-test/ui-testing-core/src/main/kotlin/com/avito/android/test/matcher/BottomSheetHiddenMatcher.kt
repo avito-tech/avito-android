@@ -6,7 +6,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import org.hamcrest.Description
 
-class BottomSheetHiddenMatcher : BoundedMatcher<View, View>(View::class.java) {
+internal class BottomSheetHiddenMatcher : BoundedMatcher<View, View>(View::class.java) {
 
     override fun describeTo(description: Description) {
         description.appendText("with hidden bottom sheet")

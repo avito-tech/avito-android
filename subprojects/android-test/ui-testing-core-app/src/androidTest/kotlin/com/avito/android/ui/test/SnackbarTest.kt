@@ -5,7 +5,7 @@ import com.avito.android.ui.SnackbarActivity
 import org.junit.Rule
 import org.junit.Test
 
-class SnackbarTest {
+internal class SnackbarTest {
 
     @get:Rule
     val rule = screenRule<SnackbarActivity>()

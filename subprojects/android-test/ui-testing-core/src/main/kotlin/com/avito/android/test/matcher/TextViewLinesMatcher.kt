@@ -6,7 +6,7 @@ import androidx.test.espresso.matcher.BoundedMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 
-class TextViewLinesMatcher(val matcher: Matcher<Int>) :
+internal class TextViewLinesMatcher(val matcher: Matcher<Int>) :
     BoundedMatcher<View, TextView>(TextView::class.java) {
 
     override fun describeTo(description: Description) {

@@ -6,7 +6,7 @@ import com.avito.android.test.util.AppendableDescription
 /**
  * Dead simple string representation of any [ViewAssertion]
  */
-fun ViewAssertion.describe(): String {
+public fun ViewAssertion.describe(): String {
     val result = StringBuilder()
     result.append("Check ")
     if (this is ViewAssertions.MatchesViewAssertion) {

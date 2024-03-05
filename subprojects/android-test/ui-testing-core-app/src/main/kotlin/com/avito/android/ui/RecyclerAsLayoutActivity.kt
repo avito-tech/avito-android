@@ -16,7 +16,7 @@ import com.google.android.material.textfield.TextInputLayout
 /**
  * This activity tries to emulate non-list layouts rendered via RecyclerView
  */
-class RecyclerAsLayoutActivity : AppCompatActivity() {
+internal class RecyclerAsLayoutActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -6,7 +6,7 @@ import com.google.android.material.textfield.TextInputLayout
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 
-class TextInputLayoutHintMatcher(private val stringMatcher: Matcher<String>) :
+internal class TextInputLayoutHintMatcher(private val stringMatcher: Matcher<String>) :
     BoundedMatcher<View, TextInputLayout>(TextInputLayout::class.java) {
 
     override fun describeTo(description: Description) {

@@ -4,7 +4,7 @@ import androidx.test.espresso.EspressoException
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentTypeDeterminer
 
-class EspressoBasedIncidentTypeDeterminer : IncidentTypeDeterminer {
+public class EspressoBasedIncidentTypeDeterminer : IncidentTypeDeterminer {
 
     override fun determine(throwable: Throwable): Incident.Type = when (throwable) {
         is AssertionError, is EspressoException -> Incident.Type.ASSERTION_FAILED

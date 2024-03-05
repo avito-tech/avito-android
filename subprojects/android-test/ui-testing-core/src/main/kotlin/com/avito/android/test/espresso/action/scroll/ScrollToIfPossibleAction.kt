@@ -19,7 +19,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.anyOf
 
-class ScrollToIfPossibleAction : ViewAction {
+internal class ScrollToIfPossibleAction : ViewAction {
 
     private val scrollableContainerMatcher = anyOf(
         isAssignableFrom(ScrollView::class.java),

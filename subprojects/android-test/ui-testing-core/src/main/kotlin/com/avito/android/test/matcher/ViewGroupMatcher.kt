@@ -6,9 +6,9 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 
-class ViewGroupMatcher {
+public class ViewGroupMatcher {
 
-    fun hasChildren(numChildrenMatcher: Matcher<Int>): Matcher<View> {
+    public fun hasChildren(numChildrenMatcher: Matcher<Int>): Matcher<View> {
         return object : TypeSafeMatcher<View>() {
 
             override fun matchesSafely(view: View): Boolean {
@@ -22,7 +22,7 @@ class ViewGroupMatcher {
         }
     }
 
-    fun childAtPosition(parentMatcher: Matcher<View>, childPosition: Int): Matcher<View> {
+    public fun childAtPosition(parentMatcher: Matcher<View>, childPosition: Int): Matcher<View> {
         return object : TypeSafeMatcher<View>() {
             override fun describeTo(description: Description) {
                 description.appendText("position $childPosition of parent ")

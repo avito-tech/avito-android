@@ -2,7 +2,7 @@ package com.avito.android.test.checks
 
 import androidx.test.espresso.ViewAssertion
 
-interface ChecksDriver {
+public interface ChecksDriver {
 
-    fun check(assertion: ViewAssertion)
+    public fun check(assertion: ViewAssertion)
 }

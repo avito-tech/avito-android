@@ -6,19 +6,19 @@ import androidx.test.espresso.action.Swipe
 import androidx.test.espresso.action.SwipeDirection
 import androidx.test.espresso.action.Swiper
 
-interface Actions {
+public interface Actions {
 
-    fun click()
+    public fun click()
 
-    fun longClick()
+    public fun longClick()
 
-    fun scrollTo()
+    public fun scrollTo()
 
-    fun swipe(
+    public fun swipe(
         direction: SwipeDirection,
         speed: Swiper = Swipe.FAST,
         precision: PrecisionDescriber = Press.FINGER
     )
 
-    fun read(allowBlank: Boolean = false): String
+    public fun read(allowBlank: Boolean = false): String
 }

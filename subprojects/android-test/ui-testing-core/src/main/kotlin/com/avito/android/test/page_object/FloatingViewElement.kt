@@ -9,11 +9,11 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThanOrEqualTo
 import org.hamcrest.Matchers.lessThan
 
-class FloatingViewElement(
+public class FloatingViewElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext, checks = FloatingViewChecksImpl(interactionContext))
 
-class FloatingViewChecksImpl(
+internal class FloatingViewChecksImpl(
     private val interactionContext: InteractionContext
 ) : Checks by ChecksImpl(interactionContext) {
 

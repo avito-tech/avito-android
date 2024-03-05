@@ -2,12 +2,12 @@ package com.avito.android.runner.annotation.resolver
 
 import android.os.Bundle
 
-interface TestMetadataInjector {
+public interface TestMetadataInjector {
 
-    fun inject(test: TestMethodOrClass, instrumentationArguments: Bundle)
+    public fun inject(test: TestMethodOrClass, instrumentationArguments: Bundle)
 }
 
-class AnnotationResolversBasedMetadataInjector(
+public class AnnotationResolversBasedMetadataInjector(
     private val annotationResolvers: Set<TestMetadataResolver>
 ) : TestMetadataInjector {
 

@@ -1,5 +1,6 @@
 package com.avito.android.rule
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Context
@@ -45,7 +46,7 @@ import org.junit.runners.model.Statement
  * }
  */
 @Deprecated("InHouseScreenRule is deprecated since AndroidX Test 1.3.0. Use InHouseScenarioScreenRule instead.")
-abstract class InHouseScreenRule<T : Activity>(activityClass: Class<T>) : TestRule {
+public abstract class InHouseScreenRule<T : Activity>(activityClass: Class<T>) : TestRule {
 
     protected val androidInstrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()
     protected val arguments: Bundle = InstrumentationRegistry.getArguments()
@@ -54,31 +55,32 @@ abstract class InHouseScreenRule<T : Activity>(activityClass: Class<T>) : TestRu
 
     private val activityRule = ActivityRule(activityClass)
 
-    val checks = ChecksLibrary { activityRule.activity }
+    public val checks: ChecksLibrary = ChecksLibrary { activityRule.activity }
 
-    val activityResult: Instrumentation.ActivityResult
+    public val activityResult: Instrumentation.ActivityResult
         get() = activityRule.activityResult
 
-    val activity: Activity
+    public val activity: Activity
         get() = activityRule.activity
 
-    fun launchActivity(startIntent: Intent?): T = activityRule.launchActivity(startIntent)
+    public fun launchActivity(startIntent: Intent?): T = activityRule.launchActivity(startIntent)
 
-    fun runOnUiThread(body: () -> Unit) {
+    public fun runOnUiThread(body: () -> Unit) {
         activityRule.runOnUiThread { body.invoke() }
     }
 
-    class ChecksLibrary(private val activity: () -> Activity?) {
+    public class ChecksLibrary(private val activity: () -> Activity?) {
 
-        fun isFinishing() {
+        public fun isFinishing() {
             waitForAssertion { Assert.assertTrue(activity()?.isFinishing ?: false) }
         }
 
-        fun isNotFinishing() {
+        public fun isNotFinishing() {
             waitForAssertion { Assert.assertFalse(activity()?.isFinishing ?: true) }
         }
 
-        fun activityResult(expectedResult: Int) {
+        @SuppressLint("DiscouragedPrivateApi")
+        public fun activityResult(expectedResult: Int) {
             val field = Activity::class.java.getDeclaredField("mResultCode")
             field.isAccessible = true
             val actualResult = field.getInt(activity())

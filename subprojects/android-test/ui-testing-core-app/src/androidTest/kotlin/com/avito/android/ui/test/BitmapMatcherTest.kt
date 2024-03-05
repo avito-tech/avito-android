@@ -13,7 +13,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 
-class BitmapMatcherTest {
+internal class BitmapMatcherTest {
 
     @get:Rule
     val rule = screenRule<BitmapActivity>(launchActivity = true)

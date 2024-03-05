@@ -17,20 +17,20 @@ import com.avito.android.test.espresso.EspressoActions
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class TextElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
+public class TextElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
     override val actions: TextElementActions = TextElementActionsImpl(interactionContext)
 
-    fun clickOnText(textToClick: String) = actions.clickOnText(textToClick)
-    fun clickOnLink() = actions.clickOnLink()
+    public fun clickOnText(textToClick: String): Unit = actions.clickOnText(textToClick)
+    public fun clickOnLink(): Unit = actions.clickOnLink()
 }
 
-interface TextElementActions : Actions {
-    fun clickOnText(textToClick: String)
-    fun clickOnLink()
+public interface TextElementActions : Actions {
+    public fun clickOnText(textToClick: String)
+    public fun clickOnLink()
 }
 
-class TextElementActionsImpl(private val driver: ActionsDriver) : TextElementActions,
+public class TextElementActionsImpl(private val driver: ActionsDriver) : TextElementActions,
     Actions by ActionsImpl(driver) {
 
     override fun clickOnText(textToClick: String) {
@@ -42,7 +42,7 @@ class TextElementActionsImpl(private val driver: ActionsDriver) : TextElementAct
     }
 }
 
-class ClickOnTextAction(private val textToClick: String) : ViewAction {
+internal class ClickOnTextAction(private val textToClick: String) : ViewAction {
 
     override fun getConstraints(): Matcher<View> = Matchers.instanceOf(TextView::class.java)
 
@@ -74,7 +74,7 @@ class ClickOnTextAction(private val textToClick: String) : ViewAction {
     }
 }
 
-class ClickOnSpannableAction : ViewAction {
+internal class ClickOnSpannableAction : ViewAction {
 
     override fun getConstraints(): Matcher<View> = Matchers.instanceOf(TextView::class.java)
 

@@ -7,7 +7,7 @@ import android.view.ViewConfiguration
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 
-class DeviceSettingsChecker(
+public class DeviceSettingsChecker(
     private val context: Context,
     private val maximumSupportedSdk: Int = Build.VERSION_CODES.TIRAMISU,
     loggerFactory: LoggerFactory,
@@ -15,7 +15,7 @@ class DeviceSettingsChecker(
 
     private val logger = loggerFactory.create<DeviceSettingsChecker>()
 
-    fun check() {
+    public fun check() {
         checkSupportedApi()
 
         val warnings: List<String> = listOfNotNull(

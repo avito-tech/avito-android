@@ -37,14 +37,14 @@ import com.avito.android.waiter.waitFor
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.anyOf
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.TypeSafeMatcher
 
-open class ToolbarElement(interactionContext: InteractionContext) :
+public open class ToolbarElement(interactionContext: InteractionContext) :
     ViewElement(interactionContext) {
 
     override val checks: ToolbarElementChecks = ToolbarElementChecksImpl(interactionContext)
@@ -61,7 +61,7 @@ open class ToolbarElement(interactionContext: InteractionContext) :
         allOf<View>(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))
     )
 
-    val upButton = ImageViewElement(
+    public val upButton: ImageViewElement = ImageViewElement(
         interactionContext.provideChildContext(
             allOf(
                 isAssignableFrom(ImageButton::class.java),
@@ -70,24 +70,24 @@ open class ToolbarElement(interactionContext: InteractionContext) :
         )
     )
 
-    val overflowMenuButton = ViewElement(overflowButtonMatcher)
+    public val overflowMenuButton: ViewElement = ViewElement(overflowButtonMatcher)
 
     // TODO: migrate to HandleParentContext
-    constructor() : this(SimpleInteractionContext(isAssignableFrom(Toolbar::class.java)))
+    public constructor() : this(SimpleInteractionContext(isAssignableFrom(Toolbar::class.java)))
 
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 
-    protected fun overflowMenuItem(titleMatcher: Matcher<String>) =
+    protected fun overflowMenuItem(titleMatcher: Matcher<String>): MenuItem =
         MenuItem(isAssignableFrom(Toolbar::class.java), titleMatcher, overflowMenuButton)
 
-    protected fun overflowMenuItem(title: String) = overflowMenuItem(equalTo(title))
+    protected fun overflowMenuItem(title: String): MenuItem = overflowMenuItem(equalTo(title))
 
-    protected fun actionMenuItem(titleMatcher: Matcher<String>) =
+    protected fun actionMenuItem(titleMatcher: Matcher<String>): MenuItem =
         MenuItem(isAssignableFrom(Toolbar::class.java), titleMatcher, overflowMenuButton)
 
-    protected fun actionMenuItem(title: String) = actionMenuItem(equalTo(title))
+    protected fun actionMenuItem(title: String): MenuItem = actionMenuItem(equalTo(title))
 
-    class MenuItem(
+    public class MenuItem(
         private val toolbarMatcher: Matcher<View>,
         private val titleMatcher: Matcher<String>,
         private var overflowMenuButton: PageObjectElement?
@@ -102,14 +102,14 @@ open class ToolbarElement(interactionContext: InteractionContext) :
                 )
             )
 
-        override val checks
+        override val checks: OverflowMenuChecksImpl
             get() = OverflowMenuChecksImpl(
                 toolbarMatcher,
                 titleMatcher,
                 ChecksImpl(OverflowMenuDriver(toolbarMatcher, titleMatcher, overflowMenuButton))
             )
 
-        fun withDisabledAutoOpenOverflow(): MenuItem {
+        public fun withDisabledAutoOpenOverflow(): MenuItem {
             overflowMenuButton = null
             return this
         }
@@ -119,7 +119,7 @@ open class ToolbarElement(interactionContext: InteractionContext) :
      * In some cases, there is no need to expand overflow menu,
      * if element could be found with reflection.
      * */
-    class OverflowMenuChecksImpl(
+    public class OverflowMenuChecksImpl(
         private val toolbarMatcher: Matcher<View>,
         private val titleMatcher: Matcher<String>,
         private val checks: Checks
@@ -137,7 +137,7 @@ open class ToolbarElement(interactionContext: InteractionContext) :
         }
 
         /** Overflow menu element is not visible until expanded */
-        fun existsAsHidden() {
+        public fun existsAsHidden() {
             assertThat("Overflow menu element $titleMatcher seems to be hidden", foundHidden)
         }
     }
@@ -212,18 +212,18 @@ open class ToolbarElement(interactionContext: InteractionContext) :
     }
 }
 
-interface ToolbarElementChecks : Checks {
+public interface ToolbarElementChecks : Checks {
 
-    fun withTitle(text: String)
+    public fun withTitle(text: String)
 
-    fun withTitle(@StringRes resId: Int)
+    public fun withTitle(@StringRes resId: Int)
 
-    fun withSubtitle(text: String)
+    public fun withSubtitle(text: String)
 
-    fun withSubtitle(@StringRes resId: Int)
+    public fun withSubtitle(@StringRes resId: Int)
 }
 
-class ToolbarElementChecksImpl(
+internal class ToolbarElementChecksImpl(
     private val driver: ChecksDriver
 ) : ToolbarElementChecks,
     Checks by ChecksImpl(driver) {

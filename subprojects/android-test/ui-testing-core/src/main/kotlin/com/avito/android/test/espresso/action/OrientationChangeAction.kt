@@ -13,7 +13,7 @@ import org.hamcrest.Matcher
 /**
  * An Espresso ViewAction that changes the orientation of the screen
  */
-class OrientationChangeAction(private val orientation: Int? = null) : ViewAction {
+public class OrientationChangeAction(private val orientation: Int? = null) : ViewAction {
 
     override fun getConstraints(): Matcher<View> = ViewMatchers.isRoot()
 
@@ -39,14 +39,14 @@ class OrientationChangeAction(private val orientation: Int? = null) : ViewAction
             else -> throw IllegalStateException("Unsupported orientation: $currentOrientation")
         }
 
-    companion object {
+    public companion object {
 
-        fun orientationLandscape(): ViewAction =
+        public fun orientationLandscape(): ViewAction =
             OrientationChangeAction(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
-        fun orientationPortrait(): ViewAction =
+        public fun orientationPortrait(): ViewAction =
             OrientationChangeAction(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
-        fun toggle(): ViewAction = OrientationChangeAction()
+        public fun toggle(): ViewAction = OrientationChangeAction()
     }
 }

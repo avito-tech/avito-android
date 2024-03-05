@@ -8,9 +8,9 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Matcher
 
-class RecyclerSpanCountAction : ViewAction {
+public class RecyclerSpanCountAction : ViewAction {
 
-    var result: Int = Int.MIN_VALUE
+    public var result: Int = Int.MIN_VALUE
         get() {
             if (field == Int.MIN_VALUE) {
                 throw UninitializedPropertyAccessException()
@@ -19,7 +19,7 @@ class RecyclerSpanCountAction : ViewAction {
         }
         private set
 
-    override fun getDescription() = "getting grid layout manager span count"
+    override fun getDescription(): String = "getting grid layout manager span count"
 
     override fun getConstraints(): Matcher<View> =
         ViewMatchers.isAssignableFrom(RecyclerView::class.java)

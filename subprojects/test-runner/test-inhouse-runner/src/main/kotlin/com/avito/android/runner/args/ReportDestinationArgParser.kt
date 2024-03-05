@@ -5,7 +5,7 @@ import com.avito.android.transport.ReportDestination
 import com.avito.reportviewer.model.ReportCoordinates
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-class ReportDestinationArgParser : ArgProvider<ReportDestination> {
+public class ReportDestinationArgParser : ArgProvider<ReportDestination> {
     override fun parse(args: ArgsProvider): ReportDestination {
         val parsedDestination = args.getArgument(reportDestinationKey) ?: reportDestinationNoop
         return when (parsedDestination) {
@@ -29,7 +29,7 @@ class ReportDestinationArgParser : ArgProvider<ReportDestination> {
         }
     }
 
-    companion object {
+    private companion object {
         private const val reportDestinationKey = "avito.report.transport"
         private const val reportDestinationFile = "file"
         private const val reportDestinationBackend = "backend"

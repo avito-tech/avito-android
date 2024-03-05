@@ -7,7 +7,7 @@ import com.avito.android.test.matcher.CanBeClickedMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class ActionOnClickableElement(
+public class ActionOnClickableElement(
     private val action: ViewAction
 ) : ViewAction {
 

@@ -8,7 +8,7 @@ import com.avito.android.screen.Screen
 import com.avito.android.test.InteractionContext
 import com.avito.android.test.SimpleInteractionContext
 
-abstract class SimpleScreen : PageObject(), Screen {
+public abstract class SimpleScreen : PageObject(), Screen {
 
     override val interactionContext: InteractionContext by lazy {
         SimpleInteractionContext(ViewMatchers.isRoot()) {
@@ -21,12 +21,12 @@ abstract class SimpleScreen : PageObject(), Screen {
     override val checks: com.avito.android.screen.ScreenChecks =
         SimpleScreenChecks(screen = this, checkOnEachScreenInteraction = false)
 
-    val rootElement: ViewElement by lazy {
+    public val rootElement: ViewElement by lazy {
         // rootId property is initialized after rootElement property
         element(withId(rootId))
     }
 
-    open class SimpleScreenChecks<T : SimpleScreen>(
+    public open class SimpleScreenChecks<T : SimpleScreen>(
         screen: T,
         override val checkOnEachScreenInteraction: Boolean = false
     ) : BaseScreenChecks<T>(screen) {

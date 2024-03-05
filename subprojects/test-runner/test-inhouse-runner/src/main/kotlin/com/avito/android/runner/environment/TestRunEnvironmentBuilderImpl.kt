@@ -11,7 +11,7 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
 import com.avito.android.transport.ReportDestination
 
-class TestRunEnvironmentBuilderImpl : TestRunEnvironmentBuilder {
+internal class TestRunEnvironmentBuilderImpl : TestRunEnvironmentBuilder {
 
     private var elastic: ArgProvider<ElasticConfig>? = null
     private var statsD: ArgProvider<StatsDConfig>? = null

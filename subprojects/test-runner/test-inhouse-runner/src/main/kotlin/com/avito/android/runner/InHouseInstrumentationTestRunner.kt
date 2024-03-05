@@ -50,6 +50,7 @@ import com.avito.android.transport.ReportTransportFactory
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.http.StatsHttpEventListener
 import com.avito.logger.LogLevel
+import com.avito.logger.LoggerFactory
 import com.avito.logger.LoggerFactoryBuilder
 import com.avito.logger.create
 import com.avito.logger.destination.ElasticLoggingHandlerProvider
@@ -68,7 +69,7 @@ import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
 
-abstract class InHouseInstrumentationTestRunner(
+public abstract class InHouseInstrumentationTestRunner(
     private val mockDispatcherIsStrict: Boolean = true,
     internal val shouldCloseScenarioInRule: Boolean = false,
 ) : InstrumentationTestRunner(), ReportProvider {
@@ -129,7 +130,7 @@ abstract class InHouseInstrumentationTestRunner(
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    val testRunEnvironment: TestRunEnvironment by lazy {
+    public val testRunEnvironment: TestRunEnvironment by lazy {
         overrideTestRunEnvironmentBuilder(TestRunEnvironmentBuilderImpl())
             .build(
                 BundleArgsProvider(bundle = instrumentationArguments)
@@ -138,11 +139,11 @@ abstract class InHouseInstrumentationTestRunner(
 
     // Public for synth monitoring
     @Suppress("MemberVisibilityCanBePrivate")
-    val screenshotCapturer: ScreenshotCapturer by lazy {
+    public val screenshotCapturer: ScreenshotCapturer by lazy {
         ScreenshotCapturerFactory.create(testArtifactsProvider, activityProvider)
     }
 
-    override val loggerFactory by lazy {
+    public override val loggerFactory: LoggerFactory by lazy {
         val elasticConfig = testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig
         val builder = baseLoggerFactoryBuilder.newBuilder()
         if (elasticConfig is ElasticConfig.Enabled) {
@@ -169,7 +170,7 @@ abstract class InHouseInstrumentationTestRunner(
 
     // used in avito
     @Suppress("unused")
-    val reportViewerHttpInterceptor: Interceptor by lazy {
+    public val reportViewerHttpInterceptor: Interceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         when (val destination = runEnvironment.reportDestination) {
             is ReportDestination.Backend -> ReportViewerHttpInterceptor(
@@ -187,20 +188,20 @@ abstract class InHouseInstrumentationTestRunner(
 
     // used in avito
     @Suppress("unused")
-    val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
+    public val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
         ReportViewerWebsocketReporter(report)
     }
 
-    val mockWebServer: MockWebServer by lazy { MockWebServer() }
+    public val mockWebServer: MockWebServer by lazy { MockWebServer() }
 
-    val mockDispatcher by lazy {
+    public val mockDispatcher: MockDispatcher by lazy {
         MockDispatcher(
             loggerFactory = loggerFactory,
             strictMode = mockDispatcherIsStrict
         )
     }
 
-    val gson by lazy { Gson() }
+    public val gson: Gson by lazy { Gson() }
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 
@@ -297,7 +298,7 @@ abstract class InHouseInstrumentationTestRunner(
 
     @CallSuper
     @Suppress("MagicNumber")
-    open fun initUITestConfig() {
+    public open fun initUITestConfig() {
         with(UITestConfig) {
             waiterTimeoutMs = TimeUnit.SECONDS.toMillis(12)
 
@@ -385,8 +386,8 @@ abstract class InHouseInstrumentationTestRunner(
         }
     }
 
-    companion object {
-        val instance: InHouseInstrumentationTestRunner by lazy {
+    public companion object {
+        public val instance: InHouseInstrumentationTestRunner by lazy {
             InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner
         }
     }

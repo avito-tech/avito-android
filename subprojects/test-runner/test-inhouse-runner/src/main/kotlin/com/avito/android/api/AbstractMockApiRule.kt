@@ -2,7 +2,7 @@ package com.avito.android.api
 
 import com.avito.android.rule.SimpleRule
 
-abstract class AbstractMockApiRule<T : RequestRegistry> : SimpleRule() {
+public abstract class AbstractMockApiRule<T : RequestRegistry> : SimpleRule() {
 
     private var registry: T? = null
 
@@ -18,7 +18,7 @@ abstract class AbstractMockApiRule<T : RequestRegistry> : SimpleRule() {
 
     protected abstract fun createRegistry(): T
 
-    fun stub(init: T.() -> Unit) {
+    public fun stub(init: T.() -> Unit) {
         if (registry == null) {
             registry = createRegistry()
         }

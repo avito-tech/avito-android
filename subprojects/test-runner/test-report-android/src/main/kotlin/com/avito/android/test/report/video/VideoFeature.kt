@@ -7,12 +7,12 @@ import com.avito.report.model.Incident
  * Логика разделена на 2 метода т.к валидным является кейс, когда мы записываем видео, но потом
  * принимаем решение о его незаливке, например, если тест прошел.
  */
-interface VideoFeature {
-    fun videoRecordingEnabled(shouldRecord: Boolean): Boolean
-    fun videoUploadingEnabled(shouldRecord: Boolean, incident: Incident?): Boolean
+public interface VideoFeature {
+    public fun videoRecordingEnabled(shouldRecord: Boolean): Boolean
+    public fun videoUploadingEnabled(shouldRecord: Boolean, incident: Incident?): Boolean
 }
 
-class VideoFeatureImplementation(
+internal class VideoFeatureImplementation(
     private val videoFeatureValue: VideoFeatureValue,
     private val canRecord: Boolean = videoFeatureValue is VideoFeatureValue.Enabled
 ) : VideoFeature {
@@ -25,11 +25,11 @@ class VideoFeatureImplementation(
                 videoFeatureValue is VideoFeatureValue.Enabled.OnlyFailed && incident != null)
 }
 
-sealed class VideoFeatureValue {
-    object Disabled : VideoFeatureValue()
+public sealed class VideoFeatureValue {
+    public data object Disabled : VideoFeatureValue()
 
-    sealed class Enabled : VideoFeatureValue() {
-        object OnlyFailed : Enabled()
-        object All : Enabled()
+    public sealed class Enabled : VideoFeatureValue() {
+        public data object OnlyFailed : Enabled()
+        public data object All : Enabled()
     }
 }

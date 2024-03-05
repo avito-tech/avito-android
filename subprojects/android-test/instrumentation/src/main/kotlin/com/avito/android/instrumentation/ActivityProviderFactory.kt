@@ -5,9 +5,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitor
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 
-object ActivityProviderFactory {
+public object ActivityProviderFactory {
 
-    fun create(
+    public fun create(
         instrumentation: Lazy<Instrumentation> = lazy {
             InstrumentationRegistry.getInstrumentation()
         },

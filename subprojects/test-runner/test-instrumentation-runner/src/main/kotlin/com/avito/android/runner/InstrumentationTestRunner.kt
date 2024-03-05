@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.test.runner.AndroidJUnitRunner
 import com.avito.logger.LoggerFactory
 
-abstract class InstrumentationTestRunner : AndroidJUnitRunner() {
+public abstract class InstrumentationTestRunner : AndroidJUnitRunner() {
 
-    abstract val loggerFactory: LoggerFactory
+    protected abstract val loggerFactory: LoggerFactory
 
     protected lateinit var instrumentationArguments: Bundle
 

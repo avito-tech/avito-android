@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class TextElementActivity : AppCompatActivity() {
+internal class TextElementActivity : AppCompatActivity() {
 
     private lateinit var textView: TextView
     private lateinit var textViewLong: TextView

@@ -15,7 +15,7 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.StringDescription
 import kotlin.math.abs
 
-object AvitoPositionAssertions {
+internal object AvitoPositionAssertions {
 
     fun isCenteredVerticallyWith(viewMatcher: Matcher<View>) =
         ViewAssertion { view, noViewFoundException ->

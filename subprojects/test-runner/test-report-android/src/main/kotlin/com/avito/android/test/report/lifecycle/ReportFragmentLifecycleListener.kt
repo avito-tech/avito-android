@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager
 import com.avito.android.test.report.Report
 import com.avito.logger.LoggerFactory
 
-class ReportFragmentLifecycleListener(
+internal class ReportFragmentLifecycleListener(
     factory: LoggerFactory,
     private val report: Report
 ) : FragmentManager.FragmentLifecycleCallbacks() {

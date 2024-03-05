@@ -6,7 +6,7 @@ import androidx.test.espresso.action.Swiper
 import com.avito.android.test.espresso.EspressoActions
 import com.avito.android.test.espresso.action.TextViewReadAction
 
-class ActionsImpl(private val driver: ActionsDriver) : Actions {
+public class ActionsImpl(private val driver: ActionsDriver) : Actions {
 
     override fun click() {
         driver.perform(

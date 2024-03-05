@@ -7,7 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class ActionOnEnabledElement(
+public class ActionOnEnabledElement(
     private val action: ViewAction
 ) : ViewAction {
 

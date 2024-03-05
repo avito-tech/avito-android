@@ -5,15 +5,15 @@ import androidx.annotation.CallSuper
 /**
  * MBS-7204 Screenchecks Story
  */
-interface ScreenChecks {
+public interface ScreenChecks {
 
-    val checkOnEachScreenInteraction: Boolean
+    public val checkOnEachScreenInteraction: Boolean
         get() = false
 
-    fun isScreenOpened()
+    public fun isScreenOpened()
 }
 
-abstract class BaseScreenChecks<out T : Screen>(
+public abstract class BaseScreenChecks<out T : Screen>(
     protected val screen: T,
 ) : ScreenChecks {
 

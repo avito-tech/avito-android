@@ -4,9 +4,9 @@ import android.view.View
 import com.avito.android.test.InteractionContext
 import org.hamcrest.Matcher
 
-abstract class PageObject {
+public abstract class PageObject {
 
-    abstract val interactionContext: InteractionContext
+    public abstract val interactionContext: InteractionContext
 
     // TODO: Matcher<View> - слишком общий, нужно сузить до конкретного типа или по аналогии с kakao
     protected inline fun <reified T> PageObject.element(matcher: Matcher<View>): T {
@@ -34,4 +34,4 @@ abstract class PageObject {
  * PageObject.element(<matcher from user>)
  *   -> constructor(<parent interaction context>, <matcher from user>)
  */
-interface HandleParentContext
+public interface HandleParentContext

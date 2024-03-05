@@ -4,7 +4,7 @@ import android.view.View
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 
-class FocusableInTouchModeMatcher : TypeSafeMatcher<View>() {
+internal class FocusableInTouchModeMatcher : TypeSafeMatcher<View>() {
 
     override fun describeTo(description: Description) {
         description.appendText("is focusable in touch mode")

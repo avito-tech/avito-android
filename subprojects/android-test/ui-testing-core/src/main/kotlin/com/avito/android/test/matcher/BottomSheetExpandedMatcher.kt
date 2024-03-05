@@ -6,7 +6,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import org.hamcrest.Description
 
-class BottomSheetExpandedMatcher : BoundedMatcher<View, View>(View::class.java) {
+public class BottomSheetExpandedMatcher : BoundedMatcher<View, View>(View::class.java) {
 
     override fun describeTo(description: Description) {
         description.appendText("with expanded bottom sheet")

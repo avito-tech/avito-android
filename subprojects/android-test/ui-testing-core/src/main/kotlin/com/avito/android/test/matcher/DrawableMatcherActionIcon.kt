@@ -6,7 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.view.menu.ActionMenuItemView
 
 @SuppressLint("RestrictedApi")
-class DrawableMatcherActionIcon(
+public class DrawableMatcherActionIcon(
     @DrawableRes private val src: Int? = null,
     @ColorRes private val tint: Int? = null
 ) : DrawableMatcher<ActionMenuItemView>(

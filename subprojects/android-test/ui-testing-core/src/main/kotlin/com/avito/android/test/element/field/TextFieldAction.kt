@@ -11,18 +11,18 @@ import com.avito.android.test.element.field.actions.TypeText
 import com.avito.android.test.espresso.EspressoActions
 import com.avito.android.test.espresso.action.scroll.ScrollToIfPossibleAction
 
-interface FieldActions : Actions {
+public interface FieldActions : Actions {
 
-    fun write(text: String)
+    public fun write(text: String)
 
     // todo move to keyboard actors
-    fun writeAndPressImeAction(text: String)
+    public fun writeAndPressImeAction(text: String)
 
-    fun pressImeAction()
+    public fun pressImeAction()
 
-    fun clear()
+    public fun clear()
 
-    fun append(text: String)
+    public fun append(text: String)
 }
 
 internal class TextFieldAction(

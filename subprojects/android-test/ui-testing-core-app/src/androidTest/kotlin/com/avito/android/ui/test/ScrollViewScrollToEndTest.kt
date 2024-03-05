@@ -5,7 +5,7 @@ import com.avito.android.ui.DistantViewOnScrollActivity
 import org.junit.Rule
 import org.junit.Test
 
-class ScrollViewScrollToEndTest {
+internal class ScrollViewScrollToEndTest {
 
     @get:Rule
     val rule = screenRule<DistantViewOnScrollActivity>(launchActivity = true)

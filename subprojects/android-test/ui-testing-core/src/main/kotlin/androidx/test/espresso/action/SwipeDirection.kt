@@ -2,11 +2,11 @@ package androidx.test.espresso.action
 
 import androidx.test.espresso.action.GeneralLocation.translate
 
-interface SwipeDirection {
-    fun toCoordinateProvider(): Pair<CoordinatesProvider, CoordinatesProvider>
+public interface SwipeDirection {
+    public fun toCoordinateProvider(): Pair<CoordinatesProvider, CoordinatesProvider>
 }
 
-enum class SwipeDirections : SwipeDirection {
+public enum class SwipeDirections : SwipeDirection {
     LEFT_TO_RIGHT {
         override fun toCoordinateProvider(): Pair<CoordinatesProvider, CoordinatesProvider> {
             return translate(

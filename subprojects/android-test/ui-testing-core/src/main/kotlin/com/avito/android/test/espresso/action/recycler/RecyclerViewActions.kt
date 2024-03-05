@@ -13,7 +13,7 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 
 // TODO reuse logic with ActionOnItemAtPositionViewAction, ActionOnItemViewAction
-private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> constructor(
+private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder>(
     private val match: RecyclerItemsMatcher.Match<VH>,
     private val viewAction: ViewAction
 ) : ViewAction {
@@ -60,7 +60,7 @@ private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> 
     }
 }
 
-fun <VH : RecyclerView.ViewHolder> itemDoesNotExists(
+public fun <VH : RecyclerView.ViewHolder> itemDoesNotExists(
     itemViewMatcher: Matcher<View>,
     viewAction: ViewAction,
     position: Int? = null
@@ -72,7 +72,7 @@ fun <VH : RecyclerView.ViewHolder> itemDoesNotExists(
     viewAction = viewAction
 )
 
-fun <VH : RecyclerView.ViewHolder> actionOnItemAtPosition(
+public fun <VH : RecyclerView.ViewHolder> actionOnItemAtPosition(
     position: Int,
     viewAction: ViewAction
 ): ViewAction {
@@ -167,7 +167,7 @@ private class ActionOnItemViewAction<VH : RecyclerView.ViewHolder>(
     }
 }
 
-fun <VH : RecyclerView.ViewHolder> actionOnHolderItem(
+public fun <VH : RecyclerView.ViewHolder> actionOnHolderItem(
     viewHolderMatcher: TypeSafeMatcher<VH>,
     viewAction: ViewAction,
     position: Int? = null,
@@ -182,7 +182,7 @@ fun <VH : RecyclerView.ViewHolder> actionOnHolderItem(
         needScroll = needScroll
     )
 
-fun <VH : RecyclerView.ViewHolder> actionOnItem(
+public fun <VH : RecyclerView.ViewHolder> actionOnItem(
     itemViewMatcher: Matcher<View>,
     viewAction: ViewAction,
     position: Int? = null,
@@ -194,7 +194,7 @@ fun <VH : RecyclerView.ViewHolder> actionOnItem(
     needScroll
 )
 
-class ViewActionOnItemAtPosition<VH : RecyclerView.ViewHolder>(
+internal class ViewActionOnItemAtPosition<VH : RecyclerView.ViewHolder>(
     private val position: Int,
     private val viewAction: ViewAction
 ) : ViewAction {

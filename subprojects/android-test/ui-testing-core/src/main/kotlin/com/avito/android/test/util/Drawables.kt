@@ -102,7 +102,7 @@ internal fun Int?.getResourceName(resources: Resources): String {
     return resources.getResourceName(this)
 }
 
-fun Drawable.toBitmap(): Bitmap {
+public fun Drawable.toBitmap(): Bitmap {
     val drawable = this
 
     val bitmap = Bitmap.createBitmap(

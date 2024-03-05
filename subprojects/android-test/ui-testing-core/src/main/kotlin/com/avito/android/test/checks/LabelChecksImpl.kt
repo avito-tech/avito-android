@@ -14,15 +14,15 @@ import com.avito.android.test.matcher.TextViewLinesMatcher
 import com.avito.android.test.matcher.WithHintEndingMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.equalToIgnoringCase
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.startsWith
 
-class LabelChecksImpl(private val driver: ChecksDriver) : LabelChecks {
+internal class LabelChecksImpl(private val driver: ChecksDriver) : LabelChecks {
 
     override fun withText(text: String) {
         driver.check(matches(TextMatchers.withText(text)))

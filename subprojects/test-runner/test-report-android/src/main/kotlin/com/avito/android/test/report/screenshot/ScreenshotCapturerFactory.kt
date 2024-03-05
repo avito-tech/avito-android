@@ -3,9 +3,9 @@ package com.avito.android.test.report.screenshot
 import com.avito.android.instrumentation.ActivityProvider
 import com.avito.report.TestArtifactsProvider
 
-object ScreenshotCapturerFactory {
+public object ScreenshotCapturerFactory {
 
-    fun create(
+    public fun create(
         testArtifactsProvider: TestArtifactsProvider,
         activityProvider: ActivityProvider
     ): ScreenshotCapturer {

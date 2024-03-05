@@ -6,7 +6,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import org.hamcrest.Description
 
-class BottomSheetCollapsedMatcher : BoundedMatcher<View, View>(View::class.java) {
+public class BottomSheetCollapsedMatcher : BoundedMatcher<View, View>(View::class.java) {
 
     override fun describeTo(description: Description) {
         description.appendText("with collapsed bottom sheet")

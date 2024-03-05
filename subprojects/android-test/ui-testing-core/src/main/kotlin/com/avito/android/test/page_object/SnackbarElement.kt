@@ -1,5 +1,7 @@
 package com.avito.android.test.page_object
 
+import android.annotation.SuppressLint
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.SwipeDirections.RIGHT_TO_LEFT
 import androidx.test.espresso.matcher.ViewMatchers
 import com.avito.android.test.InteractionContext
@@ -20,23 +22,23 @@ import org.hamcrest.Matchers
  * if you encounter weird "duplicate snackbars" it's a known issue
  */
 @Deprecated(message = "Has a flaky behaviour", replaceWith = ReplaceWith("SnackbarRule"))
-class SnackbarElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
+public class SnackbarElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
-    val message = ViewElement(
+    public val message: ViewElement = ViewElement(
         interactionContext.provideChildContext(
             ViewMatchers.withId(R.id.snackbar_text)
         )
     )
 
-    val button = ViewElement(
+    public val button: ViewElement = ViewElement(
         interactionContext.provideChildContext(
             ViewMatchers.withId(R.id.snackbar_action)
         )
     )
 
-    constructor() : this(SimpleInteractionContext(snackbarLayoutMatcher())) // TODO: migrate to HandleParentContext
+    public constructor() : this(SimpleInteractionContext(snackbarLayoutMatcher())) // TODO: migrate to HandleParentContext
 
-    constructor(textMatcher: Matcher<String>? = null) : this(
+    public constructor(textMatcher: Matcher<String>? = null) : this(
         SimpleInteractionContext(
             if (textMatcher == null) {
                 snackbarLayoutMatcher()
@@ -49,7 +51,8 @@ class SnackbarElement(interactionContext: InteractionContext) : ViewElement(inte
         )
     )
 
-    fun swipeOut() = EspressoActions.swipe(RIGHT_TO_LEFT)
+    public fun swipeOut(): ViewAction = EspressoActions.swipe(RIGHT_TO_LEFT)
 }
 
+@SuppressLint("RestrictedApi")
 private fun snackbarLayoutMatcher() = ViewMatchers.isAssignableFrom(Snackbar.SnackbarLayout::class.java)

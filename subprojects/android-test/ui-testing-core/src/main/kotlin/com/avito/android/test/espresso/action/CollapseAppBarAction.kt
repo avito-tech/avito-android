@@ -7,9 +7,9 @@ import androidx.test.espresso.matcher.ViewMatchers
 import com.google.android.material.appbar.AppBarLayout
 import org.hamcrest.Matcher
 
-class CollapseAppBarAction : ViewAction {
+public class CollapseAppBarAction : ViewAction {
 
-    override fun getDescription() = "collapsing AppBar"
+    override fun getDescription(): String = "collapsing AppBar"
 
     override fun getConstraints(): Matcher<View> =
         ViewMatchers.isAssignableFrom(AppBarLayout::class.java)

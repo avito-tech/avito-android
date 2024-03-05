@@ -6,7 +6,7 @@ import com.avito.android.ui.ViewPagerActivity
 import org.junit.Rule
 import org.junit.Test
 
-class ViewPagerTest {
+internal class ViewPagerTest {
 
     @get:Rule
     val rule = screenRule<ViewPagerActivity>()

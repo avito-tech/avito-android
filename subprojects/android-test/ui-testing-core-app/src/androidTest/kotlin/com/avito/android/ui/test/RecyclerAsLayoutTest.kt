@@ -5,7 +5,7 @@ import com.avito.android.ui.RecyclerAsLayoutActivity
 import org.junit.Rule
 import org.junit.Test
 
-class RecyclerAsLayoutTest {
+internal class RecyclerAsLayoutTest {
 
     private val intent = arrayListOf(
         "input",

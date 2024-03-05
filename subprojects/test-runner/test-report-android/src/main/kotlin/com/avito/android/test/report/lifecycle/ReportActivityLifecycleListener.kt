@@ -7,7 +7,7 @@ import androidx.test.runner.lifecycle.Stage
 import com.avito.android.test.report.Report
 import com.avito.logger.LoggerFactory
 
-class ReportActivityLifecycleListener(
+public class ReportActivityLifecycleListener(
     factory: LoggerFactory,
     private val report: Report
 ) : ActivityLifecycleCallback {

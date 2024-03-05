@@ -7,13 +7,12 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import com.avito.android.test.util.getFieldByReflection
 import org.hamcrest.Matcher
-import java.util.ArrayList
 
-class ToolbarReadMenuItemsAction : ViewAction {
+public class ToolbarReadMenuItemsAction : ViewAction {
 
     private lateinit var hiddenItems: List<String>
 
-    override fun getDescription() = "reading toolbar overflow menu items"
+    override fun getDescription(): String = "reading toolbar overflow menu items"
 
     override fun getConstraints(): Matcher<View> = isAssignableFrom(Toolbar::class.java)
 
@@ -29,7 +28,7 @@ class ToolbarReadMenuItemsAction : ViewAction {
         hiddenItems = mNonActionItems.map { it.toString() }
     }
 
-    fun hasHiddenItem(itemMatcher: Matcher<String>): Boolean {
+    public fun hasHiddenItem(itemMatcher: Matcher<String>): Boolean {
         try {
             return hiddenItems.any { itemMatcher.matches(it) }
         } catch (e: UninitializedPropertyAccessException) {
@@ -37,7 +36,7 @@ class ToolbarReadMenuItemsAction : ViewAction {
         }
     }
 
-    class ToolbarReadActionUsageException : RuntimeException(
+    internal class ToolbarReadActionUsageException : RuntimeException(
         """
         First of all, you should perform action, like
         "ToolbarReadMenuItemsAction()

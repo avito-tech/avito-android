@@ -18,4 +18,4 @@ package org.gradle.kotlin.dsl.support
 import org.gradle.internal.service.ServiceRegistry
 
 public inline fun <reified T : Any> ServiceRegistry.get(): T =
-    this[T::class.java]!!
+    this[T::class.java]

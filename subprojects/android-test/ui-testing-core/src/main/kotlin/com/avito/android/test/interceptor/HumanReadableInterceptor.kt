@@ -7,7 +7,7 @@ import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.assertion.describe
 import com.avito.android.test.util.describe
 
-class HumanReadableActionInterceptor(private val consumer: (String) -> Unit) :
+public class HumanReadableActionInterceptor(private val consumer: (String) -> Unit) :
     ActionInterceptor {
 
     override fun intercept(action: ViewAction, description: String, view: View) {
@@ -15,7 +15,7 @@ class HumanReadableActionInterceptor(private val consumer: (String) -> Unit) :
     }
 }
 
-class HumanReadableAssertionInterceptor(private val consumer: (String) -> Unit) :
+public class HumanReadableAssertionInterceptor(private val consumer: (String) -> Unit) :
     AssertionInterceptor {
 
     override fun intercept(

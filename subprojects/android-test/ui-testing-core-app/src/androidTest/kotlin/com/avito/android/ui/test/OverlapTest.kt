@@ -7,7 +7,7 @@ import com.avito.android.ui.R
 import org.junit.Rule
 import org.junit.Test
 
-class OverlapTest {
+internal class OverlapTest {
 
     @get:Rule
     val rule = screenRule<OverlapActivity>()

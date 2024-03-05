@@ -1,5 +1,6 @@
 package com.avito.android.test.page_object
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Rect
 import android.view.View
@@ -9,19 +10,19 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 
-class KeyboardElement {
+public class KeyboardElement {
 
-    val actions = ActionLibrary()
+    public val actions: ActionLibrary = ActionLibrary()
 
-    val checks = CheckLibrary()
+    public val checks: CheckLibrary = CheckLibrary()
 
-    fun close() {
+    public fun close() {
         Espresso.closeSoftKeyboard()
     }
 
-    class ActionLibrary {
+    public class ActionLibrary {
 
-        fun pressImeAction(element: PageObjectElement) {
+        public fun pressImeAction(element: PageObjectElement) {
             element.interactionContext.perform(ViewActions.pressImeActionButton())
         }
     }
@@ -33,20 +34,21 @@ class KeyboardElement {
      *
      * https://issuetracker.google.com/u/1/issues/68137674
      */
-    class CheckLibrary {
+    public class CheckLibrary {
 
-        fun isDisplayed(activity: Activity) {
+        public fun isDisplayed(activity: Activity) {
             // FIXME(MBS-1301)
             Thread.sleep(1000)
             checkDisplayed(activity, true)
         }
 
-        fun isNotDisplayed(activity: Activity) {
+        public fun isNotDisplayed(activity: Activity) {
             // FIXME(MBS-1301)
             Thread.sleep(1000)
             checkDisplayed(activity, false)
         }
 
+        @SuppressLint("PrivateApi")
         private fun checkDisplayed(activity: Activity, isOpen: Boolean) {
             var threshold = 0
             var activityEffectiveHeight = 0
@@ -115,7 +117,7 @@ class KeyboardElement {
                 " $expected ${getStatusMessage(displayed, false)}"
         }
 
-        companion object {
+        private companion object {
             // not a bad name for private const
             @Suppress("VariableMaxLength")
             private const val KEYBOARD_MINIMUM_HEIGHT_PERCENTAGE = .30f

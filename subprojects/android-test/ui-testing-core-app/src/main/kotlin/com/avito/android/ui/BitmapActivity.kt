@@ -3,7 +3,7 @@ package com.avito.android.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
-class BitmapActivity : AppCompatActivity() {
+internal class BitmapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

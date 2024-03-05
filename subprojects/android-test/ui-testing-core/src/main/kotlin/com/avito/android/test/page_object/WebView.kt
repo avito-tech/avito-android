@@ -12,43 +12,43 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.containsString
 import java.util.concurrent.TimeUnit
 
-open class WebView(private val webViewMatcher: Matcher<View>) {
+public open class WebView(private val webViewMatcher: Matcher<View>) {
 
     private val interaction: Web.WebInteraction<Void>
         get() = Web.onWebView(webViewMatcher)
 
-    val checks = WebViewChecksImpl()
+    public val checks: WebViewChecks = WebViewChecksImpl()
 
-    fun withElement(
+    public fun withElement(
         elementMatcher: Atom<ElementReference>,
         timeoutSeconds: Long = WEB_ELEMENT_TIMEOUT_SECONDS
-    ) = WebViewElement(elementMatcher, timeoutSeconds)
+    ): WebViewElement = WebViewElement(elementMatcher, timeoutSeconds)
 
-    interface WebViewChecks {
+    public interface WebViewChecks {
 
-        fun withUrl(uri: String)
+        public fun withUrl(uri: String)
     }
 
-    inner class WebViewChecksImpl : WebViewChecks {
+    private inner class WebViewChecksImpl : WebViewChecks {
 
         override fun withUrl(uri: String) {
             interaction.check(webMatches(getCurrentUrl(), containsString(uri)))
         }
     }
 
-    inner class WebViewElement(
+    public inner class WebViewElement(
         private val elementMatcher: Atom<ElementReference>,
         private val timeoutSeconds: Long
     ) {
 
-        val actions: WebElementActions
+        public val actions: WebElementActions
             get() = WebElementActions(
                 interaction.withTimeout(timeoutSeconds, TimeUnit.SECONDS).withElement(
                     elementMatcher
                 )
             )
 
-        val checks: WebElementChecks
+        public val checks: WebElementChecks
             get() = WebElementChecks(
                 interaction.withTimeout(timeoutSeconds, TimeUnit.SECONDS).withElement(
                     elementMatcher

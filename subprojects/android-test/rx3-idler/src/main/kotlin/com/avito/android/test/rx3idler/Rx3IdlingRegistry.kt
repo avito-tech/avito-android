@@ -16,7 +16,7 @@ import io.reactivex.rxjava3.plugins.RxJavaPlugins
  *
  * Details https://github.com/square/RxIdler/issues/34
  */
-object Rx3IdlingRegistry {
+public object Rx3IdlingRegistry {
 
     private var initialized = false
     private var registered = false
@@ -27,7 +27,7 @@ object Rx3IdlingRegistry {
      * Must be called one time before Application will be created
      * read https://github.com/square/RxIdler#usage
      */
-    fun initialize() {
+    public fun initialize() {
         synchronized(Rx3IdlingRegistry) {
             require(!initialized) {
                 "Already have been initialized"
@@ -44,7 +44,7 @@ object Rx3IdlingRegistry {
      *
      * [Rx3IdlingRegistry] is enabled by default after [initialize]
      */
-    fun enable() {
+    public fun enable() {
         synchronized(Rx3IdlingRegistry) {
             require(initialized) {
                 "Must be initialized"
@@ -63,7 +63,7 @@ object Rx3IdlingRegistry {
      *
      * you should prefer to use [withDisabled] because you could forgot to enable back
      */
-    fun disable() {
+    public fun disable() {
         synchronized(Rx3IdlingRegistry) {
             require(initialized) {
                 "Must be initialized"
@@ -79,7 +79,7 @@ object Rx3IdlingRegistry {
     /**
      * Run [action] without RX Idling
      */
-    fun withDisabled(action: () -> Unit) {
+    public fun withDisabled(action: () -> Unit) {
         synchronized(Rx3IdlingRegistry) {
             val wasRegistered = registered
             if (wasRegistered) {

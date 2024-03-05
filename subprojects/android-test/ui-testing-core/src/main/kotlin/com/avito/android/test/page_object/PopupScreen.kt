@@ -9,7 +9,7 @@ import com.avito.android.test.InteractionContext
 import com.avito.android.test.context.PopupInteractionContext
 import org.hamcrest.Matcher
 
-abstract class PopupScreen(
+public abstract class PopupScreen(
     matcher: Matcher<View>
 ) : PageObject(), Screen {
 
@@ -26,9 +26,9 @@ abstract class PopupScreen(
     override val checks: ScreenChecks =
         PopupScreenChecks(screen = this, checkOnEachScreenInteraction = true)
 
-    val rootElement = element<ViewElement>()
+    public val rootElement: ViewElement = element<ViewElement>()
 
-    open class PopupScreenChecks<T : PopupScreen>(
+    public open class PopupScreenChecks<T : PopupScreen>(
         screen: T,
         override val checkOnEachScreenInteraction: Boolean = true
     ) : BaseScreenChecks<T>(screen) {

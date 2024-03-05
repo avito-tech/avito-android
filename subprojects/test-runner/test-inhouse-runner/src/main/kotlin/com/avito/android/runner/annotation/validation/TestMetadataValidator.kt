@@ -2,7 +2,7 @@ package com.avito.android.runner.annotation.validation
 
 import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 
-interface TestMetadataValidator {
+public interface TestMetadataValidator {
 
-    fun validate(test: TestMethodOrClass)
+    public fun validate(test: TestMethodOrClass)
 }

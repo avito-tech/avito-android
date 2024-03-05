@@ -6,7 +6,7 @@ import com.avito.android.test.SimpleInteractionContext
 import com.avito.android.test.page_object.ViewElement
 import org.hamcrest.Matcher
 
-open class TextFieldElement(
+public open class TextFieldElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext),
     FieldActions {
@@ -15,11 +15,11 @@ open class TextFieldElement(
     override val checks: TextFieldChecks = TextFieldChecksImpl(interactionContext)
 
     // TODO: remove this constructor and use element fabric method to create an instance
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 
-    override fun write(text: String) = actions.write(text)
-    override fun writeAndPressImeAction(text: String) = actions.writeAndPressImeAction(text)
-    override fun pressImeAction() = actions.pressImeAction()
-    override fun clear() = actions.clear()
-    override fun append(text: String) = actions.append(text)
+    override fun write(text: String): Unit = actions.write(text)
+    override fun writeAndPressImeAction(text: String): Unit = actions.writeAndPressImeAction(text)
+    override fun pressImeAction(): Unit = actions.pressImeAction()
+    override fun clear(): Unit = actions.clear()
+    override fun append(text: String): Unit = actions.append(text)
 }

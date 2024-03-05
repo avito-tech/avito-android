@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import java.util.Locale
 
-fun getContextWithLocaleByLanguage(language: String): Context {
+public fun getContextWithLocaleByLanguage(language: String): Context {
     val baseContext = ApplicationProvider.getApplicationContext<Application>()
     val configuration = baseContext.resources.configuration
     configuration.setLocale(Locale(language))

@@ -16,7 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-class DialogsActivity : AppCompatActivity() {
+internal class DialogsActivity : AppCompatActivity() {
 
     private var dialog: Dialog? = null
     private var popup: PopupWindow? = null

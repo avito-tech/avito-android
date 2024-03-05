@@ -1,6 +1,6 @@
 package com.avito.android.test.checks
 
-interface TextFieldErrorChecks {
+public interface TextFieldErrorChecks {
 
-    fun withErrorText(text: String)
+    public fun withErrorText(text: String)
 }

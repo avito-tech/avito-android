@@ -7,7 +7,7 @@ import org.hamcrest.Matchers.greaterThan
 import org.junit.Rule
 import org.junit.Test
 
-class LongRecyclerTest {
+internal class LongRecyclerTest {
 
     @get:Rule
     val rule = screenRule<LongRecyclerActivity>()

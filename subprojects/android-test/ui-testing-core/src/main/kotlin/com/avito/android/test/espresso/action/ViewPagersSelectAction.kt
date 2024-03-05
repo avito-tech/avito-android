@@ -7,7 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.viewpager.widget.ViewPager
 import org.hamcrest.Matcher
 
-class ViewPagersSelectAction(private val tabPosition: Int) : ViewAction {
+internal class ViewPagersSelectAction(private val tabPosition: Int) : ViewAction {
 
     override fun getDescription() = "selecting ViewPager"
 

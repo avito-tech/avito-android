@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.test.espresso.matcher.BoundedMatcher
 import org.hamcrest.Description
 
-class WithHintEndingMatcher(private val hint: CharSequence) :
+internal class WithHintEndingMatcher(private val hint: CharSequence) :
     BoundedMatcher<View, TextView>(TextView::class.java) {
 
     override fun describeTo(description: Description) {

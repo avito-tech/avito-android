@@ -12,7 +12,7 @@ import junit.framework.AssertionFailedError
 import org.hamcrest.Description
 import kotlin.math.absoluteValue
 
-class BitmapMatcher(private val expectedBitmap: Bitmap) :
+internal class BitmapMatcher(private val expectedBitmap: Bitmap) :
     BoundedMatcher<View, ImageView>(ImageView::class.java) {
 
     override fun describeTo(description: Description) {

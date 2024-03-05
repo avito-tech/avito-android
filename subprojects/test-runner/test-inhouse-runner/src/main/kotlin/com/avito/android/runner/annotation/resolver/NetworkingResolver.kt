@@ -3,7 +3,7 @@ package com.avito.android.runner.annotation.resolver
 import com.avito.android.api.AbstractMockApiRule
 import com.avito.android.mock.MockWebServerApiRule
 
-class NetworkingResolver : ClassReflectionResolver(key = NETWORKING_TYPE_KEY, resolver = { aClass ->
+public class NetworkingResolver : ClassReflectionResolver(key = NETWORKING_TYPE_KEY, resolver = { aClass ->
 
     val hasMockApiRule = aClass.declaredFields
         .find { it.type == MockWebServerApiRule::class.java } != null
@@ -21,8 +21,8 @@ class NetworkingResolver : ClassReflectionResolver(key = NETWORKING_TYPE_KEY, re
     TestMetadataResolver.Resolution.ReplaceSerializable(networkingType)
 })
 
-enum class NetworkingType {
+public enum class NetworkingType {
     REAL, MOCK_WEB_SERVER, MOCKED_NETWORK_LAYER, ILLEGAL
 }
 
-const val NETWORKING_TYPE_KEY = "networking"
+public const val NETWORKING_TYPE_KEY: String = "networking"

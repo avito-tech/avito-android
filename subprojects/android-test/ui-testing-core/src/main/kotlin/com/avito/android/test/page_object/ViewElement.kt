@@ -13,12 +13,12 @@ import com.avito.android.test.checks.ChecksImpl
 import com.avito.android.test.matcher.NoViewMatcher
 import org.hamcrest.Matcher
 
-open class ViewElement : PageObjectElement, Actions {
-
-    override val matcher: Matcher<View>
-    override val interactionContext: InteractionContext
-    override val actions: Actions
+public open class ViewElement private constructor(
+    override val interactionContext: InteractionContext,
+    override val matcher: Matcher<View>,
+    override val actions: Actions,
     override val checks: Checks
+) : PageObjectElement(), Actions {
 
     /**
      * "Use constructor with interaction context. " +
@@ -27,20 +27,15 @@ open class ViewElement : PageObjectElement, Actions {
      * "For a custom class use `ViewElement(interactionContext)`"
      * TODO: make this constructor private and remove matcher
      */
-    constructor(
+    public constructor(
         matcher: Matcher<View>,
         interactionContext: InteractionContext = SimpleInteractionContext(matcher),
         actions: Actions = ActionsImpl(interactionContext),
         checks: Checks = ChecksImpl(interactionContext)
-    ) {
-        this.matcher = matcher
-        this.interactionContext = interactionContext
-        this.actions = actions
-        this.checks = checks
-    }
+    ) : this(interactionContext, matcher, actions, checks)
 
     @Suppress("DEPRECATION")
-    constructor(interactionContext: InteractionContext) :
+    public constructor(interactionContext: InteractionContext) :
         this(
             NoViewMatcher(),
             interactionContext,
@@ -49,17 +44,17 @@ open class ViewElement : PageObjectElement, Actions {
         )
 
     @Suppress("DEPRECATION")
-    constructor(interactionContext: InteractionContext, checks: Checks) :
+    public constructor(interactionContext: InteractionContext, checks: Checks) :
         this(NoViewMatcher(), interactionContext, ActionsImpl(interactionContext), checks)
 
-    override fun click() = actions.click()
+    override fun click(): Unit = actions.click()
 
-    override fun longClick() = actions.longClick()
+    override fun longClick(): Unit = actions.longClick()
 
-    override fun scrollTo() = actions.scrollTo()
+    override fun scrollTo(): Unit = actions.scrollTo()
 
-    override fun swipe(direction: SwipeDirection, speed: Swiper, precision: PrecisionDescriber) =
+    override fun swipe(direction: SwipeDirection, speed: Swiper, precision: PrecisionDescriber): Unit =
         actions.swipe(direction, speed, precision)
 
-    override fun read(allowBlank: Boolean) = actions.read(allowBlank)
+    override fun read(allowBlank: Boolean): String = actions.read(allowBlank)
 }

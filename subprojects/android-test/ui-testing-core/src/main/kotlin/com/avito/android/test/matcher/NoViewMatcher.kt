@@ -7,7 +7,7 @@ import org.hamcrest.TypeSafeMatcher
 /**
  * Used to refactor PageObjectElement matcher constructor
  */
-class NoViewMatcher : TypeSafeMatcher<View>() {
+internal class NoViewMatcher : TypeSafeMatcher<View>() {
     override fun describeTo(description: Description) {
         description.appendText(
             " If you see this description: you use legacy PageObjectElement constructor; " +

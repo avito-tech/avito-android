@@ -6,11 +6,11 @@ import com.avito.android.test.checks.Checks
 import org.hamcrest.Matcher
 
 // TODO: hide or deprecate private api
-abstract class PageObjectElement : PageObject(), Actions {
+public abstract class PageObjectElement : PageObject(), Actions {
     /**
      * Don't use this matcher directly. Make child interaction context instead.
      */
-    abstract val matcher: Matcher<View>
-    abstract val actions: Actions
-    abstract val checks: Checks
+    public abstract val matcher: Matcher<View>
+    public abstract val actions: Actions
+    public abstract val checks: Checks
 }

@@ -32,7 +32,7 @@ private class ScrollToPositionViewAction(private val position: Int) : ViewAction
     }
 }
 
-class SmoothScrollToPositionViewAction constructor(private val position: Int) : ViewAction {
+internal class SmoothScrollToPositionViewAction(private val position: Int) : ViewAction {
 
     override fun getConstraints(): Matcher<View> = Matchers.allOf(
         ViewMatchers.isAssignableFrom(RecyclerView::class.java),
@@ -47,7 +47,7 @@ class SmoothScrollToPositionViewAction constructor(private val position: Int) : 
     }
 }
 
-fun scrollToPosition(position: Int): ViewAction = ScrollToPositionViewAction(position)
+public fun scrollToPosition(position: Int): ViewAction = ScrollToPositionViewAction(position)
 
 private class ScrollToElementInsideRecyclerViewItem(
     private val position: Int,
@@ -72,7 +72,7 @@ private class ScrollToElementInsideRecyclerViewItem(
     }
 }
 
-fun scrollToElementInsideRecyclerViewItem(
+public fun scrollToElementInsideRecyclerViewItem(
     position: Int,
     childViewId: Int
 ): ViewAction = ScrollToElementInsideRecyclerViewItem(
@@ -84,7 +84,7 @@ internal class ScrollToViewAction<VH : RecyclerView.ViewHolder>(
     private val match: RecyclerItemsMatcher.Match<VH>
 ) : ViewAction {
 
-    override fun getConstraints(): Matcher<View> = Matchers.allOf<View>(
+    override fun getConstraints(): Matcher<View> = Matchers.allOf(
         ViewMatchers.isAssignableFrom(RecyclerView::class.java),
         ViewMatchers.isDisplayed()
     )
@@ -106,6 +106,7 @@ internal class ScrollToViewAction<VH : RecyclerView.ViewHolder>(
                 is RecyclerItemsMatcher.Result.IndexOutOfBound,
                 is RecyclerItemsMatcher.Result.NoItemAtPosition ->
                     throw AssertionError(matchResult.description)
+
                 is RecyclerItemsMatcher.Result.Found -> {
                     val matchedItem = matchResult.item
                     scrollToPosition(matchedItem.position).perform(
@@ -125,7 +126,7 @@ internal class ScrollToViewAction<VH : RecyclerView.ViewHolder>(
     }
 }
 
-fun <VH : RecyclerView.ViewHolder> scrollToHolder(
+public fun <VH : RecyclerView.ViewHolder> scrollToHolder(
     viewHolderMatcher: TypeSafeMatcher<VH>,
     position: Int? = null
 ): ViewAction = ScrollToViewAction(

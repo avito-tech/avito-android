@@ -35,7 +35,7 @@ public class ShadowR8TaskCreator(creationConfig: ConsumableCreationConfig) {
         r8CreationAction.configure(task)
 
         task.classes.setFrom()
-        task.resources.setFrom()
+//        task.resources.setFrom()
 
         task.shadowOutputs()
     }
@@ -55,10 +55,10 @@ public class ShadowR8TaskCreator(creationConfig: ConsumableCreationConfig) {
             newDirName = "proguard_guard",
             insertAfterDir = "intermediates"
         )
-        projectOutputKeepRules.insertDirIntoPath(
-            newDirName = "proguard_guard",
-            insertAfterDir = "intermediates"
-        )
+//        projectOutputKeepRules.insertDirIntoPath(
+//            newDirName = "proguard_guard",
+//            insertAfterDir = "intermediates"
+//        )
         baseDexDir.insertDirIntoPath(
             newDirName = "proguard_guard",
             insertAfterDir = "intermediates"

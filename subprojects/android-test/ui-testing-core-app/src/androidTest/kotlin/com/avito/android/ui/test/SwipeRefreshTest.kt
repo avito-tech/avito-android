@@ -6,7 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
-class SwipeRefreshTest {
+internal class SwipeRefreshTest {
 
     @get:Rule
     val rule = screenRule<SwipeRefreshActivity>()

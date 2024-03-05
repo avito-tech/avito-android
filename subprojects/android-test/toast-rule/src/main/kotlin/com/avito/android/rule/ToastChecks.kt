@@ -4,22 +4,22 @@ import android.view.View
 import androidx.annotation.StringRes
 import org.hamcrest.Matcher
 
-interface ToastChecks {
+public interface ToastChecks {
 
-    fun toastDisplayedWithText(text: String)
+    public fun toastDisplayedWithText(text: String)
 
-    fun toastDisplayedWithText(@StringRes resId: Int)
+    public fun toastDisplayedWithText(@StringRes resId: Int)
 
     @Deprecated(
         "Use toastDisplayedWithView for custom views " +
             "or toastDisplayedWithText(String|StringRes) for simple toasts"
     )
-    fun toastDisplayedWithText(matcher: Matcher<View>)
+    public fun toastDisplayedWithText(matcher: Matcher<View>)
 
     /**
      * Toasts with custom views
      */
-    fun toastDisplayedWithView(matcher: Matcher<View>)
+    public fun toastDisplayedWithView(matcher: Matcher<View>)
 
-    fun toastNotDisplayed()
+    public fun toastNotDisplayed()
 }

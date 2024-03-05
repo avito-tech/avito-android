@@ -7,7 +7,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 
-class ActivityLifecycleStatesTest {
+internal class ActivityLifecycleStatesTest {
 
     @get:Rule
     val activityRule = inHouseScreenRule<EmptyActivity>()

@@ -9,7 +9,7 @@ import androidx.test.espresso.PerformException
 import junit.framework.AssertionFailedError
 import org.hamcrest.Matcher
 
-class ReportFriendlyFailureHandler : FailureHandler {
+public class ReportFriendlyFailureHandler : FailureHandler {
 
     private val normalizers = listOf(
         RegexNormalizer(
@@ -157,7 +157,7 @@ class ReportFriendlyFailureHandler : FailureHandler {
      * was   : LinearLayout$LayoutParams@1aeef385
      * become: LinearLayout$LayoutParams
      */
-    class RegexNormalizer(
+    private class RegexNormalizer(
         private val regex: Regex,
         private val replacement: String = ""
     ) : Normalizer {

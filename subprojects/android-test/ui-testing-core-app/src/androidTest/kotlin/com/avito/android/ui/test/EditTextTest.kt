@@ -6,7 +6,7 @@ import com.avito.android.ui.EditTextActivity
 import org.junit.Rule
 import org.junit.Test
 
-class EditTextTest {
+internal class EditTextTest {
 
     @get:Rule
     val rule = screenRule<EditTextActivity>()

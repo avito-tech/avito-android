@@ -35,10 +35,10 @@ io.fabric8:kubernetes-model-rbac:5.11.2
 io.fabric8:kubernetes-model-scheduling:5.11.2
 io.fabric8:kubernetes-model-storageclass:5.11.2
 io.fabric8:zjsonpatch:0.3.0
-org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0
+org.jetbrains.kotlin:kotlin-stdlib:1.9.22
 org.jetbrains.kotlinx:kotlinx-cli-jvm:0.3.3
 org.jetbrains.kotlinx:kotlinx-cli:0.3.3
 org.jetbrains.teamcity:teamcity-rest-client:1.6.2

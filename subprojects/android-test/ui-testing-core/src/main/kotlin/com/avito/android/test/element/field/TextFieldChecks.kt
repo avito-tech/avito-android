@@ -7,7 +7,7 @@ import com.avito.android.test.checks.Checks
 import com.avito.android.test.checks.ChecksImpl
 import com.avito.android.test.checks.TextFieldHintChecks
 
-interface TextFieldChecks : Checks, TextFieldHintChecks {
+public interface TextFieldChecks : Checks, TextFieldHintChecks {
     override fun withHintText(text: String)
 }
 

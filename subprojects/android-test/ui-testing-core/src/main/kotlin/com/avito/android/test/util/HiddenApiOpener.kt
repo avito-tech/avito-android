@@ -7,13 +7,13 @@ import me.weishu.reflection.Reflection
  * Workaround to access restricted API by reflection.
  * https://developer.android.com/distribute/best-practices/develop/restrictions-non-sdk-interfaces
  */
-object HiddenApiOpener {
+public object HiddenApiOpener {
 
     private val unsealResult: Boolean by lazy {
         0 == Reflection.unseal(InstrumentationRegistry.getInstrumentation().targetContext)
     }
 
-    fun ensureUnseal() = check(unsealResult) {
+    public fun ensureUnseal(): Unit = check(unsealResult) {
         "Hidden API is unavailable"
     }
 }

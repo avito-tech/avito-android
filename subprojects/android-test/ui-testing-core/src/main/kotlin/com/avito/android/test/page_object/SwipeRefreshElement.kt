@@ -19,7 +19,7 @@ import com.avito.android.test.matcher.IsRefreshingMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.`is`
 
-class SwipeRefreshElement(
+public class SwipeRefreshElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext) {
 
@@ -28,15 +28,15 @@ class SwipeRefreshElement(
     override val actions: SwipeRefreshActions = SwipeRefreshActionsImpl(interactionContext)
 
     // TODO: remove this constructor and use element fabric method to create an instance
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 }
 
-interface SwipeRefreshActions : Actions {
+public interface SwipeRefreshActions : Actions {
 
-    fun pullToRefresh()
+    public fun pullToRefresh()
 }
 
-class SwipeRefreshActionsImpl(
+internal class SwipeRefreshActionsImpl(
     private val driver: ActionsDriver
 ) : SwipeRefreshActions,
     Actions by ActionsImpl(driver) {
@@ -46,13 +46,13 @@ class SwipeRefreshActionsImpl(
     }
 }
 
-interface SwipeRefreshChecks : Checks {
+public interface SwipeRefreshChecks : Checks {
 
-    fun isRefreshing()
-    fun isNotRefreshing()
+    public fun isRefreshing()
+    public fun isNotRefreshing()
 }
 
-class SwipeRefreshChecksImpl(
+internal class SwipeRefreshChecksImpl(
     private val driver: ChecksDriver
 ) : SwipeRefreshChecks,
     Checks by ChecksImpl(driver) {
@@ -71,7 +71,7 @@ class SwipeRefreshChecksImpl(
  * sometimes default GeneralSwipeAction constraint fails, need to override it.
  * see https://stackoverflow.com/questions/33505953/espresso-how-to-test-swiperefreshlayout
  * */
-class SwipeRefreshTolerantAction : ViewAction {
+internal class SwipeRefreshTolerantAction : ViewAction {
 
     val action = EspressoActions.swipe(SwipeDirections.TOP_TO_BOTTOM)
 

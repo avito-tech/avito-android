@@ -6,50 +6,50 @@ import com.avito.android.test.interceptor.AssertionInterceptor
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
-object UITestConfig {
+public object UITestConfig {
 
     /**
      * A global registry for [ActionInterceptor]'s
      */
-    val actionInterceptors = mutableListOf<ActionInterceptor>()
+    public val actionInterceptors: MutableList<ActionInterceptor> = mutableListOf()
 
     /**
      * A global registry for [AssertionInterceptor]'s
      */
-    val assertionInterceptors = mutableListOf<AssertionInterceptor>()
+    public val assertionInterceptors: MutableList<AssertionInterceptor> = mutableListOf()
 
     /**
      * To react on every exception during waiter loop
      */
-    var onWaiterRetry: (e: Throwable) -> Unit = {}
+    public var onWaiterRetry: (e: Throwable) -> Unit = {}
 
     /**
      * Changing this value will affect all subsequent actions/checks wait frequency
      */
-    var waiterFrequencyMs: Long = 50L
+    public var waiterFrequencyMs: Long = 50L
 
     /**
      * Changing this value will affect all subsequent actions/checks wait timeout
      */
-    var waiterTimeoutMs: Long = TimeUnit.SECONDS.toMillis(2)
+    public var waiterTimeoutMs: Long = TimeUnit.SECONDS.toMillis(2)
 
-    var activityLaunchTimeoutMilliseconds: Long = TimeUnit.SECONDS.toMillis(10)
+    public var activityLaunchTimeoutMilliseconds: Long = TimeUnit.SECONDS.toMillis(10)
 
-    var openNotificationTimeoutMilliseconds: Long = TimeUnit.SECONDS.toMillis(30)
+    public var openNotificationTimeoutMilliseconds: Long = TimeUnit.SECONDS.toMillis(30)
 
-    val defaultClicksType: ClickType = ClickType.InProcessClick
+    public val defaultClicksType: ClickType = ClickType.InProcessClick
 
-    var clicksType: ClickType = defaultClicksType
+    public var clicksType: ClickType = defaultClicksType
 
     /**
      * Works only for [ClickType.InProcessClick]
      */
-    var visualizeClicks: Boolean = true
+    public var visualizeClicks: Boolean = true
 
     /**
      * Exceptions to be waited for; any unregistered exceptions will be propagated
      */
-    var waiterAllowedExceptions = setOf(
+    public var waiterAllowedExceptions: Set<Class<out Any>> = setOf(
         EspressoException::class.java,
         AssertionError::class.java
     )
@@ -61,29 +61,29 @@ object UITestConfig {
      * Also we match "com.android.fakesystemapp" because ATD emulators use it instead of launcher
      * So matching "com.android.fakesystemapp" allows us to pass custom waitForLauncher check for ATD emulators
      */
-    var deviceLauncherPackage: Pattern = Pattern.compile(".+launcher.*|com.android.fakesystemapp")
+    public var deviceLauncherPackage: Pattern = Pattern.compile(".+launcher.*|com.android.fakesystemapp")
 
-    sealed class ClickType {
+    public sealed class ClickType {
         /**
          * Use default espresso clicks and long clicks
          */
-        class EspressoClick(val rollbackPolicy: ClickRollbackPolicy) : ClickType() {
+        public class EspressoClick(public val rollbackPolicy: ClickRollbackPolicy) : ClickType() {
             /**
              * Because of clicks implementation inside Espresso sometimes clicks can be interpreted
              * as long clicks. Here we have several options to handle it.
              *
              * https://stackoverflow.com/questions/32330671/android-espresso-performs-longclick-instead-of-click
              */
-            sealed class ClickRollbackPolicy {
-                object DoNothing : ClickRollbackPolicy()
-                object TryOneMoreClick : ClickRollbackPolicy()
-                object Fail : ClickRollbackPolicy()
+            public sealed class ClickRollbackPolicy {
+                public data object DoNothing : ClickRollbackPolicy()
+                public data object TryOneMoreClick : ClickRollbackPolicy()
+                public data object Fail : ClickRollbackPolicy()
             }
         }
 
         /**
          * [Documentation](https://avito-tech.github.io/avito-android/docs/test_framework/internals/)
          */
-        object InProcessClick : ClickType()
+        public data object InProcessClick : ClickType()
     }
 }

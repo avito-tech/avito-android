@@ -8,7 +8,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 
-class DialogsTest {
+internal class DialogsTest {
 
     @get:Rule
     val rule = screenRule<DialogsActivity>()

@@ -9,7 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-class VisibilityTest {
+internal class VisibilityTest {
 
     @get:Rule
     val rule = screenRule<VisibilityActivity>()

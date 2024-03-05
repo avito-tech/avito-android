@@ -13,8 +13,5 @@ org.codehaus.mojo:animal-sniffer-annotations:1.17
 org.hamcrest:hamcrest-core:2.2
 org.hamcrest:hamcrest-library:2.2
 org.hamcrest:hamcrest:2.2
-org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
-org.jetbrains.kotlin:kotlin-stdlib:1.7.10
+org.jetbrains.kotlin:kotlin-stdlib:1.9.22
 org.jetbrains:annotations:13.0

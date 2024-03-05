@@ -5,7 +5,7 @@ package com.avito.android.runner.annotation.resolver
  *
  * see InHouseInstrumentationTestRunner.parseTestAnnotations
  */
-open class AnnotationResolver<T : Annotation>(
+public open class AnnotationResolver<T : Annotation>(
     override val key: String,
     private val annotationClass: Class<T>,
     private val annotationResolutionGetter: (T) -> TestMetadataResolver.Resolution

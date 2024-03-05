@@ -6,9 +6,9 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import org.hamcrest.Matcher
 
-class ViewGetHeightAction : ViewAction {
+public class ViewGetHeightAction : ViewAction {
 
-    var height: Int = Int.MIN_VALUE
+    public var height: Int = Int.MIN_VALUE
         get() {
             if (field == Int.MIN_VALUE) {
                 throw UninitializedPropertyAccessException()
@@ -17,7 +17,7 @@ class ViewGetHeightAction : ViewAction {
         }
         private set
 
-    override fun getDescription() = "getting view height"
+    override fun getDescription(): String = "getting view height"
 
     override fun getConstraints(): Matcher<View> = isAssignableFrom(View::class.java)
 

@@ -21,7 +21,7 @@ public open class BuildPropertiesPlugin : Plugin<Project> {
             extension.properties.forEach { (name, value) ->
                 property(name, value)
             }
-            outputFile = project.file("src/main/assets/build-info.properties")
+            destinationFile.set(project.file("src/main/assets/build-info.properties"))
         }
         project.addPreBuildTasks(task)
     }
@@ -33,7 +33,7 @@ public open class BuildPropertiesPlugin : Plugin<Project> {
             property("GIT_COMMIT", extension.gitCommit.orEmpty())
             property("GIT_BRANCH", extension.gitBranch.orEmpty())
             property("BUILD_NUMBER", extension.buildNumber.orEmpty())
-            outputFile = project.file("src/main/assets/app-build-info.properties")
+            destinationFile.set(project.file("src/main/assets/app-build-info.properties"))
         }
         project.addPreBuildTasks(task)
     }

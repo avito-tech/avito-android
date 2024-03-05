@@ -7,7 +7,7 @@ import com.avito.android.test.matcher.CanBeLongClickedMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class ActionOnLongClickableElement(
+public class ActionOnLongClickableElement(
     private val action: ViewAction
 ) : ViewAction {
 

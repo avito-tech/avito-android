@@ -5,7 +5,7 @@ import android.telephony.PhoneNumberFormattingTextWatcher
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 
-class EditTextActivity : AppCompatActivity() {
+internal class EditTextActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

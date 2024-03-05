@@ -7,13 +7,13 @@ import com.google.android.material.textfield.TextInputLayout
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 
-class HintMatcher(val hint: String) : TypeSafeMatcher<View>() {
+public class HintMatcher(private val hint: String) : TypeSafeMatcher<View>() {
 
     override fun describeTo(description: Description) {
         description.appendText("with hint: $hint")
     }
 
-    public override fun matchesSafely(view: View) =
+    public override fun matchesSafely(view: View): Boolean =
         when (view) {
             is EditText -> {
                 val textInputLayout = view.findParentTextInputLayoutRecursively()

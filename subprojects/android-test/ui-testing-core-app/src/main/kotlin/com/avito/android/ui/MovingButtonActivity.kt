@@ -10,7 +10,7 @@ import kotlin.concurrent.thread
 import kotlin.math.cos
 import kotlin.math.sin
 
-class MovingButtonActivity : AppCompatActivity() {
+internal class MovingButtonActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

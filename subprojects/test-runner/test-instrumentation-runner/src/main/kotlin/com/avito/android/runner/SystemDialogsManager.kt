@@ -12,7 +12,7 @@ import com.avito.logger.create
 /**
  * Based on https://github.com/nenick/espresso-macchiato
  */
-class SystemDialogsManager(loggerFactory: LoggerFactory) {
+internal class SystemDialogsManager(loggerFactory: LoggerFactory) {
 
     private val logger = loggerFactory.create<Settings.System>()
 

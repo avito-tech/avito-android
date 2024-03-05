@@ -8,7 +8,7 @@ import org.hamcrest.Matchers.greaterThan
 import org.junit.Rule
 import org.junit.Test
 
-class ButtonsOverRecyclerTest {
+internal class ButtonsOverRecyclerTest {
 
     @get:Rule
     val rule = screenRule<ButtonsOverRecyclerActivity>(launchActivity = true)

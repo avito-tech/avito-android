@@ -13,22 +13,23 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
 import com.google.android.material.R as google_R
 
-interface SnackbarAsserts {
-    fun assertIsShownWith(text: String)
-    fun assertIsShownWith(text: Matcher<String>)
-    fun assertIsShownLastWith(text: String)
-    fun assertIsShownLastWith(text: Matcher<String>)
+public interface SnackbarAsserts {
+    public fun assertIsShownWith(text: String)
+    public fun assertIsShownWith(text: Matcher<String>)
+    public fun assertIsShownLastWith(text: String)
+    public fun assertIsShownLastWith(text: Matcher<String>)
 }
 
-class SnackbarRule : SimpleRule(), SnackbarAsserts {
+public class SnackbarRule : SimpleRule(), SnackbarAsserts {
 
     private val proxy = Proxy()
 
+    @SuppressLint("VisibleForTests")
     override fun before() {
         SnackbarProxyHolder.proxy = proxy
     }
 
-    fun clear() {
+    public fun clear() {
         proxy.snackbarTexts.clear()
     }
 

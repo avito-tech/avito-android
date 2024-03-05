@@ -31,9 +31,9 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
 // TODO: make internal
-object EspressoActions {
+public object EspressoActions {
 
-    fun typeText(stringToBeTyped: String): ViewAction =
+    public fun typeText(stringToBeTyped: String): ViewAction =
         actionWithAssertions(TypeText(stringToBeTyped))
 
     /**
@@ -41,17 +41,17 @@ object EspressoActions {
      * Less strict version of ScrollToAction
      * If view not a descendant of a ScrollView - nothing happens
      */
-    fun scrollIfPossible(): ViewAction = actionWithAssertions(ScrollToIfPossibleAction())
+    public fun scrollIfPossible(): ViewAction = actionWithAssertions(ScrollToIfPossibleAction())
 
     /**
      * Hack: waits for main thread to be idle
      */
-    fun waitForIdle(): ViewAction = actionWithAssertions(WaitForIdleAction())
+    public fun waitForIdle(): ViewAction = actionWithAssertions(WaitForIdleAction())
 
     /**
      * Expose espresso API
      */
-    fun swipe(
+    public fun swipe(
         direction: SwipeDirection,
         speed: Swiper = Swipe.FAST,
         precision: PrecisionDescriber = Press.FINGER
@@ -67,7 +67,7 @@ object EspressoActions {
         )
     }
 
-    fun click(
+    public fun click(
         type: UITestConfig.ClickType = UITestConfig.clicksType,
         coordinatesProvider: CoordinatesProvider = VisibleCenterGlobalCoordinatesProvider(),
         visualize: Boolean = UITestConfig.visualizeClicks
@@ -116,7 +116,7 @@ object EspressoActions {
         return safeAction(clickAction)
     }
 
-    fun longClick(
+    public fun longClick(
         type: UITestConfig.ClickType = UITestConfig.clicksType,
         coordinatesProvider: CoordinatesProvider = VisibleCenterGlobalCoordinatesProvider(),
         visualize: Boolean = UITestConfig.visualizeClicks

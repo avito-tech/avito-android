@@ -3,7 +3,7 @@ package com.avito.android.test.screenshot
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-class ScreenshotRule(
+public class ScreenshotRule(
     private val provider: ScreenshotProvider,
     private val consumer: ScreenshotConsumer
 ) : TestWatcher() {
@@ -17,7 +17,7 @@ class ScreenshotRule(
         takeScreenshot(description = "After Test")
     }
 
-    fun takeScreenshot(description: String) {
+    public fun takeScreenshot(description: String) {
         val screenShot = provider.getScreenshot()
         consumer.onScreenshotIsReady(screenShot, description)
     }

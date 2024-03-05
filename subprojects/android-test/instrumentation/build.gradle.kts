@@ -3,6 +3,10 @@ plugins {
     id("convention.publish-android-library")
 }
 
+android {
+    namespace = "com.avito.android.instrumentation"
+}
+
 dependencies {
     api(project(":subprojects:common:result"))
 

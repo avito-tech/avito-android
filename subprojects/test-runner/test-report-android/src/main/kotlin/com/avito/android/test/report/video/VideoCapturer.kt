@@ -15,16 +15,16 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-interface VideoCapturer {
+public interface VideoCapturer {
 
-    fun start(): Result<Unit>
+    public fun start(): Result<Unit>
 
-    fun stop(): Result<File>
+    public fun stop(): Result<File>
 
-    fun abort()
+    public fun abort()
 }
 
-class VideoCapturerImpl(
+internal class VideoCapturerImpl(
     private val testArtifactsProvider: TestArtifactsProvider,
     loggerFactory: LoggerFactory
 ) : VideoCapturer {
@@ -207,7 +207,7 @@ class VideoCapturerImpl(
 
     private sealed class State {
 
-        object Idling : State()
+        data object Idling : State()
 
         data class Recording(
             val video: File,

@@ -7,9 +7,9 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.not
 import org.hamcrest.TypeSafeMatcher
 
-class RecyclerViewMatcher {
+public class RecyclerViewMatcher {
 
-    fun itemsInList(countMatcher: Matcher<Int>): Matcher<View> {
+    public fun itemsInList(countMatcher: Matcher<Int>): Matcher<View> {
         return object : RecyclerViewMatcher() {
 
             private var actualCount: Int? = null
@@ -29,7 +29,7 @@ class RecyclerViewMatcher {
         }
     }
 
-    fun firstVisibleItemPosition(positionMatcher: Matcher<Int>): Matcher<View> {
+    public fun firstVisibleItemPosition(positionMatcher: Matcher<Int>): Matcher<View> {
         return object : RecyclerViewMatcher() {
 
             private var actualPosition: Int? = null
@@ -49,14 +49,14 @@ class RecyclerViewMatcher {
         }
     }
 
-    fun hasViewTypeAtPosition(position: Int, viewType: Int): Matcher<View> = object : RecyclerViewMatcher() {
+    public fun hasViewTypeAtPosition(position: Int, viewType: Int): Matcher<View> = object : RecyclerViewMatcher() {
         override fun performMatching(recyclerView: RecyclerView): Boolean {
             val adapter = recyclerView.adapter ?: error("Adapter is not attached to RecyclerView")
             return adapter.getItemViewType(position) == viewType
         }
     }
 
-    fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int) = not(hasViewTypeAtPosition(position, viewType))
+    public fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int): Matcher<View> = not(hasViewTypeAtPosition(position, viewType))
 
     private abstract class RecyclerViewMatcher : TypeSafeMatcher<View>() {
 

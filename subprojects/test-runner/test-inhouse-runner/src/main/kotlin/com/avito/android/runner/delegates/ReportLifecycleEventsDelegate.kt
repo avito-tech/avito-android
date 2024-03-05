@@ -7,7 +7,7 @@ import com.avito.android.test.report.Report
 import com.avito.android.test.report.lifecycle.ReportActivityLifecycleListener
 import com.avito.logger.LoggerFactory
 
-class ReportLifecycleEventsDelegate(
+public class ReportLifecycleEventsDelegate(
     factory: LoggerFactory,
     report: Report
 ) : InstrumentationTestRunnerDelegate() {

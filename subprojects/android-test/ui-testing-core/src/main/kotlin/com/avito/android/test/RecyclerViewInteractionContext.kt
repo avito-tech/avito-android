@@ -14,7 +14,7 @@ import com.forkingcode.espresso.contrib.DescendantViewActions
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class RecyclerViewInteractionContext(
+public class RecyclerViewInteractionContext(
     private val interactionContext: InteractionContext,
     private val cellMatcher: Matcher<View>,
     private val childMatcher: Matcher<View>,

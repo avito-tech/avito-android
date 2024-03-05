@@ -4,7 +4,7 @@ import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 import java.util.regex.Pattern
 
-class StringPatternMatcher(private val pattern: Pattern) : TypeSafeMatcher<String>() {
+public class StringPatternMatcher(private val pattern: Pattern) : TypeSafeMatcher<String>() {
 
     override fun matchesSafely(item: String): Boolean {
         return pattern.matcher(item).find()

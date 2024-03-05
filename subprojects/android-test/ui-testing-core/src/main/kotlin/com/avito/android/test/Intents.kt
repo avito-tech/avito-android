@@ -14,20 +14,20 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.TypeSafeMatcher
 
-object Intents {
+public object Intents {
 
-    val checks = Checks()
+    public val checks: Checks = Checks()
 
-    fun resultOK(resultData: Intent? = null) =
+    public fun resultOK(resultData: Intent? = null): Instrumentation.ActivityResult =
         Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
 
-    fun resultCanceled(resultData: Intent? = null) =
+    public fun resultCanceled(resultData: Intent? = null): Instrumentation.ActivityResult =
         Instrumentation.ActivityResult(Activity.RESULT_CANCELED, resultData)
 
-    inline fun <reified T : Activity> whenIntended(): OngoingStubbing =
+    public inline fun <reified T : Activity> whenIntended(): OngoingStubbing =
         Intents.intending(IntentMatchers.hasComponent(T::class.qualifiedName))
 
-    fun stubEverything() =
+    public fun stubEverything(): Unit =
         Intents.intending(NotInstrumentationIntentMatcher()).respondWithFunction { intent: Intent ->
             val result = resultCanceled()
             Log.d("Intents", "Responding to $intent with ${result.toReadableString()}")
@@ -52,19 +52,19 @@ object Intents {
         }
     }
 
-    class Checks {
+    public class Checks {
 
-        fun actionIntended(action: String, vararg additionalMatchers: Matcher<Intent>) {
+        public fun actionIntended(action: String, vararg additionalMatchers: Matcher<Intent>) {
             Intents.intended(Matchers.allOf(IntentMatchers.hasAction(action), *additionalMatchers))
         }
 
-        fun activityIntended(className: String) = waitFor {
+        public fun activityIntended(className: String): Unit = waitFor {
             Intents.intended(IntentMatchers.hasComponent(className))
         }
 
-        inline fun <reified T : Activity> activityIntended(
+        public inline fun <reified T : Activity> activityIntended(
             vararg additionalMatchers: Matcher<Intent>
-        ) = waitFor {
+        ): Unit = waitFor {
             Intents.intended(
                 Matchers.allOf(
                     IntentMatchers.hasComponent(T::class.java.name),
@@ -73,29 +73,29 @@ object Intents {
             )
         }
 
-        fun actionIntended(action: String, key: String, value: String) {
+        public fun actionIntended(action: String, key: String, value: String) {
             actionIntended(action, IntentMatchers.hasExtra(key, value))
         }
 
-        fun actionIntendedWithUriParam(action: String, param: String, value: String) {
+        public fun actionIntendedWithUriParam(action: String, param: String, value: String) {
             actionIntended(
                 action,
                 IntentMatchers.hasData(UriMatchers.hasParamWithValue(param, value))
             )
         }
 
-        inline fun <reified T : Activity> activityIntendedWithUriParam(
+        public inline fun <reified T : Activity> activityIntendedWithUriParam(
             param: String,
             value: String
         ) {
             activityIntended<T>(IntentMatchers.hasData(UriMatchers.hasParamWithValue(param, value)))
         }
 
-        inline fun <reified T : Activity> activityIntendedWithoutExtraParam(param: String) {
+        public inline fun <reified T : Activity> activityIntendedWithoutExtraParam(param: String) {
             activityIntended<T>(Matchers.not(IntentMatchers.hasExtraWithKey(param)))
         }
 
-        inline fun <reified T : Activity> activityIntendedWithExtraParam(
+        public inline fun <reified T : Activity> activityIntendedWithExtraParam(
             param: String,
             value: String
         ) {

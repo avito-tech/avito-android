@@ -7,9 +7,9 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Matcher
 
-class RecyclerViewHorizontalOffsetAction : ViewAction {
+public class RecyclerViewHorizontalOffsetAction : ViewAction {
 
-    var result: Int = Int.MIN_VALUE
+    public var result: Int = Int.MIN_VALUE
         get() {
             if (field == Int.MIN_VALUE) {
                 throw UninitializedPropertyAccessException()
@@ -18,7 +18,7 @@ class RecyclerViewHorizontalOffsetAction : ViewAction {
         }
         private set
 
-    override fun getDescription() = "getting horizontal offset"
+    override fun getDescription(): String = "getting horizontal offset"
 
     override fun getConstraints(): Matcher<View> =
         ViewMatchers.isAssignableFrom(RecyclerView::class.java)

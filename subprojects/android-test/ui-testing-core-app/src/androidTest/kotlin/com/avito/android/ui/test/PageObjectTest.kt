@@ -8,7 +8,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-class PageObjectTest {
+internal class PageObjectTest {
 
     @get:Rule
     val rule = screenRule<PageObjectActivity>()

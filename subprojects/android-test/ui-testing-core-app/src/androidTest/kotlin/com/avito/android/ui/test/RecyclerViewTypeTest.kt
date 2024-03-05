@@ -6,7 +6,7 @@ import com.avito.android.ui.StatefulRecyclerViewAdapterActivity
 import org.junit.Rule
 import org.junit.Test
 
-class RecyclerViewTypeTest {
+internal class RecyclerViewTypeTest {
 
     @get:Rule
     val rule = screenRule<StatefulRecyclerViewAdapterActivity>()

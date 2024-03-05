@@ -16,7 +16,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-abstract class InHouseScenarioScreenRule<A : Activity>(
+public abstract class InHouseScenarioScreenRule<A : Activity>(
     activityClass: Class<A>,
     stubIntents: Boolean = true
 ) : TestRule {
@@ -27,26 +27,26 @@ abstract class InHouseScenarioScreenRule<A : Activity>(
 
     private val activityRule = ActivityScenarioRule(activityClass, stubIntents)
 
-    val checks = ChecksLibrary { activityRule.scenario }
+    public val checks: ChecksLibrary<A> = ChecksLibrary { activityRule.scenario }
 
-    val activityResult: Instrumentation.ActivityResult
+    public val activityResult: Instrumentation.ActivityResult
         get() = activityRule.scenario.result
 
-    val scenario: ActivityScenario<A>
+    public val scenario: ActivityScenario<A>
         get() = activityRule.scenario
 
-    fun launchActivity(startIntent: Intent?): ActivityScenario<A> = activityRule.launchActivity(startIntent)
+    public fun launchActivity(startIntent: Intent?): ActivityScenario<A> = activityRule.launchActivity(startIntent)
 
-    fun launchActivityForResult(startIntent: Intent?): ActivityScenario<A> =
+    public fun launchActivityForResult(startIntent: Intent?): ActivityScenario<A> =
         activityRule.launchActivityForResult(startIntent)
 
-    class ChecksLibrary<A : Activity>(private val scenarioFunc: () -> ActivityScenario<A>) {
+    public class ChecksLibrary<A : Activity>(private val scenarioFunc: () -> ActivityScenario<A>) {
 
         /**
          * Asserts that activity is in specific state.
          * For more information on lifecycle states, see [androidx.lifecycle.Lifecycle.State]
          */
-        fun isInState(state: Lifecycle.State) {
+        public fun isInState(state: Lifecycle.State) {
             waitForAssertion { assertThat(scenarioFunc().state).isEqualTo(state) }
         }
 
@@ -54,7 +54,7 @@ abstract class InHouseScenarioScreenRule<A : Activity>(
          * Asserts that activity is not in specific state.
          * For more information on lifecycle states, see [androidx.lifecycle.Lifecycle.State]
          */
-        fun isNotInState(state: Lifecycle.State) {
+        public fun isNotInState(state: Lifecycle.State) {
             continuousAssertion { assertThat(scenarioFunc().state).isNotEqualTo(state) }
         }
 
@@ -62,11 +62,11 @@ abstract class InHouseScenarioScreenRule<A : Activity>(
          * Asserts that activity is in greater or equal state
          * For more information, see [androidx.lifecycle.Lifecycle.State.isAtLeast]
          */
-        fun isAtLeastInState(state: Lifecycle.State) {
+        public fun isAtLeastInState(state: Lifecycle.State) {
             waitForAssertion { assertThat(scenarioFunc().state.isAtLeast(state)).isTrue() }
         }
 
-        fun activityResult(expectedResult: Int) {
+        public fun activityResult(expectedResult: Int) {
             val actualResult = scenarioFunc().result.resultCode
 
             waitForAssertion {

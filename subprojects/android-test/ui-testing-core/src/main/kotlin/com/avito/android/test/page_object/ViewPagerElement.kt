@@ -16,7 +16,7 @@ import com.avito.android.test.matcher.ViewPagersTabsCountMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 
-open class ViewPagerElement(
+public open class ViewPagerElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext),
     ViewPagerActions by ViewPagerActionsImpl(interactionContext) {
@@ -24,7 +24,7 @@ open class ViewPagerElement(
     override val checks: ViewPagerChecks = ViewPagerChecksImpl(interactionContext)
 
     // TODO: Use element()
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
+    public constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 
     protected inline fun <reified T : PageObjectElement> currentPageElement(matcher: Matcher<View>): T =
         T::class.java.getConstructor(InteractionContext::class.java)
@@ -58,13 +58,13 @@ open class ViewPagerElement(
         )
 }
 
-interface ViewPagerActions {
-    fun toRight()
-    fun toLeft()
-    fun select(position: Int)
+public interface ViewPagerActions {
+    public fun toRight()
+    public fun toLeft()
+    public fun select(position: Int)
 }
 
-class ViewPagerActionsImpl(private val actionsDriver: ActionsDriver) : ViewPagerActions {
+internal class ViewPagerActionsImpl(private val actionsDriver: ActionsDriver) : ViewPagerActions {
 
     override fun toRight() {
         actionsDriver.perform(ViewPagersFlipAction(ViewPagersFlipAction.Direction.RIGHT))
@@ -79,12 +79,12 @@ class ViewPagerActionsImpl(private val actionsDriver: ActionsDriver) : ViewPager
     }
 }
 
-interface ViewPagerChecks : Checks {
-    fun withSelectedPosition(position: Int)
-    fun withTabsCount(count: Int)
+public interface ViewPagerChecks : Checks {
+    public fun withSelectedPosition(position: Int)
+    public fun withTabsCount(count: Int)
 }
 
-class ViewPagerChecksImpl(
+internal class ViewPagerChecksImpl(
     private val driver: ChecksDriver
 ) : ViewPagerChecks,
     Checks by ChecksImpl(driver) {

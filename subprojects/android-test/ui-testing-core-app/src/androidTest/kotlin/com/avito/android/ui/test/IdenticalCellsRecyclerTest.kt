@@ -5,7 +5,7 @@ import com.avito.android.ui.IdenticalCellsRecyclerActivity
 import org.junit.Rule
 import org.junit.Test
 
-class IdenticalCellsRecyclerTest {
+internal class IdenticalCellsRecyclerTest {
 
     @get:Rule
     val rule = screenRule<IdenticalCellsRecyclerActivity>()

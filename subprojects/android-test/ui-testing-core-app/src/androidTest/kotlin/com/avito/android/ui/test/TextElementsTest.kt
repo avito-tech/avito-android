@@ -9,7 +9,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
-class TextElementsTest {
+internal class TextElementsTest {
 
     @get:Rule
     val rule = screenRule<TextElementActivity>()

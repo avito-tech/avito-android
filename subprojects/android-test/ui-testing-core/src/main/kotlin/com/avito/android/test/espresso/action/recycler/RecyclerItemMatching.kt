@@ -242,7 +242,7 @@ internal class RecyclerItemsMatcher(
     }
 }
 
-fun <VH : RecyclerView.ViewHolder> viewHolderMatcher(itemViewMatcher: Matcher<View>) =
+public fun <VH : RecyclerView.ViewHolder> viewHolderMatcher(itemViewMatcher: Matcher<View>): TypeSafeMatcher<VH> =
     object : TypeSafeMatcher<VH>() {
         override fun matchesSafely(viewHolder: VH): Boolean {
             return itemViewMatcher.matches(viewHolder.itemView)

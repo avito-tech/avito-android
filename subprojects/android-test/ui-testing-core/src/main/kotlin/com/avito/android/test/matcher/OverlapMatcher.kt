@@ -14,7 +14,7 @@ import org.hamcrest.TypeSafeMatcher
  * 1. Check parent siblings that are below in child list of parent's parent
  * 1. Check parent's parent siblings... and so on recursively
  */
-class OverlapMatcher : TypeSafeMatcher<View>() {
+internal class OverlapMatcher : TypeSafeMatcher<View>() {
 
     override fun describeTo(description: Description) {
         description.appendText("overlapped by another views on the same screen")

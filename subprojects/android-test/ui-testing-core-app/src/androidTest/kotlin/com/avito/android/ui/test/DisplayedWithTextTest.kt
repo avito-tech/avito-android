@@ -7,7 +7,7 @@ import org.hamcrest.Matchers.startsWith
 import org.junit.Rule
 import org.junit.Test
 
-class DisplayedWithTextTest {
+internal class DisplayedWithTextTest {
 
     @get:Rule
     val rule = screenRule<IdenticalCellsRecyclerActivity>()

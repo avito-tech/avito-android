@@ -6,6 +6,6 @@ import com.avito.android.instrumentation.ActivityProviderFactory
 private val activityProvider by lazy { ActivityProviderFactory.create() }
 
 // used in avito
-fun getCurrentActivity(): Activity {
+public fun getCurrentActivity(): Activity {
     return activityProvider.getCurrentActivity().getOrThrow()
 }
