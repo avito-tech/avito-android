@@ -40,4 +40,11 @@ gradlePlugin {
             displayName = "Network Contracts Plugin"
         }
     }
+    plugins {
+        create("networkContractsRoot") {
+            id = "com.avito.android.network-contracts-root"
+            implementationClass = "com.avito.android.network_contracts.NetworkContractsRootPlugin"
+            displayName = "Network Contracts Root Plugin"
+        }
+    }
 }
