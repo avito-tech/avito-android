@@ -1,4 +1,5 @@
 import com.avito.logger.LogLevel
+import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
     base
@@ -6,6 +7,7 @@ plugins {
     // https://youtrack.jetbrains.com/issue/KTIJ-19369
     id("com.autonomousapps.dependency-analysis") version "0.78.0"
     id("convention.dependency-updates")
+    id("convention.detekt-root")
     id("com.avito.android.gradle-logger")
     id("com.avito.android.build-verdict")
 }

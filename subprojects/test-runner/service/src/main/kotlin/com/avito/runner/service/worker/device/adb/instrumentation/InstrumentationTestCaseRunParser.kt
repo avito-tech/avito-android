@@ -73,8 +73,7 @@ internal interface InstrumentationTestCaseRunParser {
                     when {
                         // Check current test doesn't have test field
                         entry is InstrumentationEntry.InstrumentationTestEntry &&
-                            entry.test.isEmpty() -> {
-
+                            entry.test.isEmpty() ->
                             // Check previous test entry is Start and has test name
                             if (previous is InstrumentationEntry.InstrumentationTestEntry &&
                                 previous.statusCode == InstrumentationEntry.InstrumentationTestEntry.StatusCode.Start &&
@@ -95,7 +94,6 @@ internal interface InstrumentationTestCaseRunParser {
                                     }
                                 )
                             }
-                        }
                         // Attach additional output to actual test entry
                         entry is InstrumentationEntry.InstrumentationMacrobenchmarkOutputEntry -> {
                             check(previous is InstrumentationEntry.InstrumentationTestEntry) {

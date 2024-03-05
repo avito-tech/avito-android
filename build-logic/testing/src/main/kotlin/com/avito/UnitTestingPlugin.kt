@@ -1,6 +1,6 @@
 package com.avito
 
-import com.avito.android.withVersionCatalog
+import com.avito.android.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
@@ -59,23 +59,21 @@ class UnitTestingPlugin : Plugin<Project> {
                 }
             }
 
-            project.withVersionCatalog { libs ->
-                plugins.withType(KotlinBasePluginWrapper::class.java) {
-                    with(dependencies) {
-                        // If we use Junit 4 annotations in tests, they won't run, and it may confuse developers.
-                        // Our tests run only on Junit 5 jupiter, so we explicitly remove this transitive dependency.
-                        addProvider<MinimalExternalModuleDependency, ExternalModuleDependency>(
-                            "testImplementation",
-                            libs.truth
-                        ) {
-                            it.exclude(mapOf("group" to "junit"))
-                        }
-                        add("testImplementation", libs.junitJupiterApi)
-
-                        add("testRuntimeOnly", libs.junitJupiterEngine)
-                        add("testRuntimeOnly", libs.junitPlatformRunner)
-                        add("testRuntimeOnly", libs.junitPlatformLauncher)
+            plugins.withType(KotlinBasePluginWrapper::class.java) {
+                with(dependencies) {
+                    // If we use Junit 4 annotations in tests, they won't run, and it may confuse developers.
+                    // Our tests run only on Junit 5 jupiter, so we explicitly remove this transitive dependency.
+                    addProvider<MinimalExternalModuleDependency, ExternalModuleDependency>(
+                        "testImplementation",
+                        libs.truth
+                    ) {
+                        it.exclude(mapOf("group" to "junit"))
                     }
+                    add("testImplementation", libs.junitJupiterApi)
+
+                    add("testRuntimeOnly", libs.junitJupiterEngine)
+                    add("testRuntimeOnly", libs.junitPlatformRunner)
+                    add("testRuntimeOnly", libs.junitPlatformLauncher)
                 }
             }
 

@@ -1,6 +1,6 @@
 package com.avito
 
-import com.avito.android.withVersionCatalog
+import com.avito.android.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -11,9 +11,7 @@ class KotlinSerializationPlugin : Plugin<Project> {
             plugins.apply("org.jetbrains.kotlin.plugin.serialization")
 
             // workaround for https://github.com/gradle/gradle/issues/15383
-            withVersionCatalog { libs ->
-                dependencies.add("implementation", libs.kotlinx.serialization.json)
-            }
+            dependencies.add("implementation", libs.kotlinx.serialization.json)
 
             tasks.withType(KotlinCompile::class.java).configureEach {
                 it.kotlinOptions {

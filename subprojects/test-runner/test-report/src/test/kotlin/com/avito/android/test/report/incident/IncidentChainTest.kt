@@ -78,7 +78,9 @@ private val incidentMessageCorrespondence: Correspondence<IncidentElement, Incid
     { actual, expected ->
         if (actual != null && expected != null) {
             actual.message == expected.message && actual.data == expected.data
-        } else false
+        } else {
+            false
+        }
     },
     "message are equal"
 )

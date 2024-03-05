@@ -1,6 +1,6 @@
 package com.avito
 
-import com.avito.android.withVersionCatalog
+import com.avito.android.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.classpath.ModuleRegistry
@@ -129,12 +129,10 @@ class GradleTestingPlugin : Plugin<Project> {
                 systemProperty("isTest", true)
 
                 systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
-                withVersionCatalog { libs ->
-                    systemProperty("compileSdkVersion", libs.versions.compileSdk.get().toInt())
-                    systemProperty("buildToolsVersion", libs.versions.buildTools.get())
-                    systemProperty("targetSdk", libs.versions.targetSdk.get().toInt())
-                    systemProperty("minSdk", libs.versions.minSdk.get().toInt())
-                }
+                systemProperty("compileSdkVersion", libs.versions.compileSdk.get().toInt())
+                systemProperty("buildToolsVersion", libs.versions.buildTools.get())
+                systemProperty("targetSdk", libs.versions.targetSdk.get().toInt())
+                systemProperty("minSdk", libs.versions.minSdk.get().toInt())
             }
         }
     }

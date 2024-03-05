@@ -17,19 +17,15 @@ class KotlinAndroidBasePlugin : Plugin<Project> {
             extensions.configure(KotlinAndroidProjectExtension::class.java) { kotlin ->
                 kotlin.explicitApi()
                 kotlin.jvmToolchain {
-                    withVersionCatalog { libs ->
-                        it.languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
-                    }
+                    it.languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
                 }
             }
-
 
             tasks.withType(KotlinCompile::class.java).configureEach {
                 it.kotlinOptions {
                     jvmTarget = JavaVersion.VERSION_1_8.toString()
                 }
             }
-
         }
     }
 }

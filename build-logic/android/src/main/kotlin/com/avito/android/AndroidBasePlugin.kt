@@ -17,14 +17,12 @@ class AndroidBasePlugin : Plugin<Project> {
                         sourceSets.named("test").configure { it.java.srcDir("src/test/kotlin") }
                     }
 
-                    withVersionCatalog { libs ->
-                        buildToolsVersion(libs.versions.buildTools.get())
-                        compileSdkVersion(libs.versions.compileSdk.get().toInt())
+                    buildToolsVersion(libs.versions.buildTools.get())
+                    compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
-                        defaultConfig {
-                            it.minSdk = libs.versions.minSdk.get().toInt()
-                            it.targetSdk = libs.versions.targetSdk.get().toInt()
-                        }
+                    defaultConfig {
+                        it.minSdk = libs.versions.minSdk.get().toInt()
+                        it.targetSdk = libs.versions.targetSdk.get().toInt()
                     }
 
                     compileOptions {

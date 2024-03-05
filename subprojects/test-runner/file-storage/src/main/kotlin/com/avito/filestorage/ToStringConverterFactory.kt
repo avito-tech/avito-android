@@ -20,7 +20,9 @@ internal class ToStringConverterFactory : Converter.Factory() {
     ): Converter<ResponseBody, *>? {
         return if (String::class.java == type) {
             Converter<ResponseBody, String> { value -> uriRegex.find(value.string())?.groupValues?.getOrNull(1) }
-        } else null
+        } else {
+            null
+        }
     }
 
     override fun requestBodyConverter(
@@ -31,6 +33,8 @@ internal class ToStringConverterFactory : Converter.Factory() {
     ): Converter<*, RequestBody>? {
         return if (String::class.java == type) {
             Converter<String, RequestBody> { value -> value.toRequestBody(mediaType) }
-        } else null
+        } else {
+            null
+        }
     }
 }

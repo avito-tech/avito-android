@@ -40,6 +40,7 @@ internal class ReportsFetchApiImpl(
             is GetReportResult.NotFound -> Result.Failure(
                 Exception("Report not found $reportCoordinates", result.exception)
             )
+
             is GetReportResult.Error -> Result.Failure(result.exception)
         }
     }
@@ -118,7 +119,8 @@ internal class ReportsFetchApiImpl(
     private fun deserializeStatus(reportModel: ListResult): TestStatus {
         return when (reportModel.status) {
             ReportViewerStatus.OK -> TestStatus.Success
-            ReportViewerStatus.FAILURE, ReportViewerStatus.ERROR -> {
+            ReportViewerStatus.FAILURE,
+            ReportViewerStatus.ERROR ->
                 if (reportModel.lastConclusion == ConclusionStatus.OK) {
                     TestStatus.Success
                 } else {
@@ -130,7 +132,6 @@ internal class ReportsFetchApiImpl(
                         TestStatus.Failure(verdict)
                     }
                 }
-            }
             ReportViewerStatus.OTHER, ReportViewerStatus.PANIC, ReportViewerStatus.LOST, null -> TestStatus.Lost
             ReportViewerStatus.MANUAL -> TestStatus.Manual
             ReportViewerStatus.SKIP -> TestStatus.Skipped("test ignored") // todo нужен более подробный reason
@@ -140,17 +141,17 @@ internal class ReportsFetchApiImpl(
     private fun determineStability(reportModel: ListResult): Stability {
         return when {
             reportModel.attemptsCount == null || reportModel.successCount == null -> Stability.Stable(0, 0)
-            reportModel.attemptsCount < 1 -> {
+            reportModel.attemptsCount < 1 ->
                 // на самом деле не совсем, репортим эту ситуацию как невероятную
                 Stability.Failing(reportModel.attemptsCount)
-            }
-            reportModel.successCount > reportModel.attemptsCount -> {
+
+            reportModel.successCount > reportModel.attemptsCount ->
                 // на самом деле не совсем, репортим эту ситуацию как невероятную
                 Stability.Stable(
                     reportModel.attemptsCount,
                     reportModel.successCount
                 )
-            }
+
             reportModel.successCount == 0 -> Stability.Failing(reportModel.attemptsCount)
             reportModel.successCount == reportModel.attemptsCount -> Stability.Stable(
                 reportModel.attemptsCount,
@@ -161,6 +162,7 @@ internal class ReportsFetchApiImpl(
                 reportModel.attemptsCount,
                 reportModel.successCount
             )
+
             else -> Stability.Unknown(reportModel.attemptsCount, reportModel.successCount)
         }
     }

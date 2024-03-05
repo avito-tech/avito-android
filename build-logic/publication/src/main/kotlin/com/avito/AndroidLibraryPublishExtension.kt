@@ -4,7 +4,6 @@ import org.gradle.api.provider.Property
 
 abstract class AndroidLibraryPublishExtension {
 
-
     /**
      * non blank value will modify artifact id of maven coordinates
      *

@@ -1,6 +1,6 @@
 package com.avito
 
-import com.avito.android.withVersionCatalog
+import com.avito.android.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -20,18 +20,16 @@ class KotlinBasePlugin : Plugin<Project> {
             }
 
             // workaround for https://github.com/gradle/gradle/issues/15383
-            project.withVersionCatalog { libs ->
-                val kotlinLanguageVersion = libs.versions.kotlinLanguageVersion.get()
-                tasks.withType(KotlinCompile::class.java).configureEach {
-                    it.kotlinOptions {
-                        allWarningsAsErrors = true
-                        languageVersion = kotlinLanguageVersion
-                        apiVersion = kotlinLanguageVersion
+            val kotlinLanguageVersion = libs.versions.kotlinLanguageVersion.get()
+            tasks.withType(KotlinCompile::class.java).configureEach {
+                it.kotlinOptions {
+                    allWarningsAsErrors = true
+                    languageVersion = kotlinLanguageVersion
+                    apiVersion = kotlinLanguageVersion
 
-                        freeCompilerArgs = freeCompilerArgs +
-                            "-opt-in=kotlin.RequiresOptIn" +
-                            "-progressive"
-                    }
+                    freeCompilerArgs = freeCompilerArgs +
+                        "-opt-in=kotlin.RequiresOptIn" +
+                        "-progressive"
                 }
             }
         }

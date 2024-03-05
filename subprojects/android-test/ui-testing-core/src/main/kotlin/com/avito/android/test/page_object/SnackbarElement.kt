@@ -36,7 +36,8 @@ public class SnackbarElement(interactionContext: InteractionContext) : ViewEleme
         )
     )
 
-    public constructor() : this(SimpleInteractionContext(snackbarLayoutMatcher())) // TODO: migrate to HandleParentContext
+    // TODO: migrate to HandleParentContext
+    public constructor() : this(SimpleInteractionContext(snackbarLayoutMatcher()))
 
     public constructor(textMatcher: Matcher<String>? = null) : this(
         SimpleInteractionContext(

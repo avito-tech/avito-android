@@ -68,7 +68,7 @@ public class ReportFriendlyFailureHandler : FailureHandler {
                 exception.initCause(error)
                 exception
             }
-            error is PerformException -> {
+            error is PerformException ->
                 // RecyclerView descendant checks implemented via ViewActions (gross)
                 if (error.actionDescription.startsWith("Check descendant view")) {
                     AssertionFailedError("Не прошла проверка: ${error.actionDescription}").apply {
@@ -80,7 +80,6 @@ public class ReportFriendlyFailureHandler : FailureHandler {
                         .withViewDescription(minimizeViewDescription(error.viewDescription))
                         .build()
                 }
-            }
             error is AssertionError -> AssertionFailedError(error.normalizedMessage()).apply { initCause(error.cause) }
             error is NoMatchingRootException -> error.toNormalizedException()
             error is NoMatchingViewException -> error.toNormalizedException()

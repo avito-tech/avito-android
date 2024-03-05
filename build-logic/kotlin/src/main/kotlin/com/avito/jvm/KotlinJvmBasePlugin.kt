@@ -1,7 +1,7 @@
 package com.avito.jvm
 
 import com.avito.KotlinBasePlugin
-import com.avito.android.withVersionCatalog
+import com.avito.android.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
@@ -16,13 +16,11 @@ class KotlinJvmBasePlugin : Plugin<Project> {
             plugins.apply(KotlinBasePlugin::class.java)
             plugins.apply("convention.dependency-locking-kotlin")
 
-            withVersionCatalog { libs ->
-                val javaTarget = JavaLanguageVersion.of(libs.versions.java.get())
-                extensions.configure(KotlinJvmProjectExtension::class.java) { kotlin ->
-                    kotlin.explicitApi()
-                    kotlin.jvmToolchain {
-                        it.languageVersion.set(javaTarget)
-                    }
+            val javaTarget = JavaLanguageVersion.of(libs.versions.java.get())
+            extensions.configure(KotlinJvmProjectExtension::class.java) { kotlin ->
+                kotlin.explicitApi()
+                kotlin.jvmToolchain {
+                    it.languageVersion.set(javaTarget)
                 }
             }
 

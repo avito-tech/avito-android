@@ -21,7 +21,9 @@ internal open class BaseHttpClientProviderMetricsTest {
         { actual, expected ->
             if (actual != null && expected != null) {
                 actual.name == expected.name
-            } else false
+            } else {
+                false
+            }
         },
         "metric names are equal"
     )

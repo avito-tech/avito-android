@@ -202,7 +202,9 @@ internal class UploadWarningsTest {
                             uploadWarningsBatchSize.set(1)
                             uploadWarningsParallelRequestsCount.set(1)
                         """.trimIndent()
-            } else ""
+            } else {
+                ""
+            }
         }
                     }
             """.trimIndent()

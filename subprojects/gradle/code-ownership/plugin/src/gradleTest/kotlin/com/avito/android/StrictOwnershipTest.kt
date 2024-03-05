@@ -51,7 +51,9 @@ internal class StrictOwnershipTest {
                                     |    owners(Speed)
                                     |}
                                 """.trimMargin()
-                            } else "",
+                            } else {
+                                ""
+                            },
                             useKts = true,
                         ),
                         AndroidLibModule(
@@ -75,7 +77,9 @@ internal class StrictOwnershipTest {
                                     |    owners(Speed, Performance)
                                     |}
                                 """.trimMargin()
-                            } else "",
+                            } else {
+                                ""
+                            },
                             useKts = true,
                         ),
                         AndroidLibModule(
@@ -92,7 +96,9 @@ internal class StrictOwnershipTest {
                                     |    owners(MobileArchitecture)
                                     |}
                                 """.trimMargin()
-                            } else "",
+                            } else {
+                                ""
+                            },
                             useKts = true,
                         )
                     ),

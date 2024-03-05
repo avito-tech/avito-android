@@ -56,7 +56,8 @@ public class RecyclerViewMatcher {
         }
     }
 
-    public fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int): Matcher<View> = not(hasViewTypeAtPosition(position, viewType))
+    public fun doesNotHaveViewTypeAtPosition(position: Int, viewType: Int): Matcher<View> =
+        not(hasViewTypeAtPosition(position, viewType))
 
     private abstract class RecyclerViewMatcher : TypeSafeMatcher<View>() {
 

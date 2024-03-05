@@ -26,5 +26,5 @@ internal enum class ReportViewerStatus(val intValue: Int) {
     MANUAL(32),
 
     @SerializedName("100")
-    SKIP(100);
+    SKIP(100)
 }

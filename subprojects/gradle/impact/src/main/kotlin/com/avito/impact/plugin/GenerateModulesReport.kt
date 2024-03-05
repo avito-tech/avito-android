@@ -19,7 +19,8 @@ import java.nio.file.Paths
  */
 public abstract class GenerateModulesReport : DefaultTask() {
 
-    private val reportsDirectory = Paths.get(project.rootProject.layout.buildDirectory.asFile.get().toString(), "reports", "modules").toFile()
+    private val reportsDirectory =
+        Paths.get(project.rootProject.layout.buildDirectory.asFile.get().toString(), "reports", "modules").toFile()
 
     @OutputFile
     public val implementationModulesReportFile: File = File(reportsDirectory, "implementation-modules.txt")

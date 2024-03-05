@@ -74,26 +74,22 @@ internal class ReportProcessorImpl(
                     problemBuilder.throwable(error)
 
                     when (this) {
-                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnParsing -> {
+                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnParsing ->
                             problemBuilder.because("Can't parse instrumentation output, see underlying exception")
-                        }
 
-                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnStart -> {
+                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnStart ->
                             problemBuilder.because("Can't start test")
-                        }
 
-                        is TestCaseRun.Result.Failed.InfrastructureError.Timeout -> {
+                        is TestCaseRun.Result.Failed.InfrastructureError.Timeout ->
                             problemBuilder.because(
                                 "Test didn't finish in time. " +
                                     "Test Runner has hardcoded timeout of $timeoutMin minutes"
                             )
-                        }
 
-                        is TestCaseRun.Result.Failed.InfrastructureError.FailOnPullingArtifacts -> {
+                        is TestCaseRun.Result.Failed.InfrastructureError.FailOnPullingArtifacts ->
                             problemBuilder
                                 .because("Can't get report artifacts")
                                 .addSolution("MBS-11281 to return tests with such errors back to retry queue")
-                        }
 
                         is TestCaseRun.Result.Failed.InfrastructureError.Unexpected -> {
                         }
