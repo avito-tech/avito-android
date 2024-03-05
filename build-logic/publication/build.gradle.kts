@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.androidGradle)
     implementation(libs.okhttp)
     implementation(libs.kotson)
+    implementation(gradleKotlinDsl())
 }
 
 gradlePlugin {
