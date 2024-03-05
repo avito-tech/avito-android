@@ -117,7 +117,7 @@ internal class ChangesDetectorTest {
         ignorePatterns: Set<String> = emptySet()
     ): List<ChangedFile> {
         return GitChangesDetector(
-            gitRootDir = rootDir,
+            projectRootDir = rootDir,
             targetCommit = targetCommit,
             ignoreSettings = IgnoreSettings(ignorePatterns),
         )

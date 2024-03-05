@@ -26,18 +26,18 @@ internal class ChangesDetectorStub(private val reason: String) : ChangesDetector
 }
 
 public class GitChangesDetector(
-    private val gitRootDir: File,
+    private val projectRootDir: File,
     private val targetCommit: String,
     private val ignoreSettings: IgnoreSettings
 ) : ChangesDetector {
 
     private val cache: MutableMap<Key, Result<List<ChangedFile>>> = mutableMapOf()
     private val gitDiffWithTargetBranch by lazy { gitDiffWith() }
-    private val processRunner = ProcessRunner.create(gitRootDir)
+    private val processRunner = ProcessRunner.create(projectRootDir)
 
     init {
-        require(gitRootDir.exists()) { "Directory ${gitRootDir.canonicalPath} doesn't exist" }
-        require(gitRootDir.canRead()) { "Directory ${gitRootDir.canonicalPath} is not readable" }
+        require(projectRootDir.exists()) { "Directory ${projectRootDir.canonicalPath} doesn't exist" }
+        require(projectRootDir.canRead()) { "Directory ${projectRootDir.canonicalPath} is not readable" }
     }
 
     /**
@@ -56,13 +56,13 @@ public class GitChangesDetector(
      */
     private fun gitDiffWith(): Result<Sequence<ChangedFile>> {
         return processRunner.run(
-            command = "git diff --name-status $targetCommit",
+            command = "git diff --relative --name-status $targetCommit",
             timeout = Duration.ofSeconds(10)
         ).map { output: String ->
             output.lineSequence()
                 .filterNot { it.isBlank() }
                 .map { line ->
-                    line.parseGitDiffLine().map { it.asChangedFile(gitRootDir) }
+                    line.parseGitDiffLine().map { it.asChangedFile(projectRootDir) }
                 }
                 .filter { it is Result.Success }
                 .map { it as Result.Success<ChangedFile> }
@@ -74,8 +74,8 @@ public class GitChangesDetector(
         targetDirectory: File,
         excludedDirectories: Iterable<File> = emptyList()
     ): Result<List<ChangedFile>> {
-        if (!targetDirectory.toPath().startsWith(gitRootDir.toPath())) {
-            return Result.Failure(IllegalArgumentException("$targetDirectory must be inside $gitRootDir"))
+        if (!targetDirectory.toPath().startsWith(projectRootDir.toPath())) {
+            return Result.Failure(IllegalArgumentException("$targetDirectory must be inside $projectRootDir"))
         }
         val targetPath = targetDirectory.toPath()
 
@@ -109,7 +109,7 @@ public fun newChangesDetector(
         ChangesDetectorStub("targetCommit branch was not set")
     } else {
         GitChangesDetector(
-            gitRootDir = rootDir,
+            projectRootDir = rootDir,
             targetCommit = targetCommit,
             ignoreSettings = settings,
         )

@@ -36,7 +36,7 @@ internal class FindChangedTestsAction(
     fun execute() {
 
         val changesDetector: ChangesDetector = GitChangesDetector(
-            gitRootDir = rootDir.asFile,
+            projectRootDir = rootDir.asFile,
             targetCommit = targetCommit.get(),
             ignoreSettings = IgnoreSettings(emptySet()),
         )
