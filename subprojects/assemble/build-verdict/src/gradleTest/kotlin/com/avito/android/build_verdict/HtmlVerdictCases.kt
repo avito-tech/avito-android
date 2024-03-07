@@ -24,8 +24,8 @@ internal object HtmlVerdictCases {
 		&gt; Compilation error. See log for more details
 </pre>
     <h3>Error logs:</h3>
-    <pre class="logs">e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration
-e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration</pre>
+    <pre class="logs">e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration
+e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration</pre>
   </body>
 </html>""".trimIndent()
 
@@ -91,7 +91,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
 			&gt; Error while annotation processing
 </pre>
     <h3>Error logs:</h3>
-    <pre class="logs">${tempDir.canonicalPath}/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.
+    <pre class="logs">${tempDir.canonicalPath}/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:4: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.
 public abstract interface DaggerComponent {
                 ^
       CoffeeMaker is requested at
@@ -115,8 +115,8 @@ public abstract interface DaggerComponent {
 		&gt; Compilation error. See log for more details
 </pre>
     <h3>Error logs:</h3>
-    <pre class="logs">e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration
-e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration</pre>
+    <pre class="logs">e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration
+e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration</pre>
   </body>
 </html>""".trimIndent()
 
@@ -172,7 +172,7 @@ A problem occurred evaluating project ':app'.
   <body>
     <h2>FAILURE: Build completed with 2 failures.</h2>
     <h3>1: Task failed with an exception</h3>
-    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 7
+    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 8
 A problem occurred evaluating project ':app'.
 	&gt; A problem occurred evaluating project ':app'.
 		&gt; Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.</pre>

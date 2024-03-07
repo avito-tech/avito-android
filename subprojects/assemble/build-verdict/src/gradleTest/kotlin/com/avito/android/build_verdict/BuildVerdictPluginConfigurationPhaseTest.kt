@@ -67,7 +67,7 @@ internal class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest()
 
         errors[0].assertSingleError(
             expectedMessageLines = listOf(
-                "$temp/app/build.gradle' line: 7",
+                "$temp/app/build.gradle' line: 8",
                 "A problem occurred evaluating project ':app'."
             ),
             expectedCauseMessages = listOf(

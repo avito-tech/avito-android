@@ -15,8 +15,8 @@ internal object PlainTextVerdictCases {
             |		> Compilation error. See log for more details
             |
             |* Error logs:
-            |e: ${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration
-            |e: ${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration
             """.trimMargin()
 
         override fun customTaskFails() = """
@@ -52,7 +52,7 @@ internal object PlainTextVerdictCases {
             |			> Error while annotation processing
             |
             |* Error logs:
-            |${dir.canonicalPath}/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.
+            |${dir.canonicalPath}/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:4: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.
             |public abstract interface DaggerComponent {
             |                ^
             |      CoffeeMaker is requested at
@@ -66,8 +66,8 @@ internal object PlainTextVerdictCases {
             |		> Compilation error. See log for more details
             |
             |* Error logs:
-            |e: ${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration
-            |e: ${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration
             """.trimMargin()
 
         override fun unitTestsFails() = """
@@ -102,7 +102,7 @@ internal object PlainTextVerdictCases {
             |
             |1: Task failed with an exception.
             |-----------
-            |Build file '${dir.canonicalPath}/app/build.gradle' line: 7
+            |Build file '${dir.canonicalPath}/app/build.gradle' line: 8
             |A problem occurred evaluating project ':app'.
             |	> A problem occurred evaluating project ':app'.
             |		> Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.

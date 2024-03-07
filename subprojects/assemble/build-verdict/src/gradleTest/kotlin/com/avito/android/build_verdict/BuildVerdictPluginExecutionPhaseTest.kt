@@ -37,8 +37,8 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
             expectedPlainTextVerdict = plainTextVerdicts.compileKotlinFails(),
             expectedHtmlVerdict = htmlVerdicts.compileKotlinFails(),
             expectedErrorLogs = listOf(
-                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
-                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
+                "$temp/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration",
+                "$temp/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration"
             )
         )
     }
@@ -66,8 +66,8 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
             expectedPlainTextVerdict = plainTextVerdicts.kaptStubGeneratingFails(),
             expectedHtmlVerdict = htmlVerdicts.kaptStubGeneratingFails(),
             expectedErrorLogs = listOf(
-                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
-                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
+                "$temp/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration",
+                "$temp/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration"
             )
         )
     }
@@ -110,7 +110,7 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
             expectedPlainTextVerdict = plainTextVerdicts.kaptFails(),
             expectedHtmlVerdict = htmlVerdicts.kaptFails(),
             expectedErrorLogs = listOf(
-                "$temp/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.",
+                "$temp/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:4: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.",
                 "public abstract interface DaggerComponent {",
                 "                ^",
                 "      CoffeeMaker is requested at",
