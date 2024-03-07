@@ -2,7 +2,6 @@ package com.avito.android.build_checks
 
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.AndroidSdk
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.MacOSLocalhost
-import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.PreventKotlinDaemonFallback
 import org.gradle.api.Action
 import java.io.Serializable
 import kotlin.reflect.full.createInstance
@@ -20,9 +19,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
 
     public fun macOSLocalhost(action: Action<MacOSLocalhost>): Unit =
         register(MacOSLocalhost(), action)
-
-    public fun preventKotlinDaemonFallback(action: Action<PreventKotlinDaemonFallback>): Unit =
-        register(PreventKotlinDaemonFallback(), action)
 
     public sealed class RootProjectCheck : Check {
 
@@ -52,10 +48,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
         }
 
         public open class MacOSLocalhost : RootProjectCheck()
-
-        public open class PreventKotlinDaemonFallback : RootProjectCheck() {
-            override var enabled: Boolean = true
-        }
 
         override fun equals(other: Any?): Boolean {
             return this.javaClass == other?.javaClass

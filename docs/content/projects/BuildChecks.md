@@ -224,34 +224,6 @@ This check automatically detects the issue:
     }
     ```
 
-#### Prevent Kotlin daemon fallback strategy 
-
-Sometimes Kotlin daemon fails and can't recover on its own. 
-It has incredible impact on build performance and continuing build is not worth it.
-This is a workaround for [KT-48843](https://youtrack.jetbrains.com/issue/KT-48843). See there more details.
-
-=== "Kotlin"
-`build.gradle.kts`
-
-    ```kotlin
-    buildChecks {
-        preventKotlinDaemonFallback { 
-            enabled = true // disabled by default
-        } 
-    }
-    ```
-
-=== "Groovy"
-`build.gradle`
-
-    ```groovy
-    buildChecks {
-        preventKotlinDaemonFallback { 
-            enabled = true // disabled by default
-        } 
-    }
-    ```
-
 #### Gradle properties
 
 ???+ warning

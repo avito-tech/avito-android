@@ -25,9 +25,6 @@ internal class ConfigurationCacheCompatibilityTest {
                             revision = 3
                         )
                     }
-                    preventKotlinDaemonFallback {
-                        enabled = true
-                    }
                  }
             """.trimIndent(),
             useKts = true
