@@ -56,6 +56,7 @@ public class AndroidLibModule(
                 |$buildGradleExtra
                 |
                 |android {
+                |   namespace = "$packageName"
                 |   compileSdkVersion($sdkVersion)
                 |   buildToolsVersion("$buildToolsVersion")
                 |   

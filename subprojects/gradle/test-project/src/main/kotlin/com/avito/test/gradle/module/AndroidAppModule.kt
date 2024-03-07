@@ -164,9 +164,12 @@ public class AndroidAppModule(
             """.trimMargin()
         }
 
+        val namespace = "namespace = \"$packageName\""
+
         return if (useKts) {
             """
             |android {
+            |   $namespace
             |   compileSdkVersion($sdkVersion)
             |   buildToolsVersion = "$buildToolsVersion"
             |   defaultConfig {
@@ -191,6 +194,7 @@ public class AndroidAppModule(
         } else {
             """
             |android {
+            |   $namespace
             |   compileSdkVersion $sdkVersion
             |   buildToolsVersion "$buildToolsVersion"
             |   defaultConfig {
