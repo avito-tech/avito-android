@@ -21,7 +21,7 @@ import java.io.File
 public class AndroidTestModule(
     override val name: String,
     override val packageName: String = "com.$name",
-    override val imports: List<String> = emptyList(),
+    override val buildFileImports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
@@ -39,7 +39,7 @@ public class AndroidTestModule(
         file.module(name) {
             dir("src") {
                 dir("main") {
-                    androidManifest(packageName = packageName)
+                    androidManifest()
                     if (enableKotlinAndroidPlugin) {
                         dir("kotlin") {
                             kotlinClass("SomeClass", packageName)

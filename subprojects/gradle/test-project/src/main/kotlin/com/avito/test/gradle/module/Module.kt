@@ -6,7 +6,7 @@ import com.avito.test.gradle.plugin.PluginsSpec
 
 public interface Module : Generator {
     public val name: String
-    public val imports: List<String>
+    public val buildFileImports: List<String>
     public val plugins: PluginsSpec
     public val buildGradleExtra: String
     public val dependencies: Set<GradleDependency>
@@ -15,9 +15,9 @@ public interface Module : Generator {
 }
 
 internal fun Module.imports(): String {
-    return if (imports.isEmpty()) {
+    return if (buildFileImports.isEmpty()) {
         ""
     } else {
-        imports.joinToString(separator = "\n", postfix = "\n")
+        buildFileImports.joinToString(separator = "\n", postfix = "\n")
     }
 }

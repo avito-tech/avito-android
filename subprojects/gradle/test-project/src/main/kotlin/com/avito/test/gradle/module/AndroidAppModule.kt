@@ -19,7 +19,7 @@ import java.io.File
 public class AndroidAppModule(
     override val name: String,
     override val packageName: String = "com.$name",
-    override val imports: List<String> = emptyList(),
+    imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
@@ -35,11 +35,22 @@ public class AndroidAppModule(
     private val mutator: File.(AndroidAppModule) -> Unit = {}
 ) : AndroidModule {
 
+    override val buildFileImports: List<String>
+
+    init {
+        val kotlinImports = if (enableKotlinAndroidPlugin || enableKapt) {
+            listOf("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+        } else {
+            emptyList()
+        }
+        buildFileImports = imports + kotlinImports
+    }
+
     override fun generateIn(file: File) {
         file.module(name) {
             dir("src") {
                 dir("main") {
-                    androidManifest(packageName = packageName)
+                    androidManifest()
                     if (enableKotlinAndroidPlugin || enableKapt) {
                         dir("kotlin") {
                             kotlinClass("SomeClass", packageName)
@@ -83,6 +94,8 @@ public class AndroidAppModule(
                 |${plugins()}
                 |
                 |$buildGradleExtra
+                |
+                |${kotlinExtension(useKts)}
                 |
                 |${androidExtension(useKts)}
                 |
@@ -129,6 +142,29 @@ public class AndroidAppModule(
             }
         }
     }"""
+    }
+
+    private fun kotlinExtension(useKts: Boolean): String {
+        val setKotlinTarget_1_8 = if (enableKotlinAndroidPlugin || enableKapt) {
+            if (useKts) {
+                """
+                |tasks.withType(KotlinCompile::class.java).configureEach {
+                |   kotlinOptions {
+                |       jvmTarget = JavaVersion.VERSION_1_8.toString()
+                |    }
+                |}""".trimMargin()
+            } else {
+                """
+                |tasks.withType(KotlinCompile).configureEach {
+                |   kotlinOptions {
+                |       jvmTarget = JavaVersion.VERSION_1_8.toString()
+                |    }
+                |}""".trimMargin()
+            }
+        } else {
+            ""
+        }
+        return setKotlinTarget_1_8
     }
 
     private fun androidExtension(useKts: Boolean): String {

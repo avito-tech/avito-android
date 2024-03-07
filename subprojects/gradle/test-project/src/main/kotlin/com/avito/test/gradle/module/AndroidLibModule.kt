@@ -19,7 +19,7 @@ import java.io.File
 public class AndroidLibModule(
     override val name: String,
     override val packageName: String = "com.$name",
-    override val imports: List<String> = emptyList(),
+    imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
@@ -28,6 +28,17 @@ public class AndroidLibModule(
     override val useKts: Boolean = false,
     private val mutator: File.() -> Unit = {},
 ) : AndroidModule {
+
+    override val buildFileImports: List<String>
+
+    init {
+        val kotlinImports = if (enableKotlinAndroidPlugin) {
+            listOf("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+        } else {
+            emptyList()
+        }
+        buildFileImports = imports + kotlinImports
+    }
 
     /**
      * Don't use `android.resourcePrefix` because clients won't be able to add resource without it.
@@ -54,6 +65,8 @@ public class AndroidLibModule(
                 |${plugins()}
                 |
                 |$buildGradleExtra
+                |
+                |${kotlinExtension(useKts)}
                 |
                 |android {
                 |   namespace = "$packageName"
@@ -84,7 +97,7 @@ public class AndroidLibModule(
             }
 
             dir("src/main") {
-                androidManifest(packageName = packageName)
+                androidManifest()
                 if (enableKotlinAndroidPlugin) {
                     dir("kotlin") {
                         kotlinClass("SomeClass", packageName)
@@ -110,6 +123,30 @@ public class AndroidLibModule(
             this.mutator()
         }
     }
+
+    private fun kotlinExtension(useKts: Boolean): String {
+        val setKotlinTarget_1_8 = if (enableKotlinAndroidPlugin) {
+            if (useKts) {
+                """
+                |tasks.withType(KotlinCompile::class.java).configureEach {
+                |   kotlinOptions {
+                |       jvmTarget = JavaVersion.VERSION_1_8.toString()
+                |    }
+                |}""".trimMargin()
+            } else {
+                """
+                |tasks.withType(KotlinCompile).configureEach {
+                |   kotlinOptions {
+                |       jvmTarget = JavaVersion.VERSION_1_8.toString()
+                |    }
+                |}""".trimMargin()
+            }
+        } else {
+            ""
+        }
+        return setKotlinTarget_1_8
+    }
+
 
     private fun plugins(): PluginsSpec =
         plugins {

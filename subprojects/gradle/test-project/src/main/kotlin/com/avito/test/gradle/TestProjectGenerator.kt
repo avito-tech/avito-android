@@ -57,7 +57,7 @@ public interface Generator {
  */
 public class TestProjectGenerator(
     override val name: String = "test-project",
-    override val imports: List<String> = emptyList(),
+    imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     // TODO: don't share complex default values in common test fixtures. Plugin must define them implicitly!
@@ -85,6 +85,7 @@ public class TestProjectGenerator(
     )
 ) : Module {
 
+    override val buildFileImports: List<String> = imports
     override val dependencies: Set<GradleDependency> = emptySet()
 
     override fun generateIn(file: File) {

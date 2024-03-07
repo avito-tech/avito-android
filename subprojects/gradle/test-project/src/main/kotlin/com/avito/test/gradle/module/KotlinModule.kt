@@ -14,7 +14,7 @@ import java.io.File
 public class KotlinModule(
     override val name: String,
     public val packageName: String = "com.$name",
-    public override val imports: List<String> = emptyList(),
+    imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
@@ -22,6 +22,7 @@ public class KotlinModule(
     override val useKts: Boolean = false,
     private val mutator: File.() -> Unit = {},
 ) : Module {
+    override val buildFileImports: List<String> = imports
 
     override fun generateIn(file: File) {
         file.module(name) {
