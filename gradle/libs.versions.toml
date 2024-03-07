@@ -42,7 +42,7 @@ kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = 
 kotlinCompilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3"
 coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinPoet = "com.squareup:kotlinpoet:1.11.0"
+kotlinPoet = "com.squareup:kotlinpoet:1.16.0"
 kotlinTestJUnit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.3"
 
@@ -109,7 +109,7 @@ hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 hamcrestLibrary = { module = "org.hamcrest:hamcrest-library", version.ref = "hamcrest" }
 jsonPathAssert = "com.jayway.jsonpath:json-path-assert:2.4.0"
 jsonAssert = "org.skyscreamer:jsonassert:1.5.0"
-kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.4.8"
+kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.5.0"
 mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:3.3.3"
 freeReflection = "com.github.tiann:FreeReflection:3.2.0"
