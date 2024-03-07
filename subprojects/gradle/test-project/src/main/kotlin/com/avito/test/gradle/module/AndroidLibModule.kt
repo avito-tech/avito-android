@@ -125,6 +125,7 @@ public class AndroidLibModule(
     }
 
     private fun kotlinExtension(useKts: Boolean): String {
+        @Suppress("VariableNaming")
         val setKotlinTarget_1_8 = if (enableKotlinAndroidPlugin) {
             if (useKts) {
                 """
@@ -146,7 +147,6 @@ public class AndroidLibModule(
         }
         return setKotlinTarget_1_8
     }
-
 
     private fun plugins(): PluginsSpec =
         plugins {

@@ -145,6 +145,7 @@ public class AndroidAppModule(
     }
 
     private fun kotlinExtension(useKts: Boolean): String {
+        @Suppress("VariableNaming")
         val setKotlinTarget_1_8 = if (enableKotlinAndroidPlugin || enableKapt) {
             if (useKts) {
                 """
