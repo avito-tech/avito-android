@@ -33,7 +33,9 @@ internal abstract class ExtractModuleDescriptionTask : DefaultTask() {
         }
         val description = ModuleDescription(
             module = module.get(),
-            directDependencies = directDependencies.get()
+            directDependencies = mutableMapOf<ConfigurationType, Set<String>>().apply {
+                putAll(directDependencies.get())
+            }
         )
         FileSerializer.write(description, output)
     }
