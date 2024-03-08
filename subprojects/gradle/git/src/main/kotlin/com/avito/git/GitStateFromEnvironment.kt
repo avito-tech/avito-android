@@ -3,42 +3,45 @@ package com.avito.git
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Project
-import java.io.File
 
-internal class GitStateFromEnvironment(
-    rootDir: File,
-    gitBranch: String,
-    targetBranch: String?,
-    originalCommitHash: String?
-) : GitState {
+internal object GitStateFromEnvironment {
 
-    override val defaultBranch = "develop"
+    fun from(project: Project): GitState {
+        val gitBranch: String = project.getMandatoryStringProperty("gitBranch")
+        val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
+        val originalCommitHash: String? = project.getOptionalStringProperty("originalCommitHash")
+        val git = GitImpl(
+            rootDir = project.rootDir
+        )
+        return from(
+            git,
+            gitBranch,
+            targetBranch,
+            originalCommitHash
+        )
+    }
 
-    override val originalBranch: Branch
+    fun from(
+        git: Git,
+        gitBranch: String,
+        targetBranch: String?,
+        originalCommitHash: String?
+    ): GitState {
 
-    override val currentBranch: Branch
-
-    override val targetBranch: Branch?
-
-    init {
         @Suppress("NAME_SHADOWING")
         val gitBranch: String = gitBranch.asBranchWithoutOrigin()
 
         @Suppress("NAME_SHADOWING")
         val targetBranch: String? = targetBranch?.asBranchWithoutOrigin()
 
-        val git = GitImpl(
-            rootDir = rootDir
-        )
-
         val gitCommit = git.tryParseRev("HEAD").getOrThrow()
 
-        this.currentBranch = Branch(
+        val currentBranch = Branch(
             name = gitBranch,
             commit = gitCommit
         )
 
-        this.originalBranch = Branch(
+        val originalBranch = Branch(
             name = gitBranch,
             commit = originalCommitHash ?: gitCommit
         )
@@ -59,21 +62,12 @@ internal class GitStateFromEnvironment(
                 }
         }
 
-        this.targetBranch = target
-    }
-
-    companion object {
-
-        fun from(project: Project): GitState {
-            val gitBranch: String = project.getMandatoryStringProperty("gitBranch")
-            val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
-            val originalCommitHash: String? = project.getOptionalStringProperty("originalCommitHash")
-            return GitStateFromEnvironment(
-                rootDir = project.rootDir,
-                gitBranch = gitBranch,
-                targetBranch = targetBranch,
-                originalCommitHash = originalCommitHash
-            )
-        }
+        return GitState(
+            originalBranch = originalBranch,
+            currentBranch = currentBranch,
+            targetBranch = target,
+            defaultBranch = "develop",
+            false,
+        )
     }
 }

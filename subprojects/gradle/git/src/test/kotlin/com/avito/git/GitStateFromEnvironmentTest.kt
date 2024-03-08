@@ -114,8 +114,8 @@ class GitStateFromEnvironmentTest {
         assertThat(state.isOnDefaultBranch).isFalse()
     }
 
-    private fun gitState(gitBranch: String, targetBranch: String?): GitState = GitStateFromEnvironment(
-        rootDir = localRepo,
+    private fun gitState(gitBranch: String, targetBranch: String?): GitState = GitStateFromEnvironment.from(
+        git = GitImpl(localRepo),
         gitBranch = gitBranch,
         targetBranch = targetBranch,
         originalCommitHash = null,

@@ -6,7 +6,7 @@ import com.avito.android.http.createArtifactoryHttpClient
 import com.avito.android.model.input.CdBuildConfig
 import com.avito.android.model.output.CdBuildResult
 import com.avito.android.model.output.toCdCoordinates
-import com.avito.git.gitState
+import com.avito.git.gitStateProvider
 import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.model.ReportCoordinates
@@ -45,7 +45,7 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
 
     @TaskAction
     public fun sendCdBuildResult() {
-        val gitState = project.gitState()
+        val gitState = project.gitStateProvider()
 
         val reportLinksGenerator = ReportViewerLinksGeneratorImpl(
             reportViewerUrl = reportViewerUrl.get(),

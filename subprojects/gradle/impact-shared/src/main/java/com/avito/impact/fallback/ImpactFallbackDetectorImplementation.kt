@@ -1,7 +1,7 @@
 package com.avito.impact.fallback
 
 import com.avito.git.GitState
-import com.avito.git.gitState
+import com.avito.git.gitStateProvider
 import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.changes.newChangesDetector
 import com.avito.impact.platformModules
@@ -110,7 +110,7 @@ internal class ImpactFallbackDetectorImplementation(
             return ImpactFallbackDetectorImplementation(
                 configuration,
                 project = project,
-                gitState = project.gitState(),
+                gitState = project.gitStateProvider(),
             )
         }
     }

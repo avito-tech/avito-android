@@ -60,8 +60,8 @@ class GitLocalStateTest {
         assertThat(state.isOnDefaultBranch).isFalse()
     }
 
-    private fun gitState(targetBranch: String?): GitState = GitLocalStateImpl(
-        rootDir = repoDir,
+    private fun gitState(targetBranch: String?): GitState = GitLocalState.from(
+        git = GitImpl(repoDir),
         targetBranch = targetBranch
     )
 }

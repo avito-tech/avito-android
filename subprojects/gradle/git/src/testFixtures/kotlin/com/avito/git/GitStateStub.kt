@@ -1,17 +1,29 @@
 package com.avito.git
 
-public class GitStateStub(
-    override val currentBranch: Branch,
-    override val originalBranch: Branch = currentBranch,
-    override val targetBranch: Branch? = null
-) : GitState {
-    override val defaultBranch: String = "develop"
+public fun GitStateStub(
+    currentBranch: Branch,
+    originalBranch: Branch = currentBranch,
+    targetBranch: Branch? = null
+): GitState {
+    return GitState(
+        originalBranch,
+        currentBranch,
+        targetBranch,
+        "develop",
+        false,
+    )
 }
 
-public class GitLocalStateStub(
-    override val currentBranch: Branch,
-    override val originalBranch: Branch = currentBranch,
-    override val targetBranch: Branch? = null
-) : GitLocalState {
-    override val defaultBranch: String = "develop"
+public fun GitLocalStateStub(
+    currentBranch: Branch,
+    originalBranch: Branch = currentBranch,
+    targetBranch: Branch? = null
+): GitState {
+    return GitState(
+        originalBranch,
+        currentBranch,
+        targetBranch,
+        "develop",
+        true,
+    )
 }

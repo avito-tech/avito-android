@@ -4,7 +4,7 @@ import com.android.build.api.variant.Variant
 import com.avito.android.plugins.configuration.BuildEnvResolver
 import com.avito.android.plugins.configuration.GitResolver
 import com.avito.android.plugins.configuration.RunIdResolver
-import com.avito.git.gitState
+import com.avito.git.gitStateProvider
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
@@ -17,7 +17,7 @@ internal class ConfiguratorsFactory(
     private val extension: InstrumentationTestsPluginExtension,
     private val buildCacheEnabled: Boolean,
 ) {
-    private val gitResolver = GitResolver(project.gitState())
+    private val gitResolver = GitResolver(project.gitStateProvider())
 
     // todo envArgs should be lazy, see [com.avito.kotlin.dsl.ProjectProperty]
     private val buildEnvResolver = BuildEnvResolver(project.provider { project.envArgs })

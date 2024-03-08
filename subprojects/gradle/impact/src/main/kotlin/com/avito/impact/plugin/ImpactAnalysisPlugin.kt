@@ -1,6 +1,6 @@
 package com.avito.impact.plugin
 
-import com.avito.git.gitState
+import com.avito.git.gitStateProvider
 import com.avito.impact.changes.newChangesDetector
 import com.avito.impact.configuration.InternalModule
 import com.avito.impact.configuration.internalModule
@@ -24,7 +24,7 @@ public class ImpactAnalysisPlugin : Plugin<Project> {
 
         rootProject.extensions.create<ImpactAnalysisExtension>("impactAnalysis")
 
-        val gitState = rootProject.gitState()
+        val gitState = rootProject.gitStateProvider()
 
         val changesDetector = newChangesDetector(
             rootDir = rootProject.rootDir,

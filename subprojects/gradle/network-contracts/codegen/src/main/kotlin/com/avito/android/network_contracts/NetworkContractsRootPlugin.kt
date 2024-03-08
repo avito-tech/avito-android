@@ -8,7 +8,7 @@ import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteAp
 import com.avito.android.network_contracts.shared.reportFile
 import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
 import com.avito.android.tls.TlsConfigurationPlugin
-import com.avito.git.gitState
+import com.avito.git.gitStateProvider
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
@@ -82,7 +82,7 @@ public class NetworkContractsRootPlugin : Plugin<Project> {
         project.tasks.register(UpdateRemoteApiSchemesTask.NAME, UpdateRemoteApiSchemesTask::class.java) {
             it.httpClientService.set(HttpClientService.provideHttpClientService(project))
             it.author.set(project.getMandatoryStringProperty("avito.networkContracts.fixation.author"))
-            it.branchName.set(project.gitState().get().currentBranch.name)
+            it.branchName.set(project.gitStateProvider().map { it.currentBranch.name })
             it.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(project))
             it.validationReport.set(validationTask.flatMap { it.verdictFile })
         }

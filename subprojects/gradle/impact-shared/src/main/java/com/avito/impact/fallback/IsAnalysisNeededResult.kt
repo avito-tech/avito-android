@@ -1,6 +1,5 @@
 package com.avito.impact.fallback
 
-import com.avito.git.GitLocalState
 import com.avito.git.GitState
 import com.avito.impact.configuration.isBranchProtected
 import com.avito.impact.plugin.ImpactAnalysisExtension
@@ -46,7 +45,7 @@ internal fun isAnalysisNeeded(
         )
     }
 
-    if (targetBranch.name == currentBranch.name && git !is GitLocalState) {
+    if (targetBranch.name == currentBranch.name && !git.local) {
         return IsAnalysisNeededResult.Skip("running on target branch $targetBranch")
     }
 
