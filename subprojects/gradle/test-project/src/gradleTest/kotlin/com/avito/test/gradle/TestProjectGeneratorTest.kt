@@ -1,5 +1,6 @@
 package com.avito.test.gradle
 
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.platformProject
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
@@ -104,7 +105,7 @@ internal class TestProjectGeneratorTest {
             dependencies = setOf(
                 project(":parent:empty:library"),
                 project(":parent:empty:kotlin"),
-                project(":parent:empty:platform")
+                platformProject(":parent:empty:platform")
             )
         )
         val androidLibrary = AndroidLibModule("library")
@@ -145,7 +146,7 @@ internal class TestProjectGeneratorTest {
             dependencies = setOf(
                 project(":parent:empty:library"),
                 project(":parent:empty:kotlin"),
-                project(":parent:empty:platform")
+                platformProject(":parent:empty:platform")
             ),
             useKts = true
         )
