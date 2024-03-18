@@ -18,12 +18,15 @@ internal class CodegenTest {
         runTask(projectDir, "compileKotlin", dryRun = true, addGeneratedSourcesToCompile = true)
             .assertThat()
             .buildSuccessful()
-            .tasksShouldBeTriggered(
-                ":${MakeFilesExecutableTask.NAME}",
-                ":${SetupTmpMtlsFilesTask.NAME}",
-                ":${module.name}:${CodegenTask.NAME}",
-            )
-            .inOrder()
+            .apply {
+                tasksShouldBeTriggered(
+                    ":${MakeFilesExecutableTask.NAME}",
+                    ":${module.name}:${CodegenTask.NAME}",
+                ).inOrder()
+                tasksShouldNotBeTriggered(
+                    ":${SetupTmpMtlsFilesTask.NAME}"
+                )
+            }
     }
 
     @Test
@@ -33,8 +36,10 @@ internal class CodegenTest {
         runTask(projectDir, CodegenTask.NAME, dryRun = true)
             .assertThat()
             .buildSuccessful()
-            .tasksShouldBeTriggered(":${MakeFilesExecutableTask.NAME}", ":${SetupTmpMtlsFilesTask.NAME}")
-            .inOrder()
+            .apply {
+                tasksShouldBeTriggered(":${MakeFilesExecutableTask.NAME}").inOrder()
+                tasksShouldNotBeTriggered(":${SetupTmpMtlsFilesTask.NAME}")
+            }
     }
 
     @Test

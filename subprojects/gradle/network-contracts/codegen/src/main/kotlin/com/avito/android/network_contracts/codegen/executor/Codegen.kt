@@ -9,12 +9,9 @@ import com.avito.logger.Logger
 import com.avito.utils.ProcessRunner
 import org.gradle.api.file.FileCollection
 import java.io.File
-import java.nio.file.Path
 
 internal interface Codegen {
     fun execute(
-        crtEnv: Pair<String, Path>,
-        keyEnv: Pair<String, Path>,
         skipValidation: Boolean
     ): Result<String>
 
@@ -25,8 +22,6 @@ internal interface Codegen {
     ) : Codegen {
 
         override fun execute(
-            crtEnv: Pair<String, Path>,
-            keyEnv: Pair<String, Path>,
             skipValidation: Boolean
         ): Result<String> {
             val processRunner = ProcessRunner.create(codegenFile.parentFile)

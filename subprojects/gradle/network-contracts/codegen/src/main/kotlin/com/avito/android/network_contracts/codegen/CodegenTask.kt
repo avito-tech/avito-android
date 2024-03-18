@@ -20,6 +20,7 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -53,10 +54,12 @@ internal abstract class CodegenTask : DefaultTask() {
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
     abstract val tmpCrtFile: RegularFileProperty
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
     abstract val tmpKeyFile: RegularFileProperty
 
     @get:InputFiles
@@ -92,14 +95,12 @@ internal abstract class CodegenTask : DefaultTask() {
             name = codegenProjectName.get(),
             moduleDir = moduleDirectory.get().asFile,
             skipValidation = skipValidation.get(),
-            crtEnv = crtEnvName.get() to tmpCrtFile.get().asFile.toPath(),
-            keyEnv = keyEnvName.get() to tmpKeyFile.get().asFile.toPath()
+            crtEnv = crtEnvName.get() to tmpCrtFile.orNull?.asFile?.toPath(),
+            keyEnv = keyEnvName.get() to tmpKeyFile.orNull?.asFile?.toPath(),
         )
         val codegen = Codegen.create(arch, codegenExecutableFiles, logger, config)
 
         val result = codegen.execute(
-            crtEnv = crtEnvName.get() to tmpCrtFile.get().asFile.toPath(),
-            keyEnv = keyEnvName.get() to tmpKeyFile.get().asFile.toPath(),
             skipValidation = skipValidation.get()
         )
 

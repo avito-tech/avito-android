@@ -15,8 +15,8 @@ internal data class CodegenConfig(
     val packageName: String,
     val moduleName: String,
     val skipValidation: Boolean,
-    val crtEnv: Pair<String, Path>,
-    val keyEnv: Pair<String, Path>,
+    val crtEnv: Pair<String, Path?>,
+    val keyEnv: Pair<String, Path?>,
     val moduleDir: File,
     val schemesDirectoryRelativePath: String,
     val buildDirectoryRelativePath: String,
@@ -45,9 +45,9 @@ internal val CodegenConfig.envVars
     get(): Set<Pair<String, String>> {
         val configJson = generateAdvancedConfigJson()
         val configBase64 = Base64.getEncoder().encodeToString(configJson.toByteArray())
-        return setOf(
-            crtEnv.first to crtEnv.second.absolute().toString(),
-            keyEnv.first to keyEnv.second.absolute().toString(),
+        return setOfNotNull(
+            crtEnv.second?.let { crtFilePath -> crtEnv.first to crtFilePath.absolute().toString() },
+            keyEnv.second?.let { keyFilePath -> keyEnv.first to keyFilePath.absolute().toString() },
             "CODEGEN_ANDROID_CONFIG" to configBase64
         )
     }
