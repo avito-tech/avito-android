@@ -23,6 +23,18 @@ internal class ValidateProjectDependenciesTest {
     }
 
     @Test
+    internal fun `validate dependencies - debug connected - success`(@TempDir projectDir: File) {
+        DependenciesValidationProjectGenerator.generateProject(
+            projectDir,
+            connectedFunctionalType = FunctionalType.Debug
+        )
+
+        runCheck(projectDir, expectFailure = false)
+            .assertThat()
+            .buildSuccessful()
+    }
+
+    @Test
     internal fun `validate dependencies - fake connected - success`(@TempDir projectDir: File) {
         DependenciesValidationProjectGenerator.generateProject(
             projectDir,
@@ -54,11 +66,12 @@ internal class ValidateProjectDependenciesTest {
         runCheck(projectDir, expectFailure = true)
             .assertThat()
             .buildFailed()
-            .outputContains("Please, add impl/fake dependencies to the build file")
+            .outputContains("Please, add impl/fake/debug dependencies to the build file")
             .outputContains(":lib-b:demo -> :lib-b:impl -> :lib-b:public -> :lib-a:public")
             .outputContains(":lib-c:demo -> :lib-c:impl -> :lib-b:public -> :lib-a:public")
             .outputContains("implementation(projects.libA.impl)")
             .outputContains("implementation(projects.libA.fake)")
+            .outputContains("implementation(projects.libA.debug)")
     }
 
     @Test

@@ -35,6 +35,14 @@ public enum class FunctionalType {
     Fake,
 
     /**
+     * Модуль с реализацией функциональности.
+     * Может быть подключен в качестве зависимости только к дебажной сборке.
+     *
+     * См. [:debug](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#debug)
+     */
+    Debug,
+
+    /**
      * Модуль с DI-компонентами, связывающими код из Public и Impl.
      *
      * Реализован на случай использования стратегии
@@ -113,4 +121,20 @@ public enum class FunctionalType {
      * См. [:test](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#test)
      */
     Test,
+
+    /**
+     * Модуль с тестовыми фикстурами для unit и instrumentation-тестов для Debug модуля
+     *
+     * [test fixtures](https://docs.k.avito.ru/mobile/android/architecture/Modules/#text-fixtures)
+     * См. [:test-debug](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#test-debug)
+     */
+    TestDebug,
+
+    /**
+     * Модуль с тестовыми фикстурами для unit и instrumentation-тестов для Fake модуля
+     *
+     * [test fixtures](https://docs.k.avito.ru/mobile/android/architecture/Modules/#text-fixtures)
+     * См. [:test-fake](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#test-fake)
+     */
+    TestFake,
 }

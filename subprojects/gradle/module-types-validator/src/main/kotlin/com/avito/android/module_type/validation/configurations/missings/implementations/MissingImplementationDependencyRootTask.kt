@@ -72,7 +72,7 @@ public abstract class MissingImplementationDependencyRootTask : DefaultTask() {
         }
 
         val errorText = buildString {
-            appendLine("Please, add impl/fake dependencies to the build file")
+            appendLine("Please, add impl/fake/debug dependencies to the build file")
             appendLine("file://" + buildFilePath.absolutePath)
             appendLine(
                 dependencies.entries.joinToString(transform = ::createDetailedInformation)
@@ -106,7 +106,7 @@ public abstract class MissingImplementationDependencyRootTask : DefaultTask() {
     }
 
     private fun findPublicImplementationModules(logicalModule: String): List<String> {
-        val implementationTypes = setOf(FunctionalType.Impl, FunctionalType.Fake)
+        val implementationTypes = setOf(FunctionalType.Impl, FunctionalType.Fake, FunctionalType.Debug)
 
         val logicalModuleDirectory = File(
             rootProjectDir.get(),
