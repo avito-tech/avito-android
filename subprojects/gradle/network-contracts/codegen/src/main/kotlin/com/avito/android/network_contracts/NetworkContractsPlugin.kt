@@ -58,7 +58,8 @@ public class NetworkContractsPlugin : Plugin<Project> {
     private fun registerCodegenTask(
         name: String,
         target: Project,
-        forceValidation: Boolean = false
+        forceValidation: Boolean = false,
+        configuraion: (CodegenTask) -> Unit = {}
     ): TaskProvider<CodegenTask> {
         val networkContractsExtension = target.networkContractsExtension
         val rootExtension = target.networkContractsRootExtension
@@ -96,6 +97,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(it))
 
             it.onlyIf { (it as? CodegenTask)?.schemesDir?.get()?.asFileTree?.isEmpty == false }
+            configuraion.invoke(it)
         }
     }
 
@@ -129,7 +131,13 @@ public class NetworkContractsPlugin : Plugin<Project> {
             name = "validate" + CodegenTask.NAME.capitalize(),
             target = project,
             forceValidation = true
-        )
+        ) {
+            it.outputDirectory.set(
+                project.layout.buildDirectory
+                    .dir("networkContracts")
+                    .map { it.dir("validation") }
+            )
+        }
 
         val validateSchemesTask = project.tasks
             .register<ValidateNetworkContractsSchemesTask>(ValidateNetworkContractsSchemesTask.NAME) {
