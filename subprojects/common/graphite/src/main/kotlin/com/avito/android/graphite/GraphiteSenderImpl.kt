@@ -23,7 +23,7 @@ internal class GraphiteSenderImpl(
         if (config.enableDetailedLogs) {
             logger.info(withPrefix.toString())
         } else {
-            logger.debug(withPrefix.toString())
+            logger.verbose(withPrefix.toString())
         }
     }
 }
