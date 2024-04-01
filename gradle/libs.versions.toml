@@ -26,6 +26,7 @@ moshiX = "0.17.2"
 ktor = "2.0.3"
 jackson = "2.13.0"
 proguard = "6.2.2"
+compose = "1.3.1"
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
@@ -157,6 +158,9 @@ ktorOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
 # https://mvnrepository.com/artifact/com.autonomousapps.dependency-analysis/com.autonomousapps.dependency-analysis.gradle.plugin
 dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.28.0"
+
+# https://developer.android.com/jetpack/androidx/releases/compose-ui
+compose-uiTestJunit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]
