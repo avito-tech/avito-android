@@ -16,18 +16,22 @@ public class SimpleModuleGraph {
             }
             result.addVertex(project)
 
-            project.configurations.map { configuration ->
-                configuration.dependencies
-                    .withType(ProjectDependency::class.java)
-                    .forEach { dependency ->
-                        val dependencyProject = dependency.dependencyProject
+            project.configurations
+                .filter {
+                    it.name == "api" || it.name == "implementation"
+                }
+                .map {
+                    it.dependencies
+                        .withType(ProjectDependency::class.java)
+                        .forEach { dependency ->
+                            val dependencyProject = dependency.dependencyProject
 
-                        if (project != dependencyProject) {
-                            result.addVertex(dependencyProject)
-                            result.addEdge(project, dependencyProject)
+                            if (project != dependencyProject) {
+                                result.addVertex(dependencyProject)
+                                result.addEdge(project, dependencyProject)
+                            }
                         }
-                    }
-            }
+                }
         }
 
         return result
