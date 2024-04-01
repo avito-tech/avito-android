@@ -33,7 +33,7 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
 
     private fun extractOwnedDependencies(): List<OwnedDependency> {
         val dependencies = mutableListOf<OwnedDependency>()
-        val betweennessCentrality = CollectModuleBetweennessCentralityAction().collect(project)
+        val betweennessCentrality = CollectModuleBetweennessCentralityAction().collect(project).betweennessCentrality
         project.subprojects { subproject ->
             dependencies += extractOwnedDependency(subproject, betweennessCentrality)
         }

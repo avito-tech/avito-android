@@ -20,7 +20,11 @@ public class ModuleDependenciesGraphPlugin : Plugin<Project> {
             }
         }
         target.tasks.register<CollectModuleBetweennessCentralityTask>("collectModuleBetweennessCentrality") {
-            output.set(
+            moduleGraphOutput.set(
+                target.layout.buildDirectory
+                    .file("reports/modules-betweenness-centrality/modules-graph.csv")
+            )
+            betweennessCentralityOutput.set(
                 target.layout.buildDirectory
                     .file("reports/modules-betweenness-centrality/modules-betweenness-centrality.csv")
             )

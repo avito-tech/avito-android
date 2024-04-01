@@ -17,19 +17,40 @@ public abstract class CollectModuleBetweennessCentralityTask : DefaultTask() {
     }
 
     @get:OutputFile
-    public abstract val output: RegularFileProperty
+    public abstract val moduleGraphOutput: RegularFileProperty
+
+    @get:OutputFile
+    public abstract val betweennessCentralityOutput: RegularFileProperty
 
     private val Project.owners: Set<Owner>
         get() = this.extensions.findByType<CodeOwnershipExtension>()?.owners?.get().orEmpty()
 
     @TaskAction
     public fun action() {
-        val betweennessCentrality = CollectModuleBetweennessCentralityAction().collect(project)
+        val actionOutput = CollectModuleBetweennessCentralityAction().collect(project)
 
-        CsvMapper().writer().writeValues(output.asFile.get()).use { writer ->
+        CsvMapper().writer().writeValues(moduleGraphOutput.asFile.get()).use { writer ->
+            writer.write(arrayOf("from", "to"))
+
+            val moduleGraph = actionOutput.moduleGraph
+
+            moduleGraph
+                .edgeSet()
+                .map { moduleGraph.getEdgeSource(it) to moduleGraph.getEdgeTarget(it) }
+                .sortedWith(compareBy({ it.first }, { it.second }))
+                .forEach { (from, to) ->
+                    writer.write(arrayOf(
+                        from.path,
+                        to.path,
+                    ))
+                }
+        }
+
+        CsvMapper().writer().writeValues(betweennessCentralityOutput.asFile.get()).use { writer ->
             writer.write(arrayOf("module", "betweenness-centrality", "owners"))
 
-            betweennessCentrality
+            actionOutput
+                .betweennessCentrality
                 .toList()
                 .sortedByDescending { it.second }
                 .forEach { (project, betweennessCentrality) ->
