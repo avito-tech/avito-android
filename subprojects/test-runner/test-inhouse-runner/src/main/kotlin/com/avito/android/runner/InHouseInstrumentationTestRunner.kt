@@ -18,6 +18,7 @@ import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
+import com.avito.android.runner.environment.FakeRunDetector
 import com.avito.android.runner.environment.TestRunEnvironment
 import com.avito.android.runner.environment.TestRunEnvironmentBuilder
 import com.avito.android.runner.environment.TestRunEnvironmentBuilderImpl
@@ -131,10 +132,12 @@ public abstract class InHouseInstrumentationTestRunner(
 
     @Suppress("MemberVisibilityCanBePrivate")
     public val testRunEnvironment: TestRunEnvironment by lazy {
-        overrideTestRunEnvironmentBuilder(TestRunEnvironmentBuilderImpl())
-            .build(
-                BundleArgsProvider(bundle = instrumentationArguments)
-            )
+        if (FakeRunDetector.isRealRun(instrumentationArguments)) {
+            overrideTestRunEnvironmentBuilder(TestRunEnvironmentBuilderImpl())
+                .build(BundleArgsProvider(bundle = instrumentationArguments))
+        } else {
+            TestRunEnvironment.OrchestratorFakeRunEnvironment
+        }
     }
 
     // Public for synth monitoring

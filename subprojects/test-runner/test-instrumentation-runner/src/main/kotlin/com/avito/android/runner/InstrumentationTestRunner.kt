@@ -2,6 +2,7 @@ package com.avito.android.runner
 
 import android.os.Bundle
 import androidx.test.runner.AndroidJUnitRunner
+import com.avito.android.runner.environment.FakeRunDetector
 import com.avito.logger.LoggerFactory
 
 public abstract class InstrumentationTestRunner : AndroidJUnitRunner() {
@@ -22,14 +23,18 @@ public abstract class InstrumentationTestRunner : AndroidJUnitRunner() {
      */
     final override fun onCreate(arguments: Bundle) {
         instrumentationArguments = arguments
-        beforeOnCreate(arguments)
-        delegateRegistry = DelegatesRegistry(
-            getDelegates(arguments) + SystemDialogsManagerDelegate(loggerFactory)
-        )
-        delegateRegistry?.beforeOnCreate(arguments)
+        if (FakeRunDetector.isRealRun(instrumentationArguments)) {
+            beforeOnCreate(arguments)
+            delegateRegistry = DelegatesRegistry(
+                getDelegates(arguments) + SystemDialogsManagerDelegate(loggerFactory)
+            )
+            delegateRegistry?.beforeOnCreate(arguments)
+        }
         super.onCreate(arguments)
-        afterOnCreate(arguments)
-        delegateRegistry?.afterOnCreate(arguments)
+        if (FakeRunDetector.isRealRun(instrumentationArguments)) {
+            afterOnCreate(arguments)
+            delegateRegistry?.afterOnCreate(arguments)
+        }
     }
 
     protected open fun beforeOnCreate(arguments: Bundle) {
