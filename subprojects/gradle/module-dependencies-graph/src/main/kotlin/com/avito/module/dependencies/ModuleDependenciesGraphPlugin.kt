@@ -2,6 +2,8 @@ package com.avito.module.dependencies
 
 import com.avito.module.metrics.CollectAppsMetricsTask
 import com.avito.module.metrics.CollectModuleBetweennessCentralityTask
+import com.avito.module.metrics.CollectModuleBetweennessCentralityTask.Companion.OUTPUT_BETWEENNESS_CENTRALITY_PATH
+import com.avito.module.metrics.CollectModuleBetweennessCentralityTask.Companion.OUTPUT_GRAPH_PATH
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
@@ -20,14 +22,8 @@ public class ModuleDependenciesGraphPlugin : Plugin<Project> {
             }
         }
         target.tasks.register<CollectModuleBetweennessCentralityTask>("collectModuleBetweennessCentrality") {
-            moduleGraphOutput.set(
-                target.layout.buildDirectory
-                    .file("reports/modules-betweenness-centrality/modules-graph.csv")
-            )
-            betweennessCentralityOutput.set(
-                target.layout.buildDirectory
-                    .file("reports/modules-betweenness-centrality/modules-betweenness-centrality.csv")
-            )
+            moduleGraphOutput.set(target.layout.buildDirectory.file(OUTPUT_GRAPH_PATH))
+            betweennessCentralityOutput.set(target.layout.buildDirectory.file(OUTPUT_BETWEENNESS_CENTRALITY_PATH))
         }
     }
 }

@@ -52,7 +52,7 @@ public abstract class CollectModuleBetweennessCentralityTask : DefaultTask() {
             actionOutput
                 .betweennessCentrality
                 .toList()
-                .sortedByDescending { it.second }
+                .sortedWith(compareByDescending<Pair<Project, Double>> { it.second }.thenBy { it.first })
                 .forEach { (project, betweennessCentrality) ->
                     writer.write(arrayOf(
                         project.path,
@@ -61,5 +61,11 @@ public abstract class CollectModuleBetweennessCentralityTask : DefaultTask() {
                     ))
                 }
         }
+    }
+
+    public companion object {
+        public const val OUTPUT_GRAPH_PATH: String = "reports/modules-betweenness-centrality/modules-graph.csv"
+        public const val OUTPUT_BETWEENNESS_CENTRALITY_PATH: String =
+            "reports/modules-betweenness-centrality/modules-betweenness-centrality.csv"
     }
 }
