@@ -9,7 +9,7 @@ import com.avito.logger.create
 
 public class DeviceSettingsChecker(
     private val context: Context,
-    private val maximumSupportedSdk: Int = Build.VERSION_CODES.TIRAMISU,
+    private val maximumSupportedSdk: Int = Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
     loggerFactory: LoggerFactory,
 ) {
 
