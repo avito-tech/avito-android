@@ -1,5 +1,6 @@
 package com.avito.git
 
+import com.avito.git.executor.InProcessExecutor
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Project
@@ -11,7 +12,7 @@ internal object GitStateFromEnvironment {
         val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
         val originalCommitHash: String? = project.getOptionalStringProperty("originalCommitHash")
         val git = GitImpl(
-            rootDir = project.rootDir
+            executor = InProcessExecutor(project.rootDir),
         )
         return from(
             git,

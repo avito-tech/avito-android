@@ -1,6 +1,7 @@
 package com.avito.git
 
 import com.avito.android.Result
+import com.avito.git.executor.InProcessExecutor
 import java.io.File
 
 public interface Git {
@@ -49,6 +50,6 @@ public interface Git {
 
         public fun create(
             rootDir: File,
-        ): Git = GitImpl(rootDir)
+        ): Git = GitImpl(executor = InProcessExecutor(rootDir))
     }
 }

@@ -61,7 +61,7 @@ class GitLocalStateTest {
     }
 
     private fun gitState(targetBranch: String?): GitState = GitLocalState.from(
-        git = GitImpl(repoDir),
+        git = Git.create(repoDir),
         targetBranch = targetBranch
     )
 }

@@ -38,7 +38,6 @@ public fun Project.gitState(): Property<GitState> =
 
 public fun Project.gitStateProvider(): Provider<GitState> =
     project.providers.of(GitStateValueSource::class.java) {
-        it.parameters.workingDir.set(rootProject.layout.projectDirectory)
         it.parameters.strategy.set(project.getOptionalStringProperty("avito.git.state", default = "local"))
         it.parameters.gitBranch.set(project.getOptionalStringProperty("gitBranch"))
         it.parameters.targetBranch.set(project.getOptionalStringProperty("targetBranch"))

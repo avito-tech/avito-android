@@ -115,7 +115,7 @@ class GitStateFromEnvironmentTest {
     }
 
     private fun gitState(gitBranch: String, targetBranch: String?): GitState = GitStateFromEnvironment.from(
-        git = GitImpl(localRepo),
+        git = Git.create(localRepo),
         gitBranch = gitBranch,
         targetBranch = targetBranch,
         originalCommitHash = null,

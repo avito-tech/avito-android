@@ -1,5 +1,6 @@
 package com.avito.git
 
+import com.avito.git.executor.InProcessExecutor
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Project
 
@@ -7,7 +8,7 @@ internal object GitLocalState {
 
     fun from(project: Project): GitState {
         return from(
-            GitImpl(project.rootDir),
+            GitImpl(executor = InProcessExecutor(project.rootDir)),
             project.getOptionalStringProperty("targetBranch")
         )
     }

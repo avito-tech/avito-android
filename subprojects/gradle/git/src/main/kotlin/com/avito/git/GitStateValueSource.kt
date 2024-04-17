@@ -1,11 +1,10 @@
 package com.avito.git
 
-import org.gradle.api.file.DirectoryProperty
+import com.avito.git.executor.GradleCompatibleExecutor
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.process.ExecOperations
-import java.io.File
 import javax.inject.Inject
 
 /**
@@ -21,23 +20,21 @@ internal abstract class GitStateValueSource : ValueSource<GitState, GitStateValu
         val gitBranch: Property<String>
         val targetBranch: Property<String>
         val originalCommitHash: Property<String>
-        val workingDir: DirectoryProperty
     }
 
-    private val workingDir: File
-        get() = parameters.workingDir.get().asFile
-
     override fun obtain(): GitState {
-        val gradleGit = GradleGit(execOperations, workingDir)
+        val git = GitImpl(executor = GradleCompatibleExecutor(
+            execOperations = execOperations,
+        ))
 
         return when (val strategy = parameters.strategy.get()) {
             "local" -> GitLocalState.from(
-                    git = gradleGit,
+                    git = git,
                     parameters.targetBranch.orNull,
                 )
 
             "env" -> GitStateFromEnvironment.from(
-                git = gradleGit,
+                git = git,
                 gitBranch = parameters.gitBranch.get(),
                 targetBranch = parameters.targetBranch.orNull,
                 originalCommitHash = parameters.originalCommitHash.orNull,
