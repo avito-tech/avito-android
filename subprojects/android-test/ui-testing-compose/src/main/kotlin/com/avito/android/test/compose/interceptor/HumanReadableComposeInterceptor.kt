@@ -41,7 +41,7 @@ private fun SemanticsNodeInteraction.printToString(): String {
 }
 
 /**
- * Копия функции из [androidx.compose.ui.test.printToLog], удалены переносы строк.
+ * Copy of function from [androidx.compose.ui.test.printToLog], line breaks removed.
  */
 @Suppress("LoopWithTooManyJumpStatements")
 private fun StringBuilder.appendConfigInfo(config: SemanticsConfiguration, indent: String = ", ") {

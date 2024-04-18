@@ -9,12 +9,12 @@ import androidx.compose.ui.test.onChildren
 import com.avito.android.test.compose.ComposeInteractionContext
 
 /**
- * PageObject для взаимодействия с UI со скроллом.
+ * PageObject for interacting with UI with scrolling.
  *
- * В тестах Compose работает с UI как с деревом состоящим из [SemanticsNode],
- * никакой информации о реальных Composable функциях не содержит, только свойства [SemanticsPropertyKey].
- * Если у [SemanticsNode] есть свойство [SemanticsActions.ScrollBy], то можно использовать этот PageObject
- * и функцию [childWith] для создания PageObject.
+ * In tests, Compose works with UI as a tree consisting of [SemanticsNode],
+ * does not contain any information about real Composable functions, only the [SemanticsPropertyKey] property.
+ * If [SemanticsNode] has a [SemanticsActions.ScrollBy] property, you can use this PageObject
+ * and the [childWith] function to create a PageObject.
  */
 public abstract class ComposeListElement(
     interactionContext: ComposeInteractionContext

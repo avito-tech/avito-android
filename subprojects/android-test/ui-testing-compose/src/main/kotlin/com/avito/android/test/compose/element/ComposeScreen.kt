@@ -7,7 +7,7 @@ import com.avito.android.test.compose.filter.ComposeFilter
 import com.avito.android.test.page_object.SimpleScreen
 
 /**
- * PageObject для Compose экрана.
+ * PageObject for Compose screen.
  */
 public abstract class ComposeScreen(
     private val semanticsProvider: SemanticsNodeInteractionsProvider
@@ -23,7 +23,7 @@ public abstract class ComposeScreen(
 }
 
 /**
- * Создание PageObject'а экрана.
+ * Creating screen PageObject.
  */
 public inline fun <reified R : ComposeScreen> SemanticsNodeInteractionsProvider.screen(): R {
     return R::class.java.getConstructor(

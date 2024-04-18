@@ -5,18 +5,18 @@ import com.avito.android.test.compose.ComposeInteractionContext
 import com.avito.android.test.compose.filter.ComposeFilter
 
 /**
- * Базовый контракт связывающий все PageObject для Compose,
- * в рамках которого можно создавать вложенные PageObject.
+ * The main contract that all PageObjects for Compose should implement.
+ * Allows you to create nested PageObjects.
  */
 public interface ComposeElement {
     public val interactionContext: ComposeInteractionContext
 }
 
 /**
- * Создаёт PageObject соответсвующий условиям [matcher] и [position].
+ * Creates a PageObject using the [matcher] and [position] criteria.
  *
- * @param position Указывает позицию в коллекции, если поиск по [matcher] выдаёт больше одного UI-элемента.
- * Значение по умолчанию соответствует первому найденому элементу.
+ * @param position Specifies the position in the collection if the [matcher] search returns more than one UI element.
+ * The default value is the first item found.
  * @see androidx.compose.ui.test.SemanticsNodeInteractionsProvider.onAllNodes
  */
 public inline fun <reified T : ComposeElement> ComposeElement.element(

@@ -5,7 +5,7 @@ import com.avito.android.test.compose.action.ComposeTextActions
 import com.avito.android.test.compose.action.ComposeTextActionsImpl
 
 /**
- * PageObject для текстовых полей. Содержит дополнительные действия [ComposeTextActions].
+ * PageObject for text fields. Contains additional actions [ComposeTextActions].
  */
 public open class ComposeTextElement(
     interactionContext: ComposeInteractionContext

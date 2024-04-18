@@ -9,8 +9,8 @@ import com.avito.android.test.compose.waiting.ComposeWaiting
 import com.avito.android.test.page_object.PageObject
 
 /**
- * Основной PageObject для UI-компонетов Compose.
- * По умолчанию предоставляет все доступные действия и проверки над компонентом.
+ * Main PageObject for Compose UI components.
+ * Provides all available component actions and checks by default.
  */
 public open class ComposeViewElement(
     override val interactionContext: ComposeInteractionContext
