@@ -125,11 +125,11 @@ instrumentation {
         memoryLimit = defaultMemoryLimit
     )
 
-    val emulator33 = Device.CloudEmulator(
-        name = "api33",
-        api = 33,
-        model = "sdk_gphone_x86_64",
-        image = emulatorImage(33, "409d2b4839b7"),
+    val emulator34 = Device.CloudEmulator(
+        name = "api34",
+        api = 34,
+        model = "sdk_gphone64_x86_64",
+        image = emulatorImage(34, "10f893892e0b"),
         cpuCoresRequest = defaultCpuRequest,
         cpuCoresLimit = defaultCpuLimit,
         memoryLimit = "4.5Gi"
@@ -139,15 +139,15 @@ instrumentation {
         register("local") {
             filter = "local"
             targets {
-                register("api33") {
-                    deviceName = "API33"
+                register("api34") {
+                    deviceName = "API34"
                     scheduling {
                         quota {
                             retryCount = 1
                             minimumSuccessCount = 1
                         }
                         testsCountBasedReservation {
-                            device = Device.LocalEmulator.device(33, "sdk_gphone_x86_64")
+                            device = Device.LocalEmulator.device(34, "sdk_gphone64_x86_64")
                             maximum = 1
                             testsPerEmulator = 1
                         }
@@ -159,7 +159,7 @@ instrumentation {
         register(
             "PRCheck",
             instrumentationConfiguration(
-                targetDevices = setOf(emulator24, emulator33),
+                targetDevices = setOf(emulator24, emulator34),
             )
         )
     }
