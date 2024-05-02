@@ -17,6 +17,7 @@ public class InstrumentationConfigurationDataFactory(
             targets = getTargets(instrumentationConfigurationCacheableData, targetInstrumentationParams),
             testRunnerExecutionTimeout = instrumentationConfigurationCacheableData.testRunnerExecutionTimeout,
             instrumentationTaskTimeout = instrumentationConfigurationCacheableData.instrumentationTaskTimeout,
+            singleTestRunTimeout = instrumentationConfigurationCacheableData.singleTestRunTimeout,
             filter = instrumentationConfigurationCacheableData.filter,
             reportConfig = reportConfig,
         )

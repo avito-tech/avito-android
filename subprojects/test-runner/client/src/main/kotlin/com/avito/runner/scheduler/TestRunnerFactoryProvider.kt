@@ -70,6 +70,7 @@ internal class TestRunnerFactoryProvider(
             deviceDebug = params.deviceDebug,
             executionParameters = params.executionParameters,
             targets = params.instrumentationConfiguration.targets.associateBy { it.deviceName },
+            testRunTimeout = params.instrumentationConfiguration.singleTestRunTimeout,
         )
     }
 }

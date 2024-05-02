@@ -67,6 +67,7 @@ internal class InstrumentationConfigurator(
             targets = targets,
             testRunnerExecutionTimeout = configuration.testRunnerExecutionTimeout,
             instrumentationTaskTimeout = configuration.instrumentationTaskTimeout,
+            singleTestRunTimeout = configuration.singleTestRunTimeout,
             filter = filters.singleOrNull { it.name == configuration.filter }
                 ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
         )

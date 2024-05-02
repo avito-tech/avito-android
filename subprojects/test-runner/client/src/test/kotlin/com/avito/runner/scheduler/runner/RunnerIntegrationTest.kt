@@ -775,6 +775,7 @@ internal class RunnerIntegrationTest {
             executionParameters = ExecutionParameters.Companion.createStubInstance(),
             targets = targets.associateBy { it.deviceName },
             deviceDebug = deviceDebug,
+            testRunTimeout = Duration.ofMinutes(5L),
         )
         val scheduler = TestExecutionScheduler(
             dispatcher = dispatcher,

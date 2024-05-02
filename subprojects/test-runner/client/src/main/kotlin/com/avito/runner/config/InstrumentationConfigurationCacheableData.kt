@@ -10,5 +10,6 @@ public data class InstrumentationConfigurationCacheableData(
     val targets: List<TargetConfigurationCacheableData>,
     val testRunnerExecutionTimeout: Duration,
     val instrumentationTaskTimeout: Duration,
+    val singleTestRunTimeout: Duration,
     val filter: InstrumentationFilterData,
 ) : Serializable

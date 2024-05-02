@@ -12,6 +12,7 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
     targets: List<TargetConfigurationData> = emptyList(),
     testRunnerExecutionTimeout: Duration = Duration.ofSeconds(100),
     instrumentationTaskTimeout: Duration = Duration.ofSeconds(120),
+    singleTestRunTimeout: Duration = Duration.ofMinutes(5L),
     previousRunExcluded: Set<RunStatus> = emptySet(),
 ): InstrumentationConfigurationData = InstrumentationConfigurationData(
     name = name,
@@ -20,6 +21,7 @@ public fun InstrumentationConfigurationData.Companion.createStubInstance(
     targets = targets,
     testRunnerExecutionTimeout = testRunnerExecutionTimeout,
     instrumentationTaskTimeout = instrumentationTaskTimeout,
+    singleTestRunTimeout = singleTestRunTimeout,
     filter = InstrumentationFilterData(
         name = "stub",
         fromSource = InstrumentationFilterData.FromSource(

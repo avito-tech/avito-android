@@ -34,6 +34,8 @@ public abstract class InstrumentationConfiguration @Inject constructor(
 
     public var instrumentationTaskTimeout: Duration = Duration.ofMinutes(120)
 
+    public var singleTestRunTimeout: Duration = Duration.ofMinutes(5)
+
     public var enableDeviceDebug: Boolean = false
 
     public var filter: String = "default"

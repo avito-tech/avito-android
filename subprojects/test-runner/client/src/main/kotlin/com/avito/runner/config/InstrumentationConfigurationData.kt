@@ -13,6 +13,7 @@ public data class InstrumentationConfigurationData(
     val targets: List<TargetConfigurationData>,
     val testRunnerExecutionTimeout: Duration,
     val instrumentationTaskTimeout: Duration,
+    val singleTestRunTimeout: Duration,
     val filter: InstrumentationFilterData,
     val reportConfig: RunnerReportConfig,
 ) : Serializable {

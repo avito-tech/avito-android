@@ -5,6 +5,7 @@ import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import java.io.File
+import java.time.Duration
 
 internal class TestRunRequestFactory(
     private val application: File,
@@ -12,6 +13,7 @@ internal class TestRunRequestFactory(
     private val deviceDebug: Boolean,
     private val executionParameters: ExecutionParameters,
     private val targets: Map<DeviceName, TargetConfigurationData>,
+    private val testRunTimeout: Duration,
 ) {
 
     fun create(test: TestCase): TestRunRequest {
@@ -40,11 +42,9 @@ internal class TestRunRequestFactory(
             testPackage = executionParameters.applicationTestPackageName,
             testArtifactsDirectoryPackage = executionParameters.testArtifactsDirectoryPackageName,
             testRunner = executionParameters.testRunner,
-            timeoutMinutes = TEST_TIMEOUT_MINUTES,
+            timeoutMinutes = testRunTimeout.toMinutes(),
             instrumentationParameters = target.instrumentationParams,
             enableDeviceDebug = deviceDebug
         )
     }
 }
-
-private const val TEST_TIMEOUT_MINUTES = 5L
