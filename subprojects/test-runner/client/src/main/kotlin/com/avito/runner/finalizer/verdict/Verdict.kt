@@ -21,6 +21,7 @@ internal sealed class Verdict {
     data class Failure(
         override val testResults: Collection<AndroidTest>,
         val notReportedTests: Collection<AndroidTest.Lost>,
-        val unsuppressedFailedTests: Collection<TestStaticData>
+        val unsuppressedFailedTests: Collection<TestStaticData>,
+        val testRunnerThrowable: Throwable? = null,
     ) : Verdict()
 }

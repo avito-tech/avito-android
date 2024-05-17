@@ -15,7 +15,10 @@ internal class FinalizerImpl(
     private val finalizerFileDumper: FinalizerFileDumper,
 ) : Finalizer {
 
-    override fun finalize(testSchedulerResults: TestRunnerResults): TestSchedulerResult {
+    override fun finalize(
+        testSchedulerResults: TestRunnerResults,
+        testRunnerThrowable: Throwable?,
+    ): TestSchedulerResult {
 
         val initialTestSuite: Set<TestStaticData> = testSchedulerResults.testsToRun.toSet()
 
@@ -26,7 +29,8 @@ internal class FinalizerImpl(
 
         val verdict: Verdict = verdictDeterminer.determine(
             initialTestSuite = initialTestSuite,
-            testResults = testSchedulerResults.testResults
+            testResults = testSchedulerResults.testResults,
+            testRunnerThrowable = testRunnerThrowable
         )
 
         actions.forEach { action -> action.action(verdict = verdict) }

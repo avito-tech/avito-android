@@ -25,7 +25,8 @@ internal class VerdictDeterminerImplTest {
 
         val verdict = verdictDeterminer.determine(
             initialTestSuite = emptySet(),
-            testResults = emptyList()
+            testResults = emptyList(),
+            testRunnerThrowable = null
         )
 
         assertThat(verdict).isInstanceOf<Verdict.Success.OK>()
@@ -52,7 +53,8 @@ internal class VerdictDeterminerImplTest {
             ),
             testResults = listOf(
                 createTestExecution(executedTest)
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat<Verdict.Failure>(verdict) {
@@ -89,7 +91,8 @@ internal class VerdictDeterminerImplTest {
                     )
                 ),
                 extraTest
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat(verdict).isInstanceOf<Verdict.Success.OK>()
@@ -108,7 +111,8 @@ internal class VerdictDeterminerImplTest {
             initialTestSuite = setOf(test),
             testResults = listOf(
                 createSuccessTestExecution(testStaticData = test)
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat(verdict).isInstanceOf<Verdict.Success.OK>()
@@ -130,7 +134,8 @@ internal class VerdictDeterminerImplTest {
             initialTestSuite = setOf(test),
             testResults = listOf(
                 createFailedTestExecution(testStaticData = test)
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat<Verdict.Failure>(verdict) {
@@ -154,7 +159,8 @@ internal class VerdictDeterminerImplTest {
             initialTestSuite = setOf(test),
             testResults = listOf(
                 createFailedTestExecution(testStaticData = test)
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat(verdict).isInstanceOf<Verdict.Success.Suppressed>()
@@ -177,7 +183,8 @@ internal class VerdictDeterminerImplTest {
             initialTestSuite = setOf(test),
             testResults = listOf(
                 createFailedTestExecution(testStaticData = test)
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat(verdict).isInstanceOf<Verdict.Success.Suppressed>()
@@ -200,7 +207,8 @@ internal class VerdictDeterminerImplTest {
             initialTestSuite = setOf(test),
             testResults = listOf(
                 createFailedTestExecution(testStaticData = test)
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat<Verdict.Failure>(verdict) {
@@ -222,7 +230,8 @@ internal class VerdictDeterminerImplTest {
             initialTestSuite = setOf(test),
             testResults = listOf(
                 createLostTestExecution(testStaticData = test)
-            )
+            ),
+            testRunnerThrowable = null
         )
 
         assertThat<Verdict.Failure>(verdict) {
@@ -255,7 +264,8 @@ internal class VerdictDeterminerImplTest {
                 lostTest,
                 failedTest
             ),
-            testResults = results
+            testResults = results,
+            testRunnerThrowable = null
         )
 
         assertThat<Verdict.Success.Suppressed>(verdict) {
@@ -294,7 +304,8 @@ internal class VerdictDeterminerImplTest {
                 lostTest,
                 failedTest
             ),
-            testResults = results
+            testResults = results,
+            testRunnerThrowable = null
         )
 
         assertThat<Verdict.Success.Suppressed>(verdict) {
@@ -327,13 +338,27 @@ internal class VerdictDeterminerImplTest {
                 lostTest,
                 failedTest
             ),
-            testResults = results
+            testResults = results,
+            testRunnerThrowable = null
         )
 
         assertThat<Verdict.Failure>(verdict) {
             assertThat(unsuppressedFailedTests).containsExactlyElementsIn(results)
             assertThat(notReportedTests).isEmpty()
         }
+    }
+
+    @Test
+    fun `verdict - failure - empty test suite`() {
+        val verdictDeterminer = createVerdictDeterminer()
+
+        val verdict = verdictDeterminer.determine(
+            initialTestSuite = emptySet(),
+            testResults = emptyList(),
+            testRunnerThrowable = RuntimeException("test")
+        )
+
+        assertThat(verdict).isInstanceOf<Verdict.Failure>()
     }
 
     private fun createLostTestExecution(

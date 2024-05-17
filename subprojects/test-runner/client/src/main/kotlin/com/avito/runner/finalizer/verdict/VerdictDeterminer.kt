@@ -7,6 +7,7 @@ internal interface VerdictDeterminer {
 
     fun determine(
         initialTestSuite: Set<TestStaticData>,
-        testResults: Collection<AndroidTest>
+        testResults: Collection<AndroidTest>,
+        testRunnerThrowable: Throwable?,
     ): Verdict
 }

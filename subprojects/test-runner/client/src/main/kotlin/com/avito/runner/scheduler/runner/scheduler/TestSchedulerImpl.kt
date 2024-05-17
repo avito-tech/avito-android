@@ -87,9 +87,12 @@ internal class TestSchedulerImpl(
         writeTestSuite(outputDir, testSuite)
         val testCases = testsToRun.map { test -> TestCase(test.name, test.device) }
 
+        var testRunnerThrowable: Throwable? = null
         if (testsToRun.isNotEmpty()) {
             runBlocking {
                 testRunnerFactory.createTestRunner(testsToRun).runTests(testCases)
+            }.onFailure {
+                testRunnerThrowable = it
             }
         }
 
@@ -98,7 +101,7 @@ internal class TestSchedulerImpl(
             testResults = report.getTestResults()
         )
 
-        return finalizer.finalize(testRunnerResults)
+        return finalizer.finalize(testRunnerResults, testRunnerThrowable)
     }
 
     private fun writeParsedTests(outputDir: File, parsedTests: Result<List<TestInApk>>) {

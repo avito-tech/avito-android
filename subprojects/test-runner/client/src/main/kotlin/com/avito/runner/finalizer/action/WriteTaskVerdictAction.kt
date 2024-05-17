@@ -41,6 +41,10 @@ internal class WriteTaskVerdictAction(
                 appendLine("Test suite failed. Problems:")
                 appendLine()
 
+                if (testRunnerThrowable != null) {
+                    appendLine(" - ${testRunnerThrowable.message} ")
+                }
+
                 if (notReportedTests.isNotEmpty()) {
                     appendLine(" - Not reported tests: ${notReportedTests.size} ")
                 }

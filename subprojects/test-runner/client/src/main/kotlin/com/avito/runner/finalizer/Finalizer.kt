@@ -5,5 +5,8 @@ import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
 
 internal interface Finalizer {
 
-    fun finalize(testSchedulerResults: TestRunnerResults): TestSchedulerResult
+    fun finalize(
+        testSchedulerResults: TestRunnerResults,
+        testRunnerThrowable: Throwable?,
+    ): TestSchedulerResult
 }

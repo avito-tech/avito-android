@@ -28,7 +28,7 @@ internal class FinalizerImplTest {
             testResults = listOf(AndroidTest.Completed.createStubInstance(testStaticData = test))
         )
 
-        val result = finalizerImpl.finalize(testSchedulerResult)
+        val result = finalizerImpl.finalize(testSchedulerResult, null)
 
         assertThat(result).isInstanceOf<TestSchedulerResult.Ok>()
     }
@@ -46,7 +46,7 @@ internal class FinalizerImplTest {
             testResults = emptyList()
         )
 
-        val result = finalizerImpl.finalize(testSchedulerResult)
+        val result = finalizerImpl.finalize(testSchedulerResult, null)
 
         assertThat(result).isInstanceOf<TestSchedulerResult.Failure>()
         assertThat(verdictFile.readText()).contains("${test.name} ${test.device} NOT REPORTED")
@@ -72,10 +72,29 @@ internal class FinalizerImplTest {
             )
         )
 
-        val result = finalizerImpl.finalize(testSchedulerResult)
+        val result = finalizerImpl.finalize(testSchedulerResult, null)
 
         assertThat(result).isInstanceOf<TestSchedulerResult.Failure>()
         assertThat(verdictFile.readText()).contains("${test.name} ${test.device} FAILED")
+    }
+
+    @Test
+    fun `finalized - failure - test runner error`() {
+        val finalizerImpl = FinalizerImpl.createStubInstance()
+
+        val test = TestStaticDataPackage.createStubInstance()
+
+        val testSchedulerResult = TestRunnerResults(
+            testsToRun = listOf(test),
+            testResults = listOf(AndroidTest.Completed.createStubInstance(testStaticData = test))
+        )
+
+        val result = finalizerImpl.finalize(
+            testSchedulerResults = testSchedulerResult,
+            testRunnerThrowable = RuntimeException("test")
+        )
+
+        assertThat(result).isInstanceOf<TestSchedulerResult.Failure>()
     }
 
     private fun createFinalizer(verdictFile: File): FinalizerImpl {
