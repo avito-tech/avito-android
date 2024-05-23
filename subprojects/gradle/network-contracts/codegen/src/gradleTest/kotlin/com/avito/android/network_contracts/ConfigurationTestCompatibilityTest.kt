@@ -54,7 +54,7 @@ class ConfigurationTestCompatibilityTest {
 
     @Test
     fun `configuration with applied plugin and compile task - ok`(@TempDir projectDir: File) {
-        checkConfigurationCacheCompatibility(projectDir, "compileKotlin", "-PnetworkContracts.generated.compile=true")
+        checkConfigurationCacheCompatibility(projectDir, "compileKotlin")
     }
 
     private fun checkConfigurationCacheCompatibility(

@@ -8,7 +8,6 @@ import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.collect.CollectApiSchemesTask
 import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
 import com.avito.android.network_contracts.scheme.imports.ApiSchemesImportTask
-import com.avito.android.network_contracts.shared.findPackageDirectory
 import com.avito.android.network_contracts.shared.networkContractsExtension
 import com.avito.android.network_contracts.shared.networkContractsRootExtension
 import com.avito.android.network_contracts.shared.reportFile
@@ -30,14 +29,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 public class NetworkContractsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        if (target.isRoot() && !target.plugins.hasPlugin(NetworkContractsRootPlugin::class.java)) {
-            target.plugins.apply(NetworkContractsRootPlugin::class.java)
-        } else {
-            configureModulePlugin(target)
+        check(!target.isRoot()) {
+            "NetworkContractsPlugin should not be applied to root"
         }
-    }
 
-    private fun configureModulePlugin(target: Project) {
         createNetworkContractsExtension(target)
 
         registerCodegenTask(CodegenTask.NAME, target)
@@ -49,34 +44,30 @@ public class NetworkContractsPlugin : Plugin<Project> {
     }
 
     private fun createNetworkContractsExtension(project: Project) {
-        project.extensions.create<NetworkContractsModuleExtension>(NetworkContractsModuleExtension.NAME).apply {
-            generatedDirectory.convention(project.findPackageDirectory(packageName))
-            apiSchemesDirectory.convention(project.findPackageDirectory(packageName))
-        }
+        project.extensions.create<NetworkContractsModuleExtension>(NetworkContractsModuleExtension.NAME)
     }
 
     private fun registerCodegenTask(
         name: String,
         target: Project,
         forceValidation: Boolean = false,
-        configuraion: (CodegenTask) -> Unit = {}
+        configuration: (CodegenTask) -> Unit = {}
     ): TaskProvider<CodegenTask> {
         val networkContractsExtension = target.networkContractsExtension
         val rootExtension = target.networkContractsRootExtension
-        val setupMtlsTask = target.rootProject.tasks
-            .named(
-                SetupTmpMtlsFilesTask.NAME,
-                SetupTmpMtlsFilesTask::class.java
-            )
+        val setupMtlsTask = target.rootProject.tasks.named(
+            SetupTmpMtlsFilesTask.NAME,
+            SetupTmpMtlsFilesTask::class.java
+        )
 
-        val makeFilesExecutableTask = target.rootProject.tasks
-            .named(
-                MakeFilesExecutableTask.NAME,
-                MakeFilesExecutableTask::class.java
-            )
+        val makeFilesExecutableTask = target.rootProject.tasks.named(
+            MakeFilesExecutableTask.NAME,
+            MakeFilesExecutableTask::class.java
+        )
 
         return target.tasks.register(name, CodegenTask::class.java) {
             it.packageName.set(networkContractsExtension.packageName)
+            it.apiClassName.set(networkContractsExtension.apiClassName)
             it.moduleName.set(it.project.path)
             it.kind.set(networkContractsExtension.kind)
             it.codegenProjectName.set(networkContractsExtension.projectName)
@@ -97,7 +88,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(it))
 
             it.onlyIf { (it as? CodegenTask)?.schemesDir?.get()?.asFileTree?.isEmpty == false }
-            configuraion.invoke(it)
+            configuration.invoke(it)
         }
     }
 

@@ -15,7 +15,7 @@ internal class CodegenTest {
     fun `compile task - applies subtasks in the correct order`(@TempDir projectDir: File) {
         val module = defaultModule()
         NetworkCodegenProjectGenerator.generate(projectDir, modules = listOf(module))
-        runTask(projectDir, "compileKotlin", dryRun = true, addGeneratedSourcesToCompile = true)
+        runTask(projectDir, "compileKotlin", dryRun = true)
             .assertThat()
             .buildSuccessful()
             .apply {
@@ -62,14 +62,12 @@ internal class CodegenTest {
         tempDir: File,
         name: String,
         dryRun: Boolean = false,
-        addGeneratedSourcesToCompile: Boolean = false,
     ): TestResult {
         return gradlew(
             tempDir,
             name,
             "-Pavito.ownership.mtlsCrt=\"\${OWNERSHIP_MTLS_CRT_CI}\"",
             "-Pavito.ownership.mtlsKey=\"\${OWNERSHIP_MTLS_CRT_KEY_CI}\"\n",
-            "-PnetworkContracts.generated.compile=$addGeneratedSourcesToCompile",
             useTestFixturesClasspath = true,
             dryRun = dryRun
         )

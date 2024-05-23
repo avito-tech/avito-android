@@ -41,6 +41,10 @@ internal abstract class CodegenTask : DefaultTask() {
     abstract val packageName: Property<String>
 
     @get:Input
+    @get:Optional
+    abstract val apiClassName: Property<String>
+
+    @get:Input
     abstract val moduleName: Property<String>
 
     @get:Input
@@ -88,6 +92,7 @@ internal abstract class CodegenTask : DefaultTask() {
 
         val config = CodegenConfig(
             packageName = packageName.get(),
+            apiClassName = apiClassName.orNull.orEmpty(),
             schemesDirectoryRelativePath = schemesDir.get().asFile.toRelativeString(moduleDirectory.get().asFile),
             buildDirectoryRelativePath = outputDirectory.get().asFile.toRelativeString(moduleDirectory.get().asFile),
             moduleName = moduleName.get(),

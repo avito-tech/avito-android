@@ -13,6 +13,7 @@ internal data class CodegenConfig(
     val name: String,
     val kind: String,
     val packageName: String,
+    val apiClassName: String,
     val moduleName: String,
     val skipValidation: Boolean,
     val crtEnv: Pair<String, Path?>,
@@ -26,6 +27,7 @@ internal data class CodegenConfig(
 @Serializable
 private class CodegenConfigAdvanced(
     @SerialName("package") val packageName: String,
+    @SerialName("api_class_name") val apiClassName: String,
     @SerialName("schemes_dir") val schemesDirectoryPath: String,
     @SerialName("codegen_files_dir") val buildDirectoryPath: String,
     @SerialName("module_name") val moduleName: String,
@@ -56,6 +58,7 @@ private fun CodegenConfig.generateAdvancedConfigJson(): String {
     return Json.encodeToString<CodegenConfigAdvanced>(
         CodegenConfigAdvanced(
             packageName = this.packageName,
+            apiClassName = this.apiClassName,
             schemesDirectoryPath = this.schemesDirectoryRelativePath,
             buildDirectoryPath = this.buildDirectoryRelativePath,
             moduleName = this.moduleName,

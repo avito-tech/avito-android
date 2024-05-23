@@ -23,8 +23,8 @@ import org.gradle.kotlin.dsl.register
 public class NetworkContractsRootPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        if (!target.isRoot()) {
-            error("Plugin must be applied to root project")
+        check(target.isRoot()) {
+            "NetworkContractsRootPlugin must be applied to root project"
         }
 
         target.extensions.create<NetworkContractsRootExtension>(NetworkContractsRootExtension.NAME)
