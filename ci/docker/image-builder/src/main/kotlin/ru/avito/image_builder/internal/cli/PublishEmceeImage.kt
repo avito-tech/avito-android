@@ -1,6 +1,7 @@
 package ru.avito.image_builder.internal.cli
 
 import ru.avito.image_builder.internal.command.ImageTagger
+import ru.avito.image_builder.internal.command.NoOpRegistryLogin
 import ru.avito.image_builder.internal.command.SimpleImageBuilder
 import ru.avito.image_builder.internal.docker.CliDocker
 import java.io.File
@@ -17,7 +18,7 @@ internal class PublishEmceeImage(
             docker = docker,
             dockerfilePath = dockerfilePath,
             buildDir = File(buildDir),
-            login = dockerHubLogin(docker),
+            login = NoOpRegistryLogin("Disabled because of the DockerHub ban"),
             tagger = ImageTagger(docker, imageVersionTag),
             registry = registry,
             imageRegistryTagName = imageRegistryTagName,

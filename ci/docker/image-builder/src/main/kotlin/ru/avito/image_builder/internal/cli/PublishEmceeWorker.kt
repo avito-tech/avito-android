@@ -36,7 +36,6 @@ internal class PublishEmceeWorker(
             imageRegistryTagName = imageRegistryTagName,
             imageName = imageName,
             artifactoryUrl = artifactoryUrl,
-            login = dockerHubLogin(docker),
             tagger = ImageTagger(docker, imageVersionTag),
             emulatorPreparer = EmulatorPreparer(docker, EmulatorTester(docker)),
             emulatorLocale = emulatorLocale
