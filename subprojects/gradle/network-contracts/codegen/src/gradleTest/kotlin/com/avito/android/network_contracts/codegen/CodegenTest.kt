@@ -20,7 +20,6 @@ internal class CodegenTest {
             .buildSuccessful()
             .apply {
                 tasksShouldBeTriggered(
-                    ":${MakeFilesExecutableTask.NAME}",
                     ":${module.name}:${CodegenTask.NAME}",
                 ).inOrder()
                 tasksShouldNotBeTriggered(
@@ -31,13 +30,14 @@ internal class CodegenTest {
 
     @Test
     fun `codegen task - applies subtasks in the correct order`(@TempDir projectDir: File) {
-        NetworkCodegenProjectGenerator.generate(projectDir)
+        val module = defaultModule()
+        NetworkCodegenProjectGenerator.generate(projectDir, modules = listOf(module))
 
         runTask(projectDir, CodegenTask.NAME, dryRun = true)
             .assertThat()
             .buildSuccessful()
             .apply {
-                tasksShouldBeTriggered(":${MakeFilesExecutableTask.NAME}").inOrder()
+                tasksShouldBeTriggered(":${module.name}:${CodegenTask.NAME}").inOrder()
                 tasksShouldNotBeTriggered(":${SetupTmpMtlsFilesTask.NAME}")
             }
     }

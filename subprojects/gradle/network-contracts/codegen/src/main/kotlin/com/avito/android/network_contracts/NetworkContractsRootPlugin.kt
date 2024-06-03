@@ -1,7 +1,7 @@
 package com.avito.android.network_contracts
 
-import com.avito.android.network_contracts.codegen.MakeFilesExecutableTask
 import com.avito.android.network_contracts.codegen.SetupTmpMtlsFilesTask
+import com.avito.android.network_contracts.configuration.codegenConfiguration
 import com.avito.android.network_contracts.extension.NetworkContractsRootExtension
 import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
@@ -15,8 +15,6 @@ import com.avito.kotlin.dsl.typedNamed
 import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
@@ -29,28 +27,11 @@ public class NetworkContractsRootPlugin : Plugin<Project> {
 
         target.extensions.create<NetworkContractsRootExtension>(NetworkContractsRootExtension.NAME)
 
-        createCodegenConfigurations(target)
-        configureMakeCodegenFileExecutableTask(target)
+        target.codegenConfiguration.setArtifactsExecutable()
+
         configureSetupMtlsVariablesTask(target)
         configureVerificationRootTask(target)
         configureContractFixationTask(target)
-    }
-
-    private fun createCodegenConfigurations(
-        target: Project,
-    ): Configuration {
-        return target.configurations.create("codegen") {
-            it.isTransitive = false
-        }
-    }
-
-    private fun configureMakeCodegenFileExecutableTask(
-        target: Project,
-    ): TaskProvider<MakeFilesExecutableTask> {
-        val codegenConfiguration = target.rootProject.configurations.getByName("codegen")
-        return target.tasks.register<MakeFilesExecutableTask>(MakeFilesExecutableTask.NAME) {
-            this.files.setFrom(codegenConfiguration.files)
-        }
     }
 
     private fun configureSetupMtlsVariablesTask(

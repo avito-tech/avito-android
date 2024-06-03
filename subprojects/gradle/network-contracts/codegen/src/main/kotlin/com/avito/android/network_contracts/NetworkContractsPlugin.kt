@@ -1,8 +1,8 @@
 package com.avito.android.network_contracts
 
 import com.avito.android.network_contracts.codegen.CodegenTask
-import com.avito.android.network_contracts.codegen.MakeFilesExecutableTask
 import com.avito.android.network_contracts.codegen.SetupTmpMtlsFilesTask
+import com.avito.android.network_contracts.configuration.codegenConfiguration
 import com.avito.android.network_contracts.extension.NetworkContractsModuleExtension
 import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.collect.CollectApiSchemesTask
@@ -35,6 +35,8 @@ public class NetworkContractsPlugin : Plugin<Project> {
 
         createNetworkContractsExtension(target)
 
+        target.codegenConfiguration.setArtifactsExecutable()
+
         registerCodegenTask(CodegenTask.NAME, target)
 
         configureAddEndpointTask(target)
@@ -51,18 +53,13 @@ public class NetworkContractsPlugin : Plugin<Project> {
         name: String,
         target: Project,
         forceValidation: Boolean = false,
-        configuration: (CodegenTask) -> Unit = {}
+        action: (CodegenTask) -> Unit = {}
     ): TaskProvider<CodegenTask> {
         val networkContractsExtension = target.networkContractsExtension
         val rootExtension = target.networkContractsRootExtension
         val setupMtlsTask = target.rootProject.tasks.named(
             SetupTmpMtlsFilesTask.NAME,
             SetupTmpMtlsFilesTask::class.java
-        )
-
-        val makeFilesExecutableTask = target.rootProject.tasks.named(
-            MakeFilesExecutableTask.NAME,
-            MakeFilesExecutableTask::class.java
         )
 
         return target.tasks.register(name, CodegenTask::class.java) {
@@ -74,7 +71,11 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.skipValidation.set(networkContractsExtension.skipValidation.map { forceValidation || it })
             it.moduleDirectory.set(it.project.layout.projectDirectory)
             it.outputDirectory.set(networkContractsExtension.generatedDirectory)
-            it.codegenExecutableFiles.setFrom(makeFilesExecutableTask.map { it.files })
+
+            val codegenConfiguration = target.codegenConfiguration.takeIf { !it.isEmpty }
+                ?: target.rootProject.codegenConfiguration
+            it.codegenExecutableFiles.setFrom(codegenConfiguration.files)
+
             it.schemesDir.set(networkContractsExtension.apiSchemesDirectory)
 
             it.crtEnvName.set(rootExtension.crtEnvName)
@@ -88,7 +89,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(it))
 
             it.onlyIf { (it as? CodegenTask)?.schemesDir?.get()?.asFileTree?.isEmpty == false }
-            configuration.invoke(it)
+            action.invoke(it)
         }
     }
 

@@ -29,11 +29,6 @@ class ConfigurationTestCompatibilityTest {
     }
 
     @Test
-    fun `configuration with applied plugin and make codegen files executable task - ok`(@TempDir projectDir: File) {
-        checkConfigurationCacheCompatibility(projectDir, "makeFilesExecutable")
-    }
-
-    @Test
     fun `configuration with applied plugin and collect api schemes task - ok`(@TempDir projectDir: File) {
         checkConfigurationCacheCompatibility(projectDir, CollectApiSchemesTask.NAME)
     }

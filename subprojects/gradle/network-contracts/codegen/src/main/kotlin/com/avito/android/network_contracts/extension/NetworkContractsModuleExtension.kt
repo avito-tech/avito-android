@@ -17,6 +17,8 @@ public abstract class NetworkContractsModuleExtension(
 
     public abstract val apiClassName: Property<String>
 
+    public abstract val version: Property<String>
+
     public val skipValidation: Property<Boolean> = objects.property<Boolean>()
         .convention(true)
 
