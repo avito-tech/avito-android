@@ -61,7 +61,7 @@ public abstract class ValidateNetworkContractsRootTask : DefaultTask(), BuildVer
                 }
 
                 appendLine()
-                appendLine("You can locally run task to check corrupted files:")
+                appendLine("You can locally run validation task:")
                 appendLine("`./gradlew $NAME`")
             }
         }

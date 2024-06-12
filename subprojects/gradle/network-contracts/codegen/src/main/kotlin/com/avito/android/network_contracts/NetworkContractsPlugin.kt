@@ -16,6 +16,7 @@ import com.avito.android.network_contracts.validation.ValidateNetworkContractsSc
 import com.avito.capitalize
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
+import com.avito.kotlin.dsl.toOptional
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerPlugin
@@ -68,7 +69,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.moduleName.set(it.project.path)
             it.kind.set(networkContractsExtension.kind)
             it.codegenProjectName.set(networkContractsExtension.projectName)
-            it.skipValidation.set(networkContractsExtension.skipValidation.map { forceValidation || it })
+            it.skipValidation.set(networkContractsExtension.skipValidation.map { !forceValidation && it })
             it.moduleDirectory.set(it.project.layout.projectDirectory)
             it.outputDirectory.set(networkContractsExtension.generatedDirectory)
 
@@ -135,6 +136,11 @@ public class NetworkContractsPlugin : Plugin<Project> {
             .register<ValidateNetworkContractsSchemesTask>(ValidateNetworkContractsSchemesTask.NAME) {
                 this.projectPath.set(project.path)
                 this.schemes.from(codegenTasks.map { it.schemesDir })
+                this.codegenTomlFilePath.set(
+                    project.objects.fileProperty()
+                        .convention(project.layout.projectDirectory.file(project.provider { "codegen.toml" }))
+                        .toOptional()
+                )
 
                 resultFile.set(
                     project.reportFile(
