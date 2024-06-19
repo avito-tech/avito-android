@@ -90,10 +90,11 @@ kubernetesDsl = "com.github.fkorotkov:k8s-kotlin-dsl:3.1.1"
 ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"
 uiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 testOrchestrator = "androidx.test:orchestrator:1.4.2"
-androidXTestCore = "androidx.test:core:1.5.0"
+androidXTestCore = "androidx.test:core:1.6.0"
 androidXTestRunner = "androidx.test:runner:1.5.2"
 androidXTestRules = "androidx.test:rules:1.5.0"
 androidXTestExtJunit = "androidx.test.ext:junit:1.1.5"
+androidXtracing = "androidx.tracing:tracing:1.1.0"
 espressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 espressoWeb = { module = "androidx.test.espresso:espresso-web", version.ref = "espresso" }
 espressoIntents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso" }

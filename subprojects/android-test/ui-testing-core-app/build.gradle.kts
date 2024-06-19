@@ -38,6 +38,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidXtracing) {
+        because("androidx libs bring 1.0.0 instead of 1.1.0")
+        because("https://github.com/android/android-test/issues/1755")
+    }
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.playServicesBase)
@@ -70,6 +74,7 @@ instrumentation {
             planSlug = "UiTestingCoreApp",
             jobSlug = "FunctionalTests"
         )
+
         else -> throw IllegalArgumentException("Invalid value for $reportKey property")
     }
 

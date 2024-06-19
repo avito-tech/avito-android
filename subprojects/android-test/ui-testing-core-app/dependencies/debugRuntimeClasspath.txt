@@ -31,7 +31,7 @@ androidx.print:print:1.0.0
 androidx.recyclerview:recyclerview:1.1.0
 androidx.savedstate:savedstate:1.1.0
 androidx.swiperefreshlayout:swiperefreshlayout:1.1.0
-androidx.tracing:tracing:1.0.0
+androidx.tracing:tracing:1.1.0
 androidx.transition:transition:1.2.0
 androidx.vectordrawable:vectordrawable-animated:1.1.0
 androidx.vectordrawable:vectordrawable:1.1.0
