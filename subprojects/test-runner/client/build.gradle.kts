@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":subprojects:test-runner:test-annotations"))
     implementation(project(":subprojects:test-runner:test-report-artifacts"))
     implementation(project(":subprojects:test-runner:report-viewer-test-static-data-parser"))
+    implementation(project(":subprojects:test-runner:inhouse-avito-report"))
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
     implementation(libs.commonsText) {

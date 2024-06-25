@@ -1,4 +1,4 @@
-package com.avito.runner.scheduler.report
+package com.avito.report.inhouse
 
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
@@ -24,9 +24,8 @@ import com.avito.time.TimeProvider
  *
  * todo new instance for every new reportCoordinates
  * todo extract batching logic
- * todo move to separate module
  */
-internal class AvitoReport(
+public class AvitoReport(
     private val reportsApi: ReportsApi,
     reportViewerUrl: String,
     loggerFactory: LoggerFactory,

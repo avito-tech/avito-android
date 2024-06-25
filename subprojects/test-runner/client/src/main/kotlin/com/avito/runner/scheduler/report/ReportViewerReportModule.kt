@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler.report
 
 import com.avito.report.Report
+import com.avito.report.inhouse.AvitoReport
 import com.avito.report.inmemory.InMemoryReportFactory
 import com.avito.reportviewer.ReportsApiFactory
 import com.avito.runner.config.RunnerReportConfig
