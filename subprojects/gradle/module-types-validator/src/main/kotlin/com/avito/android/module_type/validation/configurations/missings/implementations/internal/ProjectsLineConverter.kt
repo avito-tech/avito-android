@@ -1,36 +1,26 @@
 package com.avito.android.module_type.validation.configurations.missings.implementations.internal
 
 import com.avito.android.module_type.FunctionalType
-import com.avito.capitalize
 
 internal class ProjectsLineConverter {
 
     private val projectRegex = Regex("^(.*)project (.*)$")
-    private val functionalTypeRegex = FunctionalType.values().asRegex()
+    private val functionalTypeRegexes = FunctionalType.entries.associateWith { it.asRegex() }
 
     fun convert(line: String): ProjectConvertedData? {
-        val matcher = projectRegex.find(line)
-        if (matcher == null || matcher.groups.size <= 1) {
-            return null
-        }
-        val groups = matcher.groupValues
+        val (prefix, modulePath) = projectRegex.find(line)?.destructured ?: return null
 
-        val level = groups[1].split(REPORT_DEPENDENCY_LEVEL_SEPARATOR_REGEX).size
-        val path = groups[2]
-        val logicalModule = path.substringBeforeLast(":")
+        val logicalModule = modulePath.substringBeforeLast(":")
+        val moduleName = modulePath.substringAfterLast(":")
 
-        val functionalModuleGroups = functionalTypeRegex.find(path.substringAfterLast(":"))
-            ?.groupValues
-            .orEmpty()
+        val functionalType = functionalTypeRegexes.filterValues { it.matches(moduleName) }.keys.firstOrNull()
 
-        val functionalType = functionalModuleGroups.getOrNull(1)
-            // In case when logical module can be like `impl-something`
-            ?.substringBefore("-")
+        val level = prefix.split(REPORT_DEPENDENCY_LEVEL_SEPARATOR_REGEX).size
 
         return ProjectConvertedData(
-            modulePath = path,
+            modulePath = modulePath,
             logicalModule = logicalModule,
-            functionalType = functionalType?.let { FunctionalType.valueOf(functionalType.capitalize()) },
+            functionalType = functionalType,
             level = level
         )
     }
