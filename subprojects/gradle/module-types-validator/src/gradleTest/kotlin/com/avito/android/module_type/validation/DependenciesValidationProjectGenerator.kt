@@ -197,7 +197,7 @@ internal object DependenciesValidationProjectGenerator {
                 module {
                     type = new DefaultModuleType(
                         new StubApplication(), 
-                        FunctionalType.${FunctionalType.Application.name}
+                        FunctionalType.${FunctionalType.DemoApp.name}
                     )
                     validation { 
                         missingImplementations {

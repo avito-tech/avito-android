@@ -66,12 +66,10 @@ internal class ValidateProjectDependenciesTest {
         runCheck(projectDir, expectFailure = true)
             .assertThat()
             .buildFailed()
-            .outputContains("Please, add impl/fake/debug dependencies to the build file")
+            .outputContains("Please add the following dependencies")
             .outputContains(":lib-b:demo -> :lib-b:impl -> :lib-b:public -> :lib-a:public")
             .outputContains(":lib-c:demo -> :lib-c:impl -> :lib-b:public -> :lib-a:public")
-            .outputContains("implementation(projects.libA.impl)")
-            .outputContains("implementation(projects.libA.fake)")
-            .outputContains("implementation(projects.libA.debug)")
+            .outputContains("project(\":lib-a:fake\")")
     }
 
     @Test

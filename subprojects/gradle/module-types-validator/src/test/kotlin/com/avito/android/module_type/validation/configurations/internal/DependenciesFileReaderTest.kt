@@ -5,31 +5,26 @@ import com.avito.android.module_type.validation.configurations.missings.implemen
 import com.avito.android.module_type.validation.configurations.missings.implementations.internal.ProjectDependencyInfo
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import java.io.File
 
 class DependenciesFileReaderTest {
 
     @Test
-    fun `read file - return correct dependencies`(@TempDir reportDirectory: File) {
-        val inputFile = prepareReportFile(reportDirectory)
-
-        val dependenciesFileReader = DependenciesFileReader(inputFile, "lib-c:demo")
+    fun `return correct dependencies`() {
+        val dependenciesFileReader = DependenciesFileReader(INPUT_TEXT, "lib-c:demo")
         val dependencies = dependenciesFileReader.readProjectDependencies()
         assertThat(dependencies).hasSize(8)
         assertThat(dependencies).contains(
             ProjectDependencyInfo(
                 modulePath = ":lib-a:public",
                 fullPath = "lib-c:demo -> :lib-b:fake -> :lib-a:public",
-                level = 2,
                 logicalModule = ":lib-a",
                 functionalType = FunctionalType.Public
             )
         )
     }
 
-    private fun prepareReportFile(directory: File): File {
-        val text = """
+    companion object {
+        private val INPUT_TEXT = """
             
             ------------------------------------------------------------
             Project ':lib-c:demo'
@@ -55,8 +50,5 @@ class DependenciesFileReaderTest {
 
             A web-based, searchable dependency report is available by adding the --scan option.
         """.trimIndent()
-        val reportFile = File(directory, "report.txt")
-        reportFile.writeText(text)
-        return reportFile
     }
 }
