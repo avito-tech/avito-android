@@ -184,32 +184,6 @@ internal class TestSummaryComposerTest {
     }
 
     @Test
-    fun `slack message - contains @channel - if mention enabled and there are failed tests`() {
-        val suiteWithFailure = CrossDeviceSuite(
-            listOf(
-                CrossDeviceRunTest.createStubInstance(
-                    status = CrossDeviceStatus.FailedOnSomeDevices(
-                        listOf(
-                            FailureOnDevice(
-                                "device1",
-                                "failure1"
-                            )
-                        )
-                    )
-                ),
-                CrossDeviceRunTest.createStubInstance(
-                    status = CrossDeviceStatus.Success
-                )
-            )
-        )
-
-        val message = compose(suiteWithFailure, mentionOnFailures = true)
-
-        assertThat(message).isInstanceOf<Result.Success<*>>()
-        assertThat(message.getOrThrow()).contains("@channel")
-    }
-
-    @Test
     fun `slack message - does not contain @channel - if mention enabled and there are no failed tests`() {
         val greenSuite = CrossDeviceSuite(
             listOf(
@@ -218,7 +192,7 @@ internal class TestSummaryComposerTest {
             )
         )
 
-        val message = compose(greenSuite, mentionOnFailures = true)
+        val message = compose(greenSuite)
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
         assertThat(message.getOrThrow()).doesNotContain("@channel")
@@ -244,7 +218,7 @@ internal class TestSummaryComposerTest {
             )
         )
 
-        val message = compose(suiteWithFailure, mentionOnFailures = false)
+        val message = compose(suiteWithFailure)
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
         assertThat(message.getOrThrow()).doesNotContain("@channel")
@@ -253,12 +227,10 @@ internal class TestSummaryComposerTest {
     private fun compose(
         testData: CrossDeviceSuite,
         team: Team = Team.UNDEFINED,
-        mentionOnFailures: Boolean = false
     ): Result<String> {
         return composer.composeMessage(
             testData = testData,
             team = team,
-            mentionOnFailures = mentionOnFailures,
             reportCoordinates = ReportCoordinates("Any", "Any", "Any"),
             reportId = "Any",
             buildUrl = "build_url"

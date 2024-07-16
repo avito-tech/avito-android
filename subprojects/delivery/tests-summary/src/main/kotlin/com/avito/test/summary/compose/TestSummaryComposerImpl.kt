@@ -18,7 +18,6 @@ internal class TestSummaryComposerImpl(private val reportViewerUrl: String) : Te
     override fun composeMessage(
         testData: CrossDeviceSuite,
         team: Team,
-        mentionOnFailures: Boolean,
         reportCoordinates: ReportCoordinates,
         reportId: String,
         buildUrl: String
@@ -74,12 +73,6 @@ internal class TestSummaryComposerImpl(private val reportViewerUrl: String) : Te
                         "*Потерянные тесты на некоторых девайсах (например, зависли и не зарепортились)*: " +
                         "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated})"
                 )
-
-                val hasFailures = testData.failedOnSomeDevicesCount + testData.failedOnAllDevicesCount > 0
-
-                if (mentionOnFailures && hasFailures) {
-                    appendLine("${AlertinoStringFormat.mentionChannel}, т.к. есть упавшие тесты")
-                }
 
                 if (topFailures.isNotEmpty()) {
                     appendLine("*Причины падений:*")

@@ -10,7 +10,6 @@ internal interface TestSummaryComposer {
     fun composeMessage(
         testData: CrossDeviceSuite,
         team: Team,
-        mentionOnFailures: Boolean,
         reportCoordinates: ReportCoordinates,
         reportId: String,
         buildUrl: String
