@@ -10,6 +10,10 @@ import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.compose.TestSummaryComposer
 import com.avito.test.summary.compose.TestSummaryComposerImpl
 import com.avito.test.summary.model.CrossDeviceSuite
+import com.avito.test.summary.model.TestSummaryDestination
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
+import java.io.File
 
 internal class AlertinoTestSummarySender(
     alertinoBaseUrl: String,
@@ -20,8 +24,8 @@ internal class AlertinoTestSummarySender(
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val globalSummaryChannel: AlertinoRecipient,
-    private val unitToChannelMapping: Map<Team, AlertinoRecipient>,
-    private val mentionOnFailures: Set<Team>,
+    private val testSummaryDestination: File,
+    private val gson: Gson,
     loggerFactory: LoggerFactory
 ) : TestSummarySender {
 
@@ -35,9 +39,7 @@ internal class AlertinoTestSummarySender(
             .map { ToCrossDeviceSuiteConverter.convert(it) }
             .fold(
                 { suite -> send(suite, requireNotNull(reportsApi.tryGetId(reportCoordinates))) },
-                {
-                    logger.warn("Cannot get tests for RunId[$reportCoordinates]", it)
-                }
+                { logger.critical("Cannot get tests for RunId[$reportCoordinates]", it) }
             )
     }
 
@@ -54,50 +56,53 @@ internal class AlertinoTestSummarySender(
     }
 
     private fun send(suite: CrossDeviceSuite, reportId: String) {
-        alertinoSender.run {
-            unitToChannelMapping.entries.map { (team, channel) ->
-                val unitSuite = suite.filterTeam(team)
+        val destinations = gson.fromJson<List<TestSummaryDestination>>(testSummaryDestination.reader())
 
-                if (unitSuite.crossDeviceRuns.isNotEmpty()) {
-                    testSummaryComposer.composeMessage(
-                        testData = unitSuite,
-                        team = team,
-                        mentionOnFailures = mentionOnFailures.contains(team),
-                        reportCoordinates = reportCoordinates,
-                        reportId = reportId,
-                        buildUrl = buildUrl
-                    ).onSuccess { message ->
-                        sendNotification(
-                            template = alertinoTemplate,
-                            recipient = channel,
-                            values = mapOf(alertinoTemplatePlaceholder to message)
-                        )
-                    }.onFailure {
-                        logger.warn("Cannot compose message for test summary (channel: $channel)", it)
-                    }
-                } else {
-                    logger.info("Crosse device runs list is empty")
-                }
-            }
+        destinations.forEach { (team, channel) ->
+            val unitSuite = suite.filterTeam(team)
 
-            testSummaryComposer.composeMessage(
-                testData = suite,
-                team = Team.UNDEFINED,
-                mentionOnFailures = false,
-                reportCoordinates = reportCoordinates,
-                reportId = reportId,
-                buildUrl = buildUrl
-            ).onSuccess {
-                sendNotification(
-                    template = alertinoTemplate,
-                    recipient = globalSummaryChannel,
-                    values = mapOf("text" to it)
-                ).onFailure { error ->
-                    logger.warn("Cannot send message for test summary: ${error.message}")
-                }
-            }.onFailure {
-                logger.warn("Cannot compose message for test summary (channel: $globalSummaryChannel)")
+            if (unitSuite.crossDeviceRuns.isNotEmpty()) {
+                sendTestSummary(
+                    unitSuite,
+                    team,
+                    reportId,
+                    channel
+                )
+            } else {
+                logger.info("Crosse device runs list is empty")
             }
+        }
+
+        sendTestSummary(
+            suite,
+            Team.UNDEFINED,
+            reportId,
+            globalSummaryChannel,
+        )
+    }
+
+    private fun sendTestSummary(
+        unitSuite: CrossDeviceSuite,
+        team: Team,
+        reportId: String,
+        channel: AlertinoRecipient
+    ) {
+        testSummaryComposer.composeMessage(
+            testData = unitSuite,
+            team = team,
+            reportCoordinates = reportCoordinates,
+            reportId = reportId,
+            buildUrl = buildUrl
+        ).onSuccess { message ->
+            alertinoSender.sendNotification(
+                template = alertinoTemplate,
+                recipient = channel,
+                values = mapOf(alertinoTemplatePlaceholder to message)
+            ).onFailure { error ->
+                logger.critical("Cannot send message for test summary: ${error.message}", error)
+            }
+        }.onFailure {
+            logger.critical("Cannot compose message for test summary (channel: $channel)", it)
         }
     }
 }

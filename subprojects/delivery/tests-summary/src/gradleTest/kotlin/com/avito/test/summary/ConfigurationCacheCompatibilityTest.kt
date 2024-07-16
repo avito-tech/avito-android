@@ -1,6 +1,7 @@
 package com.avito.test.summary
 
 import com.avito.test.gradle.TestResult
+import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -10,7 +11,7 @@ internal class ConfigurationCacheCompatibilityTest {
 
     @Test
     fun `testSummary task - ok`(@TempDir projectDir: File) {
-        MinimalTestSummaryProject.builder().generateIn(projectDir)
+        MinimalTestSummaryProject.builder(projectDir.file("test_summary_destination.json")).generateIn(projectDir)
 
         val testSummaryTask = testSummaryTaskName(MinimalTestSummaryProject.appName)
 
@@ -21,7 +22,7 @@ internal class ConfigurationCacheCompatibilityTest {
 
     @Test
     fun `markReportForTms task - ok`(@TempDir projectDir: File) {
-        MinimalTestSummaryProject.builder().generateIn(projectDir)
+        MinimalTestSummaryProject.builder(projectDir.file("test_summary_destination.json")).generateIn(projectDir)
 
         val testSummaryTask = markReportForTmsTaskName(MinimalTestSummaryProject.appName)
 

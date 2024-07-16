@@ -3,12 +3,13 @@ package com.avito.test.summary
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
+import java.io.File
 
 internal object MinimalTestSummaryProject {
 
     const val appName = "app"
 
-    fun builder(): TestProjectGenerator {
+    fun builder(testSummaryDestination: File): TestProjectGenerator {
         return TestProjectGenerator(
             plugins = plugins {
                 id(testSummaryPluginId)
@@ -17,7 +18,6 @@ internal object MinimalTestSummaryProject {
             imports = listOf(
                 "import com.avito.report.model.Team",
                 "import com.avito.reportviewer.model.ReportCoordinates",
-                "import com.avito.slack.model.SlackChannel",
                 "import com.avito.alertino.model.AlertinoRecipient",
             ),
             buildGradleExtra = """
@@ -26,25 +26,12 @@ internal object MinimalTestSummaryProject {
                         buildUrl.set("someUrl")
                         currentBranch.set("someBranch")
                         
-                        slack.token.set("someToken")
-                        slack.workspace.set("someWorkspace")
-                        slack.username.set("someUsername")
-                        slack.unitToChannelMapping.set(
-                            mapOf(Team("someTeam") to SlackChannel("someId", "#someChannel"))
-                        )
-                        slack.summaryChannel.set(SlackChannel("someId", "#someChannel"))
-                        slack.reserveChannel.set(SlackChannel("someId", "#someChannel"))
-                        slack.mentionOnFailures.set(setOf("someChannel"))
-                        
                         alertino.alertinoEndpoint.set("https://localhost")
                         alertino.alertinoTemplate.set("template")
                         alertino.alertinoTemplate.set("text")
-                        alertino.unitToChannelMapping.set(
-                            mapOf(Team("someTeam") to AlertinoRecipient("#someChannel"))
-                        )
                         alertino.summaryChannel.set(AlertinoRecipient("#someChannel"))
                         alertino.reserveChannel.set(AlertinoRecipient("#someChannel"))
-                        alertino.mentionOnFailures.set(setOf("@username"))
+                        alertino.testSummaryDestination.set(File("${testSummaryDestination.absolutePath}"))
                         
                         reportViewer.url.set("someUrl")
                         reportViewer.reportsHost.set("someUrl")

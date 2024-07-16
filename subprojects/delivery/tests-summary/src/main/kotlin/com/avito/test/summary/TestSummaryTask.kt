@@ -2,9 +2,11 @@ package com.avito.test.summary
 
 import com.avito.android.stats.statsdConfig
 import com.avito.logger.GradleLoggerPlugin
-import com.avito.report.model.Team
+import com.avito.test.summary.json.TestSummaryDestinationDeserializer
+import com.avito.test.summary.model.TestSummaryDestination
 import com.avito.test.summary.sender.AlertinoTestSummarySender
 import com.avito.test.summary.sender.TestSummarySender
+import com.google.gson.GsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -12,9 +14,6 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 
 public abstract class TestSummaryTask : DefaultTask() {
-
-    @get:Nested
-    public abstract val slackExtension: Property<SlackExtension>
 
     @get:Nested
     public abstract val alertinoExtension: Property<AlertinoExtension>
@@ -41,6 +40,11 @@ public abstract class TestSummaryTask : DefaultTask() {
         )
 
         val reportsApi = di.provideReportsApi(reportViewer.reportsHost.get())
+        val gson = GsonBuilder()
+            .registerTypeAdapter(
+                TestSummaryDestination::class.java,
+                TestSummaryDestinationDeserializer()
+            ).create()
         val testSummarySender: TestSummarySender = AlertinoTestSummarySender(
             alertinoBaseUrl = alertino.alertinoEndpoint.get(),
             alertinoTemplate = alertino.alertinoTemplate.get(),
@@ -50,10 +54,8 @@ public abstract class TestSummaryTask : DefaultTask() {
             buildUrl = buildUrl.get(),
             reportCoordinates = reportViewer.reportCoordinates.get(),
             globalSummaryChannel = alertino.summaryChannel.get(),
-            unitToChannelMapping = alertino.unitToChannelMapping.get(),
-            mentionOnFailures = alertino.mentionOnFailures.map { set ->
-                set.map { Team(it) }.toSet()
-            }.get(),
+            testSummaryDestination = alertino.testSummaryDestination.get().asFile,
+            gson = gson,
             loggerFactory = loggerFactory
         )
 

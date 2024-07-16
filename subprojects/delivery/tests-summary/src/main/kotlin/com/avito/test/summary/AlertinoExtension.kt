@@ -1,11 +1,12 @@
 package com.avito.test.summary
 
 import com.avito.alertino.model.AlertinoRecipient
-import com.avito.report.model.Team
-import org.gradle.api.provider.MapProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 
 public abstract class AlertinoExtension {
 
@@ -18,15 +19,13 @@ public abstract class AlertinoExtension {
     @get:Input
     public abstract val alertinoTemplatePlaceholder: Property<String>
 
-    @get:Input
-    public abstract val unitToChannelMapping: MapProperty<Team, AlertinoRecipient>
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    public abstract val testSummaryDestination: RegularFileProperty
 
     @get:Input
     public abstract val summaryChannel: Property<AlertinoRecipient>
 
     @get:Input
     public abstract val reserveChannel: Property<AlertinoRecipient>
-
-    @get:Input
-    public abstract val mentionOnFailures: SetProperty<String>
 }

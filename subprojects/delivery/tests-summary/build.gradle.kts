@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(libs.okhttp)
+    implementation(libs.kotson)
     implementation(project(":subprojects:common:http-statsd"))
     implementation(project(":subprojects:common:math"))
     implementation(project(":subprojects:common:problem"))
