@@ -9,9 +9,6 @@ import javax.inject.Inject
 public abstract class TestSummaryAppExtension @Inject constructor() : Named {
 
     @get:Nested
-    public abstract val slack: SlackExtension
-
-    @get:Nested
     public abstract val alertino: AlertinoExtension
 
     @get:Nested

@@ -12,7 +12,6 @@ dependencies {
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(project(":subprojects:gradle:slack"))
     implementation(project(":subprojects:gradle:alertino"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
