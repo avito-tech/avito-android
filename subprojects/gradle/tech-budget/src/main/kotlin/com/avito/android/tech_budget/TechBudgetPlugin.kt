@@ -9,6 +9,7 @@ import com.avito.android.tech_budget.internal.module_dependencies.ModuleDependen
 import com.avito.android.tech_budget.internal.module_types.ModuleTypesConfigurator
 import com.avito.android.tech_budget.internal.owners.OwnersConfigurator
 import com.avito.android.tech_budget.internal.owners.dependencies.DependenciesConfigurator
+import com.avito.android.tech_budget.internal.perf_screen_owners.PerfScreenOwnersConfigurator
 import com.avito.android.tech_budget.internal.warnings.WarningsConfigurator
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
@@ -37,6 +38,7 @@ public class TechBudgetPlugin : Plugin<Project> {
             ModuleDependenciesConfigurator(),
             ModuleCompilationInfoConfigurator(),
             ModuleTypesConfigurator(),
+            PerfScreenOwnersConfigurator(),
         )
         configurators.forEach { it.configure(target) }
     }
