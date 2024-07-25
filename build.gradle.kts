@@ -1,5 +1,4 @@
 import com.avito.logger.LogLevel
-import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
     base

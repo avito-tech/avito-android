@@ -97,6 +97,7 @@ internal class BuildMetricsPluginDI(
     val cacheMetricsTracker by lazy {
         BuildCacheMetricsTracker(
             metricsTracker = sender,
+            observableTaskTypes = extension.buildCacheObservableTasks.get(),
             loggerFactory = loggerFactory,
         )
     }

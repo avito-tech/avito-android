@@ -19,46 +19,76 @@ import org.junit.jupiter.api.Test
 
 internal class BuildCacheMetricsTrackerTest {
 
-    @Test
-    fun `sends - remote hit-miss count`() {
-        val metrics = processResults(
-            BuildOperationsResult(
-                tasksExecutions = listOf(
-                    taskExecution(
-                        path = ":lib:missRemote",
-                        type = CustomTask::class.java,
-                        cacheResult = TaskCacheResult.Miss(local = true, remote = true)
+    private val buildOperationsResult = BuildOperationsResult(
+        tasksExecutions = listOf(
+            taskExecution(
+                path = ":lib:missRemote",
+                type = CustomTask::class.java,
+                cacheResult = TaskCacheResult.Miss(local = true, remote = true)
+            ),
+            taskExecution(
+                path = ":lib:hitRemote",
+                type = CustomTask::class.java,
+                cacheResult = TaskCacheResult.Hit.Remote
+            ),
+            taskExecution(
+                path = ":lib:hitRemote2",
+                type = CustomTask::class.java,
+                cacheResult = TaskCacheResult.Hit.Remote
+            ),
+            taskExecution(
+                path = ":lib:nonCacheable",
+                type = CustomTask::class.java,
+                cacheResult = TaskCacheResult.Disabled
+            ),
+            taskExecution(
+                path = ":lib2:missRemote",
+                type = CustomTask::class.java,
+                cacheResult = TaskCacheResult.Miss(local = true, remote = true)
+            ),
+            taskExecution(
+                path = ":lib2:hitRemote",
+                type = CustomTask::class.java,
+                cacheResult = TaskCacheResult.Hit.Remote
+            ),
+            taskExecution(
+                path = ":lib2:nonCacheable",
+                type = CustomTask::class.java,
+                cacheResult = TaskCacheResult.Disabled
+            )
+        ),
+        cacheOperations = CacheOperations(
+            errors = listOf(
+                RemoteBuildCacheError(
+                    selector = RemoteBuildCacheError.Selector(
+                        type = LOAD,
+                        httpStatus = 503,
                     ),
-                    taskExecution(
-                        path = ":lib:missRemote2",
-                        type = CustomTask::class.java,
-                        cacheResult = TaskCacheResult.Miss(local = true, remote = true)
-                    ),
-                    taskExecution(
-                        path = ":lib:hitRemote",
-                        type = CustomTask::class.java,
-                        cacheResult = TaskCacheResult.Hit.Remote
-                    ),
-                    taskExecution(
-                        path = ":lib:nonCacheable",
-                        type = CustomTask::class.java,
-                        cacheResult = TaskCacheResult.Disabled
-                    )
+                    cause = RuntimeException("unknown")
                 ),
-                cacheOperations = CacheOperations(
-                    errors = emptyList()
+                RemoteBuildCacheError(
+                    selector = RemoteBuildCacheError.Selector(
+                        type = BuildCacheOperationType.STORE,
+                        httpStatus = 500,
+                    ),
+                    cause = RuntimeException("unknown")
                 )
             )
         )
+    )
+
+    @Test
+    fun `sends - remote hit-miss count`() {
+        val metrics = processResults(buildOperationsResult)
         assertThat(metrics).contains(
             GraphiteMetric(
-                SeriesName.create("gradle", "cache", "remote", "hit"),
-                "1"
+                SeriesName.create("gradle.cache.remote.hit", multipart = true),
+                "3"
             )
         )
         assertThat(metrics).contains(
             GraphiteMetric(
-                SeriesName.create("gradle", "cache", "remote", "miss"),
+                SeriesName.create("gradle.cache.remote.miss", multipart = true),
                 "2"
             )
         )
@@ -66,35 +96,7 @@ internal class BuildCacheMetricsTrackerTest {
 
     @Test
     fun `sends - caching errors`() {
-        val metrics = processResults(
-            BuildOperationsResult(
-                tasksExecutions = listOf(
-                    taskExecution(
-                        path = ":lib:build",
-                        type = CustomTask::class.java,
-                        cacheResult = TaskCacheResult.Miss(local = true, remote = true)
-                    )
-                ),
-                cacheOperations = CacheOperations(
-                    errors = listOf(
-                        RemoteBuildCacheError(
-                            selector = RemoteBuildCacheError.Selector(
-                                type = LOAD,
-                                httpStatus = 503,
-                            ),
-                            cause = RuntimeException("unknown")
-                        ),
-                        RemoteBuildCacheError(
-                            selector = RemoteBuildCacheError.Selector(
-                                type = BuildCacheOperationType.STORE,
-                                httpStatus = 500,
-                            ),
-                            cause = RuntimeException("unknown")
-                        )
-                    )
-                )
-            )
-        )
+        val metrics = processResults(buildOperationsResult)
         assertThat(metrics).contains(
             GraphiteMetric(
                 SeriesName.create("gradle", "cache", "errors")
@@ -108,6 +110,107 @@ internal class BuildCacheMetricsTrackerTest {
                 SeriesName.create("gradle", "cache", "errors")
                     .addTag("operation_type", "store")
                     .addTag("error_type", "500"),
+                "1"
+            )
+        )
+    }
+
+    @Test
+    fun `module cache metrics`() {
+        val metrics = processResults(
+            buildOperationsResult
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.hit", multipart = true)
+                    .addTag("module_name", "lib"),
+                "2"
+            )
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.hit", multipart = true)
+                    .addTag("module_name", "lib2"),
+                "1"
+            )
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.miss", multipart = true)
+                    .addTag("module_name", "lib"),
+                "1"
+            )
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.miss", multipart = true)
+                    .addTag("module_name", "lib2"),
+                "1"
+            )
+        )
+    }
+
+    @Test
+    fun `task type cache metrics`() {
+        val metrics = processResults(buildOperationsResult)
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.task.type.hit", multipart = true)
+                    .addTag("task_type", "CustomTask"),
+                "3"
+            )
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.task.type.miss", multipart = true)
+                    .addTag("task_type", "CustomTask"),
+                "2"
+            )
+        )
+    }
+
+    @Test
+    fun `task type by module cache metrics`() {
+        val metrics = processResults(buildOperationsResult)
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.task.type.hit", multipart = true)
+                    .addTag("module_name", "lib")
+                    .addTag("task_type", "CustomTask"),
+                "2"
+            )
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.task.type.miss", multipart = true)
+                    .addTag("module_name", "lib")
+                    .addTag("task_type", "CustomTask"),
+                "1"
+            )
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.task.type.hit", multipart = true)
+                    .addTag("module_name", "lib2")
+                    .addTag("task_type", "CustomTask"),
+                "1"
+            )
+        )
+        assertThat(metrics).contains(
+            GraphiteMetric(
+                SeriesName
+                    .create("gradle.cache.remote.module.task.type.miss", multipart = true)
+                    .addTag("module_name", "lib2")
+                    .addTag("task_type", "CustomTask"),
                 "1"
             )
         )
@@ -133,7 +236,9 @@ internal class BuildCacheMetricsTrackerTest {
         val buildMetricSender = StubBuildMetricsSender()
 
         val listener = BuildCacheMetricsTracker(
-            buildMetricSender, PrintlnLoggerFactory
+            buildMetricSender,
+            setOf(CustomTask::class.java.simpleName),
+            PrintlnLoggerFactory
         )
         listener.onBuildFinished(result)
 

@@ -6,6 +6,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 import java.time.Duration
@@ -52,6 +53,9 @@ public abstract class BuildMetricsExtension @Inject constructor(
 
     public val sendBuildCacheMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
+    internal val buildCacheObservableTasks: SetProperty<String> =
+        objectFactory.setProperty(String::class.java).convention(emptySet())
+
     public val sendBuildInitConfiguration: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
     public val sendBuildTotal: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
@@ -61,4 +65,9 @@ public abstract class BuildMetricsExtension @Inject constructor(
     public val writeModulesBuildTime: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
 
     public val modulesBuildTimeFile: RegularFileProperty = objectFactory.fileProperty()
+
+    public fun buildCacheObservableTasks(tasks: Set<String>) {
+        buildCacheObservableTasks.set(tasks)
+        buildCacheObservableTasks.disallowChanges()
+    }
 }

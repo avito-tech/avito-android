@@ -64,6 +64,7 @@ All actual kinds of metrics you could find by looking at `BuildMetric` inheritor
 - Remote cache statistics:
 Shows count of cacheable tasks that were requested from the remote cache.
 This is the same as **Performance** | **Build cache** | **Remote cache** | **Operations** | **Hit\Miss** in build scan.
+Also we send detailed build cache hit/miss metrics: by module, by task type, by task type in module. Observed task types should be configured in `buildMetrics` gradle extension.
 
 ##### Common build metrics
 
