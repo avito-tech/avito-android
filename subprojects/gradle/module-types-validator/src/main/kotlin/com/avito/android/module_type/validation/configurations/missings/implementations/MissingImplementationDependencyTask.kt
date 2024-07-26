@@ -1,7 +1,9 @@
 package com.avito.android.module_type.validation.configurations.missings.implementations
 
-import com.avito.android.module_type.FunctionalType
-import com.avito.android.module_type.validation.configurations.missings.implementations.internal.MissingImplementationDependencyTaskDelegate
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.DependenciesFileReader
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.MissingPublicDependencies
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.ProjectDependencyInfo
+import com.avito.android.module_type.validation.configurations.missings.implementations.internal.isPublicType
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -18,44 +20,40 @@ import java.io.File
 public abstract class MissingImplementationDependencyTask : DefaultTask() {
 
     @get:Input
-    public abstract val appModulePath: Property<String>
+    public abstract val projectPath: Property<String>
 
     @get:Input
-    public abstract val appModuleBuildFilePath: Property<String>
-
-    @get:Input
-    public abstract val appModuleType: Property<FunctionalType>
+    public abstract val buildFileRelativePath: Property<String>
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal abstract val projectsTaskOutput: Property<File>
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal abstract val appDependencies: Property<File>
+    internal abstract val projectDependencies: Property<File>
 
     @get:OutputFile
-    internal abstract val outputStatusFile: RegularFileProperty
-
-    @get:OutputFile
-    internal abstract val outputErrorMessageFile: RegularFileProperty
+    internal abstract val reportFile: RegularFileProperty
 
     @TaskAction
-    public fun validate() {
-        val result = MissingImplementationDependencyTaskDelegate().validate(
-            appModulePath = appModulePath.get(),
-            appModuleBuildFilePath = appModuleBuildFilePath.get(),
-            appModuleType = appModuleType.get(),
-            projectsTaskOutputText = projectsTaskOutput.get().readText(),
-            appDependenciesText = appDependencies.get().readText(),
-        )
+    public fun check() {
+        val dependenciesFileReader =
+            DependenciesFileReader(projectDependencies.get(), projectPath.get())
 
-        result.onSuccess {
-            outputStatusFile.get().asFile.writeText("Success")
-        }.onFailure {
-            outputStatusFile.get().asFile.writeText("Error")
-            outputErrorMessageFile.get().asFile.writeText(it.message!!)
-        }
+        val publicWithoutImpl = dependenciesFileReader.readProjectDependencies()
+            .groupBy { it.logicalModule }
+            .filterValues { modules -> modules.all(ProjectDependencyInfo::isPublicType) }
+
+        writeReport(publicWithoutImpl)
+    }
+
+    private fun writeReport(publicWithoutImpl: Map<String, List<ProjectDependencyInfo>>) {
+        val projectWithNotImplementationDependenciesAdapter = MissingPublicDependencies.adapter()
+
+        val missingPublicDependencies = MissingPublicDependencies(
+            projectPath = projectPath.get(),
+            buildFilePath = buildFileRelativePath.get(),
+            dependencies = publicWithoutImpl
+        )
+        val serializedReport = projectWithNotImplementationDependenciesAdapter.toJson(missingPublicDependencies)
+        reportFile.get().asFile.writeText(serializedReport)
     }
 
     public companion object {

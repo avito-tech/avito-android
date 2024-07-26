@@ -59,16 +59,12 @@ public enum class FunctionalType {
     FakeWiring,
 
     /**
-     * Модуль приложения, предназначенного для конечного пользователя.
-     */
-    UserApp,
-
-    /**
-     * Модуль демонстрационного приложения, используемого для разработки и тестирования.
+     * Android application - модуль с плагином 'com.android.application' ('convention.kotlin-android-app')
      *
+     * [Applications](https://docs.k.avito.ru/mobile/android/architecture/Modules/#apps)
      * См. [:demo](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#demo)
      */
-    DemoApp,
+    Application,
 
     /**
      * Модуль с общими сущностями, для которых не целесообразно делать разделение на интерфейс и реализацию.
