@@ -7,7 +7,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:module-types"))
+    api(project(":subprojects:gradle:module-types-api"))
+    implementation(project(":subprojects:gradle:module-types")) {
+        because("Applying ModuleTypesPlugin from this plugin")
+    }
 
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:common:problem"))

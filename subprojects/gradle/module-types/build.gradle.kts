@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":subprojects:gradle:module-types-api"))
     api(project(":subprojects:gradle:module-dependencies"))
 
     implementation(project(":subprojects:gradle:gradle-extensions"))

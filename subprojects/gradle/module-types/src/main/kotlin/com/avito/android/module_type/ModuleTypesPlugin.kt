@@ -82,6 +82,19 @@ public class ModuleTypesPlugin : Plugin<Project> {
             }
         }
     }
+
+    private fun ModuleTypeExtension.ensureHasType(projectPath: String) {
+        check(type.isPresent) {
+            """
+            |Module type must be set for the $projectPath project.
+            |Configure an extension in the buildscript: 
+            |
+            |module {
+            |   type.set(...)
+            |}
+            """.trimMargin()
+        }
+    }
 }
 
 internal const val pluginId = "com.avito.android.module-types"

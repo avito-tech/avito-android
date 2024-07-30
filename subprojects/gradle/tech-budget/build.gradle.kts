@@ -19,7 +19,10 @@ dependencies {
     implementation(project(":subprojects:logger:gradle-logger"))
     implementation(project(":subprojects:common:composite-exception"))
     implementation(project(":subprojects:common:tech-budget-common"))
-    implementation(project(":subprojects:gradle:module-types"))
+    implementation(project(":subprojects:gradle:module-types-api"))
+    runtimeOnly(project(":subprojects:gradle:module-types")) {
+        because("Need to run gradleTest. Adding to gradleTestRuntime doesn't work")
+    }
 
     ksp(libs.moshiCodegen)
 
