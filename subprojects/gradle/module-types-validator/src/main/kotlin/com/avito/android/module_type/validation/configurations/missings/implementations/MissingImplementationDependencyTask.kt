@@ -52,6 +52,7 @@ public abstract class MissingImplementationDependencyTask : DefaultTask() {
 
         result.onSuccess {
             outputStatusFile.get().asFile.writeText("Success")
+            outputErrorMessageFile.get().asFile.writeText("")
         }.onFailure {
             outputStatusFile.get().asFile.writeText("Error")
             outputErrorMessageFile.get().asFile.writeText(it.message!!)
