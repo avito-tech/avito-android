@@ -13,8 +13,8 @@ public class BetweenModuleTypes(
         dependency: ModuleWithType,
         configuration: ConfigurationType
     ): Boolean {
-        val moduleType = module.type ?: return false
-        val dependencyType = dependency.type ?: return false
+        val moduleType = module.type
+        val dependencyType = dependency.type
 
         return this.module.isEqualTo(moduleType)
             && this.dependency.isEqualTo(dependencyType)
@@ -32,8 +32,8 @@ public class ToTestModule : DependencyMatcher {
         dependency: ModuleWithType,
         configuration: ConfigurationType
     ): Boolean {
-        val moduleType = module.type ?: return false
-        val dependencyType = dependency.type ?: return false
+        val moduleType = module.type
+        val dependencyType = dependency.type
 
         return !moduleType.isEqualTo(TestModule)
             && dependencyType.isEqualTo(TestModule)

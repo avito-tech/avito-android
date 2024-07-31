@@ -68,7 +68,8 @@ public class ModuleTypesPlugin : Plugin<Project> {
             ExtractModuleDescriptionTask.name,
             ExtractModuleDescriptionTask::class.java
         ) { task ->
-            task.module.set(ModuleWithType(project.path, extension.type.orNull))
+            task.modulePath.set(project.path)
+            task.moduleType.set(extension.type)
             task.outputFile.set(
                 project.layout.buildDirectory.file(ExtractModuleDescriptionTask.outputPath)
             )
@@ -76,32 +77,7 @@ public class ModuleTypesPlugin : Plugin<Project> {
                 .mapValues { it.value.map { it.path }.toSet() }
             task.directDependencies.set(directDependencies)
         }
-        if (project.mandatoryType) {
-            project.afterEvaluate {
-                extension.ensureHasType(projectPath = it.path)
-            }
-        }
-    }
-
-    private fun ModuleTypeExtension.ensureHasType(projectPath: String) {
-        check(type.isPresent) {
-            """
-            |Module type must be set for the $projectPath project.
-            |Configure an extension in the buildscript: 
-            |
-            |module {
-            |   type.set(...)
-            |}
-            """.trimMargin()
-        }
     }
 }
 
 internal const val pluginId = "com.avito.android.module-types"
-
-// TODO: delete after migrating clients in MBS-12266
-private val Project.mandatoryType: Boolean
-    get() = providers
-        .gradleProperty("avito.module_type.mandatoryType")
-        .map { it.toBoolean() }
-        .getOrElse(false)

@@ -4,5 +4,5 @@ import java.io.Serializable
 
 public data class ModuleWithType(
     val path: String,
-    val type: ModuleType? // TODO: make non-null in MBS-12266
+    val type: ModuleType
 ) : Serializable

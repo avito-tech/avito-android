@@ -83,11 +83,7 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
     }
 
     private fun ModuleWithType.description(): String {
-        return if (type == null) {
-            "module $path"
-        } else {
-            "module $path (${type.description()})"
-        }
+        return "module $path (${type.description()})"
     }
 
     companion object {

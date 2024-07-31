@@ -1,5 +1,6 @@
 package com.avito.android.module_type.internal
 
+import com.avito.android.module_type.ModuleType
 import com.avito.android.module_type.ModuleWithType
 import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.DefaultTask
@@ -17,7 +18,10 @@ import org.gradle.api.tasks.TaskAction
 internal abstract class ExtractModuleDescriptionTask : DefaultTask() {
 
     @get:Input
-    public abstract val module: Property<ModuleWithType>
+    public abstract val modulePath: Property<String>
+
+    @get:Input
+    public abstract val moduleType: Property<ModuleType>
 
     @get:Input
     public abstract val directDependencies: MapProperty<ConfigurationType, Set<String>>
@@ -31,8 +35,21 @@ internal abstract class ExtractModuleDescriptionTask : DefaultTask() {
         if (!output.exists()) {
             output.createNewFile()
         }
+        check(moduleType.isPresent) {
+            """
+            |Module type must be set for the ${modulePath.get()} project.
+            |Configure an extension in the buildscript: 
+            |
+            |module {
+            |   type.set(...)
+            |}
+            """.trimMargin()
+        }
         val description = ModuleDescription(
-            module = module.get(),
+            module = ModuleWithType(
+                path = modulePath.get(),
+                type = moduleType.get(),
+            ),
             directDependencies = mutableMapOf<ConfigurationType, Set<String>>().apply {
                 putAll(directDependencies.get())
             }
