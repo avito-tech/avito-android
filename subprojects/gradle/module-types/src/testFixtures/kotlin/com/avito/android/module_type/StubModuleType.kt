@@ -1,6 +1,8 @@
+import com.avito.android.module_type.ApplicationDeclaration
+import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.ModuleType
 
-public abstract class StubModuleType : ModuleType {
+public abstract class StubModuleType(type: FunctionalType) : ModuleType(StubApplication(), type) {
 
     override fun isEqualTo(other: ModuleType): Boolean {
         return this.javaClass == other.javaClass
@@ -11,13 +13,15 @@ public abstract class StubModuleType : ModuleType {
     }
 }
 
-// Flat module types for simplicity of test fixtures
-// In real applications they can be more complex
+@Suppress("DEPRECATION")
+public object FeatureModule : StubModuleType(FunctionalType.Feature)
 
-public object AppModule : StubModuleType()
+@Suppress("DEPRECATION")
+public object LibraryModule : StubModuleType(FunctionalType.Library)
 
-public object FeatureModule : StubModuleType()
+public object TestModule : StubModuleType(FunctionalType.Test)
 
-public object LibraryModule : StubModuleType()
-
-public object TestModule : StubModuleType()
+private class StubApplication : ApplicationDeclaration {
+    override val name: String
+        get() = "stub"
+}

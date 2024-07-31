@@ -1,6 +1,5 @@
 package com.avito.android.module_type.validation.configurations.missings.implementations
 
-import com.avito.android.module_type.DefaultModuleType
 import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.ModuleTypeExtension
 import com.avito.android.module_type.validation.configurations.ValidationConfiguration
@@ -48,10 +47,6 @@ internal class MissingImplementationDependencyConfiguration : ValidationConfigur
             MissingImplementationDependencyTask.NAME
         ) {
             val moduleType = moduleTypeExtension.type.get()
-
-            require(moduleType is DefaultModuleType) {
-                "${MissingImplementationDependencyTask.NAME} cannot run for module type $moduleType"
-            }
 
             require(moduleType.type == FunctionalType.DemoApp || moduleType.type == FunctionalType.UserApp) {
                 "This validation check should be performed only on demo or application modules"

@@ -164,7 +164,7 @@ internal object DependenciesValidationProjectGenerator {
             plugins = plugins,
             buildGradleExtra = """
                 module {
-                    type = new DefaultModuleType(new StubApplication(), FunctionalType.${functionalType.name})
+                    type = new ModuleType(new StubApplication(), FunctionalType.${functionalType.name})
                 }
             """.trimIndent(),
             dependencies = dependentModules.map {
@@ -195,7 +195,7 @@ internal object DependenciesValidationProjectGenerator {
                 .toSet(),
             buildGradleExtra = """
                 module {
-                    type = new DefaultModuleType(
+                    type = new ModuleType(
                         new StubApplication(), 
                         FunctionalType.${FunctionalType.DemoApp.name}
                     )

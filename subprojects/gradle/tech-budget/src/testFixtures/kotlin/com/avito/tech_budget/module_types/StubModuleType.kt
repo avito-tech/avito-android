@@ -1,12 +1,11 @@
 package com.avito.tech_budget.module_types
 
 import com.avito.android.module_type.ApplicationDeclaration
-import com.avito.android.module_type.DefaultModuleType
 import com.avito.android.module_type.ModuleType
 
 class StubModuleType(
     type: FunctionalType
-) : DefaultModuleType(StubApplication(), createType(type)) {
+) : ModuleType(StubApplication(), createType(type)) {
 
     override fun isEqualTo(other: ModuleType) = this == other
 
