@@ -1,6 +1,5 @@
 package com.avito.android.module_type
 
-import StubModuleType
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
@@ -16,18 +15,8 @@ internal abstract class BaseModuleTypesTest {
     }
 
     fun givenProject(
-        severity: Severity? = null,
-        moduleType: StubModuleType,
-        dependency: ModuleTypesProjectGenerator.Dependency,
-        constraint: ModuleTypesProjectGenerator.Constraint,
-        exclusions: Set<String> = emptySet()
-    ) = ModuleTypesProjectGenerator(
-        severity,
-        moduleType,
-        dependency,
-        constraint,
-        exclusions
-    ).generateIn(projectDir)
+        config: ModuleTypesProjectGenerator.ModuleTypesProjectConfig,
+    ) = ModuleTypesProjectGenerator(config).generateIn(projectDir)
 
     fun runCheck(
         projectDir: File,

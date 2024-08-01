@@ -31,6 +31,8 @@ internal class ImpactMetricsSender(
                 ConfigurationType.Main -> "implementation"
                 ConfigurationType.Lint -> "lint"
                 ConfigurationType.UnitTests -> "unittests"
+                ConfigurationType.Detekt -> "detekt"
+                ConfigurationType.CodeGenerators -> "codegenerators"
             }
         }
 

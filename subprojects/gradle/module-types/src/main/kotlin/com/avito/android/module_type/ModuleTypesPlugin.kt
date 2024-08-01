@@ -33,9 +33,13 @@ public class ModuleTypesPlugin : Plugin<Project> {
             CheckModuleDependenciesTask.name,
             CheckModuleDependenciesTask::class.java
         ) { task ->
-            task.group = "verification"
-            task.severity.set(extension.severity)
-            task.restrictions.set(extension.restrictions)
+            with(extension.dependencyRestrictionsExtension) {
+                task.group = "verification"
+                task.betweenFunctionalTypesRestrictions.set(betweenFunctionalTypesRestrictions)
+                task.betweenDifferentAppsRestriction.set(betweenDifferentAppsRestriction)
+                task.toWiringRestriction.set(toWiringRestriction)
+                task.solutionMessage.set(solutionMessage)
+            }
         }
     }
 

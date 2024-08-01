@@ -2,6 +2,7 @@ package com.avito.android.module_type
 
 import com.avito.module.configurations.ConfigurationType
 
+@Deprecated("Delete after MBSA-1482")
 public class DependencyRestriction(
     public val matcher: DependencyMatcher,
     public val exclusions: Set<DependencyMatcher> = emptySet(),

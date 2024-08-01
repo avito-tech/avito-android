@@ -1,117 +1,81 @@
 package com.avito.android.module_type.internal
 
-import BetweenModuleTypes
-import DependentModule
-import FeatureModule
 import LibraryModule
-import TestModule
-import ToTestModule
-import com.avito.android.module_type.DependencyRestriction
 import com.avito.android.module_type.ModuleWithType
+import com.avito.android.module_type.Severity
+import com.avito.android.module_type.restrictions.DependencyRestriction
 import com.avito.module.configurations.ConfigurationType.Main
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class ModulesRestrictionsFinderTest {
 
+    private val modules = setOf(
+        ModuleDescription(
+            module = ModuleWithType(":A", LibraryModule),
+            directDependencies = mapOf(Main to setOf(":B"))
+        ),
+        ModuleDescription(
+            module = ModuleWithType(":B", LibraryModule),
+            directDependencies = emptyMap()
+        )
+    )
+
+    private val ignoredRestriction = DependencyRestriction(
+        reason = "Stub ignored",
+        severity = Severity.ignore
+    )
+
+    private val failedRestriction = DependencyRestriction(
+        reason = "Stub failed",
+        severity = Severity.fail
+    )
+
     @Test
-    fun `finds restricted dependency - main configuration`() {
-        val modules = setOf(
-            ModuleDescription(
-                module = ModuleWithType(":A", LibraryModule),
-                directDependencies = mapOf(Main to setOf(":B", ":C"))
-            ),
-            ModuleDescription(
-                module = ModuleWithType(":B", LibraryModule),
-                directDependencies = emptyMap()
-            ),
-            ModuleDescription(
-                module = ModuleWithType(":C", FeatureModule),
-                directDependencies = emptyMap()
-            )
+    fun `empty restrictions = success`() {
+        val result = violations(
+            modules = modules,
+            restrictions = emptyList()
         )
-        val restriction = DependencyRestriction(
-            matcher = BetweenModuleTypes(module = LibraryModule, dependency = FeatureModule),
-        )
-        val restrictions = listOf(restriction)
 
-        val violations = violations(modules, restrictions)
-
-        assertWithMessage("Found one violation")
-            .that(violations).hasSize(1)
-
-        val violation = violations.first()
-
-        assertThat(violation.module).isEqualTo(ModuleWithType(":A", LibraryModule))
-        assertThat(violation.dependency).isEqualTo(ModuleWithType(":C", FeatureModule))
-        assertThat(violation.restriction).isEqualTo(restriction)
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `finds restricted dependency - test configuration`() {
-        val modules = setOf(
-            ModuleDescription(
-                module = ModuleWithType(":lib", LibraryModule),
-                directDependencies = mapOf(Main to setOf(":test-fixtures"))
-            ),
-            ModuleDescription(
-                module = ModuleWithType(":test-fixtures", TestModule),
-                directDependencies = emptyMap()
-            ),
+    fun `only ignored restrictions = success`() {
+        val result = violations(
+            modules = modules,
+            restrictions = listOf(ignoredRestriction)
         )
-        val restriction = DependencyRestriction(ToTestModule())
-        val restrictions = listOf(restriction)
 
-        val violations = violations(modules, restrictions)
-
-        assertWithMessage("Found one violation")
-            .that(violations).hasSize(1)
-
-        val violation = violations.first()
-
-        assertThat(violation.module).isEqualTo(ModuleWithType(":lib", LibraryModule))
-        assertThat(violation.dependency).isEqualTo(ModuleWithType(":test-fixtures", TestModule))
-        assertThat(violation.restriction).isEqualTo(restriction)
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun `filters excluded dependencies`() {
-        val modules = setOf(
-            ModuleDescription(
-                module = ModuleWithType(":A", LibraryModule),
-                directDependencies = mapOf(Main to setOf(":B"))
-            ),
-            ModuleDescription(
-                module = ModuleWithType(":B", LibraryModule),
-                directDependencies = emptyMap()
-            )
+    fun `failed restrictions = one violation`() {
+        val result = violations(
+            modules = modules,
+            restrictions = listOf(failedRestriction)
         )
-        val restriction = DependencyRestriction(
-            matcher = BetweenModuleTypes(module = LibraryModule, dependency = LibraryModule),
-            exclusions = setOf(DependentModule(":B"))
-        )
-        val restrictions = listOf(restriction)
 
-        val violations = violations(modules, restrictions)
-
-        assertThat(violations).isEmpty()
+        assertThat(result).hasSize(1)
+        assertThat(result[0].restriction).isEqualTo(failedRestriction)
     }
 
     @Test
-    fun `failure - no module description for dependency`() {
-        val modules = setOf(
-            ModuleDescription(
-                module = ModuleWithType(":A", LibraryModule),
-                directDependencies = mapOf(Main to setOf(":MISSED_MODULE"))
-            )
+    fun `2 failed restrictions = 2 violations`() {
+        val secondFailed = DependencyRestriction(
+            reason = "Second failed",
+            severity = Severity.fail
         )
-        val error = assertThrows<RuntimeException> {
-            violations(modules, emptyList())
-        }
-        assertThat(error).hasMessageThat()
-            .contains("Not found module description for :MISSED_MODULE")
+        val result = violations(
+            modules = modules,
+            restrictions = listOf(failedRestriction, secondFailed)
+        )
+
+        assertThat(result).hasSize(2)
+        assertThat(result[0].restriction).isEqualTo(failedRestriction)
+        assertThat(result[1].restriction).isEqualTo(secondFailed)
     }
 
     private fun violations(

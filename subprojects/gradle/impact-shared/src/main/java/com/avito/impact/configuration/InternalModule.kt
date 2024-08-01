@@ -18,16 +18,20 @@ public class InternalModule(
 ) : Equality by InternalModuleEquality(project) {
 
     private val lintConfiguration = LintConfiguration(this)
+    private val detektConfiguration = DetektConfiguration(this)
 
     internal val path: String = project.path
     public val mainConfiguration: MainConfiguration = MainConfiguration(this)
     public val testConfiguration: TestConfiguration = TestConfiguration(this)
     public val androidTestConfiguration: AndroidTestConfiguration = AndroidTestConfiguration(this)
+    public val codeGeneratorsConfiguration: CodeGeneratorsConfiguration = CodeGeneratorsConfiguration(this)
     internal val configurations = listOf(
         mainConfiguration,
         testConfiguration,
         androidTestConfiguration,
-        lintConfiguration
+        lintConfiguration,
+        detektConfiguration,
+        codeGeneratorsConfiguration,
     )
 
     /**
@@ -43,6 +47,8 @@ public class InternalModule(
         ConfigurationType.UnitTests -> testConfiguration
         ConfigurationType.AndroidTests -> androidTestConfiguration
         ConfigurationType.Lint -> lintConfiguration
+        ConfigurationType.Detekt -> detektConfiguration
+        ConfigurationType.CodeGenerators -> codeGeneratorsConfiguration
     }
 
     override fun toString(): String = "InternalModule[${project.path}]"

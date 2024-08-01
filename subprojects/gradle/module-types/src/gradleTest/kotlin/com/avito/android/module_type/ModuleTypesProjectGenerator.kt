@@ -1,9 +1,6 @@
 package com.avito.android.module_type
 
-import StubModuleType
-import com.avito.module.configurations.ConfigurationType
 import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.plugin.plugins
@@ -14,42 +11,50 @@ import java.io.File
  * The structure: module --> dependency
  */
 internal class ModuleTypesProjectGenerator(
-    private val severity: Severity?,
-    private val moduleType: StubModuleType,
-    private val dependency: Dependency,
-    private val constraint: Constraint,
-    private val exclusions: Set<String>
+    private val config: ModuleTypesProjectConfig,
 ) {
 
-    class Dependency(
-        val type: StubModuleType,
-        val configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION,
+    data class ModuleTypesProjectConfig(
+        val defaultSeverity: Severity = Severity.fail,
     )
 
-    class Constraint(
-        val module: StubModuleType,
-        val dependency: StubModuleType,
-        val configuration: ConfigurationType = ConfigurationType.Main,
-    )
-
-    private val Any.classReference: String
+    private val Any.javaCanonicalName
         get() = this::class.java.canonicalName
 
     fun generateIn(projectDir: File) {
-        val severityDeclaration = if (severity != null) {
-            "severity.set(${severity.classReference}.${severity.name})"
-        } else {
-            ""
-        }
-        val exclusionsDeclaration = exclusions.joinToString {
-            "DependentModule(\"$it\")"
-        }
-
         TestProjectGenerator(
-            imports = listOf("import com.avito.android.module_type.*"),
+            imports = listOf(
+                "import com.avito.android.module_type.*",
+                "import com.avito.module.configurations.ConfigurationType",
+            ),
             plugins = plugins {
                 id(pluginId)
             },
+            buildGradleExtra = """
+                moduleTypes {
+                    dependencyRestrictions {
+                        defaultSeverity.set(${config.defaultSeverity.javaCanonicalName}.${config.defaultSeverity.name})
+                        betweenFunctionalTypes(
+                            fromType = FunctionalType.Library,
+                            allowedTypes = mapOf(ConfigurationType.Main to setOf(FunctionalType.Public)),
+                            reason = "Between betweenFunctionalTypes"
+                        ) {
+                            modulesExclusion(
+                                module = ":A",
+                                dependency = ":B",
+                                reason = "Is a test"
+                            )
+                        }
+                        betweenDifferentApps(
+                            reason = "Because betweenDifferentApps",
+                            commonApp = CommonApp
+                        )
+                        toWiring(
+                            reason = "Because toWiring"
+                        )
+                    }
+                }
+            """.trimIndent(),
             modules = listOf(
                 KotlinModule(
                     "A",
@@ -58,11 +63,11 @@ internal class ModuleTypesProjectGenerator(
                         id(pluginId)
                     },
                     dependencies = setOf(
-                        project(":B", dependency.configuration)
+                        project(":B")
                     ),
                     buildGradleExtra = """
                         module {
-                            type.set(${moduleType.classReference})
+                            type.set(ModuleType(StubApplication, FunctionalType.Library))
                         }
                         """.trimIndent(),
                     useKts = true
@@ -75,28 +80,12 @@ internal class ModuleTypesProjectGenerator(
                     },
                     buildGradleExtra = """
                         module {
-                            type.set(${dependency.type.classReference})
+                            type.set(ModuleType(StubApplication, FunctionalType.Library))
                         }
                         """.trimIndent(),
                     useKts = true
-                )
+                ),
             ),
-            buildGradleExtra = """
-                moduleTypes {
-                    $severityDeclaration
-                    
-                    restrictions.add(
-                        DependencyRestriction(
-                            matcher = BetweenModuleTypes(
-                                module = ${constraint.module.classReference}, 
-                                dependency = ${constraint.dependency.classReference},
-                                configuration = ${constraint.configuration.classReference}
-                            ), 
-                            exclusions = setOf($exclusionsDeclaration),
-                        )
-                    )
-                }
-            """.trimIndent(),
             useKts = true
         ).generateIn(projectDir)
     }

@@ -2,7 +2,7 @@ import com.avito.android.module_type.ApplicationDeclaration
 import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.ModuleType
 
-public abstract class StubModuleType(type: FunctionalType) : ModuleType(StubApplication(), type) {
+public abstract class StubModuleType(type: FunctionalType) : ModuleType(StubApplication, type) {
 
     override fun isEqualTo(other: ModuleType): Boolean {
         return this.javaClass == other.javaClass
@@ -14,14 +14,19 @@ public abstract class StubModuleType(type: FunctionalType) : ModuleType(StubAppl
 }
 
 @Suppress("DEPRECATION")
-public object FeatureModule : StubModuleType(FunctionalType.Feature)
+public data object FeatureModule : StubModuleType(FunctionalType.Feature)
 
 @Suppress("DEPRECATION")
-public object LibraryModule : StubModuleType(FunctionalType.Library)
+public data object LibraryModule : StubModuleType(FunctionalType.Library)
 
-public object TestModule : StubModuleType(FunctionalType.Test)
+public data object TestModule : StubModuleType(FunctionalType.Test)
 
-private class StubApplication : ApplicationDeclaration {
+public data object CommonApp : ApplicationDeclaration {
+    override val name: String
+        get() = "Common"
+}
+
+public data object StubApplication : ApplicationDeclaration {
     override val name: String
         get() = "stub"
 }

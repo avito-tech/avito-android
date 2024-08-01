@@ -150,7 +150,7 @@ clear_docker_containers:
 	fi
 
 publish_to_maven_local:
-	$(docker_command) ./gradlew $(params) publishToMavenLocal -PprojectVersion=local --no-configuration-cache
+	$(docker_command) ./gradlew $(params) publishToMavenLocal -PprojectVersion=10000000.0-local --no-configuration-cache
 
 stage_ui_tests:
 	make publish_to_maven_local

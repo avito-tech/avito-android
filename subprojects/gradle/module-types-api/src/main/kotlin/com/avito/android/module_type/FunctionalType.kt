@@ -112,6 +112,16 @@ public enum class FunctionalType {
     Lint,
 
     /**
+     * Модуль с кастомным detekt кодом, добавляем в detekt конфигурации
+     */
+    Detekt,
+
+    /**
+     * Модуль c ksp, kapt кодом
+     */
+    CodeGenerators,
+
+    /**
      * Модуль с dependency constraints, добавляем как platform зависимость.
      *
      * [Platform plugin](https://docs.gradle.org/current/userguide/java_platform_plugin.html)

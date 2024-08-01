@@ -26,6 +26,18 @@ public enum class ConfigurationType {
         override fun toString(): String {
             return "ConfigurationType.Lint"
         }
+    },
+
+    Detekt {
+        override fun toString(): String {
+            return "ConfigurationType.Detekt"
+        }
+    },
+
+    CodeGenerators {
+        override fun toString(): String {
+            return "ConfigurationType.CodeGenerators"
+        }
     };
 
     public companion object {
@@ -35,6 +47,8 @@ public enum class ConfigurationType {
                 configuration.isTest() -> UnitTests
                 configuration.isAndroidTest() -> AndroidTests
                 configuration.isLint() -> Lint
+                configuration.isDetekt() -> Detekt
+                configuration.isCodeGenerators() -> CodeGenerators
                 /**
                  * TODO Now we define all unknown configurations as Main.
                  *  But should ignore or convert them to the concrete type
@@ -46,5 +60,7 @@ public enum class ConfigurationType {
         private fun Configuration.isTest() = name.startsWith("test")
         private fun Configuration.isAndroidTest() = name.startsWith("androidTest")
         private fun Configuration.isLint() = name.startsWith("lint")
+        private fun Configuration.isDetekt() = name.startsWith("detekt")
+        private fun Configuration.isCodeGenerators() = name.startsWith("ksp") || name.startsWith("kapt")
     }
 }
