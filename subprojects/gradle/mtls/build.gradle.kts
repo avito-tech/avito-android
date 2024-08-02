@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     api(project(":subprojects:common:okhttp"))
+    api(project(":subprojects:common:mtls-manager"))
     api(libs.okhttpTls)
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:common:problem"))

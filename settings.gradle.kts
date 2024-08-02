@@ -103,6 +103,7 @@ include(":subprojects:common:command-line-rx")
 include(":subprojects:common:command-line-coroutines")
 include(":subprojects:common:diff-util")
 include(":subprojects:common:tech-budget-common")
+include(":subprojects:common:mtls-manager")
 
 include(":subprojects:android-test:resource-manager-exceptions")
 include(":subprojects:android-test:websocket-reporter")

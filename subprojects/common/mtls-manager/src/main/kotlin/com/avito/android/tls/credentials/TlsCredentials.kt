@@ -9,12 +9,12 @@ public sealed class TlsCredentials {
     public abstract val crt: String
     public abstract val key: String
 
-    internal class PlainCredentials(
+    public class PlainCredentials(
         override val crt: String,
         override val key: String,
     ) : TlsCredentials()
 
-    internal class FileCredentials(
+    public class FileCredentials(
         private val tlsCrtFile: File,
         private val tlsKeyFile: File,
     ) : TlsCredentials() {
@@ -23,7 +23,7 @@ public sealed class TlsCredentials {
         override val key: String by lazy { tlsKeyFile.readText() }
     }
 
-    internal object Undefined : TlsCredentials() {
+    public object Undefined : TlsCredentials() {
 
         override val crt: String get() = error("Tls credentials is undefined")
         override val key: String get() = error("Tls credentials is undefined")
