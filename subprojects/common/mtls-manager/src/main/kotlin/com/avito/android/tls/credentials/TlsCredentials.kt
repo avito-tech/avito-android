@@ -30,7 +30,9 @@ public sealed class TlsCredentials {
     }
 }
 
-internal fun TlsCredentials.pkcs8Key(): String {
+public fun TlsCredentials.pkcs8Key(): String = pkcs8Key(key)
+
+public fun pkcs8Key(key: String): String {
     if (key.isPkcs8Key()) {
         return key
     }
