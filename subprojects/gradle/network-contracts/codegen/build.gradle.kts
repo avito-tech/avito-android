@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:mtls"))

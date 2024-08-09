@@ -4,6 +4,7 @@ import com.avito.android.network_contracts.scheme.imports.ApiSchemesFilesGenerat
 import com.avito.android.network_contracts.scheme.imports.data.models.SchemaEntry
 import com.avito.android.tls.test.createMtlsExtensionString
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.plugin.plugins
@@ -14,6 +15,30 @@ internal const val DEFAULT_APP_NAME = "avito-android-test-app"
 internal const val DEFAULT_GENERATED_PACKAGE = "com.example.test"
 internal const val DEFAULT_API_SCHEMES_DIRECTORY = "src/main/resources/"
 internal const val DEFAULT_BUILD_DIRECTORY = "build/networkContracts/codegen"
+
+internal fun defaultAndroidModule(
+    name: String = "impl",
+    appName: String = DEFAULT_APP_NAME,
+    generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
+    apiSchemesDirectory: String = DEFAULT_API_SCHEMES_DIRECTORY,
+    generatedDirectory: String = DEFAULT_BUILD_DIRECTORY,
+    skipValidation: Boolean = true,
+    buildExtra: String = "",
+) = AndroidLibModule(
+    name = name,
+    plugins = plugins {
+        id("com.avito.android.network-contracts")
+    },
+    buildGradleExtra = buildGradleExtra(
+        appName,
+        generatedClassesPackage,
+        skipValidation,
+        apiSchemesDirectory,
+        generatedDirectory,
+        buildExtra,
+    ),
+    useKts = true
+)
 
 internal fun defaultModule(
     name: String = "impl",

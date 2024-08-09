@@ -5,7 +5,6 @@ import com.avito.android.network_contracts.codegen.CodegenTask
 import com.avito.android.network_contracts.codegen.SetupTmpMtlsFilesTask
 import com.avito.android.network_contracts.defaultModule
 import com.avito.android.network_contracts.scheme.imports.data.models.SchemaEntry
-import com.avito.capitalize
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test
@@ -24,7 +23,7 @@ class ValidateNetworkContractsTaskTest {
             .assertThat()
             .tasksShouldBeTriggered(
                 ":${SetupTmpMtlsFilesTask.NAME}",
-                ":$projectName:validate${CodegenTask.NAME.capitalize()}",
+                ":$projectName:${CodegenTask.NAME}Validate",
                 ":$projectName:${ValidateNetworkContractsSchemesTask.NAME}",
                 ":${ValidateNetworkContractsRootTask.NAME}",
             )

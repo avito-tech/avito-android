@@ -25,7 +25,15 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 public class NetworkContractsPlugin : Plugin<Project> {
 
@@ -38,21 +46,49 @@ public class NetworkContractsPlugin : Plugin<Project> {
 
         target.codegenConfiguration.setArtifactsExecutable()
 
-        registerCodegenTask(CodegenTask.NAME, target)
+        target.plugins.withType<KotlinBasePlugin> {
+            registerCodegenVariantsTask(target)
+        }
 
         configureAddEndpointTask(target)
         configureValidationTask(target)
         configureCollectSchemesTask(target)
-        configureGeneratedSources(target)
     }
 
     private fun createNetworkContractsExtension(project: Project) {
         project.extensions.create<NetworkContractsModuleExtension>(NetworkContractsModuleExtension.NAME)
     }
 
+    private fun registerCodegenVariantsTask(target: Project) {
+        // KMP type is not supported for now, using only single target (android/jvm)
+        val kotlinTargetExtension = target.kotlinExtension as? KotlinSingleTargetExtension<*> ?: return
+
+        kotlinTargetExtension.target.compilations
+            .all { compilation ->
+                // configure codegen task only for Android/Kotlin modules and include only baseVariant/main sourceSet
+                val codegenTask = when {
+                    compilation.isAndroidBaseVariantCompilation() -> registerCodegenTask(
+                        name = CodegenTask.NAME,
+                        variant = compilation.androidVariant.name,
+                        target = target
+                    )
+
+                    compilation.isJvmMainCompilation() -> registerCodegenTask(
+                        name = CodegenTask.NAME,
+                        target = target
+                    )
+
+                    else -> return@all
+                }
+
+                compilation.defaultSourceSet.kotlin.srcDirs(codegenTask.flatMap { it.outputDirectory })
+            }
+    }
+
     private fun registerCodegenTask(
         name: String,
         target: Project,
+        variant: String = "",
         forceValidation: Boolean = false,
         action: (CodegenTask) -> Unit = {}
     ): TaskProvider<CodegenTask> {
@@ -63,7 +99,14 @@ public class NetworkContractsPlugin : Plugin<Project> {
             SetupTmpMtlsFilesTask::class.java
         )
 
-        return target.tasks.register(name, CodegenTask::class.java) {
+        val taskName = "$name${variant.capitalize()}"
+        val outputDirectory = if (variant.isEmpty()) {
+            networkContractsExtension.generatedDirectory.dir("main")
+        } else {
+            networkContractsExtension.generatedDirectory.dir(variant)
+        }
+
+        return target.tasks.register(taskName, CodegenTask::class.java) {
             it.packageName.set(networkContractsExtension.packageName)
             it.apiClassName.set(networkContractsExtension.apiClassName)
             it.moduleName.set(it.project.path)
@@ -71,7 +114,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.codegenProjectName.set(networkContractsExtension.projectName)
             it.skipValidation.set(networkContractsExtension.skipValidation.map { !forceValidation && it })
             it.moduleDirectory.set(it.project.layout.projectDirectory)
-            it.outputDirectory.set(networkContractsExtension.generatedDirectory)
+            it.outputDirectory.set(outputDirectory)
 
             val codegenConfiguration = target.codegenConfiguration.takeIf { !it.isEmpty }
                 ?: target.rootProject.codegenConfiguration
@@ -121,16 +164,11 @@ public class NetworkContractsPlugin : Plugin<Project> {
             .withType<ValidateNetworkContractsRootTask>()
 
         val codegenTasks = registerCodegenTask(
-            name = "validate" + CodegenTask.NAME.capitalize(),
+            name = CodegenTask.NAME,
+            variant = "validate",
             target = project,
             forceValidation = true
-        ) {
-            it.outputDirectory.set(
-                project.layout.buildDirectory
-                    .dir("networkContracts")
-                    .map { it.dir("validation") }
-            )
-        }
+        )
 
         val validateSchemesTask = project.tasks
             .register<ValidateNetworkContractsSchemesTask>(ValidateNetworkContractsSchemesTask.NAME) {
@@ -184,12 +222,21 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.schemes.from(collectApiSchemesTask.flatMap(CollectApiSchemesTask::jsonSchemeMetadataFile))
         }
     }
+}
 
-    private fun configureGeneratedSources(project: Project) {
-        val codegenTask = project.tasks.typedNamed<CodegenTask>(CodegenTask.NAME)
-
-        project.tasks.withType<KotlinCompileTool>().configureEach {
-            it.source(codegenTask.flatMap { it.outputDirectory })
-        }
+@OptIn(ExperimentalContracts::class)
+private fun KotlinCompilation<*>.isAndroidBaseVariantCompilation(): Boolean {
+    contract {
+        returns(true) implies (this@isAndroidBaseVariantCompilation is KotlinJvmAndroidCompilation)
     }
+    return this is KotlinJvmAndroidCompilation &&
+        this.androidVariant.baseName == this.androidVariant.name
+}
+
+@OptIn(ExperimentalContracts::class)
+private fun KotlinCompilation<*>.isJvmMainCompilation(): Boolean {
+    contract {
+        returns(true) implies (this@isJvmMainCompilation is KotlinWithJavaCompilation<*, *>)
+    }
+    return this is KotlinWithJavaCompilation<*, *> && this.name == "main"
 }

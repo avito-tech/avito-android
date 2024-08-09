@@ -1,6 +1,7 @@
 package com.avito.android.network_contracts.codegen
 
 import com.avito.android.network_contracts.NetworkCodegenProjectGenerator
+import com.avito.android.network_contracts.defaultAndroidModule
 import com.avito.android.network_contracts.defaultModule
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -21,7 +22,24 @@ internal class CodegenTest {
             .apply {
                 tasksShouldBeTriggered(
                     ":${module.name}:${CodegenTask.NAME}",
-                ).inOrder()
+                )
+                tasksShouldNotBeTriggered(
+                    ":${SetupTmpMtlsFilesTask.NAME}"
+                )
+            }
+    }
+
+    @Test
+    fun `compile android task - applies subtasks in the correct order`(@TempDir projectDir: File) {
+        val module = defaultAndroidModule()
+        NetworkCodegenProjectGenerator.generate(projectDir, modules = listOf(module))
+        runTask(projectDir, "compileReleaseKotlin", dryRun = true)
+            .assertThat()
+            .buildSuccessful()
+            .apply {
+                tasksShouldBeTriggered(
+                    ":${module.name}:${CodegenTask.NAME}Release",
+                )
                 tasksShouldNotBeTriggered(
                     ":${SetupTmpMtlsFilesTask.NAME}"
                 )
