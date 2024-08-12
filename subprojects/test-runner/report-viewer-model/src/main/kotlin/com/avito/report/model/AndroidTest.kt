@@ -25,10 +25,11 @@ public sealed class AndroidTest : TestStaticData {
         override val behavior: TestCaseBehavior?,
         override val kind: Kind,
         override val flakiness: Flakiness,
+        override val groupList: List<String>,
         public val startTime: Long,
         public val lastSignalTime: Long,
         public val logcat: String,
-        public val incident: Incident?
+        public val incident: Incident?,
     ) : AndroidTest() {
 
         override fun equals(other: Any?): Boolean {
@@ -88,6 +89,7 @@ public sealed class AndroidTest : TestStaticData {
                 behavior = testStaticData.behavior,
                 kind = testStaticData.kind,
                 flakiness = testStaticData.flakiness,
+                groupList = testStaticData.groupList,
                 startTime = startTime,
                 lastSignalTime = lastSignalTime,
                 logcat = logcat,
@@ -112,8 +114,9 @@ public sealed class AndroidTest : TestStaticData {
         override val behavior: TestCaseBehavior?,
         override val kind: Kind,
         override val flakiness: Flakiness,
+        override val groupList: List<String>,
         public val skipReason: String,
-        public val reportTime: Long
+        public val reportTime: Long,
     ) : AndroidTest() {
 
         override fun equals(other: Any?): Boolean {
@@ -158,6 +161,7 @@ public sealed class AndroidTest : TestStaticData {
                 behavior = testStaticData.behavior,
                 kind = testStaticData.kind,
                 flakiness = testStaticData.flakiness,
+                groupList = testStaticData.groupList,
                 skipReason = skipReason,
                 reportTime = reportTime
             )
@@ -187,6 +191,7 @@ public sealed class AndroidTest : TestStaticData {
         override val startTime: Long,
         override val endTime: Long,
         override val flakiness: Flakiness,
+        override val groupList: List<String>,
         public val logcat: String,
     ) : AndroidTest(), TestRuntimeData {
 
@@ -240,6 +245,7 @@ public sealed class AndroidTest : TestStaticData {
                 startTime = testRuntimeData.startTime,
                 endTime = testRuntimeData.endTime,
                 flakiness = testStaticData.flakiness,
+                groupList = testStaticData.groupList,
                 logcat = logcat,
             )
         }

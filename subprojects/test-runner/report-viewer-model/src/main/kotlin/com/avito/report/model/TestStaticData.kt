@@ -33,4 +33,6 @@ public interface TestStaticData {
     public val behavior: TestCaseBehavior?
 
     public val kind: Kind
+
+    public val groupList: List<String>
 }

@@ -10,6 +10,7 @@ import com.avito.android.test.annotations.E2ETest
 import com.avito.android.test.annotations.ExternalId
 import com.avito.android.test.annotations.FeatureId
 import com.avito.android.test.annotations.Flaky
+import com.avito.android.test.annotations.GroupList
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.Priority
@@ -41,6 +42,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
         var tagIds: List<Int> = emptyList()
         var featureIds: List<Int> = emptyList()
         var flakiness: Flakiness = Flakiness.Stable
+        var groupList: List<String> = emptyList()
 
         val annotationTypes = arrayOf(
             FeatureId::class.java,
@@ -51,6 +53,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
             ExternalId::class.java,
             TagId::class.java,
             Flaky::class.java,
+            GroupList::class.java,
             UIComponentTest::class.java,
             E2ETest::class.java,
             IntegrationTest::class.java,
@@ -80,6 +83,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
                         else ->
                             Flakiness.Stable
                     }
+                    is GroupList -> groupList = annotation.value.toList()
                 }
             }
 
@@ -95,7 +99,8 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
                 externalId = externalId,
                 featureIds = featureIds,
                 tagIds = tagIds,
-                flakiness = flakiness
+                flakiness = flakiness,
+                groupList = groupList,
             )
         )
     }

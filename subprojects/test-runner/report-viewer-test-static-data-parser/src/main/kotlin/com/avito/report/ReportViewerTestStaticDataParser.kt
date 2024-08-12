@@ -11,6 +11,7 @@ import com.avito.android.test.annotations.E2ETest
 import com.avito.android.test.annotations.ExternalId
 import com.avito.android.test.annotations.FeatureId
 import com.avito.android.test.annotations.Flaky
+import com.avito.android.test.annotations.GroupList
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.NO_REASON
@@ -113,7 +114,9 @@ public interface ReportViewerTestStaticDataParser {
 
             kind = determineKind(testInApk.annotations),
 
-            flakiness = determineFlakiness(testInApk.annotations, target.api)
+            flakiness = determineFlakiness(testInApk.annotations, target.api),
+
+            groupList = determineGroupList(testInApk.annotations)
         )
 
         private fun determineFlakiness(annotations: List<AnnotationData>, api: Int): Flakiness {
@@ -136,8 +139,18 @@ public interface ReportViewerTestStaticDataParser {
                         Flakiness.Stable
                     }
                 }
+
                 else -> Flakiness.Stable
             }
+        }
+
+        private fun determineGroupList(annotations: List<AnnotationData>): List<String> {
+            val annotation = annotations.find { it.name == GroupList::class.java.canonicalName }
+
+            return annotation
+                ?.getStringArrayValue(GROUP_LIST_VALUE_KEY)
+                ?.toList()
+                ?: emptyList()
         }
 
         private fun determineKind(annotations: List<AnnotationData>): Kind =
@@ -162,3 +175,5 @@ private const val FEATURE_ID_VALUE_KEY = "value"
 private const val FLAKY_REASON_KEY = "reason"
 
 private const val FLAKY_SDKS_KEY = "onSdks"
+
+private const val GROUP_LIST_VALUE_KEY = "value"

@@ -113,12 +113,11 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
     ): RfcRpcRequest {
         val preparedData = mutableMapOf<String, Any>()
         val messageList = mutableListOf<String>()
-        val groupList = mutableListOf(test.name.team.name)
         val reportData = mutableMapOf<String, Any>()
 
         val kind = test.kind
-        groupList.add(kind.tmsId)
 
+        val groups: List<String> = test.groupList + test.name.team.name + test.kind.tmsId
         val report = mutableMapOf(
             "test_class" to test.name.className,
             "test_name" to if (test.dataSetNumber != null) {
@@ -128,7 +127,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
             },
             "message_list" to messageList,
             // собираем из всех нужных данных список лейблов(тэгов), по которым можно будет фильтровать тесты в RV
-            "group_list" to groupList,
+            "group_list" to groups,
             "precondition_step_list" to preconditionList,
             "test_case_step_list" to stepList
         )
