@@ -4,7 +4,6 @@ package com.avito.android.module_type.internal
 
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
-import com.avito.android.module_type.DependencyRestriction
 import com.avito.android.module_type.ModuleWithType
 import com.avito.android.module_type.restrictions.extension.BetweenDifferentAppsRestrictionExtension
 import com.avito.android.module_type.restrictions.extension.BetweenFunctionalTypesExtension
@@ -31,10 +30,6 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
     @get:Input
     abstract val dependentProjects: SetProperty<String>
 
-    @Suppress("DEPRECATION")
-    @get:Input
-    abstract val restrictions: ListProperty<DependencyRestriction>
-
     @get:Input
     abstract val betweenFunctionalTypesRestrictions: ListProperty<BetweenFunctionalTypesExtension>
 
@@ -51,9 +46,6 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
 
     @TaskAction
     fun checkDependencies() {
-        require(restrictions.getOrElse(emptyList()).isEmpty()) {
-            "Deprecated field. Use dependencyRestrictions"
-        }
         val restrictions: List<com.avito.android.module_type.restrictions.DependencyRestriction> = buildList {
             addAll(betweenFunctionalTypesRestrictions.getOrElse(emptyList()).map { it.getRestriction() })
             if (betweenDifferentAppsRestriction.isPresent) {
