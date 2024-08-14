@@ -34,6 +34,30 @@ internal class ImpactAnalysisFilterFactoryTest {
         filter.assertIncluded(test1, test2, test3, test4)
     }
 
+    @Test
+    fun `noImpactAnalysis - filtered impacted tests`() {
+        val filter = StubFilterFactoryFactory.create(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                runOnlyChangedTests = false,
+                changedTests = listOf(test1)
+            )
+        ).createFilter()
+
+        filter.assertIncluded(test2, test3, test4)
+    }
+
+    @Test
+    fun `impactAnalysis - filtered not impacted tests`() {
+        val filter = StubFilterFactoryFactory.create(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                runOnlyChangedTests = true,
+                changedTests = listOf(test1)
+            )
+        ).createFilter()
+
+        filter.assertIncluded(test1)
+    }
+
     private fun TestsFilter.assertIncluded(vararg name: String) {
         name.forEach {
             val result = filter(TestsFilter.Test.createStub(it))

@@ -108,7 +108,6 @@ internal class FilterFactoryImplTest {
         )
     }
 
-    @Suppress("MaxLineLength")
     @Test
     fun `when filterData - includePrevious statuses and Report failed - then filters contain defaults`() {
         val runResultsProvider = StubRunResultsProvider()
@@ -242,5 +241,29 @@ internal class FilterFactoryImplTest {
                 isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
             }
         }
+    }
+
+    @Test
+    fun `filterData is empty and changedTest is not empty - contains impact analysis filter`() {
+        val factory = StubFilterFactoryFactory.create(
+            filter = InstrumentationFilterData.createStub(),
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                runOnlyChangedTests = false,
+                changedTests = listOf("com.stub.Test")
+            )
+        )
+
+        val compositionFilter = factory.createFilter() as CompositionFilter
+
+        assertThat(compositionFilter.filters).contains(
+            ExcludeByTestSignaturesFilter(
+                source = Source.ImpactAnalysis,
+                signatures = setOf(
+                    TestSignature(
+                        name = "com.stub.Test",
+                    )
+                )
+            )
+        )
     }
 }

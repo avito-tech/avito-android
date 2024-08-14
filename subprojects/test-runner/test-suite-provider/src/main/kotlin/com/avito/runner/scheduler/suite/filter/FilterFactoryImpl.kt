@@ -159,13 +159,30 @@ internal class FilterFactoryImpl(
 
     private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
         if (impactAnalysisResult.runOnlyChangedTests) {
-            addImpactTests(impactAnalysisResult.changedTests)
+            includeImpactedTests(impactAnalysisResult.changedTests)
+        } else {
+            if (impactAnalysisResult.changedTests.isNotEmpty()) {
+                excludeImpactedTests(impactAnalysisResult.changedTests)
+            }
         }
     }
 
-    private fun MutableList<TestsFilter>.addImpactTests(tests: List<String>) {
+    private fun MutableList<TestsFilter>.includeImpactedTests(tests: List<String>) {
         add(
             IncludeByTestSignaturesFilter(
+                source = TestsFilter.Signatures.Source.ImpactAnalysis,
+                signatures = tests.map { name ->
+                    TestSignature(
+                        name = name
+                    )
+                }.toSet()
+            )
+        )
+    }
+
+    private fun MutableList<TestsFilter>.excludeImpactedTests(tests: List<String>) {
+        add(
+            ExcludeByTestSignaturesFilter(
                 source = TestsFilter.Signatures.Source.ImpactAnalysis,
                 signatures = tests.map { name ->
                     TestSignature(
