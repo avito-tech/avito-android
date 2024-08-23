@@ -151,6 +151,7 @@ include(":subprojects:test-runner:plugins-configuration")
 include(":subprojects:test-runner:report-viewer-test-static-data-parser")
 include(":subprojects:test-runner:test-suite-provider")
 include(":subprojects:test-runner:inhouse-avito-report")
+include(":subprojects:test-runner:junit-report-generator")
 
 include(":subprojects:logger:gradle-logger")
 include(":subprojects:logger:logger")

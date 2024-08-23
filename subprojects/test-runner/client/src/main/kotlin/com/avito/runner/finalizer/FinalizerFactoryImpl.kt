@@ -1,15 +1,17 @@
 package com.avito.runner.finalizer
 
 import com.avito.android.stats.StatsDSender
+import com.avito.junit.JUnitReportGenerator
 import com.avito.logger.LoggerFactory
 import com.avito.report.Report
 import com.avito.runner.config.RunnerReportConfig
 import com.avito.runner.finalizer.action.FinalizeAction
 import com.avito.runner.finalizer.action.ReportLostTestsAction
 import com.avito.runner.finalizer.action.SendMetricsAction
-import com.avito.runner.finalizer.action.WriteJUnitReportAction
 import com.avito.runner.finalizer.action.WriteReportViewerLinkFile
 import com.avito.runner.finalizer.action.WriteTaskVerdictAction
+import com.avito.runner.finalizer.action.junit.AvitoJunitTestSuiteConfig
+import com.avito.runner.finalizer.action.junit.WriteJUnitReportAction
 import com.avito.runner.finalizer.verdict.VerdictDeterminer
 import com.avito.runner.finalizer.verdict.VerdictDeterminerImpl
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
@@ -62,8 +64,12 @@ internal class FinalizerFactoryImpl(
 
         actions += WriteJUnitReportAction(
             destination = File(outputDir, "junit-report.xml"),
-            reportLinksGenerator = report.reportLinksGenerator,
-            testSuiteNameProvider = report.testSuiteNameProvider
+            jUnitReportGenerator = JUnitReportGenerator(
+                testSuiteConfig = AvitoJunitTestSuiteConfig(
+                    testSuiteNameProvider = report.testSuiteNameProvider,
+                    reportLinksGenerator = report.reportLinksGenerator,
+                )
+            ),
         )
 
         when (reportConfig) {
@@ -75,6 +81,7 @@ internal class FinalizerFactoryImpl(
                     reportLinksGenerator = report.reportLinksGenerator
                 )
             }
+
             RunnerReportConfig.None -> {
                 // no-op
             }

@@ -35,9 +35,7 @@ dependencies {
     implementation(project(":subprojects:test-runner:inhouse-avito-report"))
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
-    implementation(libs.commonsText) {
-        because("for StringEscapeUtils.escapeXml10() only")
-    }
+    implementation(project(":subprojects:test-runner:junit-report-generator"))
 
     testImplementation(libs.coroutinesTest)
     testImplementation(libs.kotlinReflect)

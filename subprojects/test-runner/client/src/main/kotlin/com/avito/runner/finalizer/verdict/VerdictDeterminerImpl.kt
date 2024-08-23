@@ -27,7 +27,7 @@ internal class VerdictDeterminerImpl(
 
         return when {
             testRunnerThrowable != null -> {
-                val unsuppressedFailedTests: Collection<TestStaticData> = when {
+                val unsuppressedFailedTests: Collection<AndroidTest> = when {
                     suppressFailure -> emptySet()
                     suppressFlaky -> failedTests.filter { it.flakiness !is Flakiness.Flaky }.toSet()
                     else -> failedTests
@@ -81,7 +81,7 @@ internal class VerdictDeterminerImpl(
         }
     }
 
-    private fun getFailedTests(testVerdicts: Collection<AndroidTest>): Set<TestStaticData> {
+    private fun getFailedTests(testVerdicts: Collection<AndroidTest>): Set<AndroidTest> {
         val completedWithIncident =
             testVerdicts.filterIsInstance<AndroidTest.Completed>().filter { it.incident != null }
         val infrastructureError = testVerdicts.filterIsInstance<AndroidTest.Lost>()

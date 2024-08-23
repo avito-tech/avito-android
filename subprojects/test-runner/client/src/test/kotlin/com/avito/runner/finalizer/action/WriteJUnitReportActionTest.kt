@@ -1,5 +1,6 @@
 package com.avito.runner.finalizer.action
 
+import com.avito.junit.JUnitReportGenerator
 import com.avito.report.NoOpReportLinksGenerator
 import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.model.AndroidTest
@@ -8,6 +9,8 @@ import com.avito.report.model.IncidentElement
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
+import com.avito.runner.finalizer.action.junit.AvitoJunitTestSuiteConfig
+import com.avito.runner.finalizer.action.junit.WriteJUnitReportAction
 import com.avito.runner.finalizer.verdict.Verdict
 import com.avito.test.model.TestName
 import com.google.common.truth.Truth.assertThat
@@ -106,8 +109,12 @@ internal class WriteJUnitReportActionTest {
     private fun mockData(verdict: Verdict) {
         WriteJUnitReportAction(
             destination = file,
-            testSuiteNameProvider = NoOpTestSuiteNameProvider(),
-            reportLinksGenerator = NoOpReportLinksGenerator(testLink = reportViewerUrl)
+            jUnitReportGenerator = JUnitReportGenerator(
+                testSuiteConfig = AvitoJunitTestSuiteConfig(
+                    testSuiteNameProvider = NoOpTestSuiteNameProvider(),
+                    reportLinksGenerator = NoOpReportLinksGenerator(testLink = reportViewerUrl),
+                )
+            )
         ).action(
             verdict = verdict
         )

@@ -1,7 +1,6 @@
 package com.avito.runner.finalizer.verdict
 
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.TestStaticData
 
 internal sealed class Verdict {
 
@@ -14,14 +13,14 @@ internal sealed class Verdict {
         data class Suppressed(
             override val testResults: Collection<AndroidTest>,
             val notReportedTests: Collection<AndroidTest.Lost>,
-            val failedTests: Collection<TestStaticData>,
+            val failedTests: Collection<AndroidTest>,
         ) : Success()
     }
 
     data class Failure(
         override val testResults: Collection<AndroidTest>,
         val notReportedTests: Collection<AndroidTest.Lost>,
-        val unsuppressedFailedTests: Collection<TestStaticData>,
+        val unsuppressedFailedTests: Collection<AndroidTest>,
         val testRunnerThrowable: Throwable? = null,
     ) : Verdict()
 }
