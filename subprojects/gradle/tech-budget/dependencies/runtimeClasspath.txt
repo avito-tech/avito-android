@@ -82,6 +82,7 @@ com.sun.xml.fastinfoset:FastInfoset:1.2.16
 commons-codec:commons-codec:1.11
 commons-io:commons-io:2.4
 commons-logging:commons-logging:1.2
+io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.5
 io.grpc:grpc-api:1.45.1
 io.grpc:grpc-context:1.45.1
 io.grpc:grpc-core:1.45.1

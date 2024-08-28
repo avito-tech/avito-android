@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.moshiRetrofit)
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
+    implementation(libs.detektGradle)
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:code-ownership:plugin"))
     implementation(project(":subprojects:gradle:android"))

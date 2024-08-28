@@ -3,6 +3,7 @@ package com.avito.android.tech_budget
 import com.avito.android.tech_budget.internal.ab_tests.ABTestsConfigurator
 import com.avito.android.tech_budget.internal.compilation_info.ModuleCompilationInfoConfigurator
 import com.avito.android.tech_budget.internal.deeplinks.DeepLinkConfigurator
+import com.avito.android.tech_budget.internal.detekt.DetektConfigurator
 import com.avito.android.tech_budget.internal.feature_toggles.FeatureTogglesConfigurator
 import com.avito.android.tech_budget.internal.lint_issues.LintIssuesConfigurator
 import com.avito.android.tech_budget.internal.module_dependencies.ModuleDependenciesConfigurator
@@ -39,6 +40,7 @@ public class TechBudgetPlugin : Plugin<Project> {
             ModuleCompilationInfoConfigurator(),
             ModuleTypesConfigurator(),
             PerfScreenOwnersConfigurator(),
+            DetektConfigurator(),
         )
         configurators.forEach { it.configure(target) }
     }
