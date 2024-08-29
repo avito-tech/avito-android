@@ -5,7 +5,7 @@ package com.avito.report.model
  */
 public sealed class Flakiness {
 
-    public class Flaky(public val reason: String) : Flakiness()
+    public data class Flaky(public val reason: String) : Flakiness()
 
-    public object Stable : Flakiness()
+    public data object Stable : Flakiness()
 }
