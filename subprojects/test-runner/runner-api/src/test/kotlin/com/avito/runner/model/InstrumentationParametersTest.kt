@@ -1,4 +1,4 @@
-package com.avito.runner.config
+package com.avito.runner.model
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

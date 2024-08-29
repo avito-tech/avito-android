@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":subprojects:test-runner:report-viewer"))
     implementation(project(":subprojects:test-runner:test-annotations"))
     implementation(project(":subprojects:test-runner:test-suite-provider"))
+    implementation(project(":subprojects:test-runner:instrumentation-args-interactor"))
 
     testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(testFixtures(project(":subprojects:test-runner:report")))

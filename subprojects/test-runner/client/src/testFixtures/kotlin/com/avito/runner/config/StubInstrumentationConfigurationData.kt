@@ -1,5 +1,6 @@
 package com.avito.runner.config
 
+import com.avito.runner.model.InstrumentationParameters
 import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.Filter

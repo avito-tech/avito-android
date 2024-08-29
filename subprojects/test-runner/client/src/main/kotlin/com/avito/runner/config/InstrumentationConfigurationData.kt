@@ -2,6 +2,7 @@ package com.avito.runner.config
 
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.runner.model.InstrumentationParameters
 import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 import java.io.Serializable
 import java.time.Duration
@@ -28,7 +29,7 @@ public data class InstrumentationConfigurationData(
             requestedDevices.all { it is Device.CloudEmulator } -> DeviceType.CLOUD
             requestedDevices.all { it is Device.MockEmulator } -> DeviceType.MOCK
             else -> {
-                val deviceTypesNames = DeviceType.values().map { it.name }
+                val deviceTypesNames = DeviceType.entries.map { it.name }
                 throw IllegalStateException(
                     "Targeting different type of emulators($deviceTypesNames) " +
                         "in the same configuration is not supported; " +

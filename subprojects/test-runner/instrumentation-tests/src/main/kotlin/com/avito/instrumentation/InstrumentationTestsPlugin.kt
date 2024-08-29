@@ -45,15 +45,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
 
             androidComponents.finalizeDsl { androidExtension ->
-
-                val instrumentationArgs = factory.instrumentationArgsResolver.resolvePluginLevelArgs(
-                    androidExtension = androidExtension
-                )
-
-                factory.localRunInteractor.setupLocalRunInstrumentationArgs(
-                    androidExtension = androidExtension,
-                    args = instrumentationArgs
-                )
+                factory.setupLocalInstrumentationArgsUseCase.setupLocalRunParams(androidExtension)
             }
 
             extension.configurationsContainer.all { configuration ->

@@ -256,3 +256,7 @@ internal_publish_gradle_cache_node_image:
 	docker pull gradle/build-cache-node:$(GRADLE_CACHE_NODE_TAG) && \
 	docker tag gradle/build-cache-node:$(GRADLE_CACHE_NODE_TAG) $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG) && \
 	docker push $(DOCKER_REGISTRY)/android/gradle-cache-node:$(GRADLE_CACHE_NODE_TAG)
+
+# Update depenedency lock-files after dependency update
+write_locks:
+	./gradlew dependencyGuardBaseline

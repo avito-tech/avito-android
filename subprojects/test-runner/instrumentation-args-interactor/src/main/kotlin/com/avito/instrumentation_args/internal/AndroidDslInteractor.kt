@@ -1,4 +1,4 @@
-package com.avito.instrumentation.internal
+package com.avito.instrumentation_args.internal
 
 import com.android.build.api.dsl.CommonExtension
 

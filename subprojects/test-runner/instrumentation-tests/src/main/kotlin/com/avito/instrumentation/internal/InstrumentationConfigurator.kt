@@ -9,15 +9,16 @@ import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.instrumentation_args.InstrumentationArgsResolver
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.runner.config.InstrumentationConfigurationCacheableData
-import com.avito.runner.config.InstrumentationParameters
 import com.avito.runner.config.Reservation
 import com.avito.runner.config.RunnerReportConfig
 import com.avito.runner.config.SchedulingConfigurationData
 import com.avito.runner.config.TargetConfigurationCacheableData
+import com.avito.runner.model.InstrumentationParameters
 import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.Filter
@@ -74,8 +75,7 @@ internal class InstrumentationConfigurator(
     }
 
     private fun getMergedInstrumentationParameters(jobSlug: String?): InstrumentationParameters {
-        val parentInstrumentationParameters =
-            instrumentationArgsResolver.getInstrumentationArgsForTestTask()
+        val parentInstrumentationParameters = instrumentationArgsResolver.resolveTestTaskArgs()
 
         return getConfigurationInstrumentationParameters(
             parentInstrumentationParameters,

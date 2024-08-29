@@ -8,6 +8,10 @@ import com.avito.git.gitStateProvider
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
+import com.avito.instrumentation_args.AgpInstrumentationArgsProvider
+import com.avito.instrumentation_args.InstrumentationArgsResolver
+import com.avito.instrumentation_args.LocalRunInteractor
+import com.avito.instrumentation_args.SetupLocalInstrumentationArgsUseCase
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.utils.gradle.envArgs
 import org.gradle.api.Project
@@ -37,21 +41,29 @@ internal class ConfiguratorsFactory(
 
     private val argsTester = LocalRunArgsChecker(outputDirResolver)
 
-    private val androidDslInteractor = AndroidDslInteractor
-
     private val experimentsConfigurator = ExperimentsConfigurator(extension)
 
-    val instrumentationArgsResolver = InstrumentationArgsResolver(
-        extension = extension,
-        reportResolver = reportResolver,
-        runIdResolver = runIdResolver,
-        androidDslInteractor = androidDslInteractor,
+    private val loggerFactory = GradleLoggerPlugin.getLoggerFactory(project)
+
+    private val agpInstrumentationArgsProvider = AgpInstrumentationArgsProvider()
+
+    private val instrumentationArgsResolver = InstrumentationArgsResolver(
+        agpArgsProvider = agpInstrumentationArgsProvider,
+        extensionArgsProvider = ExtensionInstrumentationArgsProvider(extension),
+        additionalArgsProviders = listOf(
+            ReportInstrumentationArgsProvider(
+                reportResolver = reportResolver,
+                runIdResolver = runIdResolver,
+            ),
+        ),
     )
 
-    val localRunInteractor: LocalRunInteractor = LocalRunInteractor(
-        argsTester = argsTester,
-        dslInteractor = androidDslInteractor,
-        logger = project.logger
+    val setupLocalInstrumentationArgsUseCase = SetupLocalInstrumentationArgsUseCase(
+        agpInstrumentationArgsProvider = agpInstrumentationArgsProvider,
+        localRunInteractor = LocalRunInteractor(
+            instrumentationArgsDumper = argsTester,
+            instrumentationArgsResolver = instrumentationArgsResolver,
+        ),
     )
 
     fun createTaskConfigurators(
@@ -82,7 +94,7 @@ internal class ConfiguratorsFactory(
                 configuration = configuration,
                 instrumentationArgsResolver = instrumentationArgsResolver,
                 reportResolver = reportResolver,
-                loggerFactory = GradleLoggerPlugin.getLoggerFactory(project),
+                loggerFactory = loggerFactory,
             )
 
             val buildCacheConfigurator = BuildCacheConfigurator(

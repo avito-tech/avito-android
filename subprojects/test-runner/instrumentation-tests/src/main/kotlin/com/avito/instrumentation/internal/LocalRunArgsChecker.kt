@@ -1,11 +1,12 @@
 package com.avito.instrumentation.internal
 
 import com.avito.instrumentation.dumpDirName
+import com.avito.instrumentation_args.InstrumentationArgsDumper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.File
 
-internal class LocalRunArgsChecker(private val dumpDir: () -> File) {
+internal class LocalRunArgsChecker(private val dumpDir: () -> File) : InstrumentationArgsDumper {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -16,7 +17,7 @@ internal class LocalRunArgsChecker(private val dumpDir: () -> File) {
             .asFile
     })
 
-    fun dumpArgs(args: Map<String, String>) {
+    override fun dumpArgs(args: Map<String, String>) {
         getDumpFile().writer().use { gson.toJson(args, it) }
     }
 

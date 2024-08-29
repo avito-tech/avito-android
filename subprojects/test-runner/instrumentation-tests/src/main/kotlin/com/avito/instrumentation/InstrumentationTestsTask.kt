@@ -13,10 +13,10 @@ import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.runner.config.InstrumentationConfigurationCacheableData
 import com.avito.runner.config.InstrumentationConfigurationDataFactory
-import com.avito.runner.config.InstrumentationParameters
 import com.avito.runner.config.RunnerInputParams
 import com.avito.runner.config.RunnerReportConfig
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
+import com.avito.runner.model.InstrumentationParameters
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult

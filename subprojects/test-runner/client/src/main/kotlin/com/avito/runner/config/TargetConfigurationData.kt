@@ -1,5 +1,6 @@
 package com.avito.runner.config
 
+import com.avito.runner.model.InstrumentationParameters
 import com.avito.test.model.DeviceName
 import java.io.Serializable
 

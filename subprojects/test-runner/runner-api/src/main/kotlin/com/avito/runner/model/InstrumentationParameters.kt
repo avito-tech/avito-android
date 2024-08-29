@@ -1,4 +1,4 @@
-package com.avito.runner.config
+package com.avito.runner.model
 
 import java.io.Serializable
 
