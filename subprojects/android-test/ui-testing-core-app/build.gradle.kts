@@ -137,16 +137,6 @@ instrumentation {
         memoryLimit = defaultMemoryLimit
     )
 
-    val emulator34 = Device.CloudEmulator(
-        name = "api34",
-        api = 34,
-        model = "sdk_gphone64_x86_64",
-        image = emulatorImage(34, "10f893892e0b"),
-        cpuCoresRequest = defaultCpuRequest,
-        cpuCoresLimit = defaultCpuLimit,
-        memoryLimit = "4.5Gi"
-    )
-
     configurations {
         register("local") {
             filter = "local"
@@ -171,7 +161,7 @@ instrumentation {
         register(
             "PRCheck",
             instrumentationConfiguration(
-                targetDevices = setOf(emulator24, emulator34),
+                targetDevices = setOf(emulator24),
             )
         )
     }
