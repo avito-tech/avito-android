@@ -1,4 +1,5 @@
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.configuration.report.ReportConfig
 import com.avito.instrumentation.reservation.request.Device
@@ -97,6 +98,12 @@ instrumentation {
     filters {
         register("ci") {
             fromSource.excludeFlaky = true
+            fromRunHistory.excludePreviousStatuses(
+                setOf(
+                    FromRunHistory.RunStatus.Success,
+                    FromRunHistory.RunStatus.Manual
+                )
+            )
         }
 
         register("local") {
