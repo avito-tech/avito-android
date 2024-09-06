@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":subprojects:gradle:code-ownership:api"))
+    api(project(":subprojects:gradle:alertino"))
     compileOnly(gradleApi())
     implementation(project(":subprojects:gradle:gradle-extensions"))
 }

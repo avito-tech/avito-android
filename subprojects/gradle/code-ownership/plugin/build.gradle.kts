@@ -11,9 +11,14 @@ dependencies {
     api(project(":subprojects:gradle:code-ownership:extensions"))
 
     implementation(libs.jacksonDataformat.toml)
+    implementation(libs.retrofitConverterGson)
+    implementation(libs.kotlinPoet)
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:module-dependencies-graph"))
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:logger:logger"))
+    implementation(project(":subprojects:logger:gradle-logger"))
     implementation(project(":subprojects:common:okhttp"))
 
     ksp(libs.moshiCodegen)

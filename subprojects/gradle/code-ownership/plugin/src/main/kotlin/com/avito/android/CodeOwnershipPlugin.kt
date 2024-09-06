@@ -4,8 +4,13 @@ import com.avito.android.check.deps.CheckExternalDepsCodeOwners
 import com.avito.android.check.ownersip.CheckOwnersPresentTask
 import com.avito.android.diff.ReportCodeOwnershipDiffTask
 import com.avito.android.diff.ReportCodeOwnershipExtension
+import com.avito.android.diff.comparator.AvitoModuleOwnerNameComparator
+import com.avito.android.diff.formatter.ChatMessageFormatter
+import com.avito.android.diff.report.AlertinoOwnerDiffReporter
+import com.avito.android.diff.report.OwnersDiffReportDestination
 import com.avito.android.info.ExportExternalDepsCodeOwners
 import com.avito.android.info.ExportInternalDepsCodeOwners
+import com.avito.android.providers.RemoteAvitoModuleOwnersProvider
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Plugin
@@ -19,12 +24,60 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         val codeOwnershipExtension = target.extensions.create<CodeOwnershipExtension>("ownership")
         if (target.isRoot()) {
             val reportExtension = target.extensions.create<ReportCodeOwnershipExtension>("codeOwnershipDiffReport")
+            reportExtension.configure(target, codeOwnershipExtension)
+
             configureDiffReportTask(target, reportExtension)
             configureCheckExternalDepsTask(target, codeOwnershipExtension, reportExtension)
             configureExportInternalDepsTask(target, codeOwnershipExtension)
             configureExportExternalDepsTask(target, codeOwnershipExtension)
+            registerOwnershipTask(target, codeOwnershipExtension)
         } else {
             configureStrictOwnershipCheckTask(target, codeOwnershipExtension)
+            configureOwnershipTask(target, codeOwnershipExtension)
+        }
+    }
+
+    private fun ReportCodeOwnershipExtension.configure(
+        target: Project,
+        codeOwnershipExtension: CodeOwnershipExtension,
+    ) {
+        val chatMessageFormatter = ChatMessageFormatter()
+        actualOwnersProvider.set(
+            target.provider {
+                RemoteAvitoModuleOwnersProvider(codeOwnershipExtension.avitoOwnersClient.get())
+            }
+        )
+        messageFormatter.set(chatMessageFormatter)
+        diffReportDestination.set(
+            target.provider {
+                OwnersDiffReportDestination.Custom(
+                    AlertinoOwnerDiffReporter(
+                        alertinoSender = codeOwnershipExtension.alertinoSender.get(),
+                        messageFormatter = chatMessageFormatter,
+                    ),
+                )
+            }
+        )
+        comparator.set(AvitoModuleOwnerNameComparator())
+    }
+
+    private fun registerOwnershipTask(
+        target: Project,
+        codeOwnershipExtension: CodeOwnershipExtension,
+    ) = with(target) {
+        tasks.register<GenerateOwnersTask>("generateCodeOwnersFile") {
+            moduleDir.set(codeOwnershipExtension.ownersDir)
+            avitoOwnersClient.set(codeOwnershipExtension.avitoOwnersClient)
+            bitbucketCodeOwnershipFile.set(project.layout.projectDirectory.dir(".bitbucket").file("CODEOWNERS"))
+        }
+    }
+
+    private fun configureOwnershipTask(
+        target: Project,
+        codeOwnershipExtension: CodeOwnershipExtension,
+    ) {
+        target.rootProject.tasks.withType(GenerateOwnersTask::class.java).configureEach {
+            it.modulePathToOwners.put(target.path, codeOwnershipExtension.owners)
         }
     }
 

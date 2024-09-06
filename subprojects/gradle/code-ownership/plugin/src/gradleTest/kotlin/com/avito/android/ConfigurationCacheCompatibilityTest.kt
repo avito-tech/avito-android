@@ -80,10 +80,19 @@ internal class ConfigurationCacheCompatibilityTest {
             imports = listOf(
                 "import com.avito.android.model.StubOwner",
                 "import com.avito.android.diff.provider.SimpleOwnersProvider",
-                "import com.avito.android.diff.report.OwnersDiffReportDestination"
+                "import com.avito.android.diff.report.OwnersDiffReportDestination",
+                "import com.avito.android.network.FakeAvitoOwnersClient",
+                "import com.avito.android.network.FakeAlertinoSender",
+                "import com.avito.android.diff.formatter.DefaultOwnersDiffMessageFormatter"
             ),
             buildGradleExtra = """
+                ownership {
+                    avitoOwnersClient.set(FakeAvitoOwnersClient())
+                    alertinoSender.set(FakeAlertinoSender())
+                }
+                
                 codeOwnershipDiffReport { 
+                    messageFormatter.set(DefaultOwnersDiffMessageFormatter())
                     expectedOwnersProvider.set(SimpleOwnersProvider(setOf()))
                     actualOwnersProvider.set(SimpleOwnersProvider(setOf(StubOwner)))
                     diffReportDestination.set(OwnersDiffReportDestination.File(project.projectDir))

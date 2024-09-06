@@ -20,16 +20,35 @@ internal class FileOwnersDiffReporterTest {
                 id("com.avito.android.code-ownership")
             },
             imports = listOf(
-                "import com.avito.android.model.Owner",
+                "import com.avito.android.model.AvitoCodeOwner",
                 "import com.avito.android.diff.provider.OwnersProvider",
-                "import com.avito.android.diff.report.OwnersDiffReportDestination"
+                "import com.avito.android.diff.report.OwnersDiffReportDestination",
+                "import com.avito.android.network.FakeAvitoOwnersClient",
+                "import com.avito.android.network.FakeAlertinoSender",
+                "import com.avito.android.diff.formatter.DefaultOwnersDiffMessageFormatter",
+                "import com.avito.android.model.Unit"
             ),
             buildGradleExtra = """
-                object Speed : Owner { override fun toString() = "Speed" }
-                object MobileArchitecture : Owner { override fun toString() = "Mobile Architecture" }
-                object Performance : Owner { override fun toString() = "Performance" }
+                object Speed : AvitoCodeOwner {
+                    override val type = Unit("Speed", "1")
+                    override fun toString() = "Speed"
+                }
+                object MobileArchitecture : AvitoCodeOwner {
+                    override val type = Unit("Mobile Architecture", "2")
+                    override fun toString() = "Mobile Architecture"
+                }
+                object Performance : AvitoCodeOwner {
+                    override val type = Unit("Performance", "3")
+                    override fun toString() = "Performance"
+                }
+                
+                ownership {
+                    avitoOwnersClient.set(FakeAvitoOwnersClient())
+                    alertinoSender.set(FakeAlertinoSender())
+                }
                 
                 codeOwnershipDiffReport { 
+                    messageFormatter.set(DefaultOwnersDiffMessageFormatter())
                     expectedOwnersProvider.set(OwnersProvider { setOf(Speed) })
                     actualOwnersProvider.set(OwnersProvider { setOf(Performance, MobileArchitecture) })
                     diffReportDestination.set(OwnersDiffReportDestination.File(project.projectDir)) 

@@ -76,6 +76,8 @@ com.squareup.retrofit2:converter-moshi:2.9.0
 com.squareup.retrofit2:retrofit:2.9.0
 com.squareup:javapoet:1.10.0
 com.squareup:javawriter:2.5.0
+com.squareup:kotlinpoet-jvm:1.16.0
+com.squareup:kotlinpoet:1.16.0
 com.sun.activation:javax.activation:1.2.0
 com.sun.istack:istack-commons-runtime:3.0.8
 com.sun.xml.fastinfoset:FastInfoset:1.2.16
@@ -139,6 +141,7 @@ org.jetbrains.kotlin:kotlin-gradle-plugins-bom:1.9.22
 org.jetbrains.kotlin:kotlin-klib-commonizer-api:1.9.22
 org.jetbrains.kotlin:kotlin-native-utils:1.9.22
 org.jetbrains.kotlin:kotlin-project-model:1.9.22
+org.jetbrains.kotlin:kotlin-reflect:1.9.22
 org.jetbrains.kotlin:kotlin-scripting-common:1.9.22
 org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.22
 org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.22

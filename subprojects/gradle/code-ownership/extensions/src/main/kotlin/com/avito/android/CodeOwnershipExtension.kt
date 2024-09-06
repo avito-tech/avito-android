@@ -1,7 +1,10 @@
 package com.avito.android
 
+import com.avito.alertino.AlertinoSender
 import com.avito.android.model.Owner
+import com.avito.android.model.network.AvitoOwnersClient
 import org.gradle.api.Action
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
@@ -23,6 +26,12 @@ public abstract class CodeOwnershipExtension(
     public abstract val ownerSerializer: Property<OwnerSerializer>
 
     public abstract val ownerSerializersProvider: Property<OwnerSerializerProvider>
+
+    public abstract val avitoOwnersClient: Property<AvitoOwnersClient>
+
+    public abstract val alertinoSender: Property<AlertinoSender>
+
+    public abstract val ownersDir: DirectoryProperty
 
     @get:Nested
     public abstract val externalDependencies: ExternalDependenciesExtension
