@@ -50,6 +50,15 @@ internal class InMemoryReport(
         )
     }
 
+    @Synchronized
+    override fun addTest(tests: Collection<AndroidTest>) {
+        testAttempts.addAll(
+            tests.map {
+                TestAttempt.createWithoutExecution(it)
+            }
+        )
+    }
+
     /**
      * lost tests determined via [getTestResults] and can be found in [com.avito.runner.finalizer.verdict.Verdict]
      */

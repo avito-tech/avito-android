@@ -15,6 +15,8 @@ public interface Report {
 
     public fun addTest(testAttempt: TestAttempt)
 
+    public fun addTest(tests: Collection<AndroidTest>)
+
     /**
      * Skipped tests available right after initial filtering, so it's added even before test runner started
      */

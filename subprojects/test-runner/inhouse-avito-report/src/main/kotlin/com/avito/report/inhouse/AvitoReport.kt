@@ -23,7 +23,6 @@ import com.avito.time.TimeProvider
  * Implementation for inhouse Avito report backend
  *
  * todo new instance for every new reportCoordinates
- * todo extract batching logic
  */
 public class AvitoReport(
     private val reportsApi: ReportsApi,
@@ -36,11 +35,6 @@ public class AvitoReport(
 ) : Report {
 
     private val logger = loggerFactory.create<AvitoReport>()
-
-    /**
-     * not sure what, but something bad happens if empty report marked as finished
-     */
-    private var hasAtLeastOneTestReported = false
 
     private val reportViewerLinksGenerator = ReportViewerLinksGeneratorImpl(
         reportViewerUrl = reportViewerUrl,
@@ -55,8 +49,6 @@ public class AvitoReport(
         get() = reportViewerLinksGenerator
 
     override fun addTest(testAttempt: TestAttempt) {
-        hasAtLeastOneTestReported = true
-
         reportsApi.addTest(
             reportCoordinates = reportCoordinates,
             buildId = buildId,
@@ -67,12 +59,11 @@ public class AvitoReport(
         )
     }
 
-    override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
-        if (skippedTests.isEmpty()) {
-            logger.info("No skipped tests to report")
-            return
-        }
+    override fun addTest(tests: Collection<AndroidTest>) {
+        addTestsBatched("", tests)
+    }
 
+    override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         val testsToSkip = skippedTests
             .map { (test, reason) ->
                 AndroidTest.Skipped.fromTestMetadata(
@@ -82,46 +73,11 @@ public class AvitoReport(
                 )
             }
 
-        testsToSkip.actionOnBatches { index, testsToSkipBatch ->
-            logger.info("Reporting ${testsToSkipBatch.size} skipped tests for batch: $index")
-
-            reportsApi.addTests(
-                buildId = buildId,
-                reportCoordinates = reportCoordinates,
-                tests = testsToSkipBatch
-            ).fold(
-                { logger.info("Skipped tests successfully reported") },
-                { logger.warn("Can't report skipped tests", it) }
-            )
-
-            logger.info("Reporting skipped tests for batch: $index completed")
-        }
+        addTestsBatched("skipped", testsToSkip)
     }
 
     override fun reportLostTests(notReportedTests: Collection<AndroidTest.Lost>) {
-        if (notReportedTests.isEmpty()) {
-            logger.info("No lost tests to report")
-            return
-        }
-
-        notReportedTests.actionOnBatches { index, lostTestsBatch ->
-            logger.info("Reporting ${lostTestsBatch.size} lost tests for batch: $index")
-
-            reportsApi.addTests(
-                buildId = buildId,
-                reportCoordinates = reportCoordinates,
-                tests = lostTestsBatch
-            ).fold(
-                { logger.info("Lost tests successfully reported") },
-                { logger.warn("Can't report lost tests", it) }
-            )
-
-            logger.info("Reporting lost tests for batch: $index completed")
-        }
-
-        // this is not obvious side-effect, yet very important for correct logic on report-viewer side
-        // only finishing report triggers event that leads to parsing suite for TMS
-        finish()
+        addTestsBatched("lost", notReportedTests)
     }
 
     override fun getTestResults(): Collection<AndroidTest> {
@@ -138,21 +94,32 @@ public class AvitoReport(
 
     private fun Result<List<SimpleRunTest>>.mapToRunResults(): Result<Map<TestCase, TestStatus>> =
         map { simpleResults ->
-            simpleResults
-                .map { simpleRunTest ->
-                    TestCase(simpleRunTest.name, DeviceName(simpleRunTest.deviceName)) to simpleRunTest.status
-                }
-                .toMap()
+            simpleResults.associate { simpleRunTest ->
+                TestCase(simpleRunTest.name, DeviceName(simpleRunTest.deviceName)) to simpleRunTest.status
+            }
         }
 
-    private fun finish() {
-        if (hasAtLeastOneTestReported) {
-            reportsApi.setFinished(reportCoordinates = reportCoordinates).fold(
-                { logger.info("Test run finished $reportCoordinates") },
-                { error -> logger.warn("Can't finish test run $reportCoordinates", error) }
+    private fun addTestsBatched(
+        testType: String,
+        tests: Collection<AndroidTest>
+    ) {
+        if (tests.isEmpty()) {
+            logger.info("No $testType tests to report")
+            return
+        }
+        tests.actionOnBatches { index, testsBatch ->
+            logger.info("Reporting ${testsBatch.size} $testType tests for batch: $index")
+
+            reportsApi.addTests(
+                buildId = buildId,
+                reportCoordinates = reportCoordinates,
+                tests = testsBatch
+            ).fold(
+                { logger.info("$testType tests successfully reported") },
+                { logger.warn("Can't report $testType tests", it) }
             )
-        } else {
-            logger.info("Skipping finishing report. It is empty.")
+
+            logger.info("Reporting $testType tests for batch: $index completed")
         }
     }
 

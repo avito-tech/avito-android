@@ -29,6 +29,10 @@ class StubReport : Report {
         TODO("Not yet implemented")
     }
 
+    override fun addTest(tests: Collection<AndroidTest>) {
+        TODO("Not yet implemented")
+    }
+
     override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         reportedSkippedTests = skippedTests
     }

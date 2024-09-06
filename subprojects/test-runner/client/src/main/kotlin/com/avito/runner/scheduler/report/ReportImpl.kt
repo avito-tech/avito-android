@@ -27,6 +27,11 @@ internal class ReportImpl(
         externalReportService?.addTest(testAttempt)
     }
 
+    override fun addTest(tests: Collection<AndroidTest>) {
+        inMemoryReport.addTest(tests)
+        externalReportService?.addTest(tests)
+    }
+
     override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         inMemoryReport.addSkippedTests(skippedTests)
 
