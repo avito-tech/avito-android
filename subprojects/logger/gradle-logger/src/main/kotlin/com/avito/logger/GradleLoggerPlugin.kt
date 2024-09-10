@@ -34,7 +34,7 @@ public class GradleLoggerPlugin : Plugin<Project> {
             task: Task
         ): Provider<LoggerFactory> {
             val project = task.project
-            return getLoggerFactory(project, GradleLoggerCoordinates(project.name, task.name))
+            return getLoggerFactory(project, GradleLoggerCoordinates(project.path, task.name))
         }
 
         public fun provideLoggerFactory(

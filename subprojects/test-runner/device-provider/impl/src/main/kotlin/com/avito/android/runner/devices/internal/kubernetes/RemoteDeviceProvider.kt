@@ -30,10 +30,9 @@ internal class RemoteDeviceProviderImpl(
             val podName = name
             logger.info("Found new pod: $podName")
             return bootDevice().onFailure { error ->
-                logger.warn(initializeFailureMessage(podName, kubernetesApi.getPodDescription(podName), ip), error)
                 try {
-                    kubernetesApi.getPodDescription(podName)
                     val isDeleted = kubernetesApi.deletePod(podName)
+                    logger.warn(initializeFailureMessage(podName, kubernetesApi.getPodDescription(podName), ip), error)
                     logger.info("Pod $podName is deleted: $isDeleted")
                 } catch (t: Throwable) {
                     logger.warn("Fail to delete pod $podName", t)
