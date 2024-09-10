@@ -37,7 +37,7 @@ internal class RemoteDeviceImpl(
     }
 
     override suspend fun waitForBoot(): Result<String> {
-        return connect().flatMap {
+        return connect().flatMap { connectResult ->
             isBootCompleted()
                 .flatMap { bootResult ->
                     if (bootResult == "1") {
@@ -45,6 +45,9 @@ internal class RemoteDeviceImpl(
                     } else {
                         Result.Failure(RuntimeException("Failed to connect to $serial"))
                     }
+                }
+                .rescue { error ->
+                    Result.Failure(RuntimeException("Failed to boot. Connect status=$connectResult", error))
                 }
         }
     }

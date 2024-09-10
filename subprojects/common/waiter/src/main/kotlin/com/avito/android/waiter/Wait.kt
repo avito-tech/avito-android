@@ -18,6 +18,7 @@ public suspend fun <T> waitForCondition(
     val startTime = System.currentTimeMillis()
     var lastAttemptTime = startTime
     var attempt = 1
+    var lastFailure: Throwable? = null
     while (lastAttemptTime - startTime < timeoutMs && attempt <= maxAttempts) {
         when (val result = condition()) {
             is Success -> {
@@ -25,7 +26,9 @@ public suspend fun <T> waitForCondition(
                 onSuccess(conditionName, durationMs, attempt)
                 return result
             }
+
             is Failure -> {
+                lastFailure = result.throwable
                 val lastAttempt = attempt == maxAttempts - 1
                 if (lastAttempt) {
                     return result
@@ -37,7 +40,13 @@ public suspend fun <T> waitForCondition(
             }
         }
     }
-    return Failure(IllegalStateException("Condition $conditionName must end in for loop"))
+    return Failure(
+        if (lastFailure != null) {
+            RuntimeException("Failed to $conditionName", lastFailure)
+        } else {
+            RuntimeException("Failed to $conditionName")
+        }
+    )
 }
 
 private const val WAIT_FOR_COMMAND_MAX_ATTEMPTS = 30
