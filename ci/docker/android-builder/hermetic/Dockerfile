@@ -37,7 +37,7 @@ COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-7_0.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/tools/tools_linux_26_1_1.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build-tools-linux-34_0_0.zip $ANDROID_HOME
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_34_0_3.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_35_0_1.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-34_0_5.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/ndk/ndk-linux-25_2_9519653.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmake/cmake_3_22_1.zip $ANDROID_HOME
