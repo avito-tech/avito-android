@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.ab_tests.ABTest
 import com.avito.android.tech_budget.ab_tests.CollectProjectABTestsTask
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.parser.JsonFileParser
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
@@ -36,6 +37,8 @@ internal class ABTestsConfigurator : TechBudgetConfigurator {
                 techBudgetExtension.abTests.abTestsFileParser
                     .orElse(defaultJsonFileParser)
             )
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 }

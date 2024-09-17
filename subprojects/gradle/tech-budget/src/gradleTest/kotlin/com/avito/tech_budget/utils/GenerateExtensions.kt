@@ -2,6 +2,7 @@ package com.avito.tech_budget.utils
 
 internal fun dumpInfoExtension(webServerUrl: String): String = """
                     dumpInfo { 
+                        useTls.set(false)
                         baseUploadUrl.set("$webServerUrl")
                         commitHash.set("123")
                         currentDate.set("2022-10-31")

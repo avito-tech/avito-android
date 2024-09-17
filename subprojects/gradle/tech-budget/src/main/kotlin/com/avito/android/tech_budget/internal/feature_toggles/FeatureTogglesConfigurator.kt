@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.feature_toggles.CollectProjectFeatureToggle
 import com.avito.android.tech_budget.feature_toggles.FeatureToggle
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.parser.JsonFileParser
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
@@ -36,6 +37,8 @@ internal class FeatureTogglesConfigurator : TechBudgetConfigurator {
             this.featureTogglesFileParser.set(
                 techBudgetExtension.featureToggles.featureTogglesFileParser.orElse(defaultJsonFileParser)
             )
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 }

@@ -3,6 +3,7 @@ package com.avito.android.tech_budget.internal.warnings
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.android.tech_budget.internal.warnings.report.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.upload.UploadWarningsTask
 import com.avito.android.tech_budget.warnings.CollectWarningsTask
@@ -31,6 +32,8 @@ internal class WarningsConfigurator : TechBudgetConfigurator {
             this.uploadWarningsBatchSize.set(extension.warnings.uploadWarningsBatchSize)
             this.uploadWarningsParallelRequestsCount.set(extension.warnings.uploadWarningsParallelRequestsCount)
             this.issuesFileParser.set(extension.warnings.issuesFileParser)
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 

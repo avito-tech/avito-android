@@ -3,6 +3,7 @@ package com.avito.android.tech_budget.internal.owners
 import com.avito.android.diff.ReportCodeOwnershipExtension
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.findByType
@@ -25,6 +26,8 @@ internal class OwnersConfigurator : TechBudgetConfigurator {
             ownerSerializer.set(project.requireCodeOwnershipExtension().requireOwnersSerializerProvider())
             this.dumpInfoConfiguration.set(techBudgetExtension.dumpInfo)
             this.techBudgetOwnerMapper.set(techBudgetExtension.owners.techBudgetOwnerMapper)
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 }

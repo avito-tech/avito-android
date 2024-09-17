@@ -126,6 +126,7 @@ internal class UploadWarningsTest {
         plugins = plugins {
             id("com.avito.android.gradle-logger")
             id("com.avito.android.tech-budget")
+            id("com.avito.android.tls-configuration")
             id("com.avito.android.code-ownership")
         },
         useKts = true,

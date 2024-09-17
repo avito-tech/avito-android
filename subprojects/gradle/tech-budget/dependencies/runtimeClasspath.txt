@@ -68,6 +68,7 @@ com.google.testing.platform:core-proto:0.0.8-alpha08
 com.googlecode.juniversalchardet:juniversalchardet:1.0.3
 com.squareup.moshi:moshi:1.13.0
 com.squareup.okhttp3:logging-interceptor:4.10.0
+com.squareup.okhttp3:okhttp-tls:4.10.0
 com.squareup.okhttp3:okhttp:4.10.0
 com.squareup.okio:okio-jvm:3.0.0
 com.squareup.okio:okio:3.0.0

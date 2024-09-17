@@ -5,8 +5,8 @@ import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.ab_tests.ABTest
 import com.avito.android.tech_budget.internal.ab_tests.models.UploadABTestsRequest
-import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
+import com.avito.android.tech_budget.internal.service.RetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
 import com.avito.android.tech_budget.parser.FileParser
 import com.avito.logger.GradleLoggerPlugin
@@ -19,6 +19,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import retrofit2.create
 
 internal abstract class UploadABTestsTask : DefaultTask() {
 
@@ -33,6 +34,9 @@ internal abstract class UploadABTestsTask : DefaultTask() {
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
+
+    @get:Internal
+    abstract val retrofitBuilderService: Property<RetrofitBuilderService>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
@@ -56,11 +60,11 @@ internal abstract class UploadABTestsTask : DefaultTask() {
     private fun upload(abTests: List<ABTest>) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
 
-        val service = ApiServiceProvider(
-            baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
-            loggerFactory = loggerFactory.get()
-        ).provide<UploadABTestsApi>()
+        val service = retrofitBuilderService.get()
+            .build(
+                loggerFactory = loggerFactory.get(),
+                ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
+            ).create<UploadABTestsApi>()
 
         service.dumpABTests(UploadABTestsRequest(DumpInfo.fromExtension(dumpInfoConfig), abTests))
             .executeWithHttpFailure("Upload AB Tests request failed")

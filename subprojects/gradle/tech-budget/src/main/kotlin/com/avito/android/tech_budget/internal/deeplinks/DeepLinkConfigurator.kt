@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.deeplinks.CollectProjectDeeplinksTask
 import com.avito.android.tech_budget.deeplinks.DeepLink
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.parser.JsonFileParser
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
@@ -36,6 +37,8 @@ internal class DeepLinkConfigurator : TechBudgetConfigurator {
             this.deeplinksFileParser.set(
                 techBudgetExtension.deepLinks.deepLinksFileParser.orElse(defaultJsonFileParser)
             )
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 }

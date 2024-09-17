@@ -17,6 +17,7 @@ internal object ModuleTypesTestProject {
                 id("com.avito.android.code-ownership")
                 id("com.avito.android.tech-budget")
                 id("com.avito.android.module-types")
+                id("com.avito.android.tls-configuration")
             },
             useKts = true,
             buildGradleExtra = """

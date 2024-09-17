@@ -7,6 +7,7 @@ import com.avito.android.tech_budget.detekt.DetektConfiguration
 import com.avito.android.tech_budget.feature_toggles.CollectFeatureTogglesConfiguration
 import com.avito.android.tech_budget.perf_screen_owners.CollectPerfOwnersConfiguration
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
@@ -73,3 +74,6 @@ public abstract class TechBudgetExtension {
         action.execute(detekt)
     }
 }
+
+internal val Project.techBudgetExtension: TechBudgetExtension
+    get() = rootProject.extensions.getByType(TechBudgetExtension::class.java)

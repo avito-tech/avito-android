@@ -116,6 +116,7 @@ internal class CollectLintIssuesTest {
         TestProjectGenerator(
             plugins = plugins {
                 id("com.avito.android.tech-budget")
+                id("com.avito.android.tls-configuration")
             },
             modules = listOf(
                 AndroidAppModule(

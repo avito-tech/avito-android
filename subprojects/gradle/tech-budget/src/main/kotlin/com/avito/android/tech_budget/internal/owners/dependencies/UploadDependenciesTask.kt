@@ -7,9 +7,9 @@ import com.avito.android.owner.dependency.OwnedDependency
 import com.avito.android.serializers.OwnerIdSerializer
 import com.avito.android.serializers.OwnerNameSerializer
 import com.avito.android.tech_budget.DumpInfoConfiguration
-import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.owners.dependencies.models.UploadDependenciesRequestBody
+import com.avito.android.tech_budget.internal.service.RetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
 import com.avito.logger.GradleLoggerPlugin
 import com.avito.logger.LoggerFactory
@@ -19,10 +19,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import retrofit2.create
 import java.io.File
 
 internal abstract class UploadDependenciesTask : DefaultTask() {
@@ -40,6 +42,9 @@ internal abstract class UploadDependenciesTask : DefaultTask() {
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
+
+    @get:Internal
+    abstract val retrofitBuilderService: Property<RetrofitBuilderService>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
@@ -70,11 +75,13 @@ internal abstract class UploadDependenciesTask : DefaultTask() {
         val dumpInfoConfig = dumpInfoConfiguration.get()
         val ownedDependencies = dependencies.filter { it.owners.isNotEmpty() }
 
-        val service = ApiServiceProvider(
-            baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer),
-            loggerFactory = loggerFactory
-        ).provide<UploadDependenciesApi>()
+        val service = retrofitBuilderService.get()
+            .build(
+                ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer),
+                loggerFactory = loggerFactory
+            )
+            .create<UploadDependenciesApi>()
+
         service.dumpModules(UploadDependenciesRequestBody(DumpInfo.fromExtension(dumpInfoConfig), ownedDependencies))
             .executeWithHttpFailure(errorMessage = "Upload dependencies request failed")
     }

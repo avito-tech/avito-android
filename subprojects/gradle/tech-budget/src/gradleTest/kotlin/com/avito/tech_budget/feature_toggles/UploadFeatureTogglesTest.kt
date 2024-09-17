@@ -100,6 +100,7 @@ internal class UploadFeatureTogglesTest {
             id("com.avito.android.gradle-logger")
             if (includeCodeOwnership) id("com.avito.android.code-ownership")
             id("com.avito.android.tech-budget")
+            id("com.avito.android.tls-configuration")
         },
         useKts = true,
         imports = listOf(

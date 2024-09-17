@@ -4,10 +4,10 @@ package com.avito.android.tech_budget.internal.detekt
 
 import com.android.build.gradle.api.BaseVariant
 import com.avito.android.androidBaseExtension
-import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.detekt.tasks.AvitoDetektReportTask
 import com.avito.android.tech_budget.internal.detekt.tasks.TechBudgetDetektTask
+import com.avito.android.tech_budget.techBudgetExtension
 import com.avito.capitalize
 import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Project
@@ -107,6 +107,3 @@ private fun AndroidVariantsFilter.isVariantSuitable(variant: BaseVariant): Boole
     val variantName = variant.name
     return baseVariantName == targetVariantName || variantName == targetVariantName || variantName in fallbacks
 }
-
-private val Project.techBudgetExtension: TechBudgetExtension
-    get() = rootProject.extensions.getByType(TechBudgetExtension::class.java)

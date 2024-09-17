@@ -4,9 +4,9 @@ import com.avito.android.OwnerSerializerProvider
 import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.feature_toggles.FeatureToggle
-import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.feature_toggles.models.UploadFeatureTogglesRequest
+import com.avito.android.tech_budget.internal.service.RetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
 import com.avito.android.tech_budget.parser.FileParser
 import com.avito.logger.GradleLoggerPlugin
@@ -19,6 +19,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import retrofit2.create
 
 internal abstract class UploadFeatureTogglesTask : DefaultTask() {
 
@@ -33,6 +34,9 @@ internal abstract class UploadFeatureTogglesTask : DefaultTask() {
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
+
+    @get:Internal
+    abstract val retrofitBuilderService: Property<RetrofitBuilderService>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
@@ -53,16 +57,17 @@ internal abstract class UploadFeatureTogglesTask : DefaultTask() {
         return featureTogglesFileParser.get().parse(featureTogglesFile)
     }
 
-    private fun upload(FeatureToggles: List<FeatureToggle>) {
+    private fun upload(featureToggles: List<FeatureToggle>) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
 
-        val service = ApiServiceProvider(
-            baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
-            loggerFactory = loggerFactory.get()
-        ).provide<UploadFeatureTogglesApi>()
+        val service = retrofitBuilderService.get()
+            .build(
+                ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
+                loggerFactory = loggerFactory.get()
+            )
+            .create<UploadFeatureTogglesApi>()
 
-        service.dumpFeatureToggles(UploadFeatureTogglesRequest(DumpInfo.fromExtension(dumpInfoConfig), FeatureToggles))
+        service.dumpFeatureToggles(UploadFeatureTogglesRequest(DumpInfo.fromExtension(dumpInfoConfig), featureToggles))
             .executeWithHttpFailure("Upload Feature Toggles request failed")
     }
 

@@ -4,6 +4,7 @@ import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.parser.JsonFileParser
 import com.avito.android.tech_budget.perf_screen_owners.CollectPerfOwnersTask
 import com.avito.android.tech_budget.perf_screen_owners.PerformanceScreenInfo
@@ -35,6 +36,8 @@ internal class PerfScreenOwnersConfigurator : TechBudgetConfigurator {
                 techBudgetExtension.perfOwners.screenInfoFileParser
                     .orElse(defaultJsonFileParser)
             )
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 }

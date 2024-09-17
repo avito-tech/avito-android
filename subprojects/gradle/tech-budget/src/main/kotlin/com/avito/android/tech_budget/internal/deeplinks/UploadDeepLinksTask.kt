@@ -5,8 +5,8 @@ import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
 import com.avito.android.tech_budget.deeplinks.DeepLink
 import com.avito.android.tech_budget.internal.deeplinks.models.UploadDeepLinksRequest
-import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
+import com.avito.android.tech_budget.internal.service.RetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
 import com.avito.android.tech_budget.parser.FileParser
 import com.avito.logger.GradleLoggerPlugin
@@ -19,6 +19,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import retrofit2.create
 
 internal abstract class UploadDeepLinksTask : DefaultTask() {
 
@@ -33,6 +34,9 @@ internal abstract class UploadDeepLinksTask : DefaultTask() {
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
+
+    @get:Internal
+    abstract val retrofitBuilderService: Property<RetrofitBuilderService>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
@@ -56,11 +60,11 @@ internal abstract class UploadDeepLinksTask : DefaultTask() {
     private fun upload(deeplinks: List<DeepLink>) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
 
-        val service = ApiServiceProvider(
-            baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
-            loggerFactory = loggerFactory.get()
-        ).provide<UploadDeepLinksApi>()
+        val service = retrofitBuilderService.get()
+            .build(
+                ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
+                loggerFactory = loggerFactory.get()
+            ).create<UploadDeepLinksApi>()
 
         service.dumpDeepLinks(UploadDeepLinksRequest(DumpInfo.fromExtension(dumpInfoConfig), deeplinks))
             .executeWithHttpFailure("Upload deepLinks request failed")

@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.TechBudgetExtension
 import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
 import com.avito.android.tech_budget.internal.owners.requireOwnersSerializerProvider
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.Project
@@ -32,6 +33,8 @@ internal class DependenciesConfigurator : TechBudgetConfigurator {
 
             dependsOn(exportInternalDepsTask)
             dependsOn(exportExternalDepsTask)
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 }

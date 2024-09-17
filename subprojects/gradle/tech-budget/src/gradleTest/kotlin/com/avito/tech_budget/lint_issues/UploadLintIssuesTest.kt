@@ -91,6 +91,7 @@ internal class UploadLintIssuesTest {
                 id("com.avito.android.gradle-logger")
                 id("com.avito.android.tech-budget")
                 id("com.avito.android.code-ownership")
+                id("com.avito.android.tls-configuration")
             },
             buildGradleExtra = """
                 techBudget {

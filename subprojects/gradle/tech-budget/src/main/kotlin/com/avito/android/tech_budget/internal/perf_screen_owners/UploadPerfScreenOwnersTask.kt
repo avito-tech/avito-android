@@ -3,9 +3,9 @@ package com.avito.android.tech_budget.internal.perf_screen_owners
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.tech_budget.DumpInfoConfiguration
-import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
 import com.avito.android.tech_budget.internal.perf_screen_owners.models.UploadPerfScreenOwnersRequest
+import com.avito.android.tech_budget.internal.service.RetrofitBuilderService
 import com.avito.android.tech_budget.internal.utils.executeWithHttpFailure
 import com.avito.android.tech_budget.parser.FileParser
 import com.avito.android.tech_budget.perf_screen_owners.PerformanceScreenInfo
@@ -19,6 +19,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import retrofit2.create
 
 internal abstract class UploadPerfScreenOwnersTask : DefaultTask() {
 
@@ -33,6 +34,9 @@ internal abstract class UploadPerfScreenOwnersTask : DefaultTask() {
 
     @get:Nested
     abstract val dumpInfoConfiguration: Property<DumpInfoConfiguration>
+
+    @get:Internal
+    abstract val retrofitBuilderService: Property<RetrofitBuilderService>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
@@ -56,11 +60,12 @@ internal abstract class UploadPerfScreenOwnersTask : DefaultTask() {
     private fun upload(screenOwners: List<PerformanceScreenInfo>) {
         val dumpInfoConfig = dumpInfoConfiguration.get()
 
-        val service = ApiServiceProvider(
-            baseUrl = dumpInfoConfig.baseUploadUrl.get(),
-            ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
-            loggerFactory = loggerFactory.get()
-        ).provide<UploadPerfScreenOwnersApi>()
+        val service = retrofitBuilderService.get()
+            .build(
+                ownerAdapterFactory = OwnerAdapterFactory(ownerSerializer.get().provideIdSerializer()),
+                loggerFactory = loggerFactory.get()
+            )
+            .create<UploadPerfScreenOwnersApi>()
 
         service.dumpPerfOwners(UploadPerfScreenOwnersRequest(DumpInfo.fromExtension(dumpInfoConfig), screenOwners))
             .executeWithHttpFailure("Upload performance screen owners request failed")

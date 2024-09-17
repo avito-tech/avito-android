@@ -8,6 +8,7 @@ import com.avito.android.tech_budget.internal.TechBudgetConfigurator
 import com.avito.android.tech_budget.internal.lint_issues.collect.CollectLintIssuesTask
 import com.avito.android.tech_budget.internal.lint_issues.upload.UploadLintIssuesTask
 import com.avito.android.tech_budget.internal.owners.requireCodeOwnershipExtension
+import com.avito.android.tech_budget.internal.service.usesRetrofitBuilderService
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.kotlin.dsl.withType
@@ -35,6 +36,8 @@ internal class LintIssuesConfigurator : TechBudgetConfigurator {
             this.ownerSerializer.set(root.requireCodeOwnershipExtension().ownerSerializersProvider)
             this.dumpInfoConfiguration.set(extension.dumpInfo)
             this.outputXmlFiles.set(collectLintIssues.get().outputXmlFiles)
+
+            usesRetrofitBuilderService(this.retrofitBuilderService)
         }
     }
 

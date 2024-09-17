@@ -79,6 +79,7 @@ class DetektConfigurationTest {
     ) = TestProjectGenerator(
         plugins = plugins {
             id("com.avito.android.tech-budget")
+            id("com.avito.android.tls-configuration")
         },
         useKts = true,
         buildGradleExtra = """

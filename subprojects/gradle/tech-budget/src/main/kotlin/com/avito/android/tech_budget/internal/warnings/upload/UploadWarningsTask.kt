@@ -2,8 +2,8 @@ package com.avito.android.tech_budget.internal.warnings.upload
 
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.tech_budget.DumpInfoConfiguration
-import com.avito.android.tech_budget.internal.di.ApiServiceProvider
 import com.avito.android.tech_budget.internal.dump.DumpInfo
+import com.avito.android.tech_budget.internal.service.RetrofitBuilderService
 import com.avito.android.tech_budget.internal.warnings.report.ProjectInfo
 import com.avito.android.tech_budget.internal.warnings.report.converter.IssueToWarningConverter
 import com.avito.android.tech_budget.internal.warnings.upload.model.Warning
@@ -20,6 +20,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import retrofit2.create
 
 internal abstract class UploadWarningsTask : DefaultTask() {
 
@@ -40,6 +41,9 @@ internal abstract class UploadWarningsTask : DefaultTask() {
 
     @get:Internal
     abstract val uploadWarningsParallelRequestsCount: Property<Int>
+
+    @get:Internal
+    abstract val retrofitBuilderService: Property<RetrofitBuilderService>
 
     private val loggerFactory: Provider<LoggerFactory> = GradleLoggerPlugin.provideLoggerFactory(this)
 
@@ -63,10 +67,9 @@ internal abstract class UploadWarningsTask : DefaultTask() {
         val sender = UploadWarningsBatcher(
             batchSize = uploadWarningsBatchSize.get(),
             parallelRequestsCount = uploadWarningsParallelRequestsCount.get(),
-            apiClient = ApiServiceProvider(
-                baseUrl = dumpConfiguration.baseUploadUrl.get(),
-                loggerFactory = loggerFactory.get()
-            ).provide()
+            apiClient = retrofitBuilderService.get()
+                .build(loggerFactory.get())
+                .create()
         )
 
         sender.send(DumpInfo.fromExtension(dumpConfiguration), warnings)

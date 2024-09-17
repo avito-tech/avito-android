@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":subprojects:common:composite-exception"))
     implementation(project(":subprojects:common:tech-budget-common"))
     implementation(project(":subprojects:gradle:module-types-api"))
+    implementation(project(":subprojects:gradle:mtls"))
     runtimeOnly(project(":subprojects:gradle:module-types")) {
         because("Need to run gradleTest. Adding to gradleTestRuntime doesn't work")
     }
