@@ -116,45 +116,6 @@ internal class BuildCacheMetricsTrackerTest {
     }
 
     @Test
-    fun `module cache metrics`() {
-        val metrics = processResults(
-            buildOperationsResult
-        )
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.hit", multipart = true)
-                    .addTag("module_name", "lib"),
-                "2"
-            )
-        )
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.hit", multipart = true)
-                    .addTag("module_name", "lib2"),
-                "1"
-            )
-        )
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.miss", multipart = true)
-                    .addTag("module_name", "lib"),
-                "1"
-            )
-        )
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.miss", multipart = true)
-                    .addTag("module_name", "lib2"),
-                "1"
-            )
-        )
-    }
-
-    @Test
     fun `task type cache metrics`() {
         val metrics = processResults(buildOperationsResult)
         assertThat(metrics).contains(
@@ -171,47 +132,6 @@ internal class BuildCacheMetricsTrackerTest {
                     .create("gradle.cache.remote.task.type.miss", multipart = true)
                     .addTag("task_type", "CustomTask"),
                 "2"
-            )
-        )
-    }
-
-    @Test
-    fun `task type by module cache metrics`() {
-        val metrics = processResults(buildOperationsResult)
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.task.type.hit", multipart = true)
-                    .addTag("module_name", "lib")
-                    .addTag("task_type", "CustomTask"),
-                "2"
-            )
-        )
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.task.type.miss", multipart = true)
-                    .addTag("module_name", "lib")
-                    .addTag("task_type", "CustomTask"),
-                "1"
-            )
-        )
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.task.type.hit", multipart = true)
-                    .addTag("module_name", "lib2")
-                    .addTag("task_type", "CustomTask"),
-                "1"
-            )
-        )
-        assertThat(metrics).contains(
-            GraphiteMetric(
-                SeriesName
-                    .create("gradle.cache.remote.module.task.type.miss", multipart = true)
-                    .addTag("module_name", "lib2")
-                    .addTag("task_type", "CustomTask"),
-                "1"
             )
         )
     }

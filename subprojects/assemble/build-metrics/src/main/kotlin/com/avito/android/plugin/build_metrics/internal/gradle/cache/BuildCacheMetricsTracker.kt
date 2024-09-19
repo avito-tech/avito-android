@@ -7,8 +7,6 @@ import com.avito.android.plugin.build_metrics.internal.TaskCacheResult.Hit
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult.Miss
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.plugin.build_metrics.internal.core.BuildMetricSender
-import com.avito.android.plugin.build_metrics.internal.module
-import com.avito.android.plugin.build_metrics.internal.toTagValue
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 
@@ -25,7 +23,6 @@ internal class BuildCacheMetricsTracker(
         trackCacheErrors(result.cacheOperations)
         trackRemoteCacheStats(result.tasksExecutions)
         trackTaskTypesCacheMetrics(result.tasksExecutions)
-        trackModuleCacheMetrics(result.tasksExecutions)
     }
 
     private fun trackCacheErrors(operations: CacheOperations) {
@@ -67,40 +64,9 @@ internal class BuildCacheMetricsTracker(
 
             if (taskTypeCacheResults != null) {
                 trackTaskTypeCacheMetrics(taskTypeCacheResults, taskType)
-                trackModuleTaskTypeCacheMetrics(taskTypeCacheResults, taskType)
             } else {
                 // TODO send can't find data about task
             }
-        }
-    }
-
-    private fun trackModuleTaskTypeCacheMetrics(
-        taskTypeCacheResults: List<TaskExecutionResult>,
-        taskType: String
-    ) {
-        val taskTypeCacheResultsByModule = taskTypeCacheResults.groupBy { it.path.module }
-        taskTypeCacheResultsByModule.forEach { (module, cacheResults) ->
-            val taskTypeModuleHit = cacheResults.count { it.cacheResult is Hit }
-            val taskTypeModuleMiss = cacheResults.count { it.cacheResult is Miss && it.cacheResult.remote }
-            metricsTracker.send(
-                BuildCacheModuleTaskHitMetric(
-                    type = BuildCacheMetricType.ModuleTaskType(
-                        moduleName = module.toTagValue(),
-                        taskType = taskType
-                    ),
-                    hitsCount = taskTypeModuleHit.toLong()
-                )
-            )
-
-            metricsTracker.send(
-                BuildCacheModuleTaskMissMetric(
-                    type = BuildCacheMetricType.ModuleTaskType(
-                        moduleName = module.toTagValue(),
-                        taskType = taskType
-                    ),
-                    missesCount = taskTypeModuleMiss.toLong()
-                )
-            )
         }
     }
 
@@ -123,33 +89,5 @@ internal class BuildCacheMetricsTracker(
                 missesCount = taskTypeMiss.toLong()
             )
         )
-    }
-
-    private fun trackModuleCacheMetrics(
-        tasksExecutions: List<TaskExecutionResult>,
-    ) {
-        val taskExecutionsByModule = tasksExecutions.groupBy { it.path.module }
-        taskExecutionsByModule.forEach { (module, taskExecutionResults) ->
-            val moduleHit = taskExecutionResults
-                .count { it.cacheResult is Hit.Remote }
-                .toLong()
-
-            val moduleMiss = taskExecutionResults
-                .count { it.cacheResult is Miss && it.cacheResult.remote }
-                .toLong()
-            metricsTracker.send(
-                BuildCacheModuleHitMetric(
-                    type = BuildCacheMetricType.Module(module.toTagValue()),
-                    hitsCount = moduleHit
-                )
-            )
-
-            metricsTracker.send(
-                BuildCacheModuleMissMetric(
-                    type = BuildCacheMetricType.Module(module.toTagValue()),
-                    missesCount = moduleMiss
-                )
-            )
-        }
     }
 }

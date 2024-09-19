@@ -78,18 +78,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
 
         result.assertHasMetric("$metricsPrefix.hit;build_type=test;env=ci", "0")
         result.assertHasMetric("$metricsPrefix.miss;build_type=test;env=ci", "1")
-        result.assertHasMetric("$metricsPrefix.module.hit;build_type=test;env=ci;module_name=root", "0")
-        result.assertHasMetric("$metricsPrefix.module.miss;build_type=test;env=ci;module_name=root", "1")
         result.assertHasMetric("$metricsPrefix.task.type.hit;build_type=test;env=ci;task_type=CustomTask", "0")
         result.assertHasMetric("$metricsPrefix.task.type.miss;build_type=test;env=ci;task_type=CustomTask", "1")
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.hit;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "0"
-        )
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.miss;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "1"
-        )
     }
 
     @Test
@@ -102,17 +92,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
 
         result.assertHasMetric("$metricsPrefix.hit;build_type=test;env=ci", "0")
         result.assertHasMetric("$metricsPrefix.miss;build_type=test;env=ci", "0")
-        result.assertHasMetric("$metricsPrefix.module.hit;build_type=test;env=ci;module_name=root", "0")
-        result.assertHasMetric("$metricsPrefix.module.miss;build_type=test;env=ci;module_name=root", "0")
         result.assertHasMetric("$metricsPrefix.task.type.hit;build_type=test;env=ci;task_type=CustomTask", "0")
         result.assertHasMetric("$metricsPrefix.task.type.miss;build_type=test;env=ci;task_type=CustomTask", "0")
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.hit;build_type=test;env=ci;module_name=root;task_type=CustomTask", "0"
-        )
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.miss;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "0"
-        )
     }
 
     @Test
@@ -125,18 +106,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
 
         result.assertHasMetric("$metricsPrefix.hit;build_type=test;env=ci", "1")
         result.assertHasMetric("$metricsPrefix.miss;build_type=test;env=ci", "0")
-        result.assertHasMetric("$metricsPrefix.module.hit;build_type=test;env=ci;module_name=root", "1")
-        result.assertHasMetric("$metricsPrefix.module.miss;build_type=test;env=ci;module_name=root", "0")
         result.assertHasMetric("$metricsPrefix.task.type.hit;build_type=test;env=ci;task_type=CustomTask", "1")
         result.assertHasMetric("$metricsPrefix.task.type.miss;build_type=test;env=ci;task_type=CustomTask", "0")
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.hit;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "1"
-        )
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.miss;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "0"
-        )
     }
 
     @Test
@@ -149,18 +120,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
 
         result.assertHasMetric("$metricsPrefix.hit;build_type=test;env=ci", "0")
         result.assertHasMetric("$metricsPrefix.miss;build_type=test;env=ci", "1")
-        result.assertHasMetric("$metricsPrefix.module.hit;build_type=test;env=ci;module_name=root", "0")
-        result.assertHasMetric("$metricsPrefix.module.miss;build_type=test;env=ci;module_name=root", "1")
         result.assertHasMetric("$metricsPrefix.task.type.hit;build_type=test;env=ci;task_type=CustomTask", "0")
         result.assertHasMetric("$metricsPrefix.task.type.miss;build_type=test;env=ci;task_type=CustomTask", "1")
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.hit;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "0"
-        )
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.miss;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "1"
-        )
     }
 
     @Test
@@ -173,18 +134,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
 
         result.assertHasMetric("$metricsPrefix.hit;build_type=test;env=ci", "0")
         result.assertHasMetric("$metricsPrefix.miss;build_type=test;env=ci", "0")
-        result.assertHasMetric("$metricsPrefix.module.hit;build_type=test;env=ci;module_name=root", "0")
-        result.assertHasMetric("$metricsPrefix.module.miss;build_type=test;env=ci;module_name=root", "0")
         result.assertHasMetric("$metricsPrefix.task.type.hit;build_type=test;env=ci;task_type=CustomTask", "0")
         result.assertHasMetric("$metricsPrefix.task.type.miss;build_type=test;env=ci;task_type=CustomTask", "0")
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.hit;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "0"
-        )
-        result.assertHasMetric(
-            "$metricsPrefix.module.task.type.miss;build_type=test;env=ci;module_name=root;task_type=CustomTask",
-            "0"
-        )
     }
 
     private fun warmupAndBuild(
