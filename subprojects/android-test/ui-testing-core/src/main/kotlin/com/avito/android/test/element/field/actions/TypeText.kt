@@ -75,12 +75,17 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
         val inputMethodManager = ApplicationProvider.getApplicationContext<Application>()
             .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        val context = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            inputMethodManager
+        val context = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM -> inputMethodManager
+                .getFieldByReflectionWithAnyField("mFallbackInputConnection")
+                .executeMethod("getInputConnection")
+
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.TIRAMISU ||
+                Build.VERSION.SDK_INT == Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> inputMethodManager
                 .getFieldByReflectionWithAnyField("mFallbackInputConnection")
                 .getFieldByReflectionWithAnyField("mInputConnection")
-        } else {
-            inputMethodManager
+
+            else -> inputMethodManager
                 .getFieldByReflectionWithAnyField("mIInputContext")
         }
 
