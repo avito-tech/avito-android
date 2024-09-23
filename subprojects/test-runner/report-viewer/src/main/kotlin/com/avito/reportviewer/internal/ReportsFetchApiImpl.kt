@@ -64,7 +64,7 @@ internal class ReportsFetchApiImpl(
         }.fold(
             { report -> GetReportResult.Found(report) },
             { exception ->
-                val isNotFoundError = exception.message?.contains("\"data\":\"not found\"") ?: false
+                val isNotFoundError = exception.message?.contains("\"not found\"") ?: false
                 if (isNotFoundError) {
                     GetReportResult.NotFound(exception)
                 } else {
