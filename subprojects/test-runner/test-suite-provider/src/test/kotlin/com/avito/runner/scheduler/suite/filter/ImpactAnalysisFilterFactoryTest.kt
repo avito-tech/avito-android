@@ -13,10 +13,10 @@ internal class ImpactAnalysisFilterFactoryTest {
     private val test4 = "com.test.Test4"
 
     @Test
-    fun `noImpactAnalysis - filters nothing`() {
+    fun `run all - filters nothing`() {
         val filter = StubFilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                runOnlyChangedTests = false
+                mode = ImpactAnalysisMode.ALL
             )
         ).createFilter()
 
@@ -24,10 +24,10 @@ internal class ImpactAnalysisFilterFactoryTest {
     }
 
     @Test
-    fun `noImpactAnalysis - filters nothing - even if impact provided`() {
+    fun `run all - filters nothing - even if impact provided`() {
         val filter = StubFilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                runOnlyChangedTests = false
+                mode = ImpactAnalysisMode.ALL
             )
         ).createFilter()
 
@@ -35,10 +35,10 @@ internal class ImpactAnalysisFilterFactoryTest {
     }
 
     @Test
-    fun `noImpactAnalysis - filtered impacted tests`() {
+    fun `run all except changed - filtered impacted tests`() {
         val filter = StubFilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                runOnlyChangedTests = false,
+                mode = ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
                 changedTests = listOf(test1)
             )
         ).createFilter()
@@ -47,10 +47,22 @@ internal class ImpactAnalysisFilterFactoryTest {
     }
 
     @Test
-    fun `impactAnalysis - filtered not impacted tests`() {
+    fun `run all and changed is not empty - filter is empty`() {
         val filter = StubFilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                runOnlyChangedTests = true,
+                mode = ImpactAnalysisMode.ALL,
+                changedTests = listOf(test1)
+            )
+        ).createFilter()
+
+        filter.assertIncluded(test1, test2, test3, test4)
+    }
+
+    @Test
+    fun `run changed - filtered not impacted tests`() {
+        val filter = StubFilterFactoryFactory.create(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                mode = ImpactAnalysisMode.CHANGED,
                 changedTests = listOf(test1)
             )
         ).createFilter()

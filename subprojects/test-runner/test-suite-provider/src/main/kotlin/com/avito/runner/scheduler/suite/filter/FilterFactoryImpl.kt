@@ -158,12 +158,12 @@ internal class FilterFactoryImpl(
     }
 
     private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
-        if (impactAnalysisResult.runOnlyChangedTests) {
-            includeImpactedTests(impactAnalysisResult.changedTests)
-        } else {
-            if (impactAnalysisResult.changedTests.isNotEmpty()) {
-                excludeImpactedTests(impactAnalysisResult.changedTests)
+        when (impactAnalysisResult.mode) {
+            ImpactAnalysisMode.ALL -> {
+                // empty
             }
+            ImpactAnalysisMode.CHANGED -> includeImpactedTests(impactAnalysisResult.changedTests)
+            ImpactAnalysisMode.ALL_EXCEPT_CHANGED -> excludeImpactedTests(impactAnalysisResult.changedTests)
         }
     }
 

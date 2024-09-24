@@ -248,7 +248,7 @@ internal class FilterFactoryImplTest {
         val factory = StubFilterFactoryFactory.create(
             filter = InstrumentationFilterData.createStub(),
             impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                runOnlyChangedTests = false,
+                mode = ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
                 changedTests = listOf("com.stub.Test")
             )
         )

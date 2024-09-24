@@ -4,17 +4,17 @@ import java.io.File
 import java.io.Serializable
 
 public data class ImpactAnalysisResult(
-    val runOnlyChangedTests: Boolean,
+    val mode: ImpactAnalysisMode,
     val changedTests: List<String>
 ) : Serializable {
 
     public companion object {
 
         public fun create(
-            runOnlyChangedTests: Boolean,
+            mode: ImpactAnalysisMode,
             changedTestsFile: File?
         ): ImpactAnalysisResult = ImpactAnalysisResult(
-            runOnlyChangedTests = runOnlyChangedTests,
+            mode = mode,
             changedTests = parseFile(changedTestsFile)
         )
 
