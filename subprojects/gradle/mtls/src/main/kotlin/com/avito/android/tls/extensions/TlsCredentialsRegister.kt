@@ -6,7 +6,7 @@ import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.model.ObjectFactory
 
-public class TlsCredentialsRegister constructor(
+public class TlsCredentialsRegister(
     objects: ObjectFactory
 ) {
 

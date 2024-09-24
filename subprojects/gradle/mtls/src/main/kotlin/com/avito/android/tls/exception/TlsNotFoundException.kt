@@ -1,7 +1,7 @@
 package com.avito.android.tls.exception
 
 internal class TlsNotFoundException(
-    private val infoList: List<TlsCredentialsRetrievingInformation> = emptyList()
+    private val infoList: List<TlsCredentialsRetrievingInformation> = emptyList(),
 ) : RuntimeException() {
 
     override val message: String = createMessage()
@@ -12,30 +12,21 @@ internal class TlsNotFoundException(
 
             if (infoList.isNotEmpty()) {
                 appendRetrievingInformation(infoList)
-            } else {
-                appendMtlsConfigurationInformation()
             }
         }
     }
 }
 
 private fun StringBuilder.appendRetrievingInformation(infoList: List<TlsCredentialsRetrievingInformation>) {
-    appendLine("To address this issue, consider one of the following options:")
+    appendLine()
+    appendLine("----------- Applied configurations ------------")
+    appendLine()
 
     infoList.forEachIndexed { index, info ->
-        appendLine("${index + 1}. ${info.info}")
+        appendLine("${index + 1}. ${info.action}")
+        appendLine("Problem: ${info.problem}")
+        if (!info.solution.isNullOrBlank()) {
+            appendLine("Solution: ${info.solution}")
+        }
     }
-}
-
-private fun StringBuilder.appendMtlsConfigurationInformation() {
-    val message = """
-            Register providers by adding mTls configuration to you build.gradle file.
-            Configuration:
-                tls {
-                    credentials {
-                        registerProvider([provider])
-                    }
-                }
-        """.trimIndent()
-    appendLine(message)
 }

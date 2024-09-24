@@ -15,19 +15,25 @@ public sealed class TlsCredentials {
     ) : TlsCredentials()
 
     public class FileCredentials(
-        private val tlsCrtFile: File,
-        private val tlsKeyFile: File,
+        public val tlsCrtFile: File,
+        public val tlsKeyFile: File,
     ) : TlsCredentials() {
 
         override val crt: String by lazy { tlsCrtFile.readText() }
         override val key: String by lazy { tlsKeyFile.readText() }
     }
 
-    public object Undefined : TlsCredentials() {
+    public sealed class Failure(
+        public val message: String,
+    ) : TlsCredentials() {
 
-        override val crt: String get() = error("Tls credentials is undefined")
-        override val key: String get() = error("Tls credentials is undefined")
+        override val crt: String get() = error(message)
+        override val key: String get() = error(message)
     }
+
+    public class NotFound(message: String) : Failure(message)
+
+    public data object Undefined : Failure("Tls credentials is undefined")
 }
 
 public fun TlsCredentials.pkcs8Key(): String = pkcs8Key(key)
@@ -39,3 +45,6 @@ public fun pkcs8Key(key: String): String {
 
     return formatPkcs1toPkcs8(key)
 }
+
+public val TlsCredentials.isValid: Boolean
+    get() = this != TlsCredentials.Undefined && this !is TlsCredentials.NotFound

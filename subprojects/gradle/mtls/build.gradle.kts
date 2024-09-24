@@ -13,6 +13,9 @@ dependencies {
     implementation(project(":subprojects:common:problem"))
     implementation(libs.kotlinGradle)
 
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockitoJUnitJupiter)
+
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 

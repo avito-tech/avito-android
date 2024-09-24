@@ -24,18 +24,44 @@ class TlsConfigurationPluginTest {
     }
 
     @Test
-    fun `when providers defined but credentials is not created - then throw exception with suggestions`(
+    fun `when providers defined but credentials is not created - then throw exception with docs url`(
         @TempDir projectDir: File
     ) {
-        val suggestion = "test suggestion"
+        val docsUrl = "https://docs.url"
         generate(
             projectDir,
-            helperText = suggestion
+            docsUrl = docsUrl
         )
         runTask(projectDir, expectFailure = true)
             .assertThat()
             .buildFailed()
+            .outputContains(docsUrl)
+    }
+
+    @Test
+    fun `when providers defined but credentials is not properly set - then throw exception with suggestions and trace`(
+        @TempDir projectDir: File
+    ) {
+        val suggestion = "action suggestion"
+        val docsUrl = "https://docs.url"
+        generate(
+            projectDir,
+            docsUrl = docsUrl,
+            providers = listOf(
+                StubRawConfigurationData(
+                    name = "stub1",
+                    actionText = suggestion,
+                    crtContent = "crtContent"
+                )
+            )
+        )
+
+        runTask(projectDir, expectFailure = true)
+            .assertThat()
+            .buildFailed()
             .outputContains(suggestion)
+            .outputContains("Applied configurations")
+            .outputContains("No key content specified")
     }
 
     @Test
@@ -88,14 +114,17 @@ class TlsConfigurationPluginTest {
         projectDir: File,
         crtContent: String = "",
         keyContent: String = "",
-        helperText: String = "",
+        actionText: String = "",
+        docsUrl: String = "",
     ) {
         generate(
-            projectDir, listOf(
+            projectDir = projectDir,
+            docsUrl = docsUrl,
+            providers = listOf(
                 StubRawConfigurationData(
                     crtContent = crtContent,
                     keyContent = keyContent,
-                    helperText = helperText
+                    actionText = actionText
                 )
             )
         )
@@ -103,6 +132,7 @@ class TlsConfigurationPluginTest {
 
     private fun generate(
         projectDir: File,
+        docsUrl: String = "",
         providers: List<StubRawConfigurationData>
     ) {
         TestProjectGenerator(
@@ -117,6 +147,7 @@ class TlsConfigurationPluginTest {
             },
             buildGradleExtra = """
                 tls { 
+                    docsUrl.set("$docsUrl")
                     credentials {
                         ${createTlsCredentialsProviders(providers)}
                     }
@@ -156,7 +187,7 @@ class TlsConfigurationPluginTest {
             ) { 
                 crtContent.set("${provider.crtContent}")
                 keyContent.set("${provider.keyContent}")
-                helperText.set("${provider.helperText}")
+                actionText.set("${provider.actionText}")
             }
         """.trimIndent()
     }

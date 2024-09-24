@@ -40,6 +40,8 @@ public class TlsConfigurationPlugin : Plugin<Project> {
             ) {
                 it.parameters { params ->
                     params.configurations.set(tlsExtension.credentials.tlsCredentialsProviders)
+                    params.docsUrl.set(tlsExtension.docsUrl)
+                    params.verbose.set(tlsExtension.verbose)
                 }
             }
 

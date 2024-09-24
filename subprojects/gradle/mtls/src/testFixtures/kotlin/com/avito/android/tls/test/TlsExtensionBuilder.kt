@@ -33,7 +33,7 @@ private fun registerProvider(provider: StubRawConfigurationData): String {
             ) { 
                 crtContent.set("${provider.crtContent}")
                 keyContent.set("${provider.keyContent}")
-                helperText.set("${provider.helperText}")
+                helperText.set("${provider.actionText}")
             }
         """.trimIndent()
 }
