@@ -23,6 +23,7 @@ import com.avito.runner.scheduler.report.ReportModuleDependencies
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
+import com.avito.runner.scheduler.suite.filter.run_results_provider.RunResultsProviderImpl
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider

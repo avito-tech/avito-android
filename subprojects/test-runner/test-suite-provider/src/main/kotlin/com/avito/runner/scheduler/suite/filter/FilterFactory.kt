@@ -2,6 +2,7 @@ package com.avito.runner.scheduler.suite.filter
 
 import com.avito.logger.LoggerFactory
 import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.filter.run_results_provider.RunResultsProvider
 
 public interface FilterFactory {
 

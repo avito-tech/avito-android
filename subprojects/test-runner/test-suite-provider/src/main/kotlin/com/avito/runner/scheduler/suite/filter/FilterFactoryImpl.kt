@@ -6,6 +6,7 @@ import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
 import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.runner.scheduler.suite.filter.TestsFilter.Signatures.TestSignature
+import com.avito.runner.scheduler.suite.filter.run_results_provider.RunResultsProvider
 import com.avito.test.model.TestCase
 
 internal class FilterFactoryImpl(

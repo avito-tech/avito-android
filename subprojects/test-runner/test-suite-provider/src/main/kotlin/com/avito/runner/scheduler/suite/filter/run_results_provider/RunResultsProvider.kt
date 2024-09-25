@@ -1,4 +1,4 @@
-package com.avito.runner.scheduler.suite.filter
+package com.avito.runner.scheduler.suite.filter.run_results_provider
 
 import com.avito.android.Result
 import com.avito.runner.scheduler.suite.config.RunStatus
