@@ -15,5 +15,4 @@ Multiple projects live in two repositories:
 
 ## Contacts
 
-[Telegram chat in Russian](https://t.me/avito_android_opensource)  
-[Telegram chat in English](https://t.me/avito_android_opensource_en)
+[Telegram chat in Russian](https://t.me/avito_android_opensource)

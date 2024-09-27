@@ -157,13 +157,13 @@ determines which ones to run.
 For more details of the main modules and approaches,
 see the project documentation(deleted). It is still incomplete, and not everything
 is translated. We want to make the documentation easier to understand, and need your help. Tell us what to improve and
-correct in the documentation in [our Telegram chat](https://t-do.ru/avito_android_opensource_en).
+correct in the documentation in github issues
 
 ## How our libraries can be useful
 
 Since there are many components in our project, its applications depend on your needs. 
 If you are working on a similar problem or just want to understand the technology better — feel free to contact us 
-in GitHub or our [Telegram chat](https://t-do.ru/avito_android_opensource_en). 
+in GitHub
 We will share what we know, try to help, and show relevant examples.
  
 You can ask anything:
