@@ -1,14 +1,63 @@
-INSTRUMENTATION_STATUS: class=com.example.test.TestClass
+INSTRUMENTATION_STATUS: class=com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator
 INSTRUMENTATION_STATUS: current=1
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
 INSTRUMENTATION_STATUS: numtests=1
 INSTRUMENTATION_STATUS: stream=
-com.example.test.TestClass:
-INSTRUMENTATION_STATUS: test=testMethodName
+com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator:
+INSTRUMENTATION_STATUS: test=startup
 INSTRUMENTATION_STATUS_CODE: 1
-INSTRUMENTATION_STATUS: additionalTestOutputFile_baseline-profile=/storage/emulated/0/Android/media/com.example.test.package/file.txt
+INSTRUMENTATION_STATUS: additionalTestOutputFile_BaselineProfileGenerator_startup-baseline-prof.txt=/storage/emulated/0/Android/media/com.avito.android.macrobenchmark/BaselineProfileGenerator_startup-baseline-prof.txt
 INSTRUMENTATION_STATUS_CODE: 2
-INSTRUMENTATION_RESULT: stream=
+INSTRUMENTATION_STATUS: class=com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator:
+INSTRUMENTATION_STATUS: test=startup
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: additionalTestOutputFile_BaselineProfileGenerator_startup-baseline-prof.txt=/storage/emulated/0/Android/media/com.avito.android.macrobenchmark/BaselineProfileGenerator_startup-baseline-prof.txt
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: class=com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator:
+INSTRUMENTATION_STATUS: test=startup
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: additionalTestOutputFile_BaselineProfileGenerator_startup-baseline-prof.txt=/storage/emulated/0/Android/media/com.avito.android.macrobenchmark/BaselineProfileGenerator_startup-baseline-prof.txt
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: class=com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator:
+INSTRUMENTATION_STATUS: test=startup
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: additionalTestOutputFile_BaselineProfileGenerator_startup-baseline-prof.txt=/storage/emulated/0/Android/media/com.avito.android.macrobenchmark/BaselineProfileGenerator_startup-baseline-prof.txt
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: class=com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator:
+INSTRUMENTATION_STATUS: test=startup
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: additionalTestOutputFile_BaselineProfileGenerator_startup-baseline-prof.txt=/storage/emulated/0/Android/media/com.avito.android.macrobenchmark/BaselineProfileGenerator_startup-baseline-prof.txt
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: class=com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator:
+INSTRUMENTATION_STATUS: test=startup
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: additionalTestOutputFile_BaselineProfileGenerator_startup-baseline-prof.txt=/storage/emulated/0/Android/media/com.avito.android.macrobenchmark/BaselineProfileGenerator_startup-baseline-prof.txt
+INSTRUMENTATION_STATUS_CODE: 2
 
 Time: 0
 

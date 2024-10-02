@@ -3,6 +3,7 @@ package com.avito.runner.service.worker.device.adb.instrumentation
 import com.android.annotations.VisibleForTesting
 import com.avito.cli.Notification
 import com.avito.runner.model.TestCaseRun
+import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry.StatusCode
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.test.model.TestName
 import rx.Observable
@@ -76,7 +77,7 @@ internal interface InstrumentationTestCaseRunParser {
                             entry.test.isEmpty() ->
                             // Check previous test entry is Start and has test name
                             if (previous is InstrumentationEntry.InstrumentationTestEntry &&
-                                previous.statusCode == InstrumentationEntry.InstrumentationTestEntry.StatusCode.Start &&
+                                previous.statusCode == StatusCode.Start &&
                                 previous.test.isNotEmpty()
                             ) {
                                 // Copy test field from previous Start entry
@@ -100,7 +101,7 @@ internal interface InstrumentationTestCaseRunParser {
                                 buildString {
                                     append("Wrong instrumentation output order: ")
                                     append("additional output entry (code=2) must ")
-                                    append("be followed by tests start entry (code = 1).")
+                                    append("follow after tests start entry (code = 1).")
                                 }
                             }
                             previous.copy(
@@ -209,22 +210,22 @@ internal interface InstrumentationTestCaseRunParser {
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         name = TestName(first.clazz, first.test),
                         result = when (second.statusCode) {
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok ->
+                            StatusCode.Ok ->
                                 TestCaseRun.Result.Passed.Regular
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput ->
+                            StatusCode.MacrobenchmarkOutput ->
                                 TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs(
                                     outputFiles = listOfNotNull(second.macrobenchmarkOutputFile)
                                         .map { File(it).toPath() }
                                 )
 
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ignored ->
+                            StatusCode.Ignored ->
                                 TestCaseRun.Result.Ignored
 
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Failure,
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.AssumptionFailure ->
+                            StatusCode.Failure,
+                            StatusCode.AssumptionFailure ->
                                 TestCaseRun.Result.Failed.InRun(errorMessage = second.stack)
 
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Start ->
+                            StatusCode.Start ->
                                 throw IllegalStateException(
                                     "Unexpected status code [${second.statusCode}] " +
                                         "in second entry, ($first, $second)"
@@ -258,6 +259,14 @@ internal interface InstrumentationTestCaseRunParser {
             substringBetween("INSTRUMENTATION_STATUS: $key=", "INSTRUMENTATION_STATUS", "INSTRUMENTATION_STATUS_CODE")
                 .trim()
 
+        private fun String.parseInstrumentationAdditionalOutputsValue(): List<String> =
+            substringBetween(
+                "INSTRUMENTATION_STATUS: additionalTestOutputFile_",
+                "INSTRUMENTATION_STATUS_CODE: ${StatusCode.MacrobenchmarkOutput.code}"
+            )
+                .trim()
+                .split("=")
+
         private fun String.parseInstrumentationResultValue(key: String): String =
             substringBetween("INSTRUMENTATION_RESULT: $key=", "INSTRUMENTATION_RESULT", "INSTRUMENTATION_CODE")
                 .trim()
@@ -271,7 +280,7 @@ internal interface InstrumentationTestCaseRunParser {
                         .trim()
                         .toInt()
                         .let { code ->
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.values()
+                            StatusCode.values()
                                 .firstOrNull { it.code == code }
                         }
                         .let { code ->
@@ -283,13 +292,13 @@ internal interface InstrumentationTestCaseRunParser {
                                 else -> code
                             }
                         }
-                if (statusCode == InstrumentationEntry.InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput) {
-                    val filePath = str
-                        .parseInstrumentationStatusValue("additionalTestOutputFile_baseline-profile")
-                    check(filePath.isNotBlank()) {
+                if (statusCode == StatusCode.MacrobenchmarkOutput) {
+                    val (name, filePath) = str.parseInstrumentationAdditionalOutputsValue()
+                    check(name.isNotBlank() && filePath.isNotBlank()) {
                         "Received status code indicating additional output files, but file path was empty."
                     }
                     return InstrumentationEntry.InstrumentationMacrobenchmarkOutputEntry(
+                        outputName = name,
                         outputFilePath = filePath,
                     )
                 }

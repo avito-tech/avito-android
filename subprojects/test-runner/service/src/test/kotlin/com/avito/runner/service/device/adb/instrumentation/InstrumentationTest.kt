@@ -1010,7 +1010,8 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     @Test
     fun `read instrumentation output - completes stream - with additional outputs`() {
         val outputWithFailedTest = ResourcesReader.readFile("instrumentation-output-additional-outputs.txt")
-        val outputFilePathFromSampleOutput = "/storage/emulated/0/Android/media/com.example.test.package/file.txt"
+        val outputFilePathFromSampleOutput = "/storage/emulated/0/Android/media/com.avito.android.macrobenchmark/" +
+            "BaselineProfileGenerator_startup-baseline-prof.txt"
 
         val subscriber = instrumentationParser
             .parse(
@@ -1019,19 +1020,20 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
+        val run = InstrumentationTestCaseRun.CompletedTestCaseRun(
+            name = TestName(
+                "com.avito.android.macrobenchmark.baselineprofile.BaselineProfileGenerator",
+                "startup"
+            ),
+            result = TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs(
+                outputFiles = listOf(outputFilePathFromSampleOutput).map { File(it).toPath() }
+            ),
+            timestampStartedMilliseconds = 0,
+            timestampCompletedMilliseconds = 0
+        )
         assertThat(entries).containsExactlyElementsIn(
             listOf<InstrumentationTestCaseRun>(
-                InstrumentationTestCaseRun.CompletedTestCaseRun(
-                    name = TestName(
-                        "com.example.test.TestClass",
-                        "testMethodName"
-                    ),
-                    result = TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs(
-                        outputFiles = listOf(outputFilePathFromSampleOutput).map { File(it).toPath() }
-                    ),
-                    timestampStartedMilliseconds = 0,
-                    timestampCompletedMilliseconds = 0
-                )
+                run, run, run, run, run, run
             )
         )
     }

@@ -26,6 +26,7 @@ internal sealed class InstrumentationEntry {
     }
 
     data class InstrumentationMacrobenchmarkOutputEntry(
+        val outputName: String,
         val outputFilePath: String,
         val statusCode: InstrumentationTestEntry.StatusCode = InstrumentationTestEntry.StatusCode.MacrobenchmarkOutput
     ) : InstrumentationEntry()
