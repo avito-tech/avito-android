@@ -6,6 +6,9 @@ import com.avito.logger.LoggerFactoryBuilder
 import com.avito.logger.handler.PrintlnLoggingHandlerProvider
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 public object ElasticClientFactory {
 
@@ -15,23 +18,29 @@ public object ElasticClientFactory {
 
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 
-    private val cache = mutableMapOf<ElasticConfig, HttpElasticClient>()
+    private val cache = mutableMapOf<ElasticConfig, ElasticClient>()
 
-    public fun provide(config: ElasticConfig): ElasticClient = when (config) {
+    private const val defaultTimeoutSec = 10L
+
+    public fun provide(
+        config: ElasticConfig,
+    ): ElasticClient = when (config) {
 
         is ElasticConfig.Disabled -> StubElasticClient
 
         is ElasticConfig.Enabled -> cache.getOrPut(
             key = config,
             defaultValue = {
-                HttpElasticClient(
+                ElasticClientProvider(
+                    config = config,
                     timeProvider = timeProvider,
-                    endpoints = config.endpoints,
-                    indexPattern = config.indexPattern,
-                    buildId = config.buildId,
-                    authApiKey = config.authApiKey,
-                    loggerFactory = loggerFactory
-                )
+                    loggerFactory = loggerFactory,
+                    // TODO move to module
+                    okHttpClient = OkHttpClient.Builder()
+                        .connectTimeout(defaultTimeoutSec, TimeUnit.SECONDS)
+                        .readTimeout(defaultTimeoutSec, TimeUnit.SECONDS),
+                    gsonBuilder = GsonBuilder(),
+                ).provide()
             }
         )
     }

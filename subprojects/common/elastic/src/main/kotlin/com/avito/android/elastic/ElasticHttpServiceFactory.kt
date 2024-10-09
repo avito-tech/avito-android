@@ -1,6 +1,6 @@
 package com.avito.android.elastic
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -10,12 +10,12 @@ import retrofit2.create
 internal class ElasticHttpServiceFactory(
     private val endpoint: HttpUrl,
     private val okHttpClientBuilder: OkHttpClient.Builder,
-    private val gson: Gson
-) : ElasticServiceFactory {
+    private val gson: GsonBuilder,
+) {
 
-    override fun provide(): ElasticService =
+    fun provide(): ElasticApi =
         Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(GsonConverterFactory.create(gson.create()))
             .client(okHttpClientBuilder.build())
             .baseUrl(endpoint)
             .build()

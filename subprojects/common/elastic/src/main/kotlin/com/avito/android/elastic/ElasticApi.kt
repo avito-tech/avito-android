@@ -8,14 +8,13 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-internal interface ElasticService {
+internal interface ElasticApi {
 
     @Headers("Content-Type:application/json")
-    @POST("{indexPattern}-{date}/_doc")
-    fun log(
+    @POST("{indexName}/_doc")
+    fun sendDocument(
         @Header("Authorization") authApiKeyHeaderValue: String?,
-        @Path("indexPattern") indexPattern: String,
-        @Path("date") date: String,
+        @Path("indexName") indexPattern: String,
         @Body params: Map<String, String>
     ): Call<ResponseBody>
 }

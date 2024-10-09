@@ -3,13 +3,10 @@ package com.avito.android.elastic
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.TimeProvider
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.net.URL
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -18,30 +15,29 @@ import java.util.TimeZone
 /**
  * @param endpoints list of elastic endpoints to send logs
  *                  multiple endpoints used for stability, sometimes nodes may be unresponsive
- * @param indexPattern see https://www.elastic.co/guide/en/kibana/current/index-patterns.html
+ * @param indexName https://www.elastic.co/blog/what-is-an-elasticsearch-index
  * @param authApiKey API key for Elastic auth
  * see https://www.elastic.co/guide/en/elasticsearch/reference/current/token-authentication-services.html
  */
 internal class HttpElasticClient(
+    private val elasticApi: ElasticApi,
     private val timeProvider: TimeProvider,
-    private val endpoints: List<URL>,
-    private val indexPattern: String,
-    private val buildId: String,
+    private val indexName: String,
+    /**
+     * e.g. worker, client, android-test-runtime
+     */
+    private val sourceType: String,
+    /**
+     * e.g. buildId, workerId
+     */
+    private val sourceId: String,
     private val authApiKey: String?,
     loggerFactory: LoggerFactory
 ) : ElasticClient {
 
     private val logger = loggerFactory.create<HttpElasticClient>()
 
-    private val elasticServiceFactory = ElasticServiceFactory
-
-    private val elasticApi = elasticServiceFactory.create(
-        endpoints = endpoints.toHttpUrls()
-    ).provide()
-
     private val timestampFormatter = utcFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-
-    private val isoDate = utcFormatter("yyyy-MM-dd")
 
     override fun sendMessage(
         level: String,
@@ -55,7 +51,8 @@ internal class HttpElasticClient(
             val params = mutableMapOf(
                 "@timestamp" to timestampFormatter.get().format(now),
                 "level" to level,
-                "build_id" to buildId,
+                "source.type" to sourceType,
+                "source.id" to sourceId,
                 "message" to message
             )
 
@@ -66,14 +63,11 @@ internal class HttpElasticClient(
 
             params.putAll(metadata)
 
-            val formattedDate = isoDate.get().format(now)
-
             val authApiKeyHeaderValue = authApiKey?.let { "ApiKey $it" }
 
-            elasticApi.log(
+            elasticApi.sendDocument(
                 authApiKeyHeaderValue = authApiKeyHeaderValue,
-                indexPattern = indexPattern,
-                date = formattedDate,
+                indexPattern = indexName,
                 params = params
             ).enqueue(
                 object : Callback<ResponseBody> {
@@ -88,14 +82,6 @@ internal class HttpElasticClient(
         } catch (t: Throwable) {
             logger.warn("Can't send logs to Elastic", t)
         }
-    }
-
-    private fun List<URL>.toHttpUrls(): List<HttpUrl> = mapNotNull { url ->
-        val result = url.toHttpUrlOrNull()
-        if (result == null) {
-            logger.warn("Can't convert URL to okhttp.HttpUrl: $url")
-        }
-        result
     }
 
     /**

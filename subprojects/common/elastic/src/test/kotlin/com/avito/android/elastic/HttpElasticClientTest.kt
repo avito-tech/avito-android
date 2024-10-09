@@ -4,6 +4,8 @@ import com.avito.logger.PrintlnLoggerFactory
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.avito.time.TimeMachineProvider
+import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -28,9 +30,13 @@ internal class HttpElasticClientTest {
 
         val elasticClient: ElasticClient = HttpElasticClient(
             timeProvider = timeProvider,
-            endpoints = listOf(mockWebServer.url("/").toUrl()),
-            indexPattern = "doesnt-matter",
-            buildId = "12345",
+            elasticApi = ElasticApiProvider(
+                gson = GsonBuilder(),
+                okHttpClientBuilder = OkHttpClient.Builder(),
+            ).provide(listOf(mockWebServer.url("/").toUrl())),
+            indexName = "stub-index",
+            sourceType = "gradle-build",
+            sourceId = "12345",
             authApiKey = "testkey",
             loggerFactory = loggerFactory
         )
@@ -46,11 +52,12 @@ internal class HttpElasticClientTest {
 
         capturedRequest.checks.singleRequestCaptured().apply {
             containsHeader("Authorization", "ApiKey testkey")
-            pathContains("doesnt-matter-2021-01-05/_doc")
+            pathContains("stub-index/_doc")
             bodyContains(
                 "{\"@timestamp\":\"2021-01-05T14:56:34.000Z\"," +
                     "\"level\":\"WARNING\"," +
-                    "\"build_id\":\"12345\"," +
+                    "\"source.type\":\"gradle-build\"," +
+                    "\"source.id\":\"12345\"," +
                     "\"message\":\"SomeMessage\"," +
                     "\"error_message\":\"SomeException\"," +
                     "\"some_key\":\"SomeValue\"}"
