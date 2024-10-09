@@ -26,7 +26,7 @@ public object ElasticClientFactory {
         config: ElasticConfig,
     ): ElasticClient = when (config) {
 
-        is ElasticConfig.Disabled -> StubElasticClient
+        is ElasticConfig.Disabled -> StubElasticClient()
 
         is ElasticConfig.Enabled -> cache.getOrPut(
             key = config,

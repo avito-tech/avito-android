@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
     api(libs.okhttp)
-
-    implementation(project(":subprojects:common:time"))
-    implementation(project(":subprojects:common:okhttp"))
+    api(project(":subprojects:common:time"))
+    api(project(":subprojects:common:okhttp"))
+    api(project(":subprojects:logger:logger"))
 
     implementation(libs.gson)
     implementation(libs.retrofit)

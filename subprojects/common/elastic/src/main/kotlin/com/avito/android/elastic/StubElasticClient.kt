@@ -1,6 +1,6 @@
 package com.avito.android.elastic
 
-internal object StubElasticClient : ElasticClient {
+public class StubElasticClient : ElasticClient {
 
     override fun sendMessage(
         level: String,
@@ -8,5 +8,6 @@ internal object StubElasticClient : ElasticClient {
         metadata: Map<String, String>,
         throwable: Throwable?
     ) {
+        // empty
     }
 }
