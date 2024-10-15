@@ -39,6 +39,8 @@ internal class HttpElasticClient(
 
     private val timestampFormatter = utcFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
+    private val isoDate = utcFormatter("yyyy.MM.dd")
+
     override fun sendMessage(
         level: String,
         message: String,
@@ -65,9 +67,12 @@ internal class HttpElasticClient(
 
             val authApiKeyHeaderValue = authApiKey?.let { "ApiKey $it" }
 
+            val indexDate = isoDate.get().format(now)
+
             elasticApi.sendDocument(
                 authApiKeyHeaderValue = authApiKeyHeaderValue,
                 indexPattern = indexName,
+                date = indexDate,
                 params = params
             ).enqueue(
                 object : Callback<ResponseBody> {

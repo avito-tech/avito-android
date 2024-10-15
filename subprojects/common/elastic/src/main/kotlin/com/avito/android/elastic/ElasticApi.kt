@@ -11,10 +11,15 @@ import retrofit2.http.Path
 internal interface ElasticApi {
 
     @Headers("Content-Type:application/json")
-    @POST("{indexName}/_doc")
+    @POST("{indexName}-{indexDate}/_doc")
     fun sendDocument(
         @Header("Authorization") authApiKeyHeaderValue: String?,
         @Path("indexName") indexPattern: String,
+        /**
+         * Best practise
+         * Using for search optimization. Each day new index. Simplifies search through one day
+         */
+        @Path("indexDate") date: String,
         @Body params: Map<String, String>
     ): Call<ResponseBody>
 }

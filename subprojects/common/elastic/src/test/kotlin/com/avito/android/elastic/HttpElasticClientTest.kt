@@ -52,7 +52,7 @@ internal class HttpElasticClientTest {
 
         capturedRequest.checks.singleRequestCaptured().apply {
             containsHeader("Authorization", "ApiKey testkey")
-            pathContains("stub-index/_doc")
+            pathContains("stub-index-2021.01.05/_doc")
             bodyContains(
                 "{\"@timestamp\":\"2021-01-05T14:56:34.000Z\"," +
                     "\"level\":\"WARNING\"," +
