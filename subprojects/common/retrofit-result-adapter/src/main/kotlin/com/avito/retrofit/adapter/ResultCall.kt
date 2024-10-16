@@ -43,18 +43,21 @@ internal class ResultCall<T>(
     override fun timeout(): Timeout = delegate.timeout()
 
     private fun Response<T>.toResult(): Result<T> {
-        if (!isSuccessful) {
-            val errorBody = errorBody()?.string() ?: "empty"
-            return Result.Failure(HttpException(code(), errorBody))
-        }
+        val responseMessage = message()
+        val code = code()
 
-        body()?.let { body -> return Result.Success(body) }
-
-        // For example, in case of 204 No Content
-        @Suppress("UNCHECKED_CAST")
-        return when (successType) {
-            Unit::class.java -> Result.Success(Unit) as Result<T>
-            else -> Result.Failure(IllegalStateException("Response body was null"))
+        val result: Result<T> = if (!isSuccessful) {
+            val errorBody = errorBody()?.string() ?: "error body is null"
+            Result.Failure(HttpException(code, errorBody, responseMessage))
+        } else {
+            body()?.let { body -> return Result.Success(body) }
+            // For example, in case of 204 No Content
+            @Suppress("UNCHECKED_CAST")
+            return when (successType) {
+                Unit::class.java -> Result.Success(Unit) as Result<T>
+                else -> Result.Failure(HttpException(code, "Response body is null", responseMessage))
+            }
         }
+        return result
     }
 }

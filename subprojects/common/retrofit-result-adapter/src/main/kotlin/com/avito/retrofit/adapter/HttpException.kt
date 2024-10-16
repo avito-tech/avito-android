@@ -1,3 +1,10 @@
 package com.avito.retrofit.adapter
 
-public class HttpException(public val code: Int, public val body: String) : RuntimeException()
+/**
+ * idk why we can't use [retrofit2.HttpException]
+ */
+public class HttpException(
+    code: Int,
+    body: String,
+    responseMessage: String,
+) : RuntimeException("HTTP Response[ code: $code, message: $responseMessage, body: $body]")
