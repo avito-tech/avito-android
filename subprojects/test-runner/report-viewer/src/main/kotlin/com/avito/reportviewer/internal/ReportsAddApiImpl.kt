@@ -209,6 +209,8 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
                 preparedData["is_flaky"] = false
         }
 
+        preparedData["is_regression"] = test.isRegression
+
         val params = mutableMapOf(
             "plan_slug" to reportCoordinates.planSlug,
             "job_slug" to reportCoordinates.jobSlug,

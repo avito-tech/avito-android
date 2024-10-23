@@ -35,4 +35,6 @@ public interface TestStaticData {
     public val kind: Kind
 
     public val groupList: List<String>
+
+    public val isRegression: Boolean
 }

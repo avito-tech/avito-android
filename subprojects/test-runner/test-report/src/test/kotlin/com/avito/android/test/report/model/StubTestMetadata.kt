@@ -19,6 +19,7 @@ internal fun TestMetadata.Companion.createStubInstance(
     tagIds: List<Int> = emptyList(),
     flakiness: Flakiness = Flakiness.Stable,
     groupList: List<String> = emptyList(),
+    isRegression: Boolean = false,
 ) = TestMetadata(
     caseId = caseId,
     description = description,
@@ -32,4 +33,5 @@ internal fun TestMetadata.Companion.createStubInstance(
     tagIds = tagIds,
     flakiness = flakiness,
     groupList = groupList,
+    isRegression = isRegression,
 )

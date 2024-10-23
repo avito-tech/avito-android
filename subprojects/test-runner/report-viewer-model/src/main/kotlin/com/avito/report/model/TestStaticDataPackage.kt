@@ -19,6 +19,7 @@ public data class TestStaticDataPackage(
     override val kind: Kind,
     override val flakiness: Flakiness,
     override val groupList: List<String>,
+    override val isRegression: Boolean,
 ) : TestStaticData {
 
     override fun equals(other: Any?): Boolean {

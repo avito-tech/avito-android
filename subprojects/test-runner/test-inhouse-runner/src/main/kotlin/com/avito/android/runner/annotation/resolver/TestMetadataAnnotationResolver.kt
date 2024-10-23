@@ -14,6 +14,7 @@ import com.avito.android.test.annotations.GroupList
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.Priority
+import com.avito.android.test.annotations.Regression
 import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.TagId
 import com.avito.android.test.annotations.TestCaseBehavior
@@ -43,6 +44,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
         var featureIds: List<Int> = emptyList()
         var flakiness: Flakiness = Flakiness.Stable
         var groupList: List<String> = emptyList()
+        var isRegression: Boolean = false
 
         val annotationTypes = arrayOf(
             FeatureId::class.java,
@@ -62,6 +64,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
             E2EStub::class.java,
             UnitTest::class.java,
             ScreenshotTest::class.java,
+            Regression::class.java,
         )
 
         val testAnnotations = Annotations.getAnnotationsSubset(test.testClass, test.testMethod, *annotationTypes)
@@ -84,6 +87,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
                             Flakiness.Stable
                     }
                     is GroupList -> groupList = annotation.value.toList()
+                    is Regression -> isRegression = true
                 }
             }
 
@@ -101,6 +105,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
                 tagIds = tagIds,
                 flakiness = flakiness,
                 groupList = groupList,
+                isRegression = isRegression,
             )
         )
     }

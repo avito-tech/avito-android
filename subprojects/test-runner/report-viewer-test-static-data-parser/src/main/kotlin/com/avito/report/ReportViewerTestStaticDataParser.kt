@@ -16,6 +16,7 @@ import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.NO_REASON
 import com.avito.android.test.annotations.Priority
+import com.avito.android.test.annotations.Regression
 import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.TagId
 import com.avito.android.test.annotations.TestCaseBehavior
@@ -105,18 +106,21 @@ public interface ReportViewerTestStaticDataParser {
                 ?.getIntArrayValue(FEATURE_ID_VALUE_KEY) ?: emptyList(),
 
             priority = testInApk.annotations
-                .find { it.name == Priority::class.java.name }
+                .find { it.name == Priority::class.java.canonicalName }
                 ?.getEnumValue("priority")?.let { TestCasePriority.fromName(it) },
 
             behavior = testInApk.annotations
-                .find { it.name == Behavior::class.java.name }
+                .find { it.name == Behavior::class.java.canonicalName }
                 ?.getEnumValue("behavior")?.let { TestCaseBehavior.fromName(it) },
 
             kind = determineKind(testInApk.annotations),
 
             flakiness = determineFlakiness(testInApk.annotations, target.api),
 
-            groupList = determineGroupList(testInApk.annotations)
+            groupList = determineGroupList(testInApk.annotations),
+
+            isRegression = testInApk.annotations
+                .any { it.name == Regression::class.java.canonicalName }
         )
 
         private fun determineFlakiness(annotations: List<AnnotationData>, api: Int): Flakiness {

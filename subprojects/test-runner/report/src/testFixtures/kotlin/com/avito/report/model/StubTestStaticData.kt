@@ -19,6 +19,7 @@ public fun TestStaticDataPackage.Companion.createStubInstance(
     kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable,
     groupList: List<String> = emptyList(),
+    isRegression: Boolean = false,
 ): TestStaticDataPackage = TestStaticDataPackage(
     name = name,
     device = deviceName,
@@ -32,5 +33,6 @@ public fun TestStaticDataPackage.Companion.createStubInstance(
     behavior = behavior,
     kind = kind,
     flakiness = flakiness,
-    groupList = groupList
+    groupList = groupList,
+    isRegression = isRegression,
 )

@@ -75,6 +75,7 @@ internal class ReportTestExtension(
         behavior: TestCaseBehavior? = null,
         flakiness: Flakiness = Flakiness.Stable,
         groupList: List<String> = emptyList(),
+        isRegression: Boolean = false,
     ) {
         initTestCase(
             testMetadata = TestMetadata(
@@ -90,6 +91,7 @@ internal class ReportTestExtension(
                 tagIds = tagIds,
                 flakiness = flakiness,
                 groupList = groupList,
+                isRegression = isRegression,
             )
         )
     }

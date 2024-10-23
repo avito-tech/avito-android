@@ -47,7 +47,8 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
     flakiness: Flakiness = Flakiness.Stable,
     groupList: List<String> = emptyList(),
     logcat: String = "",
-    incident: Incident? = null
+    incident: Incident? = null,
+    isRegression: Boolean = false,
 ): AndroidTest.Lost = fromTestStaticData(
     TestStaticDataPackage(
         name = TestName(className, methodName),
@@ -63,6 +64,7 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
         kind = kind,
         flakiness = flakiness,
         groupList = groupList,
+        isRegression = isRegression,
     ),
     startTime = startTime,
     lastSignalTime = lastSignalTime,
@@ -86,7 +88,8 @@ public fun AndroidTest.Skipped.Companion.createStubInstance(
     kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable,
     groupList: List<String> = emptyList(),
-    skipReason: String = "просто потомучто"
+    skipReason: String = "просто потомучто",
+    isRegression: Boolean = false,
 ): AndroidTest.Skipped = fromTestMetadata(
     TestStaticDataPackage(
         name = TestName(className, methodName),
@@ -102,6 +105,7 @@ public fun AndroidTest.Skipped.Companion.createStubInstance(
         kind = kind,
         flakiness = flakiness,
         groupList = groupList,
+        isRegression = isRegression,
     ),
     skipReason = skipReason,
     reportTime = reportTime
