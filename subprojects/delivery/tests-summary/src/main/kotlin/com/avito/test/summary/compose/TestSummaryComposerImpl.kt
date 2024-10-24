@@ -27,7 +27,9 @@ internal class TestSummaryComposerImpl(private val reportViewerUrl: String) : Te
             reportCoordinates = reportCoordinates,
             reportViewerQuery = ReportViewerQuery.createForJvm(),
         )
-        val reportViewerUrl = Result.tryCatch { reportLinksGenerator.generateReportLink(team = team.name) }
+        val reportViewerUrl = Result.tryCatch {
+            reportLinksGenerator.generateReportLink(team = team.name, filterOnlyFailures = true)
+        }
         val reportIdentifier = reportCoordinates.runId
 
         val failures = testData.analyzeFailures()
