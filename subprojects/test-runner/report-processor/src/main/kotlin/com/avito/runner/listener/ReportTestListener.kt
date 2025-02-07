@@ -15,10 +15,11 @@ import java.io.File
 internal class ReportTestListener(
     private val logcatDir: File,
     private val reportProcessor: ReportProcessor,
-    private val report: Report
+    private val report: Report,
+    disableLogcat: Boolean,
 ) : TestLifecycleListener {
 
-    private val logcatBuffers = LogcatBuffers()
+    private val logcatBuffers = LogcatBuffers.create(disableLogcat)
 
     override fun started(
         test: TestCase,

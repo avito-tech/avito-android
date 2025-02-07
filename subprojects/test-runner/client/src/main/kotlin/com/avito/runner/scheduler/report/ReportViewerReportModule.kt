@@ -27,7 +27,8 @@ internal class ReportViewerReportModule(
             testListenerFactory = TestListenerFactory(
                 loggerFactory = dependencies.loggerFactory,
                 timeProvider = dependencies.timeProvider,
-                httpClientBuilder = dependencies.httpClientBuilder
+                httpClientBuilder = dependencies.httpClientBuilder,
+                disableLogcat = dependencies.params.disableLogcat,
             ),
             loggerFactory = dependencies.loggerFactory,
             testRunnerOutputDir = dependencies.testRunnerOutputDir,

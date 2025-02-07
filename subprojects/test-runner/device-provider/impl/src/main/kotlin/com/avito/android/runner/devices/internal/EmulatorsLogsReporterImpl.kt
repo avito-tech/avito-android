@@ -19,15 +19,14 @@ internal class EmulatorsLogsReporterImpl(
     }
 
     override fun redirectLogcat(emulatorName: Serial, device: Device) {
+        if (disableLogcat) {
+            return
+        }
+
         val logcatFile = getFile(
             dir = logcatDir,
             emulatorName = emulatorName.value
         )
-
-        if (disableLogcat) {
-            logcatFile.writeText("Logcat is disabled by Experiments")
-            return
-        }
 
         device.redirectLogcatToFile(
             file = logcatFile,

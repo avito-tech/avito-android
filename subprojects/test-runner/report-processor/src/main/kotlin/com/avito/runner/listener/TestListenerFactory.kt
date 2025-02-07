@@ -24,7 +24,8 @@ import java.io.File
 public class TestListenerFactory(
     private val loggerFactory: LoggerFactory,
     private val timeProvider: TimeProvider,
-    private val httpClientBuilder: OkHttpClient.Builder
+    private val httpClientBuilder: OkHttpClient.Builder,
+    private val disableLogcat: Boolean
 ) {
 
     public fun createReportTestListener(
@@ -41,6 +42,7 @@ public class TestListenerFactory(
                 proguardMappings = proguardMappings,
                 fileStorageUrl = fileStorageUrl,
             ),
+            disableLogcat = disableLogcat,
             report = report,
         )
     }
