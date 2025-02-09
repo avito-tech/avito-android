@@ -1,5 +1,5 @@
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/avito/debian-minbase:11.3
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:12.7
 
 ARG ARTIFACTORY_URL
 ENV DEBIAN_FRONTEND=noninteractive
@@ -44,8 +44,6 @@ RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linu
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/ndk/ndk-linux-25_2_9519653.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmake/cmake_3_22_1.zip $ANDROID_HOME
 
-RUN rm /usr/local/bin/unzip_from_url.sh
-
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
 ARG PROFILER_VERSION=0.19.0
@@ -63,7 +61,20 @@ RUN \
 
 ENV PATH $PATH:/usr/local/gradle-profiler/bin
 
+# --------------- Perfetto -----------------
+# https://github.com/google/perfetto/releases/
+ARG PERFETTO_VERSION=v49.0
+
+# Install Perfetto tracebox
+RUN \
+  mkdir -p /opt/perfetto && \
+  unzip_from_url.sh ${ARTIFACTORY_URL}android-build-env/perfetto/${PERFETTO_VERSION}/linux-amd64.zip /opt/perfetto && \
+  install -m 755 /opt/perfetto/linux-amd64/* /usr/local/bin && \
+  rm -rf /opt/perfetto
+
 # ----------------------------------------------------------------------------
+
+RUN rm /usr/local/bin/unzip_from_url.sh
 
 # Entrypoint script will allow us run as non-root in the container.
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

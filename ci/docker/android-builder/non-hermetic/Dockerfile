@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -60,6 +60,17 @@ RUN \
   rm -f /opt/gradle-profiler.zip
 
 ENV PATH $PATH:/usr/local/gradle-profiler/bin
+
+# --------------- Perfetto -----------------
+# https://github.com/google/perfetto/releases/
+ARG PERFETTO_VERSION=v49.0
+
+# Install Perfetto tracebox
+RUN \
+  mkdir -p /opt/perfetto && \
+  unzip_from_url.sh https://github.com/google/perfetto/releases/download/${PERFETTO_VERSION}/linux-amd64.zip /opt/perfetto && \
+  install -m 755 /opt/perfetto/linux-amd64/* /usr/local/bin && \
+  rm -rf /opt/perfetto
 
 # ----------------------------------------------------------------------------
 
