@@ -44,7 +44,7 @@ internal class SimpleImageBuilder(
     private fun buildImage(): ImageId {
         log.info("Building an image ...")
 
-        val buildResult = docker.build(buildList() {
+        val buildResult = docker.build(*buildList() {
             addAll(listOf("--build-arg", "DOCKER_REGISTRY=$registry"))
             addAll(listOf("--build-arg", "ARTIFACTORY_URL=$artifactoryUrl"))
             addAll(listOf("--file", File(buildDir, dockerfilePath).canonicalPath))
