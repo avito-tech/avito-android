@@ -38,6 +38,7 @@ internal class PublishImage(
             imageRegistryTagName = null,
             artifactoryUrl = artifactoryUrl,
             imageName = imageName,
+            ssh = ssh
         )
 
         val publisher = ImagePublisher(

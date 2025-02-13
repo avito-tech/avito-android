@@ -24,6 +24,7 @@ internal class PublishEmceeImage(
             imageRegistryTagName = imageRegistryTagName,
             artifactoryUrl = artifactoryUrl,
             imageName = imageName,
+            ssh = ssh,
         )
         buildOrPublishImage(docker, builder)
     }

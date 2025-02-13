@@ -56,6 +56,11 @@ internal open class BuildImage(
         description = "Image name. Usually, it's in format <repository>/<image-name> (e.g. 'android/image-builder')"
     ).required()
 
+    protected val ssh: String? by option(
+        type = ArgType.String,
+        description = "SSH agent socket or keys to expose to the build"
+    )
+
     override fun execute() {
         imageBuilder().build()
     }
@@ -73,6 +78,7 @@ internal open class BuildImage(
             imageRegistryTagName = null,
             artifactoryUrl = artifactoryUrl,
             imageName = imageName,
+            ssh = ssh,
         )
     }
 

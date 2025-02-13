@@ -11,7 +11,7 @@ internal open class CliDocker(
         vararg args: String,
         timeout: Duration
     ): Result<ImageId> {
-        val successMessagePattern = "^Successfully built (.{12})$".toRegex(RegexOption.MULTILINE)
+        val successMessagePattern = "^#\\d+ writing image sha256:(.{12}).{52} done$".toRegex(RegexOption.MULTILINE)
 
         return execute("docker", "build", *args, timeout = timeout)
             .mapCatching { output ->

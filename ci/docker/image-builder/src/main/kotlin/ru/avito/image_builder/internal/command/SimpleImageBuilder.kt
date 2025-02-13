@@ -28,6 +28,7 @@ internal class SimpleImageBuilder(
     private val imageRegistryTagName: String?,
     private val artifactoryUrl: String,
     private val imageName: String,
+    private val ssh: String?,
 ) : ImageBuilder {
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
@@ -43,12 +44,15 @@ internal class SimpleImageBuilder(
     private fun buildImage(): ImageId {
         log.info("Building an image ...")
 
-        val buildResult = docker.build(
-            "--build-arg", "DOCKER_REGISTRY=$registry",
-            "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
-            "--file", File(buildDir, dockerfilePath).canonicalPath,
-            buildDir.canonicalPath,
-        )
+        val buildResult = docker.build(buildList() {
+            addAll(listOf("--build-arg", "DOCKER_REGISTRY=$registry"))
+            addAll(listOf("--build-arg", "ARTIFACTORY_URL=$artifactoryUrl"))
+            addAll(listOf("--file", File(buildDir, dockerfilePath).canonicalPath))
+            if (ssh != null) {
+                addAll(listOf("--ssh", ssh))
+            }
+            add(buildDir.canonicalPath)
+        }.toTypedArray())
         check(buildResult.isSuccess) {
             "Failed to build the image: ${buildResult.exceptionOrNull()}"
         }
