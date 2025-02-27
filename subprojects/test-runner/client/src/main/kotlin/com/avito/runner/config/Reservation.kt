@@ -36,6 +36,21 @@ public sealed class Reservation : Serializable {
             val guaranteedTries = quota.minimumSuccessCount + quota.minimumFailedCount
 
             var calculatedEmulatorsCount = testsCount * guaranteedTries / testsPerEmulator
+            /**
+             * i.e.
+             * before this change when:
+             * (testsCount * guaranteedTries) = 22
+             * testsPerEmulator = 12
+             * calculatedEmulatorsCount = 1
+             *
+             * after this change when:
+             * (testsCount * guaranteedTries) = 22
+             * testsPerEmulator = 12
+             * calculatedEmulatorsCount = 2
+             */
+            if (testsCount * guaranteedTries % testsPerEmulator > 0) {
+                calculatedEmulatorsCount++
+            }
 
             if (calculatedEmulatorsCount < minimum) {
                 calculatedEmulatorsCount = minimum
