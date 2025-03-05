@@ -20,6 +20,7 @@ dependencies {
 
     implementation(project(":subprojects:common:result"))
     implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:common:retry-action"))
     implementation(project(":subprojects:test-runner:test-report-artifacts")) {
         because("DeviceWorker pulls test artifacts")
     }

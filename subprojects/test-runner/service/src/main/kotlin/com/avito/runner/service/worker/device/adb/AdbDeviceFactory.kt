@@ -48,7 +48,6 @@ public class AdbDeviceFactory(
     private fun getSdkVersion(listener: AdbDeviceEventsListener): GetSdkVersion {
         return GetSdkVersion(
             processRunner = processRunner,
-            retryAction = RetryAction(timeProvider),
             adb = adb,
             eventsListener = listener
         )

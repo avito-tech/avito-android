@@ -1,6 +1,7 @@
 package com.avito.runner.service.worker.device.adb
 
 import com.avito.android.Result
+import com.avito.android.retry.executeWithRetries
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.listener.AdbDeviceGetSdkListener
 import com.avito.utils.ProcessRunner
@@ -8,29 +9,28 @@ import java.time.Duration
 
 internal class GetSdkVersion(
     private val processRunner: ProcessRunner,
-    private val retryAction: RetryAction,
     private val adb: Adb,
     private val eventsListener: AdbDeviceGetSdkListener,
 ) {
 
     fun get(serial: Serial): Result<Int> {
-        return retryAction.retry(
+        return executeWithRetries(
             retriesCount = 3,
-            delaySeconds = 5,
+            delay = Duration.ofSeconds(5),
             action = {
                 processRunner.run(
                     command = "${adb.adbPath} -s ${serial.value} shell getprop ro.build.version.sdk",
                     timeout = Duration.ofSeconds(5)
                 ).map { it.toInt() }.getOrThrow()
             },
-            onError = { attempt, _, durationMs ->
-                eventsListener.onGetSdkPropertyError(attempt, durationMs)
+            onFailedTry = { attempt, _, duration ->
+                eventsListener.onGetSdkPropertyError(attempt, duration.toMillis())
             },
-            onFailure = { throwable, durationMs ->
-                eventsListener.onGetSdkPropertyFailure(throwable, durationMs)
+            onFailure = { throwable, duration ->
+                eventsListener.onGetSdkPropertyFailure(throwable, duration.toMillis())
             },
-            onSuccess = { attempt, result, durationMs ->
-                eventsListener.onGetSdkPropertySuccess(attempt, result, durationMs)
+            onSuccess = { attempt, result, duration ->
+                eventsListener.onGetSdkPropertySuccess(attempt, result, duration.toMillis())
             }
         )
     }
