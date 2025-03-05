@@ -49,6 +49,7 @@ kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.3"
 
 kotlinx-serialization-gradle = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
+converter-kotlinx-serialization = "com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0"
 
 rxJava = "io.reactivex:rxjava:1.3.8"
 
