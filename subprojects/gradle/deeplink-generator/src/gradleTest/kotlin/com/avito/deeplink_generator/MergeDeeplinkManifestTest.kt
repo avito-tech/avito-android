@@ -142,13 +142,13 @@ internal class MergeDeeplinkManifestTest {
         fun getGeneratedManifestLibFile(libDir: File) =
             File(
                 libDir,
-                "/build/intermediates/merged_manifest/release/AndroidManifest.xml"
+                "/build/intermediates/merged_manifest/release/mergeReleasePublicDeeplinkManifest/AndroidManifest.xml"
             )
 
         fun getGeneratedManifestAppFile(appDir: File) =
             File(
                 appDir,
-                "/build/intermediates/merged_manifest/release/AndroidManifest.xml"
+                "/build/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml"
             )
 
         fun validateManifest(

@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.register
 
 internal class ProfileTaskConfigurator(
@@ -54,7 +53,8 @@ internal class ProfileTaskConfigurator(
 
     private fun configureAssembleApkTask(): Provider<TaskProvider<Task>> {
         return applicationProject.map { project ->
-            val taskName = "assemble" + configuration.applicationVariantName.get().capitalized()
+            val taskName = "assemble" + configuration.applicationVariantName.get().toString()
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             project.tasks.named(taskName)
         }
     }

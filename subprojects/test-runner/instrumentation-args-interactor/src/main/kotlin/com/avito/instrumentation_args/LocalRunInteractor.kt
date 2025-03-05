@@ -13,7 +13,7 @@ public class LocalRunInteractor(
     private val instrumentationArgsResolver: InstrumentationArgsResolver,
 ) {
 
-    public fun setupLocalRunInstrumentationArgs(androidExtension: CommonExtension<*, *, *, *, *>) {
+    public fun setupLocalRunInstrumentationArgs(androidExtension: CommonExtension<*, *, *, *, *, *>) {
         val args = instrumentationArgsResolver.resolveLocalRunArgs()
         AndroidDslInteractor.addInstrumentationArgs(androidExtension, args)
         instrumentationArgsDumper.dumpArgs(AndroidDslInteractor.getInstrumentationArgs(androidExtension))

@@ -7,7 +7,7 @@ public class SetupLocalInstrumentationArgsUseCase(
     private val localRunInteractor: LocalRunInteractor,
 ) {
 
-    public fun setupLocalRunParams(androidExtension: CommonExtension<*, *, *, *, *>) {
+    public fun setupLocalRunParams(androidExtension: CommonExtension<*, *, *, *, *, *>) {
         agpInstrumentationArgsProvider.init(androidExtension)
         localRunInteractor.setupLocalRunInstrumentationArgs(androidExtension)
     }

@@ -9,7 +9,7 @@ public class AgpInstrumentationArgsProvider : InstrumentationArgsProvider {
     private val args: MutableMap<String, String> = mutableMapOf()
     private var initialized = false
 
-    public fun init(androidExtension: CommonExtension<*, *, *, *, *>) {
+    public fun init(androidExtension: CommonExtension<*, *, *, *, *, *>) {
         args.putAll(filterNotBlankValues(AndroidDslInteractor.getInstrumentationArgs(androidExtension)))
         initialized = true
     }

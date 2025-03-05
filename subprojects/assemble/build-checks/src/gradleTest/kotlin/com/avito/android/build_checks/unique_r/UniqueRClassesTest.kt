@@ -70,21 +70,21 @@ internal class UniqueRClassesTest {
                         buildChecks {
                             enableByDefault = false
                             uniqueRClasses {
-                                allowedNonUniquePackageNames.add("lib.package")
+                                allowedNonUniquePackageNames.add("lib.stubPackage")
                             }
                         }
                         """.trimIndent()
                 ),
                 AndroidLibModule(
                     name = "lib-a",
-                    packageName = "lib.package",
+                    packageName = "lib.stubPackage",
                     dependencies = setOf(
                         project(":lib-b")
                     )
                 ),
                 AndroidLibModule(
                     name = "lib-b",
-                    packageName = "lib.package"
+                    packageName = "lib.stubPackage"
                 ),
             ),
         ).generateIn(projectDir)
@@ -153,11 +153,11 @@ internal class UniqueRClassesTest {
                 ),
                 AndroidLibModule(
                     name = "lib",
-                    packageName = "lib.package"
+                    packageName = "lib.stubPackage"
                 ),
                 AndroidLibModule(
                     name = "lib-test",
-                    packageName = "lib.package",
+                    packageName = "lib.stubPackage",
                     dependencies = setOf(
                         project(":lib")
                     )
@@ -170,7 +170,7 @@ internal class UniqueRClassesTest {
         @Suppress("MaxLineLength")
         build.assertThat()
             .buildFailed()
-            .outputContains("Application :app has dependencies with the same package in AndroidManifest.xml: [lib.package]")
+            .outputContains("Application :app has dependencies with the same package in AndroidManifest.xml: [lib.stubPackage]")
     }
 
     private fun runCheck(expectFailure: Boolean = false) = gradlew(

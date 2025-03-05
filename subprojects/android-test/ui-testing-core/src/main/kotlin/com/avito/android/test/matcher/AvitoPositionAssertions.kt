@@ -1,13 +1,12 @@
 package com.avito.android.test.matcher
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
 import androidx.test.espresso.AmbiguousViewMatcherException
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.ViewAssertion
-import androidx.test.espresso.core.internal.deps.guava.base.Predicate
-import androidx.test.espresso.core.internal.deps.guava.collect.Iterables
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.espresso.util.TreeIterables.breadthFirstViewTraversal
 import org.hamcrest.Matcher
@@ -48,6 +47,7 @@ internal object AvitoPositionAssertions {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun assertLocationEqualWithTolerance(
         location1: ScreenLocation,
         location2: ScreenLocation
@@ -121,9 +121,10 @@ internal object AvitoPositionAssertions {
     }
 
     private fun findView(toView: Matcher<View>, root: View?): View {
-        val viewPredicate = Predicate<View> { input -> toView.matches(input) }
         val matchedViewIterator =
-            Iterables.filter(breadthFirstViewTraversal(root), viewPredicate).iterator()
+            breadthFirstViewTraversal(root)
+                .filter { input -> toView.matches(input) }
+                .iterator()
         var matchedView: View? = null
         while (matchedViewIterator.hasNext()) {
             if (matchedView != null) {

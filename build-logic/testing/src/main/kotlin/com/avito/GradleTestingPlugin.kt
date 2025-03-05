@@ -3,7 +3,6 @@ package com.avito
 import com.avito.android.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.api.plugins.JavaTestFixturesPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
@@ -11,7 +10,6 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.Test
-import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -35,13 +33,6 @@ class GradleTestingPlugin : Plugin<Project> {
             }
             val gradleTestTask = registerGradleTestTask(gradleTest, gradleTestJarTask)
 
-            // workaround for https://github.com/gradle/gradle/issues/16774
-            dependencies.add(
-                "gradleTestRuntimeOnly",
-                files(
-                    serviceOf<ModuleRegistry>().getModule("gradle-tooling-api-builders").classpath.asFiles.first()
-                )
-            )
             plugins.withId("java-gradle-plugin") {
                 extensions.getByType(GradlePluginDevelopmentExtension::class.java).testSourceSets(gradleTest)
             }

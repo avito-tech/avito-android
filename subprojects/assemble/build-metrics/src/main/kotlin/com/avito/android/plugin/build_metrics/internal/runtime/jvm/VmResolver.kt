@@ -63,7 +63,7 @@ internal class VmResolver(
 
     private fun LocalVm.Unknown.recoverType(): LocalVm {
         return when {
-            name == org.gradle.launcher.daemon.bootstrap.GradleDaemon::class.java.canonicalName -> GradleDaemon(id)
+            name == "org.gradle.launcher.daemon.bootstrap.GradleDaemon" -> GradleDaemon(id)
             name == "org.jetbrains.kotlin.daemon.KotlinCompileDaemon" -> KotlinDaemon(id)
             name.contains(GradleWorkerMain::class.java.canonicalName) -> GradleWorker(id)
             else -> this

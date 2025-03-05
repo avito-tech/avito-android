@@ -2,8 +2,8 @@ package com.avito.test.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaLibraryPlugin
-import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.initialization.GradlePropertiesController
+import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.testfixtures.ProjectBuilder
 
 public fun rootProject(): Project =
