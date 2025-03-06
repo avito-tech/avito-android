@@ -29,6 +29,7 @@ public class DependenciesGraphBuilder(
             .toSet()
     }
 
+    @Suppress("DEPRECATION")
     private fun dependenciesOnProjects(
         project: Project,
         configurationType: ConfigurationType

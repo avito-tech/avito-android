@@ -24,6 +24,7 @@ public class SimpleModuleGraph {
                     it.dependencies
                         .withType(ProjectDependency::class.java)
                         .forEach { dependency ->
+                            @Suppress("DEPRECATION")
                             val dependencyProject = dependency.dependencyProject
 
                             if (project != dependencyProject) {

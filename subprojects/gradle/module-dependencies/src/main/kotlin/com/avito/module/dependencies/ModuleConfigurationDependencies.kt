@@ -22,7 +22,10 @@ public fun Project.directDependenciesOnProjects(
 private fun directProjectDependencies(project: Project, configuration: Configuration): Set<Project> {
     return configuration.dependencies
         .matching { it is ProjectDependency }
-        .map { (it as ProjectDependency).dependencyProject }
+        .map {
+            @Suppress("DEPRECATION")
+            (it as ProjectDependency).dependencyProject
+        }
         // project has dependency to itself in a default configuration
         .filter { it != project }
         .toSet()
