@@ -1,49 +1,61 @@
 package com.avito.i18n.plugin.xml
 
-import groovy.xml.DOMBuilder
-import org.gradle.api.GradleScriptException
+import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 
-internal class PluralsElement(
-    element: Element
-) : BaseElement(element) {
+internal class PluralsElement : BaseElement {
 
-    private val _values = mutableMapOf<String, String>()
+    private val _node: Element
 
-    val values: Map<String, String>
-        get() = _values
+    override val node: Node
+        get() = _node
 
-    init {
-        val nodes = element.childNodes
+    private val _hash by lazy { items.generateHash() }
+
+    override val hash: String
+        get() = _node.getAttribute("hash").ifEmpty { _hash }
+
+    private val _items = mutableMapOf<String, String>()
+
+    val items: Map<String, String>
+        get() = _items
+
+    constructor(document: Document, name: String, values: Map<String, String>, hash: String) : super() {
+        _node = document.createElement("plurals").apply {
+            setAttribute("name", name)
+            createItems(document, values)
+            setAttribute("hash", hash.ifEmpty { _hash })
+        }
+        document.resourcesNode.appendChild(_node)
+    }
+
+    constructor(element: Element) : super() {
+        _node = element
+        parseItems()
+    }
+
+    private fun parseItems() {
+        val nodes = _node.childNodes
         for (i in 0..<nodes.length) {
             val item = nodes.item(i)
-            if (item.nodeType == Node.ELEMENT_NODE && item is Element) {
-                _values += item.getAttribute("quantity") to item.childNodes.item(0).nodeValue
+            if (item.nodeType == Node.ELEMENT_NODE && item is Element && item.tagName == "item") {
+                _items += item.getAttribute("quantity") to item.childNodes.item(0).nodeValue
             }
         }
     }
 
-    override fun toString(): String {
-        return "PluralsElement(name='$name', values=$values)"
+    private fun Map<String, String>.generateHash(): String {
+        return map { it.value }.joinToString("").hashSha1()
     }
 
-    companion object {
-        fun create(name: String, values: Map<String, String>): PluralsElement {
-            val builder = StringBuilder("""<plurals name="$name">""")
-
-            for ((k, v) in values) {
-                builder.append("""<item quantity="$k">$v</item>""")
-            }
-
-            builder.append("</plurals>")
-            return try {
-                val document = DOMBuilder.newInstance(false, true)
-                    .parseText(builder.toString())
-                PluralsElement(document.documentElement)
-            } catch (e: Exception) {
-                throw GradleScriptException("Error create plurals: $name", e)
-            }
+    private fun Node.createItems(document: Document, values: Map<String, String>) {
+        for ((k, v) in values) {
+            val element = document.createElement("item")
+            element.setAttribute("quantity", k)
+            element.appendChild(document.createTextNode(v))
+            _items += k to v
+            appendChild(element)
         }
     }
 }

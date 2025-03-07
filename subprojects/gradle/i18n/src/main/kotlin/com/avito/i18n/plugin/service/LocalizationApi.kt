@@ -1,16 +1,10 @@
 package com.avito.i18n.plugin.service
 
-import com.avito.i18n.plugin.xml.StringsFile
+import com.avito.i18n.plugin.dto.TranslationRequest
+import com.avito.i18n.plugin.dto.TranslationResponse
 
 internal interface LocalizationApi {
     fun translate(
-        file: StringsFile,
-        locales: Set<String>
-    ): List<StringsFile>
-
-    fun createComponent(
-        name: String,
-        file: String,
-        locales: Set<String>
-    )
+        request: TranslationRequest,
+    ): TranslationResponse
 }

@@ -1,31 +1,34 @@
 package com.avito.i18n.plugin.xml
 
-import groovy.xml.DOMBuilder
-import org.gradle.api.GradleScriptException
+import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 
-internal class StringElement(
-    private val element: Element
-) : BaseElement(element) {
+internal class StringElement : BaseElement {
 
-    val text: String
-        get() = element.childNodes.item(0).nodeValue
+    private val _node: Element
 
-    override fun toString(): String {
-        return "StringElement(name '$name', text='$text')"
+    override val node: Node
+        get() = _node
+
+    private val _hash by lazy { value.hashSha1() }
+
+    override val hash: String
+        get() = _node.getAttribute("hash").ifEmpty { _hash }
+
+    val value: String
+        get() = _node.childNodes.item(0).nodeValue
+
+    constructor(document: Document, name: String, value: String, hash: String) : super() {
+        _node = document.createElement("string").apply {
+            setAttribute("name", name)
+            setAttribute("hash", hash.ifEmpty { value.hashSha1() })
+            appendChild(document.createTextNode(value))
+        }
+        document.resourcesNode.appendChild(_node)
     }
 
-    companion object {
-        fun create(name: String, value: String): StringElement {
-            return try {
-                val document = DOMBuilder.newInstance(false, true)
-                    .parseText(
-                        """<string name="$name">$value</string>"""
-                    )
-                StringElement(document.documentElement)
-            } catch (e: Exception) {
-                throw GradleScriptException("Error create string: $name", e)
-            }
-        }
+    constructor(element: Element) : super() {
+        _node = element
     }
 }

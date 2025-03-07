@@ -27,7 +27,6 @@ public class TranslationPlugin : Plugin<Project> {
         val service = LocalizationService.provideService(target)
 
         configureTranslationTask(target, translationExtension, service)
-        configureCreateComponentTask(target, translationExtension, service)
     }
 
     private fun configureTranslationTask(
@@ -39,35 +38,15 @@ public class TranslationPlugin : Plugin<Project> {
             val resDir = checkNotNull(target.mainResDir) {
                 "'resDir' not found!"
             }
-            val stringsFile = translationExtension.defaultLocale.get().getStringsFile()
-            val file = File(resDir, stringsFile)
+            val file = File(resDir, DEFAULT_STRING_FILE)
             check(file.exists()) {
-                "File '$stringsFile' not found!"
+                "File '$DEFAULT_STRING_FILE' not found!"
             }
             defaultStringsFile.set(file)
             service.set(localizationService)
             locales.set(translationExtension.locales)
-            usesService(localizationService)
-        }
-    }
-
-    private fun configureCreateComponentTask(
-        target: Project,
-        translationExtension: TranslationExtension,
-        localizationService: Provider<LocalizationService>
-    ) {
-        target.tasks.register<CreateComponentTask>(CREATE_COMPONENT_TASK_NAME) {
-            val resDir = checkNotNull(target.mainResDir) {
-                "'resDir' not found!"
-            }
-            val stringsFile = translationExtension.defaultLocale.get().getStringsFile()
-            val file = File(resDir, stringsFile)
-            check(file.exists()) {
-                "File '$stringsFile' not found!"
-            }
-            stringsFilePath.set(file)
-            locales.set(translationExtension.locales)
-            service.set(localizationService)
+            namespace.set(translationExtension.namespace)
+            sourceLocale.set(translationExtension.sourceLocale)
             componentName.set(translationExtension.componentName)
             usesService(localizationService)
         }
@@ -79,7 +58,6 @@ public class TranslationPlugin : Plugin<Project> {
 
     internal companion object {
         const val TRANSLATION_TASK_NAME = "updateTranslations"
-        const val CREATE_COMPONENT_TASK_NAME = "createTranslationComponent"
-        const val RES_PATH = "src/main/res/"
+        const val DEFAULT_STRING_FILE = "values/strings.xml"
     }
 }

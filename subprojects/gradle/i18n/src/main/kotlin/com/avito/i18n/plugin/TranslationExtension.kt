@@ -8,24 +8,17 @@ import org.gradle.kotlin.dsl.property
 public abstract class TranslationExtension(
     objectFactory: ObjectFactory
 ) {
-    /**
-     * Languages for which translation is carried out.
-     * Accepted formats: en, en-US.
-     */
     public val locales: SetProperty<String> = objectFactory.setProperty(String::class.java).convention(emptySet())
 
-    /**
-     * Default locale. Accepted formats: en, en-US.
-     */
-    public val defaultLocale: Property<String> = objectFactory.property<String>().convention("")
+    public abstract val sourceLocale: Property<String>
 
-    /**
-     * The name of the component for registering the translation file.
-     */
     public abstract val componentName: Property<String>
 
-    /**
-     * URL to the translation service.
-     */
+    public abstract val namespace: Property<String>
+
     public abstract val serviceUrl: Property<String>
+
+    public abstract val translateUrlPath: Property<String>
+
+    public val useTls: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 }

@@ -1,5 +1,6 @@
 package com.avito.i18n.plugin
 
+import com.avito.android.tls.test.createMtlsExtensionString
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
@@ -29,6 +30,12 @@ class TranslationPluginTest {
     @Test
     fun `configuration with applied plugin to subproject successful`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.tls-configuration")
+            },
+            buildGradleExtra = """
+                ${createMtlsExtensionString()}
+            """.trimIndent(),
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -37,7 +44,8 @@ class TranslationPluginTest {
                     },
                     enableKotlinAndroidPlugin = false
                 )
-            )
+            ),
+            useKts = true
         ).generateIn(projectDir)
 
         gradlew(projectDir, ":app:help")
