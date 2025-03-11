@@ -61,7 +61,7 @@ public data class AdbDevice(
             installStartedTimestamp = timeProvider.nowInMillis()
 
             executeWithRetries(
-                retriesCount = 10,
+                maxAttempts = 10,
                 delay = Duration.ofSeconds(5),
                 action = {
                     adbDevice.installPackage(applicationPackage, true)
@@ -220,7 +220,7 @@ public data class AdbDevice(
     }
 
     override fun deviceStatus(): Device.DeviceStatus = executeWithRetries(
-        retriesCount = 15,
+        maxAttempts = 15,
         delay = Duration.ofSeconds(5),
         action = {
             val bootCompleted: Boolean = loadProperty(
@@ -250,7 +250,7 @@ public data class AdbDevice(
         )
 
     override fun clearPackage(name: String): Result<Unit> = executeWithRetries(
-        retriesCount = 10,
+        maxAttempts = 10,
         delay = Duration.ofSeconds(1),
         action = {
             val result = executeBlockingAdbRequest(
@@ -317,7 +317,7 @@ public data class AdbDevice(
     }
 
     override fun clearDirectory(remotePath: Path): Result<Unit> = executeWithRetries(
-        retriesCount = DEFAULT_RETRY_COUNT,
+        maxAttempts = DEFAULT_RETRY_COUNT,
         delay = Duration.ofSeconds(DEFAULT_DELAY_SEC),
         action = {
             executeBlockingAdbRequest(request = ClearDirectoryAdbShellRequest(remotePath))
@@ -350,7 +350,7 @@ public data class AdbDevice(
     ).map { }
 
     override fun list(remotePath: Path): Result<List<String>> = executeWithRetries(
-        retriesCount = DEFAULT_RETRY_COUNT,
+        maxAttempts = DEFAULT_RETRY_COUNT,
         delay = Duration.ofSeconds(DEFAULT_DELAY_SEC),
         action = {
             executeBlockingAdbRequest(
@@ -388,7 +388,7 @@ public data class AdbDevice(
         to: Path,
         validator: PullValidator
     ): Result<File> = executeWithRetries(
-        retriesCount = DEFAULT_RETRY_COUNT,
+        maxAttempts = DEFAULT_RETRY_COUNT,
         delay = Duration.ofSeconds(DEFAULT_DELAY_SEC),
         action = {
             executeBlockingAdbRequest(
@@ -432,7 +432,7 @@ public data class AdbDevice(
 
     override fun logcat(lines: Int?): Result<String> {
         return executeWithRetries(
-            retriesCount = 3,
+            maxAttempts = 3,
             delay = Duration.ofSeconds(1),
             action = {
                 executeBlockingAdbRequest(

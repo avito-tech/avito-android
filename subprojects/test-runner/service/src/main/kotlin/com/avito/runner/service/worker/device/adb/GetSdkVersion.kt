@@ -15,7 +15,7 @@ internal class GetSdkVersion(
 
     fun get(serial: Serial): Result<Int> {
         return executeWithRetries(
-            retriesCount = 3,
+            maxAttempts = 3,
             delay = Duration.ofSeconds(5),
             action = {
                 processRunner.run(
