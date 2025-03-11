@@ -21,6 +21,7 @@ internal data class CodegenConfig(
     val moduleDir: File,
     val schemesDirectoryRelativePath: String,
     val buildDirectoryRelativePath: String,
+    val flags: Set<String>,
 )
 
 @Suppress("unused")
@@ -31,6 +32,7 @@ private class CodegenConfigAdvanced(
     @SerialName("schemes_dir") val schemesDirectoryPath: String,
     @SerialName("codegen_files_dir") val buildDirectoryPath: String,
     @SerialName("module_name") val moduleName: String,
+    @SerialName("flags") val flags: Set<String>,
 )
 
 internal val CodegenConfig.args
@@ -62,6 +64,7 @@ private fun CodegenConfig.generateAdvancedConfigJson(): String {
             schemesDirectoryPath = this.schemesDirectoryRelativePath,
             buildDirectoryPath = this.buildDirectoryRelativePath,
             moduleName = this.moduleName,
+            flags = flags,
         )
     )
 }

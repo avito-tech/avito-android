@@ -110,6 +110,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.packageName.set(networkContractsExtension.packageName)
             it.apiClassName.set(networkContractsExtension.apiClassName)
             it.moduleName.set(it.project.path)
+            it.flags.set(networkContractsExtension.flags)
             it.kind.set(networkContractsExtension.kind)
             it.codegenProjectName.set(networkContractsExtension.projectName)
             it.skipValidation.set(networkContractsExtension.skipValidation.map { !forceValidation && it })

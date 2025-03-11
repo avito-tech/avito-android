@@ -14,6 +14,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
@@ -46,6 +47,9 @@ internal abstract class CodegenTask : DefaultTask() {
 
     @get:Input
     abstract val moduleName: Property<String>
+
+    @get:Input
+    abstract val flags: SetProperty<String>
 
     @get:Input
     abstract val skipValidation: Property<Boolean>
@@ -102,6 +106,7 @@ internal abstract class CodegenTask : DefaultTask() {
             skipValidation = skipValidation.get(),
             crtEnv = crtEnvName.get() to tmpCrtFile.orNull?.asFile?.toPath(),
             keyEnv = keyEnvName.get() to tmpKeyFile.orNull?.asFile?.toPath(),
+            flags = flags.get()
         )
         val codegen = Codegen.create(arch, codegenExecutableFiles, logger, config)
 
