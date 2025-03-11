@@ -4,6 +4,7 @@ import com.avito.android.clickstream.api.ClickStreamApi
 import com.avito.android.clickstream.api.ClickStreamEventRequest
 import com.avito.android.clickstream.config.ClickStreamConfig
 import com.avito.android.clickstream.config.clickStreamConfig
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -14,7 +15,6 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import retrofit2.HttpException
 import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
 public abstract class ClickStreamEventService : BuildService<ClickStreamEventService.Params> {
