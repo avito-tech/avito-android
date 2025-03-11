@@ -68,18 +68,21 @@ internal abstract class TranslationFileTask : DefaultTask() {
             }
             val diff = source.diff(target)
 
-            if (diff.isEmpty()) continue
+            if (diff.isNotEmpty()) {
+                val response = service.get().translate(createTranslationRequest(diff, l))
+                val error = response.result.error
+                if (error != null) {
+                    throw GradleException("Response error: $error")
+                }
+                val data = response.result.data?.targetTextUnits?.get(l)
+                    ?: throw GradleException("Language code '$l' not found in translated strings")
 
-            val response = service.get().translate(createTranslationRequest(diff, l))
+                val textUnits = data.textUnits.associateBy { it["key"] }
 
-            val error = response.result.error
-            if (error != null) {
-                throw GradleException("Response error: $error")
+                updateTargetFile(target, source, textUnits, targetFile)
+            } else {
+                updateTargetFile(target, source, mapOf(), targetFile)
             }
-
-            val data = response.result.data?.targetTextUnits?.get(l)!!
-            val textUnits = data.textUnits.associateBy { it["key"] }
-            updateTargetFile(target, source, textUnits, targetFile)
         }
     }
 
@@ -93,7 +96,10 @@ internal abstract class TranslationFileTask : DefaultTask() {
         val newTarget = StringsXmlFile()
 
         for (e in source.elements) {
-            val name = e.name ?: continue
+            val name = e.name
+            if (!e.isTranslatable || name == null) {
+                continue
+            }
             val fields = textUnits[name]
             if (fields == null) {
                 val element = targetElements[name]

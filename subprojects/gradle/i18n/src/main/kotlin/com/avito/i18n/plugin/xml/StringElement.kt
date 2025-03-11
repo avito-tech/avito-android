@@ -17,7 +17,7 @@ internal class StringElement : BaseElement {
         get() = _node.getAttribute("hash").ifEmpty { _hash }
 
     val value: String
-        get() = _node.childNodes.item(0).nodeValue
+        get() = _node.childNodes.takeIf { it.length > 0 }?.item(0)?.nodeValue ?: ""
 
     constructor(document: Document, name: String, value: String, hash: String) : super() {
         _node = document.createElement("string").apply {

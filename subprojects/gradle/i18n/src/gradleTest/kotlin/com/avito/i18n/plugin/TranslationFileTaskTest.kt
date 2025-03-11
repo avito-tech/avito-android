@@ -13,7 +13,6 @@ import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
-import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -125,35 +124,209 @@ class TranslationFileTaskTest {
             .contains(TRANSLATED_FILE_CONTENT)
     }
 
+    @Test
+    fun `run update translations task with translatable false string - successful`(@TempDir projectDir: File) {
+        val moduleName = "app"
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.tls-configuration")
+            },
+            buildGradleExtra = """
+                ${createMtlsExtensionString()}
+            """.trimIndent(),
+            modules = listOf(
+                AndroidAppModule(
+                    name = moduleName,
+                    plugins = plugins {
+                        id("com.avito.android.i18n")
+                    },
+                    buildGradleExtra = """
+                        translation {
+                            locales = ["en"]
+                            sourceLocale = "en"
+                            namespace = "android"
+                            serviceUrl = "${mockWebServer.url("/")}"
+                            translateUrlPath = "$PATH"
+                            useTls = false
+                        }
+                    """.trimIndent(),
+                    enableKotlinAndroidPlugin = false
+                )
+            ),
+            useKts = true
+        ).generateIn(projectDir)
+
+        projectDir.module(moduleName) {
+            dir(RES_PATH) {
+                file(
+                    name = TranslationPlugin.DEFAULT_STRING_FILE,
+                    content = ORIGINAL_FILE_CONTENT_TRANSLATABLE_FALSE
+                )
+            }
+        }
+
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = {
+                    path.contains(PATH)
+                },
+                response = MockResponse()
+                    .setResponseCode(200)
+                    .setHeader("Content-Type", "application/json")
+                    .setBody(RESPONSE_BODY_TRANSLATABLE_FALSE)
+            )
+        )
+
+        gradlew(projectDir, ":app:${TranslationPlugin.TRANSLATION_TASK_NAME}")
+            .assertThat()
+            .buildSuccessful()
+
+        val enFile = File(projectDir, "app/${RES_PATH}values-en/strings.xml")
+
+        assertThat(enFile.exists())
+            .isTrue()
+        assertThat(enFile.readText())
+            .contains(TRANSLATED_FILE_CONTENT_TRANSLATABLE_FALSE)
+    }
+
+    @Test
+    fun `run update translations task with remove string from file - successful`(@TempDir projectDir: File) {
+        val moduleName = "app"
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.tls-configuration")
+            },
+            buildGradleExtra = """
+                ${createMtlsExtensionString()}
+            """.trimIndent(),
+            modules = listOf(
+                AndroidAppModule(
+                    name = moduleName,
+                    plugins = plugins {
+                        id("com.avito.android.i18n")
+                    },
+                    buildGradleExtra = """
+                        translation {
+                            locales = ["en"]
+                            sourceLocale = "en"
+                            namespace = "android"
+                            serviceUrl = "${mockWebServer.url("/")}"
+                            translateUrlPath = "$PATH"
+                            useTls = false
+                        }
+                    """.trimIndent(),
+                    enableKotlinAndroidPlugin = false
+                )
+            ),
+            useKts = true
+        ).generateIn(projectDir)
+
+        projectDir.module(moduleName) {
+            dir(RES_PATH) {
+                file(
+                    name = TranslationPlugin.DEFAULT_STRING_FILE,
+                    content = ORIGINAL_FILE_CONTENT_REMOVE_STRING
+                )
+            }
+        }
+
+        projectDir.module(moduleName) {
+            dir(RES_PATH) {
+                file(
+                    name = "values-en/strings.xml",
+                    content = TRANSLATED_FILE_CONTENT
+                )
+            }
+        }
+
+        gradlew(projectDir, ":app:${TranslationPlugin.TRANSLATION_TASK_NAME}")
+            .assertThat()
+            .buildSuccessful()
+
+        val enFile = File(projectDir, "app/${RES_PATH}values-en/strings.xml")
+
+        assertThat(enFile.exists())
+            .isTrue()
+        assertThat(enFile.readText())
+            .contains(TRANSLATED_FILE_CONTENT_REMOVE_STRING)
+    }
+
+    @Test
+    fun `run update translations task with change string from file - successful`(@TempDir projectDir: File) {
+        val moduleName = "app"
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.tls-configuration")
+            },
+            buildGradleExtra = """
+                ${createMtlsExtensionString()}
+            """.trimIndent(),
+            modules = listOf(
+                AndroidAppModule(
+                    name = moduleName,
+                    plugins = plugins {
+                        id("com.avito.android.i18n")
+                    },
+                    buildGradleExtra = """
+                        translation {
+                            locales = ["en"]
+                            sourceLocale = "en"
+                            namespace = "android"
+                            serviceUrl = "${mockWebServer.url("/")}"
+                            translateUrlPath = "$PATH"
+                            useTls = false
+                        }
+                    """.trimIndent(),
+                    enableKotlinAndroidPlugin = false
+                )
+            ),
+            useKts = true
+        ).generateIn(projectDir)
+
+        projectDir.module(moduleName) {
+            dir(RES_PATH) {
+                file(
+                    name = TranslationPlugin.DEFAULT_STRING_FILE,
+                    content = ORIGINAL_FILE_CONTENT_CHANGE_STRING
+                )
+            }
+        }
+
+        projectDir.module(moduleName) {
+            dir(RES_PATH) {
+                file(
+                    name = "values-en/strings.xml",
+                    content = TRANSLATED_FILE_CONTENT
+                )
+            }
+        }
+
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = {
+                    path.contains(PATH)
+                },
+                response = MockResponse()
+                    .setResponseCode(200)
+                    .setHeader("Content-Type", "application/json")
+                    .setBody(RESPONSE_BODY_CHANGE_STRING)
+            )
+        )
+
+        gradlew(projectDir, ":app:${TranslationPlugin.TRANSLATION_TASK_NAME}")
+            .assertThat()
+            .buildSuccessful()
+
+        val enFile = File(projectDir, "app/${RES_PATH}values-en/strings.xml")
+
+        assertThat(enFile.exists())
+            .isTrue()
+        assertThat(enFile.readText())
+            .contains(TRANSLATED_FILE_CONTENT_CHANGE_STRING)
+    }
+
     private companion object {
         const val RES_PATH = "src/main/res/"
         const val PATH = "test_translate"
-
-        @Language("JSON")
-        val RESPONSE_BODY = """
-                {
-                  "result": {
-                    "data": {
-                      "componentSlug": "",
-                      "namespaceSlug": "",
-                      "targetTextUnits": {
-                        "en": {
-                          "textUnits": [
-                            {
-                              "key": "some_string",
-                              "other": "emos gnirts"
-                            },
-                            {
-                              "key": "params_string",
-                              "other": "smarap %s gnirts %d"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "error": null
-                  }
-                }
-                """.trimIndent()
     }
 }
