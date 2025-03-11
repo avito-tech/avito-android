@@ -12,12 +12,12 @@ RUN \
     git-lfs \
     gcc \
     openssh-client \
-    ca-certificates \
+    ca-certificates ca-certificates-java \
     build-essential \
     acl \
     sudo \
     openjdk-17-jdk \
-    ca-certificates-java && \
+    shellcheck bats && \
   apt-get clean && \
   apt-get purge
 
