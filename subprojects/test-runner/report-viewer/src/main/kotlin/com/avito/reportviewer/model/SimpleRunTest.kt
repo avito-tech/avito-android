@@ -34,7 +34,7 @@ public data class SimpleRunTest(
     val endTime: Long,
     val skipReason: String?,
     val isFinished: Boolean,
-    val lastAttemptDurationInSeconds: Int,
+    val lastAttemptDurationInSeconds: Float,
     val externalId: String?,
     val description: String?,
     val dataSetNumber: Int?,

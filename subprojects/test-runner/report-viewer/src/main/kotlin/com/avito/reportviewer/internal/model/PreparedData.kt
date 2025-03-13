@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 internal data class PreparedData(
     @SerializedName("verdict") val verdict: String?,
-    @SerializedName("run_duration") val runDuration: Int,
+    @SerializedName("run_duration") val runDuration: Float,
     @SerializedName("error_hash") val errorHash: String,
     @SerializedName("tc_build") val tcBuild: String?,
     @SerializedName("skip_reason") val skipReason: String?,

@@ -100,7 +100,7 @@ internal class ReportsFetchApiImpl(
                     skipReason = listResult.preparedData?.lastOrNull()?.skipReason,
                     isFinished = listResult.isFinished ?: false,
                     lastAttemptDurationInSeconds = listResult.preparedData?.lastOrNull()?.runDuration
-                        ?: -1,
+                        ?: -1f,
                     externalId = listResult.preparedData?.lastOrNull()?.externalId,
                     description = getDescription(listResult),
                     dataSetNumber = getDataSetNumber(listResult),

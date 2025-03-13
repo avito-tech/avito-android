@@ -20,7 +20,7 @@ public fun SimpleRunTest.Companion.createStubInstance(
     stability: Stability = Stability.Stable(1, 1),
     skipReason: String? = null,
     isFinished: Boolean = false,
-    lastAttemptDurationInSeconds: Int = 123,
+    lastAttemptDurationInSeconds: Float = 123f,
     externalId: String? = null,
     description: String? = null,
     startTime: Long = 0,
