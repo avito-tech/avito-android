@@ -245,7 +245,7 @@ benchmark_gradle_test:
 	gradle-profiler --benchmark --scenario-file gradle/performance.scenarios gradleTest
 
 ## Gradle cache node
-GRADLE_CACHE_NODE_TAG=13.2
+GRADLE_CACHE_NODE_TAG=20.2
 
 # publish to internal repo to avoid rate limits problems
 internal_publish_gradle_cache_node_image:
