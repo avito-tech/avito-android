@@ -6,9 +6,9 @@
  * Where:
  * Auto-applied by using --scan
  * What went wrong:
- * Could not apply requested plugin [id: 'com.gradle.enterprise', version: '3.8.1', artifact: 'com.gradle:gradle-enterprise-gradle-plugin:3.8.1'] as it does not provide a plugin with id 'com.gradle.enterprise'.
+ * Could not apply requested plugin [id: 'com.gradle.develocity', version: '3.19', artifact: 'com.gradle:develocity-gradle-plugin:3.19'] as it does not provide a plugin with id 'com.gradle.develocity'.
  * This is caused by an incorrect plugin implementation. Please contact the plugin author(s).
- * > Plugin with id 'com.gradle.enterprise' not found.
+ * > Plugin with id 'com.gradle.develocity' not found.
  * ```
  *
  * Didn't find reasons.
@@ -19,7 +19,7 @@
 pluginManagement {
     if (gradle.startParameter.isBuildScan) {
         gradle.startParameter.isBuildScan = false
-        // It will be read in a convention-enterprise plugin
+        // It will be read in a scan-settings plugin
         settings.extra["avito.gradle.buildScan.publish"] = true
     }
 }

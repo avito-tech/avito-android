@@ -3,7 +3,7 @@
 ???+ warning
     This plugin is internal and not recommended to use.  
     See alternatives: 
-    [Gradle Enterprise](https://gradle.com/gradle-enterprise-solution-overview/), 
+    [Gradle Develocity](https://gradle.com/develocity/), 
     [Talaiot](https://github.com/cdsap/Talaiot)
 
 ## How to start

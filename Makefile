@@ -154,7 +154,7 @@ publish_to_maven_local:
 
 stage_ui_tests:
 	make publish_to_maven_local
-	./gradlew $(params) :subprojects:android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
+	./gradlew $(params) :subprojects:android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=10000000.0-local
 
 compile:
 	$(docker_command) ./gradlew $(params) compileAll
@@ -233,7 +233,7 @@ dynamic_properties:
 
 check_avito_configuration:
 	make publish_to_maven_local
-	cd ../avito-android && ./gradlew tasks -DinfraVersion=local
+	cd ../avito-android && ./gradlew tasks -DinfraVersion=10000000.0-local
 
 dependency_updates:
 	$(docker_command) ./gradlew $(params) dependencyUpdates -Drevision=release
