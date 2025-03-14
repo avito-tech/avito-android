@@ -8,6 +8,9 @@ dependencies {
 
     api(project(":subprojects:logger:logger"))
     api(project(":subprojects:common:time"))
+    api(project(":subprojects:common:elastic")) {
+        because("Provide elastic config which used in gradleLogging extension")
+    }
 
     implementation(project(":subprojects:gradle:build-environment"))
     implementation(project(":subprojects:logger:elastic-logger"))
