@@ -26,7 +26,7 @@ internal class GetSdkVersion(
             onFailedTry = { attempt, _, duration ->
                 eventsListener.onGetSdkPropertyError(attempt, duration.toMillis())
             },
-            onFailure = { throwable, duration ->
+            onFailure = { _, throwable, duration ->
                 eventsListener.onGetSdkPropertyFailure(throwable, duration.toMillis())
             },
             onSuccess = { attempt, result, duration ->

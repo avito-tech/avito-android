@@ -75,7 +75,7 @@ public data class AdbDevice(
                         durationMs = duration.toMillis()
                     )
                 },
-                onFailure = { throwable: Throwable, duration: Duration ->
+                onFailure = { _, throwable: Throwable, duration: Duration ->
                     eventsListener.onInstallApplicationFailure(
                         device = this,
                         applicationPackage = applicationPackage,
@@ -237,7 +237,7 @@ public data class AdbDevice(
         onFailedTry = { attempt: Int, _: Throwable, duration: Duration ->
             eventsListener.onGetAliveDeviceError(this, attempt, duration.toMillis())
         },
-        onFailure = { throwable, duration ->
+        onFailure = { _, throwable, duration ->
             eventsListener.onGetAliveDeviceFailed(this, throwable, duration.toMillis())
         },
         onSuccess = { attempt: Int, _: Boolean, duration: Duration ->
@@ -272,7 +272,7 @@ public data class AdbDevice(
                 durationMs = duration.toMillis()
             )
         },
-        onFailure = { throwable: Throwable, duration: Duration ->
+        onFailure = { _, throwable: Throwable, duration: Duration ->
             eventsListener.onClearPackageFailure(
                 device = this,
                 name = name,
@@ -331,7 +331,7 @@ public data class AdbDevice(
                 durationMs = duration.toMillis()
             )
         },
-        onFailure = { throwable: Throwable, duration: Duration ->
+        onFailure = { _, throwable: Throwable, duration: Duration ->
             eventsListener.onClearDirectoryFailure(
                 device = this,
                 remotePath = remotePath,
@@ -366,7 +366,7 @@ public data class AdbDevice(
                 durationMs = duration.toMillis()
             )
         },
-        onFailure = { throwable: Throwable, duration: Duration ->
+        onFailure = { _, throwable: Throwable, duration: Duration ->
             eventsListener.onListFailure(
                 device = this,
                 remotePath = remotePath.toString(),
@@ -412,7 +412,7 @@ public data class AdbDevice(
                 durationMs = duration.toMillis()
             )
         },
-        onFailure = { throwable: Throwable, duration: Duration ->
+        onFailure = { _, throwable: Throwable, duration: Duration ->
             eventsListener.onPullFailure(
                 device = this,
                 from = from,
@@ -446,7 +446,7 @@ public data class AdbDevice(
             onFailedTry = { _, throwable, duration ->
                 eventsListener.onLogcatError(this, duration.toMillis(), throwable)
             },
-            onFailure = { throwable, duration ->
+            onFailure = { _, throwable, duration ->
                 eventsListener.onLogcatFailure(this, duration.toMillis(), throwable)
             }
         )
