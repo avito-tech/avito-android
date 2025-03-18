@@ -9,7 +9,6 @@ import com.avito.logger.Logger
 import com.avito.utils.ProcessRunner
 import org.gradle.api.file.FileCollection
 import java.io.File
-import java.time.Duration
 
 internal interface Codegen {
     fun execute(
@@ -53,7 +52,7 @@ internal interface Codegen {
             logger.info("Codegen Command is about to run:")
             logger.info(rawCommand)
 
-            return run(rawCommand, timeout = Duration.ofSeconds(20))
+            return run(rawCommand, timeout = config.timeout)
         }
     }
 

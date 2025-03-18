@@ -28,6 +28,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.os.OperatingSystem
 import java.io.File
+import java.time.Duration
 
 @CacheableTask
 internal abstract class CodegenTask : DefaultTask() {
@@ -59,6 +60,9 @@ internal abstract class CodegenTask : DefaultTask() {
 
     @get:Input
     abstract val keyEnvName: Property<String>
+
+    @get:Input
+    abstract val timeoutSeconds: Property<Long>
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -106,7 +110,8 @@ internal abstract class CodegenTask : DefaultTask() {
             skipValidation = skipValidation.get(),
             crtEnv = crtEnvName.get() to tmpCrtFile.orNull?.asFile?.toPath(),
             keyEnv = keyEnvName.get() to tmpKeyFile.orNull?.asFile?.toPath(),
-            flags = flags.get()
+            flags = flags.get(),
+            timeout = Duration.ofSeconds(timeoutSeconds.get()),
         )
         val codegen = Codegen.create(arch, codegenExecutableFiles, logger, config)
 

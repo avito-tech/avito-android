@@ -6,6 +6,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.nio.file.Path
+import java.time.Duration
 import java.util.Base64
 import kotlin.io.path.absolute
 
@@ -22,6 +23,7 @@ internal data class CodegenConfig(
     val schemesDirectoryRelativePath: String,
     val buildDirectoryRelativePath: String,
     val flags: Set<String>,
+    val timeout: Duration,
 )
 
 @Suppress("unused")

@@ -126,6 +126,8 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.crtEnvName.set(rootExtension.crtEnvName)
             it.keyEnvName.set(rootExtension.keyEnvName)
 
+            it.timeoutSeconds.set(networkContractsExtension.codegenTimeoutSeconds)
+
             if (forceValidation) {
                 it.tmpCrtFile.set(setupMtlsTask.flatMap { it.tmpCrt })
                 it.tmpKeyFile.set(setupMtlsTask.flatMap { it.tmpKey })

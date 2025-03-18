@@ -28,6 +28,9 @@ public abstract class NetworkContractsModuleExtension(
     public val skipValidation: Property<Boolean> = objects.property<Boolean>()
         .convention(true)
 
+    public val codegenTimeoutSeconds: Property<Long> = objects.property<Long>()
+        .convention(20)
+
     public val schemesDirName: Property<String> = objects.property<String>()
         .convention("api-clients")
 
