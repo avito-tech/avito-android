@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.provider.Settings
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 
@@ -15,6 +17,40 @@ import com.avito.logger.create
 internal class SystemDialogsManager(loggerFactory: LoggerFactory) {
 
     private val logger = loggerFactory.create<Settings.System>()
+
+    private val waysToDismissDialog: List<(UiDevice) -> Unit> = listOf(
+        { uiDevice ->
+            uiDevice.wait(
+                Until.findObject(By.res("android:id/button1")),
+                DISMISS_DIALOG_TIMEOUT
+            ).click()
+        },
+        { uiDevice ->
+            uiDevice.wait(
+                Until.findObject(By.res("android:id/closeButton")),
+                DISMISS_DIALOG_TIMEOUT
+            ).click()
+        },
+        { uiDevice ->
+            uiDevice.wait(
+                Until.findObject(By.res("com.android.internal:id/aerr_close")),
+                DISMISS_DIALOG_TIMEOUT
+            ).click()
+        },
+        { uiDevice ->
+            uiDevice.wait(
+                Until.findObject(By.res("com.android.packageinstaller:id/permission_deny_button")),
+                DISMISS_DIALOG_TIMEOUT
+            ).click()
+        },
+        { uiDevice ->
+            uiDevice.wait(
+                Until.findObject(By.res("com.android.permissioncontroller:id/permission_deny_button")),
+                DISMISS_DIALOG_TIMEOUT
+            ).click()
+        },
+        { uiDevice -> uiDevice.pressBack() }
+    )
 
     fun closeSystemDialogs() {
         try {
@@ -52,15 +88,10 @@ internal class SystemDialogsManager(loggerFactory: LoggerFactory) {
         }
 
         if (elementWithTextExists(crashStrings)) {
-            val ok = stringResourceByName("ok")
-            val close = stringResourceByName("aerr_close")
-            val closeApp = stringResourceByName("aerr_close_app")
+            tryToDismissSystemDialog()
 
-            when {
-                ok != null && elementWithTextExists(ok) -> click(ok)
-                close != null && elementWithTextExists(close) -> click(close)
-                closeApp != null && elementWithTextExists(closeApp) -> click(closeApp)
-                else -> throw IllegalStateException("Found crash dialog but can't find dismiss button")
+            if (elementWithTextExists(crashStrings)) {
+                throw IllegalStateException("Found crash dialog but failed to dismiss it")
             }
         }
     }
@@ -101,6 +132,17 @@ internal class SystemDialogsManager(loggerFactory: LoggerFactory) {
         mHiddenApiWarningShown.setBoolean(activityThread, true)
     }
 
+    private fun tryToDismissSystemDialog() {
+        val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        waysToDismissDialog.forEach { attemptToDismiss ->
+            try {
+                attemptToDismiss.invoke(uiDevice)
+            } catch (error: Throwable) {
+                // ignore
+            }
+        }
+    }
+
     private fun elementWithTextExists(expectedMessage: String): Boolean {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         val dialog = device.findObject(UiSelector().textMatches(expectedMessage))
@@ -128,4 +170,8 @@ internal class SystemDialogsManager(loggerFactory: LoggerFactory) {
         }.let {
             "($it)"
         }
+
+    companion object {
+        private const val DISMISS_DIALOG_TIMEOUT: Long = 1000
+    }
 }
