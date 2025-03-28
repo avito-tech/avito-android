@@ -37,5 +37,5 @@ public abstract class ExternalDependenciesExtension(
      * ```
      */
     public val libsOwnersFile: RegularFileProperty =
-        objects.fileProperty().convention(layout.projectDirectory.file("gradle/libs.owners.toml"))
+        objects.fileProperty().convention(layout.projectDirectory.file("gradle/libs.info.toml"))
 }

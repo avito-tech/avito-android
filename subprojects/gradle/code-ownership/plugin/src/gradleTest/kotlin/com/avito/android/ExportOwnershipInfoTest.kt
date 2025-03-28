@@ -1,7 +1,7 @@
 package com.avito.android
 
 import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
-import com.avito.android.utils.LIBS_OWNERS_TOML_CONTENT
+import com.avito.android.utils.LIBS_INFO_TOML_CONTENT
 import com.avito.android.utils.LIBS_VERSIONS_TOML_CONTENT
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.IMPLEMENTATION
@@ -131,7 +131,7 @@ internal class ExportOwnershipInfoTest {
     @Test
     internal fun `external deps ownership exporting file - works correctly`(@TempDir projectDir: File) {
         projectDir.file("gradle/libs.versions.toml", LIBS_VERSIONS_TOML_CONTENT)
-        projectDir.file("gradle/libs.owners.toml", LIBS_OWNERS_TOML_CONTENT)
+        projectDir.file("gradle/libs.info.toml", LIBS_INFO_TOML_CONTENT)
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
@@ -155,7 +155,7 @@ internal class ExportOwnershipInfoTest {
     @Test
     internal fun `external deps ownership exporting - remove output - build cache used`(@TempDir projectDir: File) {
         projectDir.file("gradle/libs.versions.toml", LIBS_VERSIONS_TOML_CONTENT)
-        projectDir.file("gradle/libs.owners.toml", LIBS_OWNERS_TOML_CONTENT)
+        projectDir.file("gradle/libs.info.toml", LIBS_INFO_TOML_CONTENT)
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
@@ -231,6 +231,7 @@ internal class ExportOwnershipInfoTest {
                     "owners": [
                         "Speed"
                     ],
+                    "description": "added for writing rules",
                     "type": "external"
                 },
                 {
@@ -238,6 +239,7 @@ internal class ExportOwnershipInfoTest {
                     "owners": [
                         "Speed"
                     ],
+                    "description": "",
                     "type": "external"
                 },
                 {
@@ -245,6 +247,7 @@ internal class ExportOwnershipInfoTest {
                     "owners": [
                         "Messenger"
                     ],
+                    "description": "",
                     "type": "external"
                 },
                 {
@@ -252,6 +255,7 @@ internal class ExportOwnershipInfoTest {
                     "owners": [
                         "Messenger"
                     ],
+                    "description": "",
                     "type": "external"
                 }
             ]

@@ -19,12 +19,12 @@ val LIBS_VERSIONS_TOML_CONTENT = """
         """.trimIndent()
 
 @Language("toml")
-val LIBS_OWNERS_TOML_CONTENT = """
+val LIBS_INFO_TOML_CONTENT = """
             [plugins]
-            detekt = "Speed"
+            detekt = { owner = "Speed", description = "added for writing rules" }
 
             [libraries]
-            gson = "Speed"
-            androidx-core = "Messenger"
-            androidx-constraintLayout = "Messenger"
+            gson = { owner = "Speed", description = "" }
+            androidx-core = { owner = "Messenger", description = "" }
+            androidx-constraintLayout = { owner = "Messenger", description = "" }
         """.trimIndent()

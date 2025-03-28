@@ -1,7 +1,7 @@
 package com.avito.tech_budget.dependencies
 
 import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
-import com.avito.android.utils.LIBS_OWNERS_TOML_CONTENT
+import com.avito.android.utils.LIBS_INFO_TOML_CONTENT
 import com.avito.android.utils.LIBS_VERSIONS_TOML_CONTENT
 import com.avito.tech_budget.utils.dumpInfoExtension
 import com.avito.tech_budget.utils.failureResponse
@@ -128,7 +128,7 @@ internal class UploadDependenciesTest {
     ).generateIn(projectDir).also {
         if (includeVersionFiles) {
             projectDir.file("gradle/libs.versions.toml", LIBS_VERSIONS_TOML_CONTENT)
-            projectDir.file("gradle/libs.owners.toml", LIBS_OWNERS_TOML_CONTENT)
+            projectDir.file("gradle/libs.info.toml", LIBS_INFO_TOML_CONTENT)
         }
     }
 
@@ -154,6 +154,7 @@ internal class UploadDependenciesTest {
                      "owners":[
                         "SpeedID"
                      ],
+                     "description": "added for writing rules",
                      "type":"external"
                   },
                   {

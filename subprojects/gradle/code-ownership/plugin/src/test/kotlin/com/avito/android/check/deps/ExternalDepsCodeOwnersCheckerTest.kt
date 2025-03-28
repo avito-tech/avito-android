@@ -3,7 +3,7 @@ package com.avito.android.check.deps
 import com.avito.android.diff.provider.OwnersProvider
 import com.avito.android.model.FakeOwners
 import com.avito.android.model.FakeOwnersSerializer
-import com.avito.android.utils.LIBS_OWNERS_TOML_CONTENT
+import com.avito.android.utils.LIBS_INFO_TOML_CONTENT
 import com.avito.android.utils.LIBS_VERSIONS_TOML_CONTENT
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
@@ -28,10 +28,10 @@ internal class ExternalDepsCodeOwnersCheckerTest {
                 """.trimIndent(),
             ),
             projectDir.createChildFile(
-                name = "libs.owners.toml",
+                name = "libs.info.toml",
                 content = """
                     [libraries]
-                    androidx-constraintLayout = "Speed"  
+                    androidx-constraintLayout = { owner = "Speed", description = "" }  
                 """.trimIndent()
             )
         )
@@ -45,8 +45,8 @@ internal class ExternalDepsCodeOwnersCheckerTest {
                 content = LIBS_VERSIONS_TOML_CONTENT,
             ),
             projectDir.createChildFile(
-                name = "libs.owners.toml",
-                content = LIBS_OWNERS_TOML_CONTENT
+                name = "libs.info.toml",
+                content = LIBS_INFO_TOML_CONTENT
             )
         )
     }
@@ -63,7 +63,7 @@ internal class ExternalDepsCodeOwnersCheckerTest {
                 """.trimIndent(),
                 ),
                 projectDir.createChildFile(
-                    name = "libs.owners.toml",
+                    name = "libs.info.toml",
                     content = """
                     [libraries]
                 """.trimIndent()
@@ -73,7 +73,33 @@ internal class ExternalDepsCodeOwnersCheckerTest {
 
         Truth
             .assertThat(exception.message)
-            .contains("Dependency `androidx-constraintLayout` should have an owner, but it don't")
+            .contains("Dependency `androidx-constraintLayout` should have an owner and a description, but it doesn't")
+    }
+
+    @Test
+    internal fun `check dependencies - dependency doesn't have a description - error`(@TempDir projectDir: File) {
+        val exception = assertThrows<RuntimeException> {
+            checker.check(
+                projectDir.createChildFile(
+                    name = "libs.versions.toml",
+                    content = """
+                    [libraries]
+                    androidx-constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.1"
+                """.trimIndent(),
+                ),
+                projectDir.createChildFile(
+                    name = "libs.info.toml",
+                    content = """
+                    [libraries]
+                    androidx-constraintLayout = { owner = "Speed" }
+                """.trimIndent()
+                )
+            )
+        }
+
+        Truth
+            .assertThat(exception.message)
+            .contains("Dependency `androidx-constraintLayout` should have a description, but it doesn't")
     }
 
     @Test
@@ -88,10 +114,10 @@ internal class ExternalDepsCodeOwnersCheckerTest {
                 """.trimIndent(),
                 ),
                 projectDir.createChildFile(
-                    name = "libs.owners.toml",
+                    name = "libs.info.toml",
                     content = """
                     [libraries]
-                    androidx-constraintLayout = "Test Owner"
+                    androidx-constraintLayout = { owner = "Test Owner", description = "" }
                 """.trimIndent()
                 )
             )
@@ -116,10 +142,10 @@ internal class ExternalDepsCodeOwnersCheckerTest {
                 """.trimIndent(),
                 ),
                 projectDir.createChildFile(
-                    name = "libs.owners.toml",
+                    name = "libs.info.toml",
                     content = """
                     [libraries]
-                    androidx-constraintLayout = "Test Owner"
+                    androidx-constraintLayout = { owner = "Test Owner", description = "" }
                 """.trimIndent()
                 )
             )
@@ -143,18 +169,18 @@ internal class ExternalDepsCodeOwnersCheckerTest {
                 """.trimIndent(),
                 ),
                 projectDir.createChildFile(
-                    name = "libs.owners.toml",
+                    name = "libs.info.toml",
                     content = """
                     [libraries]
-                    androidx-constraintLayout = "Speed"
-                    androidx-unknownLibrary = "Speed"
+                    androidx-constraintLayout = { owner = "Speed", description = "" }
+                    androidx-unknownLibrary = { owner = "Speed", description = "" }
                 """.trimIndent()
                 )
             )
         }
         Truth
             .assertThat(exception.message)
-            .contains("Dependency `androidx-unknownLibrary` have an owner, but is not present")
+            .contains("Dependency `androidx-unknownLibrary` is present in file")
     }
 
     companion object {

@@ -2,6 +2,8 @@ package com.avito.android.info
 
 import com.avito.android.OwnerSerializerProvider
 import com.avito.android.check.deps.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCIES_SECTION_NAMES
+import com.avito.android.check.deps.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCY_DESCRIPTION_KEY
+import com.avito.android.check.deps.ExternalDepsCodeOwnersChecker.Companion.DEPENDENCY_OWNER_KEY
 import com.avito.android.owner.adapter.OwnerAdapterFactory
 import com.avito.android.owner.dependency.JsonOwnedDependenciesSerializer
 import com.avito.android.owner.dependency.OwnedDependency
@@ -69,14 +71,16 @@ public abstract class ExportExternalDepsCodeOwners : DefaultTask() {
                 versionsFileEntry.has("id") -> versionsFileEntry["id"].textValue()
                 else -> versionsFileEntry["module"].textValue()
             }
-            val owner = ownersFileSection[dependencyName].textValue()
+            val owner = ownersFileSection[dependencyName][DEPENDENCY_OWNER_KEY].textValue()
+            val description = ownersFileSection[dependencyName][DEPENDENCY_DESCRIPTION_KEY].textValue()
 
             dependencies.add(
                 OwnedDependency(
                     name = fullDependencyName ?: dependencyName,
                     owners = listOf(ownerSerializer.deserialize(owner)),
                     type = OwnedDependency.Type.EXTERNAL,
-                    betweennessCentrality = null // not supported for external dependencies
+                    betweennessCentrality = null, // not supported for external dependencies
+                    description = description,
                 )
             )
         }

@@ -47,13 +47,27 @@ internal class ExternalDepsCodeOwnersChecker(
         for (dependencyName in versionsFileSection.fieldNames()) {
             require(ownersFileSection.has(dependencyName)) {
                 """
-                    Dependency `$dependencyName` should have an owner, but it don't.
+                    Dependency `$dependencyName` should have an owner and a description, but it doesn't.
+                    Add this information to $ownersFilePath.
+                """.trimIndent()
+            }
+
+            require(ownersFileSection[dependencyName].has(DEPENDENCY_OWNER_KEY)) {
+                """
+                    Dependency `$dependencyName` should have an owner, but it doesn't.
                     Add one in $ownersFilePath.
                     Valid owners: $validOwnersRaw
                 """.trimIndent()
             }
 
-            val actualOwner = ownersFileSection[dependencyName].textValue()
+            require(ownersFileSection[dependencyName].has(DEPENDENCY_DESCRIPTION_KEY)) {
+                """
+                    Dependency `$dependencyName` should have a description, but it doesn't.
+                    Add one in $ownersFilePath.
+                """.trimIndent()
+            }
+
+            val actualOwner = ownersFileSection[dependencyName][DEPENDENCY_OWNER_KEY].textValue()
             require(actualOwner in validOwnersRaw) {
                 """
                     Dependency `$dependencyName` should have a valid owner, not `$actualOwner`.
@@ -66,8 +80,8 @@ internal class ExternalDepsCodeOwnersChecker(
         for (dependencyName in ownersFileSection.fieldNames()) {
             require(versionsFileSection.has(dependencyName)) {
                 """
-                    Dependency `$dependencyName` have an owner, but is not present in $versionsFilePath.
-                    Remove the owner from $ownersFilePath.
+                    Dependency `$dependencyName` is present in file $ownersFilePath, but is not present in $versionsFilePath.
+                    Remove it from $ownersFilePath.
                 """.trimIndent()
             }
         }
@@ -75,5 +89,7 @@ internal class ExternalDepsCodeOwnersChecker(
 
     internal companion object {
         internal val DEPENDENCIES_SECTION_NAMES = listOf("plugins", "libraries")
+        internal const val DEPENDENCY_OWNER_KEY = "owner"
+        internal const val DEPENDENCY_DESCRIPTION_KEY = "description"
     }
 }

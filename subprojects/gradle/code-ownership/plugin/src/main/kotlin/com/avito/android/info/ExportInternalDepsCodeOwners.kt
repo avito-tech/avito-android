@@ -54,7 +54,8 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
             name = project.path,
             owners = owners,
             type = OwnedDependency.Type.INTERNAL,
-            betweennessCentrality = betweennessCentrality.getOrDefault(project, null)
+            betweennessCentrality = betweennessCentrality.getOrDefault(project, null),
+            description = null,
         )
     }
 

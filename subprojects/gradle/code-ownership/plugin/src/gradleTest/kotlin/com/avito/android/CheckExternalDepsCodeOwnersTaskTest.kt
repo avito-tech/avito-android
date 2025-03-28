@@ -3,7 +3,7 @@ package com.avito.android
 import com.avito.android.check.deps.CheckExternalDepsCodeOwners
 import com.avito.android.utils.FAKE_OWNERSHIP_EXTENSION
 import com.avito.android.utils.FAKE_OWNERS_PROVIDER_EXTENSION
-import com.avito.android.utils.LIBS_OWNERS_TOML_CONTENT
+import com.avito.android.utils.LIBS_INFO_TOML_CONTENT
 import com.avito.android.utils.LIBS_VERSIONS_TOML_CONTENT
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
@@ -96,7 +96,7 @@ internal class CheckExternalDepsCodeOwnersTaskTest {
     ) {
 
         if (hasLibsVersions) projectDir.file("gradle/libs.versions.toml", LIBS_VERSIONS_TOML_CONTENT)
-        if (hasLibsOwners) projectDir.file("gradle/libs.owners.toml", LIBS_OWNERS_TOML_CONTENT)
+        if (hasLibsOwners) projectDir.file("gradle/libs.info.toml", LIBS_INFO_TOML_CONTENT)
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
