@@ -10,6 +10,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.FolderModule
 import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
@@ -113,16 +114,40 @@ internal class UploadDependenciesTest {
                 }
             """.trimIndent(),
         modules = listOf(
-            AndroidAppModule(
-                name = "app",
-                imports = listOf("import com.avito.android.model.Owner"),
-                plugins = plugins { id("com.avito.android.code-ownership") },
-                useKts = true,
-                buildGradleExtra = """
+            FolderModule(
+                name = "some-folder",
+                modules = listOf(
+                    AndroidAppModule(
+                        name = "app",
+                        imports = listOf("import com.avito.android.model.Owner"),
+                        plugins = plugins { id("com.avito.android.code-ownership") },
+                        useKts = true,
+                        buildGradleExtra = """
                     ownership {
                         owners(object: Owner { override fun toString() = "Speed" })
                     }
                 """.trimIndent(),
+                        mutator = {
+                            parentFile.file(name = "README.md", content = "logical module description")
+                        }
+                    ),
+                )
+            ),
+            FolderModule(
+                name = "some-folder-2",
+                modules = listOf(
+                    AndroidAppModule(
+                        name = "app2",
+                        imports = listOf("import com.avito.android.model.Owner"),
+                        plugins = plugins { id("com.avito.android.code-ownership") },
+                        useKts = true,
+                        buildGradleExtra = """
+                    ownership {
+                        owners(object: Owner { override fun toString() = "Speed" })
+                    }
+                """.trimIndent(),
+                    ),
+                )
             )
         )
     ).generateIn(projectDir).also {
@@ -143,10 +168,19 @@ internal class UploadDependenciesTest {
                },
                "modules":[
                   {
-                     "moduleName":":app",
+                     "moduleName":":some-folder:app",
                      "owners":[
                         "SpeedID"
                      ],
+                    "description": "logical module description",
+                     "type":"internal"
+                  },
+                  {
+                     "moduleName":":some-folder-2:app2",
+                     "owners":[
+                        "SpeedID"
+                     ],
+                    "description": "",
                      "type":"internal"
                   },
                   {

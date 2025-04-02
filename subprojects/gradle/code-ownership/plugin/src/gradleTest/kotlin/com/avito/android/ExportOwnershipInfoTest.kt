@@ -10,6 +10,7 @@ import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.module.FolderModule
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
@@ -66,23 +67,26 @@ internal class ExportOwnershipInfoTest {
                         |}
                     """.trimMargin(),
             modules = listOf(
-                AndroidAppModule(
-                    "app",
-                    plugins = plugins {
-                        id("com.avito.android.code-ownership")
-                    },
-                    imports = listOf("import com.avito.android.model.Owner"),
-                    dependencies = setOf(
-                        project(
-                            path = ":feature",
-                            configuration = IMPLEMENTATION
-                        ),
-                        project(
-                            path = ":common",
-                            configuration = IMPLEMENTATION
-                        )
-                    ),
-                    buildGradleExtra = """
+                FolderModule(
+                    name = "some-folder",
+                    modules = listOf(
+                        AndroidAppModule(
+                            "app",
+                            plugins = plugins {
+                                id("com.avito.android.code-ownership")
+                            },
+                            imports = listOf("import com.avito.android.model.Owner"),
+                            dependencies = setOf(
+                                project(
+                                    path = ":feature",
+                                    configuration = IMPLEMENTATION
+                                ),
+                                project(
+                                    path = ":common",
+                                    configuration = IMPLEMENTATION
+                                )
+                            ),
+                            buildGradleExtra = """
                         |object Speed : Owner { 
                         |   override fun toString(): String = "Speed"
                         |}
@@ -91,7 +95,12 @@ internal class ExportOwnershipInfoTest {
                         |    owners(Speed)
                         |}
                     """.trimMargin(),
-                    useKts = true,
+                            useKts = true,
+                            mutator = {
+                                parentFile.file(name = "README.md", content = "logical module description")
+                            }
+                        ),
+                    )
                 ),
                 AndroidLibModule(
                     name = "feature",
@@ -125,7 +134,7 @@ internal class ExportOwnershipInfoTest {
         val file = File(projectDir, "build/ownership/internal-dependencies-owners.json")
         assertThat(file.exists()).isTrue()
 
-        JSONAssert.assertEquals(file.readText(), EXPECTED_INTERNAL_DEPS_CODE_OWNERS, JSONCompareMode.LENIENT)
+        JSONAssert.assertEquals(EXPECTED_INTERNAL_DEPS_CODE_OWNERS, file.readText(), JSONCompareMode.LENIENT)
     }
 
     @Test
@@ -196,10 +205,14 @@ internal class ExportOwnershipInfoTest {
         private val EXPECTED_INTERNAL_DEPS_CODE_OWNERS = """
             [
                {
-                  "moduleName":":app",
+                  "moduleName":":some-folder"
+               },
+               {
+                  "moduleName":":some-folder:app",
                   "owners":[
                      "TestSpeed"
                   ],
+                  "description": "logical module description",
                   "type":"internal",
                   "betweennessCentrality": 0.0
                },
@@ -217,6 +230,7 @@ internal class ExportOwnershipInfoTest {
                      "TestSpeed",
                      "TestPerformance"
                   ],
+                  "description": "",
                   "type":"internal",
                   "betweennessCentrality": 0.0
                }

@@ -50,12 +50,14 @@ public abstract class ExportInternalDepsCodeOwners : DefaultTask() {
     private fun extractOwnedDependency(project: Project, betweennessCentrality: Map<Project, Double>): OwnedDependency {
         val extension = project.extensions.findByType<CodeOwnershipExtension>()
         val owners = extension?.owners?.orNull ?: emptySet()
+        val readmeFile = project.projectDir.parentFile.resolve("README.md")
+        val description = if (readmeFile.exists()) readmeFile.readText() else ""
         return OwnedDependency(
             name = project.path,
             owners = owners,
             type = OwnedDependency.Type.INTERNAL,
             betweennessCentrality = betweennessCentrality.getOrDefault(project, null),
-            description = null,
+            description = description,
         )
     }
 
