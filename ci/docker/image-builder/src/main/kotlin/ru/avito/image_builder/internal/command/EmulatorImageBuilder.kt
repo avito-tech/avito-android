@@ -36,8 +36,7 @@ internal class EmulatorImageBuilder(
         val imageId = buildImage()
         val preparedImageId = emulatorPreparer.prepareEmulators(
             imageId = imageId,
-            apis = setOf(api),
-            type = type,
+            apisAndTypes = mapOf(api to type),
             emulatorLocale = "en-US"
         )
 

@@ -18,14 +18,14 @@ internal class EmceeWorkerBuilder(
      * https://docs.docker.com/engine/reference/commandline/build/#build-with-path
      */
     private val buildDir: File,
-    private val apis: Set<Int>,
     private val registry: String,
     private val imageRegistryTagName: String,
     private val imageName: String,
     private val artifactoryUrl: String,
     private val tagger: ImageTagger,
     private val emulatorPreparer: EmulatorPreparer,
-    private val emulatorLocale: String
+    private val emulatorLocale: String,
+    private val apisAndTypes: Map<Int, EmulatorType>,
 ) : ImageBuilder {
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
@@ -34,8 +34,7 @@ internal class EmceeWorkerBuilder(
         val imageId = buildImage()
         val preparedImageId = emulatorPreparer.prepareEmulators(
             imageId = imageId,
-            apis = apis,
-            type = EmulatorType.google_apis,
+            apisAndTypes = apisAndTypes,
             emulatorLocale = emulatorLocale
         )
 
@@ -47,7 +46,8 @@ internal class EmceeWorkerBuilder(
 
         val buildResult = docker.build(
             "--build-arg", "DOCKER_REGISTRY=$registry",
-            "--build-arg", "SDK_VERSIONS=${apis.joinToString(separator = " ")}",
+            "--build-arg", "SDK_VERSIONS=${apisAndTypes.keys.joinToString(separator = " ")}",
+            "--build-arg", "SDK_TYPES=${apisAndTypes.values.joinToString(separator = " ")}",
             "--build-arg", "ARTIFACTORY_URL=$artifactoryUrl",
             "--file", File(buildDir, dockerfilePath).canonicalPath,
             buildDir.canonicalPath,

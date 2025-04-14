@@ -45,7 +45,7 @@ public object Main {
             BuildImage("build", "Build image"),
             PublishImage("publish", "Build and publish image"),
             PublishEmulator("publishEmulator", "Build and publish Android emulator image"),
-            PublishEmceeImage("publishEmceeImage", "Build and publish Emcee queue image"),
+            PublishEmceeImage("publishEmceeImage", "Build and publish Emcee queue or worker image"),
             PublishEmceeWorker("publishEmceeWorker", "Build and publish Emcee worker image")
         )
         parser.parse(sanitizeEmptyArgs(args))
