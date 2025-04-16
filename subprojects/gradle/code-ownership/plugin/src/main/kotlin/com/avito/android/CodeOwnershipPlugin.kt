@@ -1,6 +1,7 @@
 package com.avito.android
 
 import com.avito.android.check.deps.CheckExternalDepsCodeOwners
+import com.avito.android.check.deps.CheckInternalDepsTask
 import com.avito.android.check.ownersip.CheckOwnersPresentTask
 import com.avito.android.diff.ReportCodeOwnershipDiffTask
 import com.avito.android.diff.ReportCodeOwnershipExtension
@@ -34,6 +35,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
         } else {
             configureStrictOwnershipCheckTask(target, codeOwnershipExtension)
             configureOwnershipTask(target, codeOwnershipExtension)
+            registerCheckInternalDepsTask(target)
         }
     }
 
@@ -130,6 +132,18 @@ public class CodeOwnershipPlugin : Plugin<Project> {
             libsOwnersFile.set(codeOwnershipExtension.externalDependencies.libsOwnersFile)
             ownerSerializer.set(codeOwnershipExtension.ownerSerializersProvider)
             outputFile.set(target.layout.buildDirectory.file("ownership/external-dependencies-owners.json"))
+        }
+    }
+
+    private fun registerCheckInternalDepsTask(target: Project) {
+        val isInternalDepsCheckEnabled = target.getBooleanProperty(
+            name = "avito.ownership.internal-deps-check.enable",
+            default = false
+        )
+        if (isInternalDepsCheckEnabled) {
+            target.tasks.register<CheckInternalDepsTask>(CheckInternalDepsTask.NAME) {
+                this.projectDir.set(target.projectDir)
+            }
         }
     }
 
