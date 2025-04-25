@@ -117,7 +117,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
 
         val kind = test.kind
 
-        val groups: List<String> = test.groupList + test.name.team.name + test.kind.tmsId
+        val groups: List<String> = listOf(test.name.team.name, test.kind.tmsId) + test.groupList
         val report = mutableMapOf(
             "test_class" to test.name.className,
             "test_name" to if (test.dataSetNumber != null) {
