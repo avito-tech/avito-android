@@ -118,6 +118,12 @@ require 1500 adb shell "settings get secure long_press_timeout"
 # https://androidstudio.googleblog.com/2019/05/emulator-2906-stable.html
 require 2147483647 adb shell "settings get system screen_off_timeout"
 
+if [[ "$EMULATOR_TYPE" == "google_atd" ]]; then
+  # ensure drawing_enabled for video recording to work
+  # https://issuetracker.google.com/issues/218895341
+  require 1 adb shell "getprop debug.hwui.drawing_enabled"
+fi
+
 adb emu avd snapshot save ci
 
 sleep 5

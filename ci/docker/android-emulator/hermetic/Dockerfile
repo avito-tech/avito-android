@@ -57,6 +57,25 @@ RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-
     unzip_from_url.sh "${ANDROID_SDK_BASE_URL}/system-images/system-images-android-${SDK_VERSION}-${EMULATOR_ARCH}-${EMULATOR_TYPE}.zip" $ANDROID_HOME && \
     rm /usr/local/bin/unzip_from_url.sh
 
+# ---------------------------------------------------------------------------
+# ATD-specific patch
+# ---------------------------------------------------------------------------
+RUN if [ "$EMULATOR_TYPE" = "google_atd" ]; then \
+      # ensure drawing_enabled for video recording to work
+      # use /data/local.prop to overwrite /system/build.prop
+      # because setprop does not persist reboot
+      # https://issuetracker.google.com/issues/218895341
+      echo "debug.hwui.drawing_enabled=1" \
+        >> "$ANDROID_HOME/system-images/android-${SDK_VERSION}/${EMULATOR_TYPE}/${EMULATOR_ARCH}/data/local.prop" && \
+                                                                          \
+      # remove empty_data_disk file for local.prop passing to work
+      # this file exists since android 35
+      # https://android.googlesource.com/device/generic/goldfish/+/3180bf573e33d1641e60a2909e949521be1a8db7%5E%21/#F0
+      empty_data_disk="$ANDROID_HOME/system-images/android-${SDK_VERSION}/${EMULATOR_TYPE}/${EMULATOR_ARCH}/data/empty_data_disk" && \
+      if [ -e "$empty_data_disk" ]; then rm "$empty_data_disk"; fi ; \
+    fi
+# ---------------------------------------------------------------------------
+
 # ------------------ Emulators ------------------
 # Create emulator and increase internal storage
 RUN echo "no" | avdmanager create avd \
