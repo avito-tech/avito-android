@@ -1,11 +1,18 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
+    id("convention.kotlin-serialization")
+    id("convention.test-fixtures")
 }
 dependencies {
     implementation(project(":subprojects:gradle:module-types-api"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:clickstream"))
+    implementation(project(":subprojects:gradle:process"))
+    implementation(libs.jdgraphtCore)
+    implementation(libs.kotlinGradle)
+
+    testFixturesImplementation(testFixtures(project(":subprojects:gradle:module-types")))
 }
 
 gradlePlugin {
