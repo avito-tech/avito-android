@@ -59,6 +59,7 @@ public class TestProjectGenerator(
     override val name: String = "test-project",
     imports: List<String> = emptyList(),
     override val plugins: PluginsSpec = PluginsSpec(),
+    private val settingsPlugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     // TODO: don't share complex default values in common test fixtures. Plugin must define them implicitly!
     override val modules: List<Module> = listOf(
@@ -112,8 +113,9 @@ public class TestProjectGenerator(
                 }
             }
 
-            var settingsGradleContent = """
+            val settingsGradleContent = """
 pluginManagement {
+$settingsPlugins
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("com.android.")) {
@@ -121,26 +123,15 @@ pluginManagement {
             }
         }
     }
-    ${repositories()}
+${repositories()}
 }
-
+${localBuildCache()}
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "${this@TestProjectGenerator.name}"
 
 ${generateIncludes(modules, "")}
             """.trimIndent()
-
-            if (localBuildCache != null) {
-                settingsGradleContent = settingsGradleContent + "\n" + """
-buildCache {
-    local {
-        directory '${localBuildCache.toURI()}'
-    }
-}
-                """.trimIndent()
-            }
-
             if (useKts) {
                 file("settings.gradle.kts", settingsGradleContent)
             } else {
@@ -175,6 +166,19 @@ buildCache {
         with(file) {
             git("init --quiet --initial-branch=master")
             commit("initial_state")
+        }
+    }
+
+    private fun localBuildCache(): String {
+        return if (localBuildCache != null) {
+            """
+            |buildCache {
+            |   local {
+            |       directory '${localBuildCache.toURI()}'
+            |   }
+            |}""".trimMargin()
+        } else {
+            ""
         }
     }
 
