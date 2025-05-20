@@ -70,6 +70,7 @@ include(":subprojects:assemble:critical-path:api")
 include(":subprojects:assemble:critical-path:critical-path")
 include(":subprojects:assemble:gradle-profile")
 include(":subprojects:assemble:proguard-guard")
+include(":subprojects:assemble:bmp")
 
 include(":subprojects:common:build-metadata")
 include(":subprojects:common:resources")
