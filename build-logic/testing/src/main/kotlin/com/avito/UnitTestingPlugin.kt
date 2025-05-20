@@ -54,7 +54,11 @@ class UnitTestingPlugin : Plugin<Project> {
                      */
                     systemProperty(
                         "isInvokedFromIde",
-                        gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
+                        gradle.startParameter.allInitScripts.find {
+                            it.name.contains("ijtestinit") ||
+                                it.name.contains("ijMapper") ||
+                                it.name.contains("ijresolvers")
+                        } != null
                     )
                 }
             }
