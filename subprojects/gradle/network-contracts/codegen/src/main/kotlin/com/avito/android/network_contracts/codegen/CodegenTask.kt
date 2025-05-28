@@ -4,6 +4,8 @@ import com.avito.android.Result
 import com.avito.android.isFailure
 import com.avito.android.network_contracts.codegen.config.CodegenConfig
 import com.avito.android.network_contracts.codegen.executor.Codegen
+import com.avito.android.network_contracts.output.OutputTransformer
+import com.avito.android.network_contracts.output.OutputType
 import com.avito.android.network_contracts.shared.throwGradleError
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
@@ -64,6 +66,10 @@ internal abstract class CodegenTask : DefaultTask() {
     @get:Input
     abstract val timeoutSeconds: Property<Long>
 
+    @get:Input
+    @get:Optional
+    abstract val errorOutputType: Property<OutputType>
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Optional
@@ -91,6 +97,9 @@ internal abstract class CodegenTask : DefaultTask() {
     @get:Internal
     internal abstract val loggerFactory: Property<LoggerFactory>
 
+    @get:Internal
+    internal abstract val errorOutputTransformer: Property<OutputTransformer>
+
     private val logger: Logger by lazy { loggerFactory.get().create("CodegenTask") }
 
     @TaskAction
@@ -112,6 +121,7 @@ internal abstract class CodegenTask : DefaultTask() {
             keyEnv = keyEnvName.get() to tmpKeyFile.orNull?.asFile?.toPath(),
             flags = flags.get(),
             timeout = Duration.ofSeconds(timeoutSeconds.get()),
+            errorOutputType = errorOutputType.orNull,
         )
         val codegen = Codegen.create(arch, codegenExecutableFiles, logger, config)
 
@@ -120,7 +130,9 @@ internal abstract class CodegenTask : DefaultTask() {
         )
 
         if (result.isFailure()) {
-            throw GradleException("Network contracts generation failed:\n${result.throwable.message}", result.throwable)
+            val causeMessage = result.throwable.cause?.message.orEmpty()
+            val message = errorOutputTransformer.orNull?.transform(causeMessage) ?: result.throwable.message
+            throw GradleException("Network contracts generation failed:\n$message", result.throwable)
         }
     }
 

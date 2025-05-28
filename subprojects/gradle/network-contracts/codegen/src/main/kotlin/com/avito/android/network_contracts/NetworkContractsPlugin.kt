@@ -5,6 +5,9 @@ import com.avito.android.network_contracts.codegen.SetupTmpMtlsFilesTask
 import com.avito.android.network_contracts.configuration.codegenConfiguration
 import com.avito.android.network_contracts.extension.NetworkContractsModuleExtension
 import com.avito.android.network_contracts.internal.http.HttpClientService
+import com.avito.android.network_contracts.output.OutputTransformer
+import com.avito.android.network_contracts.output.OutputType
+import com.avito.android.network_contracts.output.parsers.CodegenJsonOutputTransformer
 import com.avito.android.network_contracts.scheme.fixation.collect.CollectApiSchemesTask
 import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
 import com.avito.android.network_contracts.scheme.imports.ApiSchemesImportTask
@@ -56,7 +59,13 @@ public class NetworkContractsPlugin : Plugin<Project> {
     }
 
     private fun createNetworkContractsExtension(project: Project) {
-        project.extensions.create<NetworkContractsModuleExtension>(NetworkContractsModuleExtension.NAME)
+        val extension = project.extensions.create<NetworkContractsModuleExtension>(NetworkContractsModuleExtension.NAME)
+        extension.outputTransformers.register(OutputType.TEXT.kind) {
+            it.transformer.set(OutputTransformer { it })
+        }
+        extension.outputTransformers.register(OutputType.JSON.kind) {
+            it.transformer.set(CodegenJsonOutputTransformer())
+        }
     }
 
     private fun registerCodegenVariantsTask(target: Project) {
@@ -116,6 +125,12 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.skipValidation.set(networkContractsExtension.skipValidation.map { !forceValidation && it })
             it.moduleDirectory.set(it.project.layout.projectDirectory)
             it.outputDirectory.set(outputDirectory)
+            it.errorOutputType.set(networkContractsExtension.errorOutputType)
+            it.errorOutputTransformer.set(
+                networkContractsExtension.errorOutputType
+                    .flatMap { type -> networkContractsExtension.outputTransformers.named(type.kind) }
+                    .flatMap { configuration -> configuration.transformer }
+            )
 
             val codegenConfiguration = target.codegenConfiguration.takeIf { !it.isEmpty }
                 ?: target.rootProject.codegenConfiguration

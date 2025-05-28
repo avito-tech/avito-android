@@ -1,5 +1,8 @@
 package com.avito.android.network_contracts.extension
 
+import com.avito.android.network_contracts.output.OutputTransformerConfiguration
+import com.avito.android.network_contracts.output.OutputType
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -37,6 +40,11 @@ public abstract class NetworkContractsModuleExtension(
     public val apiSchemesDirectory: DirectoryProperty = objects.directoryProperty()
 
     public val generatedDirectory: DirectoryProperty = objects.directoryProperty()
+
+    public val errorOutputType: Property<OutputType> = objects.property<OutputType>()
+
+    public val outputTransformers: NamedDomainObjectContainer<OutputTransformerConfiguration> = objects
+        .domainObjectContainer(OutputTransformerConfiguration::class.java)
 
     internal companion object {
         internal const val NAME = "networkContracts"

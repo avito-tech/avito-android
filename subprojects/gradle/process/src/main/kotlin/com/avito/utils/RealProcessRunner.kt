@@ -76,7 +76,12 @@ internal class RealProcessRunner(
 
         try {
             if (process.exitValue() != 0) {
-                Result.Failure(Throwable("Unknown error: exit code=[${process.exitValue()}]; output=$output"))
+                Result.Failure(
+                    Throwable(
+                        message = "Unknown error: exit code=[${process.exitValue()}]; output=$output",
+                        cause = Throwable(output)
+                    )
+                )
             } else {
                 Result.Success(output)
             }

@@ -1,5 +1,6 @@
 package com.avito.android.network_contracts.codegen.config
 
+import com.avito.android.network_contracts.output.OutputType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -24,6 +25,7 @@ internal data class CodegenConfig(
     val buildDirectoryRelativePath: String,
     val flags: Set<String>,
     val timeout: Duration,
+    val errorOutputType: OutputType?,
 )
 
 @Suppress("unused")
@@ -43,6 +45,7 @@ internal val CodegenConfig.args
             "dir" to moduleDir.path,
             "kind" to kind,
             "name" to name,
+            errorOutputType?.let { "output" to it.kind },
             ("skip-validation" to null).takeIf { skipValidation }
         )
     }
