@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.internal.detekt.DetektConfigurator
 import com.avito.android.tech_budget.internal.feature_toggles.FeatureTogglesConfigurator
 import com.avito.android.tech_budget.internal.lint_issues.LintIssuesConfigurator
 import com.avito.android.tech_budget.internal.module_dependencies.ModuleDependenciesConfigurator
+import com.avito.android.tech_budget.internal.module_graph_info.ModuleGraphInfoExtractorConfigurator
 import com.avito.android.tech_budget.internal.module_types.ModuleTypesConfigurator
 import com.avito.android.tech_budget.internal.owners.OwnersConfigurator
 import com.avito.android.tech_budget.internal.owners.dependencies.DependenciesConfigurator
@@ -35,6 +36,7 @@ public class TechBudgetPlugin : Plugin<Project> {
             ABTestsConfigurator(),
             FeatureTogglesConfigurator(),
             LintIssuesConfigurator(),
+            ModuleGraphInfoExtractorConfigurator(),
             ModuleDependenciesConfigurator(),
             ModuleTypesConfigurator(),
             PerfScreenOwnersConfigurator(),

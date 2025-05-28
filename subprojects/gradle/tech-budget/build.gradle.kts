@@ -1,5 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
+    id("convention.kotlin-serialization")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
     id("convention.ksp")
@@ -16,6 +17,7 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:code-ownership:plugin"))
     implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:demo-app-metrics"))
     implementation(project(":subprojects:gradle:module-dependencies-graph"))
     implementation(project(":subprojects:logger:gradle-logger"))
     implementation(project(":subprojects:common:composite-exception"))

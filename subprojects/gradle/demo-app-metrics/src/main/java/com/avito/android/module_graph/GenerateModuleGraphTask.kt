@@ -26,11 +26,11 @@ import javax.inject.Inject
 @CacheableTask
 public abstract class GenerateModuleGraphTask @Inject constructor(
     objects: ObjectFactory,
-) : DefaultTask() {
+) : DefaultTask(), ModuleGraphTask {
 
     // Contains an object of type ModuleGraphInfo
     @get:OutputFile
-    public abstract val outputFile: RegularFileProperty
+    public abstract override val outputFile: RegularFileProperty
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
