@@ -20,11 +20,10 @@ internal class ModuleGraphInfoExtractorConfigurator : TechBudgetConfigurator {
     override fun configure(project: Project) {
         if (!project.isRoot()) return
 
-        val extension = project.extensions.getByType<TechBudgetExtension>()
-
         project.tasks.register<UploadModuleGraphAppDependenciesTask>(
             UploadModuleGraphAppDependenciesTask.NAME
         ) {
+            val extension = project.extensions.getByType<TechBudgetExtension>()
             graphInfo.set(
                 project.tasks.typedNamed<ModuleGraphTask>(GenerateModuleGraphTask.NAME)
                     .flatMap { it.outputFile }
@@ -35,6 +34,7 @@ internal class ModuleGraphInfoExtractorConfigurator : TechBudgetConfigurator {
         }
 
         project.tasks.register<UploadModuleGraphDependenciesTask>(UploadModuleGraphDependenciesTask.NAME) {
+            val extension = project.extensions.getByType<TechBudgetExtension>()
             graphInfo.set(
                 project.tasks.typedNamed<ModuleGraphTask>(GenerateModuleGraphTask.NAME)
                     .flatMap { it.outputFile }
@@ -45,6 +45,7 @@ internal class ModuleGraphInfoExtractorConfigurator : TechBudgetConfigurator {
         }
 
         project.tasks.register<UploadModuleSizesTask>(UploadModuleSizesTask.NAME) {
+            val extension = project.extensions.getByType<TechBudgetExtension>()
             graphInfo.set(
                 project.tasks.typedNamed<ModuleGraphTask>(GenerateModuleGraphTask.NAME)
                     .flatMap { it.outputFile }
