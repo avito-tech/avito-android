@@ -1,8 +1,7 @@
 package com.avito.utils
 
 import com.avito.android.Result
-import org.apache.tools.ant.types.Commandline
-import org.gradle.internal.impldep.com.google.common.annotations.VisibleForTesting
+import org.apache.tools.ant.types.translateCommandline
 import java.io.File
 import java.time.Duration
 import java.util.concurrent.ExecutorService
@@ -31,11 +30,7 @@ internal class RealProcessRunner(
         return spawnProcess(command, workingDirectory, outputTo)
     }
 
-    /**
-     * [ProcessBuilder] expects command as an arguments list, arguments could be separated by space
-     */
-    @VisibleForTesting
-    internal fun splitCommand(source: String): Array<String> = Commandline.translateCommandline(source)
+    internal fun splitCommand(source: String): Array<String> = translateCommandline(source)
 
     private fun spawnProcess(
         command: String,
