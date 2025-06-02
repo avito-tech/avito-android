@@ -18,7 +18,7 @@ public class DefaultTimeProvider : TimeProvider {
     @RequiresApi(26)
     override fun nowInstant(): Instant = Instant.now()
 
-    override fun now(): Date = toDate(nowInSeconds())
+    override fun now(): Date = Date(nowInMillis())
 
     override fun toDate(seconds: Long): Date {
         val millis = TimeUnit.SECONDS.toMillis(seconds)
