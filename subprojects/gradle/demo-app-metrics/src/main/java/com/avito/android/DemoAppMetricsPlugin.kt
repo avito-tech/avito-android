@@ -27,7 +27,6 @@ public class DemoAppMetricsPlugin : Plugin<Project> {
     private fun registerGenerateModuleGraphTask(project: Project) {
         project.tasks.register<GenerateModuleGraphTask>(GenerateModuleGraphTask.NAME) {
             outputFile.set(project.layout.buildDirectory.file("module-graph.json"))
-            projectDir.set(project.projectDir)
             infoExtractorService.set(ModuleGraphInfoExtractorService.provideService(project))
         }
     }
