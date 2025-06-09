@@ -38,6 +38,14 @@ import java.util.concurrent.TimeUnit
  */
 internal class TypeText(private val stringToBeTyped: String) : ViewAction {
 
+    /**
+     * Check if the emulator is ATD (Automated Test Device) emulator.
+     * ro.product.name is sdk_gslim_x86_64 for ATD emulator and sdk_gphone_x86_64 for non-ATD emulator
+     */
+    private val isApi30AtdEmulator: Boolean
+        get() = Build.PRODUCT.startsWith("sdk_gslim") &&
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.R
+
     override fun getConstraints(): Matcher<View> = Matchers.allOf(
         ViewMatchers.isDisplayed(),
         ViewMatchers.isAssignableFrom(EditText::class.java)
@@ -84,6 +92,27 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
                 Build.VERSION.SDK_INT == Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> inputMethodManager
                 .getFieldByReflectionWithAnyField("mFallbackInputConnection")
                 .getFieldByReflectionWithAnyField("mInputConnection")
+
+            /**
+             * ATD devices ships *without* a system IME (LatinIME).
+             * see https://developer.android.com/studio/test/gradle-managed-devices#atd-optimizations:~:text=LatinIME
+             * Until API 31 the framework method mIInputContext.commitText() refused to run
+             * unless the caller’s InputMethodManager instance was the **active** IME client
+             * (hard check on `mActive`). With no IME present we can never become active,
+             * so commitText() do not work.
+             *
+             * Framework change: commit (Android 12) https://android.googlesource.com/platform/frameworks/base/+/af47729a1545e2edc21effad306dc523b2d5805b
+             * replaced the `mActive` check with `isActive()`, which only needs a served
+             * view, fixing the problem from API 31 upward.
+             *
+             * Work-around for API 30 ATD:
+             * We use the local fallback `mDummyInputConnection` see
+             * https://android.googlesource.com/platform/frameworks/base/+/android11-release/core/java/android/view/inputmethod/InputMethodManager.java#1089
+             * It is a plain BaseInputConnection that writes text by key events and ignores
+             * the active-client requirement.
+             */
+            isApi30AtdEmulator -> inputMethodManager
+                .getFieldByReflectionWithAnyField("mDummyInputConnection")
 
             else -> inputMethodManager
                 .getFieldByReflectionWithAnyField("mIInputContext")
