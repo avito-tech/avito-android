@@ -1,8 +1,11 @@
 package com.avito.android.plugin.build_metrics.internal
 
+import com.avito.android.plugin.build_metrics.internal.result.BuildResult
+
 internal class BuildOperationsResult(
     val tasksExecutions: List<TaskExecutionResult>,
-    val cacheOperations: CacheOperations
+    val cacheOperations: CacheOperations,
+    val buildResult: BuildResult,
 )
 
 internal class CacheOperations(

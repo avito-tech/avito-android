@@ -5,7 +5,8 @@ import com.avito.test.gradle.gradlew
 import java.io.File
 
 internal class BuildMetricsRunner(
-    private val projectDir: File
+    private val projectDir: File,
+    private val configurationCache: Boolean = true,
 ) {
 
     fun build(args: List<String>): TestResult {
@@ -19,7 +20,8 @@ internal class BuildMetricsRunner(
             "-Pavito.graphite.namespace=build.metrics.test",
             "-Pavito.graphite.host",
             "-Pavito.graphite.port=80",
-            "-Pbuild.metrics.test"
+            "-Pbuild.metrics.test",
+            configurationCache = configurationCache
         )
     }
 }

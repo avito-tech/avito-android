@@ -1,37 +1,90 @@
 package com.avito.android.plugin.build_metrics.internal
 
-import com.avito.android.gradle.metric.BuildEventsListener
-import com.avito.logger.LoggerFactory
+import com.avito.android.graphite.GraphiteConfig
+import com.avito.android.plugin.build_metrics.BuildEnvironment
+import com.avito.android.plugin.build_metrics.internal.di.CompatibleWithConfigurationCacheDI
+import com.avito.android.plugin.build_metrics.internal.result.BuildResult
+import com.avito.android.plugin.build_metrics.internal.result.BuildStatus
+import com.avito.android.stats.StatsDConfig
+import com.avito.logger.GradleLoggerCoordinates
+import com.avito.logger.LoggerService
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.flow.BuildWorkResult
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.TaskExecutionOutcome
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationDetails
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.caching.internal.controller.operations.LoadOperationDetails
 import org.gradle.caching.internal.controller.operations.StoreOperationDetails
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.execution.RunRootBuildWorkBuildOperationType
-import org.gradle.internal.operations.BuildOperationCategory
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.BuildOperationListener
-import org.gradle.internal.operations.BuildOperationMetadata
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
+import org.gradle.internal.taskgraph.CalculateTreeTaskGraphBuildOperationType
 import org.gradle.util.Path
+import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
-internal class BuildOperationsResultProvider(
-    private val resultListener: BuildOperationsResultListener
-) : BuildOperationListener {
+@Suppress("UnstableApiUsage")
+internal abstract class BuildOperationsResultProvider : BuildService<BuildOperationsResultProvider.Params>,
+    BuildOperationListener,
+    AutoCloseable {
+
+    interface Params : BuildServiceParameters {
+        val test: Property<Boolean>
+        val buildType: Property<String>
+        val environment: Property<BuildEnvironment>
+        val statsdConfig: Property<StatsDConfig>
+        val graphiteConfig: Property<GraphiteConfig>
+        val sendCompileMetrics: Property<Boolean>
+        val compileMetricsMinimumDuration: Property<Duration>
+        val sendSlowTaskMetrics: Property<Boolean>
+        val slowTaskMinimumDuration: Property<Duration>
+        val sendBuildCacheMetrics: Property<Boolean>
+        val canTrackRemoteCache: Property<Boolean>
+        val buildCacheObservableTasks: SetProperty<String>
+        val writeModulesBuildTime: Property<Boolean>
+        val modulesBuildTimeFile: RegularFileProperty
+        val sendJvmMetrics: Property<Boolean>
+        val sendOsMetrics: Property<Boolean>
+        val sendBuildInitConfiguration: Property<Boolean>
+        val sendBuildTotal: Property<Boolean>
+        val sendAppBuildTime: Property<Boolean>
+        val loggerService: Property<LoggerService>
+        val loggerCoordinates: Property<GradleLoggerCoordinates>
+    }
+
+    private val di by lazy { CompatibleWithConfigurationCacheDI(parameters) }
+
+    private val buildResultListeners by lazy {
+        di.createBuildResultListener()
+    }
+
+    private val buildOperationsResultListener: BuildOperationsResultListener by lazy {
+        di.createListener()
+    }
 
     private val remoteLoadsByParentId: MutableMap<OperationIdentifier, BuildCacheRemoteLoadBuildOperationType.Result> =
         ConcurrentHashMap()
     private val tasksExecutionsById: MutableMap<OperationIdentifier, TaskExecutionIntermediateResult> =
         ConcurrentHashMap()
     private val buildCacheErrors = mutableListOf<RemoteBuildCacheError>()
+
+    private lateinit var buildResult: BuildWorkResult
+
+    private var startTime: Instant = Instant.now()
+    private var configurationEndTime: Instant = Instant.now()
 
     override fun started(buildOperation: BuildOperationDescriptor, startEvent: OperationStartEvent) {
         // no-op
@@ -42,13 +95,19 @@ internal class BuildOperationsResultProvider(
     }
 
     override fun finished(descriptor: BuildOperationDescriptor, event: OperationFinishEvent) {
+        val details = descriptor.details
         val result = event.result
         val failure = event.failure
 
         when {
+            details is RunRootBuildWorkBuildOperationType.Details ->
+                startTime = Instant.ofEpochMilli(details.buildStartTime)
+
+            details is CalculateTreeTaskGraphBuildOperationType.Details ->
+                configurationEndTime = Instant.ofEpochMilli(event.endTime)
+
             result is BuildCacheRemoteLoadBuildOperationType.Result -> onCacheRemoteLoad(descriptor, result)
             result is ExecuteTaskBuildOperationType.Result -> onTaskExecuted(descriptor, event, result)
-            descriptor.isRunTasksOperation() -> onRunTasks()
             failure != null && descriptor.details is LoadOperationDetails -> onBuildCacheLoadError(failure)
             failure != null && descriptor.details is StoreOperationDetails -> onBuildCacheStoreError(failure)
         }
@@ -81,14 +140,32 @@ internal class BuildOperationsResultProvider(
         remoteLoadsByParentId[parentId] = result
     }
 
-    private fun onRunTasks() {
-        val result = BuildOperationsResult(
+    internal fun onBuildResult(buildResult: BuildWorkResult) {
+        this.buildResult = buildResult
+    }
+
+    override fun close() {
+        val buildResult = BuildResult(
+            status = if (buildResult.failure.isPresent) {
+                BuildStatus.Fail
+            } else {
+                BuildStatus.Success
+            },
+            startTime = startTime,
+            configurationEndTime = configurationEndTime,
+            finishTime = Instant.now(),
+        )
+        val operationsResult = BuildOperationsResult(
             tasksExecutions = collectTasksExecutions(),
             cacheOperations = CacheOperations(
                 errors = buildCacheErrors,
-            )
+            ),
+            buildResult = buildResult,
         )
-        resultListener.onBuildFinished(result)
+        buildResultListeners.forEach {
+            it.onBuildFinished(buildResult)
+        }
+        buildOperationsResultListener.onBuildFinished(operationsResult)
     }
 
     private fun collectTasksExecutions(): List<TaskExecutionResult> {
@@ -179,29 +256,7 @@ internal class BuildOperationsResultProvider(
         }
     }
 
-    private fun BuildOperationDescriptor.isRunTasksOperation(): Boolean {
-        return details is RunRootBuildWorkBuildOperationType.Details
-            && (metadata == BuildOperationCategory.RUN_WORK || metadata.isRunTaskGradle6())
-    }
-
-    private fun BuildOperationMetadata.isRunTaskGradle6(): Boolean {
-        return (this as? BuildOperationCategory)?.name == "RUN_WORK_ROOT_BUILD"
-    }
-
     companion object {
-
-        fun register(
-            project: Project,
-            listeners: List<BuildOperationsResultListener>,
-            loggerFactory: LoggerFactory,
-        ): BuildEventsListener {
-            val buildOperationListener = BuildOperationsResultProvider(
-                resultListener = CompositeBuildOperationsResultListener(listeners, loggerFactory),
-            )
-            project.gradle.buildOperationListenerManager().addListener(buildOperationListener)
-
-            return BuildOperationListenerCleaner(buildOperationListener)
-        }
 
         fun canTrackRemoteCache(project: Project): Boolean {
             val remoteBuildCache = (project as ProjectInternal).gradle.settings.buildCache.remote

@@ -44,7 +44,7 @@ internal class BuildMetricsPluginTest {
 
     @Test
     fun `send configuration time - build`() {
-        val result = build(":app:preBuild")
+        val result = build(":app:preBuild", configurationCache = true)
 
         result.assertThat()
             .buildSuccessful()
@@ -54,7 +54,7 @@ internal class BuildMetricsPluginTest {
 
     @Test
     fun `send total build time - build`() {
-        val result = build(":app:preBuild")
+        val result = build(":app:preBuild", configurationCache = true)
 
         result.assertThat()
             .buildSuccessful()
@@ -100,7 +100,7 @@ internal class BuildMetricsPluginTest {
             ),
         ).map {
             dynamicTest("send total task time for app scenario - " + it.description) {
-                val result = build(*it.tasks)
+                val result = build(*it.tasks, configurationCache = true)
 
                 result.assertThat()
                     .buildSuccessful()
@@ -112,7 +112,7 @@ internal class BuildMetricsPluginTest {
         }
     }
 
-    private fun build(vararg args: String) =
-        BuildMetricsRunner(projectDir)
+    private fun build(vararg args: String, configurationCache: Boolean) =
+        BuildMetricsRunner(projectDir, configurationCache)
             .build(args.toList())
 }

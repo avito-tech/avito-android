@@ -10,12 +10,15 @@ import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.plugin.build_metrics.internal.core.StubBuildMetricsSender
 import com.avito.android.plugin.build_metrics.internal.gradle.cache.BuildCacheMetricsTracker
+import com.avito.android.plugin.build_metrics.internal.result.BuildResult
+import com.avito.android.plugin.build_metrics.internal.result.BuildStatus
 import com.avito.graphite.series.SeriesName
 import com.avito.logger.PrintlnLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
 import org.gradle.util.Path
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 internal class BuildCacheMetricsTrackerTest {
 
@@ -74,6 +77,12 @@ internal class BuildCacheMetricsTrackerTest {
                     cause = RuntimeException("unknown")
                 )
             )
+        ),
+        buildResult = BuildResult(
+            status = BuildStatus.Success,
+            startTime = Instant.now(),
+            configurationEndTime = Instant.now(),
+            finishTime = Instant.now(),
         )
     )
 

@@ -4,7 +4,6 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -12,7 +11,6 @@ import java.io.File
 internal class ConfigurationCacheCompatibilityTest {
 
     @Test
-    @Disabled
     fun `configuration with applied plugin - ok`(@TempDir projectDir: File) {
         TestProjectGenerator(
             name = "rootapp",
@@ -40,11 +38,9 @@ internal class ConfigurationCacheCompatibilityTest {
     }
 
     private fun runTask(projectDir: File): TestResult {
-        return BuildMetricsRunner(projectDir).build(
-            listOf(
-                ":app:preBuild",
-                "--configuration-cache"
+        return BuildMetricsRunner(projectDir)
+            .build(
+                listOf(":app:preBuild")
             )
-        )
     }
 }

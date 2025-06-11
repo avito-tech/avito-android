@@ -46,7 +46,7 @@ abstract class BaseTasksMetricsTest(
         ).generateIn(tempDir)
     }
 
-    protected fun build(vararg args: String) =
-        BuildMetricsRunner(projectDir)
+    protected fun build(vararg args: String, configurationCache: Boolean = true) =
+        BuildMetricsRunner(projectDir, configurationCache)
             .build(args.toList())
 }

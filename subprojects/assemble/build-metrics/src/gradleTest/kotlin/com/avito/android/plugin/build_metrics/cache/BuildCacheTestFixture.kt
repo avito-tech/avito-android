@@ -52,7 +52,7 @@ internal abstract class BuildCacheTestFixture {
     protected fun build(
         vararg args: String,
         useLocalCache: Boolean = true,
-        useRemoteCache: Boolean = true
+        useRemoteCache: Boolean = true,
     ) = BuildMetricsRunner(projectDir)
         .build(
             args.toList()

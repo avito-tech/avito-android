@@ -1,9 +1,8 @@
 package com.avito.android.plugin.build_metrics.internal.runtime
 
-import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.isFailure
 import com.avito.android.plugin.build_metrics.internal.BuildResultListener
-import com.avito.android.plugin.build_metrics.internal.BuildStatus
+import com.avito.android.plugin.build_metrics.internal.result.BuildResult
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.Timer
@@ -42,7 +41,7 @@ internal class RuntimeMetricsListener(
         }
     }
 
-    override fun onBuildFinished(status: BuildStatus, profile: BuildProfile) {
+    override fun onBuildFinished(result: BuildResult) {
         cancel()
     }
 

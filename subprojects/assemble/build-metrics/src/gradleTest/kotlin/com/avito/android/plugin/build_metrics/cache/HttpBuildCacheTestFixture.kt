@@ -73,10 +73,15 @@ internal abstract class HttpBuildCacheTestFixture {
         }
     }
 
+    protected fun cleanBuildDir() {
+        File(projectDir, "build").deleteRecursively()
+    }
+
     protected fun build(vararg args: String) =
         BuildMetricsRunner(projectDir)
             .build(
-                args.toList().plus(listOf(
+                args.toList()
+                    .plus(listOf(
                     "--build-cache",
                     // Cache errors can happen for Kotlin DSL scripts.
                     // It disables cache before applying the plugin for metrics

@@ -5,7 +5,7 @@ import com.avito.android.plugin.build_metrics.internal.core.BuildMetric
 import com.avito.graphite.series.SeriesName
 
 internal class PackageApplicationMetric(
-    private val time: Long,
+    private val duration: Long,
     private val status: String,
     private val module: String,
     private val appType: ApplicationType,
@@ -29,7 +29,7 @@ internal class PackageApplicationMetric(
 
         return GraphiteMetric(
             path = series,
-            value = time.toString()
+            value = duration.toString()
         )
     }
 }

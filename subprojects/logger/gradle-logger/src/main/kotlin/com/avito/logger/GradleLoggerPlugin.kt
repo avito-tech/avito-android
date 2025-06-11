@@ -55,7 +55,7 @@ public class GradleLoggerPlugin : Plugin<Project> {
         public fun getLoggerFactory(task: Task): LoggerFactory = LazyLoggerFactory(provideLoggerFactory(task))
         public fun getLoggerFactory(project: Project): LoggerFactory = LazyLoggerFactory(provideLoggerFactory(project))
 
-        private fun getLoggerService(project: Project): Provider<LoggerService> {
+        public fun getLoggerService(project: Project): Provider<LoggerService> {
             val rootProject = project.rootProject
             if (!rootProject.plugins.hasPlugin(GradleLoggerPlugin::class.java)) {
                 throw IllegalStateException(

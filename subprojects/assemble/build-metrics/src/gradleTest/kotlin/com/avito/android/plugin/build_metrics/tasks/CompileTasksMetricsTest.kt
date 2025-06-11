@@ -16,8 +16,18 @@ class CompileTasksMetricsTest : BaseTasksMetricsTest(
 ) {
 
     @Test
-    @Suppress("MaxLineLength")
     fun `execute compile - metrics exist`() {
+        check()
+    }
+
+    @Test
+    fun `execute compile with repeatedly - metrics exist`() {
+        check()
+        check()
+    }
+
+    @Suppress("MaxLineLength")
+    private fun check() {
         val result = build(":app:assembleDebug")
 
         result.assertThat()

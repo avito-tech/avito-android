@@ -1,4 +1,5 @@
 @file:Suppress("MaxLineLength")
+
 package com.avito.android.plugin.build_metrics.cache
 
 import com.avito.android.plugin.build_metrics.assertNoMetric
@@ -19,7 +20,8 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             storeStatus = 200,
             assertion = { result ->
                 result.assertNoMetric("build.metrics.test.builds.gradle.cache.errors.")
-            }
+            },
+            repeatableCheck = true,
         ),
         TestCase(
             name = "load error - 500 response",
@@ -27,7 +29,8 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             storeStatus = 200,
             assertion = { result ->
                 result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=load;error_type=500 1")
-            }
+            },
+            repeatableCheck = true,
         ),
         TestCase(
             name = "store error - 500 response",
@@ -35,7 +38,8 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             storeStatus = 500,
             assertion = { result ->
                 result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=store;error_type=500 1")
-            }
+            },
+            repeatableCheck = false,
         ),
         TestCase(
             name = "store error - unknown error",
@@ -43,7 +47,8 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             storeStatus = invalidHttpStatus,
             assertion = { result ->
                 result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=store;error_type=unknown 1")
-            }
+            },
+            repeatableCheck = false,
         ),
         TestCase(
             name = "load error - unknown error",
@@ -51,7 +56,8 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             storeStatus = 200,
             assertion = { result ->
                 result.assertHasEvents("build.metrics.test.builds.gradle.cache.errors;build_type=test;env=ci;operation_type=load;error_type=unknown 1")
-            }
+            },
+            repeatableCheck = false,
         ),
     )
 
@@ -97,7 +103,11 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
         val name: String,
         val loadStatus: Int,
         val storeStatus: Int,
-        val assertion: (result: TestResult) -> Unit
+        val assertion: (result: TestResult) -> Unit,
+        /**
+         * Execute test case second time to test repetitive builds. i.e. for conf cache
+         */
+        val repeatableCheck: Boolean,
     )
 
     @TestFactory
@@ -108,14 +118,20 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
 
                 try {
                     givenHttpBuildCache(loadHttpStatus = case.loadStatus, storeHttpStatus = case.storeStatus)
+                    fun check() {
+                        val result = build(":cacheMissTask")
 
-                    val result = build(":cacheMissTask")
+                        result.assertThat()
+                            .buildSuccessful()
+                            .taskWithOutcome(":cacheMissTask", TaskOutcome.SUCCESS)
 
-                    result.assertThat()
-                        .buildSuccessful()
-                        .taskWithOutcome(":cacheMissTask", TaskOutcome.SUCCESS)
-
-                    case.assertion(result)
+                        case.assertion(result)
+                    }
+                    check()
+                    if (case.repeatableCheck) {
+                        cleanBuildDir()
+                        check()
+                    }
                 } finally {
                     cleanup()
                 }

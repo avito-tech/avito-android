@@ -7,11 +7,14 @@ import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.plugin.build_metrics.internal.core.StubBuildMetricsSender
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.slow.SlowTasksMetricsTracker
+import com.avito.android.plugin.build_metrics.internal.result.BuildResult
+import com.avito.android.plugin.build_metrics.internal.result.BuildStatus
 import com.avito.graphite.series.SeriesName
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Task
 import org.gradle.util.Path
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 internal class SlowTasksMetricsTrackerTest {
 
@@ -156,6 +159,12 @@ internal class SlowTasksMetricsTrackerTest {
             tasksExecutions = tasks.toList(),
             cacheOperations = CacheOperations(
                 errors = emptyList()
+            ),
+            buildResult = BuildResult(
+                status = BuildStatus.Success,
+                startTime = Instant.now(),
+                configurationEndTime = Instant.now(),
+                finishTime = Instant.now(),
             )
         )
         listener.onBuildFinished(result)

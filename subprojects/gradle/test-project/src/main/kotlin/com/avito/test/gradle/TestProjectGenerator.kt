@@ -115,7 +115,6 @@ public class TestProjectGenerator(
 
             val settingsGradleContent = """
 pluginManagement {
-$settingsPlugins
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("com.android.")) {
@@ -125,6 +124,7 @@ $settingsPlugins
     }
 ${repositories()}
 }
+$settingsPlugins
 ${localBuildCache()}
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

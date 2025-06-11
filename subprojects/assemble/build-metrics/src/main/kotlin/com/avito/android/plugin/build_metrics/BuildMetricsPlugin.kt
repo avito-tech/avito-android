@@ -1,21 +1,39 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.android.critical_path.CriticalPathRegistry
-import com.avito.android.gradle.metric.GradleCollector
-import com.avito.android.plugin.build_metrics.internal.BuildMetricsPluginDI
-import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultListener
+import com.avito.android.graphite.graphiteConfig
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
-import com.avito.android.plugin.build_metrics.internal.BuildResultListener
-import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
-import com.avito.android.plugin.build_metrics.internal.runtime.MetricsCollector
-import com.avito.android.plugin.build_metrics.internal.runtime.RuntimeMetricsListener
+import com.avito.android.plugin.build_metrics.internal.di.NotCompatibleWithConfigurationCacheDI
+import com.avito.android.plugin.build_metrics.internal.di.NotCompatibleWithConfigurationCacheDI.Companion.isTestProperty
+import com.avito.android.plugin.build_metrics.internal.result.BuildResultFlowAction
+import com.avito.android.stats.statsdConfig
 import com.avito.kotlin.dsl.isRoot
+import com.avito.logger.GradleLoggerCoordinates
 import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.configuration.BuildFeatures
+import org.gradle.api.flow.FlowProviders
+import org.gradle.api.flow.FlowScope
+import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
 import org.gradle.kotlin.dsl.create
+import javax.inject.Inject
 
-public open class BuildMetricsPlugin : Plugin<Project> {
+public abstract class BuildMetricsPlugin : Plugin<Project> {
+
+    @get:Inject
+    internal abstract val buildEventListenerRegistryInternal: BuildEventListenerRegistryInternal
+
+    @Suppress("UnstableApiUsage")
+    @get:Inject
+    internal abstract val flowScope: FlowScope
+
+    @Suppress("UnstableApiUsage")
+    @get:Inject
+    internal abstract val flowProviders: FlowProviders
+
+    @get:Inject
+    internal abstract val buildFeatures: BuildFeatures
 
     override fun apply(project: Project) {
         check(project.isRoot()) {
@@ -28,7 +46,7 @@ public open class BuildMetricsPlugin : Plugin<Project> {
             project.logger.lifecycle("Build metrics plugin is disabled")
             return
         }
-        // values from extension are not available earlier
+
         project.afterEvaluate {
             if (!extension.buildType.isPresent || !extension.environment.isPresent) {
                 project.logger.warn(
@@ -45,98 +63,60 @@ public open class BuildMetricsPlugin : Plugin<Project> {
                 """.trimIndent()
                 )
             } else {
-                val di = BuildMetricsPluginDI(
-                    project,
-                    extension,
-                    GradleLoggerPlugin.getLoggerFactory(project)
-                )
-                registerListeners(di, extension)
+                val collector = project
+                    .gradle
+                    .sharedServices
+                    .registerIfAbsent("bmp", BuildOperationsResultProvider::class.java) {
+                        with(it.parameters) {
+                            loggerService.set(GradleLoggerPlugin.getLoggerService(project))
+                            loggerCoordinates.set(GradleLoggerCoordinates(project.path))
+                            test.set(project.hasProperty(isTestProperty))
+                            buildType.set(extension.buildType)
+                            environment.set(extension.environment)
+                            statsdConfig.set(project.statsdConfig)
+                            graphiteConfig.set(project.graphiteConfig)
+                            sendCompileMetrics.set(extension.sendCompileMetrics)
+                            compileMetricsMinimumDuration.set(extension.compileMetricsMinimumDuration)
+                            sendSlowTaskMetrics.set(extension.sendSlowTaskMetrics)
+                            slowTaskMinimumDuration.set(extension.slowTaskMinimumDuration)
+                            sendBuildCacheMetrics.set(extension.sendBuildCacheMetrics)
+                            canTrackRemoteCache.set(BuildOperationsResultProvider.canTrackRemoteCache(project))
+                            buildCacheObservableTasks.set(extension.buildCacheObservableTasks)
+                            writeModulesBuildTime.set(extension.writeModulesBuildTime)
+                            modulesBuildTimeFile.set(extension.modulesBuildTimeFile)
+                            sendJvmMetrics.set(extension.sendJvmMetrics)
+                            sendOsMetrics.set(extension.sendOsMetrics)
+                            sendBuildInitConfiguration.set(extension.sendBuildInitConfiguration)
+                            sendBuildTotal.set(extension.sendBuildTotal)
+                            sendAppBuildTime.set(extension.sendAppBuildTime)
+                        }
+                    }
+
+                @Suppress("UnstableApiUsage")
+                flowScope.always(BuildResultFlowAction::class.java) {
+                    it.parameters.buildWorkResult.set(flowProviders.buildWorkResult)
+                }
+
+                buildEventListenerRegistryInternal.onOperationCompletion(collector)
+
+                if (!buildFeatures.configurationCache.active.get()) {
+                    val di = NotCompatibleWithConfigurationCacheDI(
+                        project,
+                        extension,
+                        GradleLoggerPlugin.getLoggerFactory(project)
+                    )
+                    registerNotCompatibleWithCCListeners(di, extension)
+                }
             }
         }
     }
 
-    private fun registerListeners(
-        di: BuildMetricsPluginDI,
+    private fun registerNotCompatibleWithCCListeners(
+        di: NotCompatibleWithConfigurationCacheDI,
         extension: BuildMetricsExtension,
     ) {
         if (extension.sendCriticalPathMetrics.get()) {
             CriticalPathRegistry.addListener(di.project, di.criticalPathTracker)
-        }
-
-        val buildResultListeners = createBuildResultListeners(extension, di)
-        val buildOperationResultListeners = createBuildOperationsResultListeners(extension, di)
-
-        val eventListeners = buildList {
-            if (buildResultListeners.isNotEmpty()) {
-                add(CompositeBuildMetricsListener(buildResultListeners, di.loggerFactory))
-            }
-            if (buildOperationResultListeners.isNotEmpty()) {
-                add(BuildOperationsResultProvider.register(di.project, buildOperationResultListeners, di.loggerFactory))
-            }
-        }
-        if (eventListeners.isNotEmpty()) {
-            GradleCollector.initialize(
-                "BuildMetrics",
-                di.project,
-                eventListeners
-            )
-        }
-    }
-
-    private fun createBuildOperationsResultListeners(
-        extension: BuildMetricsExtension,
-        di: BuildMetricsPluginDI
-    ): List<BuildOperationsResultListener> {
-        return buildList {
-            if (extension.sendCompileMetrics.get()) {
-                add(di.compileMetricsTracker)
-            }
-            if (extension.sendSlowTaskMetrics.get()) {
-                add(di.slowTasksMetricsTracker)
-            }
-            if (extension.sendBuildCacheMetrics.get() &&
-                BuildOperationsResultProvider.canTrackRemoteCache(di.project)
-            ) {
-                add(di.cacheMetricsTracker)
-            }
-            if (extension.writeModulesBuildTime.get()) {
-                add(di.techBudgetBuildTimeWriter)
-            }
-        }
-    }
-
-    private fun createBuildResultListeners(
-        extension: BuildMetricsExtension,
-        di: BuildMetricsPluginDI
-    ): List<BuildResultListener> {
-        return buildList {
-            val runtimeMetricsCollectors = createRuntimeMetricsCollectors(extension, di)
-            if (runtimeMetricsCollectors.isNotEmpty()) {
-                add(RuntimeMetricsListener(runtimeMetricsCollectors))
-            }
-            if (extension.sendBuildInitConfiguration.get()) {
-                add(di.initConfigurationListener)
-            }
-            if (extension.sendBuildTotal.get()) {
-                add(di.totalBuildTimeListener)
-            }
-            if (extension.sendAppBuildTime.get()) {
-                add(di.appBuildTimeListener)
-            }
-        }
-    }
-
-    private fun createRuntimeMetricsCollectors(
-        extension: BuildMetricsExtension,
-        di: BuildMetricsPluginDI
-    ): List<MetricsCollector> {
-        return buildList {
-            if (extension.sendJvmMetrics.get()) {
-                add(di.jvmMetricsCollector)
-            }
-            if (extension.sendOsMetrics.get()) {
-                add(di.osMetricsCollector)
-            }
         }
     }
 }
