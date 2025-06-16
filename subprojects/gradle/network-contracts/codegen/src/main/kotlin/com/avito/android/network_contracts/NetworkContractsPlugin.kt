@@ -14,17 +14,25 @@ import com.avito.android.network_contracts.scheme.imports.ApiSchemesImportTask
 import com.avito.android.network_contracts.shared.networkContractsExtension
 import com.avito.android.network_contracts.shared.networkContractsRootExtension
 import com.avito.android.network_contracts.shared.reportFile
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsSchemesTask
+import com.avito.android.network_contracts.validation.NetworkContractsCompositeTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsTask
+import com.avito.android.network_contracts.validation.analyzer.rules.configurations.EmptyCodegenTomlRuleConfiguration
+import com.avito.android.network_contracts.validation.analyzer.rules.configurations.EmptySchemesRuleConfiguration
+import com.avito.android.network_contracts.validation.analyzer.rules.configurations.RemoteCompatibilityRuleConfiguration
+import com.avito.android.network_contracts.validation.data.ValidationApiSchemesServiceImpl
+import com.avito.android.network_contracts.validation.registerRule
 import com.avito.capitalize
+import com.avito.git.gitStateProvider
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.kotlin.dsl.toOptional
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.kotlin.dsl.withType
+import com.avito.kotlin.dsl.zip
 import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
@@ -54,8 +62,8 @@ public class NetworkContractsPlugin : Plugin<Project> {
         }
 
         configureAddEndpointTask(target)
-        configureValidationTask(target)
         configureCollectSchemesTask(target)
+        configureValidationTask(target)
     }
 
     private fun createNetworkContractsExtension(project: Project) {
@@ -176,45 +184,105 @@ public class NetworkContractsPlugin : Plugin<Project> {
     }
 
     private fun configureValidationTask(
-        project: Project
+        project: Project,
     ) {
         val rootTask = project.rootProject.tasks
-            .withType<ValidateNetworkContractsRootTask>()
+            .withType<NetworkContractsCompositeTask>()
+            .named(ValidateNetworkContractsTask.NAME)
 
-        val codegenTasks = registerCodegenTask(
+        val networkContractsModuleExtension = project.networkContractsExtension
+        val codegenValidateTask = registerCodegenTask(
             name = CodegenTask.NAME,
             variant = "validate",
             target = project,
             forceValidation = true
         )
+        val validationByCodegenProperty = networkContractsModuleExtension.validationByCodegen
+        val rawSchemes = validationByCodegenProperty.flatMap { validationByCodegen ->
+            if (validationByCodegen) {
+                codegenValidateTask.map { it.schemesDir.asFileTree }
+            } else {
+                networkContractsModuleExtension.apiSchemesDirectory.map { it.asFileTree }
+            }
+        }
+        val codegenTomlFile = project.objects.fileProperty()
+            .convention(project.layout.projectDirectory.file(project.provider { "codegen.toml" }))
+            .toOptional()
 
-        val validateSchemesTask = project.tasks
-            .register<ValidateNetworkContractsSchemesTask>(ValidateNetworkContractsSchemesTask.NAME) {
-                this.projectPath.set(project.path)
-                this.schemes.from(codegenTasks.map { it.schemesDir })
-                this.codegenTomlFilePath.set(
-                    project.objects.fileProperty()
-                        .convention(project.layout.projectDirectory.file(project.provider { "codegen.toml" }))
-                        .toOptional()
-                )
-                this.failFast.set(project.networkContractsExtension.failFast)
-                this.verdictFile.set(
-                    project.reportFile(
-                        directory = "networkContracts",
-                        reportFileName = "codegenValidationSchemesVerdict.txt"
-                    )
-                )
+        val collectApiSchemesTask = project.tasks.withType<CollectApiSchemesTask>()
+            .named(CollectApiSchemesTask.NAME)
 
-                resultFile.set(
-                    project.reportFile(
-                        directory = "networkContracts",
-                        reportFileName = "codegenValidationSchemesReport.json"
-                    )
-                )
+        val httpClient = HttpClientService.provideHttpClientService(project)
+
+        val emptyFilesValidationTask = project.registerValidationTask("validateNetworkContractsFiles") {
+            registerRule<EmptyCodegenTomlRuleConfiguration>("emptyCodegenToml") {
+                modulePath.set(project.path)
+                this.codegenTomlFile.set(codegenTomlFile)
+            }
+            registerRule<EmptySchemesRuleConfiguration>("emptySchemes") {
+                modulePath.set(project.path)
+                schemes.from(rawSchemes)
+            }
+        }
+
+        val remoteCompatibilityValidationTask = project.registerValidationTask(
+            name = "validateNetworkContractsByRemote",
+        ) {
+            // Run rule only if validationByCodegen is false and the schemes are not empty
+            val schemesMetadata = validationByCodegenProperty
+                .zip(rawSchemes, codegenTomlFile) { validationByCodegen, rawSchemes, codegenTomlFile ->
+                    val fromCollectTask = !validationByCodegen
+                        && rawSchemes.files.isNotEmpty()
+                        && codegenTomlFile?.asFile?.exists() == true
+
+                    if (fromCollectTask) {
+                        collectApiSchemesTask.map { it.jsonSchemeMetadataFile }
+                    } else {
+                        Providers.notDefined()
+                    }
+                }
+                .flatMap { it }
+
+            this.requiredVerdicts.from(emptyFilesValidationTask.flatMap { it.verdictFile })
+
+            registerRule<RemoteCompatibilityRuleConfiguration>("remote") {
+                branchName.set(project.gitStateProvider().map { it.currentBranch.name })
+                validationService.set(httpClient.map { ValidationApiSchemesServiceImpl(it.buildClient()) })
+
+                logger.lifecycle("Schemes meta is present: ${schemesMetadata.isPresent}")
+                if (schemesMetadata.isPresent) {
+                    schemes.setFrom(schemesMetadata)
+                }
+                modulePath.set(project.path)
             }
 
-        rootTask.configureEach {
-            it.reports.from(validateSchemesTask.map { it.resultFile })
+            onlyIf { schemesMetadata.isPresent }
+        }
+
+        val compositeTask = project.tasks.register<NetworkContractsCompositeTask>(ValidateNetworkContractsTask.NAME) {
+            reports.from(emptyFilesValidationTask.map { it.verdictFile })
+            reports.from(remoteCompatibilityValidationTask.map { it.verdictFile })
+        }
+
+        rootTask.configure {
+            it.reports.from(compositeTask.map { it.output })
+        }
+    }
+
+    private fun Project.registerValidationTask(
+        name: String,
+        builder: ValidateNetworkContractsTask.() -> Unit = {}
+    ): TaskProvider<ValidateNetworkContractsTask> {
+        return tasks.register<ValidateNetworkContractsTask>(name).apply {
+            configure { task ->
+                task.verdictFile.set(
+                    project.reportFile(
+                        directory = "networkContracts",
+                        reportFileName = "${name}Verdict.txt"
+                    )
+                )
+                builder.invoke(task)
+            }
         }
     }
 

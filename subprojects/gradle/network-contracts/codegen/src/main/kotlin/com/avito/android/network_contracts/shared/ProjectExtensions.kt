@@ -34,3 +34,12 @@ internal fun Project.reportFile(directory: String, reportFileName: String): Prov
         .map { it.dir(directory) }
         .map { it.file(reportFileName) }
 }
+
+/**
+ * Extract scheme version from git branch name:
+ *  * develop -> develop
+ *  * release-avito/165.0 -> 165.0
+ */
+internal fun extractSchemesVersionFromBranch(branchName: String): String {
+    return branchName.split("/").last()
+}

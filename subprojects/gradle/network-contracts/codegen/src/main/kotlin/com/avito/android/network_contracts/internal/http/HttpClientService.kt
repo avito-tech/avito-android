@@ -30,6 +30,7 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
         val serviceUrl: Property<String>
         val tlsCredentialsService: Property<TlsCredentialsService>
         val useTls: Property<Boolean>
+        val timeouts: Property<Timeouts>
     }
 
     internal fun buildClient(
@@ -42,12 +43,19 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
                     HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC)
                 )
             }
+            if (parameters.timeouts.isPresent) {
+                val timeouts = parameters.timeouts.get()
+                connectTimeout(timeouts.connectTimeout)
+                readTimeout(timeouts.readTimeout)
+                writeTimeout(timeouts.writeTimeout)
+            }
         }
 
         return HttpClient(OkHttp) {
             install(ContentNegotiation) {
                 json()
             }
+
             defaultRequest { url(serviceUrl.get()) }
             builder.invoke(this)
 
@@ -84,6 +92,7 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
                     it.serviceUrl.set(networkContractsRootExtension.serviceUrl)
                     it.tlsCredentialsService.set(TlsConfigurationPlugin.provideCredentialsService(project))
                     it.useTls.set(networkContractsRootExtension.useTls)
+                    it.timeouts.set(networkContractsRootExtension.networkTimeouts)
                 }
             }
         }

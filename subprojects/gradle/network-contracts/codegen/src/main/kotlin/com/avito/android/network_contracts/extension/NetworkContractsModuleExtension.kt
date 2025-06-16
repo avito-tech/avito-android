@@ -46,6 +46,9 @@ public abstract class NetworkContractsModuleExtension(
     public val outputTransformers: NamedDomainObjectContainer<OutputTransformerConfiguration> = objects
         .domainObjectContainer(OutputTransformerConfiguration::class.java)
 
+    public val validationByCodegen: Property<Boolean> = objects.property<Boolean>()
+        .convention(true)
+
     internal companion object {
         internal const val NAME = "networkContracts"
     }

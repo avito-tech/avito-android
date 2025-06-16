@@ -48,6 +48,7 @@ internal fun defaultModule(
     generatedDirectory: String = DEFAULT_BUILD_DIRECTORY,
     skipValidation: Boolean = true,
     failFast: Boolean = false,
+    validationByCodegen: Boolean = true,
     buildExtra: String = "",
 ): KotlinModule {
     return KotlinModule(
@@ -63,6 +64,7 @@ internal fun defaultModule(
             generatedDirectory,
             buildExtra,
             failFast,
+            validationByCodegen,
         ),
         useKts = true
     )
@@ -76,6 +78,7 @@ private fun buildGradleExtra(
     generatedDirectory: String = DEFAULT_BUILD_DIRECTORY,
     buildExtra: String = "",
     failFast: Boolean = false,
+    validationByCodegen: Boolean = true,
 ): String {
     return """
         networkContracts {
@@ -86,6 +89,7 @@ private fun buildGradleExtra(
             failFast.set($failFast)
             apiSchemesDirectory.set(project.layout.projectDirectory.dir("$apiSchemesDirectory"))
             generatedDirectory.set(project.layout.projectDirectory.dir("$generatedDirectory"))
+            validationByCodegen.set($validationByCodegen)
         }
         $buildExtra
     """.trimIndent()
@@ -98,10 +102,12 @@ object NetworkCodegenProjectGenerator {
         serviceUrl: String = "www.avito.ru/",
         generatedClassesPackage: String = DEFAULT_GENERATED_PACKAGE,
         skipValidation: Boolean = true,
+        validationByCodegen: Boolean = true,
         modules: List<Module> = listOf(
             defaultModule(
                 generatedClassesPackage = generatedClassesPackage,
                 skipValidation = skipValidation,
+                validationByCodegen = validationByCodegen,
             )
         ),
         @Language("kotlin") buildExtra: String = ""
@@ -147,6 +153,7 @@ object NetworkCodegenProjectGenerator {
         val generatedFiles = ApiSchemesFilesGenerator(apiSchemesDir).generateFiles(schemes)
         val codegenFile = File(projectDir, "codegen.toml")
         codegenFile.createNewFile()
+        codegenFile.writeText("codegen")
         return generatedFiles + codegenFile
     }
 

@@ -4,6 +4,7 @@ import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.collect.ApiSchemesMetadata
 import com.avito.android.network_contracts.scheme.fixation.upsert.data.UpdateApiSchemesService
 import com.avito.android.network_contracts.scheme.fixation.upsert.data.UpdateApiSchemesServiceImpl
+import com.avito.android.network_contracts.shared.extractSchemesVersionFromBranch
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import kotlinx.coroutines.runBlocking
@@ -11,10 +12,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
@@ -34,8 +33,9 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val schemes: ConfigurableFileCollection
 
-    @get:InputFile
-    public abstract val validationReport: RegularFileProperty
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    public abstract val validationReports: ConfigurableFileCollection
 
     @get:Internal
     internal abstract val httpClientService: Property<HttpClientService>
@@ -47,9 +47,9 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
 
     @TaskAction
     public fun upsert() {
-        val validationResult = validationReport.get().asFile.readText()
+        val validationFailed = validationReports.any { it.readText() != "OK" }
 
-        if (validationResult != "OK") {
+        if (validationFailed) {
             error("Validation schemes failed.")
         }
 
@@ -63,24 +63,15 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
         val service: UpdateApiSchemesService = UpdateApiSchemesServiceImpl(httpClient)
 
         val apiSchemes = schemes
-            .map { Json.decodeFromStream<ApiSchemesMetadata>(it.inputStream()) }
+            .map { schema -> schema.inputStream().use { Json.decodeFromStream<ApiSchemesMetadata>(it) } }
 
         runBlocking {
             service.sendContracts(
                 author = author.get(),
-                version = extractSchemesVersion(),
+                version = extractSchemesVersionFromBranch(branchName.get()),
                 schemes = apiSchemes,
             )
         }
-    }
-
-    /**
-     * Extract scheme version from git branch name:
-     *  * develop -> develop
-     *  * release-avito/165.0 -> 165.0
-     */
-    private fun extractSchemesVersion(): String {
-        return branchName.get().split("/").last()
     }
 
     internal companion object {

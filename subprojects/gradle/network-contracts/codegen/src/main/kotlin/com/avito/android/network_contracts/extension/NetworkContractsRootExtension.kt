@@ -1,5 +1,6 @@
 package com.avito.android.network_contracts.extension
 
+import com.avito.android.network_contracts.internal.http.Timeouts
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
@@ -9,6 +10,8 @@ public abstract class NetworkContractsRootExtension(
 ) {
 
     public val useTls: Property<Boolean> = objects.property<Boolean>().convention(true)
+
+    public abstract val networkTimeouts: Property<Timeouts>
 
     public abstract val serviceUrl: Property<String>
 

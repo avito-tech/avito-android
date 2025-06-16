@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class NetworkContractsIssue(
     val key: String = this::class.java.name,
+    val title: String = key,
 )
 
 @Serializable

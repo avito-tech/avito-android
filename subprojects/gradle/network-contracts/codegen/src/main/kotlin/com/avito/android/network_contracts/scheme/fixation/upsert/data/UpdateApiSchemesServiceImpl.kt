@@ -25,7 +25,14 @@ internal class UpdateApiSchemesServiceImpl(
         version: String,
         schemes: List<ApiSchemesMetadata>
     ): Unit = supervisorScope {
-        val projectSchemes = ApiSchemesMapper.mapSchemesToRequest(author, version, schemes)
+        val projectSchemes = ApiSchemesMapper.mapSchemesToRequest(schemes) { projectName, schemes ->
+            UpdateApiSchemesRequest(
+                author = author,
+                appName = projectName,
+                version = version,
+                clientSchema = UpdateApiSchemesRequest.Schema(schemes.toMap()),
+            )
+        }
 
         val updateProjectContractsJobs = projectSchemes
             .map { request -> async { sendProjectContracts(request) } }

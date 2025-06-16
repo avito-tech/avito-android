@@ -1,7 +1,6 @@
 package com.avito.android.network_contracts.scheme.fixation.upsert.data
 
 import com.avito.android.network_contracts.scheme.fixation.collect.ApiSchemesMetadata
-import com.avito.android.network_contracts.scheme.fixation.upsert.data.models.UpdateApiSchemesRequest
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -13,23 +12,25 @@ class ApiSchemesMapperTest {
         val author = "test"
         val version = "develop"
         val projectName = "test_project"
-        val schemes = mapOf(
+        val schemes = listOf(
             "api1" to "content1",
             "api2" to "content2"
         )
 
         val schemesMetadata = listOf(
-            ApiSchemesMetadata(projectName, schemes)
+            ApiSchemesMetadata(projectName, schemes.toMap())
         )
 
-        val requests = ApiSchemesMapper.mapSchemesToRequest(author, version, schemesMetadata)
+        val requests = ApiSchemesMapper.mapSchemesToRequest(schemesMetadata) { schemesProjectName, innerSchemes ->
+            TestSchemesRequest(author, schemesProjectName, version, innerSchemes)
+        }
         assertThat(requests).hasSize(schemesMetadata.size)
 
-        val expectedRequest = UpdateApiSchemesRequest(
+        val expectedRequest = TestSchemesRequest(
             author,
             projectName,
             version,
-            UpdateApiSchemesRequest.Schema(schemes)
+            schemes
         )
         assertThat(requests).contains(expectedRequest)
     }
@@ -39,24 +40,26 @@ class ApiSchemesMapperTest {
         val author = "test"
         val version = "develop"
         val projectName = "test_project"
-        val schemes1 = mapOf("api1" to "content1")
-        val schemes2 = mapOf("api2" to "content2")
+        val schemes1 = "api1" to "content1"
+        val schemes2 = "api2" to "content2"
 
         val schemesMetadata = listOf(
-            ApiSchemesMetadata(projectName, schemes1),
-            ApiSchemesMetadata(projectName, schemes2),
+            ApiSchemesMetadata(projectName, mapOf(schemes1)),
+            ApiSchemesMetadata(projectName, mapOf(schemes2)),
         )
 
-        val expectedSchemes = schemes1 + schemes2
+        val expectedSchemes = listOf(schemes1, schemes2)
 
-        val requests = ApiSchemesMapper.mapSchemesToRequest(author, version, schemesMetadata)
+        val requests = ApiSchemesMapper.mapSchemesToRequest(schemesMetadata) { schemesProjectName, innerSchemes ->
+            TestSchemesRequest(author, schemesProjectName, version, innerSchemes)
+        }
         assertThat(requests).hasSize(1)
 
-        val expectedRequest = UpdateApiSchemesRequest(
+        val expectedRequest = TestSchemesRequest(
             author,
             projectName,
             version,
-            UpdateApiSchemesRequest.Schema(expectedSchemes)
+            expectedSchemes
         )
         assertThat(requests).contains(expectedRequest)
     }
@@ -71,7 +74,16 @@ class ApiSchemesMapperTest {
             ApiSchemesMetadata(projectName, emptyMap()),
         )
 
-        val requests = ApiSchemesMapper.mapSchemesToRequest(author, version, schemesMetadata)
+        val requests = ApiSchemesMapper.mapSchemesToRequest(schemesMetadata) { schemesProjectName, innerSchemes ->
+            TestSchemesRequest(author, schemesProjectName, version, innerSchemes)
+        }
         assertThat(requests).isEmpty()
     }
+
+    private data class TestSchemesRequest(
+        val author: String,
+        val projectName: String,
+        val version: String,
+        val schemes: List<Pair<String, String>>,
+    )
 }

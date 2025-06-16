@@ -3,7 +3,7 @@ package com.avito.android.network_contracts
 import com.avito.android.network_contracts.scheme.fixation.collect.CollectApiSchemesTask
 import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
 import com.avito.android.network_contracts.scheme.imports.ApiSchemesImportTask
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsTask
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.Module
@@ -44,7 +44,7 @@ class ConfigurationTestCompatibilityTest {
 
     @Test
     fun `configuration with applied plugin and contracts validation task - ok`(@TempDir projectDir: File) {
-        checkConfigurationCacheCompatibility(projectDir, ValidateNetworkContractsRootTask.NAME)
+        checkConfigurationCacheCompatibility(projectDir, ValidateNetworkContractsTask.NAME)
     }
 
     @Test

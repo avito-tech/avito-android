@@ -10,7 +10,7 @@ import com.avito.android.network_contracts.scheme.imports.data.models.SchemaEntr
 import com.avito.android.network_contracts.scheme.imports.mocks.apiSchemaImportResponseMock
 import com.avito.android.network_contracts.scheme.imports.mocks.mockBase64ContentFile
 import com.avito.android.network_contracts.scheme.upsert.mocks.generateExpectedJson
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsTask
 import com.avito.git.Git
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -66,7 +66,8 @@ internal class UpdateRemoteApiSchemesTaskTest {
         runTask(projectDir, dryRun = true)
             .assertThat()
             .tasksShouldBeTriggered(
-                ":${ValidateNetworkContractsRootTask.NAME}",
+                ":$moduleName:${ValidateNetworkContractsTask.NAME}",
+                ":${ValidateNetworkContractsTask.NAME}",
                 ":$moduleName:${CollectApiSchemesTask.NAME}",
                 ":${UpdateRemoteApiSchemesTask.NAME}"
             )
@@ -220,7 +221,7 @@ internal class UpdateRemoteApiSchemesTaskTest {
                 "${UpdateRemoteApiSchemesTask.NAME}", 
                 ${UpdateRemoteApiSchemesTask::class.qualifiedName}::class.java
             ).configure {
-                validationReport.set(project.file("${reportFile.path}"))
+                validationReports.setFrom(project.file("${reportFile.path}"))
             }
         """.trimIndent()
     }

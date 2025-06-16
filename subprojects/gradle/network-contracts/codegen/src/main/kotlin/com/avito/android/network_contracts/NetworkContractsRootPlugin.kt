@@ -5,8 +5,8 @@ import com.avito.android.network_contracts.configuration.codegenConfiguration
 import com.avito.android.network_contracts.extension.NetworkContractsRootExtension
 import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
-import com.avito.android.network_contracts.shared.reportFile
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsRootTask
+import com.avito.android.network_contracts.validation.NetworkContractsCompositeTask
+import com.avito.android.network_contracts.validation.ValidateNetworkContractsTask
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.git.gitStateProvider
 import com.avito.kotlin.dsl.getMandatoryStringProperty
@@ -49,23 +49,19 @@ public class NetworkContractsRootPlugin : Plugin<Project> {
     private fun configureVerificationRootTask(
         project: Project
     ) {
-        project.tasks.register<ValidateNetworkContractsRootTask>(ValidateNetworkContractsRootTask.NAME) {
-            this.rootDir.set(project.rootDir)
-            this.projectPath.set(project.path)
-            this.verdictFile.set(project.reportFile("networkContracts", "validation.txt"))
-        }
+        project.tasks.register<NetworkContractsCompositeTask>(ValidateNetworkContractsTask.NAME)
     }
 
     private fun configureContractFixationTask(project: Project) {
         val validationTask = project.rootProject.tasks
-            .typedNamed<ValidateNetworkContractsRootTask>(ValidateNetworkContractsRootTask.NAME)
+            .typedNamed<NetworkContractsCompositeTask>(ValidateNetworkContractsTask.NAME)
 
         project.tasks.register(UpdateRemoteApiSchemesTask.NAME, UpdateRemoteApiSchemesTask::class.java) {
             it.httpClientService.set(HttpClientService.provideHttpClientService(project))
             it.author.set(project.getMandatoryStringProperty("avito.networkContracts.fixation.author"))
             it.branchName.set(project.gitStateProvider().map { it.currentBranch.name })
             it.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(project))
-            it.validationReport.set(validationTask.flatMap { it.verdictFile })
+            it.validationReports.from(validationTask.map { it.output })
         }
     }
 }
