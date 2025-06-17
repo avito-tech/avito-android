@@ -2,6 +2,8 @@ package com.avito.android.test
 
 import android.Manifest.permission.QUERY_ALL_PACKAGES
 import android.app.Application
+import android.app.Notification.EXTRA_TEXT
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -25,7 +27,6 @@ import com.avito.android.test.page_object.KeyboardElement
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 
 /**
@@ -154,21 +155,23 @@ public object Device {
             expectedTitle: String,
             timeoutMillis: Long = UITestConfig.openNotificationTimeoutMilliseconds
         ) {
-            val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-            device.openNotification()
-            assertTrue(
-                "Waiting for notification with title: $expectedTitle was exceeded timeout: $timeoutMillis milliseconds",
-                device.wait(Until.hasObject(By.text(expectedTitle)), timeoutMillis)
-            )
-            val titleObject = device.findObject(By.text(expectedTitle))
-            assertEquals(
-                "Notification has incorrect title",
-                expectedTitle,
-                titleObject.text
-            )
-            // it is possible to add a sleep here
-            // to let some time to item to be synchronized with device after reject, message, etc
-            titleObject.click()
+            val context = ApplicationProvider.getApplicationContext<Application>()
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            waitFor(timeoutMs = timeoutMillis) {
+                val sbn = notificationManager.activeNotifications
+                    .firstOrNull { active ->
+                        val title = active.notification.extras
+                            .getCharSequence(EXTRA_TEXT)
+                            ?.toString()
+                        title == expectedTitle
+                    } ?: throw AssertionError(
+                    "Notification \"$expectedTitle\" not received within $timeoutMillis ms on device"
+                )
+
+                sbn.notification.contentIntent.send()
+            }
         }
 
         public fun receiveNotification(init: Notification.() -> Unit) {
