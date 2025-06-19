@@ -47,7 +47,9 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
 
     @TaskAction
     public fun upsert() {
-        val validationFailed = validationReports.any { it.readText() != "OK" }
+        val validationFailed = validationReports
+            .filter { it.exists() }
+            .any { it.readText() != "OK" }
 
         if (validationFailed) {
             error("Validation schemes failed.")
