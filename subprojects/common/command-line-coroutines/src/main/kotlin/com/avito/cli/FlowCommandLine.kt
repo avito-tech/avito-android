@@ -3,34 +3,46 @@ package com.avito.cli
 import com.avito.cli.Notification.Exit
 import com.avito.cli.Notification.Output
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.coroutines.cancellation.CancellationException
 
-@ExperimentalCoroutinesApi
-public class FlowCommandLine(command: String, args: List<String>) : CommandLine(command, args) {
-
+public class FlowCommandLine(
+    command: String,
+    args: List<String>,
+) : CommandLine(
+    command = command,
+    args = args,
+) {
     public fun start(output: File? = null): Flow<Notification> {
-        return flow {
-            startInternal(
-                output,
-                { notification ->
-                    when (notification) {
-                        is Output -> emit(notification)
-                        is Exit -> emit(notification)
+        return callbackFlow {
+            launch {
+                startInternal(
+                    output = output,
+                    onNotification = { notification ->
+                        when (notification) {
+                            is Output -> trySendBlocking(notification)
+                            is Exit -> {
+                                trySendBlocking(notification)
+                                channel.close()
+                            }
+                        }
+                    },
+                    onError = { error ->
+                        cancel(CancellationException(error))
+                        throw error
                     }
-                },
-                { error ->
-                    throw error
-                }
-            )
-        }.flowOn(Dispatchers.IO)
-            .onCompletion {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                close()
+                )
             }
+            awaitClose {
+                this@FlowCommandLine.close()
+            }
+        }.flowOn(Dispatchers.IO)
     }
 }
