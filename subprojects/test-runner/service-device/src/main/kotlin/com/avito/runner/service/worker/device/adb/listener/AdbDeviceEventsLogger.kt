@@ -4,7 +4,7 @@ import com.avito.logger.Logger
 import com.avito.runner.service.worker.device.Device
 import java.nio.file.Path
 
-internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEventsListener {
+public class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEventsListener {
 
     override fun onGetSdkPropertySuccess(attempt: Int, api: Int, durationMs: Long) {
         logger.info("Got ro.build.version.sdk = $api")

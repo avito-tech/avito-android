@@ -1,28 +1,22 @@
 package com.avito.runner.service.worker.device.adb.listener
 
-import com.avito.android.stats.StatsDSender
-import com.avito.android.stats.TimeMetric
-import com.avito.graphite.series.SeriesName
 import com.avito.runner.service.worker.device.Device
 import java.nio.file.Path
 
-internal class AdbDeviceMetrics(
-    private val statsDSender: StatsDSender,
-    runnerPrefix: SeriesName
+public class CompositeAdbDeviceEventListener(
+    private val listeners: List<AdbDeviceEventsListener>
 ) : AdbDeviceEventsListener {
 
-    private val prefix = runnerPrefix.append("adb")
-
     override fun onGetSdkPropertySuccess(attempt: Int, api: Int, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefix.append("get-sdk-property", "success"), durationMs))
+        listeners.forEach { it.onGetSdkPropertySuccess(attempt, api, durationMs) }
     }
 
     override fun onGetSdkPropertyError(attempt: Int, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefix.append("get-sdk-property", "error"), durationMs))
+        listeners.forEach { it.onGetSdkPropertyError(attempt, durationMs) }
     }
 
     override fun onGetSdkPropertyFailure(throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefix.append("get-sdk-property", "failure"), durationMs))
+        listeners.forEach { it.onGetSdkPropertyFailure(throwable, durationMs) }
     }
 
     override fun onInstallApplicationSuccess(
@@ -31,7 +25,7 @@ internal class AdbDeviceMetrics(
         applicationPackage: String,
         durationMs: Long
     ) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("install-application", "success"), durationMs))
+        listeners.forEach { it.onInstallApplicationSuccess(device, attempt, applicationPackage, durationMs) }
     }
 
     override fun onInstallApplicationError(
@@ -41,7 +35,7 @@ internal class AdbDeviceMetrics(
         throwable: Throwable,
         durationMs: Long
     ) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("install-application", "error"), durationMs))
+        listeners.forEach { it.onInstallApplicationError(device, attempt, applicationPackage, throwable, durationMs) }
     }
 
     override fun onInstallApplicationFailure(
@@ -50,23 +44,23 @@ internal class AdbDeviceMetrics(
         throwable: Throwable,
         durationMs: Long
     ) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("install-application", "failure"), durationMs))
+        listeners.forEach { it.onInstallApplicationFailure(device, applicationPackage, throwable, durationMs) }
     }
 
     override fun onGetAliveDeviceSuccess(device: Device, attempt: Int, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("get-alive-device", "success"), durationMs))
+        listeners.forEach { it.onGetAliveDeviceSuccess(device, attempt, durationMs) }
     }
 
     override fun onGetAliveDeviceError(device: Device, attempt: Int, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("get-alive-device", "error"), durationMs))
+        listeners.forEach { it.onGetAliveDeviceError(device, attempt, durationMs) }
     }
 
     override fun onGetAliveDeviceFailed(device: Device, throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("get-alive-device", "failure"), durationMs))
+        listeners.forEach { it.onGetAliveDeviceFailed(device, throwable, durationMs) }
     }
 
     override fun onClearPackageSuccess(device: Device, attempt: Int, name: String, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("clear-package", "success"), durationMs))
+        listeners.forEach { it.onClearPackageSuccess(device, attempt, name, durationMs) }
     }
 
     override fun onClearPackageError(
@@ -76,27 +70,27 @@ internal class AdbDeviceMetrics(
         throwable: Throwable,
         durationMs: Long
     ) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("clear-package", "error"), durationMs))
+        listeners.forEach { it.onClearPackageError(device, attempt, name, throwable, durationMs) }
     }
 
     override fun onClearPackageFailure(device: Device, name: String, throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("clear-package", "failure"), durationMs))
+        listeners.forEach { it.onClearPackageFailure(device, name, throwable, durationMs) }
     }
 
     override fun onPullSuccess(device: Device, from: Path, to: Path, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("pull", "success"), durationMs))
+        listeners.forEach { it.onPullSuccess(device, from, to, durationMs) }
     }
 
     override fun onPullError(device: Device, attempt: Int, from: Path, throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("pull", "error"), durationMs))
+        listeners.forEach { it.onPullError(device, attempt, from, throwable, durationMs) }
     }
 
     override fun onPullFailure(device: Device, from: Path, throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("pull", "failure"), durationMs))
+        listeners.forEach { it.onPullFailure(device, from, throwable, durationMs) }
     }
 
     override fun onClearDirectorySuccess(device: Device, remotePath: Path, output: String, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("clear-directory", "success"), durationMs))
+        listeners.forEach { it.onClearDirectorySuccess(device, remotePath, output, durationMs) }
     }
 
     override fun onClearDirectoryError(
@@ -106,47 +100,47 @@ internal class AdbDeviceMetrics(
         throwable: Throwable,
         durationMs: Long
     ) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("clear-directory", "error"), durationMs))
+        listeners.forEach { it.onClearDirectoryError(device, attempt, remotePath, throwable, durationMs) }
     }
 
     override fun onClearDirectoryFailure(device: Device, remotePath: Path, throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("clear-directory", "failure"), durationMs))
+        listeners.forEach { it.onClearDirectoryFailure(device, remotePath, throwable, durationMs) }
     }
 
     override fun onListSuccess(device: Device, remotePath: String, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("list", "success"), durationMs))
+        listeners.forEach { it.onListSuccess(device, remotePath, durationMs) }
     }
 
     override fun onListError(device: Device, attempt: Int, remotePath: String, throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("list", "error"), durationMs))
+        listeners.forEach { it.onListError(device, attempt, remotePath, throwable, durationMs) }
     }
 
     override fun onListFailure(device: Device, remotePath: String, throwable: Throwable, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("list", "failure"), durationMs))
+        listeners.forEach { it.onListFailure(device, remotePath, throwable, durationMs) }
     }
 
     override fun onLogcatSuccess(device: Device, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("logcat", "success"), durationMs))
+        listeners.forEach { it.onLogcatSuccess(device, durationMs) }
     }
 
     override fun onLogcatError(device: Device, durationMs: Long, throwable: Throwable) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("logcat", "error"), durationMs))
+        listeners.forEach { it.onLogcatError(device, durationMs, throwable) }
     }
 
     override fun onLogcatFailure(device: Device, durationMs: Long, throwable: Throwable) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("logcat", "failure"), durationMs))
+        listeners.forEach { it.onLogcatFailure(device, durationMs, throwable) }
     }
 
     override fun onRunTestPassed(device: Device, testName: String, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("run-test", "passed"), durationMs))
+        listeners.forEach { it.onRunTestPassed(device, testName, durationMs) }
     }
 
     override fun onRunTestIgnored(device: Device, testName: String, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("run-test", "ignored"), durationMs))
+        listeners.forEach { it.onRunTestIgnored(device, testName, durationMs) }
     }
 
     override fun onRunTestRunError(device: Device, testName: String, errorMessage: String, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("run-test", "error"), durationMs))
+        listeners.forEach { it.onRunTestRunError(device, testName, errorMessage, durationMs) }
     }
 
     override fun onRunTestInfrastructureError(
@@ -156,11 +150,19 @@ internal class AdbDeviceMetrics(
         throwable: Throwable?,
         durationMs: Long
     ) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("run-test", "infrastructure-error"), durationMs))
+        listeners.forEach {
+            it.onRunTestInfrastructureError(
+                device,
+                testName,
+                errorMessage,
+                throwable,
+                durationMs
+            )
+        }
     }
 
     override fun onRunTestFailedOnStart(device: Device, message: String, durationMs: Long) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("run-test", "failed-on-start"), durationMs))
+        listeners.forEach { it.onRunTestFailedOnStart(device, message, durationMs) }
     }
 
     override fun onRunTestFailedOnInstrumentationParse(
@@ -169,10 +171,6 @@ internal class AdbDeviceMetrics(
         throwable: Throwable,
         durationMs: Long
     ) {
-        statsDSender.send(TimeMetric(prefixWithDevice(device).append("run-test", "failed-instrum-parse"), durationMs))
-    }
-
-    private fun prefixWithDevice(device: Device): SeriesName {
-        return prefix.append(device.api.toString())
+        listeners.forEach { it.onRunTestFailedOnInstrumentationParse(device, message, throwable, durationMs) }
     }
 }

@@ -8,7 +8,7 @@ public data class DeviceData(
     public val configuration: DeviceConfiguration
 ) {
 
-    internal companion object
+    public companion object
 }
 
 public fun Device.getData(): DeviceData = DeviceData(

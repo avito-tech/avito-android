@@ -3,9 +3,9 @@ package com.avito.runner.service.worker.model
 import com.avito.runner.model.TestCaseRun
 import com.avito.test.model.TestName
 
-internal sealed class InstrumentationTestCaseRun {
+public sealed class InstrumentationTestCaseRun {
 
-    data class CompletedTestCaseRun(
+    public data class CompletedTestCaseRun(
         val name: TestName,
         val result: TestCaseRun.Result,
         val timestampStartedMilliseconds: Long,
@@ -14,12 +14,12 @@ internal sealed class InstrumentationTestCaseRun {
         val durationMilliseconds: Long = timestampCompletedMilliseconds - timestampStartedMilliseconds
     }
 
-    data class FailedOnInstrumentationParsing(
+    public data class FailedOnInstrumentationParsing(
         val message: String,
         val throwable: Throwable
     ) : InstrumentationTestCaseRun()
 
-    data class FailedOnStartTestCaseRun(
+    public data class FailedOnStartTestCaseRun(
         val message: String
     ) : InstrumentationTestCaseRun()
 }

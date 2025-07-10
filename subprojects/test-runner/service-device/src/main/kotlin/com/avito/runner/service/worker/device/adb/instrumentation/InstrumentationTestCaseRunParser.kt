@@ -330,6 +330,7 @@ internal interface InstrumentationTestCaseRunParser {
                                 null -> throw IllegalStateException(
                                     "Unknown instrumentation result status code [$code] ($str)"
                                 )
+
                                 else -> code
                             }
                         },

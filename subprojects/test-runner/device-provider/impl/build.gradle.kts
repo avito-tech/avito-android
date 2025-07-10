@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":subprojects:logger:logger"))
     implementation(project(":subprojects:common:result"))
     implementation(project(":subprojects:common:waiter"))
+    implementation(project(":subprojects:common:coroutines-extension"))
 
     testImplementation(libs.coroutinesTest)
     testImplementation(testFixtures(project(":subprojects:common:time")))

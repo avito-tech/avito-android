@@ -16,5 +16,5 @@ public data class InstrumentationTestRunAction(
 
     override fun toString(): String = "$test, execution=$executionNumber"
 
-    internal companion object
+    public companion object
 }
