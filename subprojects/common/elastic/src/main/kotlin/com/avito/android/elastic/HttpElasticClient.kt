@@ -58,9 +58,9 @@ internal class HttpElasticClient(
                 "message" to message
             )
 
-            val errorMessage = throwable?.message
-            if (!errorMessage.isNullOrBlank()) {
-                params["error_message"] = errorMessage
+            val errorMessage = throwable.formatCauseForElastic()
+            if (errorMessage.isNotBlank()) {
+                params["cause"] = errorMessage
             }
 
             params.putAll(metadata)

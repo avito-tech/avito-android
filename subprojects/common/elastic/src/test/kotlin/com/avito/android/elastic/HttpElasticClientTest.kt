@@ -59,7 +59,7 @@ internal class HttpElasticClientTest {
                     "\"source.type\":\"gradle-build\"," +
                     "\"source.id\":\"12345\"," +
                     "\"message\":\"SomeMessage\"," +
-                    "\"error_message\":\"SomeException\"," +
+                    "\"cause\":\"SomeException\"," +
                     "\"some_key\":\"SomeValue\"}"
             )
         }
