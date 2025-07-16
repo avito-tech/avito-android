@@ -20,7 +20,7 @@ public sealed class Result<T> {
         is Failure -> throw throwable
     }
 
-    public fun getOrElse(func: (Throwable) -> T): T = when (this) {
+    public inline fun getOrElse(func: (Throwable) -> T): T = when (this) {
         is Success -> value
         is Failure -> func(throwable)
     }
