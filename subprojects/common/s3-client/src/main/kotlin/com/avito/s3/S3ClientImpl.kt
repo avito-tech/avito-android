@@ -1,47 +1,55 @@
 package com.avito.s3
 
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
-import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
 import aws.smithy.kotlin.runtime.content.asByteStream
-import aws.smithy.kotlin.runtime.net.url.Url
 import com.avito.android.Result
+import com.avito.s3.listener.OperationsListener
 import java.io.File
 import java.net.URL
+import java.time.Duration
+import java.time.Instant
 import aws.sdk.kotlin.services.s3.S3Client as AWS_S3Client
 
 internal class S3ClientImpl(
-    private val config: S3ClientConfig,
+    private val endpointUrl: URL,
+    private val awsS3client: AWS_S3Client,
+    private val operationsListener: OperationsListener? = null,
 ) : S3Client {
-
-    private val awsS3client = AWS_S3Client {
-        region = config.region
-        endpointUrl = Url.parse(config.endpointUrl.toString())
-        credentialsProvider = StaticCredentialsProvider(
-            credentials = Credentials(
-                accessKeyId = config.accessKeyId,
-                secretAccessKey = config.secretAccessKey
-            )
-        )
-        httpClient {
-            maxConcurrency = config.httpClientConfig.maxConcurrency
-            connectionIdleTimeout = config.httpClientConfig.connectionIdleTimeout
-        }
-    }
-
     override suspend fun putObject(
         key: String,
-        objekt: File
-    ): Result<URL> {
-        return Result.tryCatch {
-            awsS3client.putObject(
-                PutObjectRequest {
-                    this.key = key
-                    this.metadata = emptyMap()
-                    this.body = objekt.asByteStream()
-                }
+        objekt: File,
+    ): Result<URL> = executeS3Operation(OperationType.PUT_OBJECT) {
+        if (!objekt.exists()) {
+            throw IllegalArgumentException("File does not exist: ${objekt.absolutePath}")
+        }
+
+        awsS3client.putObject(
+            PutObjectRequest {
+                this.key = key
+                this.metadata = emptyMap()
+                this.body = objekt.asByteStream()
+            }
+        )
+        URL("$endpointUrl/$key")
+    }
+
+    private suspend fun <T> executeS3Operation(s3OperationType: OperationType, block: suspend () -> T): Result<T> {
+        val operationStartTime = Instant.now()
+        val result = Result.tryCatch {
+            block.invoke()
+        }
+        val operationDuration = Duration.between(operationStartTime, Instant.now())
+        return result.onSuccess {
+            operationsListener?.onOperationSuccess(
+                operationName = s3OperationType.operationName,
+                duration = operationDuration,
             )
-            URL("${config.endpointUrl}/$key")
+        }.onFailure {
+            operationsListener?.onOperationFailure(
+                throwable = it,
+                operationName = s3OperationType.operationName,
+                duration = operationDuration,
+            )
         }
     }
 }

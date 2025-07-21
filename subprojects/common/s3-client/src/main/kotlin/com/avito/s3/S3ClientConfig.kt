@@ -1,8 +1,7 @@
 package com.avito.s3
 
 import java.net.URL
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
+import java.time.Duration
 
 /**
  * @param endpointUrl s3 compatible endpoint
@@ -16,6 +15,6 @@ public class S3ClientConfig(
 ) {
     public class HttpClientConfig(
         public val maxConcurrency: UInt = 10u,
-        public val connectionIdleTimeout: Duration = 120.seconds,
+        public val connectionIdleTimeout: Duration = Duration.ofSeconds(120),
     )
 }
