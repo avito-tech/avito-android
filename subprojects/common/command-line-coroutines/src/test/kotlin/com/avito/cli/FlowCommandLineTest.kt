@@ -9,10 +9,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.time.Duration.Companion.seconds
@@ -92,7 +95,8 @@ class FlowCommandLineTest {
     }
 
     @Test
-    fun `start - handles cancellation and stops underlying process`() = runTest(timeout = 5.seconds) {
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    fun `start - handles cancellation and stops underlying process`() = runBlocking {
         val command = "sleep"
         val args = listOf("10")
 
