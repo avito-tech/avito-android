@@ -119,7 +119,10 @@ object NetworkCodegenProjectGenerator {
                 id("com.avito.android.network-contracts-root")
                 id("com.avito.android.tls-configuration")
             },
-            imports = listOf(),
+            imports = listOf(
+                "import com.avito.android.network_contracts.http.Timeouts",
+                "import java.time.Duration"
+                ),
             buildGradleExtra = """
                 ${createMtlsExtensionString()}   
                 networkContractsRoot {
@@ -127,6 +130,7 @@ object NetworkCodegenProjectGenerator {
                     serviceUrl.set("$serviceUrl")
                     crtEnvName.set("test_env")
                     keyEnvName.set("test_key")
+                    networkTimeouts.set(Timeouts.of(Duration.ofSeconds(10)))
                 }
                 $buildExtra
             """.trimIndent(),

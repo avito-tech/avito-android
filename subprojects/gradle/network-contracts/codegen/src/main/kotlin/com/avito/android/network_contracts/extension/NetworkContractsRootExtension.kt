@@ -1,6 +1,6 @@
 package com.avito.android.network_contracts.extension
 
-import com.avito.android.network_contracts.internal.http.Timeouts
+import com.avito.android.network_contracts.http.Timeouts
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property

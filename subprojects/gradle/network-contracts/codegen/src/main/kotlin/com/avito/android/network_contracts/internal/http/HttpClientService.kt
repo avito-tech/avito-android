@@ -1,5 +1,6 @@
 package com.avito.android.network_contracts.internal.http
 
+import com.avito.android.network_contracts.http.Timeouts
 import com.avito.android.network_contracts.shared.networkContractsRootExtension
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.android.tls.TlsCredentialsService
