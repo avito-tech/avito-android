@@ -2,6 +2,7 @@ package com.avito.android.elastic
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import java.util.concurrent.TimeoutException
 
 class ElasticErrorCauseFormatterTest {
 
@@ -14,15 +15,15 @@ class ElasticErrorCauseFormatterTest {
     @Test
     fun `throwable without cause - simple message`() {
         val result = Throwable(message = "SampleMessage", cause = null).formatCauseForElastic()
-        assertThat(result).isEqualTo("SampleMessage")
+        assertThat(result).isEqualTo("Throwable: SampleMessage")
     }
 
     @Test
     fun `throwable without message - explicit no message`() {
         val result = Throwable(message = "SampleMessage", cause = Throwable()).formatCauseForElastic()
         assertThat(result).isEqualTo("""
-            SampleMessage
-            Caused by: No message
+            Throwable: SampleMessage
+            Caused by Throwable with no message
         """.trimIndent())
     }
 
@@ -30,17 +31,17 @@ class ElasticErrorCauseFormatterTest {
     fun `chain of throwables - all messages are present`() {
         val result = Throwable(
             message = "Message1",
-            cause = Throwable(
-                message = "Message2",
-                cause = Throwable(
-                    message = "Message3"
+            cause = IllegalStateException(
+                "Message2",
+                TimeoutException(
+                    "Message3"
                 )
             )
         ).formatCauseForElastic()
         assertThat(result).isEqualTo("""
-            Message1
-            Caused by: Message2
-            Caused by: Message3
+            Throwable: Message1
+            Caused by IllegalStateException: Message2
+            Caused by TimeoutException: Message3
         """.trimIndent())
     }
 }
