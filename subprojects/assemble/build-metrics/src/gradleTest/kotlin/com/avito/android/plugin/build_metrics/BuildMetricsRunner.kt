@@ -21,6 +21,7 @@ internal class BuildMetricsRunner(
             "-Pavito.graphite.host",
             "-Pavito.graphite.port=80",
             "-Pbuild.metrics.test",
+            "-Pavito.clickstream.serviceUrl=stub",
             configurationCache = configurationCache
         )
     }

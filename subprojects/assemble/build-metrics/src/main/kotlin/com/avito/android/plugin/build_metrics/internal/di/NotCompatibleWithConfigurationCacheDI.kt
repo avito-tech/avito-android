@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal.di
 
+import com.avito.android.clickstream.config.clickStreamConfig
 import com.avito.android.graphite.graphiteConfig
 import com.avito.android.plugin.build_metrics.BuildMetricsExtension
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.critical.CriticalPathMetricsTracker
@@ -19,6 +20,7 @@ internal class NotCompatibleWithConfigurationCacheDI(
             environment = extension.environment.get(),
             statsDConfig = project.statsdConfig.get(),
             graphiteConfig = project.graphiteConfig.get(),
+            clickStreamConfig = project.clickStreamConfig.get(),
             isTest = project.hasProperty(isTestProperty),
             loggerFactory = loggerFactory
         ).provide()

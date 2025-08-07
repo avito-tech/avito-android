@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":subprojects:assemble:gradle-profile"))
     implementation(project(":subprojects:assemble:critical-path:api"))
     implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:clickstream"))
     implementation(project(":subprojects:gradle:graphite-config"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:process"))

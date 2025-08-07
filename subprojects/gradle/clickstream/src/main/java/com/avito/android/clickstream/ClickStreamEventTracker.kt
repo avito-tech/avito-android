@@ -1,5 +1,6 @@
 package com.avito.android.clickstream
 
+import com.avito.android.Result
 import com.avito.android.clickstream.api.ClickStreamEventRequest
 import com.avito.android.clickstream.api.NetworkClickStreamEnv
 import com.avito.android.clickstream.api.NetworkClickStreamEvent
@@ -9,13 +10,13 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 public class ClickStreamEventTracker(
-    private val clickStreamEventService: ClickStreamEventService,
+    private val clickStreamSender: ClickStreamSender,
 ) {
 
     private val fieldConverter = ClickStreamFieldConverter()
 
-    public fun trackEvent(event: ClickStreamEvent) {
-        clickStreamEventService.sendEvents(envelope = event.toEnvelope())
+    public fun trackEvent(event: ClickStreamEvent): Result<Unit> {
+        return clickStreamSender.sendEvents(envelope = event.toEnvelope())
     }
 
     private fun ClickStreamEvent.toEnvelope(): ClickStreamEventRequest {

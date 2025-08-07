@@ -65,6 +65,7 @@ com.google.protobuf:protobuf-java-util:3.22.3
 com.google.protobuf:protobuf-java:3.22.3
 com.google.testing.platform:core-proto:0.0.9-alpha02
 com.googlecode.juniversalchardet:juniversalchardet:1.0.3
+com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0
 com.squareup.moshi:moshi:1.13.0
 com.squareup.okhttp3:logging-interceptor:4.10.0
 com.squareup.okhttp3:okhttp:4.10.0
@@ -150,6 +151,11 @@ org.jetbrains.kotlin:kotlin-tooling-core:1.9.22
 org.jetbrains.kotlin:kotlin-util-io:1.9.22
 org.jetbrains.kotlin:kotlin-util-klib:1.9.22
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0
+org.jetbrains.kotlinx:kotlinx-serialization-bom:1.5.0
+org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.5.0
+org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.0
+org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.5.0
+org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0
 org.jetbrains:annotations:23.0.0
 org.jgrapht:jgrapht-core:1.5.1
 org.jheaps:jheaps:0.13

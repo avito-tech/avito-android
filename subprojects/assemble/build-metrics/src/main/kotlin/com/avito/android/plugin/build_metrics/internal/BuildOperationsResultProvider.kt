@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal
 
+import com.avito.android.clickstream.config.ClickStreamConfig
 import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.plugin.build_metrics.BuildEnvironment
 import com.avito.android.plugin.build_metrics.internal.di.CompatibleWithConfigurationCacheDI
@@ -44,9 +45,11 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
     interface Params : BuildServiceParameters {
         val test: Property<Boolean>
         val buildType: Property<String>
+        val userName: Property<String>
         val environment: Property<BuildEnvironment>
         val statsdConfig: Property<StatsDConfig>
         val graphiteConfig: Property<GraphiteConfig>
+        val clickStreamConfig: Property<ClickStreamConfig>
         val sendCompileMetrics: Property<Boolean>
         val compileMetricsMinimumDuration: Property<Duration>
         val sendSlowTaskMetrics: Property<Boolean>

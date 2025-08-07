@@ -17,6 +17,8 @@ public abstract class BuildMetricsExtension @Inject constructor(
     public val environment: Property<BuildEnvironment> =
         objectFactory.property<BuildEnvironment>().convention(BuildEnvironment.CI)
 
+    public val userName: Property<String> = objectFactory.property<String>().convention(System.getProperty("user.name"))
+
     public val sendJvmMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
 
     public val sendOsMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(false)

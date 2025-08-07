@@ -39,6 +39,7 @@ internal class CompatibleWithConfigurationCacheDI(
             environment = parameters.environment.get(),
             statsDConfig = parameters.statsdConfig.get(),
             graphiteConfig = parameters.graphiteConfig.get(),
+            clickStreamConfig = parameters.clickStreamConfig.get(),
             isTest = parameters.test.get(),
             loggerFactory = loggerFactory
         ).provide()
@@ -114,7 +115,12 @@ internal class CompatibleWithConfigurationCacheDI(
                 )
             }
             if (parameters.sendAppBuildTime.get()) {
-                add(AppBuildTimeListener(sender))
+                add(
+                    AppBuildTimeListener(
+                        sender = sender,
+                        userName = parameters.userName.get(),
+                    )
+                )
             }
         }
 

@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics
 
+import com.avito.android.clickstream.config.clickStreamConfig
 import com.avito.android.critical_path.CriticalPathRegistry
 import com.avito.android.graphite.graphiteConfig
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
@@ -72,9 +73,11 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
                             loggerCoordinates.set(GradleLoggerCoordinates(project.path))
                             test.set(project.hasProperty(isTestProperty))
                             buildType.set(extension.buildType)
+                            userName.set(extension.userName)
                             environment.set(extension.environment)
                             statsdConfig.set(project.statsdConfig)
                             graphiteConfig.set(project.graphiteConfig)
+                            clickStreamConfig.set(project.clickStreamConfig)
                             sendCompileMetrics.set(extension.sendCompileMetrics)
                             compileMetricsMinimumDuration.set(extension.compileMetricsMinimumDuration)
                             sendSlowTaskMetrics.set(extension.sendSlowTaskMetrics)

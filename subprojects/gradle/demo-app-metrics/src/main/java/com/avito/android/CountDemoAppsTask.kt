@@ -1,7 +1,7 @@
 package com.avito.android
 
-import com.avito.android.clickstream.ClickStreamEventService
 import com.avito.android.clickstream.ClickStreamEventTracker
+import com.avito.android.clickstream.ClickStreamSenderService
 import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.ModuleType
 import org.gradle.api.DefaultTask
@@ -21,14 +21,14 @@ internal abstract class CountDemoAppsTask @Inject constructor(
     internal val moduleTypes: ListProperty<ModuleType> = objects.listProperty(ModuleType::class.java)
 
     @get:Internal
-    internal abstract val clickStreamEventService: Property<ClickStreamEventService>
+    internal abstract val clickStreamSenderService: Property<ClickStreamSenderService>
 
     @TaskAction
     fun generate() {
         val demoAppCount = moduleTypes.get().count { moduleType ->
             moduleType.type == FunctionalType.DemoApp
         }
-        val service = clickStreamEventService.get()
+        val service = clickStreamSenderService.get()
         val tracker = ClickStreamEventTracker(service)
         tracker.trackEvent(event = CountDemoAppsEvent(count = demoAppCount))
     }

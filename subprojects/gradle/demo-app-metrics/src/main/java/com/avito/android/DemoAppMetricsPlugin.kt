@@ -1,6 +1,6 @@
 package com.avito.android
 
-import com.avito.android.clickstream.ClickStreamEventService
+import com.avito.android.clickstream.ClickStreamSenderService
 import com.avito.android.module_graph.GenerateModuleGraphTask
 import com.avito.android.module_graph.extractor.ModuleGraphInfoExtractorService
 import com.avito.android.module_graph.models.GradleDependency
@@ -56,8 +56,8 @@ public class DemoAppMetricsPlugin : Plugin<Project> {
 
     private fun registerCountDemoAppTask(target: Project) {
         target.tasks.register<CountDemoAppsTask>("countDemoApps") {
-            val clickStreamService = ClickStreamEventService.provideClickStreamEventService(target)
-            clickStreamEventService.set(clickStreamService)
+            val clickStreamService = ClickStreamSenderService.provideClickStreamEventService(target)
+            clickStreamSenderService.set(clickStreamService)
             usesService(clickStreamService)
         }
     }

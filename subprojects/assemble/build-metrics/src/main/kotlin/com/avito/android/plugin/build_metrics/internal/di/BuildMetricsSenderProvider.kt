@@ -1,5 +1,8 @@
 package com.avito.android.plugin.build_metrics.internal.di
 
+import com.avito.android.clickstream.ClickStreamEventTracker
+import com.avito.android.clickstream.ClickStreamSenderImpl
+import com.avito.android.clickstream.config.ClickStreamConfig
 import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.graphite.GraphiteSender
 import com.avito.android.plugin.build_metrics.BuildEnvironment
@@ -15,6 +18,7 @@ internal class BuildMetricsSenderProvider(
     environment: BuildEnvironment,
     statsDConfig: StatsDConfig,
     graphiteConfig: GraphiteConfig,
+    clickStreamConfig: ClickStreamConfig,
     isTest: Boolean,
     loggerFactory: LoggerFactory,
 ) {
@@ -42,7 +46,15 @@ internal class BuildMetricsSenderProvider(
         )
     }
 
+    private val clickStreamEventTracker by lazy {
+        ClickStreamEventTracker(
+            clickStreamSender = ClickStreamSenderImpl(
+                config = clickStreamConfig,
+            ),
+        )
+    }
+
     fun provide(): BuildMetricSender {
-        return BuildMetricSender.create(statsdSender, graphiteSender)
+        return BuildMetricSender.create(statsdSender, graphiteSender, clickStreamEventTracker)
     }
 }

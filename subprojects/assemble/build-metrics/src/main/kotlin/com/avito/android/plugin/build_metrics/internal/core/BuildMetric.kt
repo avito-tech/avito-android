@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal.core
 
+import com.avito.android.clickstream.event.ClickStreamEvent
 import com.avito.android.graphite.GraphiteMetric
 import com.avito.android.stats.StatsMetric
 
@@ -11,5 +12,9 @@ internal sealed class BuildMetric {
 
     abstract class Graphite : BuildMetric() {
         abstract fun asGraphite(): GraphiteMetric
+    }
+
+    abstract class ClickStream : BuildMetric() {
+        abstract fun asClickStream(): ClickStreamEvent
     }
 }
