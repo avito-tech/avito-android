@@ -16,7 +16,7 @@ internal class ReportTestListener(
     private val logcatDir: File,
     private val reportProcessor: ReportProcessor,
     private val report: Report,
-    disableLogcat: Boolean,
+    private val disableLogcat: Boolean,
 ) : TestLifecycleListener {
 
     private val logcatBuffers = LogcatBuffers.create(disableLogcat)
@@ -24,18 +24,19 @@ internal class ReportTestListener(
     override fun started(
         test: TestCase,
         deviceId: String,
-        executionNumber: Int
+        executionNumber: Int,
     ) {
-        val logcatFile = File(logcatDir, "$deviceId.txt")
-
-        val key = LogcatBuffers.Key(test, executionNumber)
-        logcatBuffers.create(key, TailingLogcatBuffer(logcatFile = logcatFile))
+        if (!disableLogcat) {
+            val logcatFile = File(logcatDir, "$deviceId.txt")
+            val key = LogcatBuffers.Key(test, executionNumber)
+            logcatBuffers.create(key, TailingLogcatBuffer(logcatFile = logcatFile))
+        }
     }
 
     override fun finished(
         result: TestResult,
         test: TestCase,
-        executionNumber: Int
+        executionNumber: Int,
     ) {
         val key = LogcatBuffers.Key(test, executionNumber)
 
