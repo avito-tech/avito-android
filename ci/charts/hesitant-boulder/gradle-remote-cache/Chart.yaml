@@ -1,0 +1,15 @@
+apiVersion: v2
+type: application
+name: gradle-remote-cache
+version: v2.3.0
+appVersion: v1.0.0
+description: gradle remote cache app
+keywords:
+    - gradle cache node
+    - android
+sources:
+    - https://github.com/avito-tech/avito-android
+maintainers:
+    - name: \#speed-android
+      url: http://links.k.avito.ru/7L
+kubeVersion: ">=1.14.0-0"
