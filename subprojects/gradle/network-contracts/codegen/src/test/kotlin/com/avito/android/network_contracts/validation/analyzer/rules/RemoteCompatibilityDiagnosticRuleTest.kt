@@ -1,11 +1,18 @@
 package com.avito.android.network_contracts.validation.analyzer.rules
 
+import com.avito.android.clickstream.EventsTracker
+import com.avito.android.network_contracts.analytics.ActionType
+import com.avito.android.network_contracts.analytics.NetworkContractsActionDurationEvent
+import com.avito.android.network_contracts.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.network_contracts.validation.analyzer.rules.configurations.RemoteCompatibilityRuleConfiguration
 import com.avito.android.network_contracts.validation.data.ValidationApiSchemesService
 import com.avito.android.network_contracts.validation.data.model.RemoteValidationError
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -24,6 +31,12 @@ class RemoteCompatibilityDiagnosticRuleTest {
 
     private val validationService: ValidationApiSchemesService = mock()
 
+    private val analyticsTracker: EventsTracker = mock()
+
+    private val analyticsTrackerService: NetworkContractsAnalyticsService = mock {
+        on { tracker } doReturn analyticsTracker
+    }
+
     @Test
     fun `validation service does not return errors - no reports`(@TempDir schemesDir: File) = runTest {
         val schemes = listOf(schemesDir.createSchema(SCHEMA_METADATA))
@@ -31,6 +44,7 @@ class RemoteCompatibilityDiagnosticRuleTest {
             RemoteCompatibilityRuleConfigurationImpl(
                 schemes = schemes,
                 validationService = validationService,
+                analyticsTrackerService = analyticsTrackerService,
                 branchName = "develop",
                 modulePath = ":test",
             )
@@ -41,6 +55,13 @@ class RemoteCompatibilityDiagnosticRuleTest {
         rule.analyze()
 
         assertThat(rule.findings).isEmpty()
+
+        val eventCaptured = argumentCaptor<NetworkContractsActionDurationEvent> {
+            verify(analyticsTracker).trackEvent(capture())
+        }
+
+        assertThat(eventCaptured.firstValue.actionType).isEqualTo(ActionType.VALIDATION)
+        assertThat(eventCaptured.firstValue.modulePath).isEqualTo(":test")
     }
 
     @Test
@@ -50,6 +71,7 @@ class RemoteCompatibilityDiagnosticRuleTest {
             RemoteCompatibilityRuleConfigurationImpl(
                 schemes = schemes,
                 validationService = validationService,
+                analyticsTrackerService = analyticsTrackerService,
                 branchName = "develop",
                 modulePath = ":test",
             )
@@ -67,6 +89,13 @@ class RemoteCompatibilityDiagnosticRuleTest {
         assertThat(rule.findings).hasSize(1)
         assertThat(rule.findings[0].issue.key).isEqualTo(RemoteCompatibilityDiagnosticRule::class.java.name)
         assertThat(rule.findings[0].message).contains("validation error")
+
+        val eventCaptured = argumentCaptor<NetworkContractsActionDurationEvent> {
+            verify(analyticsTracker).trackEvent(capture())
+        }
+
+        assertThat(eventCaptured.firstValue.actionType).isEqualTo(ActionType.VALIDATION)
+        assertThat(eventCaptured.firstValue.modulePath).isEqualTo(":test")
     }
 
     @Test
@@ -76,6 +105,7 @@ class RemoteCompatibilityDiagnosticRuleTest {
             RemoteCompatibilityRuleConfigurationImpl(
                 schemes = schemes,
                 validationService = validationService,
+                analyticsTrackerService = analyticsTrackerService,
                 branchName = "develop",
                 modulePath = ":test",
             )
@@ -88,6 +118,13 @@ class RemoteCompatibilityDiagnosticRuleTest {
         assertThat(rule.findings).hasSize(1)
         assertThat(rule.findings[0].issue.key).isEqualTo(RemoteCompatibilityDiagnosticRule::class.java.name)
         assertThat(rule.findings[0].message).contains("from test")
+
+        val eventCaptured = argumentCaptor<NetworkContractsActionDurationEvent> {
+            verify(analyticsTracker).trackEvent(capture())
+        }
+
+        assertThat(eventCaptured.firstValue.actionType).isEqualTo(ActionType.VALIDATION)
+        assertThat(eventCaptured.firstValue.modulePath).isEqualTo(":test")
     }
 
     companion object {
@@ -118,11 +155,13 @@ private data class RemoteCompatibilityRuleConfigurationImpl(
     override val validationService: Property<ValidationApiSchemesService>,
     override val branchName: Property<String>,
     override val modulePath: Property<String>,
+    override val analyticsTrackerService: Property<NetworkContractsAnalyticsService>
 ) : RemoteCompatibilityRuleConfiguration {
 
     constructor(
         schemes: List<File>,
         validationService: ValidationApiSchemesService,
+        analyticsTrackerService: NetworkContractsAnalyticsService,
         branchName: String,
         modulePath: String,
         objects: ObjectFactory = ProjectBuilder.builder().build().objects
@@ -131,6 +170,9 @@ private data class RemoteCompatibilityRuleConfigurationImpl(
         validationService = objects.property<ValidationApiSchemesService>().apply { set(validationService) },
         branchName = objects.property<String>().apply { set(branchName) },
         modulePath = objects.property<String>().apply { set(modulePath) },
+        analyticsTrackerService = objects
+            .property<NetworkContractsAnalyticsService>()
+            .apply { set(analyticsTrackerService) },
     )
 
     override fun getName(): String {

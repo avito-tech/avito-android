@@ -3,6 +3,7 @@ package com.avito.android.network_contracts
 import com.avito.android.network_contracts.codegen.SetupTmpMtlsFilesTask
 import com.avito.android.network_contracts.configuration.codegenConfiguration
 import com.avito.android.network_contracts.extension.NetworkContractsRootExtension
+import com.avito.android.network_contracts.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
 import com.avito.android.network_contracts.validation.NetworkContractsCompositeTask
@@ -58,6 +59,7 @@ public class NetworkContractsRootPlugin : Plugin<Project> {
 
         project.tasks.register(UpdateRemoteApiSchemesTask.NAME, UpdateRemoteApiSchemesTask::class.java) {
             it.httpClientService.set(HttpClientService.provideHttpClientService(project))
+            it.analyticsTrackerService.set(NetworkContractsAnalyticsService.provideService(project))
             it.author.set(project.getMandatoryStringProperty("avito.networkContracts.fixation.author"))
             it.branchName.set(project.gitStateProvider().map { it.currentBranch.name })
             it.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(project))

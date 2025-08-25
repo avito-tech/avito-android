@@ -4,6 +4,7 @@ import com.avito.android.network_contracts.codegen.CodegenTask
 import com.avito.android.network_contracts.codegen.SetupTmpMtlsFilesTask
 import com.avito.android.network_contracts.configuration.codegenConfiguration
 import com.avito.android.network_contracts.extension.NetworkContractsModuleExtension
+import com.avito.android.network_contracts.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.output.OutputTransformer
 import com.avito.android.network_contracts.output.OutputType
@@ -249,7 +250,8 @@ public class NetworkContractsPlugin : Plugin<Project> {
                 branchName.set(project.gitStateProvider().map { it.currentBranch.name })
                 validationService.set(httpClient.map { ValidationApiSchemesServiceImpl(it.buildClient()) })
 
-                logger.lifecycle("Schemes meta is present: ${schemesMetadata.isPresent}")
+                analyticsTrackerService.set(NetworkContractsAnalyticsService.provideService(project))
+
                 if (schemesMetadata.isPresent) {
                     schemes.setFrom(schemesMetadata)
                 }
@@ -281,6 +283,8 @@ public class NetworkContractsPlugin : Plugin<Project> {
                         reportFileName = "${name}Verdict.txt"
                     )
                 )
+
+                task.analyticsTrackerService.set(NetworkContractsAnalyticsService.provideService(project))
                 builder.invoke(task)
             }
         }

@@ -15,6 +15,8 @@ dependencies {
     implementation(project(":subprojects:logger:gradle-logger"))
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:assemble:build-verdict-tasks-api"))
+    implementation(project(":subprojects:gradle:clickstream"))
+    implementation(project(":subprojects:gradle:build-environment"))
 
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)

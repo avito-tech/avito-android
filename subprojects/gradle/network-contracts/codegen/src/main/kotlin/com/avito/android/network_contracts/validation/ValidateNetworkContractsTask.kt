@@ -2,7 +2,10 @@ package com.avito.android.network_contracts.validation
 
 import com.avito.android.build_verdict.BuildVerdictTask
 import com.avito.android.build_verdict.span.SpannedString
+import com.avito.android.network_contracts.analytics.trackValidationFailed
+import com.avito.android.network_contracts.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.network_contracts.validation.analyzer.NetworkContractsProblemsAnalyzer
+import com.avito.android.network_contracts.validation.analyzer.diagnostic.NetworkContractsDiagnostic
 import com.avito.android.network_contracts.validation.analyzer.rules.EmptyCodegenTomlFileDiagnosticRule
 import com.avito.android.network_contracts.validation.analyzer.rules.EmptySchemesDiagnosticRule
 import com.avito.android.network_contracts.validation.analyzer.rules.NetworkContractsDiagnosticRule
@@ -16,6 +19,7 @@ import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -39,6 +43,9 @@ public abstract class ValidateNetworkContractsTask @Inject constructor(
     @get:Internal
     override val verdict: SpannedString
         get() = SpannedString(verdictFile.get().asFile.readText())
+
+    @get:Internal
+    internal abstract val analyticsTrackerService: Property<NetworkContractsAnalyticsService>
 
     @get:Nested
     internal val ruleConfigurations: ExtensiblePolymorphicDomainObjectContainer<RuleConfiguration> =
@@ -67,7 +74,17 @@ public abstract class ValidateNetworkContractsTask @Inject constructor(
         val validationDetections = networkContractsProblemsAnalyzer.analyze()
         var verdict = OK
         if (validationDetections.isNotEmpty()) {
+            val tracker = analyticsTrackerService.get().tracker
+            validationDetections.forEach { diagnostic ->
+                val type = when (diagnostic) {
+                    is NetworkContractsDiagnostic.Local -> "local"
+                    is NetworkContractsDiagnostic.Remote -> "remote"
+                    is NetworkContractsDiagnostic.Undefined -> "undefined"
+                }
+                tracker.trackValidationFailed(diagnostic.message, type)
+            }
             val diagnostics = validationDetections.groupBy { diagnostic -> diagnostic.issue }
+
             verdict = ProblemsMessageBuilder.build(diagnostics)
             verdictFile.get().asFile.writeText(verdict)
             error(verdict)

@@ -1,5 +1,7 @@
 package com.avito.android.network_contracts.scheme.fixation.upsert
 
+import com.avito.android.network_contracts.analytics.trackFixationDuration
+import com.avito.android.network_contracts.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.network_contracts.internal.http.HttpClientService
 import com.avito.android.network_contracts.scheme.fixation.collect.ApiSchemesMetadata
 import com.avito.android.network_contracts.scheme.fixation.upsert.data.UpdateApiSchemesService
@@ -20,6 +22,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import kotlin.time.measureTime
 
 public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
 
@@ -41,12 +44,22 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
     internal abstract val httpClientService: Property<HttpClientService>
 
     @get:Internal
+    internal abstract val analyticsTrackerService: Property<NetworkContractsAnalyticsService>
+
+    @get:Internal
     internal abstract val loggerFactory: Property<LoggerFactory>
 
     private val logger: Logger by lazy { loggerFactory.get().create(NAME) }
 
     @TaskAction
     public fun upsert() {
+        val tracker = analyticsTrackerService.get().tracker
+
+        val elapsedTime = measureTime { innerUpsert() }
+        tracker.trackFixationDuration(elapsedTime)
+    }
+
+    private fun innerUpsert() {
         val validationFailed = validationReports
             .filter { it.exists() }
             .any { it.readText() != "OK" }

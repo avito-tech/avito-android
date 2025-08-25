@@ -1,5 +1,6 @@
 package com.avito.android.network_contracts.validation.analyzer.rules.configurations
 
+import com.avito.android.network_contracts.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.network_contracts.validation.data.ValidationApiSchemesService
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
@@ -14,12 +15,15 @@ internal interface RemoteCompatibilityRuleConfiguration : RuleConfiguration {
     @get:Optional
     val schemes: ConfigurableFileCollection
 
-    @get:Internal
-    val validationService: Property<ValidationApiSchemesService>
-
     @get:Input
     val branchName: Property<String>
 
     @get:Input
     val modulePath: Property<String>
+
+    @get:Internal
+    val validationService: Property<ValidationApiSchemesService>
+
+    @get:Internal
+    val analyticsTrackerService: Property<NetworkContractsAnalyticsService>
 }

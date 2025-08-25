@@ -183,6 +183,7 @@ class ValidateNetworkContractsTaskTest {
         return gradlew(
             tempDir,
             ":$name",
+            "-Pavito.clickstream.serviceUrl=stub",
             expectFailure = failed,
             dryRun = dryRun,
             configurationCache = true,

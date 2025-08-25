@@ -199,7 +199,9 @@ internal class UpdateRemoteApiSchemesTaskTest {
     ): TestResult {
         return gradlew(
             tempDir,
-            UpdateRemoteApiSchemesTask.NAME, "-Pavito.networkContracts.fixation.author=$author",
+            UpdateRemoteApiSchemesTask.NAME,
+            "-Pavito.networkContracts.fixation.author=$author",
+            "-Pavito.clickstream.serviceUrl=stub",
             useTestFixturesClasspath = true,
             expectFailure = failure,
             dryRun = dryRun

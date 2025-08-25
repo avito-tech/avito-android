@@ -95,9 +95,10 @@ class ConfigurationTestCompatibilityTest {
         tempDir: File,
         vararg args: String,
     ): TestResult {
+        val runArgs = arrayOf(*args) + arrayOf("-Pavito.clickstream.serviceUrl=stub")
         return gradlew(
             tempDir,
-            name, *args,
+            name, *runArgs,
             dryRun = true,
             configurationCache = true
         )

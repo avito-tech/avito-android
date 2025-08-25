@@ -13,13 +13,8 @@ public data class ClickStreamEventRequest(
 public data class NetworkClickStreamEvent(
     @SerialName("event_id") val eventId: Int,
     @SerialName("version") val version: Int,
-    @SerialName("env") val env: NetworkClickStreamEnv,
+    @SerialName("env") val env: Map<String, String>,
     @SerialName("params") val params: Map<String, String>,
-)
-
-@Serializable
-public data class NetworkClickStreamEnv(
-    @SerialName("cdtm") val cdtm: Long,
 )
 
 @Serializable
