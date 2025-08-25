@@ -50,10 +50,10 @@ ARG ANDROID_SDK_BASE_URL=${ARTIFACTORY_URL}android-build-env/android_sdk
 
 COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-17_0.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_35_0_2.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/emulator/emulator_linux_35_3_11.zip $ANDROID_HOME && \
-    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-35_0_2.zip $ANDROID_HOME && \
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-19_0.zip $ANDROID_HOME && \
+    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_36_0_2.zip $ANDROID_HOME && \
+    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/emulator/emulator_linux_36_1_9.zip $ANDROID_HOME && \
+    unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-36_0_0.zip $ANDROID_HOME && \
     unzip_from_url.sh "${ANDROID_SDK_BASE_URL}/system-images/system-images-android-${SDK_VERSION}-${EMULATOR_ARCH}-${EMULATOR_TYPE}.zip" $ANDROID_HOME && \
     rm /usr/local/bin/unzip_from_url.sh
 
