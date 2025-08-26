@@ -10,8 +10,13 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.engine.okhttp.OkHttpConfig
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,6 +37,7 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
         val tlsCredentialsService: Property<TlsCredentialsService>
         val useTls: Property<Boolean>
         val timeouts: Property<Timeouts>
+        val retries: Property<Int>
     }
 
     internal fun buildClient(
@@ -55,6 +61,25 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
         return HttpClient(OkHttp) {
             install(ContentNegotiation) {
                 json()
+            }
+            if (retries.isPresent && retries.get() > 0) {
+                install(HttpRequestRetry) {
+                    maxRetries = retries.get()
+                    retryIf { _, httpResponse ->
+                        httpResponse.status in setOf(
+                            HttpStatusCode.BadGateway,
+                            HttpStatusCode.GatewayTimeout,
+                            HttpStatusCode.RequestTimeout,
+                            HttpStatusCode.ServiceUnavailable,
+                        )
+                    }
+                    retryOnExceptionIf { _, throwable ->
+                        throwable is HttpRequestTimeoutException ||
+                            throwable is ConnectTimeoutException ||
+                            throwable is SocketTimeoutException
+                    }
+                    exponentialDelay()
+                }
             }
 
             defaultRequest { url(serviceUrl.get()) }
@@ -94,6 +119,7 @@ internal abstract class HttpClientService : BuildService<HttpClientService.Param
                     it.tlsCredentialsService.set(TlsConfigurationPlugin.provideCredentialsService(project))
                     it.useTls.set(networkContractsRootExtension.useTls)
                     it.timeouts.set(networkContractsRootExtension.networkTimeouts)
+                    it.retries.set(networkContractsRootExtension.networkRetries)
                 }
             }
         }
