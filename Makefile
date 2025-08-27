@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-ANDROID_BUILDER_TAG=65734b4ec418
+ANDROID_BUILDER_TAG=66c2a17cfdb9
 ifeq ($(origin DOCKER_REGISTRY),undefined)
     IMAGE_ANDROID_BUILDER=avitotech/android-builder:$(ANDROID_BUILDER_TAG)
 else
