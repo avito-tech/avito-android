@@ -98,6 +98,7 @@ nav:
                 -   Internal hub images clean up policy: ci/containers/ImagesCleanUpPolicy.md
                 -   Publish images to DockerHub: ci/containers/PublishToDockerHub.md
             -   Impact analysis: ci/ImpactAnalysis.md
+            -   Increase compileSdk: ci/CompileSdkUpgrade.md
     -   Testing:
             -   Flaky annotation: test/FlakyAnnotation.md
             -   Toast: test/Toast.md

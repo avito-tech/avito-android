@@ -8,17 +8,20 @@ All supported emulators configs you could find at `./ci/android-emulator/hardwar
 If there are no needed config you should:
 
 1. Copy-paste closest `config_*.ini`
-2. Change `image.sysdir.1` property to your sdk path e.g. `system-images/android-22/google_apis/x86/` for SDK 22 
-3. Upload emulator system image to [artifactory](http://links.k.avito.ru/emulator-system_images)
-   1. You could find a link to system image at Android Studio SDK Manager. Try to download image you will see the link. 
-   2. Unzip image and change internal structure of folders to `system-image/android-<sdk>/google_apis/<image-arch>`. \
-      You could find example at any image in [artifactory](http://links.k.avito.ru/emulator-system_images) e.g. for api 25
-      ```shell
-         unzip x86-25_r18.zip; 
-         mkdir -pv system-images/android-25/google_apis;
-         mv x86 system-images/android-25/google_apis/x86;
-         zip -r system-images-android-25-x86.zip system-images;
-      ```
+2. Change `image.sysdir.1` property to your sdk path e.g. `system-images/android-36/google_apis/x86_64/` for SDK 36 <br>
+3. Upload emulator system image to [artifactory](http://links.k.avito.ru/emulator-system_images) via [Teamcity script](http://links.k.avito.ru/prepare-system-image) <br>
+   OR <br>
+   Manually:
+      1. You could find a link to system image at Android Studio SDK Manager. Try to download image you will see the link. 
+      2. Unzip image and change internal structure of folders to `system-image/android-<sdk>/google_apis/<image-arch>`. \
+         You could find example at any image in [artifactory](http://links.k.avito.ru/emulator-system_images) <br>
+         e.g. for api 25: <br>
+         ```shell
+            unzip x86-25_r18.zip;
+            mkdir -pv system-images/android-25/google_apis;
+            mv x86 system-images/android-25/google_apis/x86;
+            zip -r system-images-android-25-x86.zip system-images;
+         ```
 4. [Publish an emulator](#how-to-publish-a-new-emulator-image)
 
 ### Known build emulator image issues
@@ -31,6 +34,7 @@ If there are no needed config you should:
 ## How to build an emulator image
 
 To build an android emulator image you need:
+
 - Linux, docker
 - [KVM](https://developer.android.com/studio/run/emulator-acceleration#vm-linux)
 
@@ -39,17 +43,24 @@ Better to build image at CI because image will guarantee more hermetic. And buil
 To build:
 
 ### CI
-Run [Teamcity configuration with needed API level](http://links.k.avito.ru/Sc)
+Run [Teamcity configuration with the needed API level](http://links.k.avito.ru/publish-android-emulator)
 
 ### Local
+
+Requirements: 
+
+- Linux, docker
+- [KVM](https://developer.android.com/studio/run/emulator-acceleration#vm-linux)
+- Container registry credentials with push authorization (env. variables DOCKER_REGISTRY_USERNAME, DOCKER_REGISTRY_PASSWORD)
+
+Steps:
+
 1. Run script
-
-```bash
-cd ci/docker
-./build_emulator.sh android-emulator <api version>
-```
-
-2. Find image tag at logs. You can use it for testing image locally
+    ```bash
+    cd ci/docker
+    ./publish_emulator.sh <hermetic/non-hermetic> <API level> <Emulator type: google_apis or google_atd> <debug>
+    ```
+2. Find the image tag at logs. You can use it for testing image locally
 
 ## How to test a new emulator image
 
@@ -70,7 +81,6 @@ Check [dashboards](https://mntr.avito.ru/grafana/d/9LxwD7Wnz/android-emulators)
 ### Local
 Use [cAdvisor](https://github.com/google/cadvisor)
 
-    ```bash
     sudo docker run \
       --volume=/:/rootfs:ro \
       --volume=/var/run:/var/run:ro \
@@ -81,15 +91,13 @@ Use [cAdvisor](https://github.com/google/cadvisor)
       --detach=true \
       --name=cadvisor \
       google/cadvisor:latest
-    ```
 
 ## How to publish a new emulator image
 
-1. Run at Teamcity [Build and publish android-emulator (internal)](http://links.k.avito.ru/publish-android-emulator-image)
+1. Run at Teamcity [Build and publish android-emulator (internal)](http://links.k.avito.ru/publish-android-emulator)
 
 ???+ info
     You will need `Image tag` and `Avd model` when try to add new emulator to Test Runner. You could copy-paste them from `Teamcity Build Log`. Image tag from the end of the Build Log - search phrase `Published the image`. Avd model - Search phrase `Print devices`. We print `adb devices -l` from `prepare_emulator.sh`   
-
 
 ## How to run an emulator image
 
