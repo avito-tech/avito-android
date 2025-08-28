@@ -10,6 +10,7 @@ internal class TaskExecutionResult(
     val startMs: Long,
     val endMs: Long,
     val cacheResult: TaskCacheResult,
+    val tags: Map<String, String> = emptyMap(),
 ) {
     val elapsedMs: Long
         get() = endMs - startMs
@@ -17,7 +18,7 @@ internal class TaskExecutionResult(
 
 internal sealed class TaskCacheResult {
 
-    object Disabled : TaskCacheResult()
+    data object Disabled : TaskCacheResult()
 
     class Miss(
         val local: Boolean,
@@ -25,7 +26,7 @@ internal sealed class TaskCacheResult {
     ) : TaskCacheResult()
 
     sealed class Hit : TaskCacheResult() {
-        object Local : Hit()
-        object Remote : Hit()
+        data object Local : Hit()
+        data object Remote : Hit()
     }
 }

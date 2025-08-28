@@ -61,6 +61,7 @@ include(":subprojects:gradle:worker-extensions")
 include(":subprojects:gradle:i18n")
 
 include(":subprojects:assemble:build-checks")
+include(":subprojects:assemble:build-metrics-api")
 include(":subprojects:assemble:build-metrics")
 include(":subprojects:assemble:build-properties")
 include(":subprojects:assemble:build-trace")

@@ -6,10 +6,12 @@ plugins {
 
 dependencies {
     api(project(":subprojects:assemble:build-verdict-tasks-api"))
+    api(project(":subprojects:assemble:build-metrics-api"))
     api(project(":subprojects:test-runner:kubernetes"))
 
     implementation(libs.gson)
     implementation(project(":subprojects:common:time"))
+    implementation(project(":subprojects:common:build-metadata"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:build-failer"))
     implementation(project(":subprojects:gradle:gradle-extensions"))

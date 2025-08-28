@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal
 
+import com.avito.android.build_metrics.HasBuildMetricsTags
 import com.avito.android.clickstream.config.ClickStreamConfig
 import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.plugin.build_metrics.BuildEnvironment
@@ -64,6 +65,7 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
         val sendBuildInitConfiguration: Property<Boolean>
         val sendBuildTotal: Property<Boolean>
         val sendAppBuildTime: Property<Boolean>
+        val sendTestRunnerMetrics: Property<Boolean>
         val loggerService: Property<LoggerService>
         val loggerCoordinates: Property<GradleLoggerCoordinates>
     }
@@ -123,13 +125,15 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
     ) {
         val details = descriptor.details as ExecuteTaskBuildOperationDetails
 
+        val tags = extractTaskTags(details.task)
         tasksExecutionsById[descriptor.id!!] = TaskExecutionIntermediateResult(
             name = details.task.taskIdentity.name,
             path = details.taskPath,
             type = details.task.taskIdentity.type,
             startMs = event.startTime,
             endMs = event.endTime,
-            result = result
+            result = result,
+            tags = tags,
         )
     }
 
@@ -183,6 +187,7 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
                     startMs = intermediateResult.startMs,
                     endMs = intermediateResult.endMs,
                     cacheResult = cacheResult,
+                    tags = intermediateResult.tags,
                 )
             }
     }
@@ -259,6 +264,11 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
         }
     }
 
+    private fun extractTaskTags(task: Task): Map<String, String> = when {
+        task is HasBuildMetricsTags -> task.buildMetricsTags.get()
+        else -> emptyMap()
+    }
+
     companion object {
 
         fun canTrackRemoteCache(project: Project): Boolean {
@@ -275,7 +285,8 @@ private data class TaskExecutionIntermediateResult(
     val type: Class<out Task>,
     val startMs: Long,
     val endMs: Long,
-    val result: ExecuteTaskBuildOperationType.Result
+    val result: ExecuteTaskBuildOperationType.Result,
+    val tags: Map<String, String>,
 )
 
 private val ExecuteTaskBuildOperationType.Result.isFromCache: Boolean

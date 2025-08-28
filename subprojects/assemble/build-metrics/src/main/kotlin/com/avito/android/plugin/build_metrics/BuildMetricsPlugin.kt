@@ -92,6 +92,7 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
                             sendBuildInitConfiguration.set(extension.sendBuildInitConfiguration)
                             sendBuildTotal.set(extension.sendBuildTotal)
                             sendAppBuildTime.set(extension.sendAppBuildTime)
+                            sendTestRunnerMetrics.set(extension.sendTestRunnerMetrics)
                         }
                     }
 

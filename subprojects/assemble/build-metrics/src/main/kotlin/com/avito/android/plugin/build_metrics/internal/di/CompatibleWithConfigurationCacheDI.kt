@@ -10,6 +10,7 @@ import com.avito.android.plugin.build_metrics.internal.gradle.configuration.Conf
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.compile.CompileMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.slow.SlowTasksMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.tech_budget.TechBudgetBuildTimeWriter
+import com.avito.android.plugin.build_metrics.internal.gradle.tasks.testrunner.TestRunnerMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.total_build.TotalBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.runtime.MetricsCollector
 import com.avito.android.plugin.build_metrics.internal.runtime.RuntimeMetricsListener
@@ -119,6 +120,13 @@ internal class CompatibleWithConfigurationCacheDI(
                     AppBuildTimeListener(
                         sender = sender,
                         userName = parameters.userName.get(),
+                    )
+                )
+            }
+            if (parameters.sendTestRunnerMetrics.get()) {
+                add(
+                    TestRunnerMetricsTracker(
+                        metricsTracker = sender,
                     )
                 )
             }

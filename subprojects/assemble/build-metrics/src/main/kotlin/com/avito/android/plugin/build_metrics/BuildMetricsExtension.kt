@@ -52,6 +52,8 @@ public abstract class BuildMetricsExtension @Inject constructor(
 
     public val sendAppBuildTime: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
+    public val sendTestRunnerMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
+
     public val writeModulesBuildTime: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
 
     public val modulesBuildTimeFile: RegularFileProperty = objectFactory.fileProperty()

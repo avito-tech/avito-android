@@ -1,5 +1,6 @@
 package com.avito.instrumentation
 
+import com.avito.android.build_metrics.HasBuildMetricsTags
 import com.avito.android.build_verdict.BuildVerdictTask
 import com.avito.android.build_verdict.span.SpannedString
 import com.avito.android.build_verdict.span.SpannedString.Companion.link
@@ -24,6 +25,7 @@ import com.avito.runner.scheduler.suite.filter.ImpactAnalysisMode
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.test.model.DeviceName
 import com.avito.utils.BuildFailer
+import com.avito.utils.BuildMetadata
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -52,7 +54,7 @@ import javax.inject.Inject
 public abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
-) : DefaultTask(), BuildVerdictTask {
+) : DefaultTask(), BuildVerdictTask, HasBuildMetricsTags {
 
     @get:Optional
     @get:InputDirectory
@@ -162,6 +164,16 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @get:Optional
     public abstract val macrobenchmarkOutputDirectory: DirectoryProperty
 
+    @get:Internal
+    override val buildMetricsTags: MapProperty<String, String> =
+        objects.mapProperty(String::class.java, String::class.java)
+            .convention(
+                mapOf(
+                    "runner_type" to "instrumentation",
+                    "runner_version" to getRunnerVersion()
+                )
+            ).apply { finalizeValue() }
+
     private val verdictFile = objects.fileProperty().convention(output.file("verdict.json"))
 
     @get:Internal
@@ -259,5 +271,12 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun getRunnerVersion(): String = runCatching {
+        BuildMetadata.kotlinLibraryVersion(InstrumentationTestsTask::class.java)
+    }.getOrElse {
+        // in case of local builds or gradle tests
+        "unknown"
     }
 }
