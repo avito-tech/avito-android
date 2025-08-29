@@ -72,7 +72,7 @@ spec:
             targetPort: 5071
 ---
 kind: Ingress
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 metadata:
     name: gradle-remote-cache
     namespace: gradle-remote-cache
