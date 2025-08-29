@@ -89,5 +89,7 @@ spec:
                     -   path: "/"
                         pathType: Prefix
                         backend:
-                            serviceName: gradle-remote-cache-github
-                            servicePort: 80
+                            service:
+                                name: gradle-remote-cache-github
+                                port:
+                                    number: 80
