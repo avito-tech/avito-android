@@ -49,7 +49,7 @@ public data class AdbDevice(
     // MBS-8531: don't use "ADB" here to avoid possible recursion
     override val logger: Logger,
     private val eventsListener: AdbDeviceEventsListener,
-    private val adbPullTimeout: Duration
+    private val adbPullTimeout: Duration,
 ) : Device {
 
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
@@ -64,7 +64,19 @@ public data class AdbDevice(
                 maxAttempts = 10,
                 delay = Duration.ofSeconds(5),
                 action = {
-                    adbDevice.installPackage(applicationPackage, true)
+                    if (api >= 36) {
+                        adbDevice.installPackage(
+                            applicationPackage,
+                            true,
+                            "--dexopt-compiler-filter",
+                            "verify",
+                        )
+                    } else {
+                        adbDevice.installPackage(
+                            applicationPackage,
+                            true,
+                        )
+                    }
                 },
                 onFailedTry = { attempt: Int, throwable: Throwable, duration: Duration ->
                     eventsListener.onInstallApplicationError(
@@ -107,7 +119,7 @@ public data class AdbDevice(
 
     override suspend fun runIsolatedTest(
         action: InstrumentationTestRunAction,
-        outputDir: File
+        outputDir: File,
     ): DeviceTestCaseRun {
 
         val finalInstrumentationArguments = action.instrumentationParams.plus(
@@ -130,7 +142,8 @@ public data class AdbDevice(
                     is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
                         when (it.result) {
                             TestCaseRun.Result.Passed.Regular,
-                            is TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs ->
+                            is TestCaseRun.Result.Passed.WithMacrobenchmarkOutputs,
+                                ->
                                 eventsListener.onRunTestPassed(
                                     device = this,
                                     testName = it.name.toString(),
@@ -386,7 +399,7 @@ public data class AdbDevice(
     private fun pullInternal(
         from: Path,
         to: Path,
-        validator: PullValidator
+        validator: PullValidator,
     ): Result<File> = executeWithRetries(
         maxAttempts = DEFAULT_RETRY_COUNT,
         delay = Duration.ofSeconds(DEFAULT_DELAY_SEC),
@@ -459,7 +472,7 @@ public data class AdbDevice(
         instrumentationArguments: Map<String, String>,
         outputDir: File,
         timeoutMinutes: Long,
-        enableDeviceDebug: Boolean
+        enableDeviceDebug: Boolean,
     ): Single<InstrumentationTestCaseRun> {
         val logsDir = File(File(outputDir, "logs"), coordinate.serial.value)
             .apply { mkdirs() }
@@ -519,7 +532,7 @@ public data class AdbDevice(
 
     private fun waitForAdb(
         adb: AndroidDebugBridge,
-        timeOut: Duration = Duration.ofMinutes(WAIT_FOR_ADB_TIME_OUT_MINUTES)
+        timeOut: Duration = Duration.ofMinutes(WAIT_FOR_ADB_TIME_OUT_MINUTES),
     ) {
         var timeOutMs = timeOut.toMillis()
         val sleepTimeMs = TimeUnit.SECONDS.toMillis(1)
@@ -541,7 +554,7 @@ public data class AdbDevice(
 
     private inline fun <reified T> loadProperty(
         key: String,
-        crossinline cast: (result: String) -> T
+        crossinline cast: (result: String) -> T,
     ): T {
         val commandResult = executeBlockingAdbRequest(request = GetPropAdbShellRequest(key))
 
@@ -556,7 +569,7 @@ public data class AdbDevice(
 
     private fun executeBlockingAdbRequest(
         request: AdbRequest,
-        timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
+        timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS,
     ): Notification.Exit {
         return executeAdbRequest(request = request)
             .ofType(Notification.Exit::class.java)
