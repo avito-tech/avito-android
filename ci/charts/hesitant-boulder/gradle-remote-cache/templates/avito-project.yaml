@@ -87,6 +87,7 @@ spec:
             http:
                 paths:
                     -   path: "/"
+                        pathType: Prefix
                         backend:
                             serviceName: gradle-remote-cache
                             servicePort: 80
