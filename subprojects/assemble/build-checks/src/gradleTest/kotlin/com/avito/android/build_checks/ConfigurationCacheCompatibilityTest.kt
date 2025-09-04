@@ -21,7 +21,7 @@ internal class ConfigurationCacheCompatibilityTest {
                  buildChecks {
                     androidSdk {
                         version(
-                            compileSdkVersion = 35,
+                            compileSdkVersion = 36,
                             revision = 1
                         )
                     }

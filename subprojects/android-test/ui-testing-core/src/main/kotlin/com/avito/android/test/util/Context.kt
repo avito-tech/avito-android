@@ -8,6 +8,6 @@ import java.util.Locale
 public fun getContextWithLocaleByLanguage(language: String): Context {
     val baseContext = ApplicationProvider.getApplicationContext<Application>()
     val configuration = baseContext.resources.configuration
-    configuration.setLocale(Locale(language))
+    configuration.setLocale(Locale.forLanguageTag(language))
     return baseContext.createConfigurationContext(configuration)
 }
