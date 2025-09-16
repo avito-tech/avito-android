@@ -2,6 +2,7 @@ package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.k8s.model.toleration.TolerationConfig
 import com.avito.k8s.toValidKubernetesName
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -30,6 +31,7 @@ internal class ReservationDeploymentFactoryImpl(
     private val buildType: String,
     private val deploymentNameGenerator: DeploymentNameGenerator,
     private val useLegacyExtensionsV1Beta: Boolean,
+    private val tolerations: List<TolerationConfig>,
     loggerFactory: LoggerFactory
 ) : ReservationDeploymentFactory {
 
@@ -50,6 +52,7 @@ internal class ReservationDeploymentFactoryImpl(
             is Device.LocalEmulator -> throw IllegalStateException(
                 "Local emulator $device is unsupported in kubernetes reservation"
             )
+
             is Device.CloudEmulator -> {
                 logger.info("Creating ${reservation.count} replicas of cloud emulator deployment: $device")
                 getCloudEmulatorDeployment(
@@ -58,6 +61,7 @@ internal class ReservationDeploymentFactoryImpl(
                     count = reservation.count
                 )
             }
+
             is Device.MockEmulator -> throw IllegalStateException(
                 "Mock emulator ${reservation.device} is unsupported in kubernetes reservation"
             )
@@ -120,14 +124,14 @@ internal class ReservationDeploymentFactoryImpl(
                 }
             )
 
-            tolerations = listOf(
+            tolerations = this@ReservationDeploymentFactoryImpl.tolerations.map { toleration ->
                 newToleration {
-                    key = "dedicated"
-                    operator = "Equal"
-                    value = "android"
-                    effect = "NoSchedule"
+                    key = toleration.key
+                    operator = toleration.operator.value
+                    value = toleration.value
+                    effect = toleration.effect.value
                 }
-            )
+            }
 
             topologySpreadConstraints = listOf(
                 newTopologySpreadConstraint {

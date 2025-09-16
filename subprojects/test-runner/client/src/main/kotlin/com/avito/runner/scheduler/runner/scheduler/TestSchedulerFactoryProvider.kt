@@ -149,6 +149,7 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
                             buildType = params.buildType,
                             loggerFactory = loggerFactory,
                             useLegacyExtensionsV1Beta = params.useLegacyExtensionsV1Beta,
+                            kubernetesCredentials = params.kubernetesCredentials,
                         ),
                         emulatorsLogsReporterProvider = emulatorsLogsReporterProvider,
                         kubernetesReservationListenerProvider = KubernetesReservationListenerProvider(

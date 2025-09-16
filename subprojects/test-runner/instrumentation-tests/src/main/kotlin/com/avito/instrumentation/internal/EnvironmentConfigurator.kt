@@ -18,7 +18,8 @@ internal class EnvironmentConfigurator(
                     KubernetesCredentials.Service(
                         token = environment.token.get(),
                         url = environment.url.get(),
-                        namespace = environment.namespace.get()
+                        namespace = environment.namespace.get(),
+                        tolerations = environment.tolerations.get(),
                     )
                 )
 
@@ -26,7 +27,8 @@ internal class EnvironmentConfigurator(
                 task.kubernetesCredentials.set(
                     KubernetesCredentials.Config(
                         context = environment.context.get(),
-                        namespace = environment.namespace.get()
+                        namespace = environment.namespace.get(),
+                        tolerations = environment.tolerations.get(),
                     )
                 )
 

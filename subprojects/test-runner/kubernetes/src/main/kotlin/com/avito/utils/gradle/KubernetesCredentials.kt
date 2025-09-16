@@ -1,5 +1,6 @@
 package com.avito.utils.gradle
 
+import com.avito.k8s.model.toleration.TolerationConfig
 import java.io.File
 import java.io.Serializable
 
@@ -15,6 +16,7 @@ public sealed class KubernetesCredentials : Serializable {
         public val token: String,
         public val url: String,
         public val namespace: String,
+        public val tolerations: List<TolerationConfig>,
     ) : KubernetesCredentials() {
 
         override fun toString(): String = "KubernetesCredentials.Service"
@@ -23,6 +25,7 @@ public sealed class KubernetesCredentials : Serializable {
     public class Config(
         public val context: String,
         public val namespace: String,
+        public val tolerations: List<TolerationConfig>,
         public val caCertFile: File? = kubeDefaultCaCertFile,
         public val configFile: File = kubeConfigDefaultPath
     ) : KubernetesCredentials() {

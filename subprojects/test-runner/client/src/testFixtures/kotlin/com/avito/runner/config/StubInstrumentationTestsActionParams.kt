@@ -1,6 +1,9 @@
 package com.avito.runner.config
 
 import com.avito.android.stats.StatsDConfig
+import com.avito.k8s.model.toleration.TolerationConfig
+import com.avito.k8s.model.toleration.TolerationEffect
+import com.avito.k8s.model.toleration.TolerationOperator
 import com.avito.runner.scheduler.runner.createStubInstance
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
@@ -22,6 +25,14 @@ public fun RunnerInputParams.Companion.createStubInstance(
         token = "empty",
         url = "empty",
         namespace = "kubernetesNamespace",
+        tolerations = listOf(
+            TolerationConfig(
+                key = "dedicated",
+                operator = TolerationOperator.Equal,
+                value = "android",
+                effect = TolerationEffect.NoSchedule
+            ),
+        ),
     ),
     kubernetesHttpTries: Int = 3,
     projectName: String = "testProject",
