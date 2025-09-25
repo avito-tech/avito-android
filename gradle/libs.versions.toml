@@ -85,7 +85,7 @@ androidAnnotations = "androidx.annotation:annotation:1.5.0"
 playServicesBase = "com.google.android.gms:play-services-base:17.0.0"
 
 officialKubernetesClient = "io.kubernetes:client-java:13.0.1"
-kubernetesClient = "io.fabric8:kubernetes-client:5.11.2"
+kubernetesClient = "io.fabric8:kubernetes-client:5.12.3"
 kubernetesDsl = "com.github.fkorotkov:k8s-kotlin-dsl:3.1.1"
 
 ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"

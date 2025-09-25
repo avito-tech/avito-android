@@ -11,19 +11,19 @@ internal sealed class DeploymentEnvironment {
 
     data class Teamcity(val buildId: String) : DeploymentEnvironment()
 
-    object Local : DeploymentEnvironment()
+    data object Local : DeploymentEnvironment()
 
     /**
      * environment for long lived pods
      */
-    object Service : DeploymentEnvironment()
+    data object Service : DeploymentEnvironment()
 
     /**
      * Incorrectly finished integration tests
      */
     data class IntegrationTest(val buildId: String) : DeploymentEnvironment()
 
-    object Unknown : DeploymentEnvironment()
+    data object Unknown : DeploymentEnvironment()
 }
 
 internal val Deployment.environment: DeploymentEnvironment

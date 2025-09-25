@@ -24,6 +24,7 @@ tasks.register("clearByNamespaces", JavaExec::class.java) {
         "--teamcityApiUser", project.getOptionalStringProperty("teamcityApiUser", ""),
         "--teamcityApiPassword", project.getOptionalStringProperty("teamcityApiPassword", ""),
         "--kubernetesToken", project.getOptionalStringProperty("kubernetesToken", ""),
+        "--kubernetesCaCertData", project.getOptionalStringProperty("kubernetesCaCertData", ""),
         "--kubernetesUrl", project.getOptionalStringProperty("kubernetesUrl", ""),
         "--namespaces", "android-emulator"
     )
@@ -48,6 +49,8 @@ tasks.register("deleteByNames", JavaExec::class.java) {
         project.getOptionalStringProperty("teamcityApiPassword", ""),
         "--kubernetesToken",
         project.getOptionalStringProperty("kubernetesToken", ""),
+        "--kubernetesCaCertData",
+        project.getOptionalStringProperty("kubernetesCaCertData", ""),
         "--kubernetesUrl",
         project.getOptionalStringProperty("kubernetesUrl", ""),
         "--namespace",

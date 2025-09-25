@@ -22,6 +22,7 @@ public class KubernetesClientFactory(
                 .withMasterUrl(kubernetesCredentials.url)
                 .withOauthToken(kubernetesCredentials.token)
                 .withNamespace(kubernetesCredentials.namespace)
+                .apply { if (!kubernetesCredentials.caCertData.isNullOrBlank()) withCaCertData(caCertData) }
                 .build()
 
             is KubernetesCredentials.Config -> {

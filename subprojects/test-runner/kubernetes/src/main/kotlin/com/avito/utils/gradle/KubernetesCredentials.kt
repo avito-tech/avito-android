@@ -7,8 +7,7 @@ import java.io.Serializable
 // todo used in gradle scripts; remove it from there
 public sealed class KubernetesCredentials : Serializable {
 
-    public object Empty : KubernetesCredentials() {
-
+    public data object Empty : KubernetesCredentials() {
         override fun toString(): String = "KubernetesCredentials.Empty"
     }
 
@@ -16,6 +15,7 @@ public sealed class KubernetesCredentials : Serializable {
         public val token: String,
         public val url: String,
         public val namespace: String,
+        public val caCertData: String? = null,
         public val tolerations: List<TolerationConfig>,
     ) : KubernetesCredentials() {
 

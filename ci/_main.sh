@@ -74,8 +74,14 @@ if [[ -v ELASTIC_ENDPOINTS ]]; then
     GRADLE_ARGS+="-Pavito.elastic.indexpattern=speed-android "
 fi
 
-GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN} "
-GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL} "
+if [[ ${IS_KUBERNETES_NEW_CLUSTER} == "true" ]]; then
+    GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN_NEW} "
+    GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL_NEW} "
+    GRADLE_ARGS+="-PkubernetesCaCertData='${KUBERNETES_CA_CERT_DATA}' "
+else
+    GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN} "
+    GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL} "
+fi
 
 GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "
 GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "

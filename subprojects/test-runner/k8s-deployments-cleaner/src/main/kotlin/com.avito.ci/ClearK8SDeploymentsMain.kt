@@ -31,6 +31,9 @@ public object ClearK8SDeploymentsMain {
         protected val kubernetesToken: String by option(ArgType.String)
             .required()
 
+        protected val kubernetesCaCertData: String by option(ArgType.String)
+            .required()
+
         protected val kubernetesUrl: String by option(ArgType.String)
             .required()
     }
@@ -64,6 +67,7 @@ public object ClearK8SDeploymentsMain {
                         ConfigBuilder()
                             .withOauthToken(kubernetesToken)
                             .withMasterUrl(kubernetesUrl)
+                            .withCaCertData(kubernetesCaCertData)
                             .build()
                     )
                 ).clear(namespaces)
