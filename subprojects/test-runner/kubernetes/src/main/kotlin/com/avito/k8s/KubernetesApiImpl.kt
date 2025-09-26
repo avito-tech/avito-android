@@ -19,9 +19,14 @@ internal class KubernetesApiImpl(
 
     override val namespace: String = kubernetesClient.namespace
 
-    override suspend fun deletePod(podName: String): Boolean {
-        return kubernetesClient.pods().withName(podName).withGracePeriod(0).delete()
-    }
+    override suspend fun deletePod(podName: String): Boolean = runCatching {
+        kubernetesClient
+            .pods()
+            .withName(podName)
+            .withGracePeriod(0)
+            .withTimeoutInMillis(10_000) // Performs the delete operation as blocking
+            .delete()
+    }.isSuccess
 
     override suspend fun getPodLogs(podName: String): String {
         return kubernetesClient.pods().withName(podName).log
@@ -53,7 +58,7 @@ internal class KubernetesApiImpl(
 
     override suspend fun createDeployment(deployment: Deployment) {
         logger.info("Deployment.create(): start $deployment")
-        kubernetesClient.apps().deployments().create(deployment)
+        kubernetesClient.apps().deployments().resource(deployment).create()
         logger.info("Deployment.create(): client returned")
 
         waitForDeploymentCreationDone(

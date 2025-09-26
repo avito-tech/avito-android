@@ -27,6 +27,7 @@ ktor = "2.0.3"
 jackson = "2.13.0"
 proguard = "6.2.2"
 compose = "1.6.7"
+k8sClient = "7.3.1"
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
@@ -84,9 +85,10 @@ swipeRefreshLayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 androidAnnotations = "androidx.annotation:annotation:1.5.0"
 playServicesBase = "com.google.android.gms:play-services-base:17.0.0"
 
-officialKubernetesClient = "io.kubernetes:client-java:13.0.1"
-kubernetesClient = "io.fabric8:kubernetes-client:5.12.3"
-kubernetesDsl = "com.github.fkorotkov:k8s-kotlin-dsl:3.1.1"
+officialKubernetesClient = "io.kubernetes:client-java:20.0.0"
+kubernetesClientBase = { module = "io.fabric8:kubernetes-client", version.ref = "k8sClient" }
+kubernetesClientOkhttp = { module = "io.fabric8:kubernetes-httpclient-okhttp", version.ref = "k8sClient" }
+kubernetesDsl = "com.github.fkorotkov:k8s-kotlin-dsl:3.5.0"
 
 ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"
 uiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
@@ -168,3 +170,4 @@ compose-uiTestJunit = { module = "androidx.compose.ui:ui-test-junit4", version.r
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]
 ktor = ["ktorCore", "ktorNetty", "ktorContentNegotiation", "ktorSerializationGson", "ktorOkhttp", "ktorKotlinSerialization", "ktorClientContentNegotiation"]
+kubernetesClient = ["kubernetesClientBase", "kubernetesClientOkhttp"]

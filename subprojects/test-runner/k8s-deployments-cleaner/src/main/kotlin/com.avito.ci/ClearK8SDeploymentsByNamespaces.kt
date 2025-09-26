@@ -6,10 +6,9 @@ import com.avito.ci.DeploymentEnvironment.Service
 import com.avito.ci.DeploymentEnvironment.Teamcity
 import com.avito.ci.DeploymentEnvironment.Unknown
 import com.avito.teamcity.TeamcityApi
+import io.fabric8.kubernetes.api.model.HasMetadata
 import io.fabric8.kubernetes.api.model.apps.Deployment
-import io.fabric8.kubernetes.client.DefaultKubernetesClient
-import io.fabric8.kubernetes.client.dsl.MixedOperation
-import io.fabric8.kubernetes.client.dsl.Resource
+import io.fabric8.kubernetes.client.KubernetesClient
 import org.jetbrains.teamcity.rest.BuildState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -19,7 +18,7 @@ import java.util.concurrent.TimeUnit
 
 internal class ClearK8SDeploymentsByNamespaces(
     private val teamcity: TeamcityApi,
-    private val kubernetesClient: DefaultKubernetesClient
+    private val kubernetesClient: KubernetesClient
 ) {
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
@@ -51,9 +50,10 @@ internal class ClearK8SDeploymentsByNamespaces(
     fun clear(namespaces: List<String>) {
         namespaces.forEach { namespace ->
             try {
-                val deployments = kubernetesClient.inNamespace(namespace)
+                val deployments = kubernetesClient
                     .apps()
                     .deployments()
+                    .inNamespace(namespace)
 
                 deployments
                     .list()
@@ -62,8 +62,8 @@ internal class ClearK8SDeploymentsByNamespaces(
                         try {
                             if (deployment.isLeaked) {
                                 println("Found leaky ${deployment.description}")
-                                val deleted = deleteResource(deployments, deployment.metadata.name)
-                                println("${deployment.description} deleted is $deleted")
+                                deleteResource(deployment)
+                                println("${deployment.description} is deleted")
                             } else {
                                 println("Found not leaky ${deployment.description}")
                             }
@@ -72,9 +72,10 @@ internal class ClearK8SDeploymentsByNamespaces(
                         }
                     }
 
-                val replicasOperation = kubernetesClient.inNamespace(namespace)
+                val replicasOperation = kubernetesClient
                     .apps()
                     .replicaSets()
+                    .inNamespace(namespace)
 
                 replicasOperation
                     .list()
@@ -87,14 +88,15 @@ internal class ClearK8SDeploymentsByNamespaces(
                         val deployment = deployments.withName(deploymentName).get()
                         if (deployment == null) {
                             val deleted = replicaSets.map { replicaSet ->
-                                deleteResource(replicasOperation, replicaSet.metadata.name)
-                            }.count { it }
+                                tryDeleteResource(replicaSet)
+                            }.count { it.isSuccess }
                             println("$deleted of ${replicaSets.size} rs deleted from $deploymentName")
                         }
                     }
 
-                val podsOperation = kubernetesClient.inNamespace(namespace)
+                val podsOperation = kubernetesClient
                     .pods()
+                    .inNamespace(namespace)
 
                 podsOperation
                     .list()
@@ -107,8 +109,8 @@ internal class ClearK8SDeploymentsByNamespaces(
                         val replicaSet = replicasOperation.withName(replicaSetName).get()
                         if (replicaSet == null) {
                             val deleted = pods.map { pod ->
-                                deleteResource(podsOperation, pod.metadata.name)
-                            }.count { it }
+                                tryDeleteResource(pod)
+                            }.count { it.isSuccess }
                             println("$deleted of ${pods.size} pods deleted from $replicaSetName")
                         }
                     }
@@ -122,13 +124,21 @@ internal class ClearK8SDeploymentsByNamespaces(
         }
     }
 
-    private fun <T, L, R : Resource<T>> deleteResource(
-        resource: MixedOperation<T, L, R>,
-        nameToDelete: String
-    ): Boolean {
-        return resource
-            .withName(nameToDelete)
+    private fun deleteResource(
+        resource: HasMetadata,
+    ) {
+        kubernetesClient.resource(resource)
             .withGracePeriod(0)
+            .withTimeoutInMillis(10_000)
+            .delete()
+    }
+
+    private fun tryDeleteResource(
+        resource: HasMetadata,
+    ): Result<Unit> = runCatching {
+        kubernetesClient.resource(resource)
+            .withGracePeriod(0)
+            .withTimeoutInMillis(10_000)
             .delete()
     }
 

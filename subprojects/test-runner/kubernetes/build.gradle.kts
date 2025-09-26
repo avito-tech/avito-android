@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(libs.kubernetesClient)
+    api(libs.bundles.kubernetesClient)
     api(libs.kubernetesDsl)
     api(libs.kotlinReflect) {
         because("kubernetes dsl uses old version")

@@ -3,11 +3,11 @@ package com.avito.k8s
 import com.avito.utils.gradle.KubernetesCredentials
 import io.fabric8.kubernetes.client.Config
 import io.fabric8.kubernetes.client.ConfigBuilder
-import io.fabric8.kubernetes.client.DefaultKubernetesClient
 import io.fabric8.kubernetes.client.KubernetesClient
+import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import io.fabric8.kubernetes.client.OAuthTokenProvider
 import io.fabric8.kubernetes.client.okhttp.OkHttpClientFactory
-import io.kubernetes.client.util.FilePersister
+import io.kubernetes.client.persister.FilePersister
 import io.kubernetes.client.util.KubeConfig
 import java.io.File
 
@@ -34,15 +34,13 @@ public class KubernetesClientFactory(
                     "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable"
                 }
 
-                val configContents = configFile.readText()
-
-                Config.fromKubeconfig(kubernetesCredentials.context, configContents, "").apply {
+                Config.fromKubeconfig(configFile).apply {
                     val caCert = kubernetesCredentials.caCertFile
                     if (caCert != null && caCert.exists()) {
                         caCertFile = caCert.absolutePath
                     }
 
-                    val namespaceFromKubeConfig = getNamespace()
+                    val namespaceFromKubeConfig = namespace
 
                     val namespaceDiffErrorMessage = {
                         "kubernetes.context.namespace should be ${kubernetesCredentials.namespace}, " +
@@ -62,17 +60,18 @@ public class KubernetesClientFactory(
                         )
                     }
 
-                    requestConfig.oauthTokenProvider = oauthTokenProvider(configFile)
+                    oauthTokenProvider = oauthTokenProvider(configFile)
                 }
             }
 
             is KubernetesCredentials.Empty ->
                 throw IllegalStateException("Can't create kubernetesClient without credentials")
         }
-        return DefaultKubernetesClient(
-            okHttpClientFactory.createHttpClient(config),
-            config
-        )
+
+        return KubernetesClientBuilder()
+            .withConfig(config)
+            .withHttpClientFactory(okHttpClientFactory)
+            .build()
     }
 
     /**
@@ -85,6 +84,6 @@ public class KubernetesClientFactory(
         val persister = FilePersister(config)
         kubeConfig.setPersistConfig(persister)
         KubeConfig.registerAuthenticator(CustomGCPAuthenticator())
-        return OAuthTokenProvider { kubeConfig.accessToken }
+        return OAuthTokenProvider { kubeConfig.credentials[KubeConfig.CRED_TOKEN_KEY] }
     }
 }

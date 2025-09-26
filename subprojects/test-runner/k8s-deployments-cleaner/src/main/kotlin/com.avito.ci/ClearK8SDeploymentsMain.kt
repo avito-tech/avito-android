@@ -3,7 +3,7 @@ package com.avito.ci
 import com.avito.teamcity.TeamcityApi
 import com.avito.teamcity.TeamcityCredentials
 import io.fabric8.kubernetes.client.ConfigBuilder
-import io.fabric8.kubernetes.client.DefaultKubernetesClient
+import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
@@ -55,6 +55,12 @@ public object ClearK8SDeploymentsMain {
             ).delimiter(",").required()
 
             override fun execute() {
+                val config = ConfigBuilder()
+                    .withOauthToken(kubernetesToken)
+                    .withMasterUrl(kubernetesUrl)
+                    .withCaCertData(kubernetesCaCertData)
+                    .build()
+
                 ClearK8SDeploymentsByNamespaces(
                     teamcity = TeamcityApi.create(
                         TeamcityCredentials(
@@ -63,13 +69,9 @@ public object ClearK8SDeploymentsMain {
                             password = teamcityApiPassword
                         )
                     ),
-                    kubernetesClient = DefaultKubernetesClient(
-                        ConfigBuilder()
-                            .withOauthToken(kubernetesToken)
-                            .withMasterUrl(kubernetesUrl)
-                            .withCaCertData(kubernetesCaCertData)
-                            .build()
-                    )
+                    kubernetesClient = KubernetesClientBuilder()
+                        .withConfig(config)
+                        .build()
                 ).clear(namespaces)
             }
         }
@@ -90,13 +92,15 @@ public object ClearK8SDeploymentsMain {
             ).delimiter(",").required()
 
             override fun execute() {
+                val config = ConfigBuilder()
+                    .withOauthToken(kubernetesToken)
+                    .withMasterUrl(kubernetesUrl)
+                    .withCaCertData(kubernetesCaCertData)
+                    .build()
                 DeleteK8SDeploymentsByNames(
-                    kubernetesClient = DefaultKubernetesClient(
-                        ConfigBuilder()
-                            .withOauthToken(kubernetesToken)
-                            .withMasterUrl(kubernetesUrl)
-                            .build()
-                    )
+                    kubernetesClient = KubernetesClientBuilder()
+                        .withConfig(config)
+                        .build()
                 ).delete(namespace, deploymentNames)
             }
         }
