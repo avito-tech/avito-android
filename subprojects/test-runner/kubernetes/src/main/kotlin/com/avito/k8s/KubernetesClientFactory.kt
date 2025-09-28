@@ -18,12 +18,18 @@ public class KubernetesClientFactory(
 
     public fun create(): KubernetesClient {
         val config = when (kubernetesCredentials) {
-            is KubernetesCredentials.Service -> ConfigBuilder()
-                .withMasterUrl(kubernetesCredentials.url)
-                .withOauthToken(kubernetesCredentials.token)
-                .withNamespace(kubernetesCredentials.namespace)
-                .apply { if (!kubernetesCredentials.caCertData.isNullOrBlank()) withCaCertData(caCertData) }
-                .build()
+            is KubernetesCredentials.Service -> {
+                val builder = ConfigBuilder()
+                    .withMasterUrl(kubernetesCredentials.url)
+                    .withOauthToken(kubernetesCredentials.token)
+                    .withNamespace(kubernetesCredentials.namespace)
+
+                if (!kubernetesCredentials.caCertData.isNullOrBlank()) {
+                    builder.withCaCertData(kubernetesCredentials.caCertData)
+                }
+
+                builder.build()
+            }
 
             is KubernetesCredentials.Config -> {
                 // todo move validation to configuration phase
