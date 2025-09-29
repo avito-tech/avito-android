@@ -27,7 +27,7 @@ ktor = "2.0.3"
 jackson = "2.13.0"
 proguard = "6.2.2"
 compose = "1.6.7"
-k8sClient = "7.3.1"
+k8sClient = "6.9.0"
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"

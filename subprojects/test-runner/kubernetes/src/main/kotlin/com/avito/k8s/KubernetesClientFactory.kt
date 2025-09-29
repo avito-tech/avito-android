@@ -40,7 +40,9 @@ public class KubernetesClientFactory(
                     "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable"
                 }
 
-                Config.fromKubeconfig(configFile).apply {
+                val configContents = configFile.readText()
+
+                Config.fromKubeconfig(kubernetesCredentials.context, configContents, "").apply {
                     val caCert = kubernetesCredentials.caCertFile
                     if (caCert != null && caCert.exists()) {
                         caCertFile = caCert.absolutePath
