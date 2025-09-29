@@ -20,6 +20,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -32,6 +33,9 @@ import kotlin.reflect.KClass
 public abstract class ValidateNetworkContractsTask @Inject constructor(
     private val objects: ObjectFactory
 ) : DefaultTask(), BuildVerdictTask {
+
+    @get:Input
+    public abstract val modulePath: Property<String>
 
     @get:InputFiles
     @get:Optional
@@ -81,7 +85,7 @@ public abstract class ValidateNetworkContractsTask @Inject constructor(
                     is NetworkContractsDiagnostic.Remote -> "remote"
                     is NetworkContractsDiagnostic.Undefined -> "undefined"
                 }
-                tracker.trackValidationFailed(diagnostic.message, type)
+                tracker.trackValidationFailed(modulePath.get(), diagnostic.message, type)
             }
             val diagnostics = validationDetections.groupBy { diagnostic -> diagnostic.issue }
 

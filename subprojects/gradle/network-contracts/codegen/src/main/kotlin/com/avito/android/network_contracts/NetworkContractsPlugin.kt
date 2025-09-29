@@ -129,6 +129,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
             it.apiClassName.set(networkContractsExtension.apiClassName)
             it.moduleName.set(it.project.path)
             it.flags.set(networkContractsExtension.flags)
+            it.mappings.set(networkContractsExtension.mappings)
             it.kind.set(networkContractsExtension.kind)
             it.codegenProjectName.set(networkContractsExtension.projectName)
             it.skipValidation.set(networkContractsExtension.skipValidation.map { !forceValidation && it })
@@ -275,6 +276,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
         name: String,
         builder: ValidateNetworkContractsTask.() -> Unit = {}
     ): TaskProvider<ValidateNetworkContractsTask> {
+        val path = path
         return tasks.register<ValidateNetworkContractsTask>(name).apply {
             configure { task ->
                 task.verdictFile.set(
@@ -284,6 +286,7 @@ public class NetworkContractsPlugin : Plugin<Project> {
                     )
                 )
 
+                task.modulePath.set(path)
                 task.analyticsTrackerService.set(NetworkContractsAnalyticsService.provideService(project))
                 builder.invoke(task)
             }

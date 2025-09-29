@@ -5,13 +5,15 @@ import com.avito.android.network_contracts.output.OutputType
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.kotlin.dsl.property
 
 public abstract class NetworkContractsModuleExtension(
     objects: ObjectFactory,
-) {
+) : ExtensionAware {
 
     public abstract val kind: Property<String>
 
@@ -27,6 +29,9 @@ public abstract class NetworkContractsModuleExtension(
         .convention(false)
 
     public val flags: SetProperty<String> = objects.setProperty(String::class.java)
+
+    public val mappings: MapProperty<String, String> = objects.mapProperty(String::class.java, String::class.java)
+        .convention(emptyMap())
 
     public val skipValidation: Property<Boolean> = objects.property<Boolean>()
         .convention(true)

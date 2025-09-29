@@ -4,12 +4,14 @@ import com.avito.android.clickstream.EventsTracker
 import kotlin.time.Duration
 
 internal fun EventsTracker.trackValidationFailed(
+    module: String,
     errorMessage: String,
     type: String?,
 ) {
     val event = NetworkContractsValidationFailedEvent(
         errorMessage = errorMessage,
         type = type.orEmpty(),
+        modulePath = module,
     )
     trackEvent(event)
 }

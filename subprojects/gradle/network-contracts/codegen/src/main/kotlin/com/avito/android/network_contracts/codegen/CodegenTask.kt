@@ -15,6 +15,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
@@ -65,6 +66,9 @@ internal abstract class CodegenTask : DefaultTask() {
 
     @get:Input
     abstract val timeoutSeconds: Property<Long>
+
+    @get:Input
+    abstract val mappings: MapProperty<String, String>
 
     @get:Input
     @get:Optional
@@ -122,6 +126,7 @@ internal abstract class CodegenTask : DefaultTask() {
             flags = flags.get(),
             timeout = Duration.ofSeconds(timeoutSeconds.get()),
             errorOutputType = errorOutputType.orNull,
+            mappings = mappings.get().orEmpty(),
         )
         val codegen = Codegen.create(arch, codegenExecutableFiles, logger, config)
 

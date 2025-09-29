@@ -26,6 +26,7 @@ internal data class CodegenConfig(
     val flags: Set<String>,
     val timeout: Duration,
     val errorOutputType: OutputType?,
+    val mappings: Map<String, String>,
 )
 
 @Suppress("unused")
@@ -37,6 +38,7 @@ private class CodegenConfigAdvanced(
     @SerialName("codegen_files_dir") val buildDirectoryPath: String,
     @SerialName("module_name") val moduleName: String,
     @SerialName("flags") val flags: Set<String>,
+    @SerialName("mappings") val mappings: Map<String, String>,
 )
 
 internal val CodegenConfig.args
@@ -70,6 +72,7 @@ private fun CodegenConfig.generateAdvancedConfigJson(): String {
             buildDirectoryPath = this.buildDirectoryRelativePath,
             moduleName = this.moduleName,
             flags = flags,
+            mappings = mappings,
         )
     )
 }

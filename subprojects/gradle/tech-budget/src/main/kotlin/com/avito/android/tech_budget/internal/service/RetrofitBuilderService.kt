@@ -6,6 +6,7 @@ import com.avito.android.tech_budget.techBudgetExtension
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.android.tls.TlsCredentialsService
 import com.avito.android.tls.manager.TlsManager
+import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -34,11 +35,12 @@ internal abstract class RetrofitBuilderService : BuildService<RetrofitBuilderSer
 
         val logger = loggerFactory.create("OkHttp")
         val loggingInterceptor = HttpLoggingInterceptor(logger::info)
-            .setLevel(HttpLoggingInterceptor.Level.BASIC)
+            .setLevel(HttpLoggingInterceptor.Level.BODY)
 
         val okHttpClient = predefinedOkHttpBuilder
             .readTimeout(2, TimeUnit.MINUTES)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(RetryInterceptor())
             .build()
 
         return Retrofit.Builder()
