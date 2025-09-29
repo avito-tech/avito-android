@@ -78,10 +78,18 @@ if [[ ${IS_KUBERNETES_NEW_CLUSTER} == "true" ]]; then
     GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN_NEW} "
     GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL_NEW} "
     GRADLE_ARGS+="-PkubernetesCaCertData='${KUBERNETES_CA_CERT_DATA}' "
+    KUBERNETES_TOLERATION_FINAL=${KUBERNETES_TOLERATION_NEW}
 else
     GRADLE_ARGS+="-PkubernetesToken=${KUBERNETES_TOKEN} "
     GRADLE_ARGS+="-PkubernetesUrl=${KUBERNETES_URL} "
+    KUBERNETES_TOLERATION_FINAL=${KUBERNETES_TOLERATION}
 fi
+
+IFS=";" read -r TOLERATION_KEY TOLERATION_OPERATOR TOLERATION_VALUE TOLERATION_EFFECT <<< "$KUBERNETES_TOLERATION_FINAL"
+GRADLE_ARGS+="-Pkubernetes.toleration.key=${TOLERATION_KEY} "
+GRADLE_ARGS+="-Pkubernetes.toleration.operator=${TOLERATION_OPERATOR} "
+GRADLE_ARGS+="-Pkubernetes.toleration.value=${TOLERATION_VALUE} "
+GRADLE_ARGS+="-Pkubernetes.toleration.effect=${TOLERATION_EFFECT} "
 
 GRADLE_ARGS+="-PkubernetesNamespace=android-emulator "
 GRADLE_ARGS+="-Pavito.build-verdict.enabled=true "

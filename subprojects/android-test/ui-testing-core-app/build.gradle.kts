@@ -3,6 +3,8 @@ import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHist
 import com.avito.instrumentation.configuration.KubernetesViaCredentials
 import com.avito.instrumentation.configuration.report.ReportConfig
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.k8s.model.toleration.TolerationEffect
+import com.avito.k8s.model.toleration.TolerationOperator
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import java.time.Duration
@@ -116,6 +118,20 @@ instrumentation {
             token.set(getMandatoryStringProperty("kubernetesToken"))
             url.set(getMandatoryStringProperty("kubernetesUrl"))
             namespace.set(getMandatoryStringProperty("kubernetesNamespace"))
+            caCertData.set(getOptionalStringProperty("kubernetesCaCertData"))
+
+            tolerations {
+                toleration(
+                    key = getMandatoryStringProperty("kubernetes.toleration.key"),
+                    operator = TolerationOperator.fromValue(
+                        value = getMandatoryStringProperty("kubernetes.toleration.operator")
+                    ),
+                    value = getMandatoryStringProperty("kubernetes.toleration.value"),
+                    effect = TolerationEffect.fromValue(
+                        value = getMandatoryStringProperty("kubernetes.toleration.effect")
+                    ),
+                )
+            }
         }
     }
 
