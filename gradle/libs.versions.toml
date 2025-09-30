@@ -162,7 +162,7 @@ ktorClient = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktorOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
 # https://mvnrepository.com/artifact/com.autonomousapps.dependency-analysis/com.autonomousapps.dependency-analysis.gradle.plugin
-dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.28.0"
+dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.33.0"
 
 # https://developer.android.com/jetpack/androidx/releases/compose-ui
 compose-uiTestJunit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
