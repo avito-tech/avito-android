@@ -1,0 +1,15 @@
+apiVersion: v2
+type: application
+name: instant-feedback
+version: v1.0.0
+appVersion: v1.0.0
+description: instant feedback service
+keywords:
+    - android
+    - instant-feedback
+sources:
+    - https://github.com/avito-tech/avito-android-tools
+maintainers:
+    - name: \#speed-android
+      url: http://links.k.avito.ru/7L
+kubeVersion: ">=1.14.0-0"

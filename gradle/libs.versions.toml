@@ -50,6 +50,7 @@ kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.3"
 
 kotlinx-serialization-gradle = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
+kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.6.2"
 converter-kotlinx-serialization = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
 
 rxJava = "io.reactivex:rxjava:1.3.8"
@@ -158,8 +159,8 @@ ktorContentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", v
 ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktorSerializationGson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
 ktorKotlinSerialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-ktorClient = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktorOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktorServerTestHost = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 
 # https://mvnrepository.com/artifact/com.autonomousapps.dependency-analysis/com.autonomousapps.dependency-analysis.gradle.plugin
 dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.33.0"

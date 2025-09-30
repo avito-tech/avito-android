@@ -176,3 +176,5 @@ include(":subprojects:delivery:tests-summary")
 include(":subprojects:delivery:upload-cd-build-result")
 
 include(":subprojects:teamcity-metrics-collector")
+
+include(":subprojects:instant-feedback")

@@ -1,0 +1,10 @@
+docker:
+    registry: registry
+    image: android/instant-feedback
+    image_tag: undefined
+
+ingress:
+    host: undefined
+
+env:
+    service_endpoint: undefined

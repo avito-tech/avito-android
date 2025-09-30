@@ -14,7 +14,7 @@ buildCache {
 
     val isInternalBuild = booleanProperty("avito.internalBuild", false)
 
-    val buildCacheUrl: String? = if (isInternalBuild) {
+    val buildCacheUrl: String? = if (isInternalBuild && gradle.startParameter.isBuildCacheEnabled) {
         val remoteUrl = checkNotNull(
             stringProperty("com.avito.android.tools.buildCache.remote.url", nullIfBlank = true)
         ) {
