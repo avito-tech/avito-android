@@ -5,10 +5,27 @@ import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 class FileLoggingHandlerTest {
+
+    @Test
+    fun `log format is correct`(@TempDir file: File) {
+        val logFile = File(file, "logs.txt")
+        val handler = FileLoggingHandler(
+            "[prefix]",
+            acceptedLogLevel = LogLevel.DEBUG,
+            logFile = logFile.toPath(),
+            clock = Clock.fixed(Instant.EPOCH, ZoneId.of("UTC+3"))
+        )
+        handler.write(LogLevel.DEBUG, "Test message", null)
+        Truth.assertThat(logFile.readLines().first())
+            .isEqualTo("03:00:00+3 DEBUG [prefix] Test message")
+    }
 
     @Test
     fun `when 10 threads write to one log file concurrenty - we have all log lines`(@TempDir file: File) {
