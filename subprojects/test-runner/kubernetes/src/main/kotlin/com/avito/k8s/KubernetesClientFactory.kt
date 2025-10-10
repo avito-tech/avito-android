@@ -22,6 +22,7 @@ public class KubernetesClientFactory(
                 .withMasterUrl(kubernetesCredentials.url)
                 .withOauthToken(kubernetesCredentials.token)
                 .withNamespace(kubernetesCredentials.namespace)
+                .withTrustCerts(true)
                 .build()
 
             is KubernetesCredentials.Config -> {
