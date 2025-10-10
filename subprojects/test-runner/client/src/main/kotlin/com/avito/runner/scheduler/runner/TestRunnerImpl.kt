@@ -57,6 +57,8 @@ internal class TestRunnerImpl(
                 val deviceWorkerPool: DeviceWorkerPool = devicesProvider.provideFor(
                     reservations = getReservations(tests),
                 )
+                val gottenResults = mutableListOf<TestRunResult>()
+                val summaryReport by lazy { summaryReportMaker.make(gottenResults, startTime) }
                 try {
                     deviceWorkerPool.start()
                     reservationWatcher.watch(state.deviceSignals)
@@ -66,7 +68,6 @@ internal class TestRunnerImpl(
 
                     val expectedResultsCount = tests.count()
 
-                    val gottenResults = mutableListOf<TestRunResult>()
                     for (result in state.results) {
                         gottenResults.add(result)
                         val gottenCount = gottenResults.size
@@ -89,8 +90,6 @@ internal class TestRunnerImpl(
                         }
                     )
 
-                    val summaryReport = summaryReportMaker.make(gottenResults, startTime)
-                    reporter.report(report = summaryReport)
                     logger.info(
                         "Test run finished. The results: " +
                             "passed = ${summaryReport.successRunsCount}, " +
@@ -115,6 +114,7 @@ internal class TestRunnerImpl(
                     }
                     Result.Failure(e)
                 } finally {
+                    reporter.report(report = summaryReport)
                     logger.info("Test run release resources")
                     deviceWorkerPool.stop()
                     state.cancel()
