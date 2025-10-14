@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics.internal.gradle.app_build
 
 import com.android.build.gradle.tasks.PackageApplication
+import com.avito.android.plugin.build_metrics.BuildEnvironment
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultListener
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
@@ -15,7 +16,8 @@ import java.time.Instant
 
 internal class AppBuildTimeListener(
     private val sender: BuildMetricSender,
-    private val userName: String,
+    private val metadata: AppBuildTimeMetadata,
+    private val environment: BuildEnvironment,
 ) : BuildOperationsResultListener {
 
     override val name: String = "AppBuildTime"
@@ -45,7 +47,8 @@ internal class AppBuildTimeListener(
                     status = result.buildResult.status.asSeriesName(),
                     appName = task.path.module.toTagValue(),
                     appType = getPackageTaskAppType(task),
-                    userName = userName,
+                    metadata = metadata,
+                    environment = environment
                 )
             )
         }

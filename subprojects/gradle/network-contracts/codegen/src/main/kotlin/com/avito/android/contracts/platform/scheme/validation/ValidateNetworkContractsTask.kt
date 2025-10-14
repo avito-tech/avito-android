@@ -27,6 +27,12 @@ public abstract class ValidateNetworkContractsTask @Inject constructor(
 ) : DefaultTask(), BuildVerdictTask {
 
     @get:Input
+    public abstract val kind: Property<String>
+
+    @get:Input
+    public abstract val variantName: Property<String>
+
+    @get:Input
     public abstract val modulePath: Property<String>
 
     @get:InputFiles
@@ -65,7 +71,7 @@ public abstract class ValidateNetworkContractsTask @Inject constructor(
                     is NetworkContractsDiagnostic.Remote -> "remote"
                     is NetworkContractsDiagnostic.Undefined -> "undefined"
                 }
-                tracker.trackValidationFailed(modulePath.get(), diagnostic.message, type)
+                tracker.trackValidationFailed(modulePath.get(), diagnostic.message, type, kind.get(), variantName.get())
             }
             val diagnostics = validationDetections.groupBy { diagnostic -> diagnostic.issue }
 

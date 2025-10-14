@@ -3,12 +3,14 @@ package com.avito.android.plugin.build_metrics.app_build
 import com.android.build.gradle.tasks.PackageApplication
 import com.avito.android.clickstream.event.ClickStreamEvent
 import com.avito.android.graphite.GraphiteMetric
+import com.avito.android.plugin.build_metrics.BuildEnvironment
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
 import com.avito.android.plugin.build_metrics.internal.CacheOperations
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.plugin.build_metrics.internal.core.StubBuildMetricsSender
 import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuildTimeListener
+import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuildTimeMetadata
 import com.avito.android.plugin.build_metrics.internal.gradle.app_build.ApplicationType
 import com.avito.android.plugin.build_metrics.internal.gradle.app_build.clickstream.AppBuildTimeClickStreamEvent
 import com.avito.android.plugin.build_metrics.internal.result.BuildResult
@@ -84,6 +86,9 @@ internal class AppBuildTimeListenerTest {
                 appName = "avito-app",
                 appType = ApplicationType.MAIN,
                 devName = "ivanivanov",
+                branchName = "A-1234_test",
+                repoName = "test",
+                environment = BuildEnvironment.LOCAL,
             ),
             AppBuildTimeClickStreamEvent(
                 duration = 50L,
@@ -91,6 +96,9 @@ internal class AppBuildTimeListenerTest {
                 appName = "cart-demo",
                 appType = ApplicationType.TEST,
                 devName = "ivanivanov",
+                branchName = "A-1234_test",
+                repoName = "test",
+                environment = BuildEnvironment.LOCAL,
             )
         )
     }
@@ -98,7 +106,15 @@ internal class AppBuildTimeListenerTest {
     private fun processGraphiteResults(result: BuildOperationsResult): List<GraphiteMetric> {
         val buildMetricSender = StubBuildMetricsSender()
 
-        val listener = AppBuildTimeListener(buildMetricSender, "ivanivanov")
+        val listener = AppBuildTimeListener(
+            sender = buildMetricSender,
+            metadata = AppBuildTimeMetadata(
+                userName = "ivanivanov",
+                branchName = "A-1234_test",
+                repoName = "test"
+            ),
+            environment = BuildEnvironment.LOCAL,
+        )
         listener.onBuildFinished(result)
 
         return buildMetricSender.getSentGraphiteMetrics()
@@ -107,7 +123,15 @@ internal class AppBuildTimeListenerTest {
     private fun processClickStreamResults(result: BuildOperationsResult): List<ClickStreamEvent> {
         val buildMetricSender = StubBuildMetricsSender()
 
-        val listener = AppBuildTimeListener(buildMetricSender, "ivanivanov")
+        val listener = AppBuildTimeListener(
+            sender = buildMetricSender,
+            metadata = AppBuildTimeMetadata(
+                userName = "ivanivanov",
+                branchName = "A-1234_test",
+                repoName = "test"
+            ),
+            environment = BuildEnvironment.LOCAL,
+            )
         listener.onBuildFinished(result)
 
         return buildMetricSender.getSentClickStreamEvents()

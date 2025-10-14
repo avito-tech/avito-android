@@ -48,6 +48,7 @@ public class NetworkContractsModulePlugin : Plugin<Project> {
             it.generatedDirectory.set(networkContractsExtension.generatedDirectory)
             it.errorOutputType.set(networkContractsExtension.errorOutputType)
             it.packageName.set(networkContractsExtension.packageName)
+            it.generators.add("api-composition-clients")
         }
 
         schemesContractsExtension.imports.register("network") {
@@ -135,6 +136,8 @@ private fun Project.configureNetworkContractsValidationTasks(
                     it.schemes.setFrom(schemesMetadata)
                 }
                 it.modulePath.set(project.path)
+                it.kind.set(extension.kind)
+                it.variantName.set(variantConfiguration.name)
             }
             configuration.onlyIf.set(project.provider { schemesMetadata.isPresent })
         }

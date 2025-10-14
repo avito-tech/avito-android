@@ -74,6 +74,8 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
             buildMetrics {
                buildType.set("test")
                environment.set(BuildEnvironment.CI)
+               branchName.set("A-1234_test")
+               repoName.set("test-project")
             }
             
             @CacheableTask

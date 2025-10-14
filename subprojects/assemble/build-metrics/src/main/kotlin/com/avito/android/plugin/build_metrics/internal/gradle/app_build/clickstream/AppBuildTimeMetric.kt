@@ -1,7 +1,9 @@
 package com.avito.android.plugin.build_metrics.internal.gradle.app_build.clickstream
 
 import com.avito.android.clickstream.event.ClickStreamEvent
+import com.avito.android.plugin.build_metrics.BuildEnvironment
 import com.avito.android.plugin.build_metrics.internal.core.BuildMetric
+import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuildTimeMetadata
 import com.avito.android.plugin.build_metrics.internal.gradle.app_build.ApplicationType
 
 internal class AppBuildTimeMetric(
@@ -9,7 +11,8 @@ internal class AppBuildTimeMetric(
     private val status: String,
     private val appName: String,
     private val appType: ApplicationType,
-    private val userName: String,
+    private val metadata: AppBuildTimeMetadata,
+    private val environment: BuildEnvironment,
 ) : BuildMetric.ClickStream() {
 
     override fun asClickStream(): ClickStreamEvent {
@@ -18,7 +21,10 @@ internal class AppBuildTimeMetric(
             status = status,
             appName = appName,
             appType = appType,
-            devName = userName,
+            devName = metadata.userName,
+            branchName = metadata.branchName,
+            repoName = metadata.repoName,
+            environment = environment
         )
     }
 }

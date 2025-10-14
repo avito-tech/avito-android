@@ -46,6 +46,8 @@ class RemoteCompatibilityDiagnosticRuleTest {
             analyticsTrackerService = analyticsTrackerService,
             branchName = "develop",
             modulePath = ":test",
+            kind = "test",
+            variantName = "test",
         )
         whenever(validationService.validate(any(), any())).thenReturn(emptyList())
 
@@ -71,6 +73,8 @@ class RemoteCompatibilityDiagnosticRuleTest {
                 analyticsTrackerService = analyticsTrackerService,
                 branchName = "develop",
                 modulePath = ":test",
+                kind = "test",
+                variantName = "test",
             )
 
         whenever(
@@ -104,6 +108,8 @@ class RemoteCompatibilityDiagnosticRuleTest {
                 analyticsTrackerService = analyticsTrackerService,
                 branchName = "develop",
                 modulePath = ":test",
+                kind = "test",
+                variantName = "test",
             )
 
         whenever(validationService.validate(any(), any())).thenThrow(RuntimeException("from test"))
@@ -150,6 +156,8 @@ private class RemoteCompatibilityRuleImpl(
     override val validationService: Property<ValidationApiSchemesService>,
     override val branchName: Property<String>,
     override val modulePath: Property<String>,
+    override val kind: Property<String>,
+    override val variantName: Property<String>,
     override val analyticsTrackerService: Property<NetworkContractsAnalyticsService>
 ) : RemoteCompatibilityDiagnosticRule() {
 
@@ -159,12 +167,16 @@ private class RemoteCompatibilityRuleImpl(
         analyticsTrackerService: NetworkContractsAnalyticsService,
         branchName: String,
         modulePath: String,
+        kind: String,
+        variantName: String,
         objects: ObjectFactory = ProjectBuilder.builder().build().objects
     ) : this(
         schemes = objects.fileCollection().apply { setFrom(schemes) },
         validationService = objects.property<ValidationApiSchemesService>().apply { set(validationService) },
         branchName = objects.property<String>().apply { set(branchName) },
         modulePath = objects.property<String>().apply { set(modulePath) },
+        kind = objects.property<String>().apply { set(kind) },
+        variantName = objects.property<String>().apply { set(variantName) },
         analyticsTrackerService = objects
             .property<NetworkContractsAnalyticsService>()
             .apply { set(analyticsTrackerService) },

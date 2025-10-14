@@ -32,6 +32,12 @@ public abstract class RemoteCompatibilityDiagnosticRule @Inject constructor() : 
     @get:Input
     public abstract val modulePath: Property<String>
 
+    @get:Input
+    public abstract val kind: Property<String>
+
+    @get:Input
+    public abstract val variantName: Property<String>
+
     @get:Internal
     public abstract val validationService: Property<ValidationApiSchemesService>
 
@@ -58,7 +64,7 @@ public abstract class RemoteCompatibilityDiagnosticRule @Inject constructor() : 
 
         val analyticsTracker = analyticsTrackerService.get().tracker
         val elapsedTime = measureTime { innerAnalyze(schemes) }
-        analyticsTracker.trackValidationDuration(elapsedTime, modulePath.get())
+        analyticsTracker.trackValidationDuration(elapsedTime, modulePath.get(), kind.get(), variantName.get())
     }
 
     private fun innerAnalyze(schemes: Set<File>) {

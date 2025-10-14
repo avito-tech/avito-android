@@ -8,6 +8,8 @@ import com.avito.android.plugin.build_metrics.internal.di.NotCompatibleWithConfi
 import com.avito.android.plugin.build_metrics.internal.di.NotCompatibleWithConfigurationCacheDI.Companion.isTestProperty
 import com.avito.android.plugin.build_metrics.internal.result.BuildResultFlowAction
 import com.avito.android.stats.statsdConfig
+import com.avito.git.gitStateProvider
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerCoordinates
 import com.avito.logger.GradleLoggerPlugin
@@ -41,7 +43,15 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
 
-        val extension = project.extensions.create<BuildMetricsExtension>("buildMetrics")
+        val extension = project.extensions.create<BuildMetricsExtension>("buildMetrics").apply {
+            branchName.convention(project.gitStateProvider().map { it.currentBranch.name })
+            repoName.convention(
+                project.getOptionalStringProperty(
+                    "avito.bitbucket.repositorySlug",
+                    default = "",
+                )
+            )
+        }
 
         if (!project.pluginIsEnabled) {
             project.logger.lifecycle("Build metrics plugin is disabled")
@@ -93,6 +103,8 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
                             sendBuildTotal.set(extension.sendBuildTotal)
                             sendAppBuildTime.set(extension.sendAppBuildTime)
                             sendTestRunnerMetrics.set(extension.sendTestRunnerMetrics)
+                            branchName.set(extension.branchName)
+                            repoName.set(extension.repoName)
                         }
                     }
 

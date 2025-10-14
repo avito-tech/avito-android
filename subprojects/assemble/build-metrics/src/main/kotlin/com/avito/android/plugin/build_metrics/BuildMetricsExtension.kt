@@ -58,6 +58,10 @@ public abstract class BuildMetricsExtension @Inject constructor(
 
     public val modulesBuildTimeFile: RegularFileProperty = objectFactory.fileProperty()
 
+    public val branchName: Property<String> = objectFactory.property()
+
+    public val repoName: Property<String> = objectFactory.property()
+
     public fun buildCacheObservableTasks(tasks: Set<String>) {
         buildCacheObservableTasks.set(tasks)
         buildCacheObservableTasks.disallowChanges()

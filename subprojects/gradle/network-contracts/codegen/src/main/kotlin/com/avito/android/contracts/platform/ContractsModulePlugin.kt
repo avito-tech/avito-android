@@ -22,7 +22,7 @@ public class ContractsModulePlugin : Plugin<Project> {
 
         pluginInstaller.installModule(target, contractsExtension)
 
-        contractsExtension.validations.all { pluginInstaller.installValidations(it) }
+        contractsExtension.validations.all { pluginInstaller.installValidations(it, contractsExtension) }
         contractsExtension.imports.all { pluginInstaller.installCollectSchemesTask(it, contractsExtension) }
     }
 }

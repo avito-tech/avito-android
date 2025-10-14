@@ -24,6 +24,8 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
                    buildType.set("test")
                    environment.set(BuildEnvironment.CI)
                    buildCacheObservableTasks(setOf("CustomTask"))
+                   branchName.set("A-1234_test")
+                   repoName.set("test-project")
             }
             
             @CacheableTask

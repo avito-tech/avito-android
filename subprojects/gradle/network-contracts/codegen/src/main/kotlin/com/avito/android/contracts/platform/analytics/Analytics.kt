@@ -7,11 +7,15 @@ internal fun EventsTracker.trackValidationFailed(
     module: String,
     errorMessage: String,
     type: String?,
+    kind: String?,
+    variantName: String?,
 ) {
     val event = NetworkContractsValidationFailedEvent(
         errorMessage = errorMessage,
         type = type.orEmpty(),
         modulePath = module,
+        kind = kind.orEmpty(),
+        variantName = variantName.orEmpty(),
     )
     trackEvent(event)
 }
@@ -19,22 +23,30 @@ internal fun EventsTracker.trackValidationFailed(
 public fun EventsTracker.trackValidationDuration(
     duration: Duration,
     modulePath: String,
+    kind: String?,
+    variantName: String?,
 ) {
     val event = NetworkContractsActionDurationEvent(
         actionType = ActionType.VALIDATION,
         duration = duration.inWholeSeconds,
-        modulePath = modulePath
+        modulePath = modulePath,
+        kind = kind.orEmpty(),
+        varinantName = variantName.orEmpty(),
     )
     trackEvent(event)
 }
 
 internal fun EventsTracker.trackFixationDuration(
     duration: Duration,
+    kind: String?,
+    variantName: String?,
 ) {
     val event = NetworkContractsActionDurationEvent(
         actionType = ActionType.FIXATION,
         duration = duration.inWholeSeconds,
         modulePath = null,
+        kind = kind.orEmpty(),
+        varinantName = variantName.orEmpty(),
     )
     trackEvent(event)
 }

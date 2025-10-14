@@ -5,6 +5,7 @@ import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProv
 import com.avito.android.plugin.build_metrics.internal.BuildResultListener
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildOperationsResultListener
 import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuildTimeListener
+import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuildTimeMetadata
 import com.avito.android.plugin.build_metrics.internal.gradle.cache.BuildCacheMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.configuration.ConfigurationTimeListener
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.compile.CompileMetricsTracker
@@ -119,7 +120,12 @@ internal class CompatibleWithConfigurationCacheDI(
                 add(
                     AppBuildTimeListener(
                         sender = sender,
-                        userName = parameters.userName.get(),
+                        metadata = AppBuildTimeMetadata(
+                            userName = parameters.userName.get(),
+                            branchName = parameters.branchName.get(),
+                            repoName = parameters.repoName.orNull.orEmpty(),
+                        ),
+                        environment = parameters.environment.get(),
                     )
                 )
             }

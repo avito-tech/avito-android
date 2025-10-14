@@ -68,6 +68,8 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
         val sendTestRunnerMetrics: Property<Boolean>
         val loggerService: Property<LoggerService>
         val loggerCoordinates: Property<GradleLoggerCoordinates>
+        val branchName: Property<String>
+        val repoName: Property<String>
     }
 
     private val di by lazy { CompatibleWithConfigurationCacheDI(parameters) }

@@ -62,8 +62,8 @@ internal class ContractsPluginInstaller(
         configureCollectSchemesTask(extension, configuration)
     }
 
-    fun installValidations(configuration: ValidationConfiguration) {
-        configureValidationTask(configuration)
+    fun installValidations(configuration: ValidationConfiguration, extension: ContractsModuleExtension) {
+        configureValidationTask(extension, configuration)
     }
 
     private fun registerCodegenVariantsTask(
@@ -199,6 +199,7 @@ internal class ContractsPluginInstaller(
     }
 
     private fun configureValidationTask(
+        extension: ContractsModuleExtension,
         variantConfiguration: ValidationConfiguration,
     ) {
 
@@ -239,6 +240,8 @@ internal class ContractsPluginInstaller(
                             }
                         }
                 )
+                kind.set(extension.kind)
+                variantName.set(variantConfiguration.name)
                 onlyIf { group.onlyIf.get() }
             }
             compositeTask.configure { it.reports.from(validationTask.flatMap { it.verdictFile }) }

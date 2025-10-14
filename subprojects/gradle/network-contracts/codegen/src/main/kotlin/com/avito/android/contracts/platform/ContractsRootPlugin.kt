@@ -65,6 +65,7 @@ public class ContractsRootPlugin : Plugin<Project> {
                     it.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(project))
                     it.upsertService.set(variant.upsertService)
                     it.outputFile.set(project.reportFile("networkContracts", "upsert.txt"))
+                    it.variantName.set(variant.name)
                 }
 
                 upsertCompositeTask.configure {

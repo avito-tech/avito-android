@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:worker-extensions"))
+    implementation(project(":subprojects:gradle:git"))
     implementation(libs.kotlinGradle)
     implementation(libs.kspGradle)
     implementation(libs.moshi)

@@ -12,6 +12,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
@@ -19,13 +20,16 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     public abstract val schemes: ConfigurableFileCollection
+
+    @get:Input
+    public abstract val variantName: Property<String>
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -49,13 +53,21 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
     public fun upsert() {
         val tracker = analyticsTrackerService.get().tracker
 
-        val elapsedTime = measureTime { innerUpsert() }
-        tracker.trackFixationDuration(elapsedTime)
+        val (kind, elapsedTime) = measureTimedValue {
+            val schemes = innerUpsert()
+            val kinds = schemes.map { it.kind }.toSet()
+            if (kinds.size > 1) {
+                MULTIPLE_KIND
+            } else {
+                kinds.first()
+            }
+        }
+        tracker.trackFixationDuration(elapsedTime, kind, variantName.get())
 
         outputFile.get().asFile.writeText("OK")
     }
 
-    private fun innerUpsert() {
+    private fun innerUpsert(): List<ApiSchemesMetadata> {
         val validationFailed = validationReports
             .filter { it.exists() }
             .any { it.readText() != "OK" }
@@ -67,7 +79,7 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
         val schemes = schemes.filter(File::exists)
         if (schemes.isEmpty) {
             logger.warn("Schemes not found")
-            return
+            return emptyList()
         }
 
         val schemesMetadata = schemes
@@ -78,5 +90,11 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
                 schemes = schemesMetadata,
             )
         }
+        return schemesMetadata
+    }
+
+    private companion object {
+
+        const val MULTIPLE_KIND = "multiple"
     }
 }
