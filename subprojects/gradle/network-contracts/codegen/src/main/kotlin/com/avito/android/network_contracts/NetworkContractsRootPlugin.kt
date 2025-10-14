@@ -1,69 +1,76 @@
 package com.avito.android.network_contracts
 
-import com.avito.android.network_contracts.codegen.SetupTmpMtlsFilesTask
-import com.avito.android.network_contracts.configuration.codegenConfiguration
-import com.avito.android.network_contracts.extension.NetworkContractsRootExtension
-import com.avito.android.network_contracts.internal.analytics.NetworkContractsAnalyticsService
-import com.avito.android.network_contracts.internal.http.HttpClientService
-import com.avito.android.network_contracts.scheme.fixation.upsert.UpdateRemoteApiSchemesTask
-import com.avito.android.network_contracts.validation.NetworkContractsCompositeTask
-import com.avito.android.network_contracts.validation.ValidateNetworkContractsTask
-import com.avito.android.tls.TlsConfigurationPlugin
+import com.avito.android.contracts.platform.ContractsRootPlugin
+import com.avito.android.contracts.platform.extension.ContractsRootExtension
+import com.avito.android.contracts.platform.extension.network
+import com.avito.android.contracts.platform.internal.http.HttpClientService
+import com.avito.android.contracts.platform.scheme.fixation.UpsertService
+import com.avito.android.network_contracts.fixation.service.NetworkContractsUpsertService
 import com.avito.git.gitStateProvider
 import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.kotlin.dsl.isRoot
-import com.avito.kotlin.dsl.typedNamed
-import com.avito.logger.GradleLoggerPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.getByType
 
 public class NetworkContractsRootPlugin : Plugin<Project> {
 
+    @Suppress("DEPRECATION")
     override fun apply(target: Project) {
-        check(target.isRoot()) {
-            "NetworkContractsRootPlugin must be applied to root project"
+        if (!target.plugins.hasPlugin(ContractsRootPlugin::class.java)) {
+            target.plugins.apply(ContractsRootPlugin::class.java)
         }
 
-        target.extensions.create<NetworkContractsRootExtension>(NetworkContractsRootExtension.NAME)
+        val schemesContractExtension = target.extensions.getByType<ContractsRootExtension>()
+        val networkContractsExtension = target.extensions
+            .create<NetworkContractsRootExtension>(NetworkContractsRootExtension.NAME)
 
-        target.codegenConfiguration.setArtifactsExecutable()
-
-        configureSetupMtlsVariablesTask(target)
-        configureVerificationRootTask(target)
-        configureContractFixationTask(target)
-    }
-
-    private fun configureSetupMtlsVariablesTask(
-        target: Project
-    ) {
-        target.tasks.register<SetupTmpMtlsFilesTask>(SetupTmpMtlsFilesTask.NAME) {
-            val buildDirectory = project.layout.buildDirectory
-            this.tmpCrt.set(buildDirectory.dir(SetupTmpMtlsFilesTask.NAME).map { it.file("tmp_mtls_crt.crt") })
-            this.tmpKey.set(buildDirectory.dir(SetupTmpMtlsFilesTask.NAME).map { it.file("tmp_mtls_key.key") })
-            this.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(this))
-            this.tlsCredentialsService.set(TlsConfigurationPlugin.provideCredentialsService(project))
+        val networkContractsUpsertService = UpsertService.provideUpsertService(
+            project = target,
+            klass = NetworkContractsUpsertService::class.java
+        ) {
+            it.author.set(
+                target.provider {
+                    target.getMandatoryStringProperty("avito.networkContracts.fixation.author")
+                }
+            )
+            it.branchName.set(target.gitStateProvider().map { it.currentBranch.name })
+            it.httpClient.set(
+                target.provider {
+                    HttpClientService.provideHttpClientService(target)
+                }
+            )
         }
-    }
 
-    private fun configureVerificationRootTask(
-        project: Project
-    ) {
-        project.tasks.register<NetworkContractsCompositeTask>(ValidateNetworkContractsTask.NAME)
-    }
+        schemesContractExtension.network {
+            useTls.set(networkContractsExtension.network.useTls
+                .convention(networkContractsExtension.useTls)
+            )
 
-    private fun configureContractFixationTask(project: Project) {
-        val validationTask = project.rootProject.tasks
-            .typedNamed<NetworkContractsCompositeTask>(ValidateNetworkContractsTask.NAME)
+            retries.set(
+                networkContractsExtension.network.retries
+                    .convention(networkContractsExtension.networkRetries)
+            )
+            timeouts.set(
+                networkContractsExtension.network.timeouts
+                    .convention(networkContractsExtension.networkTimeouts)
+            )
+            serviceUrl.set(
+                networkContractsExtension.network.serviceUrl
+                    .convention(networkContractsExtension.serviceUrl)
+            )
+            crtEnvName.set(
+                networkContractsExtension.network.crtEnvName
+                    .convention(networkContractsExtension.crtEnvName)
+            )
+            keyEnvName.set(
+                networkContractsExtension.network.keyEnvName
+                    .convention(networkContractsExtension.keyEnvName)
+            )
+        }
 
-        project.tasks.register(UpdateRemoteApiSchemesTask.NAME, UpdateRemoteApiSchemesTask::class.java) {
-            it.httpClientService.set(HttpClientService.provideHttpClientService(project))
-            it.analyticsTrackerService.set(NetworkContractsAnalyticsService.provideService(project))
-            it.author.set(project.getMandatoryStringProperty("avito.networkContracts.fixation.author"))
-            it.branchName.set(project.gitStateProvider().map { it.currentBranch.name })
-            it.loggerFactory.set(GradleLoggerPlugin.getLoggerFactory(project))
-            it.validationReports.from(validationTask.map { it.output })
+        schemesContractExtension.fixations.register(NetworkContractsVariantConstants.NAME) {
+            it.upsertService.set(networkContractsUpsertService)
         }
     }
 }
