@@ -40,6 +40,8 @@ public interface Bitbucket {
         data: List<InsightData>
     ): Result<Unit>
 
+    public fun getPullRequest(): Result<PullRequest?>
+
     public companion object {
 
         public fun create(

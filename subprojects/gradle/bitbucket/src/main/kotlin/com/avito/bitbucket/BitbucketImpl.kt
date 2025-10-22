@@ -149,6 +149,20 @@ internal class BitbucketImpl(
             .handleError(link = link)
     }
 
+    override fun getPullRequest(): Result<PullRequest?> = Result.tryCatch {
+        if (pullRequestId == null) {
+            return@tryCatch null
+        }
+
+        bitbucketApi.getPullRequest(
+            projectKey = config.projectKey,
+            repositorySlug = config.repositorySlug,
+            pullRequestId = pullRequestId
+        )
+            .execute()
+            .body()
+    }
+
     // todo generic solution
     private fun <T> retrofit2.Response<T>.handleError(link: HttpUrl? = null, issueSize: Int = 0) {
         if (!isSuccessful) {

@@ -1,11 +1,15 @@
 package com.avito.teamcity
 
+import com.avito.android.clickstream.ClickStreamEventTracker
 import com.avito.android.graphite.GraphiteSender
 import com.avito.teamcity.builds.PreviousMetricsSendingTimeProvider
 import com.avito.teamcity.builds.TeamcityBuildsProvider
 import com.avito.teamcity.metric.TeamcityBuildDurationMetric
+import com.avito.teamcity.metric.TeamcityBuildOverallDurationMetric
 import com.avito.teamcity.metric.TeamcityBuildQueueMetric
 import com.avito.teamcity.model.TeamcityMetricsSource
+import com.avito.teamcity.saturate.bitbucket.BitbucketInfoSaturator
+import com.avito.teamcity.saturate.saturateWith
 import org.jetbrains.teamcity.rest.Build
 import java.time.Instant
 
@@ -13,6 +17,8 @@ internal class SendTeamcityBuildMetricsAction(
     private val teamcityBuildsProvider: TeamcityBuildsProvider,
     private val previousMetricsSendingTimeProvider: PreviousMetricsSendingTimeProvider,
     private val graphiteSender: GraphiteSender,
+    private val clickstreamTracker: ClickStreamEventTracker,
+    private val bitbucketInfoSaturator: BitbucketInfoSaturator,
 ) {
 
     fun execute(metricsSources: List<TeamcityMetricsSource>) {
@@ -29,6 +35,11 @@ internal class SendTeamcityBuildMetricsAction(
                 )
                 graphiteSender.send(
                     TeamcityBuildDurationMetric(build).asGraphite()
+                )
+                clickstreamTracker.trackEvent(
+                    TeamcityBuildOverallDurationMetric(
+                        build.saturateWith(bitbucketInfoSaturator)
+                    ).asClickstreamEvent()
                 )
                 log(build)
             }

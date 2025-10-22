@@ -3,6 +3,8 @@ package com.avito.bitbucket
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -28,6 +30,14 @@ internal interface BitbucketApi {
     fun addTask(
         @Body task: Task,
     ): Call<JsonObject>
+
+    @Headers("Accept: application/json;charset=UTF-8")
+    @GET("/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}")
+    fun getPullRequest(
+        @Path("projectKey") projectKey: String,
+        @Path("repositorySlug") repositorySlug: String,
+        @Path("pullRequestId") pullRequestId: Int,
+    ): Call<PullRequest>
 }
 
 internal data class CommentResponse(
@@ -45,3 +55,17 @@ internal data class Task(
 )
 
 internal data class Comment(val text: String)
+
+public data class PullRequest(
+    val author: Author?
+)
+
+public data class Author(
+    val user: User?
+)
+
+public data class User(
+    val name: String,
+    val slug: String,
+    val emailAddress: String?,
+)

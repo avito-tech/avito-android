@@ -1,5 +1,8 @@
 package com.avito.teamcity
 
+import com.avito.android.clickstream.ClickStreamEventTracker
+import com.avito.android.clickstream.ClickStreamSenderImpl
+import com.avito.android.clickstream.config.ClickStreamConfig
 import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.graphite.GraphiteSender
 import com.avito.graphite.series.SeriesName
@@ -7,6 +10,7 @@ import com.avito.logger.PrintlnLoggerFactory
 import com.avito.teamcity.builds.PreviousMetricsSendingTimeProvider
 import com.avito.teamcity.builds.TeamcityBuildsProvider
 import com.avito.teamcity.config.TeamcityMetricsSourceConfig
+import com.avito.teamcity.saturate.bitbucket.BitbucketInfoSaturator
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
@@ -48,6 +52,18 @@ internal object SendTeamcityBuildsMetricsMain {
         private val metricsPrefix: String by option(type = ArgType.String)
             .required()
 
+        private val clickstreamServiceUrl: String by option(type = ArgType.String)
+            .required()
+
+        private val bitbucketUrl: String by option(type = ArgType.String)
+            .required()
+
+        private val bitbucketUser: String by option(type = ArgType.String)
+            .required()
+
+        private val bitbucketPassword: String by option(type = ArgType.String)
+            .required()
+
         private val graphiteSender by lazy {
             GraphiteSender.create(
                 config = GraphiteConfig(
@@ -84,11 +100,33 @@ internal object SendTeamcityBuildsMetricsMain {
             PreviousMetricsSendingTimeProvider.create(teamcityApi)
         }
 
+        private val clickstreamTracker by lazy {
+            ClickStreamEventTracker(
+                clickStreamSender = ClickStreamSenderImpl(
+                    config = ClickStreamConfig(
+                        serviceUrl = clickstreamServiceUrl,
+                        readTimeOutInSeconds = 10,
+                        connectTimeOutInSeconds = 10,
+                    )
+                )
+            )
+        }
+
+        private val bitbucketInfoSaturator by lazy {
+            BitbucketInfoSaturator(
+                bitbucketHost = bitbucketUrl,
+                bitbucketUser = bitbucketUser,
+                bitbucketPassword = bitbucketPassword,
+            )
+        }
+
         override fun execute() {
             val action = SendTeamcityBuildMetricsAction(
                 graphiteSender = graphiteSender,
                 teamcityBuildsProvider = teamcityBuildsProvider,
                 previousMetricsSendingTimeProvider = previousMetricsSendingTimeProvider,
+                clickstreamTracker = clickstreamTracker,
+                bitbucketInfoSaturator = bitbucketInfoSaturator
             )
             val config = Json.decodeFromString<TeamcityMetricsSourceConfig>(
                 string = File(metricsSourcesConfigPath).readText(),

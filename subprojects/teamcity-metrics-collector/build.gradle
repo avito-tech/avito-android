@@ -7,6 +7,10 @@ dependencies {
     implementation(project(":subprojects:common:teamcity-common"))
     implementation(libs.kotlinXCli)
     implementation(project(":subprojects:common:graphite"))
+    implementation(project(":subprojects:common:result"))
+
+    implementation(project(":subprojects:gradle:clickstream"))
+    implementation(project(":subprojects:gradle:bitbucket"))
 }
 
 tasks.register("sendTeamcityBuildsMetrics", JavaExec) {
@@ -22,6 +26,10 @@ tasks.register("sendTeamcityBuildsMetrics", JavaExec) {
         "--graphiteHost", project.providers.gradleProperty("graphite.host").getOrNull(),
         "--graphitePort", project.providers.gradleProperty("graphite.port").getOrNull(),
         "--metricsPrefix", project.providers.gradleProperty("buildMetrics.prefix").getOrNull(),
+        "--clickstreamServiceUrl", project.providers.gradleProperty("clickstream.url").getOrNull(),
+        "--bitbucketUrl", project.providers.gradleProperty("bitbucket.url").getOrNull(),
+        "--bitbucketUser", project.providers.gradleProperty("bitbucket.user").getOrNull(),
+        "--bitbucketPassword", project.providers.gradleProperty("bitbucket.password").getOrNull(),
     )
 }
 
