@@ -64,7 +64,7 @@ public data class AdbDevice(
                 maxAttempts = 10,
                 delay = Duration.ofSeconds(5),
                 action = {
-                    if (api >= 36) {
+                    if (api >= 35) {
                         adbDevice.installPackage(
                             applicationPackage,
                             true,
