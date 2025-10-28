@@ -24,6 +24,19 @@ RUN \
 ENV LANG C.UTF-8
 ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
 
+# ------------------- Kotlin --------------------
+
+ENV KOTLIN_VERSION=2.1.20
+ENV KOTLIN_SHA256=a118197b0de55ffab2bc8d5cd03a5e39033cfb53383d6931bc761dec0784891a
+RUN \
+   curl https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}/kotlin-compiler-${KOTLIN_VERSION}.zip \
+    --progress-bar --location --output kotlin.zip \
+    && echo "${KOTLIN_SHA256}  kotlin.zip" | sha256sum -c - \
+    && unzip kotlin.zip -d /opt \
+    && rm -f kotlin.zip \
+    && ln -s /opt/kotlinc/bin/kotlinc /usr/local/bin/kotlinc \
+    && ln -s /opt/kotlinc/bin/kotlin /usr/local/bin/kotlin
+
 # ----------------- Android SDK -----------------
 ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/cmdline-tools/bin
