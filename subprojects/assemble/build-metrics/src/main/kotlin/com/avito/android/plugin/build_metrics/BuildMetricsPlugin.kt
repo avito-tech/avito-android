@@ -45,12 +45,7 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
 
         val extension = project.extensions.create<BuildMetricsExtension>("buildMetrics").apply {
             branchName.convention(project.gitStateProvider().map { it.currentBranch.name })
-            repoName.convention(
-                project.getOptionalStringProperty(
-                    "avito.bitbucket.repositorySlug",
-                    default = "",
-                )
-            )
+            repoName.convention(project.repoName)
         }
 
         if (!project.pluginIsEnabled) {
@@ -144,3 +139,16 @@ internal val Project.pluginIsEnabled: Boolean
         .getOrElse(false)
 
 private const val enabledProp = "avito.build.metrics.enabled"
+
+private val Project.repoName: String
+    get() {
+        val key = getOptionalStringProperty(
+            "avito.bitbucket.projectKey",
+            default = "",
+        )
+        val name = getOptionalStringProperty(
+            "avito.bitbucket.repositorySlug",
+            default = "",
+        )
+        return "$key/$name"
+    }
