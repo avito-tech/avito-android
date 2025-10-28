@@ -23,5 +23,10 @@ gradlePlugin {
             implementationClass = "com.avito.deeplink_generator.DeeplinkGeneratorPlugin"
             displayName = "Automatic generation of AndroidManifest entries for public deeplinks"
         }
+        create("deeplinkManifestFilterPlugin") {
+            id = "com.avito.android.deeplink-manifest-filter"
+            implementationClass = "com.avito.deeplink_generator.DeeplinkManifestFilterPlugin"
+            displayName = "Filtering out forbidden schemes from the app's AndroidManifest"
+        }
     }
 }

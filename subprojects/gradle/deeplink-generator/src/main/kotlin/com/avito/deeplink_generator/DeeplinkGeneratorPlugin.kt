@@ -5,6 +5,7 @@ import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.api.variant.LibraryVariant
 import com.avito.android.isAndroidLibrary
 import com.avito.deeplink_generator.internal.merge.MergeDeeplinkManifestTask
+import com.avito.kotlin.dsl.getBooleanProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -46,7 +47,25 @@ public class DeeplinkGeneratorPlugin : Plugin<Project> {
         variant: LibraryVariant,
         ext: DeeplinkGeneratorExtension
     ) {
-        if (ext.publicDeeplinks.get().isNotEmpty()) {
+        if (ext.publicDeeplinks.get().isEmpty()) return
+        val deeplinksFilterEnabled =
+            project.getBooleanProperty("avito.deeplinks.filter.enabled", false)
+        if (deeplinksFilterEnabled) {
+            val mergeManifestTask =
+                project.tasks.register(
+                    MergePublicDeeplinkManifestTask.taskName(variant.name),
+                    MergePublicDeeplinkManifestTask::class.java
+                ) { task ->
+                    task.activityIntentFilterClass.set(ext.activityIntentFilterClass)
+                }
+
+            variant.artifacts.use(mergeManifestTask)
+                .wiredWithFiles(
+                    MergePublicDeeplinkManifestTask::inputManifest,
+                    MergePublicDeeplinkManifestTask::outputManifest
+                )
+                .toTransform(SingleArtifact.MERGED_MANIFEST)
+        } else {
             val mergeManifestTask =
                 project.tasks.register(
                     MergeDeeplinkManifestTask.taskName(variant.name),
