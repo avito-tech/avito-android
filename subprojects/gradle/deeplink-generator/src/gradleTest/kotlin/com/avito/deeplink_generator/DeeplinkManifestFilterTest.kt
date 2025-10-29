@@ -68,7 +68,7 @@ internal class DeeplinkManifestFilterTest {
                     useKts = true,
                     buildGradleExtra = """
                         deeplinkManifestFilter {
-                            variantToAllowedSchemes.put("release", setOf("ru.avito", "com.scheme1"))
+                            variantToForbiddenSchemes.put("release", setOf("com.scheme2"))
                         }
                     """.trimIndent(),
                 ),

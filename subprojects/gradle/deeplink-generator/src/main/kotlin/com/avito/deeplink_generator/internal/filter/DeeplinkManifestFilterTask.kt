@@ -25,7 +25,7 @@ import java.io.File
 internal abstract class DeeplinkManifestFilterTask : DefaultTask() {
 
     @get:Input
-    abstract val allowedSchemes: SetProperty<String>
+    abstract val forbiddenSchemes: SetProperty<String>
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -56,14 +56,14 @@ internal abstract class DeeplinkManifestFilterTask : DefaultTask() {
 
         val xml = XmlParser().parse(inputManifest)
         val androidNS = Namespace("http://schemas.android.com/apk/res/android", "android")
-        val allowedSchemes = allowedSchemes.get()
+        val forbiddenSchemes = forbiddenSchemes.get()
 
         (xml["application"] as NodeList).asNodes()
             .flatMap { it.children("activity") }
             .flatMap { it.children("intent-filter") }
             .flatMap { it.children("data") }
             .filter { data ->
-                allowedSchemes.none { scheme ->
+                forbiddenSchemes.any { scheme ->
                     data.attr(androidNS, "scheme")?.contains(scheme) == true
                 }
             }

@@ -19,13 +19,13 @@ public class DeeplinkManifestFilterPlugin : Plugin<Project> {
             project.extensions.create<DeeplinkManifestFilterExtension>("deeplinkManifestFilter")
 
         androidComponents.onVariants { variant ->
-            val variantToAllowedSchemes = deeplinkManifestFilterExtension.variantToAllowedSchemes.get()
+            val variantToForbiddenSchemes = deeplinkManifestFilterExtension.variantToForbiddenSchemes.get()
 
             val filterManifestTask = project.tasks.register(
                 DeeplinkManifestFilterTask.taskName(variant.name),
                 DeeplinkManifestFilterTask::class.java
             ) {
-                it.allowedSchemes.set(variantToAllowedSchemes[variant.name])
+                it.forbiddenSchemes.set(variantToForbiddenSchemes[variant.name])
             }
 
             variant.artifacts.use(filterManifestTask)
