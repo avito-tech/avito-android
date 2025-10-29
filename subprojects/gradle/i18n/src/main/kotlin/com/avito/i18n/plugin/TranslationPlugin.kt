@@ -48,6 +48,7 @@ public class TranslationPlugin : Plugin<Project> {
             namespace.set(translationExtension.namespace)
             sourceLocale.set(translationExtension.sourceLocale)
             componentName.set(translationExtension.componentName)
+            useNewApi.set(translationExtension.useNewApi)
             usesService(localizationService)
         }
     }

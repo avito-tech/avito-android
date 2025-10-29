@@ -2,6 +2,8 @@ package com.avito.i18n.plugin.service
 
 import com.avito.android.tls.TlsCredentialsService
 import com.avito.android.tls.manager.TlsManager
+import com.avito.i18n.plugin.dto.OldTranslationRequest
+import com.avito.i18n.plugin.dto.OldTranslationResponse
 import com.avito.i18n.plugin.dto.TranslationRequest
 import com.avito.i18n.plugin.dto.TranslationResponse
 import io.ktor.client.HttpClient
@@ -18,6 +20,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import org.gradle.api.GradleException
 
@@ -30,7 +33,12 @@ internal class LocalizationApiImpl(
 
     private val client: HttpClient = HttpClient(OkHttp) {
         install(ContentNegotiation) {
-            json()
+            json(
+                Json {
+                    explicitNulls = false
+                    ignoreUnknownKeys = true
+                }
+            )
         }
         defaultRequest {
             url(serviceUrl)
@@ -41,7 +49,21 @@ internal class LocalizationApiImpl(
         }
     }
 
-    override fun translate(request: TranslationRequest): TranslationResponse {
+    override fun translateWithDeprecatedApi(request: OldTranslationRequest): OldTranslationResponse {
+        return runBlocking {
+            val response = client.post {
+                url(path = translateUrlPath)
+                setBody(request)
+            }
+            if (response.status == HttpStatusCode.OK) {
+                response.body()
+            } else {
+                throw GradleException("Error while processing request:  <-- ${response.status} ${response.request.url}")
+            }
+        }
+    }
+
+    override fun translateWithNewApi(request: TranslationRequest): TranslationResponse {
         return runBlocking {
             val response = client.post {
                 url(path = translateUrlPath)

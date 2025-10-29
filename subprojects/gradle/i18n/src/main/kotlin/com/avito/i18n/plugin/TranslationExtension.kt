@@ -21,4 +21,6 @@ public abstract class TranslationExtension(
     public abstract val translateUrlPath: Property<String>
 
     public val useTls: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
+
+    public val useNewApi: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
 }

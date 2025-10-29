@@ -5,9 +5,22 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class TranslationRequest(
-    @SerialName("namespaceSlug") val namespace: String,
-    @SerialName("componentSlug") val componentName: String,
+    @SerialName("namespace") val namespace: String,
     @SerialName("sourceLang") val sourceLang: String,
+    @SerialName("platform") val platform: String,
     @SerialName("targetLangs") val targetLangs: List<String>,
-    @SerialName("sourceTextUnits") val textUnits: List<Map<String, String>>
+    @SerialName("texts") val textUnits: List<TranslationInputText>
+)
+
+@Serializable
+internal data class TranslationInputText(
+    @SerialName("key") val key: String,
+    @SerialName("component") val componentName: String,
+    @SerialName("text") val text: TranslationText,
+    @SerialName("context") val context: TranslationContext?
+)
+
+@Serializable
+internal data class TranslationContext(
+    @SerialName("text") val text: String?
 )

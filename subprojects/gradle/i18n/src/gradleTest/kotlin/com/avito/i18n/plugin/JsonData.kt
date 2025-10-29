@@ -5,72 +5,136 @@ import org.intellij.lang.annotations.Language
 @Language("JSON")
 val RESPONSE_BODY = """
     {
-      "result": {
-        "data": {
-          "componentSlug": "",
-          "namespaceSlug": "",
-          "targetTextUnits": {
-            "en": {
-              "textUnits": [
-                {
-                  "key": "some_string",
-                  "other": "emos gnirts"
+        "result": {
+            "status": {
+                "code": "ok",
+                "message": "some message"
+            },
+            "data": {
+                "task": {
+                    "taskUUID": "Some task id",
+                    "namespace": "android",
+                    "contentType": "avito",
+                    "status": "success",
+                    "description": "some description"
                 },
-                {
-                  "key": "params_string",
-                  "other": "smarap %s gnirts %d"
-                }
-              ]
+                "textUnits": [
+                    {
+                        "status": 10,
+                        "unit": {
+                            "key": "some_string",
+                            "component": "some component",
+                            "namespace": "android",
+                            "status": 1,
+                            "translated": [
+                                {
+                                    "lang": "en",
+                                    "text": {
+                                        "text": "emos gnirts"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "status": 10,
+                        "unit": {
+                            "key": "params_string",
+                            "component": "some component",
+                            "namespace": "android",
+                            "status": 1,
+                            "translated": [
+                                {
+                                    "lang": "en",
+                                    "text": {
+                                        "text": "smarap %s gnirts %d"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
-          }
-        },
-        "error": null
-      }
+        }
     }
     """.trimIndent()
 
 @Language("JSON")
 val RESPONSE_BODY_TRANSLATABLE_FALSE = """
     {
-      "result": {
-        "data": {
-          "componentSlug": "",
-          "namespaceSlug": "",
-          "targetTextUnits": {
-            "en": {
-              "textUnits": [
-                {
-                  "key": "params_string",
-                  "other": "smarap %s gnirts %d"
-                }
-              ]
+        "result": {
+            "status": {
+                "code": "ok",
+                "message": "some message"
+            },
+            "data": {
+                "task": {
+                    "taskUUID": "Some task id",
+                    "namespace": "android",
+                    "contentType": "avito",
+                    "status": "success",
+                    "description": "some description"
+                },
+                "textUnits": [
+                    {
+                        "status": 10,
+                        "unit": {
+                            "key": "params_string",
+                            "component": "some component",
+                            "namespace": "android",
+                            "status": 1,
+                            "translated": [
+                                {
+                                    "lang": "en",
+                                    "text": {
+                                        "text": "smarap %s gnirts %d"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
-          }
-        },
-        "error": null
-      }
+        }
     }
     """.trimIndent()
 
 @Language("JSON")
 val RESPONSE_BODY_CHANGE_STRING = """
     {
-      "result": {
-        "data": {
-          "componentSlug": "",
-          "namespaceSlug": "",
-          "targetTextUnits": {
-            "en": {
-              "textUnits": [
-                {
-                  "key": "some_string",
-                  "other": "emos gnirts 321"
-                }
-              ]
+        "result": {
+            "status": {
+                "code": "ok",
+                "message": "some message"
+            },
+            "data": {
+                "task": {
+                    "taskUUID": "Some task id",
+                    "namespace": "android",
+                    "contentType": "avito",
+                    "status": "success",
+                    "description": "some description"
+                },
+                "textUnits": [
+                    {
+                        "status": 10,
+                        "unit": {
+                            "key": "some_string",
+                            "component": "some component",
+                            "namespace": "android",
+                            "status": 1,
+                            "translated": [
+                                {
+                                    "lang": "en",
+                                    "text": {
+                                        "text": "emos gnirts 321"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
-          }
-        },
-        "error": null
-      }
+        }
     }
     """.trimIndent()
