@@ -52,17 +52,20 @@ internal class ContractsPluginInstaller(
             it.transformer.set(CodegenJsonOutputTransformer())
         }
 
+        extension.validations.all { installValidations(it, extension) }
+        extension.imports.all { installCollectSchemesTask(it, extension) }
+
         project.plugins.withType<KotlinBasePlugin> {
             registerCodegenVariantsTask(extension)
         }
     }
 
-    fun installCollectSchemesTask(configuration: ImportConfiguration, extension: ContractsModuleExtension) {
+    private fun installCollectSchemesTask(configuration: ImportConfiguration, extension: ContractsModuleExtension) {
         configureAddEndpointTask(extension, configuration)
         configureCollectSchemesTask(extension, configuration)
     }
 
-    fun installValidations(configuration: ValidationConfiguration, extension: ContractsModuleExtension) {
+    private fun installValidations(configuration: ValidationConfiguration, extension: ContractsModuleExtension) {
         configureValidationTask(extension, configuration)
     }
 
@@ -75,6 +78,8 @@ internal class ContractsPluginInstaller(
 
         val rootExtension = project.rootProject.extensions.getByType<ContractsRootExtension>()
         val networkConfiguration = rootExtension.network
+
+        val validationTask = project.tasks.withType<ValidateNetworkContractsTask>()
 
         kotlinTargetExtension.target.compilations
             .all { compilation ->
@@ -107,6 +112,9 @@ internal class ContractsPluginInstaller(
                 }
 
                 compilation.defaultSourceSet.kotlin.srcDirs(codegenTask.flatMap { it.outputDirectory })
+                codegenTask.configure {
+                    it.mustRunAfter(validationTask)
+                }
             }
     }
 

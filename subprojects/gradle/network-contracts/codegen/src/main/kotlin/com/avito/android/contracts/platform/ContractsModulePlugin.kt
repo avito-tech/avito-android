@@ -21,8 +21,5 @@ public class ContractsModulePlugin : Plugin<Project> {
         val pluginInstaller = ContractsPluginInstaller(target)
 
         pluginInstaller.installModule(target, contractsExtension)
-
-        contractsExtension.validations.all { pluginInstaller.installValidations(it, contractsExtension) }
-        contractsExtension.imports.all { pluginInstaller.installCollectSchemesTask(it, contractsExtension) }
     }
 }

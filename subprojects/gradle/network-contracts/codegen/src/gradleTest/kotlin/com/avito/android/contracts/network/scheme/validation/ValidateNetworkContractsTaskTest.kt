@@ -27,8 +27,47 @@ class ValidateNetworkContractsTaskTest {
         @TempDir projectDir: File
     ) {
         val projectName = "feature"
-        generateProjectWithGeneratedFiles(projectDir, emptyList(), moduleName = projectName, validationByCodegen = false)
+        generateProjectWithGeneratedFiles(
+            projectDir,
+            emptyList(),
+            moduleName = projectName,
+            validationByCodegen = false
+        )
         val assert = runTask(ContractsTaskNamesBuilder.validationTask("all"), projectDir, dryRun = true)
+            .assertThat()
+
+        assert.apply {
+            tasksShouldBeTriggered(
+                ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "local")}",
+                ":$projectName:${ContractsTaskNamesBuilder.collectSchemesTask("network")}",
+                ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "remote")}",
+                ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "all")}",
+                ":${ContractsTaskNamesBuilder.validationTask("all")}",
+            )
+                .inOrder()
+
+            tasksShouldNotBeTriggered(
+                ":$projectName:${ContractsTaskNamesBuilder.codegenTask()}"
+            )
+        }
+    }
+
+    @Test
+    fun `when validation task called with codegen - then invoke tasks in right order`(
+        @TempDir projectDir: File
+    ) {
+        val projectName = "feature"
+        generateProjectWithGeneratedFiles(
+            projectDir,
+            emptyList(),
+            moduleName = projectName,
+            validationByCodegen = false
+        )
+        val assert = runTasks(
+            listOf(ContractsTaskNamesBuilder.codegenTask(), ContractsTaskNamesBuilder.validationTask("all")),
+            projectDir,
+            dryRun = true
+        )
             .assertThat()
 
         assert
@@ -36,8 +75,7 @@ class ValidateNetworkContractsTaskTest {
                 ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "local")}",
                 ":$projectName:${ContractsTaskNamesBuilder.collectSchemesTask("network")}",
                 ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "remote")}",
-                ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "all")}",
-                ":${ContractsTaskNamesBuilder.validationTask("all")}",
+                ":$projectName:${ContractsTaskNamesBuilder.codegenTask()}",
             )
             .inOrder()
     }
@@ -82,7 +120,14 @@ class ValidateNetworkContractsTaskTest {
             .outputContains("Module `:$moduleName` applies plugin, but does not contain any network contracts schemes.")
             .apply {
                 tasksShouldBeTriggered(":$moduleName:${ContractsTaskNamesBuilder.validationTask("network", "local")}")
-                tasksShouldNotBeTriggered(":$moduleName:${ContractsTaskNamesBuilder.validationTask("network", "remote")}")
+                tasksShouldNotBeTriggered(
+                    ":$moduleName:${
+                        ContractsTaskNamesBuilder.validationTask(
+                            "network",
+                            "remote"
+                        )
+                    }"
+                )
                 tasksShouldNotBeTriggered(":$moduleName:${ContractsTaskNamesBuilder.collectSchemesTask("network")}")
             }
     }
@@ -108,7 +153,14 @@ class ValidateNetworkContractsTaskTest {
             .outputContains("codegen.toml file is omitted in the `:$moduleName` module")
             .apply {
                 tasksShouldBeTriggered(":$moduleName:${ContractsTaskNamesBuilder.validationTask("network", "local")}")
-                tasksShouldNotBeTriggered(":$moduleName:${ContractsTaskNamesBuilder.validationTask("network", "remote")}")
+                tasksShouldNotBeTriggered(
+                    ":$moduleName:${
+                        ContractsTaskNamesBuilder.validationTask(
+                            "network",
+                            "remote"
+                        )
+                    }"
+                )
                 tasksShouldNotBeTriggered(":$moduleName:${ContractsTaskNamesBuilder.collectSchemesTask("network")}")
             }
     }
@@ -144,9 +196,18 @@ class ValidateNetworkContractsTaskTest {
         failed: Boolean = false,
         dryRun: Boolean = false,
     ): TestResult {
+        return runTasks(listOf(name), tempDir, failed, dryRun)
+    }
+
+    private fun runTasks(
+        names: List<String>,
+        tempDir: File,
+        failed: Boolean = false,
+        dryRun: Boolean = false,
+    ): TestResult {
         return gradlew(
             tempDir,
-            ":$name",
+            *names.toTypedArray(),
             "-Pavito.clickstream.serviceUrl=stub",
             expectFailure = failed,
             dryRun = dryRun,
