@@ -50,9 +50,9 @@ spec:
                         -   name: node-config
                             mountPath: /data
             tolerations:
-                -   key: dedicated
+                -   key: pool
                     operator: Equal
-                    value: android
+                    value: default
                     effect: NoSchedule
 ---
 kind: Service
@@ -72,7 +72,7 @@ spec:
             targetPort: 5071
 ---
 kind: Ingress
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 metadata:
     name: gradle-remote-cache-github
     namespace: gradle-remote-cache
@@ -87,6 +87,9 @@ spec:
             http:
                 paths:
                     -   path: "/"
+                        pathType: Prefix
                         backend:
-                            serviceName: gradle-remote-cache-github
-                            servicePort: 80
+                            service:
+                                name: gradle-remote-cache-github
+                                port:
+                                    number: 80
