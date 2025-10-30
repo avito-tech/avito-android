@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
-  namespace: emcee
+  namespace: services
   labels:
     app: {{ .Chart.Name }}
 spec:
@@ -15,6 +15,11 @@ spec:
       labels:
         app: {{ .Chart.Name }}
     spec:
+      tolerations:
+      - key: pool
+        operator: Equal
+        value: default
+        effect: NoSchedule
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.docker.registry }}/{{ .Values.docker.image }}:{{ .Values.docker.image_tag }}"
