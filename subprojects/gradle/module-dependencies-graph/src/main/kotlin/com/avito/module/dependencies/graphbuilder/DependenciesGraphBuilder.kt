@@ -48,8 +48,7 @@ public class DependenciesGraphBuilder(
                     }
                     .map { (coordinate, conf) ->
                         coordinate.gradleName to conf.dependencies
-                            .matching { it is ProjectDependency }
-                            .map { it as ProjectDependency }
+                            .withType(ProjectDependency::class.java)
                             .filter { projectDependency ->
                                 val isOtherProject = projectDependency.dependencyProject != project
                                 if (!isOtherProject) {

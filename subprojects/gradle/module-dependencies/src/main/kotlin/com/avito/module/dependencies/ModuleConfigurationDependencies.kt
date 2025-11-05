@@ -21,10 +21,10 @@ public fun Project.directDependenciesOnProjects(
 
 private fun directProjectDependencies(project: Project, configuration: Configuration): Set<Project> {
     return configuration.dependencies
-        .matching { it is ProjectDependency }
+        .withType(ProjectDependency::class.java)
         .map {
             @Suppress("DEPRECATION")
-            (it as ProjectDependency).dependencyProject
+            it.dependencyProject
         }
         // project has dependency to itself in a default configuration
         .filter { it != project }

@@ -56,7 +56,7 @@ internal class LintIssuesConfigurator : TechBudgetConfigurator {
 
             val reportTasks = subProject.tasks
                 .withType<AndroidLintTask>()
-                .matching { it.name.contains("lintReport") }
+                .named { it.contains("lintReport") }
 
             require(reportTasks.isNotEmpty()) {
                 "The project doesn't contain any of 'lintReport' task"
