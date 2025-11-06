@@ -9,6 +9,7 @@ import com.avito.i18n.plugin.dto.TranslationResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.post
@@ -23,6 +24,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import org.gradle.api.GradleException
+import java.util.concurrent.TimeUnit
 
 internal class LocalizationApiImpl(
     private val serviceUrl: String,
@@ -39,6 +41,9 @@ internal class LocalizationApiImpl(
                     ignoreUnknownKeys = true
                 }
             )
+        }
+        install(HttpTimeout) {
+            socketTimeoutMillis = DEFAULT_TIMEOUT_MILLIS
         }
         defaultRequest {
             url(serviceUrl)
@@ -85,5 +90,9 @@ internal class LocalizationApiImpl(
                 sslSocketFactory(handshakeCertificates.sslSocketFactory(), handshakeCertificates.trustManager)
             }
         }
+    }
+
+    companion object {
+        private val DEFAULT_TIMEOUT_MILLIS: Long = TimeUnit.MINUTES.toMillis(15)
     }
 }
