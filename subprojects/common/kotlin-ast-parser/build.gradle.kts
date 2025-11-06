@@ -4,8 +4,9 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlinCompilerEmbeddable)
+    compileOnly(libs.kotlinCompilerEmbeddable)
 
+    testImplementation(libs.kotlinCompilerEmbeddable)
     testImplementation(project(":subprojects:gradle:test-project")) {
         because("File extensions") // todo probably move to :common:files
     }

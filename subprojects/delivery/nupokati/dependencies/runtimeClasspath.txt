@@ -208,7 +208,6 @@ org.jetbrains.kotlin:kotlin-klib-commonizer-api:1.9.22
 org.jetbrains.kotlin:kotlin-native-utils:1.9.22
 org.jetbrains.kotlin:kotlin-project-model:1.9.22
 org.jetbrains.kotlin:kotlin-reflect:2.0.21
-org.jetbrains.kotlin:kotlin-script-runtime:1.9.22
 org.jetbrains.kotlin:kotlin-scripting-common:1.9.22
 org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.22
 org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.22
