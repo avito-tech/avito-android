@@ -1,8 +1,10 @@
 package com.avito.android.test.compose.waiting
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import com.avito.android.test.compose.ComposeInteractionContext
 
+@OptIn(ExperimentalTestApi::class)
 public interface ComposeWaiting {
     public val interactionContext: ComposeInteractionContext
 
@@ -10,30 +12,20 @@ public interface ComposeWaiting {
         count: Int,
         timeoutMillis: Long = 1_000L
     ) {
-        interactionContext.waitUntil(timeoutMillis) { composeTestRule ->
-            composeTestRule.onAllNodes(interactionContext.filter.matcher).fetchSemanticsNodes().size == count
-        }
+        interactionContext.composeTestRule.waitUntilNodeCount(interactionContext.filter.matcher, count, timeoutMillis)
     }
 
     public fun waitUntilExactlyOneExists(timeoutMillis: Long = 1_000L) {
-        waitUntilNodeCount(1, timeoutMillis)
+        interactionContext.composeTestRule.waitUntilExactlyOneExists(interactionContext.filter.matcher, timeoutMillis)
     }
 
     public fun waitUntilAtLeastOneExists(timeoutMillis: Long = 1_000L) {
-        interactionContext.waitUntil(timeoutMillis) { composeTestRule ->
-            composeTestRule.onAllNodes(interactionContext.filter.matcher).fetchSemanticsNodes().isNotEmpty()
-        }
+        interactionContext.composeTestRule.waitUntilAtLeastOneExists(interactionContext.filter.matcher, timeoutMillis)
     }
 
     public fun waitUntilDoesNotExist(timeoutMillis: Long = 1_000L) {
-        waitUntilNodeCount(0, timeoutMillis)
+        interactionContext.composeTestRule.waitUntilDoesNotExist(interactionContext.filter.matcher, timeoutMillis)
     }
 }
 
-private fun ComposeInteractionContext.waitUntil(
-    timeoutMillis: Long = 1_000,
-    condition: (ComposeTestRule) -> Boolean
-) {
-    val composeTestRule = provider as ComposeTestRule
-    composeTestRule.waitUntil(timeoutMillis) { condition(composeTestRule) }
-}
+private val ComposeInteractionContext.composeTestRule get() = provider as ComposeTestRule
