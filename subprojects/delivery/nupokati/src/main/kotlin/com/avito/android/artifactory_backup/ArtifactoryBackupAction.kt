@@ -1,6 +1,6 @@
 package com.avito.android.artifactory_backup
 
-import com.avito.android.http.ArtifactoryClient
+import com.avito.android.http.artifactory.ArtifactoryClient
 import com.avito.android.model.input.Deployment
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create

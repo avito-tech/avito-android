@@ -265,17 +265,25 @@ internal class NupokatiPluginV2IntegrationTest {
                             |
                             |nupokati {
                             |    cdBuildConfigFile.set(rootProject.file("${cdConfigFile.name}"))
-                            |    teamcityBuildUrl.set("$teamcityUrl")
+                            |    
+                            |    v2("releaseV2") {
+                            |        teamcityBuildUrl.set("$teamcityUrl")
+                            |        releaseBuildVariantName.set("release")
                             |
-                            |    artifactory {
-                            |        login.set("user")
-                            |        password.set("12345")
-                            |    }
+                            |        artifactory {
+                            |            login.set("user")
+                            |            password.set("12345")
+                            |        }
                             |
-                            |    reportViewer {
-                            |        frontendUrl.set("$reportViewerFrontendUrl")
-                            |        reportCoordinates.set(ReportCoordinates("$planSlug", "$jobSlug", "$runId"))
+                            |        reportViewer {
+                            |            frontendUrl.set("$reportViewerFrontendUrl")
+                            |            reportCoordinates.set(ReportCoordinates("$planSlug", "$jobSlug", "$runId"))
+                            |        }
                             |    }
+                            |}
+                            |
+                            |tasks.register("nupokati") {
+                            |   dependsOn("nupokatiReleaseV2")
                             |}
                             |
                             |tasks.named("nupokati") {

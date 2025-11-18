@@ -1,9 +1,9 @@
 package com.avito.android.contract_upload
 
 import com.avito.android.artifactory_backup.ArtifactsAdapter
-import com.avito.android.http.ArtifactoryClient
-import com.avito.android.http.createArtifactoryHttpClient
-import com.avito.android.model.input.CdBuildConfig
+import com.avito.android.http.artifactory.ArtifactoryClient
+import com.avito.android.http.artifactory.createArtifactoryHttpClient
+import com.avito.android.model.input.config.CdBuildConfig
 import com.avito.android.model.output.CdBuildResult
 import com.avito.android.model.output.toCdCoordinates
 import com.avito.git.gitStateProvider
