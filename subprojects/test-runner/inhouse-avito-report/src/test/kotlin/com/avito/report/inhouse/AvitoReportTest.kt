@@ -27,6 +27,7 @@ class AvitoReportTest {
         reportCoordinates = reportCoordinates,
         buildId = "testBuildId",
         timeProvider = timeProvider,
+        executorService = DirectExecutorService(),
         batchSize = 2,
     )
 

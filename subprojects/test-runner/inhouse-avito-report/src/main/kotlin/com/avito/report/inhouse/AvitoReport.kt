@@ -18,6 +18,9 @@ import com.avito.reportviewer.model.SimpleRunTest
 import com.avito.test.model.DeviceName
 import com.avito.test.model.TestCase
 import com.avito.time.TimeProvider
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * Implementation for inhouse Avito report backend
@@ -31,6 +34,7 @@ public class AvitoReport(
     private val reportCoordinates: ReportCoordinates,
     private val buildId: String,
     private val timeProvider: TimeProvider,
+    private val executorService: ExecutorService = Executors.newFixedThreadPool(4),
     private val batchSize: Int = 400
 ) : Report {
 
@@ -123,10 +127,15 @@ public class AvitoReport(
         }
     }
 
-    private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) {
-        chunked(batchSize)
-            .mapIndexed { index, batch -> index to batch }
-            .parallelStream()
-            .forEach { (index, batch) -> batchAction(index, batch) }
+    private fun <T> Collection<T>.actionOnBatches(
+        batchAction: (index: Int, batch: Collection<T>) -> Unit
+    ) {
+        val tasks = chunked(batchSize).mapIndexed { index, batch ->
+            Callable {
+                batchAction(index, batch)
+            }
+        }
+        val futures = executorService.invokeAll(tasks)
+        futures.forEach { it.get() } // propagate errors
     }
 }
