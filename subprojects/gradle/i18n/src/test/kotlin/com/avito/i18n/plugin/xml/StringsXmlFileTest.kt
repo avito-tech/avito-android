@@ -1,5 +1,6 @@
 package com.avito.i18n.plugin.xml
 
+import com.avito.i18n.plugin.xml.TestUtils.createXml
 import com.google.common.truth.Truth
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual
@@ -7,14 +8,12 @@ import org.junit.jupiter.api.Test
 import org.xml.sax.InputSource
 import org.xmlunit.matchers.EvaluateXPathMatcher.hasXPath
 import java.io.StringReader
-import java.io.StringWriter
-import javax.xml.transform.stream.StreamResult
 
-class StringsXmlFileTest {
+internal class StringsXmlFileTest {
 
     @Test
     fun `create new xml document with string tag`() {
-        val xml = createXmlString {
+        val xml = TestUtils.createXmlString {
             appendString("test", "test value")
         }
 
@@ -26,7 +25,7 @@ class StringsXmlFileTest {
 
     @Test
     fun `create new xml document with plurals tag`() {
-        val xml = createXmlString {
+        val xml = TestUtils.createXmlString {
             appendPlurals("test_plurals", mapOf("one" to "1", "other" to "other"))
         }
 
@@ -39,7 +38,7 @@ class StringsXmlFileTest {
 
     @Test
     fun `create new xml document with plurals and string tags`() {
-        val xml = createXmlString {
+        val xml = TestUtils.createXmlString {
             appendString("test", "test value")
             appendPlurals("test_plurals", mapOf("one" to "1", "other" to "other"))
         }
@@ -243,17 +242,5 @@ class StringsXmlFileTest {
 
         Truth.assertThat(diff)
             .containsKey("test_plurals")
-    }
-
-    private fun createXmlString(block: StringsXmlFile.() -> Unit): String {
-        val doc = StringsXmlFile()
-            .apply(block)
-        val writer = StringWriter()
-        doc.write(StreamResult(writer))
-        return writer.toString()
-    }
-
-    private fun String.createXml(): StringsXmlFile {
-        return StringsXmlFile(InputSource(StringReader(this)))
     }
 }

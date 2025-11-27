@@ -20,10 +20,11 @@ internal class StringElement : BaseElement {
         get() = _node.childNodes.takeIf { it.length > 0 }?.item(0)?.nodeValue ?: ""
 
     constructor(document: Document, name: String, value: String, hash: String) : super() {
+        val escapedValue = value.escapeSingleQuotes()
         _node = document.createElement("string").apply {
             setAttribute("name", name)
             setAttribute("hash", hash.ifEmpty { value.hashSha1() })
-            appendChild(document.createTextNode(value))
+            appendChild(document.createTextNode(escapedValue))
         }
         document.resourcesNode.appendChild(_node)
     }

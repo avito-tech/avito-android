@@ -50,11 +50,12 @@ internal class PluralsElement : BaseElement {
     }
 
     private fun Node.createItems(document: Document, values: Map<String, String>) {
-        for ((k, v) in values) {
+        for ((key, value) in values) {
+            val escapedValue = value.escapeSingleQuotes()
             val element = document.createElement("item")
-            element.setAttribute("quantity", k)
-            element.appendChild(document.createTextNode(v))
-            _items += k to v
+            element.setAttribute("quantity", key)
+            element.appendChild(document.createTextNode(escapedValue))
+            _items += key to escapedValue
             appendChild(element)
         }
     }

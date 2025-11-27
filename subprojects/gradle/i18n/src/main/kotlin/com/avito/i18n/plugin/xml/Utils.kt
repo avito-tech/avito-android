@@ -16,5 +16,23 @@ internal fun String.hashSha1(): String {
     return sb.toString()
 }
 
+internal fun String.escapeSingleQuotes(): String {
+    val stringBuilder = StringBuilder()
+    var lastSymbolWasBackSlash = false
+    for (c in this) {
+        if (c == SINGLE_QUOTE_CHAR && !lastSymbolWasBackSlash) {
+            stringBuilder.append(BACKSLASH_CHAR)
+        }
+
+        stringBuilder.append(c)
+        lastSymbolWasBackSlash = c == BACKSLASH_CHAR
+    }
+
+    return stringBuilder.toString()
+}
+
 internal val Document.resourcesNode: Node
     get() = getElementsByTagName(RESOURCES_TAG).item(0)
+
+private const val SINGLE_QUOTE_CHAR: Char = '\''
+private const val BACKSLASH_CHAR: Char = '\\'
