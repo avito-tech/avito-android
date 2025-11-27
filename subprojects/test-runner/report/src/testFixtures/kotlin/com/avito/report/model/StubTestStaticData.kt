@@ -20,6 +20,7 @@ public fun TestStaticDataPackage.Companion.createStubInstance(
     flakiness: Flakiness = Flakiness.Stable,
     groupList: List<String> = emptyList(),
     isRegression: Boolean = false,
+    regions: List<String> = emptyList(),
 ): TestStaticDataPackage = TestStaticDataPackage(
     name = name,
     device = deviceName,
@@ -35,4 +36,5 @@ public fun TestStaticDataPackage.Companion.createStubInstance(
     flakiness = flakiness,
     groupList = groupList,
     isRegression = isRegression,
+    regions = regions,
 )

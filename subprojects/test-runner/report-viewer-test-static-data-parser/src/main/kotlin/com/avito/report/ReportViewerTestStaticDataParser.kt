@@ -16,6 +16,7 @@ import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.NO_REASON
 import com.avito.android.test.annotations.Priority
+import com.avito.android.test.annotations.Regions
 import com.avito.android.test.annotations.Regression
 import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.TagId
@@ -120,7 +121,9 @@ public interface ReportViewerTestStaticDataParser {
             groupList = determineGroupList(testInApk.annotations),
 
             isRegression = testInApk.annotations
-                .any { it.name == Regression::class.java.canonicalName }
+                .any { it.name == Regression::class.java.canonicalName },
+
+            regions = determineRegions(testInApk.annotations),
         )
 
         private fun determineFlakiness(annotations: List<AnnotationData>, api: Int): Flakiness {
@@ -157,6 +160,15 @@ public interface ReportViewerTestStaticDataParser {
                 ?: emptyList()
         }
 
+        private fun determineRegions(annotations: List<AnnotationData>): List<String> {
+            val annotation = annotations.find { it.name == Regions::class.java.canonicalName }
+
+            return annotation
+                ?.getStringArrayValue(REGIONS_VALUE_KEY)
+                ?.toList()
+                ?: emptyList()
+        }
+
         private fun determineKind(annotations: List<AnnotationData>): Kind =
             annotations.find { it.name in annotationsToKindMap.keys }
                 ?.let { annotationsToKindMap[it.name] }
@@ -181,3 +193,5 @@ private const val FLAKY_REASON_KEY = "reason"
 private const val FLAKY_SDKS_KEY = "onSdks"
 
 private const val GROUP_LIST_VALUE_KEY = "value"
+
+private const val REGIONS_VALUE_KEY = "value"

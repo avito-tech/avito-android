@@ -182,6 +182,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
         }
         if (test.tagIds.isNotEmpty()) preparedData["tag_id"] = test.tagIds
         if (test.featureIds.isNotEmpty()) preparedData["feature_id"] = test.featureIds
+        if (test.regions.isNotEmpty()) preparedData["regions"] = test.regions
 
         val priority = test.priority
         preparedData["priority_id"] = priority?.tmsValue ?: TestCasePriority.NORMAL.tmsValue

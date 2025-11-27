@@ -27,6 +27,7 @@ public sealed class AndroidTest : TestStaticData {
         override val flakiness: Flakiness,
         override val groupList: List<String>,
         override val isRegression: Boolean,
+        override val regions: List<String>,
         public val startTime: Long,
         public val lastSignalTime: Long,
         public val logcat: String,
@@ -92,6 +93,7 @@ public sealed class AndroidTest : TestStaticData {
                 flakiness = testStaticData.flakiness,
                 groupList = testStaticData.groupList,
                 isRegression = testStaticData.isRegression,
+                regions = testStaticData.regions,
                 startTime = startTime,
                 lastSignalTime = lastSignalTime,
                 logcat = logcat,
@@ -118,6 +120,7 @@ public sealed class AndroidTest : TestStaticData {
         override val flakiness: Flakiness,
         override val groupList: List<String>,
         override val isRegression: Boolean,
+        override val regions: List<String>,
         public val skipReason: String,
         public val reportTime: Long,
     ) : AndroidTest() {
@@ -166,6 +169,7 @@ public sealed class AndroidTest : TestStaticData {
                 flakiness = testStaticData.flakiness,
                 groupList = testStaticData.groupList,
                 isRegression = testStaticData.isRegression,
+                regions = testStaticData.regions,
                 skipReason = skipReason,
                 reportTime = reportTime
             )
@@ -197,6 +201,7 @@ public sealed class AndroidTest : TestStaticData {
         override val flakiness: Flakiness,
         override val groupList: List<String>,
         override val isRegression: Boolean,
+        override val regions: List<String>,
         public val logcat: String,
     ) : AndroidTest(), TestRuntimeData {
 
@@ -252,6 +257,7 @@ public sealed class AndroidTest : TestStaticData {
                 flakiness = testStaticData.flakiness,
                 groupList = testStaticData.groupList,
                 isRegression = testStaticData.isRegression,
+                regions = testStaticData.regions,
                 logcat = logcat,
             )
         }

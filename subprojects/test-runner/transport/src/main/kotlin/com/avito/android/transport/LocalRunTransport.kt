@@ -64,6 +64,7 @@ internal class LocalRunTransport(
                 flakiness = state.testMetadata.flakiness,
                 groupList = state.testMetadata.groupList,
                 isRegression = state.testMetadata.isRegression,
+                regions = state.testMetadata.regions,
             )
 
             AndroidTest.Completed.create(

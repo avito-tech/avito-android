@@ -37,4 +37,6 @@ public interface TestStaticData {
     public val groupList: List<String>
 
     public val isRegression: Boolean
+
+    public val regions: List<String>
 }
