@@ -194,7 +194,8 @@ internal class ContractsPluginInstaller(
             ContractsTaskNamesBuilder.importSchemeTask(variantConfiguration.name),
             ApiSchemesImportTask::class.java
         ) {
-            it.apiPath.set(project.getOptionalStringProperty("schemesPath", ""))
+            it.apiPath.set(project.getOptionalStringProperty("avito.networkContracts.schemesPath", ""))
+            it.gateway.set(project.getOptionalStringProperty("avito.networkContracts.gateway", ""))
             it.outputDirectory.set(
                 extension.schemesBaseDirectory
                     .flatMap { it.dir(variantConfiguration.schemesDirName) }

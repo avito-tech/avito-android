@@ -21,12 +21,12 @@ internal abstract class NetworkSchemesImportService : SchemesImportService<Netwo
 
     private val httpsClient by lazy { parameters.httpClient.get().get().buildClient() }
 
-    override suspend fun importScheme(url: String): ApiSchemeImportResponse {
-        return httpsClient.fetchSchema(url)
+    override suspend fun importScheme(gateway: String, url: String): ApiSchemeImportResponse {
+        return httpsClient.fetchSchema(gateway, url)
     }
 
-    private suspend fun HttpClient.fetchSchema(url: String): ApiSchemeImportResponse {
-        val response = fetchApiScheme(url)
+    private suspend fun HttpClient.fetchSchema(gateway: String, url: String): ApiSchemeImportResponse {
+        val response = fetchApiScheme(gateway, url)
         if (response.status == HttpStatusCode.OK) {
             return response.body()
         } else {
@@ -45,9 +45,15 @@ internal abstract class NetworkSchemesImportService : SchemesImportService<Netwo
 }
 
 private suspend fun HttpClient.fetchApiScheme(
+    gateway: String,
     apiPath: String
 ): HttpResponse = post {
     url(path = "service-api-composition-storage/getSchemaForPath/")
     contentType(ContentType.Application.Json)
-    setBody(ApiSchemesImportRequest(path = apiPath))
+    setBody(
+        ApiSchemesImportRequest(
+            path = apiPath,
+            gatewayName = gateway.takeIf(String::isNotEmpty) ?: ApiSchemesImportRequest.DEFAULT_GATEWAY
+        )
+    )
 }

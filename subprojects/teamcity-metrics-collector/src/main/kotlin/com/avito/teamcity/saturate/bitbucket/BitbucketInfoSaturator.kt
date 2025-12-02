@@ -14,10 +14,6 @@ internal class BitbucketInfoSaturator(
     private val bitbucketUser: String,
     private val bitbucketPassword: String,
     private val builder: OkHttpClient.Builder = OkHttpClient.Builder()
-        .addNetworkInterceptor {
-            println(it.request())
-            it.proceed(it.request()).apply { println(it) }
-        }
 ) : BuildInfoSaturator {
 
     override fun saturate(build: Build): Build {

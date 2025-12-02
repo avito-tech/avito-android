@@ -10,6 +10,6 @@ internal data class ApiSchemesImportRequest(
 
     companion object {
 
-        private const val DEFAULT_GATEWAY = "avito-api-gateway"
+        internal const val DEFAULT_GATEWAY = "avito-api-gateway"
     }
 }

@@ -3,7 +3,6 @@ package com.avito.android.contracts.platform.scheme.imports
 import com.avito.android.contracts.platform.scheme.imports.data.SchemesImportService
 import com.avito.android.contracts.platform.scheme.imports.data.models.ApiSchemeImportResponse
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,8 +22,8 @@ class ApiSchemesImportFacadeTest {
         val service: SchemesImportService<*> = mock()
         val facade = ApiSchemesImportFacade(service)
         val expectedSchema = modelSchema
-
-        whenever(service.importScheme(any()))
+        val gatewey = "test_gateway"
+        whenever(service.importScheme(gatewey, expectedSchema.path))
             .thenReturn(
                 ApiSchemeImportResponse(
                     result = ApiSchemeImportResponse.Schema(
@@ -33,7 +32,7 @@ class ApiSchemesImportFacadeTest {
                 )
             )
 
-        val result = facade.importSchemes(expectedSchema.path, testDirectory)
+        val result = facade.importSchemes(gatewey, expectedSchema.path, testDirectory)
         assertThat(result).hasSize(1)
 
         val generatedFile = result.first()
