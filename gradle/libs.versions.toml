@@ -1,8 +1,8 @@
 [versions]
 java = "17"
-kotlin = "1.9.22"
+kotlin = "1.9.24"
 kotlinLanguageVersion = "1.9"
-kspVersion = "1.9.22-1.0.17"
+ksp = "1.9.24-1.0.20"
 agp = "8.8.2"
 # formula: 23 + agp version
 # check versions https://mvnrepository.com/artifact/com.android.tools.external.com-intellij
@@ -12,7 +12,7 @@ retrofit = "2.9.0"
 androidX = "1.7.0"
 espresso = "3.5.1"
 coroutines = "1.3.8"
-detekt = "1.23.5"
+detekt = "1.23.7"
 buildTools = "36.0.0"
 compileSdk = "36"
 targetSdk = "35"
@@ -28,11 +28,17 @@ jackson = "2.13.0"
 proguard = "6.2.2"
 compose = "1.8.2"
 k8sClient = "6.9.0"
+dagger = "2.52"
+anvil-ksp = "0.4.1"
+
+[plugins]
+anvil = { id = "dev.zacsweers.anvil", version.ref="anvil-ksp" }
+ksp = { id = "com.google.devtools.ksp", version.ref="ksp" }
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kspGradle = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
+kspGradle = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 dependencyGuard = "com.dropbox.dependency-guard:dependency-guard:0.5.0"
@@ -167,6 +173,10 @@ dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.
 
 # https://developer.android.com/jetpack/androidx/releases/compose-ui
 compose-uiTestJunit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
+
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]

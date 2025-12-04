@@ -24,6 +24,7 @@ internal val targetSdk: Int by lazy { System.getProperty("targetSdk").toInt() }
 internal val minSdkVersion: Int by lazy { System.getProperty("minSdk").toInt() }
 internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
 internal val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
+internal val rootDir: String by lazy { System.getProperty("rootDir") }
 
 internal val artifactoryUrl: String? by lazy {
     try {
@@ -71,6 +72,7 @@ public class TestProjectGenerator(
     override val useKts: Boolean = false,
     public val localBuildCache: File? = null,
     public val androidHome: String? = null,
+    public val useRootLibsVersionsToml: Boolean = false,
     /**
      * https://docs.gradle.org/current/userguide/build_environment.html#sec:configuring_jvm_memory
      * default is -Xmx512m "-XX:MaxMetaspaceSize=256m
@@ -124,6 +126,7 @@ pluginManagement {
     }
 ${repositories()}
 }
+${versionCatalog()}
 $settingsPlugins
 ${localBuildCache()}
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
@@ -176,6 +179,21 @@ ${generateIncludes(modules, "")}
             |   local {
             |       directory '${localBuildCache.toURI()}'
             |   }
+            |}""".trimMargin()
+        } else {
+            ""
+        }
+    }
+
+    private fun versionCatalog(): String {
+        return if (useRootLibsVersionsToml) {
+            """
+            |dependencyResolutionManagement {
+            |    versionCatalogs {
+            |        create("libs") {
+            |            from(files("$rootDir/gradle/libs.versions.toml"))
+            |        }
+            |    }
             |}""".trimMargin()
         } else {
             ""

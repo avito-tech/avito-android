@@ -70,6 +70,7 @@ include(":subprojects:assemble:build-verdict")
 include(":subprojects:assemble:build-verdict-tasks-api")
 include(":subprojects:assemble:critical-path:api")
 include(":subprojects:assemble:critical-path:critical-path")
+include(":subprojects:assemble:di-spi-plugins")
 include(":subprojects:assemble:gradle-profile")
 include(":subprojects:assemble:proguard-guard")
 

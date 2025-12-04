@@ -29,6 +29,12 @@ public class PluginsSpec internal constructor(
         return spec
     }
 
+    override fun alias(alias: String): PluginSpec {
+        val spec = PluginSpec(alias, isAlias = true)
+        plugins.add(spec)
+        return spec
+    }
+
     override fun getScriptRepresentation(): String {
         return """
             |${classPaths()}

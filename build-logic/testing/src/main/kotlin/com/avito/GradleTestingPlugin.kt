@@ -124,6 +124,7 @@ class GradleTestingPlugin : Plugin<Project> {
                 systemProperty("buildToolsVersion", libs.versions.buildTools.get())
                 systemProperty("targetSdk", libs.versions.targetSdk.get().toInt())
                 systemProperty("minSdk", libs.versions.minSdk.get().toInt())
+                systemProperty("projectVersion", providers.gradleProperty("projectVersion").get())
             }
         }
     }

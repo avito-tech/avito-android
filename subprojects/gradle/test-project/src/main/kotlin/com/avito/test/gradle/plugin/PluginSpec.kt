@@ -7,7 +7,8 @@ import com.avito.test.gradle.dependencies.GradleScriptCompatible
  * Use [plugin] or [PluginsSpec.id] to create an instance
  */
 public class PluginSpec(
-    public val id: String
+    public val id: String,
+    public val isAlias: Boolean = false
 ) : GradleScriptCompatible {
 
     public var version: String? = null
@@ -27,9 +28,13 @@ public class PluginSpec(
 
     override fun getScriptRepresentation(): String {
         return buildString {
-            append("id(\"$id\")")
-            if (version != null) {
-                append(" version(\"$version\")")
+            if (isAlias) {
+                append("alias($id)")
+            } else {
+                append("id(\"$id\")")
+                if (version != null) {
+                    append(" version(\"$version\")")
+                }
             }
             if (!apply) {
                 append(" apply(false)")
