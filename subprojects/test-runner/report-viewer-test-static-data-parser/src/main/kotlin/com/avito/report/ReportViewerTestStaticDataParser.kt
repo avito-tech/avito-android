@@ -165,7 +165,7 @@ public interface ReportViewerTestStaticDataParser {
 
             return annotation
                 ?.getStringArrayValue(REGIONS_VALUE_KEY)
-                ?.toList()
+                ?.map { it.uppercase() }
                 ?: emptyList()
         }
 

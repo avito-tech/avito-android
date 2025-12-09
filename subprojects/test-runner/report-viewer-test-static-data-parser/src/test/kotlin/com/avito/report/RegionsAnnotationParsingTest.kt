@@ -43,7 +43,7 @@ internal class RegionsAnnotationParsingTest {
 
         val result = parser.getTestSuite(listOf(testInApk))
 
-        assertThat(result.single().testStaticData.regions).containsExactly("region1", "region2", "region3")
+        assertThat(result.single().testStaticData.regions).containsExactly("REGION1", "REGION2", "REGION3")
     }
 
     @Test
@@ -75,6 +75,38 @@ internal class RegionsAnnotationParsingTest {
 
         val result = parser.getTestSuite(listOf(testInApk))
 
-        assertThat(result.single().testStaticData.regions).containsExactly("region1")
+        assertThat(result.single().testStaticData.regions).containsExactly("REGION1")
+    }
+
+    @Test
+    fun `lowercase regions - parse test - returns uppercase regions`() {
+        val testInApk = TestInApk.createStubInstance(
+            annotations = listOf(
+                AnnotationData(
+                    name = Regions::class.java.canonicalName,
+                    values = mapOf("value" to listOf("region4", "region5", "region6"))
+                )
+            )
+        )
+
+        val result = parser.getTestSuite(listOf(testInApk))
+
+        assertThat(result.single().testStaticData.regions).containsExactly("REGION4", "REGION5", "REGION6")
+    }
+
+    @Test
+    fun `mixed case regions - parse test - returns uppercase regions`() {
+        val testInApk = TestInApk.createStubInstance(
+            annotations = listOf(
+                AnnotationData(
+                    name = Regions::class.java.canonicalName,
+                    values = mapOf("value" to listOf("Region7", "REGION8", "reGion9"))
+                )
+            )
+        )
+
+        val result = parser.getTestSuite(listOf(testInApk))
+
+        assertThat(result.single().testStaticData.regions).containsExactly("REGION7", "REGION8", "REGION9")
     }
 }

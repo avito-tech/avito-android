@@ -91,7 +91,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
                     }
                     is GroupList -> groupList = annotation.value.toList()
                     is Regression -> isRegression = true
-                    is Regions -> regions = annotation.value.toList()
+                    is Regions -> regions = annotation.value.map { it.uppercase() }
                 }
             }
 
