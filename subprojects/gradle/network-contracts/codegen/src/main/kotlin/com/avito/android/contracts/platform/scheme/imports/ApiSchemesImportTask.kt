@@ -39,7 +39,7 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
         if (apiPath.get().isEmpty()) {
             error(
                 "Unable to import api schemes as apiPath is not defined. " +
-                    "Please, provide url by parameter `apiSchemesUrl`"
+                    "Please, provide url by parameter `schemesPath`"
             )
         }
 
