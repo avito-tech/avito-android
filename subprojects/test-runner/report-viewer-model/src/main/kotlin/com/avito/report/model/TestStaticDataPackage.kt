@@ -20,7 +20,7 @@ public data class TestStaticDataPackage(
     override val flakiness: Flakiness,
     override val groupList: List<String>,
     override val isRegression: Boolean,
-    override val regions: List<String>,
+    override val regions: List<String> = emptyList(),
 ) : TestStaticData {
 
     override fun equals(other: Any?): Boolean {
