@@ -114,10 +114,10 @@ org.codehaus.mojo:animal-sniffer-annotations:1.23
 org.glassfish.jaxb:jaxb-runtime:2.3.2
 org.glassfish.jaxb:txw2:2.3.2
 org.jdom:jdom2:2.0.6
-org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.24
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0
-org.jetbrains.kotlin:kotlin-stdlib:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib:1.9.24
 org.jetbrains:annotations:23.0.0
 org.jvnet.staxex:stax-ex:1.8.1
 org.ow2.asm:asm-analysis:9.7

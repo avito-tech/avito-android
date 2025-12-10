@@ -1,4 +1,4 @@
 net.sf.proguard:proguard-base:6.2.2
 net.sf.proguard:proguard-retrace:6.2.2
-org.jetbrains.kotlin:kotlin-stdlib:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib:1.9.24
 org.jetbrains:annotations:13.0

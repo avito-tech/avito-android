@@ -114,7 +114,7 @@ org.glassfish.jaxb:jaxb-runtime:2.3.2
 org.glassfish.jaxb:txw2:2.3.2
 org.hamcrest:hamcrest-core:1.3
 org.jdom:jdom2:2.0.6
-org.jetbrains.kotlin:kotlin-reflect:1.9.22
+org.jetbrains.kotlin:kotlin-reflect:1.9.24
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21
 org.jetbrains.kotlin:kotlin-stdlib:2.0.21

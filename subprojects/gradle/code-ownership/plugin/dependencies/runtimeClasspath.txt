@@ -16,10 +16,10 @@ com.squareup.retrofit2:retrofit:2.9.0
 com.squareup:kotlinpoet-jvm:1.16.0
 com.squareup:kotlinpoet:1.16.0
 org.jetbrains.kotlin:kotlin-reflect:1.9.22
-org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.24
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0
-org.jetbrains.kotlin:kotlin-stdlib:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib:1.9.24
 org.jetbrains:annotations:13.0
 org.jgrapht:jgrapht-core:1.5.1
 org.jheaps:jheaps:0.13

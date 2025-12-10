@@ -95,13 +95,13 @@ org.bouncycastle:bcpkix-jdk18on:1.77
 org.bouncycastle:bcprov-jdk18on:1.77
 org.bouncycastle:bcutil-jdk18on:1.77
 org.codehaus.mojo:animal-sniffer-annotations:1.14
-org.jetbrains.kotlin:kotlin-reflect:1.9.22
-org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22
+org.jetbrains.kotlin:kotlin-reflect:1.9.24
+org.jetbrains.kotlin:kotlin-stdlib-common:1.9.24
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10
 org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.0
 org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.0
-org.jetbrains.kotlin:kotlin-stdlib:1.9.22
+org.jetbrains.kotlin:kotlin-stdlib:1.9.24
 org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8
 org.jetbrains:annotations:13.0
 org.ow2.asm:asm:8.0.1
