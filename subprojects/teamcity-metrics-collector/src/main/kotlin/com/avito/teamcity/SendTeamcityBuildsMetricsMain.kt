@@ -58,10 +58,7 @@ internal object SendTeamcityBuildsMetricsMain {
         private val bitbucketUrl: String by option(type = ArgType.String)
             .required()
 
-        private val bitbucketUser: String by option(type = ArgType.String)
-            .required()
-
-        private val bitbucketPassword: String by option(type = ArgType.String)
+        private val bitbucketToken: String by option(type = ArgType.String)
             .required()
 
         private val graphiteSender by lazy {
@@ -115,8 +112,7 @@ internal object SendTeamcityBuildsMetricsMain {
         private val bitbucketInfoSaturator by lazy {
             BitbucketInfoSaturator(
                 bitbucketHost = bitbucketUrl,
-                bitbucketUser = bitbucketUser,
-                bitbucketPassword = bitbucketPassword,
+                bitbucketToken = bitbucketToken,
             )
         }
 

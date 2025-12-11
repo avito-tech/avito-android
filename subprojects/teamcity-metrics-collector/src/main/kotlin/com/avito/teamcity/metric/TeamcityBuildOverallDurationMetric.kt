@@ -21,6 +21,7 @@ internal class TeamcityBuildOverallDurationMetric(
             status = build.status?.name?.lowercase().orEmpty(),
             toolName = "gradle",
             environment = "ci",
+            configurationId = build.buildConfigurationId.stringId,
         )
     }
 
@@ -33,9 +34,10 @@ internal class TeamcityBuildOverallDurationMetric(
         val status: String,
         val toolName: String,
         val environment: String,
+        val configurationId: String,
     ) : ClickStreamEvent by ParametrizedClickStreamEvent(
         eventId = 17306,
-        version = 0,
+        version = 1,
         srcId = ClickStreamSrcId.SDLC,
         params = mapOf(
             "jira_issue" to jiraIssue,
@@ -46,6 +48,7 @@ internal class TeamcityBuildOverallDurationMetric(
             "status" to status,
             "dev_tool_name" to toolName,
             "dev_tool_env" to environment,
+            "configuration_id" to configurationId,
         )
     )
 }

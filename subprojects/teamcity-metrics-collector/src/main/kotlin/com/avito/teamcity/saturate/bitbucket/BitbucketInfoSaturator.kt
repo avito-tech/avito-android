@@ -11,8 +11,7 @@ import org.jetbrains.teamcity.rest.Build
 
 internal class BitbucketInfoSaturator(
     private val bitbucketHost: String,
-    private val bitbucketUser: String,
-    private val bitbucketPassword: String,
+    private val bitbucketToken: String,
     private val builder: OkHttpClient.Builder = OkHttpClient.Builder()
 ) : BuildInfoSaturator {
 
@@ -23,9 +22,8 @@ internal class BitbucketInfoSaturator(
         val bitbucketInstance = Bitbucket.create(
             bitbucketConfig = BitbucketConfig(
                 baseUrl = bitbucketHost,
-                credentials = AtlassianCredentials(
-                    user = bitbucketUser,
-                    password = bitbucketPassword,
+                credentials = AtlassianCredentials.BearerToken(
+                    token = bitbucketToken,
                 ),
                 projectKey = projectKey.value,
                 repositorySlug = repoSlug.value,

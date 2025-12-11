@@ -100,7 +100,7 @@ internal class BitbucketImplTest {
             baseUrl = mockWebServer.url("/").toString(),
             projectKey = "project",
             repositorySlug = "X",
-            credentials = AtlassianCredentials("", "")
+            credentials = AtlassianCredentials.Basic("", "")
         ),
         pullRequestId = null,
         builder = OkHttpClient.Builder()

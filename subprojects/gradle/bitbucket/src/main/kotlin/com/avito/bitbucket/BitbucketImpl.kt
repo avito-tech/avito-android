@@ -2,6 +2,7 @@ package com.avito.bitbucket
 
 import com.avito.android.Result
 import com.avito.http.BasicAuthenticator
+import com.avito.http.BearerAuthenticator
 import com.avito.impact.changes.newChangesDetector
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -26,12 +27,8 @@ internal class BitbucketImpl(
         .baseUrl(config.baseUrl.toHttpUrl())
         .client(
             builder
-                .authenticator(
-                    BasicAuthenticator(
-                        user = config.credentials.user,
-                        password = config.credentials.password
-                    )
-                ).build()
+                .authenticateWith(config.credentials)
+                .build()
         )
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -180,4 +177,12 @@ internal class BitbucketImpl(
             throw BitbucketClientException(errorMessage.toString(), null)
         }
     }
+}
+
+private fun OkHttpClient.Builder.authenticateWith(credentials: AtlassianCredentials): OkHttpClient.Builder {
+    val authenticator = when (credentials) {
+        is AtlassianCredentials.Basic -> BasicAuthenticator(credentials.user, credentials.password)
+        is AtlassianCredentials.BearerToken -> BearerAuthenticator(credentials.token)
+    }
+    return authenticator(authenticator)
 }

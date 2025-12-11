@@ -13,7 +13,6 @@ PARAMS+="-Pgraphite.host=${GRAPHITE_HOST} "
 PARAMS+="-Pgraphite.port=${GRAPHITE_PORT} "
 PARAMS+="-Pclickstream.url=${CLICKSTREAM_URL} "
 PARAMS+="-Pbitbucket.url=${BITBUCKET_URL} "
-PARAMS+="-Pbitbucket.user=${BITBUCKET_USER} "
-PARAMS+="-Pbitbucket.password=${BITBUCKET_PASSWORD} "
+PARAMS+="-Pbitbucket.token=${BITBUCKET_TOKEN} "
 
 runInBuilder "${TASK} ${PARAMS} --no-daemon ${GRADLE_ARGS}"

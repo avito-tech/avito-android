@@ -47,7 +47,7 @@ public val Project.bitbucketConfig: Provider<BitbucketConfig>
                 BitbucketConfig(
                     baseUrl = "http://disable",
                     projectKey = "disable",
-                    credentials = AtlassianCredentials("disabled", "disabled"),
+                    credentials = AtlassianCredentials.Basic("disabled", "disabled"),
                     repositorySlug = "disabled"
                 )
             }
@@ -55,7 +55,7 @@ public val Project.bitbucketConfig: Provider<BitbucketConfig>
     }
 
 // todo добавить префиксы avito.
-private fun atlassianCredentials(project: Project): AtlassianCredentials = AtlassianCredentials(
+private fun atlassianCredentials(project: Project): AtlassianCredentials = AtlassianCredentials.Basic(
     project.getMandatoryStringProperty("atlassianUser"),
     project.getMandatoryStringProperty("atlassianPassword")
 )
