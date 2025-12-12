@@ -16,7 +16,7 @@ internal class TeamcityBuildOverallDurationMetric(
             repoName = build.repoName.orEmpty(),
             jiraIssue = build.jiraIssue.orEmpty(),
             ldapUser = build.ldapUser.orEmpty(),
-            timestamp = build.queuedDateTime.toInstant().toEpochMilli(),
+            timestamp = build.queuedDateTime.toInstant().epochSecond,
             duration = Duration.between(build.queuedDateTime, build.finishDateTime).seconds,
             status = build.status?.name?.lowercase().orEmpty(),
             toolName = "gradle",
