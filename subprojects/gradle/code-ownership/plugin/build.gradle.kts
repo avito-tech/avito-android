@@ -22,6 +22,8 @@ dependencies {
     implementation(project(":subprojects:logger:gradle-logger"))
     implementation(project(":subprojects:common:okhttp"))
 
+    testFixturesImplementation(project(":subprojects:common:result"))
+
     ksp(libs.moshiCodegen)
     gradleTestImplementation(libs.jsonAssert)
     gradleTestImplementation(project(":subprojects:gradle:test-project"))

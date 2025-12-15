@@ -12,7 +12,9 @@ dependencies {
     implementation(libs.jdgraphtCore)
     implementation(libs.kotlinGradle)
 
+    testImplementation(testFixtures(project(":subprojects:gradle:module-types")))
     testFixturesImplementation(testFixtures(project(":subprojects:gradle:module-types")))
+    testFixturesImplementation(libs.kotlinx.serialization.json)
 }
 
 gradlePlugin {

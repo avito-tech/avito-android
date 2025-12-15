@@ -48,6 +48,7 @@ dependencies {
     testImplementation(testFixtures(project(":subprojects:test-runner:report-viewer")))
     testImplementation(testFixtures(project(":subprojects:test-runner:service")))
     testImplementation(testFixtures(project(":subprojects:test-runner:device-provider:model")))
+    testImplementation(testFixtures(project(":subprojects:test-runner:device-provider:impl")))
 
     testFixturesImplementation(project(":subprojects:logger:logger"))
     testFixturesImplementation(testFixtures(project(":subprojects:common:time")))

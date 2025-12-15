@@ -32,6 +32,7 @@ dependencies {
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.coroutinesTest)
+    testFixturesImplementation(libs.kotlinx.serialization.json)
     testFixturesImplementation(testFixtures(project(":subprojects:gradle:mtls")))
 }
 

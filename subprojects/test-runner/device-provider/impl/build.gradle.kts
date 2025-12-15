@@ -18,5 +18,6 @@ dependencies {
     testImplementation(libs.coroutinesTest)
     testImplementation(testFixtures(project(":subprojects:common:time")))
 
+    testFixturesImplementation(libs.coroutinesCore)
     testFixturesApi(testFixtures(project(":subprojects:test-runner:kubernetes")))
 }

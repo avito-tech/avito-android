@@ -30,6 +30,9 @@ dependencies {
 
     ksp(libs.moshiCodegen)
 
+    testFixturesImplementation(project(":subprojects:gradle:module-types-api"))
+    testFixturesImplementation(libs.kotlinx.serialization.json)
+
     testImplementation(testFixtures(project(":subprojects:gradle:code-ownership:plugin")))
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(project(":subprojects:common:test-okhttp"))
