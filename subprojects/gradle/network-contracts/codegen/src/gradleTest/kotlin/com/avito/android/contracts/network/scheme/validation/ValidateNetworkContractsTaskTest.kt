@@ -4,12 +4,21 @@ package com.avito.android.contracts.scheme.validation
 
 import com.avito.android.contracts.network.NetworkCodegenProjectGenerator
 import com.avito.android.contracts.network.defaultModule
+import com.avito.android.contracts.network.scheme.imports.mocks.apiSchemaImportResponseMock
 import com.avito.android.contracts.platform.ContractsTaskNamesBuilder
 import com.avito.android.contracts.platform.scheme.imports.data.models.SchemaEntry
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
+import com.avito.test.http.Mock
+import com.avito.test.http.MockDispatcher
+import com.avito.test.http.MockWebServerFactory
+import com.avito.test.http.RequestData
+import okhttp3.mockwebserver.MockResponse
+import org.gradle.testkit.runner.TaskOutcome
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.io.TempDir
@@ -21,6 +30,24 @@ import java.io.File
 import java.util.stream.Stream
 
 class ValidateNetworkContractsTaskTest {
+
+    private val mockDispatcher = MockDispatcher(unmockedResponse = apiSchemaImportResponseMock())
+    private val mockWebServer = MockWebServerFactory.create()
+        .apply {
+            dispatcher = mockDispatcher
+        }
+
+    private val validatePathMatcher: RequestData.() -> Boolean = { path.contains("validateSchema") }
+
+    @BeforeEach
+    fun startup() {
+        mockWebServer.start()
+    }
+
+    @AfterEach
+    fun teardown() {
+        mockWebServer.shutdown()
+    }
 
     @Test
     fun `when root validation task is invoked - validationByCodegen is false - then invoke modules validation report task with codegen`(
@@ -78,6 +105,43 @@ class ValidateNetworkContractsTaskTest {
                 ":$projectName:${ContractsTaskNamesBuilder.codegenTask()}",
             )
             .inOrder()
+    }
+
+    @Test
+    fun `when validation task called twice - then use cache`(
+        @TempDir projectDir: File
+    ) {
+        val projectName = "feature"
+        generateProjectWithGeneratedFiles(
+            projectDir,
+            emptyList(),
+            moduleName = projectName,
+            validationByCodegen = false
+        )
+
+        mockDispatcher.registerSuccessValidationMock()
+
+        runTasks(
+            listOf(ContractsTaskNamesBuilder.validationTask("all")),
+            projectDir,
+        )
+            .assertThat()
+            .tasksShouldBeTriggered(
+                ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "local")}",
+                ":$projectName:${ContractsTaskNamesBuilder.collectSchemesTask("network")}",
+                ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "remote")}"
+            )
+            .inOrder()
+
+        runTasks(
+            listOf(ContractsTaskNamesBuilder.validationTask("all")),
+            projectDir,
+        )
+            .assertThat()
+            .taskWithOutcome(
+                ":$projectName:${ContractsTaskNamesBuilder.validationTask("network", "remote")}",
+                TaskOutcome.UP_TO_DATE
+            )
     }
 
     @ParameterizedTest
@@ -178,6 +242,7 @@ class ValidateNetworkContractsTaskTest {
 
         NetworkCodegenProjectGenerator.generate(
             projectDir,
+            serviceUrl = mockWebServer.url("/").toString(),
             modules = listOf(
                 defaultModule(
                     name = moduleName,
@@ -214,6 +279,13 @@ class ValidateNetworkContractsTaskTest {
             configurationCache = true,
             useTestFixturesClasspath = true
         )
+    }
+
+    private fun MockDispatcher.registerSuccessValidationMock() {
+        val response = MockResponse().setResponseCode(200)
+            .setBody("{ \"result\" : { } }")
+            .setHeader("content-type", "application/json")
+        registerMock(Mock(validatePathMatcher, response))
     }
 }
 
