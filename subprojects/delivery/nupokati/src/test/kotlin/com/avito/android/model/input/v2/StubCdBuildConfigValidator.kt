@@ -1,9 +1,10 @@
 package com.avito.android.model.input.v2
 
-import com.avito.android.model.input.CdBuildConfigV2
+import com.avito.android.model.input.config.CdBuildConfig
+import com.avito.android.model.input.config.validator.CdBuildConfigValidator
 
-internal object StubCdBuildConfigValidator : CdBuildConfigValidator {
+internal class StubCdBuildConfigValidator<T : CdBuildConfig> : CdBuildConfigValidator<T> {
 
-    override fun validate(config: CdBuildConfigV2) {
+    override fun validate(config: T) {
     }
 }

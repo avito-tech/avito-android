@@ -2,6 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.gradle-testing")
+    id("convention.ksp")
     id("convention.kotlin-serialization")
 }
 
@@ -11,12 +12,21 @@ dependencies {
     implementation(project(":subprojects:delivery:qapps"))
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:common:result"))
     implementation(project(":subprojects:logger:gradle-logger"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
     implementation(project(":subprojects:test-runner:instrumentation-tests"))
     implementation(project(":subprojects:test-runner:report-viewer"))
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitConverterScalars)
+    implementation(libs.moshi)
+    implementation(libs.moshiRetrofit)
+    implementation(libs.okhttpLogging)
+
+    ksp(libs.moshiCodegen)
 
     testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:common:resources"))

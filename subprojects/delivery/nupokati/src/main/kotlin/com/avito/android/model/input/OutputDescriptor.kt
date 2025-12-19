@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class OutputDescriptor(
-    val path: String,
+public data class OutputDescriptor(
+    @SerialName("path") val path: String,
     @SerialName("skip_upload") val skipUpload: Boolean
 )

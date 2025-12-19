@@ -1,9 +1,9 @@
 package com.avito.android.contract_upload
 
 import com.avito.android.artifactory_backup.ArtifactsAdapter
-import com.avito.android.http.ArtifactoryClient
-import com.avito.android.http.createArtifactoryHttpClient
-import com.avito.android.model.input.CdBuildConfig
+import com.avito.android.http.artifactory.ArtifactoryClient
+import com.avito.android.http.artifactory.createArtifactoryHttpClient
+import com.avito.android.model.input.config.CdBuildConfigV2
 import com.avito.android.model.output.CdBuildResult
 import com.avito.android.model.output.toCdCoordinates
 import com.avito.git.gitStateProvider
@@ -35,7 +35,7 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
     public abstract val teamcityBuildUrl: Property<String>
 
     @get:Input
-    internal abstract val cdBuildConfig: Property<CdBuildConfig>
+    internal abstract val cdBuildConfig: Property<CdBuildConfigV2>
 
     @get:Input
     public abstract val appVersionCode: Property<Int>

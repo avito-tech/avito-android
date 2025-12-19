@@ -1,7 +1,8 @@
 package com.avito.android.model.input.v3
 
 import com.avito.android.model.input.AndroidArtifactType
-import com.avito.android.model.input.CdBuildConfigV3
+import com.avito.android.model.input.config.CdBuildConfigV3
+import com.avito.android.model.input.config.parser.CdBuildConfigParser
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.DynamicTest
@@ -55,7 +56,7 @@ internal class CdBuildConfigV3ParserTest {
         """.trimIndent()
         )
 
-        val config = CdBuildConfigParser().transform { inputFile }
+        val config = CdBuildConfigParser.parseCdBuildConfigV3(file = inputFile)
 
         return listOf(
             Case("size") {

@@ -1,7 +1,7 @@
 package com.avito.android.contract_upload
 
-import com.avito.android.http.ArtifactoryClient
-import com.avito.android.model.input.CdBuildConfig
+import com.avito.android.http.artifactory.ArtifactoryClient
+import com.avito.android.model.input.config.CdBuildConfigV2
 import com.avito.android.model.output.CdBuildResult
 import com.avito.git.GitState
 import kotlinx.serialization.encodeToString
@@ -13,10 +13,10 @@ internal class UploadCdBuildResultTaskAction(private val client: ArtifactoryClie
     fun send(
         testResults: CdBuildResult.TestResultsLink,
         artifacts: JsonElement,
-        cdBuildConfig: CdBuildConfig,
+        cdBuildConfig: CdBuildConfigV2,
         versionCode: Int,
         teamcityUrl: String,
-        gitState: GitState
+        gitState: GitState,
     ) {
         val result = CdBuildResult(
             schemaVersion = cdBuildConfig.schemaVersion,

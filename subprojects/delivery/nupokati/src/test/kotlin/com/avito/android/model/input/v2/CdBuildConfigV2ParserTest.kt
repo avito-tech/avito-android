@@ -1,8 +1,9 @@
 package com.avito.android.model.input.v2
 
 import com.avito.android.model.input.AndroidArtifactType
-import com.avito.android.model.input.CdBuildConfigV2
-import com.avito.android.model.input.CdBuildConfigV2.Deployment
+import com.avito.android.model.input.config.CdBuildConfigV2
+import com.avito.android.model.input.config.CdBuildConfigV2.Deployment
+import com.avito.android.model.input.config.parser.CdBuildConfigParser
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -76,6 +77,6 @@ internal class CdBuildConfigV2ParserTest {
         val inputFile = File(testProjectDir, "config.json")
         inputFile.writeText(config)
 
-        return CdBuildConfigParser(StubCdBuildConfigValidator).transform { inputFile }
+        return CdBuildConfigParser.parseCdBuildConfigV2(inputFile)
     }
 }

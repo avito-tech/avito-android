@@ -244,6 +244,7 @@ internal class NupokatiPluginV2IntegrationTest {
                     versionCode = versionCode,
                     useKts = true,
                     imports = listOf(
+                        "import com.avito.android.model.input.config.parser.CdBuildConfigParser",
                         "import com.avito.reportviewer.model.ReportCoordinates",
                         "import com.avito.plugin.qappsUploadUnsignedTaskProvider",
                     ),
@@ -264,18 +265,29 @@ internal class NupokatiPluginV2IntegrationTest {
                             |}
                             |
                             |nupokati {
-                            |    cdBuildConfigFile.set(rootProject.file("${cdConfigFile.name}"))
-                            |    teamcityBuildUrl.set("$teamcityUrl")
+                            |    val config = CdBuildConfigParser.parseCdBuildConfigV2(
+                            |        rootProject.file("${cdConfigFile.path}")
+                            |    )
+                            |    v2("releaseV2") {
+                            |        config?.let {
+                            |            cdBuildConfig.set(it)
+                            |        }
+                            |        teamcityBuildUrl.set("$teamcityUrl")
                             |
-                            |    artifactory {
-                            |        login.set("user")
-                            |        password.set("12345")
-                            |    }
+                            |        artifactory {
+                            |            login.set("user")
+                            |            password.set("12345")
+                            |        }
                             |
-                            |    reportViewer {
-                            |        frontendUrl.set("$reportViewerFrontendUrl")
-                            |        reportCoordinates.set(ReportCoordinates("$planSlug", "$jobSlug", "$runId"))
+                            |        reportViewer {
+                            |            frontendUrl.set("$reportViewerFrontendUrl")
+                            |            reportCoordinates.set(ReportCoordinates("$planSlug", "$jobSlug", "$runId"))
+                            |        }
                             |    }
+                            |}
+                            |
+                            |tasks.register("nupokati") {
+                            |   dependsOn("nupokatiReleaseV2")
                             |}
                             |
                             |tasks.named("nupokati") {
