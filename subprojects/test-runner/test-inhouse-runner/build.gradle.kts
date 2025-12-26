@@ -46,7 +46,5 @@ dependencies {
     implementation(libs.okhttpLogging)
     implementation(libs.gson)
 
-    testImplementation(libs.kotlinPoet)
-    testImplementation(libs.kotlinCompileTesting)
     testImplementation(project(":subprojects:common:truth-extensions"))
 }

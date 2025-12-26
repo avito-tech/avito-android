@@ -8,7 +8,6 @@ dependencies {
     implementation(libs.dagger.spi)
 
     testImplementation(libs.kotlinTestJUnit)
-    testImplementation(libs.kotlinCompileTesting)
     testImplementation(libs.junitJupiterApi)
     testRuntimeOnly(libs.junitJupiterEngine)
 
