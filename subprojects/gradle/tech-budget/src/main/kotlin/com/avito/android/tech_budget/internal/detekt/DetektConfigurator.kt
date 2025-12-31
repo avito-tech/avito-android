@@ -15,11 +15,14 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 
 public class DetektConfigurator : TechBudgetConfigurator {
 
@@ -107,3 +110,16 @@ private fun AndroidVariantsFilter.isVariantSuitable(variant: BaseVariant): Boole
     val variantName = variant.name
     return baseVariantName == targetVariantName || variantName == targetVariantName || variantName in fallbacks
 }
+
+/**
+ *  This is the copy of KGP implementation
+ *  KotlinProjectExtension.targets is internal in Kotlin Gradle Plugin since Kotlin 2.0
+ *  See KT-61463 - kotlin commit 282d2f4
+ *  Recommended by Kotlin build tools teamlead - https://tinyurl.com/bddrd5pa
+ */
+private val KotlinProjectExtension.targets: Iterable<KotlinTarget>
+    get() = when (this) {
+        is KotlinSingleTargetExtension<*> -> listOf(this.target)
+        is KotlinMultiplatformExtension -> targets
+        else -> error("Unexpected 'kotlin' extension $this")
+    }
