@@ -5,17 +5,13 @@ package com.avito.android.module_type
  */
 public enum class FunctionalType {
 
-    /**
-     * Модуль с общими архитектурными абстракциями, которые могут использоваться по всему проекту.
-     *
-     * См. [:abstract](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#abstract)
-     */
+    @Deprecated("См. https://links.k.avito.ru/android-modules-2/#abstract")
     Abstract,
 
     /**
-     * Модуль с интерфейсом к реализации функциональности.
+     * Модуль с интерфейсом к реализации функциональности и фейковой реализацией для демо-приложений.
      *
-     * См. [:public](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#public)
+     * См. [:public](https://links.k.avito.ru/android-modules-2/#public)
      */
     Public,
 
@@ -23,22 +19,18 @@ public enum class FunctionalType {
      * Модуль с реализацией функциональности.
      * Может использоваться как для реализации фичи, так и для реализации общей библиотеки.
      *
-     * См. [:impl](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#impl)
+     * См. [:impl](https://links.k.avito.ru/android-modules-2/#impl)
      */
     Impl,
 
-    /**
-     * Модуль с фейковой реализацией функциональности.
-     *
-     * См. [:fake](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#fake)
-     */
+    @Deprecated("Отказываемся в рамках TDR https://links.k.avito.ru/android-tdr-no-fake")
     Fake,
 
     /**
      * Модуль с реализацией функциональности.
      * Может быть подключен в качестве зависимости только к дебажной сборке.
      *
-     * См. [:debug](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#debug)
+     * См. [:debug](https://links.k.avito.ru/android-modules-2/#debug)
      */
     Debug,
 
@@ -48,6 +40,7 @@ public enum class FunctionalType {
      * Реализован на случай использования стратегии
      * [@MergeComponent в отдельном модуле](https://cf.avito.ru/pages/viewpage.action?pageId=261393720)
      */
+    @Deprecated("Стратегия @MergeComponent в отдельном модуле не используется, используется @ContributesSubcomponent")
     ImplWiring,
 
     /**
@@ -56,6 +49,7 @@ public enum class FunctionalType {
      * Реализован на случай использования стратегии
      * [@MergeComponent в отдельном модуле](https://cf.avito.ru/pages/viewpage.action?pageId=261393720)
      */
+    @Deprecated("Стратегия @MergeComponent в отдельном модуле не используется, используется @ContributesSubcomponent")
     FakeWiring,
 
     /**
@@ -66,7 +60,7 @@ public enum class FunctionalType {
     /**
      * Модуль демонстрационного приложения, используемого для разработки и тестирования.
      *
-     * См. [:demo](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#demo)
+     * См. [:demo](https://links.k.avito.ru/android-modules-2/#demo)
      */
     DemoApp,
 
@@ -74,12 +68,12 @@ public enum class FunctionalType {
      * Модуль с общими сущностями, для которых не целесообразно делать разделение на интерфейс и реализацию.
      * Является костылем, рекомендуется избегать.
      *
-     * См. [Утилитные модули](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#util)
+     * См. [Утилитные модули](https://links.k.avito.ru/android-modules-2/#util)
      */
     Util,
 
     /**
-     * Deprecated: создавайте [логические модули](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/).
+     * Deprecated: создавайте [логические модули](https://links.k.avito.ru/android-modules-2).
      *
      * "Feature" модули: обособленная функциональность приложения,
      * с которой взаимодействуем опосредованно, через навигацию.
@@ -90,18 +84,18 @@ public enum class FunctionalType {
      * Если могу открыть по диплинку и посмотреть\отредактировать профиль - это фича.
      * Если это набор классов для получения информации \ редактирования профиля - это библиотека, ее используем в фичах.
      *
-     * [Features](https://docs.k.avito.ru/mobile/android/architecture/Modules/#avito-app)
+     * [Features](https://links.k.avito.ru/android-modules-1/#avito-app)
      */
     @Deprecated("Feature-модули устарели, создавайте логические модули")
     Feature,
 
     /**
-     * Deprecated: создавайте [логические модули](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/).
+     * Deprecated: создавайте [логические модули](https://links.k.avito.ru/android-modules-2).
      *
      * Переиспользуемая библиотека, подключается в [Feature] модули или в другие библиотеки.
      * Пока для простоты считаем библиотеками все кроме feature модулей.
      *
-     * [Modules types](https://docs.k.avito.ru/mobile/android/architecture/Modules/#types)
+     * [Modules types](https://links.k.avito.ru/android-modules-1/#types)
      */
     @Deprecated("Library-модули устарели, создавайте логические модули")
     Library,
@@ -131,24 +125,27 @@ public enum class FunctionalType {
     /**
      * Модуль с тестовыми фикстурами для unit и instrumentation-тестов
      *
-     * [test fixtures](https://docs.k.avito.ru/mobile/android/architecture/Modules/#text-fixtures)
-     * См. [:test](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#test)
+     * [test fixtures](https://links.k.avito.ru/android-modules-1/#text-fixtures)
+     * См. [:test](https://links.k.avito.ru/android-modules-2/#test)
      */
     Test,
 
     /**
      * Модуль с тестовыми фикстурами для unit и instrumentation-тестов для Debug модуля
      *
-     * [test fixtures](https://docs.k.avito.ru/mobile/android/architecture/Modules/#text-fixtures)
-     * См. [:test-debug](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#test-debug)
+     * [test fixtures](https://links.k.avito.ru/android-modules-1/#text-fixtures)
+     * См. [:test-debug](https://links.k.avito.ru/android-modules-2/#test-debug)
      */
     TestDebug,
 
-    /**
-     * Модуль с тестовыми фикстурами для unit и instrumentation-тестов для Fake модуля
-     *
-     * [test fixtures](https://docs.k.avito.ru/mobile/android/architecture/Modules/#text-fixtures)
-     * См. [:test-fake](https://docs.k.avito.ru/mobile/android/architecture/modules-2/Modules/#test-fake)
-     */
+    @Deprecated("Заменяем на TestPublic в рамках TDR https://links.k.avito.ru/android-tdr-no-fake")
     TestFake,
+
+    /**
+     * Модуль с тестовыми фикстурами для unit и instrumentation-тестов для Public-модуля
+     *
+     * [test fixtures](https://links.k.avito.ru/android-modules-1/#text-fixtures)
+     * См. [:test-public](https://links.k.avito.ru/android-modules-2/#test-public)
+     */
+    TestPublic,
 }

@@ -20,6 +20,7 @@ public class ToWiringRestriction(
         fun String.logicalModule() = this.substringBeforeLast(':')
         val moduleType = module.type.type
         val dependencyType = dependency.type.type
+        @Suppress("DEPRECATION")
         return when {
             moduleType != FunctionalType.ImplWiring && moduleType != FunctionalType.FakeWiring -> false
             moduleType == FunctionalType.ImplWiring && dependencyType != FunctionalType.Impl -> true

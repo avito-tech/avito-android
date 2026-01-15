@@ -8,6 +8,7 @@ import com.avito.module.configurations.ConfigurationType
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
+@Suppress("DEPRECATION")
 class BetweenModulesExclusionTest {
 
     private val exclusion = BetweenModulesExclusion(

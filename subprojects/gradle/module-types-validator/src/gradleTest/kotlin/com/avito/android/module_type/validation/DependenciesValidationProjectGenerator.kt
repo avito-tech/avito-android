@@ -9,6 +9,7 @@ import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
+@Suppress("DEPRECATION")
 internal object DependenciesValidationProjectGenerator {
 
     /**

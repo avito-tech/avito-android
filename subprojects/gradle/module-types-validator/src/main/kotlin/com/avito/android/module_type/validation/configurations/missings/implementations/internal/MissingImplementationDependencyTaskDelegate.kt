@@ -2,6 +2,7 @@ package com.avito.android.module_type.validation.configurations.missings.impleme
 
 import com.avito.android.module_type.FunctionalType
 
+@Suppress("DEPRECATION")
 internal class MissingImplementationDependencyTaskDelegate {
     fun validate(
         appModulePath: String,

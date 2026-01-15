@@ -3,6 +3,7 @@ package com.avito.android.module_type.validation.configurations.missings.impleme
 import com.avito.android.module_type.FunctionalType
 import java.util.SortedSet
 
+@Suppress("DEPRECATION")
 internal class MissingFakeModuleRootTaskDelegate {
     fun validate(
         projectsTaskOutputText: String,

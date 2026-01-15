@@ -10,6 +10,7 @@ import com.avito.module.configurations.ConfigurationType.Main
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
+@Suppress("DEPRECATION")
 class BetweenFunctionalTypesRestrictionTest {
 
     private val restriction = BetweenFunctionalTypesRestriction(
