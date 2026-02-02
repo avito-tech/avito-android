@@ -7,6 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN \
   apt-get update && \
   apt-get install -y \
+    libjemalloc2 \
     cloc \
     zip \
     unzip \
@@ -23,6 +24,10 @@ RUN \
     shellcheck bats && \
   apt-get clean && \
   apt-get purge
+
+# https://github.com/facebook/jemalloc/wiki/getting-started
+ENV JEMALLOC_PATH=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+RUN test -f "$JEMALLOC_PATH" || (echo "jemalloc not found at $JEMALLOC_PATH" && exit 1)
 
 ENV LANG C.UTF-8
 ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/

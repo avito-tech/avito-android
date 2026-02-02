@@ -30,4 +30,13 @@ git config --global user.email 'builder@avito.ru';"
 # shellcheck disable=SC2145
 echo "Running command: $@"
 
-sudo --set-home --preserve-env "PATH=$PATH" -u ${BUILD_USER} "$@"
+SUDO_ENV_ARGS="PATH=$PATH"
+if [[ "${ENABLE_JEMALLOC:-}" == "true" ]]; then
+    echo "jemalloc allocator enabled"
+    # https://sourceware.org/glibc/manual/latest/html_mono/libc.html#Replacing-malloc-1
+    SUDO_ENV_ARGS="$SUDO_ENV_ARGS LD_PRELOAD=$JEMALLOC_PATH"
+    # https://jemalloc.net/jemalloc.3.html#tuning
+    SUDO_ENV_ARGS="$SUDO_ENV_ARGS MALLOC_CONF=${MALLOC_CONF:-}"
+fi
+
+sudo --set-home --preserve-env $SUDO_ENV_ARGS -u ${BUILD_USER} "$@"
