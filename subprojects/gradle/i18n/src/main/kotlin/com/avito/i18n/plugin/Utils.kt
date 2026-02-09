@@ -8,6 +8,9 @@ import java.util.Locale
 internal val Project.mainResDir: File?
     get() = androidBaseExtension.sourceSets.getByName("main").res.srcDirs.firstOrNull()
 
+internal fun Project.getResDirByName(name: String): File? =
+    androidBaseExtension.sourceSets.getByName(name).res.srcDirs.firstOrNull()
+
 internal fun Locale.getStringsFile(): String {
     return "values-${getResourceQualifier()}/strings.xml"
 }

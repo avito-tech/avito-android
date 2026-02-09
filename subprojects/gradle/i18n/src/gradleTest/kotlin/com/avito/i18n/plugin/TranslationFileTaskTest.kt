@@ -66,7 +66,7 @@ class TranslationFileTaskTest {
         createFakeResponse(RESPONSE_BODY)
         runTranslationTask(projectDir)
 
-        val enFile = File(projectDir, "$MODULE_NAME/${RES_PATH}values-en/strings.xml")
+        val enFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
 
         assertThat(enFile.exists())
             .isTrue()
@@ -80,7 +80,7 @@ class TranslationFileTaskTest {
         createFakeResponse(RESPONSE_BODY_TRANSLATABLE_FALSE)
         runTranslationTask(projectDir)
 
-        val enFile = File(projectDir, "app/${RES_PATH}values-en/strings.xml")
+        val enFile = File(projectDir, "app/${MAIN_RES_PATH}values-en/strings.xml")
 
         assertThat(enFile.exists())
             .isTrue()
@@ -93,7 +93,7 @@ class TranslationFileTaskTest {
         generateTestProject(projectDir, ORIGINAL_FILE_CONTENT_REMOVE_STRING)
 
         projectDir.module(MODULE_NAME) {
-            dir(RES_PATH) {
+            dir(MAIN_RES_PATH) {
                 file(
                     name = "values-en/strings.xml",
                     content = TRANSLATED_FILE_CONTENT
@@ -103,7 +103,7 @@ class TranslationFileTaskTest {
 
         runTranslationTask(projectDir)
 
-        val enFile = File(projectDir, "$MODULE_NAME/${RES_PATH}values-en/strings.xml")
+        val enFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
 
         assertThat(enFile.exists())
             .isTrue()
@@ -112,10 +112,10 @@ class TranslationFileTaskTest {
     }
 
     @Test
-    fun `run update translations with changed string -successful`(@TempDir projectDir: File) {
+    fun `run update translations with changed string - successful`(@TempDir projectDir: File) {
         generateTestProject(projectDir, ORIGINAL_FILE_CONTENT_CHANGE_STRING)
         projectDir.module(MODULE_NAME) {
-            dir(RES_PATH) {
+            dir(MAIN_RES_PATH) {
                 file(
                     name = "values-en/strings.xml",
                     content = TRANSLATED_FILE_CONTENT
@@ -125,7 +125,7 @@ class TranslationFileTaskTest {
         createFakeResponse(RESPONSE_BODY_CHANGE_STRING)
         runTranslationTask(projectDir)
 
-        val enFile = File(projectDir, "app/${RES_PATH}values-en/strings.xml")
+        val enFile = File(projectDir, "app/${MAIN_RES_PATH}values-en/strings.xml")
 
         assertThat(enFile.exists())
             .isTrue()
@@ -133,9 +133,102 @@ class TranslationFileTaskTest {
             .contains(TRANSLATED_FILE_CONTENT_CHANGE_STRING)
     }
 
+    @Test
+    fun `run update translations with empty flavor config - translates only main flavor`(@TempDir projectDir: File) {
+        generateTestProject(
+            projectDir = projectDir,
+            stringsFileContent = ORIGINAL_FILE_CONTENT,
+            flavors = emptyList()
+        )
+
+        createFakeResponse(RESPONSE_BODY)
+        runTranslationTask(projectDir)
+
+        val mainFlavorEnFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
+
+        assertThat(mainFlavorEnFile.exists())
+            .isTrue()
+        assertThat(mainFlavorEnFile.readText())
+            .contains(TRANSLATED_FILE_CONTENT)
+
+        val otherFlavorEnFile = File(projectDir, "$MODULE_NAME/${OTHER_RES_PATH}values-en/strings.xml")
+
+        assertThat(otherFlavorEnFile.exists())
+            .isFalse()
+    }
+
+    @Test
+    fun `run update translations with other flavor in config - translates only other flavor`(
+        @TempDir projectDir: File
+    ) {
+        generateTestProject(
+            projectDir = projectDir,
+            stringsFileContent = ORIGINAL_FILE_CONTENT,
+            flavors = listOf("other")
+        )
+
+        createFakeResponse(RESPONSE_BODY)
+        runTranslationTask(projectDir)
+
+        val mainFlavorEnFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
+
+        assertThat(mainFlavorEnFile.exists())
+            .isFalse()
+
+        val otherFlavorResPath = File(projectDir, "$MODULE_NAME/${OTHER_RES_PATH}values-en/strings.xml")
+
+        assertThat(otherFlavorResPath.exists())
+            .isTrue()
+        assertThat(otherFlavorResPath.readText())
+            .contains(TRANSLATED_FILE_CONTENT)
+    }
+
+    @Test
+    fun `run update translations with unknown flavor - fails`(@TempDir projectDir: File) {
+        generateTestProject(
+            projectDir = projectDir,
+            stringsFileContent = ORIGINAL_FILE_CONTENT,
+            flavors = listOf("unknown")
+        )
+
+        gradlew(
+            projectDir = projectDir,
+            ":$MODULE_NAME:${TranslationPlugin.TRANSLATION_TASK_NAME}",
+            expectFailure = true
+        ).assertThat()
+            .buildFailed()
+    }
+
+    @Test
+    fun `run update translations with multiple flavors in config - translates all of them`(@TempDir projectDir: File) {
+        generateTestProject(
+            projectDir = projectDir,
+            stringsFileContent = ORIGINAL_FILE_CONTENT,
+            flavors = listOf("main", "other")
+        )
+
+        createFakeResponse(RESPONSE_BODY)
+        runTranslationTask(projectDir)
+
+        val mainFlavorEnFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
+
+        assertThat(mainFlavorEnFile.exists())
+            .isTrue()
+        assertThat(mainFlavorEnFile.readText())
+            .contains(TRANSLATED_FILE_CONTENT)
+
+        val otherFlavorResPath = File(projectDir, "$MODULE_NAME/${OTHER_RES_PATH}values-en/strings.xml")
+
+        assertThat(otherFlavorResPath.exists())
+            .isTrue()
+        assertThat(otherFlavorResPath.readText())
+            .contains(TRANSLATED_FILE_CONTENT)
+    }
+
     private fun generateTestProject(
         @TempDir projectDir: File,
-        stringsFileContent: String
+        stringsFileContent: String,
+        flavors: List<String> = emptyList()
     ) {
         TestProjectGenerator(
             plugins = plugins {
@@ -159,11 +252,28 @@ class TranslationFileTaskTest {
                             translateUrlPath = "$PATH"
                             useTls = false
                             useNewApi = true
+                            ${createTranslationExtensionString(flavors)}
+                        }
+                        
+                        android {
+                            flavorDimensions += "some_flavor"
+                            
+                            productFlavors {
+                                create("other") { flavor ->
+                                    flavor.dimension = "some_flavor"
+                                }
+                            }
                         }
                     """.trimIndent(),
                     enableKotlinAndroidPlugin = false
                 ) {
-                    dir(RES_PATH) {
+                    dir(MAIN_RES_PATH) {
+                        file(
+                            name = TranslationPlugin.DEFAULT_STRING_FILE,
+                            content = stringsFileContent
+                        )
+                    }
+                    dir(OTHER_RES_PATH) {
                         file(
                             name = TranslationPlugin.DEFAULT_STRING_FILE,
                             content = stringsFileContent
@@ -195,8 +305,13 @@ class TranslationFileTaskTest {
             .buildSuccessful()
     }
 
+    private fun createTranslationExtensionString(
+        flavors: List<String> = emptyList()
+    ): String = flavors.joinToString("\n") { "flavorNamesToTranslate.add(\"$it\")" }
+
     private companion object Companion {
-        const val RES_PATH = "src/main/res/"
+        const val MAIN_RES_PATH = "src/main/res/"
+        const val OTHER_RES_PATH = "src/other/res/"
         const val PATH = "test_translate"
 
         const val MODULE_NAME: String = "app"

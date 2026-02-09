@@ -1,8 +1,10 @@
 package com.avito.i18n.plugin
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 
 public abstract class TranslationExtension(
@@ -23,4 +25,7 @@ public abstract class TranslationExtension(
     public val useTls: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
     public val useNewApi: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
+
+    public val flavorNamesToTranslate: ListProperty<String> =
+        objectFactory.listProperty<String>().convention(emptyList<String>())
 }

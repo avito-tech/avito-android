@@ -35,14 +35,24 @@ public class TranslationPlugin : Plugin<Project> {
         localizationService: Provider<LocalizationService>
     ) {
         target.tasks.register<TranslationFileTask>(TRANSLATION_TASK_NAME) {
-            val resDir = checkNotNull(target.mainResDir) {
-                "'resDir' not found!"
+            val mainResDir = checkNotNull(target.mainResDir) {
+                "'mainResDir' not found!"
             }
-            val file = File(resDir, DEFAULT_STRING_FILE)
-            check(file.exists()) {
-                "File '$DEFAULT_STRING_FILE' not found!"
+            val resDirsToTranslate = translationExtension.flavorNamesToTranslate.get()
+                .map { flavorName -> target.getResDirByName(flavorName) }
+                .takeUnless { it.isEmpty() }
+                ?: listOf(mainResDir)
+
+            val filesToTranslate = resDirsToTranslate.filterNotNull()
+                .map { resDir -> File(resDir, DEFAULT_STRING_FILE) }
+
+            filesToTranslate.forEach { file ->
+                check(file.exists()) {
+                    "File '${file.path}' not found!"
+                }
             }
-            defaultStringsFile.set(file)
+
+            defaultStringsFiles.setFrom(filesToTranslate)
             service.set(localizationService)
             locales.set(translationExtension.locales)
             namespace.set(translationExtension.namespace)
