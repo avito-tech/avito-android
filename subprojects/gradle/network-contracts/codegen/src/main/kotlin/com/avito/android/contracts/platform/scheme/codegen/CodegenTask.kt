@@ -61,6 +61,9 @@ public abstract class CodegenTask : DefaultTask() {
     internal abstract val skipValidation: Property<Boolean>
 
     @get:Input
+    internal abstract val clearBeforeRun: Property<Boolean>
+
+    @get:Input
     @get:Optional
     internal abstract val crtEnvName: Property<String>
 
@@ -147,6 +150,11 @@ public abstract class CodegenTask : DefaultTask() {
             if (updateResult.isFailure()) {
                 throwCodegenException(updateResult)
             }
+        }
+
+        val destinationDir = outputDirectory.asFile.orNull
+        if (clearBeforeRun.get() && destinationDir != null && destinationDir.exists()) {
+            destinationDir.deleteRecursively()
         }
 
         val result = codegen.execute(

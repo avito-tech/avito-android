@@ -152,6 +152,7 @@ internal class ContractsPluginInstaller(
             it.kind.set(kind)
             it.codegenProjectName.set(projectName)
             it.skipValidation.set(codegenConfiguration.skipValidation.map { !forceValidation && it })
+            it.clearBeforeRun.set(codegenConfiguration.clearBeforeRun)
             it.moduleDirectory.set(it.project.layout.projectDirectory)
             it.outputDirectory.set(outputDirectory)
             it.generators.addAll(generators)

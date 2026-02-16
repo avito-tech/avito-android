@@ -28,6 +28,9 @@ public abstract class CodegenConfiguration @Inject constructor(objects: ObjectFa
     public val skipValidation: Property<Boolean> = objects.property<Boolean>()
         .convention(true)
 
+    public val clearBeforeRun: Property<Boolean> = objects.property<Boolean>()
+        .convention(true)
+
     public val codegenTimeoutSeconds: Property<Long> = objects.property<Long>()
         .convention(20)
 
