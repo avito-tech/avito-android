@@ -5,6 +5,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal class ModuleWithType(
-    @Json(name = "moduleName") val moduleName: String,
-    @Json(name = "functionalType") val functionalType: String,
+    @param:Json(name = "moduleName") val moduleName: String,
+    @param:Json(name = "functionalType") val functionalType: String,
 )

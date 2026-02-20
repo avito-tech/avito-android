@@ -67,7 +67,7 @@ internal class WithTextMatcher(
  * with nbsp logging
  */
 internal class WithCharSequenceMatcher(
-    @StringRes private val resourceId: Int,
+    @param:StringRes private val resourceId: Int,
     private val method: TextViewMethod,
 ) : BoundedDiagnosingMatcher<View, TextView>(TextView::class.java) {
     private var resourceName: String? = null

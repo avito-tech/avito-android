@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal class ModuleDependencies(
-    @Json(name = "moduleName") val modulePath: String,
-    @Json(name = "directImportedModulesCount") val directImportedModulesCount: Int,
-    @Json(name = "directDependentModulesCount") val directDependentModulesCount: Int,
+    @param:Json(name = "moduleName") val modulePath: String,
+    @param:Json(name = "directImportedModulesCount") val directImportedModulesCount: Int,
+    @param:Json(name = "directDependentModulesCount") val directDependentModulesCount: Int,
 )

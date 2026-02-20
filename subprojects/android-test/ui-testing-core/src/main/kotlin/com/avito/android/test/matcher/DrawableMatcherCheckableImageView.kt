@@ -5,8 +5,8 @@ import androidx.annotation.DrawableRes
 import com.google.android.material.internal.CheckableImageButton
 
 public class DrawableMatcherCheckableImageView(
-    @DrawableRes private val src: Int? = null,
-    @ColorRes private val tint: Int? = null
+    @param:DrawableRes private val src: Int? = null,
+    @param:ColorRes private val tint: Int? = null
 ) :
     DrawableMatcher<CheckableImageButton>(
         { it.drawable },

@@ -1,4 +1,4 @@
-org.jetbrains.kotlin:kotlin-stdlib:1.9.24
+org.jetbrains.kotlin:kotlin-stdlib:2.1.20
 org.jetbrains:annotations:13.0
 org.jgrapht:jgrapht-core:1.5.1
 org.jheaps:jheaps:0.13

@@ -5,11 +5,11 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal class DumpResponse(
-    @Json(name = "result") val result: Result
+    @param:Json(name = "result") val result: Result
 ) {
 
     @JsonClass(generateAdapter = true)
     internal class Result(
-        @Json(name = "id") val id: Int
+        @param:Json(name = "id") val id: Int
     )
 }

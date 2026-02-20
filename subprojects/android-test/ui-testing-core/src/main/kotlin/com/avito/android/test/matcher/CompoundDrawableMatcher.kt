@@ -11,11 +11,11 @@ import com.avito.android.test.util.matchDrawable
 import org.hamcrest.Description
 
 internal class CompoundDrawableMatcher(
-    @DrawableRes private val left: Int? = null,
-    @DrawableRes private val top: Int? = null,
-    @DrawableRes private val right: Int? = null,
-    @DrawableRes private val bottom: Int? = null,
-    @ColorInt private val tint: Int? = null
+    @param:DrawableRes private val left: Int? = null,
+    @param:DrawableRes private val top: Int? = null,
+    @param:DrawableRes private val right: Int? = null,
+    @param:DrawableRes private val bottom: Int? = null,
+    @param:ColorInt private val tint: Int? = null
 ) : BoundedMatcher<View, TextView>(TextView::class.java) {
 
     private var description: String? = null

@@ -1,5 +1,5 @@
 com.squareup.okhttp3:okhttp:3.14.9
 com.squareup.okio:okio:1.17.2
 com.squareup.retrofit2:retrofit:2.9.0
-org.jetbrains.kotlin:kotlin-stdlib:1.9.24
+org.jetbrains.kotlin:kotlin-stdlib:2.1.20
 org.jetbrains:annotations:13.0

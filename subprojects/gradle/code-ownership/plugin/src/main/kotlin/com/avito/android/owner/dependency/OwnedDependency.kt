@@ -6,11 +6,11 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 public class OwnedDependency(
-    @Json(name = "moduleName") public val name: String,
-    @Json(name = "owners") public val owners: Collection<Owner>,
-    @Json(name = "type") public val type: Type,
-    @Json(name = "betweennessCentrality") public val betweennessCentrality: Double?,
-    @Json(name = "description") public val description: String?,
+    @param:Json(name = "moduleName") public val name: String,
+    @param:Json(name = "owners") public val owners: Collection<Owner>,
+    @param:Json(name = "type") public val type: Type,
+    @param:Json(name = "betweennessCentrality") public val betweennessCentrality: Double?,
+    @param:Json(name = "description") public val description: String?,
 ) {
 
     public enum class Type {

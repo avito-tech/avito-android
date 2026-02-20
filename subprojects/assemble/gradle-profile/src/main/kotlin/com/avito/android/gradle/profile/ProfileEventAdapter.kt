@@ -1,4 +1,4 @@
-// todo find a replace for TaskExecutionListener
+// TODO MBSA-2245 find a replace for TaskExecutionListener
 @file:Suppress("DEPRECATION")
 
 package com.avito.android.gradle.profile
@@ -54,6 +54,7 @@ internal class ProfileEventAdapter(
         buildProfile!!.setProjectsEvaluated(now)
     }
 
+    @Deprecated("Incompatible with configuration cache")
     override fun buildFinished(result: BuildResult) {
         buildProfile!!.isSuccessful = result.failure == null
 
@@ -88,6 +89,7 @@ internal class ProfileEventAdapter(
         projectProfile.configurationOperation.setFinish(now)
     }
 
+    @Deprecated("Incompatible with configuration cache")
     override fun beforeExecute(task: Task) {
         listener.beforeExecute(task)
 
@@ -98,6 +100,7 @@ internal class ProfileEventAdapter(
         taskExecution.setStart(now)
     }
 
+    @Deprecated("Incompatible with configuration cache")
     override fun afterExecute(task: Task, state: TaskState) {
         val now = clock.currentTime
         val project = task.project

@@ -7,6 +7,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal class UploadPerfScreenOwnersRequest(
-    @Json(name = "dumpInfo") val dumpInfo: DumpInfo,
-    @Json(name = "screenInfos") val screenInfos: List<PerformanceScreenInfo>
+    @param:Json(name = "dumpInfo") val dumpInfo: DumpInfo,
+    @param:Json(name = "screenInfos") val screenInfos: List<PerformanceScreenInfo>
 )

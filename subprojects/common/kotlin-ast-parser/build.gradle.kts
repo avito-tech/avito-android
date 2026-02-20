@@ -4,13 +4,10 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.kotlinCompilerEmbeddable) {
-        because("https://kotlinlang.org/docs/whatsnew21.html#compiler-symbols-hidden-from-the-kotlin-gradle-plugin-api")
+    implementation(libs.kotlinCompilerEmbeddable) {
+        because("AST parsing needs compiler at runtime; KGP 2.1 hides these symbols")
     }
 
-    testImplementation(libs.kotlinCompilerEmbeddable) {
-        because("These classes are needed in testRuntimeClasspath to avoid ClassNotFoundException")
-    }
     testImplementation(project(":subprojects:gradle:test-project")) {
         because("File extensions") // todo probably move to :common:files
     }

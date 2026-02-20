@@ -6,8 +6,8 @@ import androidx.annotation.DrawableRes
 
 @Deprecated("Use DrawableMatcherImageView")
 public class DrawableMatcherImageButton(
-    @DrawableRes private val src: Int? = null,
-    @ColorRes private val tint: Int? = null
+    @param:DrawableRes private val src: Int? = null,
+    @param:ColorRes private val tint: Int? = null
 ) :
     DrawableMatcher<ImageView>(
         { it.drawable },

@@ -1,4 +1,4 @@
-// todo find a replace for TaskExecutionListener
+// TODO MBSA-2245 find a replace for TaskExecutionListener
 @file:Suppress("DEPRECATION")
 
 package com.avito.android.build_verdict.internal.task.lifecycle
@@ -21,6 +21,7 @@ internal class TaskExecutionListenerBridge(
         listeners.forEach { it.afterExecute(task, state) }
     }
 
+    @Deprecated("Incompatible with configuration cache")
     override fun buildFinished(result: BuildResult) {
         result.gradle?.removeListener(this)
     }

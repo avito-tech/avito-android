@@ -13,5 +13,6 @@ internal abstract class BaseBuildListener : BuildListener {
 
     override fun projectsEvaluated(gradle: Gradle) {}
 
+    @Deprecated("Incompatible with configuration cache")
     override fun buildFinished(result: BuildResult) {}
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal object KotlinCompileAggregator : BaseCompileMetricAggregator {
     override val filter: (TaskExecutionResult) -> Boolean = { task ->
-        task.type == KotlinCompile::class.java
+        KotlinCompile::class.java.isAssignableFrom(task.type)
     }
     override val transform: (TaskExecutionResult) -> BaseCompileMetric = { task ->
         KotlinCompileMetric(

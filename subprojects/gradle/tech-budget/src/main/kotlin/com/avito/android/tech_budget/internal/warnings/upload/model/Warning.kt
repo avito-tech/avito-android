@@ -5,10 +5,10 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal class Warning(
-    @Json(name = "location") val location: String,
-    @Json(name = "moduleName") val moduleName: String,
-    @Json(name = "message") val message: String,
-    @Json(name = "groupID") val groupID: String,
-    @Json(name = "ruleID") val ruleID: String,
-    @Json(name = "debt") val debt: Int,
+    @param:Json(name = "location") val location: String,
+    @param:Json(name = "moduleName") val moduleName: String,
+    @param:Json(name = "message") val message: String,
+    @param:Json(name = "groupID") val groupID: String,
+    @param:Json(name = "ruleID") val ruleID: String,
+    @param:Json(name = "debt") val debt: Int,
 )

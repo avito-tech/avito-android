@@ -5,8 +5,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 public class TechBudgetOwner(
-    @Json(name = "teamID") public val teamID: String,
-    @Json(name = "teamName") public val teamName: String,
-    @Json(name = "unitID") public val unitID: String,
-    @Json(name = "unitName") public val unitName: String,
+    @param:Json(name = "teamID") public val teamID: String,
+    @param:Json(name = "teamName") public val teamName: String,
+    @param:Json(name = "unitID") public val unitID: String,
+    @param:Json(name = "unitName") public val unitName: String,
 )

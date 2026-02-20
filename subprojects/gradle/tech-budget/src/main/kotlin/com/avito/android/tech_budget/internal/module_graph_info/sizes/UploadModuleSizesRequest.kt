@@ -6,6 +6,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class UploadModuleSizesRequest(
-    @Json(name = "dumpInfo") val dumpInfo: DumpInfo,
-    @Json(name = "sizes") val sizes: Map<String, Int>,
+    @param:Json(name = "dumpInfo") val dumpInfo: DumpInfo,
+    @param:Json(name = "sizes") val sizes: Map<String, Int>,
 )

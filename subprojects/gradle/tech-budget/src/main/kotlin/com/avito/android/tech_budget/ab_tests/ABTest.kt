@@ -6,8 +6,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 public class ABTest(
-    @Json(name = "key") public val key: String,
-    @Json(name = "defaultGroup") public val defaultGroup: String,
-    @Json(name = "groups") public val groups: List<String>,
-    @Json(name = "owners") public val owners: List<Owner>
+    @param:Json(name = "key") public val key: String,
+    @param:Json(name = "defaultGroup") public val defaultGroup: String,
+    @param:Json(name = "groups") public val groups: List<String>,
+    @param:Json(name = "owners") public val owners: List<Owner>
 )

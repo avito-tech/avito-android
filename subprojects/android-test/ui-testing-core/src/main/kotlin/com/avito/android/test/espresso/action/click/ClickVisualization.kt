@@ -15,7 +15,7 @@ internal class ClickVisualization(
     private val x: Float,
     private val y: Float,
     private val radiusInDp: Int = 16,
-    @ColorInt private val color: Int = Color.argb(0xA0, 0xFF, 0x00, 0x00)
+    @param:ColorInt private val color: Int = Color.argb(0xA0, 0xFF, 0x00, 0x00)
 ) {
 
     private var attachedView: View? = null
@@ -44,7 +44,7 @@ private class VisualizationDrawable(
     val x: Float,
     val y: Float,
     val radiusInPixels: Float,
-    @ColorInt val color: Int
+    @param:ColorInt val color: Int
 ) : Drawable() {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -61,6 +61,7 @@ private class VisualizationDrawable(
         paint.alpha = alpha
     }
 
+    @Deprecated("Overrides deprecated Drawable.getOpacity()")
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 
     override fun setColorFilter(colorFilter: ColorFilter?) {

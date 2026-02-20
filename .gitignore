@@ -20,3 +20,5 @@ captures/
 # gradle-profiler
 gradle-user-home
 profile-out*
+# https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
+.kotlin/

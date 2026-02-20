@@ -8,7 +8,7 @@ import androidx.test.espresso.matcher.BoundedMatcher
 import org.hamcrest.Description
 
 internal class ToolbarTitleResMatcher(
-    @StringRes private val resourceId: Int
+    @param:StringRes private val resourceId: Int
 ) : BoundedMatcher<View, Toolbar>(Toolbar::class.java) {
 
     private var resourceName: String? = null

@@ -24,8 +24,8 @@ internal object HtmlVerdictCases {
 		&gt; Compilation error. See log for more details
 </pre>
     <h3>Error logs:</h3>
-    <pre class="logs">e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration
-e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration</pre>
+    <pre class="logs">e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Syntax error: Expecting a top level declaration.
+e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Syntax error: Expecting a top level declaration.</pre>
   </body>
 </html>""".trimIndent()
 

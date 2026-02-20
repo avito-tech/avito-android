@@ -18,11 +18,11 @@ message LintIssueDumpPayload {
  */
 @JsonClass(generateAdapter = true)
 internal data class LintIssue(
-    @Json(name = "column") val issueFileColumn: Int?,
-    @Json(name = "line") val issueFileLine: Int?,
-    @Json(name = "file") val issueFileName: String?,
-    @Json(name = "moduleName") val moduleName: String,
-    @Json(name = "ruleID") val ruleId: String,
-    @Json(name = "message") val message: String,
-    @Json(name = "severity") val severity: String,
+    @param:Json(name = "column") val issueFileColumn: Int?,
+    @param:Json(name = "line") val issueFileLine: Int?,
+    @param:Json(name = "file") val issueFileName: String?,
+    @param:Json(name = "moduleName") val moduleName: String,
+    @param:Json(name = "ruleID") val ruleId: String,
+    @param:Json(name = "message") val message: String,
+    @param:Json(name = "severity") val severity: String,
 )

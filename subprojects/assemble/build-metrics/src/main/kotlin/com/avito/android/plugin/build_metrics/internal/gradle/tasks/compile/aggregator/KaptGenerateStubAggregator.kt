@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 
 internal object KaptGenerateStubAggregator : BaseCompileMetricAggregator {
     override val filter: (TaskExecutionResult) -> Boolean = { task ->
-        task.type == KaptGenerateStubsTask::class.java
+        KaptGenerateStubsTask::class.java.isAssignableFrom(task.type)
     }
     override val transform: (TaskExecutionResult) -> BaseCompileMetric = { task ->
         KaptGenerateStubsMetric(

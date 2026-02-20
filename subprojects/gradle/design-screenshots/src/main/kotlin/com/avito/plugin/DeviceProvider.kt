@@ -24,7 +24,6 @@ internal class DeviceProviderLocal(
             is Serial.Local -> adbDeviceParams.id as Serial.Local
             // TODO: support model of locally connected device
             is Serial.Remote -> Serial.Local(adbDeviceParams.id.value)
-            else -> throw RuntimeException("Unsupported device id: " + adbDeviceParams.id)
         }
 
         return adbDeviceFactory.create(

@@ -48,6 +48,7 @@ public interface Percent {
     }
 }
 
+@ConsistentCopyVisibility
 internal data class FourDigitsPercent private constructor(val value: BigDecimal) : Percent {
 
     private val decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.US)

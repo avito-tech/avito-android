@@ -37,6 +37,7 @@ public sealed interface TestRunEnvironment {
 
     public data class InitError(val error: String) : TestRunEnvironment
 
+    @ConsistentCopyVisibility
     public data class RunEnvironment internal constructor(
         val testMetadata: TestMetadata,
         internal val reportDestination: ReportDestination,

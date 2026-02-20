@@ -13,7 +13,7 @@ import com.avito.android.test.page_object.ViewElement
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class PageObjectScreen(@IdRes override val rootId: Int) : SimpleScreen() {
+class PageObjectScreen(@param:IdRes override val rootId: Int) : SimpleScreen() {
 
     /**
      * Our goal is to demonstrate how interaction context extends matcher in case of HandleParentContext

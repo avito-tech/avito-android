@@ -2,9 +2,7 @@ import com.avito.logger.LogLevel
 
 plugins {
     base
-    // accessing version catalog here is blocked by IDE false-positive error
-    // https://youtrack.jetbrains.com/issue/KTIJ-19369
-    id("com.autonomousapps.dependency-analysis") version "0.78.0"
+    alias(libs.plugins.dependencyAnalysis)
     id("convention.dependency-updates")
     id("convention.detekt-root")
     id("com.avito.android.gradle-logger")

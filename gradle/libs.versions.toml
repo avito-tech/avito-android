@@ -1,8 +1,8 @@
 [versions]
 java = "17"
-kotlin = "1.9.24"
-kotlinLanguageVersion = "1.9"
-ksp = "1.9.24-1.0.20"
+kotlin = "2.1.20"
+kotlinLanguageVersion = "2.1"
+kspVersion = "2.1.20-2.0.1"
 agp = "8.8.2"
 # formula: 23 + agp version
 # check versions https://mvnrepository.com/artifact/com.android.tools.external.com-intellij
@@ -30,15 +30,17 @@ compose = "1.8.2"
 k8sClient = "6.9.0"
 dagger = "2.52"
 anvil-ksp = "0.4.1"
+dependencyAnalysis = "3.5.1"
 
 [plugins]
 anvil = { id = "dev.zacsweers.anvil", version.ref="anvil-ksp" }
-ksp = { id = "com.google.devtools.ksp", version.ref="ksp" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
+ksp = { id = "com.google.devtools.ksp", version.ref="kspVersion" }
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kspGradle = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+kspGradle = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 dependencyGuard = "com.dropbox.dependency-guard:dependency-guard:0.5.0"
@@ -168,7 +170,7 @@ ktorOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktorServerTestHost = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 
 # https://mvnrepository.com/artifact/com.autonomousapps.dependency-analysis/com.autonomousapps.dependency-analysis.gradle.plugin
-dependencyAnalysis = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:1.33.0"
+dependencyAnalysis = { module = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin", version.ref = "dependencyAnalysis" }
 
 # https://developer.android.com/jetpack/androidx/releases/compose-ui
 compose-uiTestJunit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }

@@ -6,9 +6,9 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal class DumpInfo(
-    @Json(name = "commitHash") val commitHash: String,
-    @Json(name = "commitDate") val commitDate: String,
-    @Json(name = "project") val project: String
+    @param:Json(name = "commitHash") val commitHash: String,
+    @param:Json(name = "commitDate") val commitDate: String,
+    @param:Json(name = "project") val project: String
 ) {
 
     companion object {

@@ -7,6 +7,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal class UploadDependenciesRequestBody(
-    @Json(name = "dumpInfo") val dumpInfo: DumpInfo,
-    @Json(name = "modules") val modules: Collection<OwnedDependency>
+    @param:Json(name = "dumpInfo") val dumpInfo: DumpInfo,
+    @param:Json(name = "modules") val modules: Collection<OwnedDependency>
 )

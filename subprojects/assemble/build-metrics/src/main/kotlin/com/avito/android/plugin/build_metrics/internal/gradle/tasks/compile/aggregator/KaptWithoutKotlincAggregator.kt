@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 
 internal object KaptWithoutKotlincAggregator : BaseCompileMetricAggregator {
     override val filter: (TaskExecutionResult) -> Boolean = { task ->
-        task.type == KaptWithoutKotlincTask::class.java
+        KaptWithoutKotlincTask::class.java.isAssignableFrom(task.type)
     }
     override val transform: (TaskExecutionResult) -> BaseCompileMetric = { task ->
         KaptWithoutKotlincMetric(

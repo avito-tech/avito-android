@@ -12,6 +12,7 @@ internal class BuildExecutionFailureListener(
     private val listener: BuildFailedListener
 ) : BaseBuildListener() {
 
+    @Deprecated("Incompatible with configuration cache")
     override fun buildFinished(result: BuildResult) {
         result.failure?.apply {
             onFailure(this)

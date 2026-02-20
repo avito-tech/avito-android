@@ -1,5 +1,5 @@
 com.fasterxml.jackson.core:jackson-core:2.9.9
 io.sentry:sentry:1.7.23
-org.jetbrains.kotlin:kotlin-stdlib:1.9.24
+org.jetbrains.kotlin:kotlin-stdlib:2.1.20
 org.jetbrains:annotations:13.0
 org.slf4j:slf4j-api:1.7.24

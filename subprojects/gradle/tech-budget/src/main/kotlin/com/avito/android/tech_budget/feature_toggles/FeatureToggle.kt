@@ -6,9 +6,9 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 public class FeatureToggle(
-    @Json(name = "key") public val key: String,
-    @Json(name = "defaultValue") public val defaultValue: String,
-    @Json(name = "description") public val description: String,
-    @Json(name = "isRemote") public val isRemote: Boolean,
-    @Json(name = "owners") public val owners: List<Owner>
+    @param:Json(name = "key") public val key: String,
+    @param:Json(name = "defaultValue") public val defaultValue: String,
+    @param:Json(name = "description") public val description: String,
+    @param:Json(name = "isRemote") public val isRemote: Boolean,
+    @param:Json(name = "owners") public val owners: List<Owner>
 )

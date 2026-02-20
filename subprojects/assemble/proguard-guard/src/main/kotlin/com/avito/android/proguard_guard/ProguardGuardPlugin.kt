@@ -74,7 +74,7 @@ public class ProguardGuardPlugin : Plugin<Project> {
             name = computeCheckTaskName(variant.name),
             variant = variant,
             shadowR8Task = extension.shadowR8Task.get(),
-            taskConstructorArgs = arrayOf(updateTaskPath, project.debug)
+            taskConstructorArgs = arrayOf<Any>(updateTaskPath, project.debug)
         ) { task ->
             task.group = "Proguard guard"
             task.description = "Compare ${variant.capitalizedName()} proguard config with locked config"

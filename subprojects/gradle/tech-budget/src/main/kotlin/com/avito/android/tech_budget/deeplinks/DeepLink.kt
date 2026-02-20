@@ -6,9 +6,9 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 public class DeepLink(
-    @Json(name = "deepLinkName") public val className: String,
-    @Json(name = "moduleName") public val moduleName: String,
-    @Json(name = "path") public val path: String,
-    @Json(name = "version") public val version: Int,
-    @Json(name = "owners") public val owners: List<Owner>
+    @param:Json(name = "deepLinkName") public val className: String,
+    @param:Json(name = "moduleName") public val moduleName: String,
+    @param:Json(name = "path") public val path: String,
+    @param:Json(name = "version") public val version: Int,
+    @param:Json(name = "owners") public val owners: List<Owner>
 )

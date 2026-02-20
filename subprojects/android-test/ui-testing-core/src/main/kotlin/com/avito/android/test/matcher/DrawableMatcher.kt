@@ -15,8 +15,8 @@ import org.hamcrest.Description
 public open class DrawableMatcher<T : View>(
     private val drawableSupplier: (T) -> Drawable?,
     private val drawableTintSupplier: (T) -> ColorStateList?,
-    @DrawableRes private val src: Int? = null,
-    @ColorRes private val tint: Int? = null,
+    @param:DrawableRes private val src: Int? = null,
+    @param:ColorRes private val tint: Int? = null,
     clazz: Class<out T>
 ) : BoundedMatcher<View, T>(clazz) {
 

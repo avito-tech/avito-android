@@ -15,8 +15,8 @@ internal object PlainTextVerdictCases {
             |		> Compilation error. See log for more details
             |
             |* Error logs:
-            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration
-            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Syntax error: Expecting a top level declaration.
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Syntax error: Expecting a top level declaration.
             """.trimMargin()
 
         override fun customTaskFails() = """
