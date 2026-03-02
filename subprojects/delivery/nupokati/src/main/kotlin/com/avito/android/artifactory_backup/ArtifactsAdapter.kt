@@ -4,6 +4,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.encodeToJsonElement
 
 internal class ArtifactsAdapter(schemaVersion: Long) {
 
@@ -17,5 +18,7 @@ internal class ArtifactsAdapter(schemaVersion: Long) {
 
     fun toJson(artifacts: List<Artifact>): String = adapter.encodeToString(artifacts)
 
-    fun fromJson(json: String): JsonElement = adapter.decodeFromString(json)
+    fun toJsonElement(artifacts: List<Artifact>): JsonElement = adapter.encodeToJsonElement(artifacts)
+
+    fun fromJson(json: String): List<Artifact> = adapter.decodeFromString(json)
 }

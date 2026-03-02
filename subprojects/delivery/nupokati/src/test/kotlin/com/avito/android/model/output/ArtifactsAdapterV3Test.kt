@@ -1,8 +1,10 @@
 package com.avito.android.model.output
 
+import com.avito.android.artifactory_backup.Artifact
 import com.avito.android.artifactory_backup.ArtifactV3
 import com.avito.android.artifactory_backup.ArtifactsAdapter
 import com.google.common.truth.Truth
+import kotlinx.serialization.json.JsonElement
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
@@ -88,7 +90,13 @@ internal class ArtifactsAdapterV3Test {
 
     @Test
     fun deserialize() {
-        val result = artifactsAdapter.fromJson(json)
+        val result: List<Artifact> = artifactsAdapter.fromJson(json)
+        Truth.assertThat(result).isEqualTo(artifacts)
+    }
+
+    @Test
+    fun convertToElement() {
+        val result: JsonElement = artifactsAdapter.toJsonElement(artifacts)
         Truth.assertThat(result.toString()).isEqualTo(json)
     }
 }

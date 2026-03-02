@@ -1,5 +1,6 @@
 package com.avito.android.model.output
 
+import com.avito.android.artifactory_backup.Artifact
 import com.avito.android.artifactory_backup.ArtifactV2
 import com.avito.android.artifactory_backup.ArtifactsAdapter
 import com.google.common.truth.Truth
@@ -54,7 +55,13 @@ internal class ArtifactsAdapterV2Test {
 
     @Test
     fun deserialize() {
-        val result: JsonElement = artifactsAdapter.fromJson(json)
+        val result: List<Artifact> = artifactsAdapter.fromJson(json)
+        Truth.assertThat(result).isEqualTo(artifacts)
+    }
+
+    @Test
+    fun convertToElement() {
+        val result: JsonElement = artifactsAdapter.toJsonElement(artifacts)
         Truth.assertThat(result.toString()).isEqualTo(json)
     }
 }

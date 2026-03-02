@@ -11,10 +11,10 @@ import com.avito.reportviewer.ReportViewerLinksGeneratorImpl
 import com.avito.reportviewer.ReportViewerQuery
 import com.avito.reportviewer.model.ReportCoordinates
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
 public abstract class UploadCdBuildResultTask : DefaultTask() {
@@ -40,8 +40,8 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
     @get:Input
     public abstract val appVersionCode: Property<Int>
 
-    @get:InputFile
-    public abstract val buildOutputFileProperty: RegularFileProperty
+    @get:InputFiles
+    public abstract val buildOutputFiles: ConfigurableFileCollection
 
     @TaskAction
     public fun sendCdBuildResult() {
@@ -53,20 +53,19 @@ public abstract class UploadCdBuildResultTask : DefaultTask() {
             reportViewerQuery = ReportViewerQuery.createForJvm()
         )
 
-        val buildOutputFile = buildOutputFileProperty.get().asFile
-
         val cdBuildConfig = cdBuildConfig.get()
 
         val artifactsAdapter = ArtifactsAdapter(cdBuildConfig.schemaVersion)
 
-        val artifacts = artifactsAdapter.fromJson(buildOutputFile.readText())
+        val artifacts = buildOutputFiles.files.flatMap { artifactsAdapter.fromJson(it.readText()) }
+        val artifactsJson = artifactsAdapter.toJsonElement(artifacts)
 
         createUploadAction().send(
             testResults = CdBuildResult.TestResultsLink(
                 reportUrl = reportLinksGenerator.generateReportLink(filterOnlyFailures = false),
                 reportCoordinates = reportCoordinates.get().toCdCoordinates()
             ),
-            artifacts = artifacts,
+            artifacts = artifactsJson,
             cdBuildConfig = cdBuildConfig,
             versionCode = appVersionCode.get(),
             teamcityUrl = teamcityBuildUrl.get(),

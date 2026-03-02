@@ -19,6 +19,8 @@ import com.avito.kotlin.dsl.withType
 import com.avito.plugin.QAppsUploadTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.provider.Provider
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.getByType
@@ -43,6 +45,16 @@ internal class NupokatiV2Configurator(
             it.description = "Root task for CD nupokati contract execution"
         }
 
+        val releaseArtifactsElementsConfiguration = project.configurations.register("releaseArtifactsElements") {
+            it.isCanBeConsumed = true
+            it.isCanBeResolved = false
+        }
+
+        val releaseArtifactsConfiguration = project.configurations.register("releaseArtifacts") {
+            it.isCanBeConsumed = false
+            it.isCanBeResolved = true
+        }
+
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
             val releaseVariantSelector = androidComponents.selector()
@@ -56,9 +68,17 @@ internal class NupokatiV2Configurator(
                     )
                 val uploadCdBuildResultTask =
                     registerUploadCdBuildResult(
-                        variantSlug, variant, publishArtifactsTask, shouldUploadToNupokatiSpec
+                        variantSlug = variantSlug,
+                        variant = variant,
+                        publishArtifactsTask = publishArtifactsTask,
+                        shouldRunSpec = shouldUploadToNupokatiSpec,
+                        releaseArtifactsConfiguration = releaseArtifactsConfiguration,
                     )
                 nupokatiTask.dependsOn(uploadCdBuildResultTask)
+                project.artifacts.add(
+                    releaseArtifactsElementsConfiguration.name,
+                    publishArtifactsTask.flatMap { it.buildOutput }
+                )
             }
 
             project.afterEvaluate {
@@ -81,6 +101,7 @@ internal class NupokatiV2Configurator(
         variant: ApplicationVariant,
         publishArtifactsTask: TaskProvider<ArtifactoryBackupTask>,
         shouldRunSpec: Spec<Task>,
+        releaseArtifactsConfiguration: Provider<Configuration>,
     ) = project.tasks.register<UploadCdBuildResultTask>(uploadCdBuildResultTaskName(variantSlug)) {
         group = CD_TASK_GROUP
         description = "Send build result to Nupokati service"
@@ -91,7 +112,8 @@ internal class NupokatiV2Configurator(
         teamcityBuildUrl.set(pipelineSpec.teamcityBuildUrl)
         cdBuildConfig.set(config)
         appVersionCode.set(variant.getVersionCode())
-        buildOutputFileProperty.set(publishArtifactsTask.flatMap { it.buildOutput })
+        buildOutputFiles.from(releaseArtifactsConfiguration)
+        buildOutputFiles.from(publishArtifactsTask.flatMap { it.buildOutput })
 
         dependsOn(publishArtifactsTask)
         onlyIf(shouldRunSpec)
