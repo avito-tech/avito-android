@@ -40,7 +40,7 @@ internal class PluralsElement : BaseElement {
         for (i in 0..<nodes.length) {
             val item = nodes.item(i)
             if (item.nodeType == Node.ELEMENT_NODE && item is Element && item.tagName == "item") {
-                _items += item.getAttribute("quantity") to item.childNodes.item(0).nodeValue
+                _items += item.getAttribute("quantity") to item.childNodes.item(0)?.nodeValue.orEmpty()
             }
         }
     }

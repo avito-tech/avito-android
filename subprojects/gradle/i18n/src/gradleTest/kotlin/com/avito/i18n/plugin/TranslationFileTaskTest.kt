@@ -225,6 +225,24 @@ class TranslationFileTaskTest {
             .contains(TRANSLATED_FILE_CONTENT)
     }
 
+    @Test
+    fun `run update translations with empty string - keeps empty string in translated file`(@TempDir projectDir: File) {
+        generateTestProject(
+            projectDir = projectDir,
+            stringsFileContent = ORIGINAL_FILE_CONTENT_WITH_EMPTY_STRINGS
+        )
+
+        createFakeResponse(RESPONSE_BODY)
+        runTranslationTask(projectDir)
+
+        val enFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
+
+        assertThat(enFile.exists())
+            .isTrue()
+        assertThat(enFile.readText())
+            .contains(TRANSLATED_FILE_CONTENT_WITH_EMPTY_STRINGS)
+    }
+
     private fun generateTestProject(
         @TempDir projectDir: File,
         stringsFileContent: String,

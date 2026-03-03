@@ -1,6 +1,7 @@
 package com.avito.i18n.plugin.internal
 
 import com.avito.i18n.plugin.dto.TranslatedTextUnit
+import com.avito.i18n.plugin.dto.TranslatedTextWithLang
 import com.avito.i18n.plugin.dto.TranslationInputText
 import com.avito.i18n.plugin.dto.TranslationPluralText
 import com.avito.i18n.plugin.dto.TranslationRequest
@@ -31,7 +32,20 @@ internal class TranslationApiInteractor(
             languageTag = languageTag
         ) ?: return emptyList()
 
-        val response = service.translate(request)
+        val (nonEmptyTextUnits, emptyTextUnits) = request.textUnits.partition { inputText ->
+            when (val text = inputText.text) {
+                is TranslationText.Text -> text.text.isNotEmpty()
+                is TranslationText.Plural -> text.plural.toMap().values.any(String::isNotEmpty)
+            }
+        }
+
+        if (nonEmptyTextUnits.isEmpty()) {
+            return emptyTextUnits.toTranslatedTextUnits(languageTag)
+        }
+
+        val filteredRequest = request.copy(textUnits = nonEmptyTextUnits)
+
+        val response = service.translate(filteredRequest)
 
         if (response.result.status.statusCode != STATUS_CODE_OK) {
             throw GradleException(
@@ -42,8 +56,29 @@ internal class TranslationApiInteractor(
 
         val validTextUnits = getFilteredTextUnits(response)
 
-        return validTextUnits
+        val emptyUnitsAsTranslated = emptyTextUnits.toTranslatedTextUnits(languageTag)
+
+        return emptyUnitsAsTranslated + validTextUnits
     }
+
+    private fun List<TranslationInputText>.toTranslatedTextUnits(
+        languageTag: String,
+    ): List<TranslatedTextUnit> =
+        map { input ->
+            TranslatedTextUnit(
+                key = input.key,
+                component = input.componentName,
+                namespace = namespace,
+                status = TRANSLATION_CODE_SYNCED,
+                translatedTexts = listOf(
+                    TranslatedTextWithLang(
+                        lang = languageTag,
+                        translationText = input.text,
+                    )
+                ),
+                error = null,
+            )
+        }
 
     private fun getFilteredTextUnits(response: TranslationResponse): List<TranslatedTextUnit> {
         val responseTranslatedTextsWithStatus = response.result.data?.translatedTextsWithStatus
