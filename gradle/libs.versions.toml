@@ -28,6 +28,7 @@ jackson = "2.13.0"
 proguard = "6.2.2"
 compose = "1.8.2"
 k8sClient = "6.9.0"
+navigation = "2.7.7"
 dagger = "2.52"
 anvil-ksp = "0.4.1"
 dependencyAnalysis = "3.5.1"
@@ -178,6 +179,9 @@ compose-uiTestJunit = { module = "androidx.compose.ui:ui-test-junit4", version.r
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
+
+# https://developer.android.com/jetpack/androidx/releases/navigation
+androidx-navigationComponent = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
 
 [bundles]
 hamcrest = ["hamcrest", "hamcrestLibrary"]

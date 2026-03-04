@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.mockitoKotlin)
     implementation(libs.okhttpLogging)
     implementation(libs.gson)
+    implementation(libs.androidx.navigationComponent)
 
     testImplementation(project(":subprojects:common:truth-extensions"))
 }
