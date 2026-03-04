@@ -13,6 +13,9 @@ internal class QAppsSignedTest {
     @Test
     fun `qappsUploadSigned - depends on signer task`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.tls-configuration")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -26,6 +29,7 @@ internal class QAppsSignedTest {
                     buildGradleExtra = """
                         |signer {
                         |   serviceUrl.set("http://stub")
+                        |   useTls.set(false)
                         |   apkSignTokens.put("com.app", "12345")
                         |}
                         |

@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:build-failer"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:mtls"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
 
     implementation(libs.okhttp)
@@ -23,6 +24,7 @@ dependencies {
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(project(":subprojects:common:test-okhttp"))
+    gradleTestImplementation(libs.okhttpTls)
 }
 
 gradlePlugin {

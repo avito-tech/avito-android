@@ -16,7 +16,7 @@ public class SignServicePlugin : Plugin<Project> {
 
         val extension = target.extensions.create<SignExtension>("signer")
 
-        val taskConfigurator = TaskConfigurator(extension)
+        val taskConfigurator = TaskConfigurator(extension, target)
 
         val outputsLocation = "outputs/signService"
 

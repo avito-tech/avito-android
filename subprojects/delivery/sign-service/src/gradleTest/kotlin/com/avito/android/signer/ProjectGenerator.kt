@@ -12,9 +12,14 @@ internal const val applicationId = "com.app"
 internal fun generateTestProject(
     testProjectDir: File,
     buildGradleKtsExtra: String,
+    rootBuildGradleKtsExtra: String = "",
 ) {
     TestProjectGenerator(
         useKts = true,
+        plugins = plugins {
+            id("com.avito.android.tls-configuration")
+        },
+        buildGradleExtra = rootBuildGradleKtsExtra,
         modules = listOf(
             AndroidAppModule(
                 useKts = true,

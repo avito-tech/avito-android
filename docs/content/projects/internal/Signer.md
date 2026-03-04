@@ -66,6 +66,19 @@ Signer tasks can be called locally, just don't forget to specify tokens
 
 Signer service http calls data available under `<namespace>.signer.sign.*`.
 
+## mTLS
+
+Signer uses mTLS by default (`useTls = true`).
+It requires `com.avito.android.tls-configuration` plugin and `tls { credentials { ... } }` configured in the root project.
+
+If signer endpoint does not require mTLS, disable it explicitly:
+
+```kotlin
+signer {
+    useTls.set(false)
+}
+```
+
 ## Troubleshooting
 
 Network call data posted right into exception message that failing the build.  

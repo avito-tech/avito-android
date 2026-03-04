@@ -2,6 +2,8 @@ package com.avito.android.signer
 
 import com.avito.android.Problem
 import com.avito.android.signer.internal.SignViaServiceAction
+import com.avito.android.tls.TlsCredentialsService
+import com.avito.android.tls.manager.TlsManager
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.http.RetryInterceptor
 import com.avito.utils.buildFailer
@@ -13,6 +15,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
@@ -33,6 +36,12 @@ public abstract class AbstractSignTask(
     @get:Input
     public abstract val readWriteTimeoutSec: Property<Long>
 
+    @get:Input
+    public abstract val useTls: Property<Boolean>
+
+    @get:Internal
+    public abstract val tlsCredentialsService: Property<TlsCredentialsService>
+
     @get:OutputDirectory
     public val signedArtifactDirectory: Property<Directory> = objects.directoryProperty()
 
@@ -47,7 +56,7 @@ public abstract class AbstractSignTask(
 
         val timeout = readWriteTimeoutSec.get()
 
-        val httpClient = OkHttpClient.Builder()
+        val httpClientBuilder = OkHttpClient.Builder()
             .writeTimeout(timeout, TimeUnit.SECONDS)
             .readTimeout(timeout, TimeUnit.SECONDS)
             .addInterceptor(
@@ -56,7 +65,17 @@ public abstract class AbstractSignTask(
                     allowedMethods = listOf("GET", "POST")
                 )
             )
-            .build()
+
+        if (useTls.get()) {
+            val tlsManager = TlsManager(tlsCredentialsService.get().createCredentials())
+            val handshakeCertificates = tlsManager.handshakeCertificates()
+            httpClientBuilder.sslSocketFactory(
+                handshakeCertificates.sslSocketFactory(),
+                handshakeCertificates.trustManager
+            )
+        }
+
+        val httpClient = httpClientBuilder.build()
 
         val signedDirectory = signedArtifactDirectory.get().asFile.also {
             it.mkdirs()

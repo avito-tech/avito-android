@@ -16,6 +16,9 @@ internal class ConfigurationCacheCompatibilityTest {
     @Test
     fun `configuration with applied plugin - ok`(@TempDir projectDir: File) {
         TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.tls-configuration")
+            },
             modules = listOf(
                 AndroidAppModule(
                     "app",
@@ -28,6 +31,7 @@ internal class ConfigurationCacheCompatibilityTest {
                     buildGradleExtra = """
                         signer {
                             serviceUrl.set("http://stub")
+                            useTls.set(false)
                             apkSignTokens.put("$applicationId", "12345")
                         }
                     """.trimIndent()

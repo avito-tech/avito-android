@@ -1,6 +1,9 @@
 package com.avito.android.signer
 
+import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -14,6 +17,7 @@ internal class SignServicePluginTest {
             buildGradleKtsExtra = """
                 |signer {
                 |   serviceUrl.set("http://signer")
+                |   useTls.set(false)
                 |}
                 |""".trimMargin()
         )
@@ -35,6 +39,7 @@ internal class SignServicePluginTest {
             buildGradleKtsExtra = """
                 |signer {
                 |   serviceUrl.set("http://signer")
+                |   useTls.set(false)
                 |   apkSignTokens.put("$applicationId", "12345")
                 |   bundleSignTokens.put("$applicationId", "23456")
                 |}
@@ -62,6 +67,7 @@ internal class SignServicePluginTest {
             testProjectDir = testProjectDir,
             buildGradleKtsExtra = """
                 |signer {
+                |    useTls.set(false)
                 |    bundleSignTokens.put("$applicationId", "12345")
                 |}
                 |""".trimMargin()
@@ -92,6 +98,7 @@ internal class SignServicePluginTest {
                 |
                 |signer {
                 |   serviceUrl.set("http://signer")
+                |   useTls.set(false)
                 |   bundleSignTokens.put("$applicationId", "12345")
                 |}
                 |""".trimMargin()
@@ -126,6 +133,7 @@ internal class SignServicePluginTest {
                 |
                 |signer {
                 |   serviceUrl.set("http://signer")
+                |   useTls.set(false)
                 |   apkSignTokens.put("$applicationId", "12345")
                 |}
                 |""".trimMargin()
@@ -155,6 +163,7 @@ internal class SignServicePluginTest {
             buildGradleKtsExtra = """
                 |signer {
                 |   serviceUrl.set("http://signer")
+                |   useTls.set(false)
                 |   bundleSignTokens.put("$applicationId", providers.gradleProperty("signToken")) // no value
                 |}
                 |""".trimMargin()
@@ -168,5 +177,41 @@ internal class SignServicePluginTest {
         ).assertThat()
             .buildFailed()
             .outputContains("'signBundleViaServiceRelease' not found in project ':app'")
+    }
+
+    @Test
+    fun `plugin apply - fails if tls plugin is not applied to root project and mTLS is enabled`(
+        @TempDir testProjectDir: File
+    ) {
+        TestProjectGenerator(
+            useKts = true,
+            modules = listOf(
+                AndroidAppModule(
+                    useKts = true,
+                    name = moduleName,
+                    packageName = applicationId,
+                    enableKotlinAndroidPlugin = false,
+                    versionCode = 100,
+                    versionName = "219.0",
+                    plugins = plugins {
+                        id("com.avito.android.sign-service")
+                    },
+                    buildGradleExtra = """
+                        |signer {
+                        |   serviceUrl.set("http://signer")
+                        |   apkSignTokens.put("$applicationId", "12345")
+                        |}
+                        |""".trimMargin()
+                )
+            ),
+        ).generateIn(testProjectDir)
+
+        ciRun(
+            testProjectDir,
+            ":$moduleName:tasks",
+            expectFailure = true
+        ).assertThat()
+            .buildFailed()
+            .outputContains("Apply com.avito.android.tls-configuration plugin to the root project")
     }
 }
