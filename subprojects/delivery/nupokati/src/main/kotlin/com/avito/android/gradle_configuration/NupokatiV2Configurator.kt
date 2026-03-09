@@ -6,7 +6,6 @@ import com.android.build.api.variant.ApplicationVariant
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.android.CD_TASK_GROUP
-import com.avito.android.DEFAULT_RELEASE_VARIANT
 import com.avito.android.agp.getVersionCode
 import com.avito.android.artifactory_backup.ArtifactoryBackupTask
 import com.avito.android.contract_upload.UploadCdBuildResultTask
@@ -57,28 +56,31 @@ internal class NupokatiV2Configurator(
 
         project.plugins.withType<AppPlugin> {
             val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
-            val releaseVariantSelector = androidComponents.selector()
-                .withName(DEFAULT_RELEASE_VARIANT)
 
-            androidComponents.onVariants(selector = releaseVariantSelector) { variant: ApplicationVariant ->
-                val variantSlug = variant.name.capitalize()
-                val publishArtifactsTask =
-                    registerArtifactoryBackupTask(
-                        variantSlug, variant, shouldUploadToNupokatiSpec
+            androidComponents.finalizeDsl {
+                val releaseVariant = pipelineSpec.releaseVariant.get()
+                val releaseVariantSelector = androidComponents.selector()
+                    .withName(releaseVariant)
+                androidComponents.onVariants(releaseVariantSelector) { variant: ApplicationVariant ->
+                    val variantSlug = variant.name.capitalize()
+                    val publishArtifactsTask =
+                        registerArtifactoryBackupTask(
+                            variantSlug, variant, shouldUploadToNupokatiSpec
+                        )
+                    val uploadCdBuildResultTask =
+                        registerUploadCdBuildResult(
+                            variantSlug = variantSlug,
+                            variant = variant,
+                            publishArtifactsTask = publishArtifactsTask,
+                            shouldRunSpec = shouldUploadToNupokatiSpec,
+                            releaseArtifactsConfiguration = releaseArtifactsConfiguration,
+                        )
+                    nupokatiTask.dependsOn(uploadCdBuildResultTask)
+                    project.artifacts.add(
+                        releaseArtifactsElementsConfiguration.name,
+                        publishArtifactsTask.flatMap { it.buildOutput }
                     )
-                val uploadCdBuildResultTask =
-                    registerUploadCdBuildResult(
-                        variantSlug = variantSlug,
-                        variant = variant,
-                        publishArtifactsTask = publishArtifactsTask,
-                        shouldRunSpec = shouldUploadToNupokatiSpec,
-                        releaseArtifactsConfiguration = releaseArtifactsConfiguration,
-                    )
-                nupokatiTask.dependsOn(uploadCdBuildResultTask)
-                project.artifacts.add(
-                    releaseArtifactsElementsConfiguration.name,
-                    publishArtifactsTask.flatMap { it.buildOutput }
-                )
+                }
             }
 
             project.afterEvaluate {

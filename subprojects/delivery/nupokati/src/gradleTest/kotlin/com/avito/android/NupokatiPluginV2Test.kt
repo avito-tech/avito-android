@@ -29,4 +29,33 @@ internal class NupokatiPluginV2Test {
 
         gradlew(projectDir, "tasks").assertThat().buildSuccessful()
     }
+
+    @Test
+    fun `debug task is created - when debug is set as releaseVariant`(@TempDir projectDir: File) {
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app",
+                    plugins = plugins {
+                        id("com.avito.android.qapps")
+                        id("com.avito.android.nupokati")
+                    },
+                    buildGradleExtra = """
+                            |nupokati {
+                            |    v2("releaseV2") {
+                            |        releaseVariant.set("debug")
+                            |    }
+                            |}
+                            |""".trimMargin()
+                )
+            )
+        ).generateIn(projectDir)
+
+        gradlew(projectDir, "tasks").assertThat()
+            .buildSuccessful()
+            .outputContains("artifactoryBackupDebug")
+    }
 }
