@@ -12,14 +12,17 @@ internal class TeamcityBuildQueueMetric(
     private val base: SeriesName = SeriesName.create("teamcity.queue", multipart = true)
 
     fun asGraphite(): GraphiteMetric {
-        val duration = Duration.between(build.queuedDateTime, build.startDateTime)
+        val queuedDateTime = requireNotNull(build.queuedDateTime) {
+            "queuedDateTime can't be null for finished builds"
+        }
+        val duration = Duration.between(queuedDateTime, build.startDateTime)
         val seriesName = base
             .addTag(key = "build_type", value = build.buildConfigurationId.stringId)
 
         return GraphiteMetric(
             seriesName,
             duration.seconds.toString(),
-            build.queuedDateTime.toInstant(),
+            queuedDateTime.toInstant(),
         )
     }
 }

@@ -16,19 +16,20 @@ internal class BitbucketInfoSaturator(
 ) : BuildInfoSaturator {
 
     override fun saturate(build: Build): Build {
-        val projectKey = build.parameters.find { it.name == "env.BITBUCKET_PROJECT" } ?: return build
-        val repoSlug = build.parameters.find { it.name == "env.BITBUCKET_REPOSITORY" } ?: return build
-        val pullRequestId = build.parameters.find { it.name == "reverse.dep.*.env.PULL_REQUEST_ID" } ?: return build
+        val projectKey = build.parameters.find { it.name == "env.BITBUCKET_PROJECT" }?.value ?: return build
+        val repoSlug = build.parameters.find { it.name == "env.BITBUCKET_REPOSITORY" }?.value ?: return build
+        val pullRequestId = build.parameters
+            .find { it.name == "reverse.dep.*.env.PULL_REQUEST_ID" }?.value ?: return build
         val bitbucketInstance = Bitbucket.create(
             bitbucketConfig = BitbucketConfig(
                 baseUrl = bitbucketHost,
                 credentials = AtlassianCredentials.BearerToken(
                     token = bitbucketToken,
                 ),
-                projectKey = projectKey.value,
-                repositorySlug = repoSlug.value,
+                projectKey = projectKey,
+                repositorySlug = repoSlug,
             ),
-            pullRequestId = pullRequestId.value.toIntOrNull(),
+            pullRequestId = pullRequestId.toIntOrNull(),
             builder = builder
         )
 

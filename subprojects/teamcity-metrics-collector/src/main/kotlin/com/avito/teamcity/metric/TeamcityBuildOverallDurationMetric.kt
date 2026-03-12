@@ -12,12 +12,15 @@ internal class TeamcityBuildOverallDurationMetric(
 ) {
 
     fun asClickstreamEvent(): ClickStreamEvent {
+        val queuedDateTime = requireNotNull(build.queuedDateTime) {
+            "queuedDateTime can't be null for finished builds"
+        }
         return TeamcityBuildDurationEvent(
             repoName = build.repoName.orEmpty(),
             jiraIssue = build.jiraIssue.orEmpty(),
             ldapUser = build.ldapUser.orEmpty(),
-            timestamp = build.queuedDateTime.toInstant().epochSecond,
-            duration = Duration.between(build.queuedDateTime, build.finishDateTime).seconds,
+            timestamp = queuedDateTime.toInstant().epochSecond,
+            duration = Duration.between(queuedDateTime, build.finishDateTime).seconds,
             status = build.status?.name?.lowercase().orEmpty(),
             toolName = "gradle",
             environment = "ci",

@@ -98,8 +98,22 @@ public class DependencyResolutionPlugin implements Plugin<Settings> {
                         ),
                         new Filters(
                             List.of(
-                                new IncludeGroup("org.jetbrains.trove4j"),
-                                new IncludeModule("org.jetbrains.teamcity", "teamcity-rest-client")
+                                new IncludeGroup("org.jetbrains.trove4j")
+                            )
+                        )
+                    ),
+                    new ExclusiveContent(
+                        new ForRepositories(
+                            List.of(MavenRepositoryFactory.createFactory(
+                                artifactRepositories,
+                                artifactoryUrl,
+                                "teamcity-rest-client",
+                                "https://packages.jetbrains.team/maven/p/teamcity-rest-client/teamcity-rest-client"
+                            ))
+                        ),
+                        new Filters(
+                            List.of(
+                                new IncludeGroup("org.jetbrains.teamcity")
                             )
                         )
                     ),

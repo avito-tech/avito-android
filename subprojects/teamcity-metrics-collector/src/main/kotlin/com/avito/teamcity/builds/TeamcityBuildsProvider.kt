@@ -5,6 +5,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.teamcity.TeamcityApi
 import com.avito.teamcity.model.TeamcityMetricsSource
 import org.jetbrains.teamcity.rest.Build
+import org.jetbrains.teamcity.rest.BuildLocatorSettings.BuildField
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -30,6 +31,8 @@ internal interface TeamcityBuildsProvider {
     ) : TeamcityBuildsProvider {
 
         private val logger: Logger = loggerFactory.create("TeamcityBuildsProvider")
+        private val buildPrefetchFields: Array<BuildField> =
+            (BuildField.defaultFields + BuildField.RESULTING_PARAMETERS).toTypedArray()
 
         override fun provide(
             metricsSource: TeamcityMetricsSource,
@@ -38,20 +41,16 @@ internal interface TeamcityBuildsProvider {
         ): Sequence<Build> {
             logger.info("Provide builds for configuration ${metricsSource.configurationId}")
             logger.info("Provide builds end since $since until $until")
-            val ranInFetchInterval = getBuilds(
+            return getBuilds(
                 metricsSource.configurationId,
                 since.minus(metricsSource.fetchIntervalInHours, ChronoUnit.HOURS),
                 until
-            )
-            val endAtLastHour = ranInFetchInterval.filter { build ->
+            ).filter { build ->
                 val finishTime = requireNotNull(build.finishDateTime) {
                     "Can't be null. Because we don't fetch running builds"
                 }
                 finishTime.toInstant().isAfter(since)
             }
-
-            logger.info("Found ${endAtLastHour.count()} builds")
-            return endAtLastHour
         }
 
         private fun getBuilds(
@@ -64,6 +63,7 @@ internal interface TeamcityBuildsProvider {
                 .includeCanceled()
                 .since(since)
                 .until(until)
+                .prefetchFields(*buildPrefetchFields)
         }
     }
 }

@@ -11,6 +11,8 @@ dependencies {
 
     implementation(project(":subprojects:gradle:clickstream"))
     implementation(project(":subprojects:gradle:bitbucket"))
+
+    testImplementation(libs.okhttpMockWebServer)
 }
 
 tasks.register("sendTeamcityBuildsMetrics", JavaExec) {
@@ -31,5 +33,4 @@ tasks.register("sendTeamcityBuildsMetrics", JavaExec) {
         "--bitbucketToken", project.providers.gradleProperty("bitbucket.token").getOrNull(),
     )
 }
-
 

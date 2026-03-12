@@ -25,11 +25,13 @@ internal class SendTeamcityBuildMetricsAction(
         val since = previousMetricsSendingTimeProvider.getPreviousSendingTime()
         val until = Instant.now()
         metricsSources.forEach { metricsSource ->
+            var buildCount = 0
             teamcityBuildsProvider.provide(
                 metricsSource = metricsSource,
                 since = since,
                 until = until,
             ).forEach { build: Build ->
+                buildCount++
                 graphiteSender.send(
                     TeamcityBuildQueueMetric(build).asGraphite()
                 )
@@ -43,6 +45,7 @@ internal class SendTeamcityBuildMetricsAction(
                 )
                 log(build)
             }
+            println("Found $buildCount builds for ${metricsSource.configurationId}")
         }
         previousMetricsSendingTimeProvider.saveSendingTime(until)
     }

@@ -7,18 +7,16 @@ import org.jetbrains.teamcity.rest.BuildLocator
 import org.jetbrains.teamcity.rest.Project
 import org.jetbrains.teamcity.rest.ProjectId
 import org.jetbrains.teamcity.rest.TeamCityInstance
-import org.jetbrains.teamcity.rest.TeamCityInstanceFactory
+import org.jetbrains.teamcity.rest.TeamCityInstanceBuilder
 
 internal class TeamcityApiImpl private constructor(private val teamCityInstance: TeamCityInstance) : TeamcityApi {
 
     constructor(credentials: TeamcityCredentials) : this(credentials.url, credentials.user, credentials.password)
 
     private constructor(url: String, user: String, password: String) : this(
-        TeamCityInstanceFactory.httpAuth(
-            url,
-            user,
-            password
-        ).withLogResponses()
+        TeamCityInstanceBuilder(url)
+            .withHttpAuth(user, password)
+            .buildBlockingInstance()
     )
 
     override fun getProjectById(id: ProjectId): Project {
@@ -49,6 +47,14 @@ internal class TeamcityApiImpl private constructor(private val teamCityInstance:
         parameters: Map<String, String>
     ): Build {
         return teamCityInstance.buildConfiguration(BuildConfigurationId(buildType))
-            .runBuild(parameters = parameters, comment = comment, logicalBranchName = branchName)
+            .runBuild(
+                parameters = parameters,
+                comment = comment,
+                logicalBranchName = branchName,
+                // Explicit nulls to call the non-deprecated overload (shorter overloads are deprecated)
+                agentId = null, // run on any compatible agent
+                revisions = null, // use latest VCS revisions
+                dependencies = null, // let TeamCity pick builds from build dependency chain automatically
+            )
     }
 }

@@ -26,7 +26,7 @@ internal interface PreviousMetricsSendingTimeProvider {
 
         override fun getPreviousSendingTime(): Instant {
             val previousSendingTime = project.parameters.find { it.name == PROJECT_PARAMETER_KEY }
-            require(previousSendingTime != null && previousSendingTime.value.isNotBlank()) {
+            require(previousSendingTime != null && !previousSendingTime.value.isNullOrBlank()) {
                 """
                 |Setup $PROJECT_ID. Add $PROJECT_PARAMETER_KEY configuration parameter.
                 |Current value: ${previousSendingTime?.value}

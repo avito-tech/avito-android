@@ -12,7 +12,10 @@ internal class TeamcityBuildDurationMetric(
     private val base: SeriesName = SeriesName.create("teamcity.build", multipart = true)
 
     fun asGraphite(): GraphiteMetric {
-        val duration = Duration.between(build.startDateTime, build.finishDateTime)
+        val startDateTime = requireNotNull(build.startDateTime) {
+            "startDateTime can't be null for finished builds"
+        }
+        val duration = Duration.between(startDateTime, build.finishDateTime)
         val status = build.status?.name ?: "unknown"
         val seriesName = base
             .addTag(key = "build_type", value = build.buildConfigurationId.stringId)
@@ -22,14 +25,22 @@ internal class TeamcityBuildDurationMetric(
         return GraphiteMetric(
             seriesName,
             duration.seconds.toString(),
-            build.startDateTime!!.toInstant(),
+            startDateTime.toInstant(),
         )
     }
 
     private fun additionalTags(build: Build): Map<String, String> {
-        return build.parameters
+        return build.getResultingParameters()
             .filter { parameter -> parameter.name.startsWith(METRIC_TAGS_PREFIX) }
-            .associate { parameter -> parameter.name.substringAfter(METRIC_TAGS_PREFIX) to parameter.value }
+            .mapNotNull { param ->
+                val value = param.value
+                if (value.isNullOrBlank()) {
+                    null
+                } else {
+                    param.name.substringAfter(METRIC_TAGS_PREFIX) to value
+                }
+            }
+            .toMap()
     }
 
     companion object {
