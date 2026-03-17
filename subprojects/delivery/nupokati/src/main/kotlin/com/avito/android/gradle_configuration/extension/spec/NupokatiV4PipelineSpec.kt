@@ -12,6 +12,7 @@ public abstract class NupokatiV4PipelineSpec : BaseNupokatiPipelineSpec() {
     public abstract val versionCode: Property<Int>
 
     public abstract val nupokatiUrl: Property<String>
+    public abstract val useTls: Property<Boolean>
     public abstract val artifacts: ListProperty<ArtifactV4>
 
     public abstract val chunkedUploadThresholdBytes: Property<Long>

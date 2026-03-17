@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
     implementation(project(":subprojects:test-runner:instrumentation-tests"))
+    implementation(project(":subprojects:gradle:mtls"))
     implementation(project(":subprojects:test-runner:report-viewer"))
 
     implementation(libs.retrofit)
@@ -35,6 +36,7 @@ dependencies {
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(project(":subprojects:common:test-okhttp"))
+    gradleTestImplementation(testFixtures(project(":subprojects:gradle:mtls")))
 }
 
 gradlePlugin {

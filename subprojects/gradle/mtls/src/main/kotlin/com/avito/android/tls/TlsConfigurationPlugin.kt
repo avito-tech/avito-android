@@ -28,7 +28,7 @@ public class TlsConfigurationPlugin : Plugin<Project> {
         public fun provideCredentialsService(project: Project): Provider<TlsCredentialsService> {
             if (!project.rootProject.plugins.hasPlugin(TlsConfigurationPlugin::class.java)) {
                 throw IllegalStateException(
-                    "Failed to provideCredentialsService for project ${project.name}." +
+                    "Failed to provideCredentialsService for project ${project.name}. " +
                         "Apply com.avito.android.tls-configuration plugin to the root project"
                 )
             }

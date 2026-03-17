@@ -4,11 +4,14 @@ package com.avito.android.http.nupokati
 
 import com.avito.android.http.nupokati.retrofit.NupokatiV4Api
 import com.avito.android.http.nupokati.retrofit.RetrofitNupokatiV4Client
+import com.avito.android.tls.TlsCredentialsService
+import com.avito.android.tls.manager.TlsManager
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import org.gradle.api.provider.Property
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.Optional
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -26,6 +29,11 @@ public abstract class NupokatiV4ClientBuildService : BuildService<NupokatiV4Clie
         public val readTimeoutSeconds: Property<Long>
 
         public val writeTimeoutSeconds: Property<Long>
+
+        public val useTls: Property<Boolean>
+
+        @get:Optional
+        public val tlsCredentialsService: Property<TlsCredentialsService>
     }
 
     private val moshi: Moshi by lazy {
@@ -69,6 +77,17 @@ public abstract class NupokatiV4ClientBuildService : BuildService<NupokatiV4Clie
                 parameters.writeTimeoutSeconds.get(),
                 TimeUnit.SECONDS
             )
+
+        if (parameters.useTls.get()) {
+            val tlsManager = TlsManager(
+                parameters.tlsCredentialsService.get().createCredentials()
+            )
+            val handshakeCertificates = tlsManager.handshakeCertificates()
+            builder.sslSocketFactory(
+                handshakeCertificates.sslSocketFactory(),
+                handshakeCertificates.trustManager
+            )
+        }
 
         return builder.build()
     }

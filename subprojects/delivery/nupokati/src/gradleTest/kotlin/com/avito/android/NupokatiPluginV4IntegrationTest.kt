@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.avito.android.tls.test.createMtlsExtensionString
 import com.avito.http.HttpCodes
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.git
@@ -177,9 +178,14 @@ internal class NupokatiPluginV4IntegrationTest {
         val cdConfigFile = File(projectDir, "cd-config.json").also { it.writeText(cdConfig) }
 
         TestProjectGenerator(
+            useKts = true,
             plugins = plugins {
                 id("com.avito.android.gradle-logger")
+                id("com.avito.android.tls-configuration")
             },
+            buildGradleExtra = """
+                ${createMtlsExtensionString()}
+            """.trimIndent(),
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -220,6 +226,7 @@ internal class NupokatiPluginV4IntegrationTest {
                         |            cdBuildConfig.set(it)
                         |        }
                         |        versionCode.set($versionCode)
+                        |        useTls.set(false)
                         |        nupokatiUrl.set("$mockWebServerUrl")
                         |
                         |        reportViewer {
@@ -255,9 +262,14 @@ internal class NupokatiPluginV4IntegrationTest {
 
     private fun generateProject(cdConfigFile: File, projectDir: File) {
         TestProjectGenerator(
+            useKts = true,
             plugins = plugins {
                 id("com.avito.android.gradle-logger")
+                id("com.avito.android.tls-configuration")
             },
+            buildGradleExtra = """
+                ${createMtlsExtensionString()}
+            """.trimIndent(),
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -298,6 +310,7 @@ internal class NupokatiPluginV4IntegrationTest {
                         |            cdBuildConfig.set(it)
                         |        }
                         |        versionCode.set($versionCode)
+                        |        useTls.set(false)
                         |        nupokatiUrl.set("$mockWebServerUrl")
                         |
                         |        artifacts.set(

@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.avito.android.tls.test.createMtlsExtensionString
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
@@ -43,9 +44,14 @@ internal class NupokatiPluginV4Test {
         val cdConfigFile = File(projectDir, "cd-config.json").also { it.writeText(cdConfig) }
 
         TestProjectGenerator(
+            useKts = true,
             plugins = plugins {
                 id("com.avito.android.gradle-logger")
+                id("com.avito.android.tls-configuration")
             },
+            buildGradleExtra = """
+                ${createMtlsExtensionString()}
+            """.trimIndent(),
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -75,6 +81,7 @@ internal class NupokatiPluginV4Test {
                         |        config?.let {
                         |            cdBuildConfig.set(it)
                         |        }
+                        |        useTls.set(false)
                         |        nupokatiUrl.set("http://localhost:8080/")
                         |
                         |        artifacts.set(

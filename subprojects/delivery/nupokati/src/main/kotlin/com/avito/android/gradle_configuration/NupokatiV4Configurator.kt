@@ -13,6 +13,7 @@ import com.avito.android.gradle_configuration.extension.spec.NupokatiV4PipelineS
 import com.avito.android.http.nupokati.NupokatiV4ClientBuildService
 import com.avito.android.sendTestResultsTaskName
 import com.avito.android.test_results_upload.SendTestResultsTask
+import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.android.uploadArtifactsTaskName
 import com.avito.capitalize
 import org.gradle.api.Project
@@ -42,6 +43,7 @@ internal class NupokatiV4Configurator(
             "nupokatiV4Client",
             NupokatiV4ClientBuildService::class.java
         ) { spec ->
+            val useTls = pipelineSpec.useTls.orElse(true)
             spec.parameters.baseUrl.set(pipelineSpec.nupokatiUrl)
             spec.parameters.chunkedUploadThresholdBytes.set(
                 pipelineSpec.chunkedUploadThresholdBytes.convention(
@@ -63,6 +65,10 @@ internal class NupokatiV4Configurator(
                 pipelineSpec.nupokatiClientWriteTimeout.convention(
                     DEFAULT_NUPOKATI_CLIENT_WRITE_TIMEOUT
                 )
+            )
+            spec.parameters.useTls.set(useTls)
+            spec.parameters.tlsCredentialsService.set(
+                TlsConfigurationPlugin.provideCredentialsService(project)
             )
         }
 
