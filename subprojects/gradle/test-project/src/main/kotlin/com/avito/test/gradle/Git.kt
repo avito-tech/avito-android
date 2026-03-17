@@ -16,7 +16,12 @@ public fun File.getCommitHash(): String = git("rev-parse HEAD")
 
 public fun File.commit(message: String = "changes") {
     git("add --all")
-    git("commit --author='test <>' --all --message='${message.escape()}'")
+    git(
+        buildString {
+            append("-c user.name='test' -c user.email='test@example.com' -c commit.gpgsign=false ")
+            append("commit --author='test <test@example.com>' --all --message='${message.escape()}'")
+        }
+    )
 }
 
 private fun File.processRunner(): ProcessRunner {

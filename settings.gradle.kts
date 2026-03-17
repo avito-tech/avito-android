@@ -60,6 +60,7 @@ include(":subprojects:gradle:test-project")
 include(":subprojects:gradle:ui-test-bytecode-analyzer")
 include(":subprojects:gradle:worker-extensions")
 include(":subprojects:gradle:i18n")
+include(":subprojects:gradle:string-transform")
 
 include(":subprojects:assemble:build-checks")
 include(":subprojects:assemble:build-metrics-api")
