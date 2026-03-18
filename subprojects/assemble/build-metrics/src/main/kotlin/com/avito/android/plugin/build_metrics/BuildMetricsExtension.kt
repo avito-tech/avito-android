@@ -32,6 +32,27 @@ public abstract class BuildMetricsExtension @Inject constructor(
 
     public val sendCompileMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
+    public val sendRequestedTasksMetrics: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
+
+    /**
+     * Tasks that are injected by our Gradle build logic (bootstrap / verification checks)
+     * and should be excluded from `gradle.requested_task.duration` metrics.
+     *
+     * If all requested tasks are bootstrap tasks, we treat it as a Gradle sync event and report `gradleSync`.
+     */
+    public val bootstrapRequestedTaskNames: SetProperty<String> =
+        objectFactory.setProperty(String::class.java).convention(
+            setOf(
+                // Root tasks added by this repo
+                "installGitHooks",
+                "checkBuildEnvironment",
+                // Common verification tasks injected by build logic
+                "checkModulesOwners",
+                "checkAnvilConfiguration",
+                "checkModuleTypeNotDeprecated",
+            )
+        )
+
     public val slowTaskMinimumDuration: Property<Duration> =
         objectFactory.property<Duration>().convention(Duration.ofSeconds(10))
 

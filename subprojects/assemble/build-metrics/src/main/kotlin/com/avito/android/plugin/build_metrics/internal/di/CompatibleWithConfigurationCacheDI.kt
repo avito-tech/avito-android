@@ -8,6 +8,7 @@ import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuild
 import com.avito.android.plugin.build_metrics.internal.gradle.app_build.AppBuildTimeMetadata
 import com.avito.android.plugin.build_metrics.internal.gradle.cache.BuildCacheMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.configuration.ConfigurationTimeListener
+import com.avito.android.plugin.build_metrics.internal.gradle.requestedtasks.RequestedTasksListenerFactory
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.compile.CompileMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.slow.SlowTasksMetricsTracker
 import com.avito.android.plugin.build_metrics.internal.gradle.tasks.tech_budget.TechBudgetBuildTimeWriter
@@ -136,11 +137,11 @@ internal class CompatibleWithConfigurationCacheDI(
                     )
                 )
             }
+            if (parameters.sendRequestedTasksMetrics.get()) {
+                add(RequestedTasksListenerFactory(sender, loggerFactory).create(parameters))
+            }
         }
 
-        return CompositeBuildOperationsResultListener(
-            listeners,
-            loggerFactory,
-        )
+        return CompositeBuildOperationsResultListener(listeners, loggerFactory)
     }
 }

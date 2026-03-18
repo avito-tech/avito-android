@@ -6,6 +6,7 @@ import com.avito.android.graphite.graphiteConfig
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
 import com.avito.android.plugin.build_metrics.internal.di.NotCompatibleWithConfigurationCacheDI
 import com.avito.android.plugin.build_metrics.internal.di.NotCompatibleWithConfigurationCacheDI.Companion.isTestProperty
+import com.avito.android.plugin.build_metrics.internal.gradle.requestedtasks.BuildExecutionHistory
 import com.avito.android.plugin.build_metrics.internal.result.BuildResultFlowAction
 import com.avito.android.stats.statsdConfig
 import com.avito.git.gitStateProvider
@@ -13,6 +14,7 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerCoordinates
 import com.avito.logger.GradleLoggerPlugin
+import org.gradle.StartParameter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.configuration.BuildFeatures
@@ -43,7 +45,7 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
 
-        val extension = project.extensions.create<BuildMetricsExtension>("buildMetrics").apply {
+        val buildMetricsExtension = project.extensions.create<BuildMetricsExtension>("buildMetrics").apply {
             branchName.convention(project.gitStateProvider().map { it.currentBranch.name })
             repoName.convention(project.repoName)
         }
@@ -54,14 +56,17 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            if (!extension.buildType.isPresent || !extension.environment.isPresent) {
+            if (!buildMetricsExtension.buildType.isPresent || !buildMetricsExtension.environment.isPresent) {
                 project.logger.warn(
                     """
                     Build metrics plugin configuration error. Plugin can't work.
                     Please configure buildType and environment at buildMetrics extension
                 """.trimIndent()
                 )
-            } else if (extension.writeModulesBuildTime.get() && !extension.modulesBuildTimeFile.isPresent) {
+            } else if (
+                buildMetricsExtension.writeModulesBuildTime.get() &&
+                !buildMetricsExtension.modulesBuildTimeFile.isPresent
+            ) {
                 project.logger.warn(
                     """
                     Build metrics plugin configuration error. 
@@ -77,29 +82,46 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
                             loggerService.set(GradleLoggerPlugin.getLoggerService(project))
                             loggerCoordinates.set(GradleLoggerCoordinates(project.path))
                             test.set(project.hasProperty(isTestProperty))
-                            buildType.set(extension.buildType)
-                            userName.set(extension.userName)
-                            environment.set(extension.environment)
+                            buildType.set(buildMetricsExtension.buildType)
+                            userName.set(buildMetricsExtension.userName)
+                            environment.set(buildMetricsExtension.environment)
                             statsdConfig.set(project.statsdConfig)
                             graphiteConfig.set(project.graphiteConfig)
                             clickStreamConfig.set(project.clickStreamConfig)
-                            sendCompileMetrics.set(extension.sendCompileMetrics)
-                            compileMetricsMinimumDuration.set(extension.compileMetricsMinimumDuration)
-                            sendSlowTaskMetrics.set(extension.sendSlowTaskMetrics)
-                            slowTaskMinimumDuration.set(extension.slowTaskMinimumDuration)
-                            sendBuildCacheMetrics.set(extension.sendBuildCacheMetrics)
+                            sendCompileMetrics.set(buildMetricsExtension.sendCompileMetrics)
+                            compileMetricsMinimumDuration.set(buildMetricsExtension.compileMetricsMinimumDuration)
+                            sendSlowTaskMetrics.set(buildMetricsExtension.sendSlowTaskMetrics)
+                            slowTaskMinimumDuration.set(buildMetricsExtension.slowTaskMinimumDuration)
+                            sendBuildCacheMetrics.set(buildMetricsExtension.sendBuildCacheMetrics)
                             canTrackRemoteCache.set(BuildOperationsResultProvider.canTrackRemoteCache(project))
-                            buildCacheObservableTasks.set(extension.buildCacheObservableTasks)
-                            writeModulesBuildTime.set(extension.writeModulesBuildTime)
-                            modulesBuildTimeFile.set(extension.modulesBuildTimeFile)
-                            sendJvmMetrics.set(extension.sendJvmMetrics)
-                            sendOsMetrics.set(extension.sendOsMetrics)
-                            sendBuildInitConfiguration.set(extension.sendBuildInitConfiguration)
-                            sendBuildTotal.set(extension.sendBuildTotal)
-                            sendAppBuildTime.set(extension.sendAppBuildTime)
-                            sendTestRunnerMetrics.set(extension.sendTestRunnerMetrics)
-                            branchName.set(extension.branchName)
-                            repoName.set(extension.repoName)
+                            buildCacheObservableTasks.set(buildMetricsExtension.buildCacheObservableTasks)
+                            writeModulesBuildTime.set(buildMetricsExtension.writeModulesBuildTime)
+                            modulesBuildTimeFile.set(buildMetricsExtension.modulesBuildTimeFile)
+                            sendJvmMetrics.set(buildMetricsExtension.sendJvmMetrics)
+                            sendOsMetrics.set(buildMetricsExtension.sendOsMetrics)
+                            sendBuildInitConfiguration.set(buildMetricsExtension.sendBuildInitConfiguration)
+                            sendBuildTotal.set(buildMetricsExtension.sendBuildTotal)
+                            sendAppBuildTime.set(buildMetricsExtension.sendAppBuildTime)
+                            sendTestRunnerMetrics.set(buildMetricsExtension.sendTestRunnerMetrics)
+                            branchName.set(buildMetricsExtension.branchName)
+                            repoName.set(buildMetricsExtension.repoName)
+                            requestedTasks.set(project.gradle.startParameter.taskNames)
+                            bootstrapRequestedTaskNames.set(buildMetricsExtension.bootstrapRequestedTaskNames)
+                            sendRequestedTasksMetrics.set(buildMetricsExtension.sendRequestedTasksMetrics)
+                            invokedFromIde.set(isInvokedFromIde(project.gradle.startParameter))
+                            executionHistoryFile.set(
+                                project.layout.file(
+                                    project.providers.provider {
+                                        val repoKey = BuildExecutionHistory.storageKey(
+                                            originUrl = BuildExecutionHistory.gitOriginUrlProvider(project).orNull,
+                                            repoName = buildMetricsExtension.repoName.orNull,
+                                        )
+                                        project.gradle.gradleUserHomeDir
+                                            .resolve("build-metrics/execution-history/$repoKey.properties")
+                                    }
+                                )
+                            )
+                            projectDir.set(project.layout.projectDirectory)
                         }
                     }
 
@@ -113,10 +135,10 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
                 if (!buildFeatures.configurationCache.active.get()) {
                     val di = NotCompatibleWithConfigurationCacheDI(
                         project,
-                        extension,
+                        buildMetricsExtension,
                         GradleLoggerPlugin.getLoggerFactory(project)
                     )
-                    registerNotCompatibleWithCCListeners(di, extension)
+                    registerNotCompatibleWithCCListeners(di, buildMetricsExtension)
                 }
             }
         }
@@ -152,3 +174,9 @@ private val Project.repoName: String
         )
         return "$key/$name"
     }
+
+private fun isInvokedFromIde(startParameter: StartParameter): Boolean {
+    val properties = startParameter.projectProperties
+    val ideRunKey = "android.injected.invoked.from.ide"
+    return properties.containsKey(ideRunKey) && properties[ideRunKey] == "true"
+}

@@ -12,12 +12,14 @@ import com.avito.logger.GradleLoggerCoordinates
 import com.avito.logger.LoggerService
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.flow.BuildWorkResult
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.TaskExecutionOutcome
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationDetails
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.services.BuildService
@@ -70,6 +72,12 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
         val loggerCoordinates: Property<GradleLoggerCoordinates>
         val branchName: Property<String>
         val repoName: Property<String>
+        val requestedTasks: ListProperty<String>
+        val bootstrapRequestedTaskNames: SetProperty<String>
+        val sendRequestedTasksMetrics: Property<Boolean>
+        val invokedFromIde: Property<Boolean>
+        val executionHistoryFile: RegularFileProperty
+        val projectDir: DirectoryProperty
     }
 
     private val di by lazy { CompatibleWithConfigurationCacheDI(parameters) }
