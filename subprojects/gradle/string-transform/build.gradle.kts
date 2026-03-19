@@ -8,6 +8,7 @@ dependencies {
     implementation(gradleApi())
     implementation(libs.androidGradle)
     implementation(project(":subprojects:common:problem"))
+    implementation(project(":subprojects:common:result"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
 

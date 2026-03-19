@@ -20,7 +20,29 @@ internal class StringTransformPluginGradleTest {
     }
 
     @Test
-    fun `plugin tasks - register variant task and metadata - when exact release variant matches`() {
+    fun `plugin root task - succeeds without outputs - when no pipelines are declared`() {
+        givenProject(
+            """
+            transformStrings {
+            }
+            """.trimIndent()
+        )
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val outputsDir = File(
+            projectDir,
+            "app/build/outputs/transformStrings"
+        )
+        assertThat(outputsDir.exists()).isFalse()
+    }
+
+    @Test
+    fun `plugin tasks - register variant task and report - when exact release variant matches`() {
         givenProject(
             """
             transformStrings {
@@ -40,18 +62,23 @@ internal class StringTransformPluginGradleTest {
             useTestFixturesClasspath = true,
         ).assertThat().buildSuccessful()
 
-        val metadataFile = File(
+        val reportFile = File(
             projectDir,
-            "app/build/outputs/transformStrings/alpha/release/metadata/pipeline-variant-metadata.json"
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
-        assertThat(metadataFile.exists()).isTrue()
-        val metadataText = metadataFile.readText()
-        assertThat(metadataText).contains("\"pipeline\": \"alpha\"")
-        assertThat(metadataText).contains("\"variant\": \"release\"")
+        assertThat(reportFile.exists()).isTrue()
+        val reportText = reportFile.readText()
+        assertThat(reportText).contains("\"pipeline\": \"alpha\"")
+        assertThat(reportText).contains("\"variant\": \"release\"")
+        assertThat(reportText).contains("\"artifact\"")
+        assertThat(reportText).contains("\"rules\"")
+        assertThat(reportText).contains("\"phases\"")
+        assertThat(reportText).contains("\"diagnostics\"")
+        assertThat(reportText).contains("\"moduleIdentity\": \":app\"")
     }
 
     @Test
-    fun `plugin tasks - register variant task and metadata - when exact flavored variant matches`() {
+    fun `plugin tasks - register variant task and report - when exact flavored variant matches`() {
         givenProject(
             """
             android {
@@ -83,16 +110,16 @@ internal class StringTransformPluginGradleTest {
             useTestFixturesClasspath = true,
         ).assertThat().buildSuccessful()
 
-        val metadataFile = File(
+        val reportFile = File(
             projectDir,
-            "app/build/outputs/transformStrings/alpha/paidRelease/metadata/pipeline-variant-metadata.json"
+            "app/build/outputs/transformStrings/alpha/paidRelease/report/transform-report.json"
         )
-        assertThat(metadataFile.exists()).isTrue()
-        assertThat(metadataFile.readText()).contains("\"variant\": \"paidRelease\"")
+        assertThat(reportFile.exists()).isTrue()
+        assertThat(reportFile.readText()).contains("\"variant\": \"paidRelease\"")
     }
 
     @Test
-    fun `plugin metadata - writes normalized rules - when exact and case-expanded rules are declared`() {
+    fun `plugin report - writes rule summary - when exact and case-expanded rules are declared`() {
         givenProject(
             """
             transformStrings {
@@ -119,26 +146,21 @@ internal class StringTransformPluginGradleTest {
             useTestFixturesClasspath = true,
         ).assertThat().buildSuccessful()
 
-        val metadataFile = File(
+        val reportFile = File(
             projectDir,
-            "app/build/outputs/transformStrings/alpha/release/metadata/pipeline-variant-metadata.json"
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
 
-        assertThat(metadataFile.exists()).isTrue()
-        val metadataText = metadataFile.readText()
-        assertThat(metadataText).contains("\"outputRelativePath\": \"outputs/transformStrings/alpha/release\"")
-        assertThat(metadataText).contains("\"from\": \"source\"")
-        assertThat(metadataText).contains("\"to\": \"target\"")
-        assertThat(metadataText).contains("\"from\": \"token\"")
-        assertThat(metadataText).contains("\"to\": \"value\"")
-        assertThat(metadataText).contains("\"from\": \"TOKEN\"")
-        assertThat(metadataText).contains("\"to\": \"VALUE\"")
-        assertThat(metadataText).contains("\"from\": \"Token\"")
-        assertThat(metadataText).contains("\"to\": \"Value\"")
+        assertThat(reportFile.exists()).isTrue()
+        val reportText = reportFile.readText()
+        assertThat(reportText).contains("\"totalRules\": 4")
+        assertThat(reportText).contains("\"declarationCounts\"")
+        assertThat(reportText).contains("\"exact\": 1")
+        assertThat(reportText).contains("\"caseExpanded\": 1")
     }
 
     @Test
-    fun `plugin metadata - uses final pipeline configuration - when rules are added after create call`() {
+    fun `plugin report - uses final pipeline configuration - when rules are added after create call`() {
         givenProject(
             """
             transformStrings {
@@ -166,21 +188,17 @@ internal class StringTransformPluginGradleTest {
             useTestFixturesClasspath = true,
         ).assertThat().buildSuccessful()
 
-        val metadataFile = File(
+        val reportFile = File(
             projectDir,
-            "app/build/outputs/transformStrings/alpha/release/metadata/pipeline-variant-metadata.json"
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
 
-        assertThat(metadataFile.exists()).isTrue()
-        val metadataText = metadataFile.readText()
-        assertThat(metadataText).contains("\"from\": \"source\"")
-        assertThat(metadataText).contains("\"to\": \"target\"")
-        assertThat(metadataText).contains("\"from\": \"token\"")
-        assertThat(metadataText).contains("\"to\": \"value\"")
-        assertThat(metadataText).doesNotContain("\"from\": \"TOKEN\"")
-        assertThat(metadataText).doesNotContain("\"to\": \"VALUE\"")
-        assertThat(metadataText).contains("\"from\": \"Token\"")
-        assertThat(metadataText).contains("\"to\": \"Value\"")
+        assertThat(reportFile.exists()).isTrue()
+        val reportText = reportFile.readText()
+        assertThat(reportText).contains("\"totalRules\": 3")
+        assertThat(reportText).contains("\"declarationCounts\"")
+        assertThat(reportText).contains("\"exact\": 1")
+        assertThat(reportText).contains("\"caseExpanded\": 1")
     }
 
     @Test
@@ -204,13 +222,13 @@ internal class StringTransformPluginGradleTest {
             useTestFixturesClasspath = true,
         ).assertThat().buildSuccessful()
 
-        val metadataFile = File(
+        val reportFile = File(
             projectDir,
-            "app/build/outputs/transformStrings/alpha/release/metadata/pipeline-variant-metadata.json"
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
 
-        assertThat(metadataFile.exists()).isTrue()
-        assertThat(metadataFile.readText()).contains("\"variant\": \"release\"")
+        assertThat(reportFile.exists()).isTrue()
+        assertThat(reportFile.readText()).contains("\"variant\": \"release\"")
     }
 
     @Test
@@ -244,20 +262,19 @@ internal class StringTransformPluginGradleTest {
             useTestFixturesClasspath = true,
         ).assertThat().buildSuccessful()
 
-        val alphaMetadata = File(
+        val alphaReport = File(
             projectDir,
-            "app/build/outputs/transformStrings/alpha/release/metadata/pipeline-variant-metadata.json"
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
-        val betaMetadata = File(
+        val betaReport = File(
             projectDir,
-            "app/build/outputs/transformStrings/beta/release/metadata/pipeline-variant-metadata.json"
+            "app/build/outputs/transformStrings/beta/release/report/transform-report.json"
         )
 
-        assertThat(alphaMetadata.exists()).isTrue()
-        assertThat(betaMetadata.exists()).isTrue()
-        assertThat(betaMetadata.readText()).contains("\"from\": \"token\"")
-        assertThat(betaMetadata.readText()).contains("\"to\": \"value\"")
-        assertThat(betaMetadata.readText()).doesNotContain("\"from\": \"TOKEN\"")
+        assertThat(alphaReport.exists()).isTrue()
+        assertThat(betaReport.exists()).isTrue()
+        assertThat(alphaReport.readText()).contains("\"pipeline\": \"alpha\"")
+        assertThat(betaReport.readText()).contains("\"pipeline\": \"beta\"")
     }
 
     @Test
@@ -442,7 +459,35 @@ internal class StringTransformPluginGradleTest {
     }
 
     @Test
-    fun `plugin warnings - print warning - when matched pipeline contains overlapping rules`() {
+    fun `plugin root task - succeeds without report - when exact variant name is unknown`() {
+        givenProject(
+            """
+            transformStrings {
+                create("missing") {
+                    variant("missingRelease")
+                    rules {
+                        exact("source", "target")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val reportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/missing/missingRelease/report/transform-report.json"
+        )
+        assertThat(reportFile.exists()).isFalse()
+    }
+
+    @Test
+    fun `plugin warnings - print warning and record diagnostic - when matched pipeline contains overlapping rules`() {
         givenProject(
             """
             transformStrings {
@@ -457,13 +502,19 @@ internal class StringTransformPluginGradleTest {
             """.trimIndent()
         )
 
-        val output = gradlew(
+        val result = gradlew(
             projectDir,
-            ":app:help",
+            ":app:transformStrings",
             useTestFixturesClasspath = true,
-        ).output
+        )
 
-        assertThat(output).contains("overlap and remain order-sensitive")
+        assertThat(result.output).contains("overlap and remain order-sensitive")
+        val reportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
+        )
+        assertThat(reportFile.readText()).contains("\"severity\": \"WARNING\"")
+        assertThat(reportFile.readText()).contains("overlap and remain order-sensitive")
     }
 
     private fun givenProject(transformConfiguration: String) {

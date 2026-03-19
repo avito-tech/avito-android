@@ -3,9 +3,9 @@ package com.avito.android.string_transform.internal.configuration
 import Slf4jGradleLoggerFactory
 import com.android.build.api.variant.ApplicationVariant
 import com.avito.android.string_transform.TransformPipelineSpec
+import com.avito.android.string_transform.internal.rules.DeclaredRule
 import com.avito.android.string_transform.internal.rules.TransformRulesNormalizer
-import com.avito.android.string_transform.internal.task.TransformStringsPipelineVariantMetadataTask
-import com.avito.android.string_transform.internal.task.input.TransformRuleInput
+import com.avito.android.string_transform.internal.task.TransformStringsPipelineVariantReportTask
 import com.avito.capitalize
 import com.avito.logger.create
 import org.gradle.api.Project
@@ -24,30 +24,28 @@ internal class TransformPipelineVariantTaskConfigurator(
 
     fun configure() {
         val normalizedRules = TransformRulesNormalizer.normalize(pipeline)
+        val declaredRules = pipeline.rules.declaredRules.get()
+
         normalizedRules.warnings.forEach { warning ->
             logger.warn("Pipeline '${pipeline.name}' for variant '${variant.name}': $warning")
         }
 
-        val taskProvider = project.tasks.register<TransformStringsPipelineVariantMetadataTask>(
+        val taskProvider = project.tasks.register<TransformStringsPipelineVariantReportTask>(
             variantTaskName(pipeline.name, variant.name)
         ) {
             group = "string transform"
-            description = "Produces metadata for ${pipeline.name} pipeline on ${variant.name} variant"
+            description = "Produces report for ${pipeline.name} pipeline on ${variant.name} variant"
 
+            modulePath.set(project.path)
             pipelineName.set(pipeline.name)
             variantName.set(variant.name)
-            outputRelativePath.set("outputs/transformStrings/${pipeline.name}/${variant.name}")
-            rules.set(
-                normalizedRules.rules.map { rule ->
-                    TransformRuleInput(
-                        from = rule.from,
-                        to = rule.to,
-                    )
-                }
-            )
-            metadataFile.set(
+            totalRules.set(normalizedRules.rules.size)
+            exactRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.Exact })
+            caseExpandedRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.CaseExpanded })
+            configurationWarnings.set(normalizedRules.warnings)
+            reportFile.set(
                 project.layout.buildDirectory.file(
-                    "outputs/transformStrings/${pipeline.name}/${variant.name}/metadata/pipeline-variant-metadata.json"
+                    "outputs/transformStrings/${pipeline.name}/${variant.name}/report/transform-report.json"
                 )
             )
         }
