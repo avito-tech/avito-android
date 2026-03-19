@@ -1,6 +1,6 @@
 package com.avito.android.string_transform
 
-import com.avito.android.string_transform.internal.validation.TransformPipelinesValidator
+import com.avito.android.string_transform.internal.configuration.TransformPipelinesValidator
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -23,7 +23,12 @@ internal class TransformPipelinesValidatorGradleTest {
             variant("release")
             rules { rules ->
                 rules.exact("source", "target")
-                rules.caseExpanded("token", "value")
+                rules.caseExpanded(
+                    "token",
+                    "value",
+                    GeneratedForm.LOWER,
+                    GeneratedForm.UPPER,
+                )
             }
         }
 
@@ -31,8 +36,7 @@ internal class TransformPipelinesValidatorGradleTest {
 
         assertThat(pipeline.name).isEqualTo("alpha")
         assertThat(pipeline.variant.get()).isEqualTo("release")
-        assertThat(pipeline.rules.exactRuleCount).isEqualTo(1)
-        assertThat(pipeline.rules.caseExpandedRuleCount).isEqualTo(1)
+        assertThat(pipeline.rules.declaredRules.get()).hasSize(2)
     }
 
     @Test
@@ -79,6 +83,21 @@ internal class TransformPipelinesValidatorGradleTest {
         }
 
         assertThat(error.allMessages()).contains("transformStrings rule 'from' value must not be empty")
+    }
+
+    @Test
+    fun `pipeline rules - propagate invalid arguments - when case-expanded rule has no generated forms`() {
+        val error = assertThrows(IllegalArgumentException::class.java) {
+            pipeline("alpha") {
+                variant("release")
+                rules { rules ->
+                    rules.caseExpanded("source", "target")
+                }
+            }
+        }
+
+        assertThat(error.allMessages())
+            .contains("transformStrings caseExpanded rule must declare at least one generated form")
     }
 
     private fun pipeline(

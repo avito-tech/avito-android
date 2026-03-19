@@ -1,8 +1,9 @@
-package com.avito.android.string_transform.internal.validation
+package com.avito.android.string_transform.internal.configuration
 
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.android.string_transform.TransformPipelineSpec
+import com.avito.android.string_transform.internal.rules.DeclaredRule.CaseExpanded
 
 internal object TransformPipelinesValidator {
 
@@ -21,13 +22,28 @@ internal object TransformPipelinesValidator {
                 .asRuntimeException()
         }
 
-        if (pipeline.rules.totalRuleCount == 0) {
+        val declaredRules = pipeline.rules.declaredRules.get()
+
+        if (declaredRules.isEmpty()) {
             throw Problem.Builder(
                 shortDescription = "String-transform pipeline '${pipeline.name}' does not declare any rules",
                 context = pipelineContext(projectPath, pipeline)
             )
                 .because("A pipeline without rules does nothing.")
                 .addSolution("Add at least one exact(...) or caseExpanded(...) rule.")
+                .build()
+                .asRuntimeException()
+        }
+
+        val hasEmptyGeneratedForms = declaredRules.filterIsInstance<CaseExpanded>().any { it.generatedForms.isEmpty() }
+        if (hasEmptyGeneratedForms) {
+            throw Problem.Builder(
+                shortDescription = "String-transform pipeline '${pipeline.name}' declares " +
+                    "caseExpanded rule without generated forms",
+                context = pipelineContext(projectPath, pipeline)
+            )
+                .because("Generated-form selection is part of caseExpanded declaration contract.")
+                .addSolution("Pass one or more forms like GeneratedForm.LOWER to caseExpanded(...).")
                 .build()
                 .asRuntimeException()
         }

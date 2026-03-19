@@ -1,16 +1,14 @@
 package com.avito.android.string_transform
 
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
-import com.android.build.api.variant.ApplicationVariant
-import com.avito.android.string_transform.internal.task.TransformStringsPipelineVariantMetadataTask
-import com.avito.capitalize
+import com.avito.android.string_transform.internal.configuration.TransformPipelineVariantTaskConfigurator
+import com.avito.android.string_transform.internal.configuration.TransformPipelinesValidator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.register
 
 public class StringTransformPlugin : Plugin<Project> {
 
@@ -36,50 +34,28 @@ public class StringTransformPlugin : Plugin<Project> {
         rootTask: TaskProvider<Task>,
     ) {
         val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
+        val pipelines by lazy { validatedPipelines(project, extension) }
 
         androidComponents.onVariants { variant ->
-            val variantSpecific = extension.pipelines.filter { it.variant.orNull == variant.name }
-            variantSpecific.forEach { pipeline ->
-                registerPipelineVariantTask(project, variant, rootTask, pipeline)
+            pipelines.forEach { pipeline ->
+                if (pipeline.variant.orNull == variant.name) {
+                    TransformPipelineVariantTaskConfigurator(
+                        project = project,
+                        rootTask = rootTask,
+                        pipeline = pipeline,
+                        variant = variant,
+                    ).configure()
+                }
             }
         }
     }
 
-    private fun registerPipelineVariantTask(
+    private fun validatedPipelines(
         project: Project,
-        variant: ApplicationVariant,
-        rootTask: TaskProvider<Task>,
-        pipeline: TransformPipelineSpec,
-    ) {
-        val pipelineName = pipeline.name
-        val taskProvider = project.tasks.register<TransformStringsPipelineVariantMetadataTask>(
-            variantTaskName(
-                pipelineName,
-                variant.name
-            )
-        ) {
-            group = "string transform"
-            description = "Produces metadata for $pipelineName pipeline on ${variant.name} variant"
-
-            this.pipelineName.set(pipelineName)
-            this.variantName.set(variant.name)
-            this.outputRelativePath.set("outputs/transformStrings/$pipelineName/${variant.name}")
-            this.exactRuleCount.set(pipeline.rules.exactRuleCount)
-            this.caseExpandedRuleCount.set(pipeline.rules.caseExpandedRuleCount)
-
-            metadataFile.set(
-                project.layout.buildDirectory.file(
-                    "outputs/transformStrings/$pipelineName/${variant.name}/metadata/pipeline-variant-metadata.json"
-                )
-            )
+        extension: TransformStringsExtension,
+    ): List<TransformPipelineSpec> {
+        return extension.pipelines.toList().onEach { pipeline ->
+            TransformPipelinesValidator.validate(project.path, pipeline)
         }
-
-        rootTask.configure {
-            it.dependsOn(taskProvider)
-        }
-    }
-
-    private fun variantTaskName(pipelineName: String, variantName: String): String {
-        return "transformStrings${pipelineName.capitalize()}${variantName.capitalize()}"
     }
 }

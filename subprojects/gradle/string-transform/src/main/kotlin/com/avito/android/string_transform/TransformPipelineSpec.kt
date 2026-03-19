@@ -1,5 +1,4 @@
 package com.avito.android.string_transform
-
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.model.ObjectFactory

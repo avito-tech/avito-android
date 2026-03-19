@@ -92,7 +92,7 @@ internal class StringTransformPluginGradleTest {
     }
 
     @Test
-    fun `plugin metadata - writes rule summary - when exact and case-expanded rules are declared`() {
+    fun `plugin metadata - writes normalized rules - when exact and case-expanded rules are declared`() {
         givenProject(
             """
             transformStrings {
@@ -100,7 +100,13 @@ internal class StringTransformPluginGradleTest {
                     variant("release")
                     rules {
                         exact("source", "target")
-                        caseExpanded("token", "value")
+                        caseExpanded(
+                            "token",
+                            "value",
+                            com.avito.android.string_transform.GeneratedForm.LOWER,
+                            com.avito.android.string_transform.GeneratedForm.UPPER,
+                            com.avito.android.string_transform.GeneratedForm.UPPER_FIRST,
+                        )
                     }
                 }
             }
@@ -121,8 +127,90 @@ internal class StringTransformPluginGradleTest {
         assertThat(metadataFile.exists()).isTrue()
         val metadataText = metadataFile.readText()
         assertThat(metadataText).contains("\"outputRelativePath\": \"outputs/transformStrings/alpha/release\"")
-        assertThat(metadataText).contains("\"exactCount\": 1")
-        assertThat(metadataText).contains("\"caseExpandedCount\": 1")
+        assertThat(metadataText).contains("\"from\": \"source\"")
+        assertThat(metadataText).contains("\"to\": \"target\"")
+        assertThat(metadataText).contains("\"from\": \"token\"")
+        assertThat(metadataText).contains("\"to\": \"value\"")
+        assertThat(metadataText).contains("\"from\": \"TOKEN\"")
+        assertThat(metadataText).contains("\"to\": \"VALUE\"")
+        assertThat(metadataText).contains("\"from\": \"Token\"")
+        assertThat(metadataText).contains("\"to\": \"Value\"")
+    }
+
+    @Test
+    fun `plugin metadata - uses final pipeline configuration - when rules are added after create call`() {
+        givenProject(
+            """
+            transformStrings {
+                val pipeline = create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("source", "target")
+                    }
+                }
+                pipeline.rules {
+                    caseExpanded(
+                        "token",
+                        "value",
+                        com.avito.android.string_transform.GeneratedForm.UPPER_FIRST,
+                        com.avito.android.string_transform.GeneratedForm.LOWER,
+                    )
+                }
+            }
+            """.trimIndent()
+        )
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val metadataFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/metadata/pipeline-variant-metadata.json"
+        )
+
+        assertThat(metadataFile.exists()).isTrue()
+        val metadataText = metadataFile.readText()
+        assertThat(metadataText).contains("\"from\": \"source\"")
+        assertThat(metadataText).contains("\"to\": \"target\"")
+        assertThat(metadataText).contains("\"from\": \"token\"")
+        assertThat(metadataText).contains("\"to\": \"value\"")
+        assertThat(metadataText).doesNotContain("\"from\": \"TOKEN\"")
+        assertThat(metadataText).doesNotContain("\"to\": \"VALUE\"")
+        assertThat(metadataText).contains("\"from\": \"Token\"")
+        assertThat(metadataText).contains("\"to\": \"Value\"")
+    }
+
+    @Test
+    fun `plugin tasks - use final pipeline configuration - when variant is set after create call`() {
+        givenProject(
+            """
+            transformStrings {
+                val pipeline = create("alpha") {
+                    rules {
+                        exact("source", "target")
+                    }
+                }
+                pipeline.variant("release")
+            }
+            """.trimIndent()
+        )
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val metadataFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/metadata/pipeline-variant-metadata.json"
+        )
+
+        assertThat(metadataFile.exists()).isTrue()
+        assertThat(metadataFile.readText()).contains("\"variant\": \"release\"")
     }
 
     @Test
@@ -139,7 +227,11 @@ internal class StringTransformPluginGradleTest {
                 create("beta") {
                     variant("release")
                     rules {
-                        caseExpanded("token", "value")
+                        caseExpanded(
+                            "token",
+                            "value",
+                            com.avito.android.string_transform.GeneratedForm.LOWER,
+                        )
                     }
                 }
             }
@@ -163,7 +255,9 @@ internal class StringTransformPluginGradleTest {
 
         assertThat(alphaMetadata.exists()).isTrue()
         assertThat(betaMetadata.exists()).isTrue()
-        assertThat(betaMetadata.readText()).contains("\"caseExpandedCount\": 1")
+        assertThat(betaMetadata.readText()).contains("\"from\": \"token\"")
+        assertThat(betaMetadata.readText()).contains("\"to\": \"value\"")
+        assertThat(betaMetadata.readText()).doesNotContain("\"from\": \"TOKEN\"")
     }
 
     @Test
@@ -218,6 +312,56 @@ internal class StringTransformPluginGradleTest {
         ).output
 
         assertThat(output).contains("String-transform pipeline 'invalid' does not declare variant")
+    }
+
+    @Test
+    fun `plugin registration - fails build - when rule declaration is malformed`() {
+        givenProject(
+            """
+            transformStrings {
+                create("invalid") {
+                    variant("release")
+                    rules {
+                        exact("", "target")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val output = gradlew(
+            projectDir,
+            ":app:help",
+            expectFailure = true,
+            useTestFixturesClasspath = true,
+        ).output
+
+        assertThat(output).contains("transformStrings rule 'from' value must not be empty")
+    }
+
+    @Test
+    fun `plugin registration - fails build - when case-expanded rule has no generated forms`() {
+        givenProject(
+            """
+            transformStrings {
+                create("invalid") {
+                    variant("release")
+                    rules {
+                        caseExpanded("source", "target")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val output = gradlew(
+            projectDir,
+            ":app:help",
+            expectFailure = true,
+            useTestFixturesClasspath = true,
+        ).output
+
+        assertThat(output).contains("transformStrings caseExpanded rule must declare at least one generated form")
     }
 
     // This permissive behavior is accepted only for v1
@@ -295,6 +439,31 @@ internal class StringTransformPluginGradleTest {
 
         assertThat(output).contains("transformStringsAlphaRelease")
         assertThat(output).doesNotContain("transformStringsAlphaDebug")
+    }
+
+    @Test
+    fun `plugin warnings - print warning - when matched pipeline contains overlapping rules`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("token", "value")
+                        exact("tok", "prefix")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val output = gradlew(
+            projectDir,
+            ":app:help",
+            useTestFixturesClasspath = true,
+        ).output
+
+        assertThat(output).contains("overlap and remain order-sensitive")
     }
 
     private fun givenProject(transformConfiguration: String) {

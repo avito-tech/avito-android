@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.androidGradle)
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:logger:slf4j-gradle-logger"))
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }

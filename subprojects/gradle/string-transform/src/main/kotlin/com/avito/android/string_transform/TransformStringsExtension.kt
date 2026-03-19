@@ -1,6 +1,5 @@
 package com.avito.android.string_transform
 
-import com.avito.android.string_transform.internal.validation.TransformPipelinesValidator
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
@@ -19,9 +18,6 @@ public abstract class TransformStringsExtension @Inject constructor(
         name: String,
         action: Action<in TransformPipelineSpec>,
     ): TransformPipelineSpec {
-        return pipelines.create(name) { pipeline ->
-            action.execute(pipeline)
-            TransformPipelinesValidator.validate(projectPath, pipeline)
-        }
+        return pipelines.create(name, action)
     }
 }
