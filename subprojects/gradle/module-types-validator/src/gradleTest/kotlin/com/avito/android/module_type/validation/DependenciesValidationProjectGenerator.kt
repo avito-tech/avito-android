@@ -29,6 +29,7 @@ internal object DependenciesValidationProjectGenerator {
      *  - :lib-c
      *      - :impl
      *      - :demo
+     *  - :heavy-module
      * ```
      *
      * Dependencies between generated modules
@@ -50,6 +51,7 @@ internal object DependenciesValidationProjectGenerator {
      * :lib-a:impl --> :lib-a:public
      * :lib-a:fake --> :lib-a:public
      * :lib-a:debug --> :lib-a:public
+     * > :lib-c:demo --> :heavy-module is added only when [forbiddenDemoDependencyConnected] is `true`
      * ```
      *
      * > Use [mermaid](https://mermaid.live/edit#) for visualization
@@ -58,6 +60,8 @@ internal object DependenciesValidationProjectGenerator {
     fun generateProject(
         projectDir: File,
         connectedFunctionalType: FunctionalType? = null,
+        forbiddenDemoDependencyConnected: Boolean = false,
+        allowForbiddenDemoDependency: Boolean = false,
         rootPlugins: PluginsSpec = plugins {
             id("com.avito.android.module-types")
             id("com.avito.android.module-types-validator")
@@ -141,13 +145,21 @@ internal object DependenciesValidationProjectGenerator {
                             dependentModules = setOfNotNull(
                                 ":lib-c:impl",
                                 ":lib-b:fake",
-                                connectedFunctionalType?.let { ":lib-a:${it.name.lowercase()}" }
-                            )
+                                connectedFunctionalType?.let { ":lib-a:${it.name.lowercase()}" },
+                                ":heavy-module".takeIf { forbiddenDemoDependencyConnected }
+                            ),
+                            allowForbiddenDemoDependency = allowForbiddenDemoDependency
                         ),
                     )
                 ),
+                createForbiddenModule()
             ),
         ).generateIn(projectDir)
+
+        File(projectDir, "baselines")
+            .mkdirs()
+        File(projectDir, "baselines/forbidden-demo-dependencies.txt")
+            .writeText(":heavy-module")
     }
 
     private fun createModule(
@@ -181,6 +193,7 @@ internal object DependenciesValidationProjectGenerator {
     private fun createDemoModule(
         logicalModuleName: String,
         dependentModules: Set<String> = emptySet(),
+        allowForbiddenDemoDependency: Boolean = false,
     ): KotlinModule {
         return KotlinModule(
             name = "demo",
@@ -204,7 +217,27 @@ internal object DependenciesValidationProjectGenerator {
                         missingImplementations {
                             configurationNames.set(SetsKt.setOf("implementation"))
                         }
+                        forbiddenDemoDependencies {
+                            forbiddenDependencies(file("${'$'}rootDir/baselines/forbidden-demo-dependencies.txt"))
+                            ${if (allowForbiddenDemoDependency) "allow(\":heavy-module\")" else ""}
+                        }
                     }
+                }
+            """.trimIndent(),
+        )
+    }
+
+    private fun createForbiddenModule(): KotlinModule {
+        return KotlinModule(
+            name = "heavy-module",
+            packageName = "heavy.module",
+            imports = listOf("import com.avito.android.module_type.*"),
+            plugins = plugins {
+                id("com.avito.android.module-types")
+            },
+            buildGradleExtra = """
+                module {
+                    type = new ModuleType(new StubApplication(), FunctionalType.${FunctionalType.Util.name})
                 }
             """.trimIndent(),
         )

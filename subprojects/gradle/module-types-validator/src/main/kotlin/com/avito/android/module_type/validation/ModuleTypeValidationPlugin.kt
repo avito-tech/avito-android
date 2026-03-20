@@ -1,6 +1,7 @@
 package com.avito.android.module_type.validation
 
 import com.avito.android.module_type.ModuleTypesPlugin
+import com.avito.android.module_type.validation.configurations.forbidden.demo_dependencies.ForbiddenDemoDependenciesConfiguration
 import com.avito.android.module_type.validation.configurations.missings.implementations.MissingImplementationDependencyConfiguration
 import com.avito.android.module_type.validation.internal.hasModuleTypePlugin
 import com.avito.android.module_type.validation.internal.moduleTypeExtension
@@ -14,6 +15,7 @@ public class ModuleTypeValidationPlugin : Plugin<Project> {
 
     private val validationConfigurations = setOf(
         MissingImplementationDependencyConfiguration(),
+        ForbiddenDemoDependenciesConfiguration(),
     )
 
     override fun apply(target: Project) {
