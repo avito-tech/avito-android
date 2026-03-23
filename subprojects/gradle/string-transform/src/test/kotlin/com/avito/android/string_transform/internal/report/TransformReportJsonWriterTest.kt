@@ -1,11 +1,13 @@
 package com.avito.android.string_transform.internal.report
 
+import com.avito.android.Result
 import com.avito.android.isFailure
 import com.avito.android.isSuccess
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 internal class TransformReportJsonWriterTest {
 
@@ -45,14 +47,42 @@ internal class TransformReportJsonWriterTest {
 
         val result = TransformReportJsonWriter.write(report, outputFile)
 
-        val json = outputFile.readText()
         assertThat(result.isSuccess()).isTrue()
-        assertThat(json).contains("\"artifact\"")
-        assertThat(json).contains("\"rules\"")
-        assertThat(json).contains("\"phases\"")
-        assertThat(json).contains("\"diagnostics\"")
-        assertThat(json).contains("\"pipeline\": \"alpha\"")
-        assertThat(json).contains("\"variant\": \"release\"")
+        assertReportJsonEquals(
+            outputFile,
+            """
+            {
+                "pipeline": "alpha",
+                "variant": "release",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "release"
+                },
+                "rules": {
+                    "totalRules": 2,
+                    "declarationCounts": {
+                        "exact": 1,
+                        "caseExpanded": 1
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "stub-processing",
+                        "status": "SUCCESS",
+                        "durationMillis": 1
+                    }
+                ],
+                "diagnostics": [
+                    {
+                        "severity": "WARNING",
+                        "message": "warning message",
+                        "affectedPhase": null,
+                        "affectedPath": null
+                    }
+                ]
+            }
+            """.trimIndent()
+        )
     }
 
     @Test
@@ -71,21 +101,53 @@ internal class TransformReportJsonWriterTest {
                 )
             ),
             configurationWarnings = emptyList(),
+            timeSource = FakeMonotonicTimeSource(TimeUnit.SECONDS.toNanos(1)),
         )
 
-        recorder.recordPhase("stub-processing") {
-            error("boom")
+        val recordResult: Result<Unit> = recorder.recordPhase("stub-processing") {
+            Result.Failure<Unit>(IllegalStateException("boom"))
         }
 
         val outputFile = File(tempDir, "transform-report.json")
         val result = TransformReportJsonWriter.write(recorder.build(), outputFile)
 
-        val json = outputFile.readText()
+        assertThat(recordResult.isFailure()).isTrue()
         assertThat(result.isSuccess()).isTrue()
-        assertThat(json).contains("\"status\": \"FAILURE\"")
-        assertThat(json).contains("\"severity\": \"HARD_FAILURE\"")
-        assertThat(json).contains("\"message\": \"boom\"")
-        assertThat(json).contains("\"affectedPhase\": \"stub-processing\"")
+        assertReportJsonEquals(
+            outputFile,
+            """
+            {
+                "pipeline": "alpha",
+                "variant": "release",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "release"
+                },
+                "rules": {
+                    "totalRules": 1,
+                    "declarationCounts": {
+                        "exact": 1,
+                        "caseExpanded": 0
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "stub-processing",
+                        "status": "FAILURE",
+                        "durationMillis": 1000
+                    }
+                ],
+                "diagnostics": [
+                    {
+                        "severity": "HARD_FAILURE",
+                        "message": "boom",
+                        "affectedPhase": "stub-processing",
+                        "affectedPath": null
+                    }
+                ]
+            }
+            """.trimIndent()
+        )
     }
 
     @Test
@@ -114,5 +176,9 @@ internal class TransformReportJsonWriterTest {
         val result = TransformReportJsonWriter.write(report, outputDirectory)
 
         assertThat(result.isFailure()).isTrue()
+    }
+
+    private fun assertReportJsonEquals(file: File, expectedJson: String) {
+        assertThat(file.readText().trim()).isEqualTo(expectedJson)
     }
 }

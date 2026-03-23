@@ -1,9 +1,11 @@
 package com.avito.android.string_transform.internal.report
 
+import com.avito.android.Result
 import com.avito.android.isFailure
 import com.avito.android.isSuccess
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import java.util.concurrent.TimeUnit
 
 internal class TransformReportRecorderTest {
 
@@ -21,9 +23,11 @@ internal class TransformReportRecorderTest {
                 )
             ),
             configurationWarnings = listOf("warning message"),
+            timeSource = FakeMonotonicTimeSource(TimeUnit.SECONDS.toNanos(1)),
         )
 
-        val result = recorder.recordPhase("stub-processing") {
+        val result: Result<Unit> = recorder.recordPhase("stub-processing") {
+            Result.Success(Unit)
         }
 
         val report = recorder.build()
@@ -36,6 +40,7 @@ internal class TransformReportRecorderTest {
         assertThat(report.phases).hasSize(1)
         assertThat(report.phases.single().name).isEqualTo("stub-processing")
         assertThat(report.phases.single().status).isEqualTo(ReportPhaseStatus.SUCCESS)
+        assertThat(report.phases.single().durationMillis).isEqualTo(1000)
         assertThat(report.diagnostics).hasSize(1)
         assertThat(report.diagnostics.single().severity).isEqualTo(ReportDiagnosticSeverity.WARNING)
         assertThat(report.diagnostics.single().message).isEqualTo("warning message")
@@ -55,10 +60,11 @@ internal class TransformReportRecorderTest {
                 )
             ),
             configurationWarnings = emptyList(),
+            timeSource = FakeMonotonicTimeSource(TimeUnit.SECONDS.toNanos(1)),
         )
 
-        val result = recorder.recordPhase("stub-processing") {
-            error("boom")
+        val result: Result<Unit> = recorder.recordPhase("stub-processing") {
+            Result.Failure<Unit>(IllegalStateException("boom"))
         }
 
         val report = recorder.build()
@@ -66,6 +72,7 @@ internal class TransformReportRecorderTest {
         assertThat(result.isFailure()).isTrue()
         assertThat(report.phases).hasSize(1)
         assertThat(report.phases.single().status).isEqualTo(ReportPhaseStatus.FAILURE)
+        assertThat(report.phases.single().durationMillis).isEqualTo(1000)
         assertThat(report.diagnostics).hasSize(1)
         assertThat(report.diagnostics.single().severity).isEqualTo(ReportDiagnosticSeverity.HARD_FAILURE)
         assertThat(report.diagnostics.single().affectedPhase).isEqualTo("stub-processing")

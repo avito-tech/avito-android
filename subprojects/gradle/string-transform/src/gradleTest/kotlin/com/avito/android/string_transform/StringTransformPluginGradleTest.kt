@@ -49,7 +49,7 @@ internal class StringTransformPluginGradleTest {
                 create("alpha") {
                     variant("release")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -66,15 +66,22 @@ internal class StringTransformPluginGradleTest {
             projectDir,
             "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
+
         assertThat(reportFile.exists()).isTrue()
-        val reportText = reportFile.readText()
-        assertThat(reportText).contains("\"pipeline\": \"alpha\"")
-        assertThat(reportText).contains("\"variant\": \"release\"")
-        assertThat(reportText).contains("\"artifact\"")
-        assertThat(reportText).contains("\"rules\"")
-        assertThat(reportText).contains("\"phases\"")
-        assertThat(reportText).contains("\"diagnostics\"")
-        assertThat(reportText).contains("\"moduleIdentity\": \":app\"")
+        assertSuccessfulReportText(
+            report = reportFile.readText(),
+            pipeline = "alpha",
+            variant = "release",
+            totalRules = 1,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 0,
+        )
+        assertThat(
+            File(
+                projectDir,
+                "app/build/outputs/transformStrings/alpha/release/apk/transformed-unsigned.apk"
+            ).exists()
+        ).isFalse()
     }
 
     @Test
@@ -97,7 +104,7 @@ internal class StringTransformPluginGradleTest {
                 create("alpha") {
                     variant("paidRelease")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -115,7 +122,14 @@ internal class StringTransformPluginGradleTest {
             "app/build/outputs/transformStrings/alpha/paidRelease/report/transform-report.json"
         )
         assertThat(reportFile.exists()).isTrue()
-        assertThat(reportFile.readText()).contains("\"variant\": \"paidRelease\"")
+        assertSuccessfulReportText(
+            report = reportFile.readText(),
+            pipeline = "alpha",
+            variant = "paidRelease",
+            totalRules = 1,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 0,
+        )
     }
 
     @Test
@@ -126,7 +140,7 @@ internal class StringTransformPluginGradleTest {
                 create("alpha") {
                     variant("release")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                         caseExpanded(
                             "token",
                             "value",
@@ -152,11 +166,14 @@ internal class StringTransformPluginGradleTest {
         )
 
         assertThat(reportFile.exists()).isTrue()
-        val reportText = reportFile.readText()
-        assertThat(reportText).contains("\"totalRules\": 4")
-        assertThat(reportText).contains("\"declarationCounts\"")
-        assertThat(reportText).contains("\"exact\": 1")
-        assertThat(reportText).contains("\"caseExpanded\": 1")
+        assertSuccessfulReportText(
+            report = reportFile.readText(),
+            pipeline = "alpha",
+            variant = "release",
+            totalRules = 4,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 1,
+        )
     }
 
     @Test
@@ -167,7 +184,7 @@ internal class StringTransformPluginGradleTest {
                 val pipeline = create("alpha") {
                     variant("release")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
                 pipeline.rules {
@@ -194,11 +211,14 @@ internal class StringTransformPluginGradleTest {
         )
 
         assertThat(reportFile.exists()).isTrue()
-        val reportText = reportFile.readText()
-        assertThat(reportText).contains("\"totalRules\": 3")
-        assertThat(reportText).contains("\"declarationCounts\"")
-        assertThat(reportText).contains("\"exact\": 1")
-        assertThat(reportText).contains("\"caseExpanded\": 1")
+        assertSuccessfulReportText(
+            report = reportFile.readText(),
+            pipeline = "alpha",
+            variant = "release",
+            totalRules = 3,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 1,
+        )
     }
 
     @Test
@@ -208,7 +228,7 @@ internal class StringTransformPluginGradleTest {
             transformStrings {
                 val pipeline = create("alpha") {
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
                 pipeline.variant("release")
@@ -228,7 +248,14 @@ internal class StringTransformPluginGradleTest {
         )
 
         assertThat(reportFile.exists()).isTrue()
-        assertThat(reportFile.readText()).contains("\"variant\": \"release\"")
+        assertSuccessfulReportText(
+            report = reportFile.readText(),
+            pipeline = "alpha",
+            variant = "release",
+            totalRules = 1,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 0,
+        )
     }
 
     @Test
@@ -239,7 +266,7 @@ internal class StringTransformPluginGradleTest {
                 create("alpha") {
                     variant("release")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
                 create("beta") {
@@ -273,8 +300,22 @@ internal class StringTransformPluginGradleTest {
 
         assertThat(alphaReport.exists()).isTrue()
         assertThat(betaReport.exists()).isTrue()
-        assertThat(alphaReport.readText()).contains("\"pipeline\": \"alpha\"")
-        assertThat(betaReport.readText()).contains("\"pipeline\": \"beta\"")
+        assertSuccessfulReportText(
+            report = alphaReport.readText(),
+            pipeline = "alpha",
+            variant = "release",
+            totalRules = 1,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 0,
+        )
+        assertSuccessfulReportText(
+            report = betaReport.readText(),
+            pipeline = "beta",
+            variant = "release",
+            totalRules = 1,
+            exactDeclarations = 0,
+            caseExpandedDeclarations = 1,
+        )
     }
 
     @Test
@@ -285,7 +326,7 @@ internal class StringTransformPluginGradleTest {
                 create("alpha") {
                     variant("release")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -314,7 +355,7 @@ internal class StringTransformPluginGradleTest {
             transformStrings {
                 create("invalid") {
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -391,7 +432,7 @@ internal class StringTransformPluginGradleTest {
                 create("bad name") {
                     variant("release")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -415,7 +456,7 @@ internal class StringTransformPluginGradleTest {
                 create("missing") {
                     variant("missingRelease")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -440,7 +481,7 @@ internal class StringTransformPluginGradleTest {
                 create("alpha") {
                     variant("release")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -466,7 +507,7 @@ internal class StringTransformPluginGradleTest {
                 create("missing") {
                     variant("missingRelease")
                     rules {
-                        exact("source", "target")
+                        exact("samplevalue", "changedvalue")
                     }
                 }
             }
@@ -513,11 +554,52 @@ internal class StringTransformPluginGradleTest {
             projectDir,
             "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
-        assertThat(reportFile.readText()).contains("\"severity\": \"WARNING\"")
-        assertThat(reportFile.readText()).contains("overlap and remain order-sensitive")
+        assertReportJsonMatches(
+            report = reportFile.readText(),
+            expectedRegex = literalJsonPattern("""
+            {
+                "pipeline": "alpha",
+                "variant": "release",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "release"
+                },
+                "rules": {
+                    "totalRules": 2,
+                    "declarationCounts": {
+                        "exact": 2,
+                        "caseExpanded": 0
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "variant-apk-outputs-observation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "input-apk-resolution",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    }
+                ],
+                "diagnostics": [
+                    {
+                        "severity": "WARNING",
+                        "message": "Rules 'token' and 'tok' overlap and remain order-sensitive.",
+                        "affectedPhase": null,
+                        "affectedPath": null
+                    }
+                ]
+            }
+            """),
+        )
     }
 
-    private fun givenProject(transformConfiguration: String) {
+    private fun givenProject(
+        transformConfiguration: String,
+        appMutator: File.(AndroidAppModule) -> Unit = {},
+    ) {
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
@@ -528,9 +610,63 @@ internal class StringTransformPluginGradleTest {
                     enableKotlinAndroidPlugin = false,
                     buildGradleExtra = transformConfiguration,
                     useKts = true,
+                    mutator = appMutator,
                 )
             ),
             useKts = true,
         ).generateIn(projectDir)
+    }
+
+    private fun assertSuccessfulReportText(
+        report: String,
+        pipeline: String,
+        variant: String,
+        totalRules: Int,
+        exactDeclarations: Int,
+        caseExpandedDeclarations: Int,
+    ) {
+        assertReportJsonMatches(
+            report = report,
+            expectedRegex = literalJsonPattern("""
+            {
+                "pipeline": "$pipeline",
+                "variant": "$variant",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "$variant"
+                },
+                "rules": {
+                    "totalRules": $totalRules,
+                    "declarationCounts": {
+                        "exact": $exactDeclarations,
+                        "caseExpanded": $caseExpandedDeclarations
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "variant-apk-outputs-observation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "input-apk-resolution",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    }
+                ],
+                "diagnostics": [
+                    
+                ]
+            }
+            """),
+        )
+    }
+
+    private fun assertReportJsonMatches(report: String, expectedRegex: String) {
+        assertThat(report.trim()).containsMatch(expectedRegex.trimIndent())
+    }
+
+    private fun literalJsonPattern(jsonBody: String): String {
+        return "(?s)^\\Q${jsonBody.trimIndent()}\\E$"
     }
 }

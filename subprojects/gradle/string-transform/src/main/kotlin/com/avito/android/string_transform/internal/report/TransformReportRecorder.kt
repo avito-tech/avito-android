@@ -7,6 +7,7 @@ internal class TransformReportRecorder(
     private val pipelineName: String,
     private val variantName: String,
     private val rules: TransformReport.Rules,
+    private val timeSource: MonotonicTimeSource = SystemMonotonicTimeSource,
     configurationWarnings: List<String>,
 ) {
 
@@ -22,29 +23,29 @@ internal class TransformReportRecorder(
         }
         .toMutableList()
 
-    fun recordPhase(name: String, action: () -> Unit): Result<Unit> {
-        val startNanos = System.nanoTime()
-        return Result.tryCatch {
-            action()
-        }.onSuccess {
-            phases += TransformReport.Phase(
-                name = name,
-                status = ReportPhaseStatus.SUCCESS,
-                durationMillis = elapsedMillis(startNanos),
-            )
-        }.onFailure { t ->
-            phases += TransformReport.Phase(
-                name = name,
-                status = ReportPhaseStatus.FAILURE,
-                durationMillis = elapsedMillis(startNanos),
-            )
-            diagnostics += TransformReport.Diagnostic(
-                severity = ReportDiagnosticSeverity.HARD_FAILURE,
-                message = t.message ?: "Execution failed",
-                affectedPhase = name,
-                affectedPath = null,
-            )
-        }
+    fun <T> recordPhase(name: String, action: () -> Result<T>): Result<T> {
+        val startNanos = timeSource.nowNanos()
+        return Result.tryCatch { action() }
+            .flatMap { it }
+            .onSuccess {
+                phases += TransformReport.Phase(
+                    name = name,
+                    status = ReportPhaseStatus.SUCCESS,
+                    durationMillis = elapsedMillis(startNanos),
+                )
+            }.onFailure { t ->
+                phases += TransformReport.Phase(
+                    name = name,
+                    status = ReportPhaseStatus.FAILURE,
+                    durationMillis = elapsedMillis(startNanos),
+                )
+                diagnostics += TransformReport.Diagnostic(
+                    severity = ReportDiagnosticSeverity.HARD_FAILURE,
+                    message = t.message ?: "Execution failed",
+                    affectedPhase = name,
+                    affectedPath = null,
+                )
+            }
     }
 
     fun addWarning(
@@ -75,6 +76,6 @@ internal class TransformReportRecorder(
     }
 
     private fun elapsedMillis(startNanos: Long): Long {
-        return (System.nanoTime() - startNanos) / 1_000_000
+        return (timeSource.nowNanos() - startNanos) / 1_000_000
     }
 }
