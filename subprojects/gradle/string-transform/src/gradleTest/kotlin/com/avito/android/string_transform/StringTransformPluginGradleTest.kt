@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.charset.StandardCharsets
+import java.util.zip.ZipFile
 
 internal class StringTransformPluginGradleTest {
 
@@ -42,7 +44,7 @@ internal class StringTransformPluginGradleTest {
     }
 
     @Test
-    fun `plugin tasks - register variant task and report - when exact release variant matches`() {
+    fun `plugin apk transform - rewrites content and renames path - when exact and case-expanded rules are declared`() {
         givenProject(
             """
             transformStrings {
@@ -50,11 +52,20 @@ internal class StringTransformPluginGradleTest {
                     variant("release")
                     rules {
                         exact("samplevalue", "changedvalue")
+                        caseExpanded(
+                            "markpart",
+                            "nextpart",
+                            com.avito.android.string_transform.GeneratedForm.LOWER,
+                        )
                     }
                 }
             }
             """.trimIndent()
-        )
+        ) { _ ->
+            val assetDir = resolve("src/main/assets/markpart")
+            assetDir.mkdirs()
+            assetDir.resolve("payload.txt").writeText("samplevalue markpart")
+        }
 
         gradlew(
             projectDir,
@@ -66,22 +77,69 @@ internal class StringTransformPluginGradleTest {
             projectDir,
             "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
         )
+        val outputApk = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/apk/transformed-unsigned.apk"
+        )
 
         assertThat(reportFile.exists()).isTrue()
+        assertThat(outputApk.exists()).isTrue()
         assertSuccessfulReportText(
             report = reportFile.readText(),
             pipeline = "alpha",
             variant = "release",
-            totalRules = 1,
+            totalRules = 2,
             exactDeclarations = 1,
-            caseExpandedDeclarations = 0,
+            caseExpandedDeclarations = 1,
         )
-        assertThat(
-            File(
-                projectDir,
-                "app/build/outputs/transformStrings/alpha/release/apk/transformed-unsigned.apk"
-            ).exists()
-        ).isFalse()
+        assertThat(apkHasEntry(outputApk, "assets/nextpart/payload.txt")).isTrue()
+        assertThat(apkHasEntry(outputApk, "assets/markpart/payload.txt")).isFalse()
+        assertThat(readApkEntry(outputApk, "assets/nextpart/payload.txt")).isEqualTo("changedvalue nextpart")
+    }
+
+    @Test
+    fun `plugin apk transform - rewrites resource identifiers and values in decoded values xml`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        ) { _ ->
+            val valuesDir = resolve("src/main/res/values")
+            valuesDir.mkdirs()
+            valuesDir.resolve("strings.xml").writeText(
+                """
+                <resources>
+                    <string name="samplevalue_title">hello samplevalue</string>
+                    <string-array name="samplevalue_labels">
+                        <item>samplevalue one</item>
+                    </string-array>
+                </resources>
+                """.trimIndent()
+            )
+        }
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val decodedValuesFile = File(
+            projectDir,
+            "app/build/tmp/transformStrings/alpha/release/local-state/decoded/res/values/strings.xml"
+        )
+
+        assertThat(decodedValuesFile.exists()).isTrue()
+        val decodedValues = decodedValuesFile.readText()
+        assertThat(decodedValues).contains("name=\"changedvalue_title\"")
+        assertThat(decodedValues).contains(">hello changedvalue<")
     }
 
     @Test
@@ -130,6 +188,55 @@ internal class StringTransformPluginGradleTest {
             exactDeclarations = 1,
             caseExpandedDeclarations = 0,
         )
+    }
+
+    @Test
+    fun `plugin apk transform - renames path - when exact rule matches file name`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        ) { _ ->
+            val assetsDir = resolve("src/main/assets")
+            assetsDir.mkdirs()
+            assetsDir.resolve("samplevalue.txt").writeText("samplevalue")
+        }
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val reportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
+        )
+        val outputApk = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/apk/transformed-unsigned.apk"
+        )
+
+        assertThat(reportFile.exists()).isTrue()
+        assertThat(outputApk.exists()).isTrue()
+        assertSuccessfulReportText(
+            report = reportFile.readText(),
+            pipeline = "alpha",
+            variant = "release",
+            totalRules = 1,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 0,
+        )
+        assertThat(apkHasEntry(outputApk, "assets/samplevalue.txt")).isFalse()
+        assertThat(apkHasEntry(outputApk, "assets/changedvalue.txt")).isTrue()
+        assertThat(readApkEntry(outputApk, "assets/changedvalue.txt")).isEqualTo("changedvalue")
     }
 
     @Test
@@ -581,6 +688,31 @@ internal class StringTransformPluginGradleTest {
                         "name": "input-apk-resolution",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-decode",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "content-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "rename",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-build",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "output-publication",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
                     }
                 ],
                 "diagnostics": [
@@ -588,6 +720,198 @@ internal class StringTransformPluginGradleTest {
                         "severity": "WARNING",
                         "message": "Rules 'token' and 'tok' overlap and remain order-sensitive.",
                         "affectedPhase": null,
+                        "affectedPath": null
+                    }
+                ]
+            }
+            """),
+        )
+    }
+
+    @Test
+    fun `plugin warnings - record diagnostic - when unsupported so file matches replacement literal`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        ) { _ ->
+            val nativeLibDir = resolve("src/main/jniLibs/arm64-v8a")
+            nativeLibDir.mkdirs()
+            nativeLibDir.resolve("libnative.so").writeBytes("prefix samplevalue suffix".toByteArray())
+        }
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val reportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
+        )
+        assertReportJsonMatches(
+            report = reportFile.readText(),
+            expectedRegex = literalJsonPattern("""
+            {
+                "pipeline": "alpha",
+                "variant": "release",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "release"
+                },
+                "rules": {
+                    "totalRules": 1,
+                    "declarationCounts": {
+                        "exact": 1,
+                        "caseExpanded": 0
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "variant-apk-outputs-observation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "input-apk-resolution",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-decode",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "content-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "rename",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-build",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "output-publication",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    }
+                ],
+                "diagnostics": [
+                    {
+                        "severity": "WARNING",
+                        "message": "Skipped unsupported binary file during content transform because '.so' files are not supported for content transform yet. Matched literals: samplevalue",
+                        "affectedPhase": "content-transform",
+                        "affectedPath": "lib/arm64-v8a/libnative.so"
+                    }
+                ]
+            }
+            """),
+        )
+    }
+
+    @Test
+    fun `plugin warnings - record diagnostic - when rename rule target contains unsupported filename characters`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("markpart", "nextpart/name")
+                    }
+                }
+            }
+            """.trimIndent()
+        ) { _ ->
+            val assetsDir = resolve("src/main/assets")
+            assetsDir.mkdirs()
+            assetsDir.resolve("payload.txt").writeText("unchanged")
+        }
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val reportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/report/transform-report.json"
+        )
+        assertReportJsonMatches(
+            report = reportFile.readText(),
+            expectedRegex = literalJsonPattern("""
+            {
+                "pipeline": "alpha",
+                "variant": "release",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "release"
+                },
+                "rules": {
+                    "totalRules": 1,
+                    "declarationCounts": {
+                        "exact": 1,
+                        "caseExpanded": 0
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "variant-apk-outputs-observation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "input-apk-resolution",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-decode",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "content-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "rename",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-build",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "output-publication",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    }
+                ],
+                "diagnostics": [
+                    {
+                        "severity": "WARNING",
+                        "message": "Rename rule 'markpart' -> 'nextpart/name' is ignored for paths because target contains unsupported filename characters.",
+                        "affectedPhase": "rename",
                         "affectedPath": null
                     }
                 ]
@@ -652,6 +976,31 @@ internal class StringTransformPluginGradleTest {
                         "name": "input-apk-resolution",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-decode",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "content-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "rename",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-build",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "output-publication",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
                     }
                 ],
                 "diagnostics": [
@@ -668,5 +1017,22 @@ internal class StringTransformPluginGradleTest {
 
     private fun literalJsonPattern(jsonBody: String): String {
         return "(?s)^\\Q${jsonBody.trimIndent()}\\E$"
+    }
+
+    private fun apkHasEntry(apkFile: File, path: String): Boolean {
+        ZipFile(apkFile).use { zip ->
+            return zip.getEntry(path) != null
+        }
+    }
+
+    private fun readApkEntry(apkFile: File, path: String): String {
+        ZipFile(apkFile).use { zip ->
+            val entry = checkNotNull(zip.getEntry(path)) {
+                "APK entry not found: $path"
+            }
+            return zip.getInputStream(entry)
+                .bufferedReader(StandardCharsets.UTF_8)
+                .use { it.readText() }
+        }
     }
 }

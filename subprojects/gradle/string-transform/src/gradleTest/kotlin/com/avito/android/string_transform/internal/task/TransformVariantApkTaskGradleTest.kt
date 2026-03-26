@@ -2,6 +2,8 @@ package com.avito.android.string_transform.internal.task
 
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
+import org.gradle.jvm.toolchain.JavaInstallationMetadata
+import org.gradle.jvm.toolchain.JavaLauncher
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -18,52 +20,6 @@ internal class TransformVariantApkTaskGradleTest {
         project = ProjectBuilder.builder()
             .withProjectDir(dir)
             .build()
-    }
-
-    @Test
-    fun `apk task - writes successful report - when exactly one apk candidate is present`() {
-        val task = taskUnderTest()
-        val apkInputDir = apkInputDirectory()
-        apkInputDir.mkdirs()
-        File(apkInputDir, "app-release.apk").writeText("stub apk")
-
-        task.transform()
-
-        assertReportJsonMatches(
-            reportFile().readText(),
-            literalJsonPattern("""
-            {
-                "pipeline": "alpha",
-                "variant": "release",
-                "artifact": {
-                    "moduleIdentity": ":app",
-                    "variantIdentity": "release"
-                },
-                "rules": {
-                    "totalRules": 1,
-                    "declarationCounts": {
-                        "exact": 1,
-                        "caseExpanded": 0
-                    }
-                },
-                "phases": [
-                    {
-                        "name": "variant-apk-outputs-observation",
-                        "status": "SUCCESS",
-                        "durationMillis": \E\d+\Q
-                    },
-                    {
-                        "name": "input-apk-resolution",
-                        "status": "SUCCESS",
-                        "durationMillis": \E\d+\Q
-                    }
-                ],
-                "diagnostics": [
-                    
-                ]
-            }
-            """),
-        )
     }
 
     @Test
@@ -222,6 +178,67 @@ internal class TransformVariantApkTaskGradleTest {
         )
     }
 
+    @Test
+    fun `apk task - writes failure report and rethrows - when apktool jar is unavailable`() {
+        val task = taskUnderTest().also {
+            it.apktoolClasspath.from(project.layout.projectDirectory.file("missing-apktool.jar"))
+        }
+        val apkInputDir = apkInputDirectory()
+        apkInputDir.mkdirs()
+        File(apkInputDir, "app-release.apk").writeText("stub apk")
+
+        val error = assertThrows(IllegalStateException::class.java) {
+            task.transform()
+        }
+
+        assertThat(error.message).contains("apktool jar is not available")
+        assertReportJsonMatches(
+            reportFile().readText(),
+            literalJsonPattern("""
+            {
+                "pipeline": "alpha",
+                "variant": "release",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "release"
+                },
+                "rules": {
+                    "totalRules": 1,
+                    "declarationCounts": {
+                        "exact": 1,
+                        "caseExpanded": 0
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "variant-apk-outputs-observation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "input-apk-resolution",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apktool-decode",
+                        "status": "FAILURE",
+                        "durationMillis": \E\d+\Q
+                    }
+                ],
+                "diagnostics": [
+                    {
+                        "severity": "HARD_FAILURE",
+                        "message": "apktool jar is not available: ${project.projectDir.path}/missing-apktool.jar",
+                        "affectedPhase": "apktool-decode",
+                        "affectedPath": null
+                    }
+                ]
+            }
+            """)
+        )
+    }
+
     private fun taskUnderTest(): TransformVariantApkTask {
         val task = project.tasks.register(
             "transformStringsAlphaRelease",
@@ -236,7 +253,15 @@ internal class TransformVariantApkTaskGradleTest {
             exactRuleCount.set(1)
             caseExpandedRuleCount.set(0)
             configurationWarnings.set(emptyList())
+            rules.set(emptyList())
+            javaLauncher.set(fakeJavaLauncher())
             apkDirectory.set(project.layout.buildDirectory.dir("apk-input/release"))
+            localStateDirectory.set(project.layout.buildDirectory.dir("tmp/transformStrings/alpha/release/local-state"))
+            outputApkFile.set(
+                project.layout.buildDirectory.file(
+                    "outputs/transformStrings/alpha/release/apk/transformed-unsigned.apk"
+                )
+            )
             reportFile.set(
                 project.layout.buildDirectory.file(
                     "outputs/transformStrings/alpha/release/report/transform-report.json"
@@ -245,6 +270,16 @@ internal class TransformVariantApkTaskGradleTest {
         }
 
         return task
+    }
+
+    private fun fakeJavaLauncher(): JavaLauncher {
+        return object : JavaLauncher {
+            override fun getExecutablePath() = project.layout.projectDirectory.file("fake-java")
+
+            override fun getMetadata(): JavaInstallationMetadata {
+                throw UnsupportedOperationException("metadata is not used in this test")
+            }
+        }
     }
 
     private fun apkInputDirectory(): File {
