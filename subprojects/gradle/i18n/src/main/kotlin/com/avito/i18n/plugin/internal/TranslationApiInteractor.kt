@@ -1,5 +1,7 @@
 package com.avito.i18n.plugin.internal
 
+import com.avito.android.Problem
+import com.avito.android.asRuntimeException
 import com.avito.i18n.plugin.dto.TranslatedTextUnit
 import com.avito.i18n.plugin.dto.TranslatedTextWithLang
 import com.avito.i18n.plugin.dto.TranslationInputText
@@ -12,7 +14,6 @@ import com.avito.i18n.plugin.xml.BaseElement
 import com.avito.i18n.plugin.xml.PluralsElement
 import com.avito.i18n.plugin.xml.StringElement
 import com.avito.i18n.plugin.xml.StringsXmlFile
-import org.gradle.api.GradleException
 
 internal class TranslationApiInteractor(
     private val namespace: String,
@@ -25,12 +26,12 @@ internal class TranslationApiInteractor(
         sourceStringsXmlFile: StringsXmlFile,
         targetStringsXmlFile: StringsXmlFile,
         languageTag: String
-    ): List<TranslatedTextUnit> {
+    ): Result<List<TranslatedTextUnit>> {
         val request = createRequest(
             sourceStringsXmlFile = sourceStringsXmlFile,
             targetStringsXmlFile = targetStringsXmlFile,
             languageTag = languageTag
-        ) ?: return emptyList()
+        ) ?: return Result.success(emptyList())
 
         val (nonEmptyTextUnits, emptyTextUnits) = request.textUnits.partition { inputText ->
             when (val text = inputText.text) {
@@ -40,25 +41,30 @@ internal class TranslationApiInteractor(
         }
 
         if (nonEmptyTextUnits.isEmpty()) {
-            return emptyTextUnits.toTranslatedTextUnits(languageTag)
+            return Result.success(emptyTextUnits.toTranslatedTextUnits(languageTag))
         }
 
         val filteredRequest = request.copy(textUnits = nonEmptyTextUnits)
 
-        val response = service.translate(filteredRequest)
+        return service.translate(filteredRequest).mapCatching { response ->
+            if (response.result.status.statusCode != STATUS_CODE_OK) {
+                throw Problem.Builder(
+                    shortDescription = "Translation API returned an error",
+                    context = "Translating to '$languageTag' in component '$componentName'"
+                )
+                    .because(
+                        "Response status: ${response.result.status.statusCode}, " +
+                            "message: ${response.result.status.message}"
+                    )
+                    .build()
+                    .asRuntimeException()
+            }
 
-        if (response.result.status.statusCode != STATUS_CODE_OK) {
-            throw GradleException(
-                "Response error, status = ${response.result.status.statusCode}; " +
-                    "message = ${response.result.status.message}"
-            )
+            val validTextUnits = getFilteredTextUnits(response)
+            val emptyUnitsAsTranslated = emptyTextUnits.toTranslatedTextUnits(languageTag)
+
+            emptyUnitsAsTranslated + validTextUnits
         }
-
-        val validTextUnits = getFilteredTextUnits(response)
-
-        val emptyUnitsAsTranslated = emptyTextUnits.toTranslatedTextUnits(languageTag)
-
-        return emptyUnitsAsTranslated + validTextUnits
     }
 
     private fun List<TranslationInputText>.toTranslatedTextUnits(

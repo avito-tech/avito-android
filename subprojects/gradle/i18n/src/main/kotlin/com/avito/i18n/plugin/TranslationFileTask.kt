@@ -1,10 +1,12 @@
 package com.avito.i18n.plugin
 
-import com.avito.i18n.plugin.internal.OldStringsFileTranslator
+import com.avito.android.Problem
+import com.avito.android.asPlainText
 import com.avito.i18n.plugin.internal.StringsFileTranslator
 import com.avito.i18n.plugin.internal.TranslationApiInteractor
 import com.avito.i18n.plugin.service.LocalizationService
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
@@ -31,36 +33,34 @@ internal abstract class TranslationFileTask : DefaultTask() {
     @get:Input
     abstract val componentName: Property<String>
 
-    @get:Input
-    abstract val useNewApi: Property<Boolean>
-
     @get:Internal
     abstract val service: Property<LocalizationService>
 
     @TaskAction
     fun doTranslateFile() {
         defaultStringsFiles.forEach { stringsFile ->
-            if (useNewApi.get()) {
-                StringsFileTranslator(
-                    defaultStringsFile = stringsFile,
-                    locales = locales.get(),
-                    apiInteractor = TranslationApiInteractor(
-                        namespace = namespace.get(),
-                        sourceLocale = sourceLocale.get(),
-                        componentName = componentName.get(),
-                        service = service.get()
-                    )
-                ).translate()
-            } else {
-                OldStringsFileTranslator(
-                    defaultStringsFile = stringsFile,
-                    locales = locales.get(),
+            StringsFileTranslator(
+                defaultStringsFile = stringsFile,
+                locales = locales.get(),
+                apiInteractor = TranslationApiInteractor(
                     namespace = namespace.get(),
                     sourceLocale = sourceLocale.get(),
                     componentName = componentName.get(),
                     service = service.get()
-                ).translate()
-            }
+                )
+            ).translate()
+                .getOrElse { e ->
+                    throw GradleException(
+                        Problem.Builder(
+                            shortDescription = "Translation failed for '${stringsFile.name}'",
+                            context = "Task '$name' translating ${stringsFile.path}"
+                        )
+                            .throwable(e)
+                            .build()
+                            .asPlainText(),
+                        e
+                    )
+                }
         }
     }
 }

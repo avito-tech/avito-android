@@ -24,7 +24,7 @@ public abstract class TranslationExtension(
 
     public val useTls: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
-    public val useNewApi: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
+    public val useNewApi: Property<Boolean> = objectFactory.property<Boolean>().convention(true)
 
     public val flavorNamesToTranslate: ListProperty<String> =
         objectFactory.listProperty<String>().convention(emptyList<String>())

@@ -3,8 +3,6 @@ package com.avito.i18n.plugin.service
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.android.tls.TlsCredentialsService
 import com.avito.i18n.plugin.TranslationExtension
-import com.avito.i18n.plugin.dto.OldTranslationRequest
-import com.avito.i18n.plugin.dto.OldTranslationResponse
 import com.avito.i18n.plugin.dto.TranslationRequest
 import com.avito.i18n.plugin.dto.TranslationResponse
 import org.gradle.api.Project
@@ -31,15 +29,9 @@ internal abstract class LocalizationService : BuildService<LocalizationService.P
         )
     }
 
-    internal fun translateOld(
-        file: OldTranslationRequest,
-    ): OldTranslationResponse {
-        return serviceApi.translateWithDeprecatedApi(file)
-    }
-
     internal fun translate(
         request: TranslationRequest
-    ): TranslationResponse {
+    ): Result<TranslationResponse> {
         return serviceApi.translateWithNewApi(request)
     }
 

@@ -269,7 +269,6 @@ class TranslationFileTaskTest {
                             serviceUrl = "${mockWebServer.url("/")}"
                             translateUrlPath = "$PATH"
                             useTls = false
-                            useNewApi = true
                             ${createTranslationExtensionString(flavors)}
                         }
                         

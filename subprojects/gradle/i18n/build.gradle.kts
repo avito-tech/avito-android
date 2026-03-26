@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
+    implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:mtls"))

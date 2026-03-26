@@ -1,8 +1,9 @@
 package com.avito.i18n.plugin.internal
 
+import com.avito.android.Problem
+import com.avito.android.asRuntimeException
 import com.avito.i18n.plugin.getStringsFile
 import com.avito.i18n.plugin.xml.StringsXmlFile
-import org.gradle.api.GradleException
 import org.xml.sax.InputSource
 import java.io.File
 import java.io.FileReader
@@ -15,32 +16,52 @@ internal class StringsFileTranslator(
     private val apiInteractor: TranslationApiInteractor,
 ) {
 
-    fun translate() {
+    fun translate(): Result<Unit> {
         val resPath = defaultStringsFile.parentFile.parentFile
-        val sourceStringXmlFile = try {
+        val sourceStringXmlFile = runCatching {
             StringsXmlFile(InputSource(FileReader(defaultStringsFile)))
-        } catch (e: Exception) {
-            throw GradleException("Error parsing file: ${defaultStringsFile.name}", e)
+        }.getOrElse { e ->
+            return Result.failure(
+                Problem.Builder(
+                    shortDescription = "Failed to parse source strings file",
+                    context = "Parsing '${defaultStringsFile.name}' at ${defaultStringsFile.path}"
+                )
+                    .because(e.message ?: "Unknown error")
+                    .throwable(e)
+                    .build()
+                    .asRuntimeException()
+            )
         }
 
         for (languageTag in locales) {
             val locale = Locale.forLanguageTag(languageTag)
             val targetFile = File(resPath, locale.getStringsFile())
-            val targetStringXmlFile = try {
+            val targetStringXmlFile = runCatching {
                 if (targetFile.exists()) {
                     StringsXmlFile(InputSource(FileReader(targetFile)))
                 } else {
                     StringsXmlFile()
                 }
-            } catch (e: Exception) {
-                throw GradleException("Error parsing file: ${defaultStringsFile.name}", e)
+            }.getOrElse { e ->
+                return Result.failure(
+                    Problem.Builder(
+                        shortDescription = "Failed to parse target strings file",
+                        context = "Parsing '${targetFile.name}' for locale '$languageTag' at ${targetFile.path}"
+                    )
+                        .because(e.message ?: "Unknown error")
+                        .throwable(e)
+                        .build()
+                        .asRuntimeException()
+                )
             }
 
             val translatedTextUnits = apiInteractor.getTranslatedTextUnitsForLocale(
                 sourceStringsXmlFile = sourceStringXmlFile,
                 targetStringsXmlFile = targetStringXmlFile,
                 languageTag = languageTag
-            )
+            ).getOrElse { e ->
+                return Result.failure(e)
+            }
 
             val updatedTargetFile = StringsXmlFileHelper.updateTargetWithTranslations(
                 sourceStringsXmlFile = sourceStringXmlFile,
@@ -56,5 +77,6 @@ internal class StringsFileTranslator(
             }
             updatedTargetFile.write(StreamResult(targetFile))
         }
+        return Result.success(Unit)
     }
 }

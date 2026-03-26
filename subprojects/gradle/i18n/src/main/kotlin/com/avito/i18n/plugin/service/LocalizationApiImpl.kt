@@ -1,9 +1,9 @@
 package com.avito.i18n.plugin.service
 
+import com.avito.android.Problem
+import com.avito.android.asRuntimeException
 import com.avito.android.tls.TlsCredentialsService
 import com.avito.android.tls.manager.TlsManager
-import com.avito.i18n.plugin.dto.OldTranslationRequest
-import com.avito.i18n.plugin.dto.OldTranslationResponse
 import com.avito.i18n.plugin.dto.TranslationRequest
 import com.avito.i18n.plugin.dto.TranslationResponse
 import io.ktor.client.HttpClient
@@ -23,7 +23,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import org.gradle.api.GradleException
 import java.util.concurrent.TimeUnit
 
 internal class LocalizationApiImpl(
@@ -54,30 +53,24 @@ internal class LocalizationApiImpl(
         }
     }
 
-    override fun translateWithDeprecatedApi(request: OldTranslationRequest): OldTranslationResponse {
-        return runBlocking {
-            val response = client.post {
-                url(path = translateUrlPath)
-                setBody(request)
-            }
-            if (response.status == HttpStatusCode.OK) {
-                response.body()
-            } else {
-                throw GradleException("Error while processing request:  <-- ${response.status} ${response.request.url}")
-            }
-        }
-    }
-
-    override fun translateWithNewApi(request: TranslationRequest): TranslationResponse {
-        return runBlocking {
-            val response = client.post {
-                url(path = translateUrlPath)
-                setBody(request)
-            }
-            if (response.status == HttpStatusCode.OK) {
-                response.body()
-            } else {
-                throw GradleException("Error while processing request:  <-- ${response.status} ${response.request.url}")
+    override fun translateWithNewApi(request: TranslationRequest): Result<TranslationResponse> {
+        return runCatching {
+            runBlocking {
+                val response = client.post {
+                    url(path = translateUrlPath)
+                    setBody(request)
+                }
+                if (response.status == HttpStatusCode.OK) {
+                    response.body()
+                } else {
+                    throw Problem.Builder(
+                        shortDescription = "Translation API request failed",
+                        context = "POST ${response.request.url}"
+                    )
+                        .because("Server responded with HTTP ${response.status}")
+                        .build()
+                        .asRuntimeException()
+                }
             }
         }
     }
