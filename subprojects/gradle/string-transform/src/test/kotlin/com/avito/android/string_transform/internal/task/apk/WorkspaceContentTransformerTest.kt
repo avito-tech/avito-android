@@ -15,7 +15,9 @@ internal class WorkspaceContentTransformerTest {
     )
 
     @Test
-    fun `transform - rewrites asset text file - when content contains matching literals`(@TempDir dir: File) {
+    fun `transform - rewrites asset text file - when content contains matching literals`(
+        @TempDir dir: File,
+    ) {
         val assetFile = writeTextFile(
             dir = dir,
             relativePath = "assets/payload.txt",
@@ -32,7 +34,9 @@ internal class WorkspaceContentTransformerTest {
     }
 
     @Test
-    fun `transform - rewrites smali file - when content contains matching literals`(@TempDir dir: File) {
+    fun `transform - rewrites smali file - when content contains matching literals`(
+        @TempDir dir: File,
+    ) {
         val smaliFile = writeTextFile(
             dir = dir,
             relativePath = "smali/com/example/SomeClass.smali",
@@ -49,7 +53,9 @@ internal class WorkspaceContentTransformerTest {
     }
 
     @Test
-    fun `transform - rewrites manifest file - when content contains matching literals`(@TempDir dir: File) {
+    fun `transform - rewrites manifest file - when content contains matching literals`(
+        @TempDir dir: File,
+    ) {
         val manifestFile = writeTextFile(
             dir = dir,
             relativePath = "AndroidManifest.xml",

@@ -84,7 +84,7 @@ internal class StringTransformPluginGradleTest {
 
         assertThat(reportFile.exists()).isTrue()
         assertThat(outputApk.exists()).isTrue()
-        assertSuccessfulReportText(
+        assertApkSuccessfulReportText(
             report = reportFile.readText(),
             pipeline = "alpha",
             variant = "release",
@@ -175,13 +175,26 @@ internal class StringTransformPluginGradleTest {
             useTestFixturesClasspath = true,
         ).assertThat().buildSuccessful()
 
-        val reportFile = File(
+        val apkReportFile = File(
             projectDir,
             "app/build/outputs/transformStrings/alpha/paidRelease/report/transform-report.json"
         )
-        assertThat(reportFile.exists()).isTrue()
-        assertSuccessfulReportText(
-            report = reportFile.readText(),
+        val aabReportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/paidRelease/aab/report/transform-report.json"
+        )
+        assertThat(apkReportFile.exists()).isTrue()
+        assertThat(aabReportFile.exists()).isTrue()
+        assertApkSuccessfulReportText(
+            report = apkReportFile.readText(),
+            pipeline = "alpha",
+            variant = "paidRelease",
+            totalRules = 1,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 0,
+        )
+        assertAabSuccessfulReportText(
+            report = aabReportFile.readText(),
             pipeline = "alpha",
             variant = "paidRelease",
             totalRules = 1,
@@ -226,7 +239,7 @@ internal class StringTransformPluginGradleTest {
 
         assertThat(reportFile.exists()).isTrue()
         assertThat(outputApk.exists()).isTrue()
-        assertSuccessfulReportText(
+        assertApkSuccessfulReportText(
             report = reportFile.readText(),
             pipeline = "alpha",
             variant = "release",
@@ -273,7 +286,7 @@ internal class StringTransformPluginGradleTest {
         )
 
         assertThat(reportFile.exists()).isTrue()
-        assertSuccessfulReportText(
+        assertApkSuccessfulReportText(
             report = reportFile.readText(),
             pipeline = "alpha",
             variant = "release",
@@ -318,7 +331,7 @@ internal class StringTransformPluginGradleTest {
         )
 
         assertThat(reportFile.exists()).isTrue()
-        assertSuccessfulReportText(
+        assertApkSuccessfulReportText(
             report = reportFile.readText(),
             pipeline = "alpha",
             variant = "release",
@@ -355,7 +368,7 @@ internal class StringTransformPluginGradleTest {
         )
 
         assertThat(reportFile.exists()).isTrue()
-        assertSuccessfulReportText(
+        assertApkSuccessfulReportText(
             report = reportFile.readText(),
             pipeline = "alpha",
             variant = "release",
@@ -407,7 +420,7 @@ internal class StringTransformPluginGradleTest {
 
         assertThat(alphaReport.exists()).isTrue()
         assertThat(betaReport.exists()).isTrue()
-        assertSuccessfulReportText(
+        assertApkSuccessfulReportText(
             report = alphaReport.readText(),
             pipeline = "alpha",
             variant = "release",
@@ -415,7 +428,7 @@ internal class StringTransformPluginGradleTest {
             exactDeclarations = 1,
             caseExpandedDeclarations = 0,
         )
-        assertSuccessfulReportText(
+        assertApkSuccessfulReportText(
             report = betaReport.readText(),
             pipeline = "beta",
             variant = "release",
@@ -603,7 +616,9 @@ internal class StringTransformPluginGradleTest {
         ).output
 
         assertThat(output).contains("transformStringsAlphaRelease")
+        assertThat(output).contains("transformStringsAlphaReleaseBundle")
         assertThat(output).doesNotContain("transformStringsAlphaDebug")
+        assertThat(output).doesNotContain("transformStringsAlphaDebugBundle")
     }
 
     @Test
@@ -941,7 +956,7 @@ internal class StringTransformPluginGradleTest {
         ).generateIn(projectDir)
     }
 
-    private fun assertSuccessfulReportText(
+    private fun assertApkSuccessfulReportText(
         report: String,
         pipeline: String,
         variant: String,
@@ -1006,6 +1021,49 @@ internal class StringTransformPluginGradleTest {
                 "diagnostics": [
                     
                 ]
+            }
+            """),
+        )
+    }
+
+    private fun assertAabSuccessfulReportText(
+        report: String,
+        pipeline: String,
+        variant: String,
+        totalRules: Int,
+        exactDeclarations: Int,
+        caseExpandedDeclarations: Int,
+    ) {
+        assertReportJsonMatches(
+            report = report,
+            expectedRegex = literalJsonPattern("""
+            {
+                "pipeline": "$pipeline",
+                "variant": "$variant",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "$variant"
+                },
+                "rules": {
+                    "totalRules": $totalRules,
+                    "declarationCounts": {
+                        "exact": $exactDeclarations,
+                        "caseExpanded": $caseExpandedDeclarations
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "variant-aab-artifact-observation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "input-aab-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    }
+                ],
+                "diagnostics": [\E\s*\Q]
             }
             """),
         )
