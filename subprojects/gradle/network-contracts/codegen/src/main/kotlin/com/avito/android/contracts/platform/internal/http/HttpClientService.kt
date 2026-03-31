@@ -129,10 +129,12 @@ public abstract class HttpClientService : BuildService<HttpClientService.Params>
             project: Project,
             variantName: String? = null,
         ): Provider<HttpClientService> {
-            return project.gradle.sharedServices.registerIfAbsent(
-                HttpClientService::class.java.name,
-                HttpClientService::class.java,
-            ) { service ->
+            val name = if (variantName.isNullOrBlank()) {
+                HttpClientService::class.java.simpleName
+            } else {
+                "${HttpClientService::class.java.simpleName}_$variantName"
+            }
+            return project.gradle.sharedServices.registerIfAbsent(name, HttpClientService::class.java) { service ->
                 val rootExtension = project.rootProject.extensions.getByType<ContractsRootExtension>()
                 val networkConfiguration = variantName?.let { rootExtension.networks.findByName(variantName) }
                     ?: rootExtension.defaultNetwork

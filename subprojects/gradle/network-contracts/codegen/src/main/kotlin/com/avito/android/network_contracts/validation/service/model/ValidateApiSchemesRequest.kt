@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class ValidateApiSchemesRequest(
     val appName: String,
-    val version: String,
     val clientSchema: Schema
 ) {
 

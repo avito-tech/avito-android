@@ -6,7 +6,6 @@ import com.avito.android.contracts.platform.scheme.collect.ApiSchemesMetadata
 import com.avito.android.contracts.platform.scheme.validation.analyzer.diagnostic.NetworkContractsDiagnostic
 import com.avito.android.contracts.platform.scheme.validation.analyzer.diagnostic.NetworkContractsIssue
 import com.avito.android.contracts.platform.scheme.validation.data.ValidationApiSchemesService
-import com.avito.android.contracts.platform.shared.extractSchemesVersionFromBranch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -25,9 +24,6 @@ public abstract class RemoteCompatibilityDiagnosticRule @Inject constructor() : 
     @get:InputFiles
     @get:Optional
     public abstract val schemes: ConfigurableFileCollection
-
-    @get:Input
-    public abstract val branchName: Property<String>
 
     @get:Input
     public abstract val modulePath: Property<String>
@@ -76,7 +72,6 @@ public abstract class RemoteCompatibilityDiagnosticRule @Inject constructor() : 
         runBlocking {
             val result = runCatching {
                 validationService.validate(
-                    version = extractSchemesVersionFromBranch(branchName.get()),
                     schemes = apiSchemes,
                 )
             }

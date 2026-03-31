@@ -14,7 +14,6 @@ import com.avito.android.contracts.platform.scheme.validation.analyzer.rules.Emp
 import com.avito.android.contracts.platform.scheme.validation.analyzer.rules.RemoteCompatibilityDiagnosticRule
 import com.avito.android.network_contracts.NetworkContractsModulePlugin.Companion.VARIANT_NAME
 import com.avito.android.network_contracts.validation.service.ValidationApiSchemesServiceImpl
-import com.avito.git.gitStateProvider
 import com.avito.kotlin.dsl.toOptional
 import com.avito.kotlin.dsl.withType
 import org.gradle.api.Plugin
@@ -127,7 +126,6 @@ private fun Project.configureNetworkContractsValidationTasks(
             configuration.dependsOn.add("local")
 
             configuration.registerRule("remote", RemoteCompatibilityDiagnosticRule::class.java) {
-                it.branchName.set(project.gitStateProvider().map { it.currentBranch.name })
                 it.validationService.set(httpClient.map { ValidationApiSchemesServiceImpl(it.buildClient()) })
 
                 it.analyticsTrackerService.set(NetworkContractsAnalyticsService.provideService(project))

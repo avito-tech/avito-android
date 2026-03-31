@@ -27,13 +27,11 @@ internal class ValidationApiSchemesServiceImpl(
 ) : ValidationApiSchemesService {
 
     override suspend fun validate(
-        version: String,
         schemes: List<ApiSchemesMetadata>,
         ): List<RemoteValidationError> = supervisorScope {
         val requests = ApiSchemesMapper.mapSchemesToRequest(schemes) { projectName, projectSchemes ->
             ValidateApiSchemesRequest(
                 appName = projectName,
-                version = version,
                 clientSchema = ValidateApiSchemesRequest.Schema(projectSchemes.toMap())
             )
         }

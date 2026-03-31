@@ -4,5 +4,5 @@ import com.avito.android.contracts.platform.scheme.collect.ApiSchemesMetadata
 
 public fun interface ValidationApiSchemesService {
 
-    public suspend fun validate(version: String, schemes: List<ApiSchemesMetadata>): List<RemoteValidationError>
+    public suspend fun validate(schemes: List<ApiSchemesMetadata>): List<RemoteValidationError>
 }
