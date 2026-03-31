@@ -23,7 +23,7 @@ import kotlinx.coroutines.supervisorScope
 import org.gradle.api.GradleException
 
 internal class ValidationApiSchemesServiceImpl(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) : ValidationApiSchemesService {
 
     override suspend fun validate(
@@ -58,14 +58,14 @@ internal class ValidationApiSchemesServiceImpl(
         val details = "${response.status} ${response.request.url} ${response.bodyAsText()}"
         return GradleException("Error while processing request:  <-- $details")
     }
-}
 
-private suspend fun HttpClient.validateSchemes(
-    request: ValidateApiSchemesRequest
-): HttpResponse {
-    return post {
-        url(path = "service-api-composition-storage/validateSchema/")
-        contentType(ContentType.Application.Json)
-        setBody(request)
+    private suspend fun HttpClient.validateSchemes(
+        request: ValidateApiSchemesRequest
+    ): HttpResponse {
+        return post {
+            url("validateSchema/")
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
     }
 }

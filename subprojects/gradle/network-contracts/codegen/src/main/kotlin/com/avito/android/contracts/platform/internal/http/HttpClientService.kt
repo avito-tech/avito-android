@@ -2,6 +2,7 @@ package com.avito.android.contracts.platform.internal.http
 
 import com.avito.android.contracts.platform.extension.ContractsRootExtension
 import com.avito.android.contracts.platform.extension.configurations.network.Timeouts
+import com.avito.android.contracts.platform.extension.defaultNetwork
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.android.tls.TlsCredentialsService
 import com.avito.android.tls.manager.TlsManager
@@ -17,6 +18,8 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.path
+import io.ktor.http.takeFrom
 import io.ktor.serialization.kotlinx.json.json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -35,6 +38,7 @@ public abstract class HttpClientService : BuildService<HttpClientService.Params>
 
     public interface Params : BuildServiceParameters {
         public val serviceUrl: Property<String>
+        public val serviceName: Property<String>
         public val tlsCredentialsService: Property<TlsCredentialsService>
         public val useTls: Property<Boolean>
         public val timeouts: Property<Timeouts>
@@ -83,7 +87,12 @@ public abstract class HttpClientService : BuildService<HttpClientService.Params>
                 }
             }
 
-            defaultRequest { url(serviceUrl.get()) }
+            defaultRequest {
+                url {
+                    takeFrom(serviceUrl.get())
+                    serviceName.orNull?.let { path("$it/") }
+                }
+            }
             builder.invoke(this)
 
             engine {
@@ -109,21 +118,45 @@ public abstract class HttpClientService : BuildService<HttpClientService.Params>
             return registerService(project)
         }
 
+        public fun provideHttpClientService(
+            project: Project,
+            variantName: String,
+        ): Provider<HttpClientService> {
+            return registerService(project, variantName)
+        }
+
         private fun registerService(
             project: Project,
+            variantName: String? = null,
         ): Provider<HttpClientService> {
             return project.gradle.sharedServices.registerIfAbsent(
                 HttpClientService::class.java.name,
                 HttpClientService::class.java,
             ) { service ->
                 val rootExtension = project.rootProject.extensions.getByType<ContractsRootExtension>()
-                val networkConfiguration = rootExtension.network
+                val networkConfiguration = variantName?.let { rootExtension.networks.findByName(variantName) }
+                    ?: rootExtension.defaultNetwork
+
                 service.parameters { params ->
                     params.serviceUrl.set(networkConfiguration.serviceUrl)
+                    params.serviceName.set(networkConfiguration.serviceName)
                     params.tlsCredentialsService.set(TlsConfigurationPlugin.provideCredentialsService(project))
                     params.useTls.set(networkConfiguration.useTls)
                     params.timeouts.set(networkConfiguration.timeouts)
                     params.retries.set(networkConfiguration.retries)
+                }
+            }
+        }
+    }
+}
+
+public fun HttpClientService.buildClientWithBaseUrl(baseUrl: Provider<String>): HttpClient {
+    return buildClient {
+        defaultRequest {
+            url {
+                val baseUrl = baseUrl.orNull
+                if (!baseUrl.isNullOrBlank()) {
+                    takeFrom(baseUrl)
                 }
             }
         }

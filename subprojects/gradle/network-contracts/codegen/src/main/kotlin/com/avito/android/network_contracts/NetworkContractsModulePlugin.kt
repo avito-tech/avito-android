@@ -51,8 +51,8 @@ public class NetworkContractsModulePlugin : Plugin<Project> {
             it.generators.add("api-composition-clients")
         }
 
-        schemesContractsExtension.imports.register("network") {
-            it.schemesDirName.set(networkContractsExtension.schemesDirName)
+        schemesContractsExtension.imports.register(NetworkContractsVariantConstants.NAME) { extension ->
+            extension.schemesDirName.set(networkContractsExtension.schemesDirName)
 
             val importService = SchemesImportService.provideImportService(
                 target,
@@ -60,11 +60,11 @@ public class NetworkContractsModulePlugin : Plugin<Project> {
             ) {
                 it.httpClient.set(
                     target.provider {
-                        HttpClientService.provideHttpClientService(target)
+                        HttpClientService.provideHttpClientService(target, extension.name)
                     }
                 )
             }
-            it.importService.set(importService)
+            extension.importService.set(importService)
         }
 
         target.configureNetworkContractsValidationTasks(schemesContractsExtension)
@@ -89,7 +89,7 @@ private fun Project.configureNetworkContractsValidationTasks(
         val collectApiSchemesTask = project.tasks.withType<CollectApiSchemesTask>()
             .named(ContractsTaskNamesBuilder.collectSchemesTask(variantConfiguration.name))
 
-        val httpClient = HttpClientService.provideHttpClientService(project)
+        val httpClient = HttpClientService.provideHttpClientService(project, variantConfiguration.name)
 
         val localValidations = variantConfiguration
             .rulesGroups

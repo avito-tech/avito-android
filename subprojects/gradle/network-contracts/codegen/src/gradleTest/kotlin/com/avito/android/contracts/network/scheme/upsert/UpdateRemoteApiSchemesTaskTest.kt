@@ -41,8 +41,12 @@ internal class UpdateRemoteApiSchemesTaskTest {
             dispatcher = mockDispatcher
         }
 
-    private val upsertPathMatcher: RequestData.() -> Boolean = { path.contains("upsertClientVersion") }
-    private val validatePathMatcher: RequestData.() -> Boolean = { path.contains("validateSchema") }
+    private val upsertPathMatcher: RequestData.() -> Boolean = {
+        path.contains("service-.*/upsertClientVersion".toRegex())
+    }
+    private val validatePathMatcher: RequestData.() -> Boolean = {
+        path.contains("service-.*/validateSchema".toRegex())
+    }
 
     @TempDir
     lateinit var projectDir: File

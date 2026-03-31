@@ -118,11 +118,13 @@ object NetworkCodegenProjectGenerator {
 
         val variantsConfigurations = variants.joinToString(separator = "\n") { variant ->
             """
-                network.useTls.set(false)
-                network.serviceUrl.set("${variant.serviceUrl}")
-                network.crtEnvName.set("test_env")
-                network.keyEnvName.set("test_key")
-                network.timeouts.set(Timeouts.of(Duration.ofSeconds(10)))
+                networks.register("${variant.name}") {
+                    useTls.set(false)
+                    serviceUrl.set("${variant.serviceUrl}")
+                    crtEnvName.set("test_env")
+                    keyEnvName.set("test_key")
+                    timeouts.set(Timeouts.of(Duration.ofSeconds(10)))
+                }
                                
                 ${if (variant.fixationEnabled) "fixations.register(\"${variant.name}\")" else ""}
         """.trimIndent()

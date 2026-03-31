@@ -114,21 +114,25 @@ object NetworkCodegenProjectGenerator {
             name = "rootapp",
             plugins = plugins {
                 id("com.avito.android.gradle-logger")
+                id("com.avito.android.schemes-contracts-root")
                 id("com.avito.android.network-contracts-root")
                 id("com.avito.android.tls-configuration")
             },
             imports = listOf(
                 "import com.avito.android.contracts.platform.extension.configurations.network.Timeouts",
-                "import java.time.Duration"
+                "import com.avito.android.contracts.platform.extension.defaultNetwork",
+                "import java.time.Duration",
                 ),
             buildGradleExtra = """
                 ${createMtlsExtensionString()}   
-                networkContractsRoot {
-                    useTls.set(false)
-                    serviceUrl.set("$serviceUrl")
-                    crtEnvName.set("test_env")
-                    keyEnvName.set("test_key")
-                    networkTimeouts.set(Timeouts.of(Duration.ofSeconds(10)))
+                contractsRoot {
+                    defaultNetwork {
+                        useTls.set(false)
+                        serviceUrl.set("$serviceUrl")
+                        crtEnvName.set("test_env")
+                        keyEnvName.set("test_key")
+                        timeouts.set(Timeouts.of(Duration.ofSeconds(10)))
+                    }
                 }
                 $buildExtra
             """.trimIndent(),

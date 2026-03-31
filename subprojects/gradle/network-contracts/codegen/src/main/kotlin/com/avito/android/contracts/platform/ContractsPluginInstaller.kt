@@ -6,6 +6,7 @@ import com.avito.android.contracts.platform.extension.ContractsRootExtension
 import com.avito.android.contracts.platform.extension.configurations.codegen.CodegenConfiguration
 import com.avito.android.contracts.platform.extension.configurations.import.ImportConfiguration
 import com.avito.android.contracts.platform.extension.configurations.validation.ValidationConfiguration
+import com.avito.android.contracts.platform.extension.defaultNetwork
 import com.avito.android.contracts.platform.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.contracts.platform.output.OutputTransformer
 import com.avito.android.contracts.platform.output.OutputType
@@ -77,7 +78,7 @@ internal class ContractsPluginInstaller(
         val kotlinTargetExtension = target.kotlinExtension as? KotlinSingleTargetExtension<*> ?: return
 
         val rootExtension = project.rootProject.extensions.getByType<ContractsRootExtension>()
-        val networkConfiguration = rootExtension.network
+        val networkConfiguration = rootExtension.defaultNetwork
 
         val validationTask = project.tasks.withType<ValidateNetworkContractsTask>()
 

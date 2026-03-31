@@ -7,7 +7,10 @@ import org.gradle.api.model.ObjectFactory
 
 public abstract class ContractsRootExtension(objects: ObjectFactory) {
 
-    public val network: NetworkConfiguration = objects.newInstance(NetworkConfiguration::class.java, objects)
+    public val networks: NamedDomainObjectContainer<NetworkConfiguration> =
+        objects.domainObjectContainer(NetworkConfiguration::class.java).apply {
+            register(NetworkConfiguration.DEFAULT)
+        }
 
     public val fixations: NamedDomainObjectContainer<FixationConfiguration> =
         objects.domainObjectContainer(FixationConfiguration::class.java)
@@ -17,6 +20,14 @@ public abstract class ContractsRootExtension(objects: ObjectFactory) {
     }
 }
 
+@Deprecated("use defaultNetwork", replaceWith = ReplaceWith("defaultNetwork"))
 public fun ContractsRootExtension.network(action: NetworkConfiguration.() -> Unit) {
-    action.invoke(network)
+    defaultNetwork(action)
 }
+
+public fun ContractsRootExtension.defaultNetwork(action: NetworkConfiguration.() -> Unit) {
+    defaultNetwork.action()
+}
+
+internal val ContractsRootExtension.defaultNetwork: NetworkConfiguration
+    get() = networks.getByName(NetworkConfiguration.DEFAULT)

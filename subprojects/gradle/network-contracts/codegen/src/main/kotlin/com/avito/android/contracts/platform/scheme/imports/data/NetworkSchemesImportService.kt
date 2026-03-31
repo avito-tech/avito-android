@@ -48,7 +48,7 @@ private suspend fun HttpClient.fetchApiScheme(
     gateway: String,
     apiPath: String
 ): HttpResponse = post {
-    url(path = "service-api-composition-storage/getSchemaForPath/")
+    url(path = "getSchemaForPath/")
     contentType(ContentType.Application.Json)
     setBody(
         ApiSchemesImportRequest(

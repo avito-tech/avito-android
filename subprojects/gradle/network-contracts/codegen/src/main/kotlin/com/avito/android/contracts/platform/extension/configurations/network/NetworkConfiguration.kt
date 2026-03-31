@@ -1,11 +1,12 @@
 package com.avito.android.contracts.platform.extension.configurations.network
 
+import org.gradle.api.Named
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
-public abstract class NetworkConfiguration @Inject constructor(objects: ObjectFactory) {
+public abstract class NetworkConfiguration @Inject constructor(objects: ObjectFactory) : Named {
 
     /**
      * Determines whether to use TLS when connecting to the service.
@@ -32,6 +33,11 @@ public abstract class NetworkConfiguration @Inject constructor(objects: ObjectFa
     public abstract val serviceUrl: Property<String>
 
     /**
+     * If service name is specified url will be as serviceUrl/serviceName
+     */
+    public abstract val serviceName: Property<String>
+
+    /**
      * Name of the environment variable containing the path to the certificate (.crt file).
      * Used when setting up TLS connections.
      */
@@ -42,4 +48,12 @@ public abstract class NetworkConfiguration @Inject constructor(objects: ObjectFa
      * Used when setting up TLS connections.
      */
     public abstract val keyEnvName: Property<String>
+
+    internal companion object {
+
+        const val DEFAULT = "default"
+    }
 }
+
+internal val NetworkConfiguration.isDefault: Boolean
+    get() = name == NetworkConfiguration.DEFAULT

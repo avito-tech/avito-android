@@ -18,7 +18,7 @@ import org.gradle.api.GradleException
 
 internal class UpdateApiSchemesServiceImpl(
     private val httpClient: HttpClient,
-) : com.avito.android.network_contracts.fixation.service.data.UpdateApiSchemesService {
+) : UpdateApiSchemesService {
 
     override suspend fun sendContracts(
         author: String,
@@ -58,7 +58,7 @@ private suspend fun HttpClient.sendContracts(
     request: UpdateApiSchemesRequest
 ): HttpResponse {
     return post {
-        url(path = "service-api-composition-storage/upsertClientVersion/")
+        url(path = "upsertClientVersion/")
         contentType(ContentType.Application.Json)
         setBody(request)
     }

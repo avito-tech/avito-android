@@ -2,6 +2,8 @@ package com.avito.android.contracts.platform
 
 import com.avito.android.contracts.platform.dependency.codegenDependencyConfiguration
 import com.avito.android.contracts.platform.extension.ContractsRootExtension
+import com.avito.android.contracts.platform.extension.configurations.network.isDefault
+import com.avito.android.contracts.platform.extension.defaultNetwork
 import com.avito.android.contracts.platform.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.contracts.platform.scheme.codegen.SetupTmpMtlsFilesTask
 import com.avito.android.contracts.platform.scheme.fixation.UpdateRemoteApiSchemesTask
@@ -19,10 +21,22 @@ public class ContractsRootPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         check(target.isRoot()) {
-            "NetworkContractsRootPlugin must be applied to root project"
+            "SchemesContractsRootPlugin must be applied to root project"
         }
 
         val rootExtension = target.extensions.create<ContractsRootExtension>(ContractsRootExtension.NAME)
+        rootExtension.networks.configureEach { configuration ->
+            if (!configuration.isDefault) {
+                val defaultNetwork = rootExtension.defaultNetwork
+                configuration.serviceUrl.convention(defaultNetwork.serviceUrl)
+                configuration.serviceName.convention(defaultNetwork.serviceName)
+                configuration.useTls.convention(defaultNetwork.useTls)
+                configuration.retries.convention(defaultNetwork.retries)
+                configuration.timeouts.convention(defaultNetwork.timeouts)
+                configuration.crtEnvName.convention(defaultNetwork.crtEnvName)
+                configuration.keyEnvName.convention(defaultNetwork.keyEnvName)
+            }
+        }
 
         target.codegenDependencyConfiguration.setArtifactsExecutable()
 
