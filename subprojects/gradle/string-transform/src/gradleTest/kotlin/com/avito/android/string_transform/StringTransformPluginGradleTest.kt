@@ -1,5 +1,6 @@
 package com.avito.android.string_transform
 
+import com.android.aapt.Resources
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
@@ -167,7 +168,44 @@ internal class StringTransformPluginGradleTest {
                 }
             }
             """.trimIndent()
-        )
+        ) { _ ->
+            resolve("src/main/assets").mkdirs()
+            resolve("src/main/assets/samplevalue.txt").writeText("samplevalue")
+
+            resolve("src/main/res/raw").mkdirs()
+            resolve("src/main/res/raw/samplevalue.xml").writeText("samplevalue")
+
+            resolve("src/main/res/xml").mkdirs()
+            resolve("src/main/res/xml/samplevalue_config.xml").writeText(
+                """
+                <samplevalueNode>samplevalue</samplevalueNode>
+                """.trimIndent()
+            )
+
+            resolve("src/main/res/values").mkdirs()
+            resolve("src/main/res/values/branding.xml").writeText(
+                """
+                <resources>
+                    <string name="samplevalue_title">samplevalue</string>
+                </resources>
+                """.trimIndent()
+            )
+
+            resolve("src/main/java/com/example/samplevalue").mkdirs()
+            resolve("src/main/java/com/example/samplevalue/Holder.java").writeText(
+                """
+                package com.example.samplevalue;
+
+                public class Holder {
+                    public static final String samplevalueField = "samplevalue";
+
+                    public static void samplevalueMethod(String samplevalueParam) {
+                        String samplevalueLocal = samplevalueField + samplevalueParam;
+                    }
+                }
+                """.trimIndent()
+            )
+        }
 
         gradlew(
             projectDir,
@@ -183,8 +221,13 @@ internal class StringTransformPluginGradleTest {
             projectDir,
             "app/build/outputs/transformStrings/alpha/paidRelease/aab/report/transform-report.json"
         )
+        val outputAab = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/paidRelease/aab/transformed-unsigned.aab"
+        )
         assertThat(apkReportFile.exists()).isTrue()
         assertThat(aabReportFile.exists()).isTrue()
+        assertThat(outputAab.exists()).isTrue()
         assertApkSuccessfulReportText(
             report = apkReportFile.readText(),
             pipeline = "alpha",
@@ -201,6 +244,42 @@ internal class StringTransformPluginGradleTest {
             exactDeclarations = 1,
             caseExpandedDeclarations = 0,
         )
+
+        ZipFile(outputAab).use { zip ->
+            assertThat(zip.getEntry("base/assets/changedvalue.txt")).isNotNull()
+            assertThat(zip.getEntry("base/assets/samplevalue.txt")).isNull()
+            assertThat(zip.readEntryText("base/assets/changedvalue.txt")).isEqualTo("changedvalue")
+
+            assertThat(zip.getEntry("base/res/raw/changedvalue.xml")).isNotNull()
+            assertThat(zip.getEntry("base/res/raw/samplevalue.xml")).isNull()
+            assertThat(zip.readEntryText("base/res/raw/changedvalue.xml")).isEqualTo("changedvalue")
+
+            assertThat(zip.getEntry("base/res/xml/changedvalue_config.xml")).isNotNull()
+            assertThat(zip.getEntry("base/res/xml/samplevalue_config.xml")).isNull()
+
+            val resourcesPb = Resources.ResourceTable.parseFrom(
+                zip.readEntryBytes("base/resources.pb")
+            )
+            assertThat(resourcesPb.asTextFormat()).contains("changedvalue_title")
+            assertThat(resourcesPb.asTextFormat()).contains("changedvalue")
+            assertThat(resourcesPb.asTextFormat()).doesNotContain("samplevalue_title")
+
+            val compiledXml = Resources.XmlNode.parseFrom(
+                zip.readEntryBytes("base/res/xml/changedvalue_config.xml")
+            )
+            assertThat(compiledXml.asTextFormat()).contains("changedvalue")
+            assertThat(compiledXml.asTextFormat()).doesNotContain("samplevalue")
+
+            val dexFile = readDexFile(
+                bytes = zip.readEntryBytes("base/dex/classes.dex"),
+                tempDirectory = projectDir.resolve("build/aab-dex-inspection"),
+                name = "classes.dex",
+            )
+            val holderClass = dexFile.classes.single { it.type == "Lcom/example/changedvalue/Holder;" }
+
+            assertThat(holderClass.fields.single().name).isEqualTo("changedvalueField")
+            assertThat(holderClass.methods.any { it.name == "changedvalueMethod" }).isTrue()
+        }
     }
 
     @Test
@@ -1059,6 +1138,51 @@ internal class StringTransformPluginGradleTest {
                     },
                     {
                         "name": "input-aab-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "bundle-unpack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "resources-pb-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "protobuf-xml-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "dex-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "residual-text-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "rename",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "metadata-cleanup",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "bundle-repack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "output-publication",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     }

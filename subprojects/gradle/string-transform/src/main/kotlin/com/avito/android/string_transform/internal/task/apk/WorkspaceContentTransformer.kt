@@ -12,10 +12,21 @@ internal class WorkspaceContentTransformer(
     fun transform(
         workspaceDirectory: File,
         rules: List<NormalizedRule>,
+    ): Result<List<OperationWarning>> {
+        return transform(
+            workspaceDirectory = workspaceDirectory,
+            files = workspaceDirectory.walkTopDown().filter(File::isFile),
+            rules = rules,
+        )
+    }
+
+    fun transform(
+        workspaceDirectory: File,
+        files: Sequence<File>,
+        rules: List<NormalizedRule>,
     ): Result<List<OperationWarning>> = Result.tryCatch {
         val warnings = mutableListOf<OperationWarning>()
-        workspaceDirectory.walkTopDown()
-            .filter(File::isFile)
+        files
             .forEach { file ->
                 when (val treatment = classify(file)) {
                     FileTreatment.PlainText ->
@@ -46,6 +57,10 @@ internal class WorkspaceContentTransformer(
             file.extension == "so" ->
                 FileTreatment.UnsupportedBinary(
                     "'.so' files are not supported for content transform yet",
+                )
+            file.extension == "pb" ->
+                FileTreatment.UnsupportedBinary(
+                    "'.pb' files are treated as unsupported binary content",
                 )
             textFileDetector.isText(file) ->
                 FileTreatment.PlainText
@@ -88,25 +103,6 @@ internal class WorkspaceContentTransformer(
                 bytes.containsSubsequence(literal.toByteArray(StandardCharsets.UTF_8))
             }
             .toList()
-    }
-
-    private fun ByteArray.containsSubsequence(needle: ByteArray): Boolean {
-        if (needle.isEmpty()) return true
-        if (needle.size > size) return false
-
-        val lastStartIndex = size - needle.size
-        for (startIndex in 0..lastStartIndex) {
-            var matched = true
-            for (offset in needle.indices) {
-                if (this[startIndex + offset] != needle[offset]) {
-                    matched = false
-                    break
-                }
-            }
-            if (matched) return true
-        }
-
-        return false
     }
 
     private sealed interface FileTreatment {

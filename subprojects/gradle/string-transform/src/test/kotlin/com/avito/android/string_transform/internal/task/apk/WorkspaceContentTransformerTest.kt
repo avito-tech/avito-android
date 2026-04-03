@@ -164,6 +164,32 @@ internal class WorkspaceContentTransformerTest {
     }
 
     @Test
+    fun `transform - preserves protobuf binary and reports warning - when matched literal is present`(
+        @TempDir dir: File,
+    ) {
+        val protobufBinary = writeBinaryFile(
+            dir = dir,
+            relativePath = "BundleConfig.pb",
+            content = "samplevalue".toByteArray(),
+        )
+
+        val warnings = transformer.transform(
+            workspaceDirectory = dir,
+            rules = broadRules,
+        ).getOrThrow()
+
+        assertThat(protobufBinary.readBytes()).isEqualTo("samplevalue".toByteArray())
+        assertThat(warnings).containsExactly(
+            OperationWarning(
+                message = "Skipped unsupported binary file during content transform " +
+                    "because '.pb' files are treated as unsupported binary content. " +
+                    "Matched literals: samplevalue",
+                affectedPath = "BundleConfig.pb",
+            ),
+        )
+    }
+
+    @Test
     fun `transform - rewrites values xml - when resource identifiers and values contain matching literals`(
         @TempDir dir: File,
     ) {

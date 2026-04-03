@@ -1,5 +1,18 @@
 package com.avito.android.string_transform.internal.task
 
+import com.android.aapt.Resources
+import com.avito.android.string_transform.asTextFormat
+import com.avito.android.string_transform.createAabFixture
+import com.avito.android.string_transform.internal.rules.NormalizedRule
+import com.avito.android.string_transform.primaryClassSourceFile
+import com.avito.android.string_transform.primaryClassType
+import com.avito.android.string_transform.primaryFieldInitialStringValue
+import com.avito.android.string_transform.primaryFieldName
+import com.avito.android.string_transform.primaryMethodConstString
+import com.avito.android.string_transform.primaryMethodName
+import com.avito.android.string_transform.primaryMethodParameterName
+import com.avito.android.string_transform.readDexFile
+import com.avito.android.string_transform.readEntryBytes
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -8,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.util.zip.ZipFile
 
 internal class TransformVariantAabTaskGradleTest {
 
@@ -21,14 +35,72 @@ internal class TransformVariantAabTaskGradleTest {
     }
 
     @Test
-    fun `aab task - writes successful report - when input aab is valid`() {
+    fun `aab task - writes successful report and publishes transformed bundle - when input aab is valid`() {
         val task = taskUnderTest()
-        inputAabFile().apply {
-            parentFile.mkdirs()
-            writeText("bundle")
+        createAabFixture(inputAabFile())
+        val originalBundleConfigBytes = ZipFile(inputAabFile()).use { zip ->
+            zip.readEntryBytes("BundleConfig.pb")
+        }
+        val originalNativePbBytes = ZipFile(inputAabFile()).use { zip ->
+            zip.readEntryBytes("base/native.pb")
         }
 
         task.transform()
+
+        assertThat(outputAabFile().exists()).isTrue()
+        ZipFile(outputAabFile()).use { zip ->
+            assertThat(zip.readEntryBytes("BundleConfig.pb")).isEqualTo(originalBundleConfigBytes)
+            assertThat(zip.readEntryBytes("base/native.pb")).isEqualTo(originalNativePbBytes)
+
+            assertThat(zip.getEntry("base/assets/changedvalue.txt")).isNotNull()
+            assertThat(zip.getEntry("base/assets/samplevalue.txt")).isNull()
+            assertThat(zip.readEntry("base/assets/changedvalue.txt").toString(Charsets.UTF_8))
+                .isEqualTo("changedvalue")
+
+            assertThat(zip.getEntry("base/res/raw/changedvalue.xml")).isNotNull()
+            assertThat(zip.getEntry("base/res/raw/samplevalue.xml")).isNull()
+            assertThat(zip.readEntry("base/res/raw/changedvalue.xml").toString(Charsets.UTF_8))
+                .isEqualTo("changedvalue")
+
+            assertThat(zip.getEntry("base/res/xml/changedvalue_config.xml")).isNotNull()
+            assertThat(zip.getEntry("base/res/xml/samplevalue_config.xml")).isNull()
+
+            assertThat(zip.getEntry("META-INF/BNDLTOOL.SF")).isNull()
+            assertThat(zip.getEntry("META-INF/services/demo.Service")).isNotNull()
+            assertThat(zip.readEntry("META-INF/services/demo.Service").toString(Charsets.UTF_8))
+                .isEqualTo("implementation")
+
+            val resourcesPb = Resources.ResourceTable.parseFrom(
+                zip.readEntryBytes("base/resources.pb")
+            )
+            assertThat(resourcesPb.asTextFormat()).contains("changedvalue")
+            assertThat(resourcesPb.asTextFormat()).doesNotContain("samplevalue")
+
+            val manifestXml = Resources.XmlNode.parseFrom(
+                zip.readEntryBytes("base/manifest/AndroidManifest.xml")
+            )
+            assertThat(manifestXml.asTextFormat()).contains("changedvalue")
+            assertThat(manifestXml.asTextFormat()).doesNotContain("samplevalue")
+
+            val compiledXml = Resources.XmlNode.parseFrom(
+                zip.readEntryBytes("base/res/xml/changedvalue_config.xml")
+            )
+            assertThat(compiledXml.asTextFormat()).contains("changedvalue")
+            assertThat(compiledXml.asTextFormat()).doesNotContain("samplevalue")
+
+            val dexFile = readDexFile(
+                bytes = zip.readEntryBytes("base/dex/classes.dex"),
+                tempDirectory = project.layout.buildDirectory.dir("aab-dex-inspection").get().asFile,
+                name = "classes.dex",
+            )
+            assertThat(dexFile.primaryClassType()).isEqualTo("Lcom/example/changedvalue/Holder;")
+            assertThat(dexFile.primaryClassSourceFile()).isEqualTo("changedvalue.kt")
+            assertThat(dexFile.primaryFieldName()).isEqualTo("changedvalueField")
+            assertThat(dexFile.primaryFieldInitialStringValue()).isEqualTo("changedvalue")
+            assertThat(dexFile.primaryMethodName()).isEqualTo("changedvalueMethod")
+            assertThat(dexFile.primaryMethodParameterName()).isEqualTo("changedvalueParam")
+            assertThat(dexFile.primaryMethodConstString()).isEqualTo("changedvalue")
+        }
 
         assertReportJsonMatches(
             reportFile().readText(),
@@ -55,6 +127,51 @@ internal class TransformVariantAabTaskGradleTest {
                     },
                     {
                         "name": "input-aab-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "bundle-unpack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "resources-pb-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "protobuf-xml-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "dex-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "residual-text-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "rename",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "metadata-cleanup",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "bundle-repack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "output-publication",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     }
@@ -181,7 +298,16 @@ internal class TransformVariantAabTaskGradleTest {
             exactRuleCount.set(1)
             caseExpandedRuleCount.set(0)
             configurationWarnings.set(emptyList())
+            rules.set(listOf(NormalizedRule(from = "samplevalue", to = "changedvalue")))
             inputAabFile.set(inputAabFile())
+            localStateDirectory.set(
+                project.layout.buildDirectory.dir("tmp/transformStrings/alpha/release-bundle/local-state")
+            )
+            outputAabFile.set(
+                project.layout.buildDirectory.file(
+                    "outputs/transformStrings/alpha/release/aab/transformed-unsigned.aab"
+                )
+            )
             reportFile.set(
                 project.layout.buildDirectory.file(
                     "outputs/transformStrings/alpha/release/aab/report/transform-report.json"
@@ -203,11 +329,25 @@ internal class TransformVariantAabTaskGradleTest {
             .asFile
     }
 
+    private fun outputAabFile(): File {
+        return project.layout.buildDirectory
+            .file("outputs/transformStrings/alpha/release/aab/transformed-unsigned.aab")
+            .get()
+            .asFile
+    }
+
     private fun assertReportJsonMatches(report: String, expectedRegex: String) {
         assertThat(report.trim()).containsMatch(expectedRegex.trimIndent())
     }
 
     private fun literalJsonPattern(jsonBody: String): String {
         return "(?s)^\\Q${jsonBody.trimIndent()}\\E$"
+    }
+
+    private fun ZipFile.readEntry(path: String): ByteArray {
+        val entry = checkNotNull(getEntry(path)) {
+            "Zip entry not found: $path"
+        }
+        return getInputStream(entry).use { it.readBytes() }
     }
 }

@@ -55,16 +55,16 @@ internal class TransformPipelineVariantTaskConfigurator(
             apktoolClasspath.from(apktoolConfiguration)
             javaLauncher.convention(defaultJavaLauncher)
             apkDirectory.set(variant.artifacts.get(SingleArtifact.APK))
-            localStateDirectory.set(project.layout.buildDirectory.dir(localStatePath()))
+            localStateDirectory.set(project.layout.buildDirectory.dir(apkLocalStatePath()))
             outputApkFile.set(project.layout.buildDirectory.file(outputApkPath()))
-            reportFile.set(project.layout.buildDirectory.file(reportPath()))
+            reportFile.set(project.layout.buildDirectory.file(apkReportPath()))
         }
 
         val aabTaskProvider = project.tasks.register<TransformVariantAabTask>(
             aabTaskName(pipeline.name, variant.name),
         ) {
             group = "string transform"
-            description = "Validates AAB input wiring for ${pipeline.name} pipeline on ${variant.name} variant"
+            description = "Transforms AAB strings for ${pipeline.name} pipeline on ${variant.name} variant"
 
             modulePath.set(project.path)
             pipelineName.set(pipeline.name)
@@ -73,7 +73,10 @@ internal class TransformPipelineVariantTaskConfigurator(
             exactRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.Exact })
             caseExpandedRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.CaseExpanded })
             configurationWarnings.set(normalizedRules.warnings)
+            rules.set(normalizedRules.rules)
             inputAabFile.set(variant.artifacts.get(SingleArtifact.BUNDLE))
+            localStateDirectory.set(project.layout.buildDirectory.dir(aabLocalStatePath()))
+            outputAabFile.set(project.layout.buildDirectory.file(outputAabPath()))
             reportFile.set(project.layout.buildDirectory.file(aabReportPath()))
         }
 
@@ -91,7 +94,7 @@ internal class TransformPipelineVariantTaskConfigurator(
         return "transformStrings${pipelineName.capitalize()}${variantName.capitalize()}Bundle"
     }
 
-    private fun localStatePath(): String {
+    private fun apkLocalStatePath(): String {
         return "tmp/transformStrings/${pipeline.name}/${variant.name}/local-state"
     }
 
@@ -99,11 +102,19 @@ internal class TransformPipelineVariantTaskConfigurator(
         return "outputs/transformStrings/${pipeline.name}/${variant.name}/apk/transformed-unsigned.apk"
     }
 
-    private fun reportPath(): String {
+    private fun apkReportPath(): String {
         return "outputs/transformStrings/${pipeline.name}/${variant.name}/report/transform-report.json"
     }
 
     private fun aabReportPath(): String {
         return "outputs/transformStrings/${pipeline.name}/${variant.name}/aab/report/transform-report.json"
+    }
+
+    private fun aabLocalStatePath(): String {
+        return "tmp/transformStrings/${pipeline.name}/${variant.name}/aab-local-state"
+    }
+
+    private fun outputAabPath(): String {
+        return "outputs/transformStrings/${pipeline.name}/${variant.name}/aab/transformed-unsigned.aab"
     }
 }

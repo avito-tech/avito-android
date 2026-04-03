@@ -1,21 +1,34 @@
 package com.avito.android.string_transform.internal.task
 
 import com.avito.android.Result
-import com.avito.android.string_transform.internal.execution.runTransform
 import com.avito.android.string_transform.internal.report.TransformReport
 import com.avito.android.string_transform.internal.report.TransformReportJsonWriter
 import com.avito.android.string_transform.internal.report.TransformReportRecorder
+import com.avito.android.string_transform.internal.rules.NormalizedRule
+import com.avito.android.string_transform.internal.task.aab.AabBundleArchiver
+import com.avito.android.string_transform.internal.task.aab.AabDexTransformer
+import com.avito.android.string_transform.internal.task.aab.AabOutputPublisher
+import com.avito.android.string_transform.internal.task.aab.AabProtobufXmlTransformer
+import com.avito.android.string_transform.internal.task.aab.AabResourcesPbTransformer
+import com.avito.android.string_transform.internal.task.aab.AabTransformOrchestrator
+import com.avito.android.string_transform.internal.task.aab.AabWorkspaceFileClassifier
+import com.avito.android.string_transform.internal.task.aab.BundleMetadataCleaner
+import com.avito.android.string_transform.internal.task.apk.WorkspaceContentTransformer
+import com.avito.android.string_transform.internal.task.apk.WorkspacePathRenamer
+import com.avito.android.string_transform.internal.task.apk.ZeroByteTextFileDetector
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.LocalState
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 internal abstract class TransformVariantAabTask : DefaultTask() {
 
@@ -40,9 +53,19 @@ internal abstract class TransformVariantAabTask : DefaultTask() {
     @get:Input
     abstract val configurationWarnings: ListProperty<String>
 
+    @get:Input
+    abstract val rules: ListProperty<NormalizedRule>
+
     @get:InputFile
+    @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val inputAabFile: RegularFileProperty
+
+    @get:LocalState
+    abstract val localStateDirectory: DirectoryProperty
+
+    @get:OutputFile
+    abstract val outputAabFile: RegularFileProperty
 
     @get:OutputFile
     abstract val reportFile: RegularFileProperty
@@ -73,31 +96,22 @@ internal abstract class TransformVariantAabTask : DefaultTask() {
     }
 
     private fun runAabTransform(recorder: TransformReportRecorder): Result<Unit> {
-        val inputAab = inputAabFile.get().asFile
-
-        return runTransform(recorder) {
-            step("variant-aab-artifact-observation") {
-                observeInputAab(inputAab)
-            }
-            step("input-aab-validation") {
-                validateInputAab(inputAab)
-            }
-            Unit
-        }
-    }
-
-    private fun observeInputAab(inputAab: File): Result<Unit> = Result.tryCatch {
-        check(inputAab.exists()) {
-            "Variant bundle artifact file does not exist: ${inputAab.path}"
-        }
-        check(inputAab.isFile) {
-            "Variant bundle artifact path is not a file: ${inputAab.path}"
-        }
-    }
-
-    private fun validateInputAab(inputAab: File): Result<Unit> = Result.tryCatch {
-        require(inputAab.extension == "aab") {
-            "Observed bundle artifact is not a publishable AAB candidate: ${inputAab.path}"
-        }
+        return AabTransformOrchestrator(
+            bundleArchiver = AabBundleArchiver(),
+            fileClassifier = AabWorkspaceFileClassifier(),
+            resourcesPbTransformer = AabResourcesPbTransformer(),
+            protobufXmlTransformer = AabProtobufXmlTransformer(),
+            dexTransformer = AabDexTransformer(),
+            contentTransformer = WorkspaceContentTransformer(ZeroByteTextFileDetector()),
+            pathRenamer = WorkspacePathRenamer(),
+            metadataCleaner = BundleMetadataCleaner(),
+            aabPublisher = AabOutputPublisher(),
+        ).execute(
+            recorder = recorder,
+            inputAabFile = inputAabFile,
+            localStateRoot = localStateDirectory.get().asFile,
+            publishedAab = outputAabFile.get().asFile,
+            rules = rules.get(),
+        )
     }
 }
