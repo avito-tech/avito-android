@@ -283,6 +283,107 @@ internal class StringTransformPluginGradleTest {
     }
 
     @Test
+    fun `plugin mapping transform - publishes transformed mapping - when release variant produces original mapping`() {
+        givenProject(
+            """
+            android {
+                buildTypes {
+                    release {
+                        isMinifyEnabled = true
+                        proguardFiles(
+                            getDefaultProguardFile("proguard-android-optimize.txt"),
+                            "proguard.pro"
+                        )
+                    }
+                }
+            }
+
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        ) { _ ->
+            resolve("src/main/java/com/example/samplevalue").mkdirs()
+            resolve("src/main/java/com/example/samplevalue/Holder.java").writeText(
+                """
+                package com.example.samplevalue;
+
+                public class Holder {
+                    public static final String samplevalueField = "samplevalue";
+                }
+                """.trimIndent()
+            )
+        }
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val reportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/mapping/report/transform-report.json"
+        )
+        val outputMapping = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/mapping/transformed-mapping.txt"
+        )
+
+        assertThat(reportFile.exists()).isTrue()
+        assertThat(outputMapping.exists()).isTrue()
+        assertThat(outputMapping.readText()).contains("changedvalue")
+        assertThat(outputMapping.readText()).doesNotContain("samplevalue")
+        assertMappingSuccessfulReportText(
+            report = reportFile.readText(),
+            pipeline = "alpha",
+            variant = "release",
+            totalRules = 1,
+            exactDeclarations = 1,
+            caseExpandedDeclarations = 0,
+        )
+    }
+
+    @Test
+    fun `plugin mapping transform - does not publish mapping output - when release variant has no original mapping`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        val reportFile = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/mapping/report/transform-report.json"
+        )
+        val outputMapping = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/mapping/transformed-mapping.txt"
+        )
+
+        assertThat(reportFile.exists()).isFalse()
+        assertThat(outputMapping.exists()).isFalse()
+    }
+
+    @Test
     fun `plugin apk transform - renames path - when exact rule matches file name`() {
         givenProject(
             """
@@ -1178,6 +1279,64 @@ internal class StringTransformPluginGradleTest {
                     },
                     {
                         "name": "bundle-repack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "output-publication",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    }
+                ],
+                "diagnostics": [\E\s*\Q]
+            }
+            """),
+        )
+    }
+
+    private fun assertMappingSuccessfulReportText(
+        report: String,
+        pipeline: String,
+        variant: String,
+        totalRules: Int,
+        exactDeclarations: Int,
+        caseExpandedDeclarations: Int,
+    ) {
+        assertReportJsonMatches(
+            report = report,
+            expectedRegex = literalJsonPattern("""
+            {
+                "pipeline": "$pipeline",
+                "variant": "$variant",
+                "artifact": {
+                    "moduleIdentity": ":app",
+                    "variantIdentity": "$variant"
+                },
+                "rules": {
+                    "totalRules": $totalRules,
+                    "declarationCounts": {
+                        "exact": $exactDeclarations,
+                        "caseExpanded": $caseExpandedDeclarations
+                    }
+                },
+                "phases": [
+                    {
+                        "name": "variant-mapping-artifact-observation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "input-mapping-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "mapping-text-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "mapping-structural-sanity-validation",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },

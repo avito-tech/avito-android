@@ -8,6 +8,7 @@ import com.avito.android.string_transform.internal.rules.DeclaredRule
 import com.avito.android.string_transform.internal.rules.TransformRulesNormalizer
 import com.avito.android.string_transform.internal.task.TransformVariantAabTask
 import com.avito.android.string_transform.internal.task.TransformVariantApkTask
+import com.avito.android.string_transform.internal.task.TransformVariantMappingTask
 import com.avito.capitalize
 import com.avito.logger.create
 import org.gradle.api.NamedDomainObjectProvider
@@ -80,9 +81,33 @@ internal class TransformPipelineVariantTaskConfigurator(
             reportFile.set(project.layout.buildDirectory.file(aabReportPath()))
         }
 
+        val mappingTaskProvider = project.tasks.register<TransformVariantMappingTask>(
+            mappingTaskName(pipeline.name, variant.name),
+        ) {
+            group = "string transform"
+            description = "Transforms mapping strings for ${pipeline.name} pipeline on ${variant.name} variant"
+
+            modulePath.set(project.path)
+            pipelineName.set(pipeline.name)
+            variantName.set(variant.name)
+            totalRuleCount.set(normalizedRules.rules.size)
+            exactRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.Exact })
+            caseExpandedRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.CaseExpanded })
+            configurationWarnings.set(normalizedRules.warnings)
+            rules.set(normalizedRules.rules)
+            inputMappingFile.set(variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE))
+            localStateDirectory.set(project.layout.buildDirectory.dir(mappingLocalStatePath()))
+            outputMappingFile.set(project.layout.buildDirectory.file(outputMappingPath()))
+            reportFile.set(project.layout.buildDirectory.file(mappingReportPath()))
+            onlyIf("original mapping artifact exists") {
+                inputMappingFile.orNull?.asFile?.exists() == true
+            }
+        }
+
         rootTask.configure { task ->
             task.dependsOn(apkTaskProvider)
             task.dependsOn(aabTaskProvider)
+            task.dependsOn(mappingTaskProvider)
         }
     }
 
@@ -92,6 +117,10 @@ internal class TransformPipelineVariantTaskConfigurator(
 
     private fun aabTaskName(pipelineName: String, variantName: String): String {
         return "transformStrings${pipelineName.capitalize()}${variantName.capitalize()}Bundle"
+    }
+
+    private fun mappingTaskName(pipelineName: String, variantName: String): String {
+        return "transformStrings${pipelineName.capitalize()}${variantName.capitalize()}Mapping"
     }
 
     private fun apkLocalStatePath(): String {
@@ -116,5 +145,17 @@ internal class TransformPipelineVariantTaskConfigurator(
 
     private fun outputAabPath(): String {
         return "outputs/transformStrings/${pipeline.name}/${variant.name}/aab/transformed-unsigned.aab"
+    }
+
+    private fun mappingLocalStatePath(): String {
+        return "tmp/transformStrings/${pipeline.name}/${variant.name}/mapping-local-state"
+    }
+
+    private fun outputMappingPath(): String {
+        return "outputs/transformStrings/${pipeline.name}/${variant.name}/mapping/transformed-mapping.txt"
+    }
+
+    private fun mappingReportPath(): String {
+        return "outputs/transformStrings/${pipeline.name}/${variant.name}/mapping/report/transform-report.json"
     }
 }
