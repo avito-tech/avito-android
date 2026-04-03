@@ -90,6 +90,15 @@ RUN \
   install -m 755 /opt/perfetto/linux-amd64/* /usr/local/bin && \
   rm -rf /opt/perfetto
 
+# --------------- Skill Validator -----------------
+ARG SKILL_VALIDATOR_VERSION=1.5.2
+
+RUN \
+  curl ${ARTIFACTORY_URL}android-build-env/skill-validator/${SKILL_VALIDATOR_VERSION}/skill-validator-linux-amd64 \
+    --progress-bar --location --fail --output /usr/local/bin/skill-validator && \
+  chmod +x /usr/local/bin/skill-validator && \
+  skill-validator --version
+
 # ----------------------------------------------------------------------------
 
 RUN rm /usr/local/bin/unzip_from_url.sh
