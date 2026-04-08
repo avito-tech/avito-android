@@ -4,9 +4,12 @@ kotlin = "2.1.20"
 kotlinLanguageVersion = "2.1"
 kspVersion = "2.1.20-2.0.1"
 agp = "8.8.2"
+# Keep in sync with AGP-compatible aapt2 proto artifact.
+aapt2Proto = "8.8.2-12006047"
 # formula: 23 + agp version
 # check versions https://mvnrepository.com/artifact/com.android.tools.external.com-intellij
 androidTools = "31.8.2"
+protobuf = "3.22.3"
 okhttp = "4.10.0"
 retrofit = "2.9.0"
 androidX = "1.7.0"
@@ -43,6 +46,7 @@ versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kspGradle = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+aapt2Proto = { module = "com.android.tools.build:aapt2-proto", version.ref = "aapt2Proto" }
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 dependencyGuard = "com.dropbox.dependency-guard:dependency-guard:0.5.0"
 
@@ -80,6 +84,7 @@ retrofitConverterGson = { module = "com.squareup.retrofit2:converter-gson", vers
 retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
 gson = "com.google.code.gson:gson:2.8.9"
+protobufJava = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
 kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
 jacksonDataformat-toml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml", version.ref = "jackson" }
 jacksonDataformat-csv = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv", version.ref = "jackson" }

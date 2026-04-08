@@ -6,7 +6,6 @@ import com.avito.android.string_transform.internal.report.TransformReport
 import com.avito.android.string_transform.internal.report.TransformReportJsonWriter
 import com.avito.android.string_transform.internal.report.TransformReportRecorder
 import com.avito.android.string_transform.internal.rules.NormalizedRule
-import com.avito.android.string_transform.internal.task.apk.ApkOutputPublisher
 import com.avito.android.string_transform.internal.task.apk.ApktoolRunner
 import com.avito.android.string_transform.internal.task.apk.OperationWarning
 import com.avito.android.string_transform.internal.task.apk.WorkspaceContentTransformer
@@ -130,7 +129,7 @@ internal abstract class TransformVariantApkTask : DefaultTask() {
             )
             val contentTransformer = WorkspaceContentTransformer(ZeroByteTextFileDetector())
             val pathRenamer = WorkspacePathRenamer()
-            val apkPublisher = ApkOutputPublisher()
+            val outputPublisher = OutputPublisher()
             val localStateRoot = localStateDirectory.get().asFile
             val workspace = localStateRoot.resolve("decoded")
             val rebuiltApk = localStateRoot.resolve("rebuilt-unsigned.apk")
@@ -158,7 +157,7 @@ internal abstract class TransformVariantApkTask : DefaultTask() {
                 apktoolRunner.build(workspace, rebuiltApk)
             }
             step("output-publication") {
-                apkPublisher.publish(rebuiltApk, publishedApk)
+                outputPublisher.publish(rebuiltApk, publishedApk)
             }
             Unit
         }

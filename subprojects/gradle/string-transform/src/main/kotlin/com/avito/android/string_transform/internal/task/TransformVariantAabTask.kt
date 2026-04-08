@@ -7,7 +7,6 @@ import com.avito.android.string_transform.internal.report.TransformReportRecorde
 import com.avito.android.string_transform.internal.rules.NormalizedRule
 import com.avito.android.string_transform.internal.task.aab.AabBundleArchiver
 import com.avito.android.string_transform.internal.task.aab.AabDexTransformer
-import com.avito.android.string_transform.internal.task.aab.AabOutputPublisher
 import com.avito.android.string_transform.internal.task.aab.AabProtobufXmlTransformer
 import com.avito.android.string_transform.internal.task.aab.AabResourcesPbTransformer
 import com.avito.android.string_transform.internal.task.aab.AabTransformOrchestrator
@@ -105,7 +104,7 @@ internal abstract class TransformVariantAabTask : DefaultTask() {
             contentTransformer = WorkspaceContentTransformer(ZeroByteTextFileDetector()),
             pathRenamer = WorkspacePathRenamer(),
             metadataCleaner = BundleMetadataCleaner(),
-            aabPublisher = AabOutputPublisher(),
+            outputPublisher = OutputPublisher(),
         ).execute(
             recorder = recorder,
             inputAabFile = inputAabFile,

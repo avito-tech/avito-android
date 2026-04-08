@@ -8,19 +8,22 @@ plugins {
 dependencies {
     implementation(gradleApi())
     implementation(libs.androidGradle)
-    implementation("com.android.tools.build:aapt2-proto:8.8.2-12006047")
-    implementation("com.google.protobuf:protobuf-java:3.22.3")
-    implementation("org.smali:dexlib2:2.3")
+    implementation(libs.aapt2Proto)
+    implementation(libs.protobufJava)
+    implementation(libs.dexlib)
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:common:retrace"))
     implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:delivery:sign-service"))
+    implementation(project(":subprojects:gradle:mtls"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
 
-    testFixturesImplementation("com.android.tools.build:aapt2-proto:8.8.2-12006047")
-    testFixturesImplementation("com.google.protobuf:protobuf-java:3.22.3")
-    testFixturesImplementation("org.smali:dexlib2:2.3")
+    testFixturesImplementation(libs.aapt2Proto)
+    testFixturesImplementation(libs.protobufJava)
+    testFixturesImplementation(libs.dexlib)
 
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 

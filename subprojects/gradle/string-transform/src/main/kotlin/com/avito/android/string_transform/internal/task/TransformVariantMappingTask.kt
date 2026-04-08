@@ -6,7 +6,6 @@ import com.avito.android.string_transform.internal.report.TransformReport
 import com.avito.android.string_transform.internal.report.TransformReportJsonWriter
 import com.avito.android.string_transform.internal.report.TransformReportRecorder
 import com.avito.android.string_transform.internal.rules.NormalizedRule
-import com.avito.android.string_transform.internal.task.mapping.MappingOutputPublisher
 import com.avito.android.string_transform.internal.task.mapping.MappingStructuralSanityValidator
 import com.avito.android.string_transform.internal.task.mapping.MappingTextTransformer
 import org.gradle.api.DefaultTask
@@ -92,7 +91,7 @@ internal abstract class TransformVariantMappingTask : DefaultTask() {
     private fun runMappingTransform(recorder: TransformReportRecorder): Result<Unit> {
         val transformRules = rules.get()
         val validator = MappingStructuralSanityValidator()
-        val publisher = MappingOutputPublisher()
+        val outputPublisher = OutputPublisher()
         val textTransformer = MappingTextTransformer()
 
         return runTransform(recorder) {
@@ -122,7 +121,7 @@ internal abstract class TransformVariantMappingTask : DefaultTask() {
                 validator.validate(transformedMapping)
             }
             step("output-publication") {
-                publisher.publish(transformedMapping, publishedMapping)
+                outputPublisher.publish(transformedMapping, publishedMapping)
             }
             Unit
         }

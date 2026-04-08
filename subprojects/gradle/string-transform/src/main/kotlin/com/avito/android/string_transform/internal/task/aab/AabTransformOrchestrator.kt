@@ -4,6 +4,7 @@ import com.avito.android.Result
 import com.avito.android.string_transform.internal.execution.runTransform
 import com.avito.android.string_transform.internal.report.TransformReportRecorder
 import com.avito.android.string_transform.internal.rules.NormalizedRule
+import com.avito.android.string_transform.internal.task.OutputPublisher
 import com.avito.android.string_transform.internal.task.apk.OperationWarning
 import com.avito.android.string_transform.internal.task.apk.WorkspaceContentTransformer
 import com.avito.android.string_transform.internal.task.apk.WorkspacePathRenamer
@@ -19,7 +20,7 @@ internal class AabTransformOrchestrator(
     private val contentTransformer: WorkspaceContentTransformer,
     private val pathRenamer: WorkspacePathRenamer,
     private val metadataCleaner: BundleMetadataCleaner,
-    private val aabPublisher: AabOutputPublisher,
+    private val outputPublisher: OutputPublisher,
 ) {
 
     fun execute(
@@ -115,7 +116,7 @@ internal class AabTransformOrchestrator(
                 bundleArchiver.packFromWorkspace(workspace, rebuiltAab)
             }
             step("output-publication") {
-                aabPublisher.publish(rebuiltAab, publishedAab)
+                outputPublisher.publish(rebuiltAab, publishedAab)
             }
             Unit
         }

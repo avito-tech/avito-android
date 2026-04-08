@@ -100,6 +100,25 @@ internal class TransformPipelinesValidatorGradleTest {
             .contains("transformStrings caseExpanded rule must declare at least one generated form")
     }
 
+    @Test
+    fun `pipeline validation - accepts signing-enabled pipeline - without checking signer plugin presence`() {
+        val pipeline = pipeline("alpha") {
+            variant("release")
+            rules { rules ->
+                rules.exact("source", "target")
+            }
+            integrations { integrations ->
+                integrations.signing { signing ->
+                    signing.enabled.set(true)
+                }
+            }
+        }
+
+        TransformPipelinesValidator.validate(project.path, pipeline)
+
+        assertThat(pipeline.integrations.signing.enabled.get()).isTrue()
+    }
+
     private fun pipeline(
         name: String,
         action: TransformPipelineSpec.() -> Unit,
