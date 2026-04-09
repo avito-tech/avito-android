@@ -9,7 +9,7 @@ import org.gradle.api.services.BuildServiceParameters
 
 public interface SchemesImportService<T : SchemesImportService.Parameters> : BuildService<T> {
 
-    public suspend fun importScheme(gateway: String, url: String): ApiSchemeImportResponse
+    public suspend fun importScheme(url: String): ApiSchemeImportResponse
 
     public interface Parameters : BuildServiceParameters
 

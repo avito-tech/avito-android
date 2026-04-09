@@ -9,6 +9,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 
 public abstract class NetworkContractsModuleExtension(
@@ -54,6 +55,8 @@ public abstract class NetworkContractsModuleExtension(
 
     public val validationByCodegen: Property<Boolean> = objects.property<Boolean>()
         .convention(true)
+
+    public val importParameters: MapProperty<String, String> = objects.mapProperty()
 
     internal companion object {
         internal const val NAME = "networkContracts"

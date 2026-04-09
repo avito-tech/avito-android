@@ -22,8 +22,7 @@ class ApiSchemesImportFacadeTest {
         val service: SchemesImportService<*> = mock()
         val facade = ApiSchemesImportFacade(service)
         val expectedSchema = modelSchema
-        val gatewey = "test_gateway"
-        whenever(service.importScheme(gatewey, expectedSchema.path))
+        whenever(service.importScheme(expectedSchema.path))
             .thenReturn(
                 ApiSchemeImportResponse(
                     result = ApiSchemeImportResponse.Schema(
@@ -32,7 +31,7 @@ class ApiSchemesImportFacadeTest {
                 )
             )
 
-        val result = facade.importSchemes(gatewey, expectedSchema.path, testDirectory)
+        val result = facade.importSchemes(expectedSchema.path, testDirectory)
         assertThat(result).hasSize(1)
 
         val generatedFile = result.first()

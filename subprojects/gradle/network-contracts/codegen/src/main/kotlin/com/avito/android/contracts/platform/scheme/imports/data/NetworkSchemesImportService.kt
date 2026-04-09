@@ -2,7 +2,6 @@ package com.avito.android.contracts.platform.scheme.imports.data
 
 import com.avito.android.contracts.platform.internal.http.HttpClientService
 import com.avito.android.contracts.platform.scheme.imports.data.models.ApiSchemeImportResponse
-import com.avito.android.contracts.platform.scheme.imports.data.models.ApiSchemesImportRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -14,6 +13,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import org.gradle.api.GradleException
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
@@ -21,12 +21,13 @@ internal abstract class NetworkSchemesImportService : SchemesImportService<Netwo
 
     private val httpsClient by lazy { parameters.httpClient.get().get().buildClient() }
 
-    override suspend fun importScheme(gateway: String, url: String): ApiSchemeImportResponse {
-        return httpsClient.fetchSchema(gateway, url)
+    override suspend fun importScheme(url: String): ApiSchemeImportResponse {
+        return httpsClient.fetchSchema(url)
     }
 
-    private suspend fun HttpClient.fetchSchema(gateway: String, url: String): ApiSchemeImportResponse {
-        val response = fetchApiScheme(gateway, url)
+    private suspend fun HttpClient.fetchSchema(url: String): ApiSchemeImportResponse {
+        val additionalProperties = parameters.additionalParams.get()
+        val response = fetchApiScheme(url, additionalProperties)
         if (response.status == HttpStatusCode.OK) {
             return response.body()
         } else {
@@ -41,19 +42,17 @@ internal abstract class NetworkSchemesImportService : SchemesImportService<Netwo
     interface Parameters : SchemesImportService.Parameters {
 
         val httpClient: Property<Provider<HttpClientService>>
+        val additionalParams: MapProperty<String, String>
     }
 }
 
 private suspend fun HttpClient.fetchApiScheme(
-    gateway: String,
-    apiPath: String
+    apiPath: String,
+    additionalProperties: Map<String, String>
 ): HttpResponse = post {
     url(path = "getSchemaForPath/")
     contentType(ContentType.Application.Json)
     setBody(
-        ApiSchemesImportRequest(
-            path = apiPath,
-            gatewayName = gateway.takeIf(String::isNotEmpty) ?: ApiSchemesImportRequest.DEFAULT_GATEWAY
-        )
+        mapOf("path" to apiPath) + additionalProperties
     )
 }

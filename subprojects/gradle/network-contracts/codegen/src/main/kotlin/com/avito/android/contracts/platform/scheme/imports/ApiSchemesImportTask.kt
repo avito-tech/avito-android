@@ -9,7 +9,6 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -18,10 +17,6 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
 
     @get:Input
     public abstract val apiPath: Property<String>
-
-    @get:Input
-    @get:Optional
-    public abstract val gateway: Property<String>
 
     @get:OutputDirectory
     public abstract val outputDirectory: DirectoryProperty
@@ -48,7 +43,7 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
         val rootDirectory = outputDirectory.get().asFile
 
         val generatedFiles = runBlocking {
-            facade.importSchemes(gateway.orNull.orEmpty(), apiPath.get(), rootDirectory)
+            facade.importSchemes(apiPath.get(), rootDirectory)
         }
 
         logGeneratedFiles(generatedFiles)

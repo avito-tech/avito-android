@@ -9,8 +9,8 @@ public class ApiSchemesImportFacade internal constructor(
     private val service: SchemesImportService<*>,
 ) {
 
-    public suspend fun importSchemes(gateway: String, url: String, targetDirectory: File): List<File> {
-        val schemes = service.importScheme(gateway, url).result
+    public suspend fun importSchemes(url: String, targetDirectory: File): List<File> {
+        val schemes = service.importScheme(url).result
         val generator = ApiSchemesFilesGenerator(targetDirectory)
         if (!schemes.areSchemesExist) {
             error("Did not find any schemes for `$url`.")

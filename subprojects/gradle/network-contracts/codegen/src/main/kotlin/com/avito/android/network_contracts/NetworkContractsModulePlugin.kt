@@ -62,6 +62,7 @@ public class NetworkContractsModulePlugin : Plugin<Project> {
                         HttpClientService.provideHttpClientService(target, extension.name)
                     }
                 )
+                it.additionalParams.set(networkContractsExtension.importParameters)
             }
             extension.importService.set(importService)
         }
