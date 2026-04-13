@@ -28,6 +28,7 @@ import org.junit.runners.model.Statement
  * class MyFeatureScreenRule : InHouseFragmentScreenRule<NavigationActivity>(
  *    activityClass = NavigationActivity::class.java,
  *    navHostId = R.id.nav_host_fragment,
+ *    startDestinationKey = "start_destination_key",
  * )
  *
  * In your test:
@@ -47,6 +48,7 @@ import org.junit.runners.model.Statement
 public abstract class InHouseFragmentScreenRule<A : AppCompatActivity>(
     activityClass: Class<A>,
     @param:IdRes private val navHostId: Int,
+    private val startDestinationKey: String,
     stubIntents: Boolean = true,
 ) : TestRule {
 
@@ -75,20 +77,9 @@ public abstract class InHouseFragmentScreenRule<A : AppCompatActivity>(
         destination: String,
         startIntent: Intent? = null,
     ): ActivityScenario<A> {
-        activityRule.launchActivity(startIntent)
-        navigateTo(destination)
+        val intent = (startIntent ?: Intent()).putExtra(startDestinationKey, destination)
+        activityRule.launchActivity(intent)
         return scenario
-    }
-
-    /**
-     * Navigates to an arbitrary destination after the activity is already launched.
-     */
-    public fun navigateTo(destination: String) {
-        scenario.onActivity { activity ->
-            val navHostFragment = activity.supportFragmentManager.findFragmentById(navHostId) as NavHostFragment
-            val navController = navHostFragment.navController
-            navController.navigate(destination)
-        }
     }
 
     /**
@@ -97,11 +88,13 @@ public abstract class InHouseFragmentScreenRule<A : AppCompatActivity>(
      */
     public fun setFragmentResultListener(requestKey: String) {
         scenario.onActivity { activity ->
-            activity.supportFragmentManager.setFragmentResultListener(requestKey, activity) { _, bundle ->
+            activity.navHost().childFragmentManager.setFragmentResultListener(requestKey, activity) { _, bundle ->
                 fragmentResult = bundle
             }
         }
     }
+
+    private fun A.navHost(): NavHostFragment = supportFragmentManager.findFragmentById(navHostId) as NavHostFragment
 
     override fun apply(base: Statement, description: Description): Statement =
         activityRule.apply(base, description)
