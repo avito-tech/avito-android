@@ -14,8 +14,6 @@ dependencies {
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:common:retrace"))
     implementation(project(":subprojects:common:result"))
-    implementation(project(":subprojects:delivery:sign-service"))
-    implementation(project(":subprojects:gradle:mtls"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
 
@@ -23,7 +21,6 @@ dependencies {
     testFixturesImplementation(libs.protobufJava)
     testFixturesImplementation(libs.dexlib)
 
-    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 

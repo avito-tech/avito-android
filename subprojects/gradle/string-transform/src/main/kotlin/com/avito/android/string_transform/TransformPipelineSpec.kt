@@ -17,9 +17,6 @@ public abstract class TransformPipelineSpec @Inject constructor(
     @get:Nested
     public abstract val rules: TransformRulesSpec
 
-    @get:Nested
-    public abstract val integrations: TransformIntegrationsSpec
-
     override fun getName(): String = pipelineName
 
     public fun variant(value: String) {
@@ -28,9 +25,5 @@ public abstract class TransformPipelineSpec @Inject constructor(
 
     public fun rules(action: Action<in TransformRulesSpec>) {
         action.execute(rules)
-    }
-
-    public fun integrations(action: Action<in TransformIntegrationsSpec>) {
-        action.execute(integrations)
     }
 }
