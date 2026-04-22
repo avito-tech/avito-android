@@ -12,6 +12,7 @@ import com.avito.android.http.nupokati.retrofit.model.artifact_upload.chunked.Mu
 import com.avito.android.http.nupokati.retrofit.model.artifact_upload.chunked.MultipartUploadPart
 import com.avito.android.http.nupokati.retrofit.model.save_test_result.SaveTestResultRequest
 import com.avito.android.model.output.toNupokatiV4ReportCoordinates
+import com.avito.http.RequestMetadata
 import com.avito.reportviewer.model.ReportCoordinates
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -44,7 +45,10 @@ internal class RetrofitNupokatiV4Client(
             reportCoordinates = reportCoordinates.toNupokatiV4ReportCoordinates()
         )
 
-        return api.saveTestResult(request = httpRequest).executeCall().fold(
+        return api.saveTestResult(
+            metadata = RequestMetadata(SERVICE_NAME, "saveTestResult"),
+            request = httpRequest,
+        ).executeCall().fold(
             onSuccess = { response ->
                 if (response.result.success) {
                     Result.Success(
@@ -105,6 +109,7 @@ internal class RetrofitNupokatiV4Client(
         val filePart = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
         val uploadResult = api.uploadArtifact(
+            metadata = RequestMetadata(SERVICE_NAME, "upload_artifact"),
             platform = platform,
             project = project,
             version = version,
@@ -218,6 +223,7 @@ internal class RetrofitNupokatiV4Client(
                 )
 
                 api.uploadMultiPartArtifact(
+                    metadata = RequestMetadata(SERVICE_NAME, "upload_part_artifact"),
                     platform = platform,
                     project = project,
                     version = version,
@@ -268,7 +274,10 @@ internal class RetrofitNupokatiV4Client(
             fileName = fileName
         )
 
-        val initResponse = api.multipartUploadInit(initRequest).executeCall().fold(
+        val initResponse = api.multipartUploadInit(
+            metadata = RequestMetadata(SERVICE_NAME, "multipartUploadInit"),
+            request = initRequest,
+        ).executeCall().fold(
             onSuccess = { Result.Success(it) },
             onFailure = { return Result.Failure(it) }
         )
@@ -306,7 +315,10 @@ internal class RetrofitNupokatiV4Client(
             parts = uploadedParts
         )
 
-        val response = api.multipartUploadComplete(completeRequest).executeCall().fold(
+        val response = api.multipartUploadComplete(
+            metadata = RequestMetadata(SERVICE_NAME, "multipartUploadComplete"),
+            request = completeRequest,
+        ).executeCall().fold(
             onSuccess = { Result.Success(it) },
             onFailure = { return Result.Failure(it) }
         )
@@ -339,7 +351,10 @@ internal class RetrofitNupokatiV4Client(
             fileName = fileName,
             uploadId = uploadId,
         )
-        val response = api.multipartUploadAbort(abortRequest).executeCall()
+        val response = api.multipartUploadAbort(
+            metadata = RequestMetadata(SERVICE_NAME, "multipartUploadAbort"),
+            request = abortRequest,
+        ).executeCall()
 
         if (response is Result.Success && !response.value.result.error.isNullOrEmpty()) {
             return Result.Failure(
@@ -383,5 +398,9 @@ internal class RetrofitNupokatiV4Client(
             }
         }
         return result
+    }
+
+    private companion object {
+        const val SERVICE_NAME = "nupokati"
     }
 }

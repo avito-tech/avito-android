@@ -11,9 +11,14 @@ dependencies {
 
     implementation(project(":subprojects:delivery:qapps"))
     implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:http-statsd"))
+    implementation(project(":subprojects:common:statsd"))
+    implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:common:result"))
+    implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:logger:gradle-logger"))
+    implementation(project(":subprojects:logger:logger"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))
@@ -32,6 +37,7 @@ dependencies {
     testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:common:resources"))
     testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(testFixtures(project(":subprojects:common:statsd")))
     testImplementation(libs.jsonAssert)
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))

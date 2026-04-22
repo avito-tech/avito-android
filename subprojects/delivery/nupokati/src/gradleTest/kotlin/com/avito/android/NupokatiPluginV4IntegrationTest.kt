@@ -10,6 +10,7 @@ import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
+import com.avito.test.http.RequestData
 import okhttp3.mockwebserver.MockResponse
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.AfterEach
@@ -260,7 +261,200 @@ internal class NupokatiPluginV4IntegrationTest {
         gradlew(projectDir, "tasks").assertThat().buildSuccessful()
     }
 
-    private fun generateProject(cdConfigFile: File, projectDir: File) {
+    private fun MockDispatcher.registerSequencedResponses(
+        matcher: RequestData.() -> Boolean,
+        vararg responses: MockResponse,
+    ) {
+        responses.reversed().forEach { response ->
+            registerMock(
+                Mock(
+                    requestMatcher = matcher,
+                    response = response,
+                    removeAfterMatched = true,
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `nupokati v4 - uploadArtifact - retries on 503 and succeeds`(@TempDir projectDir: File) {
+        val cdConfigFile = writeCdConfig(projectDir)
+        generateProject(cdConfigFile, projectDir)
+        projectDir.git("checkout -b release_11")
+
+        val uploadCapturer = mockDispatcher.captureRequest {
+            method == "POST" && path == "/api/1/upload_artifact"
+        }
+        mockDispatcher.registerSequencedResponses(
+            matcher = { method == "POST" && path == "/api/1/upload_artifact" },
+            MockResponse().setResponseCode(503),
+            MockResponse().setResponseCode(503),
+            MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                """
+                {"buildNumber":$versionCode,"version":"$releaseVersion","platform":"android",
+                "project":"avito","uri":"${mockWebServerUrl}artifacts/app-release.aab"}
+                """.trimIndent()
+            ),
+        )
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { method == "POST" && path == "/saveTestResult/" },
+                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                    """{"result":{"success":true,"message":"ok"}}"""
+                ),
+            )
+        )
+
+        gradlew(projectDir, ":app:nupokati", dryRun = false)
+            .assertThat().buildSuccessful()
+
+        uploadCapturer.checks.requestsCaptured(requestsCount = 3)
+    }
+
+    @Test
+    fun `nupokati v4 - uploadArtifact - fails after retries exhausted`(@TempDir projectDir: File) {
+        val cdConfigFile = writeCdConfig(projectDir)
+        generateProject(cdConfigFile, projectDir)
+        projectDir.git("checkout -b release_11")
+
+        val uploadCapturer = mockDispatcher.captureRequest {
+            method == "POST" && path == "/api/1/upload_artifact"
+        }
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { method == "POST" && path == "/api/1/upload_artifact" },
+                response = MockResponse().setResponseCode(503).setBody("persistent"),
+            )
+        )
+
+        gradlew(projectDir, ":app:nupokati", expectFailure = true, dryRun = false)
+            .assertThat()
+            .buildFailed()
+            .taskWithOutcome(":app:uploadNupokatiArtifactsReleaseV4", TaskOutcome.FAILED)
+
+        uploadCapturer.checks.requestsCaptured(requestsCount = 3)
+    }
+
+    @Test
+    fun `nupokati v4 - chunked upload - retries on part and succeeds`(@TempDir projectDir: File) {
+        val cdConfigFile = writeCdConfig(projectDir)
+        generateProject(cdConfigFile, projectDir, chunkedUploadThresholdBytes = 10L)
+        projectDir.git("checkout -b release_11")
+
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { method == "POST" && path == "/multipartUploadInit/" },
+                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                    """{"result":{"uploadId":"u1"}}"""
+                ),
+            )
+        )
+        val partCapturer = mockDispatcher.captureRequest {
+            method == "POST" && path == "/api/1/upload_part_artifact"
+        }
+        mockDispatcher.registerSequencedResponses(
+            matcher = { method == "POST" && path == "/api/1/upload_part_artifact" },
+            MockResponse().setResponseCode(503),
+            MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                """{"etag":"e-1","partNumber":1}"""
+            ),
+        )
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { method == "POST" && path == "/multipartUploadComplete/" },
+                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                    """{"result":{"uri":"${mockWebServerUrl}artifacts/app-release.aab"}}"""
+                ),
+            )
+        )
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { method == "POST" && path == "/saveTestResult/" },
+                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                    """{"result":{"success":true,"message":"ok"}}"""
+                ),
+            )
+        )
+
+        gradlew(projectDir, ":app:nupokati", dryRun = false)
+            .assertThat().buildSuccessful()
+
+        // part was retried once: 2 captured requests for the part endpoint
+        partCapturer.checks.requestsCaptured(requestsCount = 2)
+    }
+
+    @Test
+    fun `nupokati v4 - saveTestResult - retries on 503`(@TempDir projectDir: File) {
+        val cdConfigFile = writeCdConfig(projectDir)
+        generateProject(cdConfigFile, projectDir)
+        projectDir.git("checkout -b release_11")
+
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { method == "POST" && path == "/api/1/upload_artifact" },
+                response = MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                    """
+                    {"buildNumber":$versionCode,"version":"$releaseVersion","platform":"android",
+                    "project":"avito","uri":"${mockWebServerUrl}artifacts/app-release.aab"}
+                    """.trimIndent()
+                ),
+            )
+        )
+        val saveCapturer = mockDispatcher.captureRequest {
+            method == "POST" && path == "/saveTestResult/"
+        }
+        mockDispatcher.registerSequencedResponses(
+            matcher = { method == "POST" && path == "/saveTestResult/" },
+            MockResponse().setResponseCode(503),
+            MockResponse().setResponseCode(HttpCodes.OK).setBody(
+                """{"result":{"success":true,"message":"ok"}}"""
+            ),
+        )
+
+        gradlew(projectDir, ":app:nupokati", dryRun = false)
+            .assertThat().buildSuccessful()
+
+        saveCapturer.checks.requestsCaptured(requestsCount = 2)
+    }
+
+    @Test
+    fun `nupokati v4 - uploadArtifact - does not retry on 4xx`(@TempDir projectDir: File) {
+        val cdConfigFile = writeCdConfig(projectDir)
+        generateProject(cdConfigFile, projectDir)
+        projectDir.git("checkout -b release_11")
+
+        val uploadCapturer = mockDispatcher.captureRequest {
+            method == "POST" && path == "/api/1/upload_artifact"
+        }
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { method == "POST" && path == "/api/1/upload_artifact" },
+                response = MockResponse().setResponseCode(400).setBody("bad request"),
+            )
+        )
+
+        gradlew(projectDir, ":app:nupokati", expectFailure = true, dryRun = false)
+            .assertThat().buildFailed()
+
+        uploadCapturer.checks.requestsCaptured(requestsCount = 1)
+    }
+
+    private fun writeCdConfig(projectDir: File): File {
+        val cdConfig = """
+            |{
+            |  "schema_version": 4,
+            |  "project": "avito",
+            |  "release_version": "$releaseVersion",
+            |  "skip_upload": false
+            |}""".trimMargin()
+        return File(projectDir, "cd-config.json").also { it.writeText(cdConfig) }
+    }
+
+    private fun generateProject(
+        cdConfigFile: File,
+        projectDir: File,
+        chunkedUploadThresholdBytes: Long? = null,
+    ) {
         TestProjectGenerator(
             useKts = true,
             plugins = plugins {
@@ -312,7 +506,7 @@ internal class NupokatiPluginV4IntegrationTest {
                         |        versionCode.set($versionCode)
                         |        useTls.set(false)
                         |        nupokatiUrl.set("$mockWebServerUrl")
-                        |
+                        |        ${chunkedUploadThresholdBytes?.let { "chunkedUploadThresholdBytes.set(${it}L)" } ?: ""}
                         |        artifacts.set(
                         |           listOf(
                         |               ArtifactV4.AppBinary(

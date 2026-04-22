@@ -1,20 +1,15 @@
 package com.avito.android.artifacts_upload
 
-import com.avito.android.http.nupokati.NupokatiV4ClientBuildService
+import com.avito.android.http.nupokati.NupokatiV4ClientTask
 import com.avito.android.model.input.config.CdBuildConfigV4
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
-internal abstract class UploadArtifactsTask : DefaultTask() {
-
-    @get:Internal
-    internal abstract val nupokatiClientService: Property<NupokatiV4ClientBuildService>
+internal abstract class UploadArtifactsTask : NupokatiV4ClientTask() {
 
     @get:Input
     internal abstract val storeNames: MapProperty</* fileName: */ String, /* storeName: */ String>
@@ -31,8 +26,7 @@ internal abstract class UploadArtifactsTask : DefaultTask() {
     @TaskAction
     internal fun uploadArtifactsToNupokati() {
         val config = cdBuildConfig.get()
-
-        val client = nupokatiClientService.get().getClient()
+        val client = buildNupokatiClient()
 
         artifacts.forEach { artifact ->
             val storeName = storeNames.get()[artifact.name]

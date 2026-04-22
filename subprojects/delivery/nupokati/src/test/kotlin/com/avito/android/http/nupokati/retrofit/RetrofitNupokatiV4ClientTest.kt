@@ -3,6 +3,7 @@ package com.avito.android.http.nupokati.retrofit
 import com.avito.android.MiB
 import com.avito.android.Result
 import com.avito.android.http.nupokati.model.ArtifactUploadResult
+import com.avito.http.RetryInterceptor
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
@@ -65,6 +66,31 @@ internal class RetrofitNupokatiV4ClientTest {
         return RetrofitNupokatiV4Client(
             retrofit.create(NupokatiV4Api::class.java),
             400.MiB
+        )
+    }
+
+    private fun createRetryingClient(
+        url: HttpUrl,
+        chunkedUploadThreshold: Long = 400.MiB,
+    ): RetrofitNupokatiV4Client {
+        val okHttp = OkHttpClient.Builder()
+            .addInterceptor(
+                RetryInterceptor(
+                    retries = 3,
+                    allowedMethods = listOf("POST"),
+                )
+            )
+            .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(url)
+            .client(okHttp)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+
+        return RetrofitNupokatiV4Client(
+            retrofit.create(NupokatiV4Api::class.java),
+            chunkedUploadThreshold
         )
     }
 
@@ -832,6 +858,324 @@ internal class RetrofitNupokatiV4ClientTest {
         assertThat(result).isFailure().withThrowable { throwable ->
             assertThat(throwable.message).contains("Completion failed")
         }
+    }
+
+    @Test
+    fun `uploadArtifact - retry - retries on 503 and succeeds`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+        val testArtifact = createFile("test-artifact.apk", 17L)
+
+        server.enqueue(MockResponse().setResponseCode(503).setBody("transient"))
+        server.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody("""{"buildNumber":1,"version":"1","platform":"android","project":"p","uri":"u"}""")
+        )
+
+        val result = client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = testArtifact
+        )
+
+        assertThat(result).isSuccess()
+        assertThat(server.requestCount).isEqualTo(2)
+    }
+
+    @Test
+    fun `uploadArtifact - retry - fails after retries exhausted`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+        val testArtifact = createFile("test-artifact.apk", 17L)
+
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(MockResponse().setResponseCode(503))
+
+        val result = client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = testArtifact
+        )
+
+        assertThat(result).isFailure()
+        assertThat(server.requestCount).isEqualTo(3)
+    }
+
+    @Test
+    fun `uploadArtifact - retry - does not retry on 4xx`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+        val testArtifact = createFile("test-artifact.apk", 17L)
+
+        server.enqueue(MockResponse().setResponseCode(400).setBody("bad"))
+
+        val result = client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = testArtifact
+        )
+
+        assertThat(result).isFailure()
+        assertThat(server.requestCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `uploadArtifact - retry - preserves request body across attempts`() {
+        server = setupMockServer(true)
+        val client = createRetryingClient(server.url("/"))
+        val testArtifact = createFile("test-artifact.apk", 17L)
+        testArtifact.writeText("test file content")
+
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody("""{"buildNumber":1,"version":"1","platform":"android","project":"p","uri":"u"}""")
+        )
+
+        client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = testArtifact
+        )
+
+        val firstBody = server.takeRequest().body.readUtf8()
+        val secondBody = server.takeRequest().body.readUtf8()
+        assertThat(firstBody).contains("test file content")
+        assertThat(secondBody).contains("test file content")
+        assertThat(firstBody).contains("""name="project"""")
+        assertThat(secondBody).contains("""name="project"""")
+    }
+
+    @Test
+    fun `uploadArtifact - chunked upload - retries on init failure`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+        val largeFile = createFile("large.apk", 401L * 1024 * 1024)
+
+        // init: 503, then 200
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uploadId": "u1" } }""")
+        )
+        // parts
+        for (i in 1..largeFile.chunksCount()) {
+            server.enqueue(
+                MockResponse().setResponseCode(200)
+                    .setBody("""{"etag":"e-$i","partNumber":$i}""")
+            )
+        }
+        // complete
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uri": "https://example.com/u" } }""")
+        )
+
+        val result = client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = largeFile
+        )
+
+        assertThat(result).isSuccess()
+        val firstPath = server.takeRequest().path
+        val secondPath = server.takeRequest().path
+        assertThat(firstPath).isEqualTo("/multipartUploadInit/")
+        assertThat(secondPath).isEqualTo("/multipartUploadInit/")
+    }
+
+    @Test
+    fun `uploadArtifact - chunked upload - retries on part without abort`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+        val largeFile = createFile("large.apk", 401L * 1024 * 1024)
+        val chunks = largeFile.chunksCount().toInt()
+
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uploadId": "u1" } }""")
+        )
+        // part 1 ok
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"etag":"e-1","partNumber":1}""")
+        )
+        // part 2 fails once then succeeds
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"etag":"e-2","partNumber":2}""")
+        )
+        // remaining parts
+        for (i in 3..chunks) {
+            server.enqueue(
+                MockResponse().setResponseCode(200)
+                    .setBody("""{"etag":"e-$i","partNumber":$i}""")
+            )
+        }
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uri": "https://example.com/u" } }""")
+        )
+
+        val result = client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = largeFile
+        )
+
+        assertThat(result).isSuccess()
+        // Verify NO abort was issued
+        val paths = (1..server.requestCount).map { server.takeRequest().path }
+        assertThat(paths).doesNotContain("/multipartUploadAbort/")
+    }
+
+    @Test
+    fun `uploadArtifact - chunked upload - retry preserves partNumber and sha256Hex`() {
+        server = setupMockServer(true)
+        val client = createRetryingClient(server.url("/"))
+        val largeFile = createFile("large.apk", 401L * 1024 * 1024)
+        val chunks = largeFile.chunksCount().toInt()
+
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uploadId": "u1" } }""")
+        )
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"etag":"e-1","partNumber":1}""")
+        )
+        // part 2 fails then succeeds
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"etag":"e-2","partNumber":2}""")
+        )
+        for (i in 3..chunks) {
+            server.enqueue(
+                MockResponse().setResponseCode(200)
+                    .setBody("""{"etag":"e-$i","partNumber":$i}""")
+            )
+        }
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uri": "https://example.com/u" } }""")
+        )
+
+        client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = largeFile
+        )
+
+        server.takeRequest() // init
+        server.takeRequest() // part 1
+        val part2Try1 = server.takeRequest().body.readUtf8()
+        val part2Try2 = server.takeRequest().body.readUtf8()
+
+        val sha1 = Regex("""name="sha256Hex"[\s\S]*?\r?\n\r?\n([0-9a-f]+)""").find(part2Try1)?.groupValues?.get(1)
+        val sha2 = Regex("""name="sha256Hex"[\s\S]*?\r?\n\r?\n([0-9a-f]+)""").find(part2Try2)?.groupValues?.get(1)
+        val num1 = Regex("""name="partNumber"[\s\S]*?\r?\n\r?\n(\d+)""").find(part2Try1)?.groupValues?.get(1)
+        val num2 = Regex("""name="partNumber"[\s\S]*?\r?\n\r?\n(\d+)""").find(part2Try2)?.groupValues?.get(1)
+
+        assertThat(sha1).isNotNull()
+        assertThat(sha1).isEqualTo(sha2)
+        assertThat(num1).isEqualTo("2")
+        assertThat(num2).isEqualTo("2")
+    }
+
+    @Test
+    fun `uploadArtifact - chunked upload - aborts after part retries exhausted`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+        val largeFile = createFile("large.apk", 401L * 1024 * 1024)
+
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uploadId": "u1" } }""")
+        )
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"etag":"e-1","partNumber":1}""")
+        )
+        // part 2 fails 3 times (retries exhausted)
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(MockResponse().setResponseCode(503))
+        // abort
+        server.enqueue(MockResponse().setResponseCode(200).setBody("""{}"""))
+
+        val result = client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = largeFile
+        )
+
+        assertThat(result).isFailure()
+        val paths = (1..server.requestCount).map { server.takeRequest().path }
+        assertThat(paths).contains("/multipartUploadAbort/")
+    }
+
+    @Test
+    fun `uploadArtifact - chunked upload - retries on complete failure`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+        val largeFile = createFile("large.apk", 401L * 1024 * 1024)
+        val chunks = largeFile.chunksCount().toInt()
+
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uploadId": "u1" } }""")
+        )
+        for (i in 1..chunks) {
+            server.enqueue(
+                MockResponse().setResponseCode(200)
+                    .setBody("""{"etag":"e-$i","partNumber":$i}""")
+            )
+        }
+        // complete: 503, then 200
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{ "result": { "uri": "https://example.com/u" } }""")
+        )
+
+        val result = client.uploadArtifact(
+            platform = "android", project = "p", version = "1", buildNumber = 1, file = largeFile
+        )
+
+        assertThat(result).isSuccess()
+    }
+
+    @Test
+    fun `saveTestResult - retry - retries on 503 and succeeds`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+
+        server.enqueue(MockResponse().setResponseCode(503))
+        server.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"result":{"success":true,"message":"ok"}}""")
+        )
+
+        val result = client.saveTestResult(
+            project = "p",
+            platform = "android",
+            version = "1",
+            buildNumber = 1,
+            reportUrl = "u",
+            reportCoordinates = ReportCoordinates("a", "b", "c")
+        )
+
+        assertThat(result).isSuccess()
+        assertThat(server.requestCount).isEqualTo(2)
+    }
+
+    @Test
+    fun `saveTestResult - retry - does not retry on 4xx`() {
+        server = setupMockServer(false)
+        val client = createRetryingClient(server.url("/"))
+
+        server.enqueue(MockResponse().setResponseCode(400).setBody("bad"))
+
+        val result = client.saveTestResult(
+            project = "p",
+            platform = "android",
+            version = "1",
+            buildNumber = 1,
+            reportUrl = "u",
+            reportCoordinates = ReportCoordinates("a", "b", "c")
+        )
+
+        assertThat(result).isFailure()
+        assertThat(server.requestCount).isEqualTo(1)
     }
 
     fun File.chunksCount(): Long {

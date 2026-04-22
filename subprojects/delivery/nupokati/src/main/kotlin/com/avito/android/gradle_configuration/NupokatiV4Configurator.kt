@@ -10,14 +10,14 @@ import com.avito.android.artifacts_upload.UploadArtifactsTask
 import com.avito.android.gradle_configuration.extension.ArtifactV4
 import com.avito.android.gradle_configuration.extension.ShouldUploadToNupokatiSpec
 import com.avito.android.gradle_configuration.extension.spec.NupokatiV4PipelineSpec
-import com.avito.android.http.nupokati.NupokatiV4ClientBuildService
+import com.avito.android.http.nupokati.NupokatiV4ClientTask
 import com.avito.android.sendTestResultsTaskName
+import com.avito.android.stats.statsdConfig
 import com.avito.android.test_results_upload.SendTestResultsTask
 import com.avito.android.tls.TlsConfigurationPlugin
 import com.avito.android.uploadArtifactsTaskName
 import com.avito.capitalize
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
@@ -39,49 +39,15 @@ internal class NupokatiV4Configurator(
             it.description = "Root task for CD nupokati contract execution"
         }
 
-        val nupokatiV4ClientBuildService = project.gradle.sharedServices.registerIfAbsent(
-            "nupokatiV4Client",
-            NupokatiV4ClientBuildService::class.java
-        ) { spec ->
-            val useTls = pipelineSpec.useTls.orElse(true)
-            spec.parameters.baseUrl.set(pipelineSpec.nupokatiUrl)
-            spec.parameters.chunkedUploadThresholdBytes.set(
-                pipelineSpec.chunkedUploadThresholdBytes.convention(
-                    DEFAULT_CHUNKED_UPLOAD_THRESHOLD
-                )
-            )
-
-            spec.parameters.connectionTimeoutSeconds.set(
-                pipelineSpec.nupokatiClientConnectionTimeout.convention(
-                    DEFAULT_NUPOKATI_CLIENT_CONNECTION_TIMEOUT
-                )
-            )
-            spec.parameters.readTimeoutSeconds.set(
-                pipelineSpec.nupokatiClientReadTimeout.convention(
-                    DEFAULT_NUPOKATI_CLIENT_READ_TIMEOUT
-                )
-            )
-            spec.parameters.writeTimeoutSeconds.set(
-                pipelineSpec.nupokatiClientWriteTimeout.convention(
-                    DEFAULT_NUPOKATI_CLIENT_WRITE_TIMEOUT
-                )
-            )
-            spec.parameters.useTls.set(useTls)
-            spec.parameters.tlsCredentialsService.set(
-                TlsConfigurationPlugin.provideCredentialsService(project)
-            )
-        }
-
         val uploadArtifactsTask =
             registerUploadArtifactsTask(
                 pipelineSpec = pipelineSpec,
-                nupokatiClientBuildService = nupokatiV4ClientBuildService,
                 shouldUploadToNupokatiSpec = shouldUploadToNupokatiSpec,
             )
         val sendTestResultsTask =
             registerSendTestResultsTask(
                 specName = specName,
-                nupokatiClientBuildService = nupokatiV4ClientBuildService,
+                pipelineSpec = pipelineSpec,
                 uploadArtifactsTask = uploadArtifactsTask,
                 shouldUploadToNupokatiSpec = shouldUploadToNupokatiSpec,
             )
@@ -90,11 +56,11 @@ internal class NupokatiV4Configurator(
 
     private fun registerSendTestResultsTask(
         specName: String,
-        nupokatiClientBuildService: Provider<NupokatiV4ClientBuildService>,
+        pipelineSpec: NupokatiV4PipelineSpec,
         uploadArtifactsTask: TaskProvider<UploadArtifactsTask>,
         shouldUploadToNupokatiSpec: ShouldUploadToNupokatiSpec,
     ) = project.tasks.register<SendTestResultsTask>(sendTestResultsTaskName(specName)) {
-        nupokatiClientService.set(nupokatiClientBuildService)
+        configureClientProperties(this, pipelineSpec)
         cdBuildConfig.set(config)
         reportCoordinates.set(pipelineSpec.reportViewer.reportCoordinates)
         reportViewerUrl.set(pipelineSpec.reportViewer.frontendUrl)
@@ -106,10 +72,9 @@ internal class NupokatiV4Configurator(
 
     private fun registerUploadArtifactsTask(
         pipelineSpec: NupokatiV4PipelineSpec,
-        nupokatiClientBuildService: Provider<NupokatiV4ClientBuildService>,
         shouldUploadToNupokatiSpec: ShouldUploadToNupokatiSpec,
     ) = project.tasks.register<UploadArtifactsTask>(uploadArtifactsTaskName(pipelineSpec.name)) {
-        nupokatiClientService.set(nupokatiClientBuildService)
+        configureClientProperties(this, pipelineSpec)
         appVersionCode.set(pipelineSpec.versionCode)
         cdBuildConfig.set(config)
 
@@ -131,5 +96,28 @@ internal class NupokatiV4Configurator(
         artifacts.from(artifactsProvider)
 
         onlyIf(shouldUploadToNupokatiSpec)
+    }
+
+    private fun configureClientProperties(task: NupokatiV4ClientTask, pipelineSpec: NupokatiV4PipelineSpec) {
+        task.baseUrl.set(pipelineSpec.nupokatiUrl)
+        task.chunkedUploadThresholdBytes.set(
+            pipelineSpec.chunkedUploadThresholdBytes.convention(DEFAULT_CHUNKED_UPLOAD_THRESHOLD)
+        )
+        task.connectionTimeoutSeconds.set(
+            pipelineSpec.nupokatiClientConnectionTimeout.convention(DEFAULT_NUPOKATI_CLIENT_CONNECTION_TIMEOUT)
+        )
+        task.readTimeoutSeconds.set(
+            pipelineSpec.nupokatiClientReadTimeout.convention(DEFAULT_NUPOKATI_CLIENT_READ_TIMEOUT)
+        )
+        task.writeTimeoutSeconds.set(
+            pipelineSpec.nupokatiClientWriteTimeout.convention(DEFAULT_NUPOKATI_CLIENT_WRITE_TIMEOUT)
+        )
+        task.useTls.set(pipelineSpec.useTls.orElse(true))
+
+        val tlsCreds = TlsConfigurationPlugin.provideCredentialsService(project)
+        task.tlsCredentialsService.set(tlsCreds)
+        task.usesService(tlsCreds)
+
+        task.statsDConfig.set(project.statsdConfig)
     }
 }
