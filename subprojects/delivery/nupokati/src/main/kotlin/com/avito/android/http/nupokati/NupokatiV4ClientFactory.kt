@@ -63,7 +63,7 @@ internal object NupokatiV4ClientFactory {
         }
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/")
             .client(builder.build())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
