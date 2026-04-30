@@ -99,6 +99,20 @@ RUN \
   chmod +x /usr/local/bin/skill-validator && \
   skill-validator --version
 
+# --------------- stringsext -----------------
+# https://github.com/getreu/stringsext/releases
+ARG STRINGSEXT_VERSION=2.3.5
+ARG STRINGSEXT_SHA256=d807efb639ef09b8589caed8e0221dcd0c5ad2701cf0a06b27b464e6c29db14f
+
+RUN \
+  curl ${ARTIFACTORY_URL}android-build-env/stringsext/${STRINGSEXT_VERSION}/stringsext-v${STRINGSEXT_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
+    --progress-bar --location --fail --output /tmp/stringsext.tar.gz && \
+  echo "${STRINGSEXT_SHA256}  /tmp/stringsext.tar.gz" | sha256sum -c - && \
+  tar -xzf /tmp/stringsext.tar.gz -C /usr/local/bin && \
+  chmod +x /usr/local/bin/stringsext && \
+  rm /tmp/stringsext.tar.gz && \
+  stringsext --version
+
 # ----------------------------------------------------------------------------
 
 RUN rm /usr/local/bin/unzip_from_url.sh
