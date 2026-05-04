@@ -1,6 +1,7 @@
 package com.avito.android.string_transform.internal.task
 
 import com.avito.android.string_transform.internal.rules.NormalizedRule
+import com.avito.android.string_transform.task.TransformVariantMappingTask
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder

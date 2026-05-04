@@ -6,9 +6,9 @@ import com.android.build.api.variant.ApplicationVariant
 import com.avito.android.string_transform.TransformPipelineSpec
 import com.avito.android.string_transform.internal.rules.DeclaredRule
 import com.avito.android.string_transform.internal.rules.TransformRulesNormalizer
-import com.avito.android.string_transform.internal.task.TransformVariantAabTask
-import com.avito.android.string_transform.internal.task.TransformVariantApkTask
-import com.avito.android.string_transform.internal.task.TransformVariantMappingTask
+import com.avito.android.string_transform.task.TransformVariantAabTask
+import com.avito.android.string_transform.task.TransformVariantApkTask
+import com.avito.android.string_transform.task.TransformVariantMappingTask
 import com.avito.capitalize
 import com.avito.logger.create
 import org.gradle.api.NamedDomainObjectProvider

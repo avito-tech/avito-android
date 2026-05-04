@@ -9,7 +9,7 @@ public abstract class TransformStringsExtension @Inject constructor(
     private val projectPath: String,
     objects: ObjectFactory,
 ) {
-    internal val pipelines: NamedDomainObjectContainer<TransformPipelineSpec> =
+    public val pipelines: NamedDomainObjectContainer<TransformPipelineSpec> =
         objects.domainObjectContainer(TransformPipelineSpec::class.java) { name ->
             objects.newInstance(TransformPipelineSpec::class.java, name)
         }

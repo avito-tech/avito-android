@@ -1,5 +1,6 @@
 package com.avito.android.string_transform.internal.task
 
+import com.avito.android.string_transform.task.TransformVariantApkTask
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
 import org.gradle.jvm.toolchain.JavaInstallationMetadata

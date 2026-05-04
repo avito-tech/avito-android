@@ -1,4 +1,4 @@
-package com.avito.android.string_transform.internal.task
+package com.avito.android.string_transform.task
 
 import com.avito.android.Result
 import com.avito.android.string_transform.internal.execution.runTransform
@@ -6,6 +6,8 @@ import com.avito.android.string_transform.internal.report.TransformReport
 import com.avito.android.string_transform.internal.report.TransformReportJsonWriter
 import com.avito.android.string_transform.internal.report.TransformReportRecorder
 import com.avito.android.string_transform.internal.rules.NormalizedRule
+import com.avito.android.string_transform.internal.task.OutputPublisher
+import com.avito.android.string_transform.internal.task.VariantApkInputResolver
 import com.avito.android.string_transform.internal.task.apk.ApktoolRunner
 import com.avito.android.string_transform.internal.task.apk.OperationWarning
 import com.avito.android.string_transform.internal.task.apk.WorkspaceContentTransformer
@@ -28,53 +30,53 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.toolchain.JavaLauncher
 
-internal abstract class TransformVariantApkTask : DefaultTask() {
+public abstract class TransformVariantApkTask : DefaultTask() {
 
     @get:Input
-    abstract val modulePath: Property<String>
+    public abstract val pipelineName: Property<String>
 
     @get:Input
-    abstract val pipelineName: Property<String>
+    public abstract val variantName: Property<String>
+
+    @get:OutputFile
+    public abstract val outputApkFile: RegularFileProperty
+
+    @get:OutputFile
+    public abstract val reportFile: RegularFileProperty
 
     @get:Input
-    abstract val variantName: Property<String>
+    internal abstract val modulePath: Property<String>
 
     @get:Input
-    abstract val totalRuleCount: Property<Int>
+    internal abstract val totalRuleCount: Property<Int>
 
     @get:Input
-    abstract val exactRuleCount: Property<Int>
+    internal abstract val exactRuleCount: Property<Int>
 
     @get:Input
-    abstract val caseExpandedRuleCount: Property<Int>
+    internal abstract val caseExpandedRuleCount: Property<Int>
 
     @get:Input
-    abstract val configurationWarnings: ListProperty<String>
+    internal abstract val configurationWarnings: ListProperty<String>
 
     @get:Input
-    abstract val rules: ListProperty<NormalizedRule>
+    internal abstract val rules: ListProperty<NormalizedRule>
 
     @get:Classpath
-    abstract val apktoolClasspath: ConfigurableFileCollection
+    internal abstract val apktoolClasspath: ConfigurableFileCollection
 
     @get:Nested
-    abstract val javaLauncher: Property<JavaLauncher>
+    internal abstract val javaLauncher: Property<JavaLauncher>
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val apkDirectory: DirectoryProperty
+    internal abstract val apkDirectory: DirectoryProperty
 
     @get:LocalState
-    abstract val localStateDirectory: DirectoryProperty
-
-    @get:OutputFile
-    abstract val outputApkFile: RegularFileProperty
-
-    @get:OutputFile
-    abstract val reportFile: RegularFileProperty
+    internal abstract val localStateDirectory: DirectoryProperty
 
     @TaskAction
-    fun transform() {
+    public fun transform() {
         val recorder = TransformReportRecorder(
             modulePath = modulePath.get(),
             pipelineName = pipelineName.get(),

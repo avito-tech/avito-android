@@ -13,6 +13,7 @@ import com.avito.android.string_transform.primaryMethodName
 import com.avito.android.string_transform.primaryMethodParameterName
 import com.avito.android.string_transform.readDexFile
 import com.avito.android.string_transform.readEntryBytes
+import com.avito.android.string_transform.task.TransformVariantAabTask
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
