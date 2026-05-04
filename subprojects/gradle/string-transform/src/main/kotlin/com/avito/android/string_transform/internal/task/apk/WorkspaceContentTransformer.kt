@@ -3,7 +3,10 @@ package com.avito.android.string_transform.internal.task.apk
 import com.avito.android.Result
 import com.avito.android.string_transform.internal.rules.NormalizedRule
 import java.io.File
+import java.io.RandomAccessFile
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 internal class WorkspaceContentTransformer(
     private val textFileDetector: TextFileDetector,
@@ -43,14 +46,37 @@ internal class WorkspaceContentTransformer(
     }
 
     private fun transformPlainText(file: File, rules: List<NormalizedRule>) {
-        val original = file.readText(StandardCharsets.UTF_8)
-        val transformed = rules.fold(original) { content, rule ->
-            content.replace(rule.from, rule.to)
-        }
-        if (transformed != original) {
-            file.writeText(transformed, StandardCharsets.UTF_8)
+        val tempFile = File(file.parentFile, "${file.name}.string-transform.tmp")
+        val hadTrailingNewline = file.endsWithNewline()
+        try {
+            file.useLines(StandardCharsets.UTF_8) { lines ->
+                tempFile.bufferedWriter(StandardCharsets.UTF_8).use { writer ->
+                    val iter = lines.iterator()
+                    if (iter.hasNext()) writer.write(applyRules(iter.next(), rules))
+                    while (iter.hasNext()) {
+                        writer.write("\n")
+                        writer.write(applyRules(iter.next(), rules))
+                    }
+                    if (hadTrailingNewline) writer.write("\n")
+                }
+            }
+            Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        } catch (t: Throwable) {
+            tempFile.delete()
+            throw t
         }
     }
+
+    private fun File.endsWithNewline(): Boolean {
+        if (length() == 0L) return false
+        return RandomAccessFile(this, "r").use { raf ->
+            raf.seek(raf.length() - 1)
+            raf.readByte() == '\n'.code.toByte()
+        }
+    }
+
+    private fun applyRules(text: String, rules: List<NormalizedRule>): String =
+        rules.fold(text) { current, rule -> current.replace(rule.from, rule.to) }
 
     private fun classify(file: File): FileTreatment {
         return when {
