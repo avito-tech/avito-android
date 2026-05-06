@@ -49,6 +49,7 @@ internal fun createAabFixture(archive: File) {
             "base/res/raw/samplevalue.xml" to "samplevalue".toByteArray(StandardCharsets.UTF_8),
             "base/assets/samplevalue.txt" to "samplevalue".toByteArray(StandardCharsets.UTF_8),
             "base/dex/classes.dex" to createDexBytes(),
+            "BUNDLE-METADATA/com.android.tools.build.libraries/dependencies.pb" to opaqueProtobufPayload,
             "META-INF/BNDLTOOL.SF" to "signature".toByteArray(StandardCharsets.UTF_8),
             "META-INF/services/demo.Service" to "implementation".toByteArray(StandardCharsets.UTF_8),
         ),

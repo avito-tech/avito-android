@@ -71,6 +71,9 @@ internal class TransformVariantAabTaskGradleTest {
             assertThat(zip.readEntry("META-INF/services/demo.Service").toString(Charsets.UTF_8))
                 .isEqualTo("implementation")
 
+            assertThat(zip.getEntry("BUNDLE-METADATA/com.android.tools.build.libraries/dependencies.pb"))
+                .isNull()
+
             val resourcesPb = Resources.ResourceTable.parseFrom(
                 zip.readEntryBytes("base/resources.pb")
             )

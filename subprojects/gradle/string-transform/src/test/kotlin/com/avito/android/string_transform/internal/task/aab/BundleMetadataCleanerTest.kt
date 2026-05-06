@@ -48,4 +48,42 @@ internal class BundleMetadataCleanerTest {
 
         assertThat(workspace.resolve("META-INF").exists()).isFalse()
     }
+
+    @Test
+    fun `bundle metadata cleaner - drops dependencies pb and prunes empty directories - when present`(
+        @TempDir dir: File,
+    ) {
+        val workspace = dir.resolve("workspace").apply {
+            resolve("BUNDLE-METADATA/com.android.tools.build.libraries").mkdirs()
+            resolve("BUNDLE-METADATA/com.android.tools.build.libraries/dependencies.pb")
+                .writeBytes(byteArrayOf(0x0A, 0x01, 0x61))
+        }
+
+        cleaner.clean(workspace).getOrThrow()
+
+        assertThat(workspace.resolve("BUNDLE-METADATA/com.android.tools.build.libraries/dependencies.pb").exists())
+            .isFalse()
+        assertThat(workspace.resolve("BUNDLE-METADATA").exists()).isFalse()
+    }
+
+    @Test
+    fun `bundle metadata cleaner - keeps unrelated bundle metadata entries - when sibling files exist`(
+        @TempDir dir: File,
+    ) {
+        val workspace = dir.resolve("workspace").apply {
+            resolve("BUNDLE-METADATA/com.android.tools.build.libraries").mkdirs()
+            resolve("BUNDLE-METADATA/com.android.tools.build.libraries/dependencies.pb")
+                .writeBytes(byteArrayOf(0x0A))
+            resolve("BUNDLE-METADATA/com.android.tools.build.profiles").mkdirs()
+            resolve("BUNDLE-METADATA/com.android.tools.build.profiles/baseline.prof")
+                .writeBytes(byteArrayOf(0x01, 0x02))
+        }
+
+        cleaner.clean(workspace).getOrThrow()
+
+        assertThat(workspace.resolve("BUNDLE-METADATA/com.android.tools.build.libraries").exists())
+            .isFalse()
+        assertThat(workspace.resolve("BUNDLE-METADATA/com.android.tools.build.profiles/baseline.prof").exists())
+            .isTrue()
+    }
 }
