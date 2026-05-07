@@ -1263,6 +1263,11 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
+                        "name": "kotlin-module-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
                         "name": "residual-text-transform",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q

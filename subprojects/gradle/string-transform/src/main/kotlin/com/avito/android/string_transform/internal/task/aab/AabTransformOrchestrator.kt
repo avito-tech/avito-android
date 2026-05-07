@@ -17,6 +17,7 @@ internal class AabTransformOrchestrator(
     private val resourcesPbTransformer: AabResourcesPbTransformer,
     private val protobufXmlTransformer: AabProtobufXmlTransformer,
     private val dexTransformer: AabDexTransformer,
+    private val kotlinModuleTransformer: KotlinModuleTransformer,
     private val contentTransformer: WorkspaceContentTransformer,
     private val pathRenamer: WorkspacePathRenamer,
     private val metadataCleaner: BundleMetadataCleaner,
@@ -89,6 +90,13 @@ internal class AabTransformOrchestrator(
                 )
             }
             recordWarnings("dex-transform", dexWarnings)
+
+            step("kotlin-module-transform") {
+                transformDiscoveredFiles(
+                    files = discoveredFiles.kotlinModuleFiles.asSequence(),
+                    coverage = coverage,
+                ) { file -> kotlinModuleTransformer.transform(file, rules) }
+            }
 
             discoveredFiles.metadataFiles.forEach(coverage::markSkipped)
             discoveredFiles.unsupportedBinaryFiles.forEach(coverage::markSkipped)
@@ -188,6 +196,7 @@ internal class AabTransformOrchestrator(
         val resourcesPbFiles = mutableListOf<File>()
         val protobufXmlFiles = mutableListOf<File>()
         val dexFiles = mutableListOf<File>()
+        val kotlinModuleFiles = mutableListOf<File>()
         val metadataFiles = mutableListOf<File>()
         val unsupportedBinaryFiles = mutableListOf<File>()
 
@@ -198,6 +207,7 @@ internal class AabTransformOrchestrator(
                     AabWorkspaceFileClassifier.ArtifactClass.RESOURCES_PB -> resourcesPbFiles += file
                     AabWorkspaceFileClassifier.ArtifactClass.PROTOBUF_XML -> protobufXmlFiles += file
                     AabWorkspaceFileClassifier.ArtifactClass.DEX -> dexFiles += file
+                    AabWorkspaceFileClassifier.ArtifactClass.KOTLIN_MODULE -> kotlinModuleFiles += file
                     AabWorkspaceFileClassifier.ArtifactClass.METADATA -> metadataFiles += file
                     AabWorkspaceFileClassifier.ArtifactClass.UNSUPPORTED_BINARY -> unsupportedBinaryFiles += file
                     AabWorkspaceFileClassifier.ArtifactClass.RESIDUAL -> Unit
@@ -208,6 +218,7 @@ internal class AabTransformOrchestrator(
             resourcesPbFiles = resourcesPbFiles,
             protobufXmlFiles = protobufXmlFiles,
             dexFiles = dexFiles,
+            kotlinModuleFiles = kotlinModuleFiles,
             metadataFiles = metadataFiles,
             unsupportedBinaryFiles = unsupportedBinaryFiles,
         )
@@ -217,6 +228,7 @@ internal class AabTransformOrchestrator(
         val resourcesPbFiles: List<File>,
         val protobufXmlFiles: List<File>,
         val dexFiles: List<File>,
+        val kotlinModuleFiles: List<File>,
         val metadataFiles: List<File>,
         val unsupportedBinaryFiles: List<File>,
     )

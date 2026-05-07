@@ -94,6 +94,34 @@ internal class AabWorkspaceFileClassifierTest {
     }
 
     @Test
+    fun `workspace file classifier - identifies kotlin module - when file lives under base root meta inf`(
+        @TempDir dir: File,
+    ) {
+        val workspace = dir.resolve("workspace").apply { mkdirs() }
+        val file = workspace.resolve("base/root/META-INF/_sample_module.kotlin_module").apply {
+            parentFile.mkdirs()
+            writeText("kotlin-module")
+        }
+
+        assertThat(classifier.classify(workspace, file))
+            .isEqualTo(AabWorkspaceFileClassifier.ArtifactClass.KOTLIN_MODULE)
+    }
+
+    @Test
+    fun `workspace file classifier - identifies kotlin module - when file lives at top level meta inf`(
+        @TempDir dir: File,
+    ) {
+        val workspace = dir.resolve("workspace").apply { mkdirs() }
+        val file = workspace.resolve("META-INF/_sample_module.kotlin_module").apply {
+            parentFile.mkdirs()
+            writeText("kotlin-module")
+        }
+
+        assertThat(classifier.classify(workspace, file))
+            .isEqualTo(AabWorkspaceFileClassifier.ArtifactClass.KOTLIN_MODULE)
+    }
+
+    @Test
     fun `workspace file classifier - identifies unsupported protobuf binaries - when file is bundle config`(
         @TempDir dir: File,
     ) {

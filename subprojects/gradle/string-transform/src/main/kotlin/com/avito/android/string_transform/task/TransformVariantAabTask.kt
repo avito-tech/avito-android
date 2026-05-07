@@ -13,6 +13,7 @@ import com.avito.android.string_transform.internal.task.aab.AabResourcesPbTransf
 import com.avito.android.string_transform.internal.task.aab.AabTransformOrchestrator
 import com.avito.android.string_transform.internal.task.aab.AabWorkspaceFileClassifier
 import com.avito.android.string_transform.internal.task.aab.BundleMetadataCleaner
+import com.avito.android.string_transform.internal.task.aab.KotlinModuleTransformer
 import com.avito.android.string_transform.internal.task.apk.WorkspaceContentTransformer
 import com.avito.android.string_transform.internal.task.apk.WorkspacePathRenamer
 import com.avito.android.string_transform.internal.task.apk.ZeroByteTextFileDetector
@@ -102,6 +103,7 @@ public abstract class TransformVariantAabTask : DefaultTask() {
             resourcesPbTransformer = AabResourcesPbTransformer(),
             protobufXmlTransformer = AabProtobufXmlTransformer(),
             dexTransformer = AabDexTransformer(),
+            kotlinModuleTransformer = KotlinModuleTransformer(),
             contentTransformer = WorkspaceContentTransformer(ZeroByteTextFileDetector()),
             pathRenamer = WorkspacePathRenamer(),
             metadataCleaner = BundleMetadataCleaner(),

@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.aapt2Proto)
     implementation(libs.protobufJava)
     implementation(libs.dexlib)
+    implementation(libs.kotlinMetadataJvm)
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:common:retrace"))
     implementation(project(":subprojects:common:result"))
@@ -20,6 +21,7 @@ dependencies {
     testFixturesImplementation(libs.aapt2Proto)
     testFixturesImplementation(libs.protobufJava)
     testFixturesImplementation(libs.dexlib)
+    testFixturesImplementation(libs.kotlinMetadataJvm)
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }

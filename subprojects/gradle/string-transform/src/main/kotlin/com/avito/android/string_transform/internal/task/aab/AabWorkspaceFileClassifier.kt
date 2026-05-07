@@ -11,6 +11,7 @@ internal class AabWorkspaceFileClassifier {
         RESIDUAL,
         METADATA,
         UNSUPPORTED_BINARY,
+        KOTLIN_MODULE,
     }
 
     fun classify(workspaceDirectory: File, file: File): ArtifactClass {
@@ -31,6 +32,8 @@ internal class AabWorkspaceFileClassifier {
                 ArtifactClass.PROTOBUF_XML
             relativePath.contains("/dex/") && relativePath.endsWith(".dex") ->
                 ArtifactClass.DEX
+            fileName.endsWith(".kotlin_module") ->
+                ArtifactClass.KOTLIN_MODULE
             relativePath.startsWith("META-INF/") ->
                 ArtifactClass.METADATA
             relativePath.endsWith(".pb") ->

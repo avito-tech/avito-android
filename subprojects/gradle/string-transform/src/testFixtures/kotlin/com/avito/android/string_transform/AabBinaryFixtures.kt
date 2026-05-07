@@ -29,6 +29,11 @@ import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.metadata.jvm.JvmMetadataVersion
+import kotlin.metadata.jvm.KmModule
+import kotlin.metadata.jvm.KmPackageParts
+import kotlin.metadata.jvm.KotlinModuleMetadata
+import kotlin.metadata.jvm.UnstableMetadataApi
 
 internal fun sampleRule(): List<NormalizedRule> {
     return listOf(NormalizedRule(from = "samplevalue", to = "changedvalue"))
@@ -49,11 +54,33 @@ internal fun createAabFixture(archive: File) {
             "base/res/raw/samplevalue.xml" to "samplevalue".toByteArray(StandardCharsets.UTF_8),
             "base/assets/samplevalue.txt" to "samplevalue".toByteArray(StandardCharsets.UTF_8),
             "base/dex/classes.dex" to createDexBytes(),
+            "base/root/META-INF/samplevalue_module.kotlin_module" to createKotlinModuleBytes(),
             "BUNDLE-METADATA/com.android.tools.build.libraries/dependencies.pb" to opaqueProtobufPayload,
             "META-INF/BNDLTOOL.SF" to "signature".toByteArray(StandardCharsets.UTF_8),
             "META-INF/services/demo.Service" to "implementation".toByteArray(StandardCharsets.UTF_8),
         ),
     )
+}
+
+@OptIn(UnstableMetadataApi::class)
+internal fun createKotlinModuleBytes(token: String = "samplevalue"): ByteArray {
+    val packageParts = KmPackageParts(
+        fileFacades = mutableListOf("com/example/$token/${token}Kt"),
+        multiFileClassParts = mutableMapOf(
+            "com/example/$token/${token}Multifile__Part" to "com/example/$token/${token}Multifile",
+        ),
+    )
+    val module = KmModule().apply {
+        this.packageParts["com.example.$token"] = packageParts
+    }
+    return KotlinModuleMetadata(module, JvmMetadataVersion.LATEST_STABLE_SUPPORTED).write()
+}
+
+@OptIn(UnstableMetadataApi::class)
+internal fun parseKotlinModule(bytes: ByteArray): KmModule {
+    return checkNotNull(KotlinModuleMetadata.read(bytes)) {
+        "kotlin_module bytes are not parseable"
+    }.kmModule
 }
 
 internal fun createResourcesPbBytes(token: String = "samplevalue"): ByteArray {

@@ -4,6 +4,7 @@ import com.android.aapt.Resources
 import com.avito.android.string_transform.asTextFormat
 import com.avito.android.string_transform.createAabFixture
 import com.avito.android.string_transform.internal.rules.NormalizedRule
+import com.avito.android.string_transform.parseKotlinModule
 import com.avito.android.string_transform.primaryClassSourceFile
 import com.avito.android.string_transform.primaryClassType
 import com.avito.android.string_transform.primaryFieldInitialStringValue
@@ -23,7 +24,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.util.zip.ZipFile
+import kotlin.metadata.jvm.UnstableMetadataApi
 
+@OptIn(UnstableMetadataApi::class)
 internal class TransformVariantAabTaskGradleTest {
 
     private lateinit var project: Project
@@ -104,6 +107,20 @@ internal class TransformVariantAabTaskGradleTest {
             assertThat(dexFile.primaryMethodName()).isEqualTo("changedvalueMethod")
             assertThat(dexFile.primaryMethodParameterName()).isEqualTo("changedvalueParam")
             assertThat(dexFile.primaryMethodConstString()).isEqualTo("changedvalue")
+
+            assertThat(zip.getEntry("base/root/META-INF/changedvalue_module.kotlin_module")).isNotNull()
+            assertThat(zip.getEntry("base/root/META-INF/samplevalue_module.kotlin_module")).isNull()
+            val kotlinModule = parseKotlinModule(
+                zip.readEntryBytes("base/root/META-INF/changedvalue_module.kotlin_module")
+            )
+            assertThat(kotlinModule.packageParts.keys).containsExactly("com.example.changedvalue")
+            val packageParts = kotlinModule.packageParts.getValue("com.example.changedvalue")
+            assertThat(packageParts.fileFacades)
+                .containsExactly("com/example/changedvalue/changedvalueKt")
+            assertThat(packageParts.multiFileClassParts).containsExactly(
+                "com/example/changedvalue/changedvalueMultifile__Part",
+                "com/example/changedvalue/changedvalueMultifile",
+            )
         }
 
         assertReportJsonMatches(
@@ -151,6 +168,11 @@ internal class TransformVariantAabTaskGradleTest {
                     },
                     {
                         "name": "dex-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "kotlin-module-transform",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
