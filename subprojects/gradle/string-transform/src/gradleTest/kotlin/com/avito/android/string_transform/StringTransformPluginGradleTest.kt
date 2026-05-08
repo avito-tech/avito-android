@@ -802,6 +802,70 @@ internal class StringTransformPluginGradleTest {
     }
 
     @Test
+    fun `plugin tasks - register androidTest variant task - when debug variant exposes androidTest component`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("debug")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        ) { _ ->
+            val androidTestSourcesDir = resolve("src/androidTest/java/com/example")
+            androidTestSourcesDir.mkdirs()
+            androidTestSourcesDir.resolve("SamplePlaceholderTest.java").writeText(
+                """
+                package com.example;
+
+                public class SamplePlaceholderTest {
+                }
+                """.trimIndent()
+            )
+        }
+
+        val output = gradlew(
+            projectDir,
+            ":app:tasks",
+            "--all",
+            useTestFixturesClasspath = true,
+        ).output
+
+        assertThat(output).contains("transformStringsAlphaDebug")
+        assertThat(output).contains("transformStringsAlphaDebugBundle")
+        assertThat(output).contains("transformStringsAlphaDebugAndroidTest")
+    }
+
+    @Test
+    fun `plugin tasks - do not register androidTest variant task - when release variant has no androidTest`() {
+        givenProject(
+            """
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val output = gradlew(
+            projectDir,
+            ":app:tasks",
+            "--all",
+            useTestFixturesClasspath = true,
+        ).output
+
+        assertThat(output).contains("transformStringsAlphaRelease")
+        assertThat(output).doesNotContain("transformStringsAlphaReleaseAndroidTest")
+    }
+
+    @Test
     fun `plugin root task - succeeds without report - when exact variant name is unknown`() {
         givenProject(
             """

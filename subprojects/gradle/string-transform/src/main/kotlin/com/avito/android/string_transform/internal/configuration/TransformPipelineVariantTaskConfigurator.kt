@@ -62,6 +62,31 @@ internal class TransformPipelineVariantTaskConfigurator(
             reportFile.set(project.layout.buildDirectory.file(apkReportPath()))
         }
 
+        val androidTestApkTaskProvider = variant.androidTest?.let { androidTestComponent ->
+            project.tasks.register<TransformVariantApkTask>(
+                androidTestApkTaskName(pipeline.name, variant.name),
+            ) {
+                group = "string transform"
+                description =
+                    "Transforms androidTest APK strings for ${pipeline.name} pipeline on ${variant.name} variant"
+
+                modulePath.set(project.path)
+                pipelineName.set(pipeline.name)
+                variantName.set(variant.name)
+                totalRuleCount.set(normalizedRules.rules.size)
+                exactRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.Exact })
+                caseExpandedRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.CaseExpanded })
+                configurationWarnings.set(normalizedRules.warnings)
+                rules.set(normalizedRules.rules)
+                apktoolClasspath.from(apktoolConfiguration)
+                javaLauncher.convention(defaultJavaLauncher)
+                apkDirectory.set(androidTestComponent.artifacts.get(SingleArtifact.APK))
+                localStateDirectory.set(project.layout.buildDirectory.dir(androidTestApkLocalStatePath()))
+                outputApkFile.set(project.layout.buildDirectory.file(outputAndroidTestApkPath()))
+                reportFile.set(project.layout.buildDirectory.file(androidTestApkReportPath()))
+            }
+        }
+
         val aabTaskProvider = project.tasks.register<TransformVariantAabTask>(
             aabTaskName(pipeline.name, variant.name),
         ) {
@@ -109,6 +134,9 @@ internal class TransformPipelineVariantTaskConfigurator(
             task.dependsOn(apkTaskProvider)
             task.dependsOn(aabTaskProvider)
             task.dependsOn(mappingTaskProvider)
+            if (androidTestApkTaskProvider != null) {
+                task.dependsOn(androidTestApkTaskProvider)
+            }
         }
     }
 
@@ -122,6 +150,10 @@ internal class TransformPipelineVariantTaskConfigurator(
 
     private fun mappingTaskName(pipelineName: String, variantName: String): String {
         return "transformStrings${pipelineName.capitalize()}${variantName.capitalize()}Mapping"
+    }
+
+    private fun androidTestApkTaskName(pipelineName: String, variantName: String): String {
+        return "transformStrings${pipelineName.capitalize()}${variantName.capitalize()}AndroidTest"
     }
 
     private fun apkLocalStatePath(): String {
@@ -158,5 +190,17 @@ internal class TransformPipelineVariantTaskConfigurator(
 
     private fun mappingReportPath(): String {
         return "outputs/transformStrings/${pipeline.name}/${variant.name}/mapping/report/transform-report.json"
+    }
+
+    private fun androidTestApkLocalStatePath(): String {
+        return "tmp/transformStrings/${pipeline.name}/${variant.name}/local-state-androidtest"
+    }
+
+    private fun outputAndroidTestApkPath(): String {
+        return "outputs/transformStrings/${pipeline.name}/${variant.name}/apk-androidtest/transformed-unsigned.apk"
+    }
+
+    private fun androidTestApkReportPath(): String {
+        return "outputs/transformStrings/${pipeline.name}/${variant.name}/report-androidtest/transform-report.json"
     }
 }
