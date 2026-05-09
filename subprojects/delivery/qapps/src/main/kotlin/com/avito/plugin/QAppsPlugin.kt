@@ -27,7 +27,7 @@ public class QAppsPlugin : Plugin<Project> {
 
                     val apkProvider = packageTaskProvider.flatMap { it.outputDirectory }
 
-                    apkDirectory.set(apkProvider)
+                    apkDirectory.convention(apkProvider)
 
                     // todo remove, somehow implicit dependency not working
                     dependsOn(packageTaskProvider)
@@ -43,7 +43,7 @@ public class QAppsPlugin : Plugin<Project> {
                         ) {
                             description = "Upload signed ${variant.name} to qapps"
                             configure(extension, variant)
-                            apkDirectory.set(signedApkDir)
+                            apkDirectory.convention(signedApkDir)
                         }
                     }
                 }
