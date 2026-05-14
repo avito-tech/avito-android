@@ -8,7 +8,7 @@ keywords:
     - android
     - instant-feedback
 sources:
-    - https://github.com/avito-tech/avito-android-tools
+    - https://github.com/avito-tech/avito-android
 maintainers:
     - name: \#speed-android
       url: http://links.k.avito.ru/7L

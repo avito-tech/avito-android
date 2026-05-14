@@ -1,0 +1,7 @@
+docker:
+    registry: registry
+    image: android/kubelet-summary-exporter-hermetic
+    image_tag: undefined
+
+# -- Port the exporter listens on; matches the default in salesforce/kubelet-summary-exporter
+metricsPort: 9091

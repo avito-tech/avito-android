@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: services
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.metricsPort | quote }}
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: {{ .Chart.Name }}
+      tolerations:
+        - key: pool
+          operator: Equal
+          value: teamcity-agent-android
+          effect: NoSchedule
+        - key: pool
+          operator: Equal
+          value: teamcity-agent-android-benchmark
+          effect: NoSchedule
+      containers:
+        - name: exporter
+          image: "{{ .Values.docker.registry }}/{{ .Values.docker.image }}:{{ .Values.docker.image_tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metricsPort }}
+              protocol: TCP
+          env:
+            - name: NODE_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: CA_CRT
+              value: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            - name: TOKEN
+              value: /var/run/secrets/kubernetes.io/serviceaccount/token
+            - name: INSECURE
+              value: "true"
+            - name: LOOK_UP_HOSTNAME
+              value: "false"
+          args:
+            - --prom-listen=:{{ .Values.metricsPort }}
+          resources:
+              requests:
+                  cpu: 50m
+                  memory: 64Mi
+              limits:
+                  cpu: 500m
+                  memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+            capabilities:
+              drop: ["ALL"]
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+            initialDelaySeconds: 3
+            periodSeconds: 10

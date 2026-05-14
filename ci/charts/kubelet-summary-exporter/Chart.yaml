@@ -1,0 +1,16 @@
+apiVersion: v2
+type: application
+name: kubelet-summary-exporter
+version: v1.0.0
+appVersion: v0.2.1
+description: Per-pod ephemeral-storage Prometheus exporter (salesforce/kubelet-summary-exporter)
+keywords:
+    - kubelet-summary-exporter
+    - android
+sources:
+    - https://github.com/avito-tech/avito-android
+    - https://github.com/salesforce/kubelet-summary-exporter
+maintainers:
+    - name: \#speed-android
+      url: http://links.k.avito.ru/7L
+kubeVersion: ">=1.14.0-0"
