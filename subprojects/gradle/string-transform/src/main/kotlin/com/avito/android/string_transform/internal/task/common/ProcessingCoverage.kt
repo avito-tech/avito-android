@@ -1,8 +1,8 @@
-package com.avito.android.string_transform.internal.task.aab
+package com.avito.android.string_transform.internal.task.common
 
 import java.io.File
 
-internal class AabProcessingCoverage(
+internal class ProcessingCoverage(
     private val workspaceDirectory: File,
 ) {
 

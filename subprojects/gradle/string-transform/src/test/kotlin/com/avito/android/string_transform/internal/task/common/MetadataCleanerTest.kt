@@ -1,13 +1,13 @@
-package com.avito.android.string_transform.internal.task.aab
+package com.avito.android.string_transform.internal.task.common
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class BundleMetadataCleanerTest {
+internal class MetadataCleanerTest {
 
-    private val cleaner = BundleMetadataCleaner()
+    private val cleaner = MetadataCleaner()
 
     @Test
     fun `bundle metadata cleaner - removes stale signing files and preserves supported metadata`(
@@ -18,6 +18,8 @@ internal class BundleMetadataCleanerTest {
             resolve("META-INF/MANIFEST.MF").writeText("manifest")
             resolve("META-INF/BNDLTOOL.SF").writeText("signature")
             resolve("META-INF/CHANNEL.RSA").writeText("certificate")
+            resolve("META-INF/CHANNEL.DSA").writeText("certificate")
+            resolve("META-INF/CHANNEL.EC").writeText("certificate")
             resolve("META-INF/services/demo.Service").writeText("implementation")
             resolve("META-INF/custom.properties").writeText("payload")
             resolve("base/assets").mkdirs()
@@ -29,6 +31,8 @@ internal class BundleMetadataCleanerTest {
         assertThat(workspace.resolve("META-INF/MANIFEST.MF").exists()).isFalse()
         assertThat(workspace.resolve("META-INF/BNDLTOOL.SF").exists()).isFalse()
         assertThat(workspace.resolve("META-INF/CHANNEL.RSA").exists()).isFalse()
+        assertThat(workspace.resolve("META-INF/CHANNEL.DSA").exists()).isFalse()
+        assertThat(workspace.resolve("META-INF/CHANNEL.EC").exists()).isFalse()
         assertThat(workspace.resolve("META-INF/services/demo.Service").readText())
             .isEqualTo("implementation")
         assertThat(workspace.resolve("META-INF/custom.properties").readText()).isEqualTo("payload")

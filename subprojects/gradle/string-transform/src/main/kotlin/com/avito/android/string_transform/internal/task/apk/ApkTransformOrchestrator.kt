@@ -1,26 +1,22 @@
-package com.avito.android.string_transform.internal.task.aab
+package com.avito.android.string_transform.internal.task.apk
 
 import com.avito.android.Result
 import com.avito.android.string_transform.internal.execution.runTransform
 import com.avito.android.string_transform.internal.report.TransformReportRecorder
 import com.avito.android.string_transform.internal.rules.NormalizedRule
 import com.avito.android.string_transform.internal.task.OutputPublisher
-import com.avito.android.string_transform.internal.task.apk.OperationWarning
-import com.avito.android.string_transform.internal.task.apk.WorkspaceContentTransformer
-import com.avito.android.string_transform.internal.task.apk.WorkspacePathRenamer
 import com.avito.android.string_transform.internal.task.common.BinaryArchiver
 import com.avito.android.string_transform.internal.task.common.DexTransformer
 import com.avito.android.string_transform.internal.task.common.KotlinModuleTransformer
 import com.avito.android.string_transform.internal.task.common.MetadataCleaner
 import com.avito.android.string_transform.internal.task.common.ProcessingCoverage
-import org.gradle.api.file.RegularFileProperty
 import java.io.File
 
-internal class AabTransformOrchestrator(
-    private val bundleArchiver: BinaryArchiver,
-    private val fileClassifier: AabWorkspaceFileClassifier,
-    private val resourcesPbTransformer: AabResourcesPbTransformer,
-    private val protobufXmlTransformer: AabProtobufXmlTransformer,
+internal class ApkTransformOrchestrator(
+    private val apkArchiver: BinaryArchiver,
+    private val fileClassifier: ApkWorkspaceFileClassifier,
+    private val arscTransformer: BinaryArscTransformer,
+    private val binaryAxmlTransformer: BinaryAxmlTransformer,
     private val dexTransformer: DexTransformer,
     private val kotlinModuleTransformer: KotlinModuleTransformer,
     private val contentTransformer: WorkspaceContentTransformer,
@@ -31,9 +27,9 @@ internal class AabTransformOrchestrator(
 
     fun execute(
         recorder: TransformReportRecorder,
-        inputAabFile: RegularFileProperty,
+        inputApk: File,
         localStateRoot: File,
-        publishedAab: File,
+        publishedApk: File,
         rules: List<NormalizedRule>,
     ): Result<Unit> {
         fun recordWarnings(
@@ -51,39 +47,39 @@ internal class AabTransformOrchestrator(
 
         return runTransform(recorder) {
             val workspace = localStateRoot.resolve("unpacked")
-            val rebuiltAab = localStateRoot.resolve("rebuilt-unsigned.aab")
+            val rebuiltApk = localStateRoot.resolve("rebuilt-unsigned.apk")
             val coverage = ProcessingCoverage(workspace)
 
-            val inputAab = step("variant-aab-artifact-observation") {
-                observeInputAab(inputAabFile)
+            step("variant-apk-artifact-observation") {
+                observeInputApk(inputApk)
             }
-            step("input-aab-validation") {
-                validateInputAab(inputAab)
+            step("input-apk-validation") {
+                validateInputApk(inputApk)
             }
-            step("bundle-unpack") {
+            step("apk-unpack") {
                 if (localStateRoot.exists()) {
                     localStateRoot.deleteRecursively()
                 }
                 localStateRoot.mkdirs()
-                bundleArchiver.unpackToWorkspace(inputAab, workspace)
+                apkArchiver.unpackToWorkspace(inputApk, workspace)
             }
 
             val discoveredFiles = discoverWorkspaceFiles(workspace)
 
-            step("resources-pb-transform") {
+            step("arsc-transform") {
                 transformDiscoveredFiles(
-                    files = discoveredFiles.resourcesPbFiles.asSequence(),
+                    files = discoveredFiles.arscFiles.asSequence(),
                     coverage = coverage,
                 ) { file ->
-                    resourcesPbTransformer.transform(file, rules)
+                    arscTransformer.transform(file, rules)
                 }
             }
-            step("protobuf-xml-transform") {
+            step("binary-axml-transform") {
                 transformDiscoveredFiles(
-                    files = discoveredFiles.protobufXmlFiles.asSequence(),
+                    files = discoveredFiles.binaryAxmlFiles.asSequence(),
                     coverage = coverage,
                 ) { file ->
-                    protobufXmlTransformer.transform(file, rules)
+                    binaryAxmlTransformer.transform(file, rules)
                 }
             }
             val dexWarnings = step("dex-transform") {
@@ -122,35 +118,31 @@ internal class AabTransformOrchestrator(
             step("metadata-cleanup") {
                 metadataCleaner.clean(workspace)
             }
-            step("bundle-repack") {
-                if (rebuiltAab.exists()) {
-                    rebuiltAab.delete()
+            step("apk-repack") {
+                if (rebuiltApk.exists()) {
+                    rebuiltApk.delete()
                 }
-                bundleArchiver.packFromWorkspace(workspace, rebuiltAab)
+                apkArchiver.packFromWorkspace(workspace, rebuiltApk)
             }
             step("output-publication") {
-                outputPublisher.publish(rebuiltAab, publishedAab)
+                outputPublisher.publish(rebuiltApk, publishedApk)
             }
             Unit
         }
     }
 
-    private fun observeInputAab(inputAabFile: RegularFileProperty): Result<File> = Result.tryCatch {
-        val inputAab = requireNotNull(inputAabFile.orNull?.asFile) {
-            "Variant bundle artifact file is not configured"
+    private fun observeInputApk(inputApk: File): Result<Unit> = Result.tryCatch {
+        check(inputApk.exists()) {
+            "Variant APK artifact file does not exist: ${inputApk.path}"
         }
-        check(inputAab.exists()) {
-            "Variant bundle artifact file does not exist: ${inputAab.path}"
+        check(inputApk.isFile) {
+            "Variant APK artifact path is not a file: ${inputApk.path}"
         }
-        check(inputAab.isFile) {
-            "Variant bundle artifact path is not a file: ${inputAab.path}"
-        }
-        inputAab
     }
 
-    private fun validateInputAab(inputAab: File): Result<Unit> = Result.tryCatch {
-        require(inputAab.extension == "aab") {
-            "Observed bundle artifact is not a publishable AAB candidate: ${inputAab.path}"
+    private fun validateInputApk(inputApk: File): Result<Unit> = Result.tryCatch {
+        require(inputApk.extension == "apk") {
+            "Observed APK artifact is not a publishable APK candidate: ${inputApk.path}"
         }
     }
 
@@ -198,8 +190,8 @@ internal class AabTransformOrchestrator(
     }
 
     private fun discoverWorkspaceFiles(workspaceDirectory: File): DiscoveredWorkspaceFiles {
-        val resourcesPbFiles = mutableListOf<File>()
-        val protobufXmlFiles = mutableListOf<File>()
+        val arscFiles = mutableListOf<File>()
+        val binaryAxmlFiles = mutableListOf<File>()
         val dexFiles = mutableListOf<File>()
         val kotlinModuleFiles = mutableListOf<File>()
         val metadataFiles = mutableListOf<File>()
@@ -209,19 +201,19 @@ internal class AabTransformOrchestrator(
             .filter(File::isFile)
             .forEach { file ->
                 when (fileClassifier.classify(workspaceDirectory, file)) {
-                    AabWorkspaceFileClassifier.ArtifactClass.RESOURCES_PB -> resourcesPbFiles += file
-                    AabWorkspaceFileClassifier.ArtifactClass.PROTOBUF_XML -> protobufXmlFiles += file
-                    AabWorkspaceFileClassifier.ArtifactClass.DEX -> dexFiles += file
-                    AabWorkspaceFileClassifier.ArtifactClass.KOTLIN_MODULE -> kotlinModuleFiles += file
-                    AabWorkspaceFileClassifier.ArtifactClass.METADATA -> metadataFiles += file
-                    AabWorkspaceFileClassifier.ArtifactClass.UNSUPPORTED_BINARY -> unsupportedBinaryFiles += file
-                    AabWorkspaceFileClassifier.ArtifactClass.RESIDUAL -> Unit
+                    ApkWorkspaceFileClassifier.ArtifactClass.RESOURCES_ARSC -> arscFiles += file
+                    ApkWorkspaceFileClassifier.ArtifactClass.BINARY_AXML -> binaryAxmlFiles += file
+                    ApkWorkspaceFileClassifier.ArtifactClass.DEX -> dexFiles += file
+                    ApkWorkspaceFileClassifier.ArtifactClass.KOTLIN_MODULE -> kotlinModuleFiles += file
+                    ApkWorkspaceFileClassifier.ArtifactClass.METADATA -> metadataFiles += file
+                    ApkWorkspaceFileClassifier.ArtifactClass.UNSUPPORTED_BINARY -> unsupportedBinaryFiles += file
+                    ApkWorkspaceFileClassifier.ArtifactClass.RESIDUAL -> Unit
                 }
             }
 
         return DiscoveredWorkspaceFiles(
-            resourcesPbFiles = resourcesPbFiles,
-            protobufXmlFiles = protobufXmlFiles,
+            arscFiles = arscFiles,
+            binaryAxmlFiles = binaryAxmlFiles,
             dexFiles = dexFiles,
             kotlinModuleFiles = kotlinModuleFiles,
             metadataFiles = metadataFiles,
@@ -230,8 +222,8 @@ internal class AabTransformOrchestrator(
     }
 
     private data class DiscoveredWorkspaceFiles(
-        val resourcesPbFiles: List<File>,
-        val protobufXmlFiles: List<File>,
+        val arscFiles: List<File>,
+        val binaryAxmlFiles: List<File>,
         val dexFiles: List<File>,
         val kotlinModuleFiles: List<File>,
         val metadataFiles: List<File>,

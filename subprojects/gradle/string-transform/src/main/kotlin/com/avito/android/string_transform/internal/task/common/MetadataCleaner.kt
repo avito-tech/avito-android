@@ -1,9 +1,9 @@
-package com.avito.android.string_transform.internal.task.aab
+package com.avito.android.string_transform.internal.task.common
 
 import com.avito.android.Result
 import java.io.File
 
-internal class BundleMetadataCleaner {
+internal class MetadataCleaner {
 
     fun clean(workspaceDirectory: File): Result<Unit> = Result.tryCatch {
         cleanMetaInf(workspaceDirectory.resolve("META-INF"))
@@ -15,7 +15,7 @@ internal class BundleMetadataCleaner {
 
         metadataDirectory.walkBottomUp()
             .filter(File::isFile)
-            .filter { file -> shouldDelete(file.relativeTo(metadataDirectory).invariantSeparatorsPath) }
+            .filter { file -> isMetaInfSignatureFile(file.relativeTo(metadataDirectory).invariantSeparatorsPath) }
             .forEach(File::delete)
 
         pruneEmptyDirectories(metadataDirectory)
@@ -38,17 +38,18 @@ internal class BundleMetadataCleaner {
             .forEach(File::delete)
     }
 
-    private fun shouldDelete(relativePath: String): Boolean {
-        val fileName = relativePath.substringAfterLast('/')
-        return fileName == "MANIFEST.MF" ||
-            fileName.endsWith(".SF") ||
-            fileName.endsWith(".RSA") ||
-            fileName.endsWith(".DSA") ||
-            fileName.startsWith("BNDLTOOL.")
-    }
-
-    private companion object {
-        const val APP_DEPENDENCIES_RELATIVE_PATH =
+    companion object {
+        private const val APP_DEPENDENCIES_RELATIVE_PATH =
             "com.android.tools.build.libraries/dependencies.pb"
+
+        internal fun isMetaInfSignatureFile(relativePath: String): Boolean {
+            val fileName = relativePath.substringAfterLast('/')
+            return fileName == "MANIFEST.MF" ||
+                fileName.endsWith(".SF") ||
+                fileName.endsWith(".RSA") ||
+                fileName.endsWith(".DSA") ||
+                fileName.endsWith(".EC") ||
+                fileName.startsWith("BNDLTOOL.")
+        }
     }
 }

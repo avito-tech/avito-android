@@ -11,13 +11,9 @@ import com.avito.android.string_transform.task.TransformVariantApkTask
 import com.avito.android.string_transform.task.TransformVariantMappingTask
 import com.avito.capitalize
 import com.avito.logger.create
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.ResolvableConfiguration
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.toolchain.JavaLauncher
 import org.gradle.kotlin.dsl.register
 
 @Suppress("UnstableApiUsage")
@@ -26,8 +22,6 @@ internal class TransformPipelineVariantTaskConfigurator(
     private val rootTask: TaskProvider<Task>,
     private val pipeline: TransformPipelineSpec,
     private val variant: ApplicationVariant,
-    private val apktoolConfiguration: NamedDomainObjectProvider<ResolvableConfiguration>,
-    private val defaultJavaLauncher: Provider<JavaLauncher>,
 ) {
 
     private val logger = Slf4jGradleLoggerFactory.create<TransformPipelineVariantTaskConfigurator>()
@@ -54,8 +48,6 @@ internal class TransformPipelineVariantTaskConfigurator(
             caseExpandedRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.CaseExpanded })
             configurationWarnings.set(normalizedRules.warnings)
             rules.set(normalizedRules.rules)
-            apktoolClasspath.from(apktoolConfiguration)
-            javaLauncher.convention(defaultJavaLauncher)
             apkDirectory.set(variant.artifacts.get(SingleArtifact.APK))
             localStateDirectory.set(project.layout.buildDirectory.dir(apkLocalStatePath()))
             outputApkFile.set(project.layout.buildDirectory.file(outputApkPath()))
@@ -78,8 +70,6 @@ internal class TransformPipelineVariantTaskConfigurator(
                 caseExpandedRuleCount.set(declaredRules.count { rule -> rule is DeclaredRule.CaseExpanded })
                 configurationWarnings.set(normalizedRules.warnings)
                 rules.set(normalizedRules.rules)
-                apktoolClasspath.from(apktoolConfiguration)
-                javaLauncher.convention(defaultJavaLauncher)
                 apkDirectory.set(androidTestComponent.artifacts.get(SingleArtifact.APK))
                 localStateDirectory.set(project.layout.buildDirectory.dir(androidTestApkLocalStatePath()))
                 outputApkFile.set(project.layout.buildDirectory.file(outputAndroidTestApkPath()))

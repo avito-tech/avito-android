@@ -1,4 +1,4 @@
-package com.avito.android.string_transform.internal.task.aab
+package com.avito.android.string_transform.internal.task.common
 
 import com.avito.android.Result
 import com.avito.android.string_transform.internal.rules.NormalizedRule
@@ -54,7 +54,7 @@ import org.jf.dexlib2.rewriter.Rewriters
 import org.jf.dexlib2.writer.pool.DexPool
 import java.io.File
 
-internal class AabDexTransformer {
+internal class DexTransformer {
 
     fun transform(
         inputFile: File,

@@ -1,4 +1,4 @@
-package com.avito.android.string_transform.internal.task.aab
+package com.avito.android.string_transform.internal.task.common
 
 import com.avito.android.isFailure
 import com.avito.android.string_transform.createDexBytes
@@ -18,9 +18,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class AabDexTransformerTest {
+internal class DexTransformerTest {
 
-    private val transformer = AabDexTransformer()
+    private val transformer = DexTransformer()
 
     @Test
     fun `dex transformer - rewrites class and string surfaces - when exact rule matches`(

@@ -1,4 +1,4 @@
-package com.avito.android.string_transform.internal.task.aab
+package com.avito.android.string_transform.internal.task.common
 
 import com.avito.android.string_transform.internal.rules.NormalizedRule
 import com.avito.android.string_transform.internal.task.apk.OperationWarning

@@ -6,17 +6,17 @@ import com.avito.android.string_transform.internal.report.TransformReportJsonWri
 import com.avito.android.string_transform.internal.report.TransformReportRecorder
 import com.avito.android.string_transform.internal.rules.NormalizedRule
 import com.avito.android.string_transform.internal.task.OutputPublisher
-import com.avito.android.string_transform.internal.task.aab.AabBundleArchiver
-import com.avito.android.string_transform.internal.task.aab.AabDexTransformer
 import com.avito.android.string_transform.internal.task.aab.AabProtobufXmlTransformer
 import com.avito.android.string_transform.internal.task.aab.AabResourcesPbTransformer
 import com.avito.android.string_transform.internal.task.aab.AabTransformOrchestrator
 import com.avito.android.string_transform.internal.task.aab.AabWorkspaceFileClassifier
-import com.avito.android.string_transform.internal.task.aab.BundleMetadataCleaner
-import com.avito.android.string_transform.internal.task.aab.KotlinModuleTransformer
 import com.avito.android.string_transform.internal.task.apk.WorkspaceContentTransformer
 import com.avito.android.string_transform.internal.task.apk.WorkspacePathRenamer
 import com.avito.android.string_transform.internal.task.apk.ZeroByteTextFileDetector
+import com.avito.android.string_transform.internal.task.common.BinaryArchiver
+import com.avito.android.string_transform.internal.task.common.DexTransformer
+import com.avito.android.string_transform.internal.task.common.KotlinModuleTransformer
+import com.avito.android.string_transform.internal.task.common.MetadataCleaner
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -98,15 +98,15 @@ public abstract class TransformVariantAabTask : DefaultTask() {
 
     private fun runAabTransform(recorder: TransformReportRecorder): Result<Unit> {
         return AabTransformOrchestrator(
-            bundleArchiver = AabBundleArchiver(),
+            bundleArchiver = BinaryArchiver(),
             fileClassifier = AabWorkspaceFileClassifier(),
             resourcesPbTransformer = AabResourcesPbTransformer(),
             protobufXmlTransformer = AabProtobufXmlTransformer(),
-            dexTransformer = AabDexTransformer(),
+            dexTransformer = DexTransformer(),
             kotlinModuleTransformer = KotlinModuleTransformer(),
             contentTransformer = WorkspaceContentTransformer(ZeroByteTextFileDetector()),
             pathRenamer = WorkspacePathRenamer(),
-            metadataCleaner = BundleMetadataCleaner(),
+            metadataCleaner = MetadataCleaner(),
             outputPublisher = OutputPublisher(),
         ).execute(
             recorder = recorder,

@@ -3,15 +3,10 @@ package com.avito.android.string_transform
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.avito.android.string_transform.internal.configuration.TransformPipelineVariantTaskConfigurator
 import com.avito.android.string_transform.internal.configuration.TransformPipelinesValidator
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.ResolvableConfiguration
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.toolchain.JavaLauncher
-import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 
@@ -26,8 +21,6 @@ public class StringTransformPlugin : Plugin<Project> {
         )
 
         project.pluginManager.withPlugin("com.android.application") {
-            val apktoolConfiguration = registerApktoolConfiguration(project)
-            val defaultJavaLauncher = defaultJavaLauncher(project)
             val rootTask = project.tasks.register("transformStrings") {
                 it.group = "string transform"
                 it.description = "Runs all registered string-transform pipelines for the module"
@@ -36,8 +29,6 @@ public class StringTransformPlugin : Plugin<Project> {
                 project = project,
                 extension = extension,
                 rootTask = rootTask,
-                apktoolConfiguration = apktoolConfiguration,
-                defaultJavaLauncher = defaultJavaLauncher,
             )
         }
     }
@@ -46,8 +37,6 @@ public class StringTransformPlugin : Plugin<Project> {
         project: Project,
         extension: TransformStringsExtension,
         rootTask: TaskProvider<Task>,
-        apktoolConfiguration: NamedDomainObjectProvider<ResolvableConfiguration>,
-        defaultJavaLauncher: Provider<JavaLauncher>,
     ) {
         val androidComponents = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
         val pipelines by lazy { validatedPipelines(project, extension) }
@@ -60,8 +49,6 @@ public class StringTransformPlugin : Plugin<Project> {
                         rootTask = rootTask,
                         pipeline = pipeline,
                         variant = variant,
-                        apktoolConfiguration = apktoolConfiguration,
-                        defaultJavaLauncher = defaultJavaLauncher,
                     ).configure()
                 }
             }
@@ -75,30 +62,5 @@ public class StringTransformPlugin : Plugin<Project> {
         return extension.pipelines.toList().onEach { pipeline ->
             TransformPipelinesValidator.validate(project.path, pipeline)
         }
-    }
-
-    private fun registerApktoolConfiguration(
-        project: Project,
-    ): NamedDomainObjectProvider<ResolvableConfiguration> {
-        val dependencyScope = project.configurations.dependencyScope(APKTOOL_DEPENDENCY_SCOPE_NAME) { configuration ->
-            configuration.isTransitive = false
-        }
-
-        project.dependencies.add(APKTOOL_DEPENDENCY_SCOPE_NAME, APKTOOL_DEPENDENCY_NOTATION)
-
-        return project.configurations.resolvable(APKTOOL_CONFIGURATION_NAME) { configuration ->
-            configuration.isTransitive = false
-            configuration.extendsFrom(dependencyScope.get())
-        }
-    }
-
-    private fun defaultJavaLauncher(project: Project): Provider<JavaLauncher> {
-        return project.extensions.getByType<JavaToolchainService>().launcherFor { }
-    }
-
-    private companion object {
-        private const val APKTOOL_DEPENDENCY_SCOPE_NAME = "stringTransformApktoolDependencies"
-        private const val APKTOOL_CONFIGURATION_NAME = "stringTransformApktool"
-        private const val APKTOOL_DEPENDENCY_NOTATION = "org.apktool:apktool-cli:2.9.3:all@jar"
     }
 }

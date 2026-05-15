@@ -99,51 +99,6 @@ internal class StringTransformPluginGradleTest {
     }
 
     @Test
-    fun `plugin apk transform - rewrites resource identifiers and values in decoded values xml`() {
-        givenProject(
-            """
-            transformStrings {
-                create("alpha") {
-                    variant("release")
-                    rules {
-                        exact("samplevalue", "changedvalue")
-                    }
-                }
-            }
-            """.trimIndent()
-        ) { _ ->
-            val valuesDir = resolve("src/main/res/values")
-            valuesDir.mkdirs()
-            valuesDir.resolve("strings.xml").writeText(
-                """
-                <resources>
-                    <string name="samplevalue_title">hello samplevalue</string>
-                    <string-array name="samplevalue_labels">
-                        <item>samplevalue one</item>
-                    </string-array>
-                </resources>
-                """.trimIndent()
-            )
-        }
-
-        gradlew(
-            projectDir,
-            ":app:transformStrings",
-            useTestFixturesClasspath = true,
-        ).assertThat().buildSuccessful()
-
-        val decodedValuesFile = File(
-            projectDir,
-            "app/build/tmp/transformStrings/alpha/release/local-state/decoded/res/values/strings.xml"
-        )
-
-        assertThat(decodedValuesFile.exists()).isTrue()
-        val decodedValues = decodedValuesFile.readText()
-        assertThat(decodedValues).contains("name=\"changedvalue_title\"")
-        assertThat(decodedValues).contains(">hello changedvalue<")
-    }
-
-    @Test
     fun `plugin tasks - register variant task and report - when exact flavored variant matches`() {
         givenProject(
             """
@@ -949,12 +904,42 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-decode",
+                        "name": "variant-apk-artifact-observation",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "content-transform",
+                        "name": "input-apk-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-unpack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "arsc-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "binary-axml-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "dex-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "kotlin-module-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "residual-text-transform",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -964,7 +949,12 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-build",
+                        "name": "metadata-cleanup",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-repack",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -1045,12 +1035,42 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-decode",
+                        "name": "variant-apk-artifact-observation",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "content-transform",
+                        "name": "input-apk-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-unpack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "arsc-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "binary-axml-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "dex-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "kotlin-module-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "residual-text-transform",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -1060,7 +1080,12 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-build",
+                        "name": "metadata-cleanup",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-repack",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -1074,7 +1099,7 @@ internal class StringTransformPluginGradleTest {
                     {
                         "severity": "WARNING",
                         "message": "Skipped unsupported binary file during content transform because '.so' files are not supported for content transform yet. Matched literals: samplevalue",
-                        "affectedPhase": "content-transform",
+                        "affectedPhase": "residual-text-transform",
                         "affectedPath": "lib/arm64-v8a/libnative.so"
                     }
                 ]
@@ -1141,12 +1166,42 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-decode",
+                        "name": "variant-apk-artifact-observation",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "content-transform",
+                        "name": "input-apk-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-unpack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "arsc-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "binary-axml-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "dex-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "kotlin-module-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "residual-text-transform",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -1156,7 +1211,12 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-build",
+                        "name": "metadata-cleanup",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-repack",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -1237,12 +1297,42 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-decode",
+                        "name": "variant-apk-artifact-observation",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "content-transform",
+                        "name": "input-apk-validation",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-unpack",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "arsc-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "binary-axml-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "dex-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "kotlin-module-transform",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "residual-text-transform",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -1252,7 +1342,12 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     },
                     {
-                        "name": "apktool-build",
+                        "name": "metadata-cleanup",
+                        "status": "SUCCESS",
+                        "durationMillis": \E\d+\Q
+                    },
+                    {
+                        "name": "apk-repack",
                         "status": "SUCCESS",
                         "durationMillis": \E\d+\Q
                     },
@@ -1262,9 +1357,7 @@ internal class StringTransformPluginGradleTest {
                         "durationMillis": \E\d+\Q
                     }
                 ],
-                "diagnostics": [
-                    
-                ]
+                "diagnostics": [\E\s*\Q]
             }
             """),
         )
