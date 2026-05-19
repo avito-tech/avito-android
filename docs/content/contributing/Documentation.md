@@ -330,10 +330,11 @@ You can edit markdown files on the fly. Changes out of this directory usually re
 
 ### How to upgrade MkDocs and theme
 
-0. Change the version in
-   a [documentation image](https://github.com/avito-tech/avito-android/tree/develop/ci/docker/documentation);
-0. Publish the image by [Build documentation docker](http://links.k.avito.ru/9M) configuration;
-0. Update a tag in `ci/_environment.sh`
+0. Check the build locally with `./ci/documentation/build.sh`;
+0. Preview the site locally with `./ci/documentation/preview.sh` (or `make docs`) and click through
+   the rendered pages to make sure nothing visually broke;
+0. Push the change to `develop`. GitHub Actions workflow `Deploy docs` installs dependencies from
+   `docs/requirements.txt` and publishes the site.
 
 Checklist for upgrades:
 

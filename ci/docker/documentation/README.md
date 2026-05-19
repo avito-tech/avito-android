@@ -1,1 +1,0 @@
-Image with mkdocs documentation

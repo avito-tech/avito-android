@@ -6,7 +6,7 @@ set -e
 
 source $(dirname "$0")/_main.sh
 
-bash $(dirname "$0")/documentation/lint.sh
+bash $(dirname "$0")/documentation/build.sh
 
 if [[ -z "${PR_INSTRUMENTATION_CACHE_ENABLED+x}" || -z $PR_INSTRUMENTATION_CACHE_ENABLED ]]; then
     echo "PR_INSTRUMENTATION_CACHE_ENABLED env is unset" >&2;
