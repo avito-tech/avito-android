@@ -67,11 +67,19 @@ internal class DexTransformer {
             .rewriteDexFile(dexFile)
 
         DexPool.writeTo(inputFile.path, rewrittenDexFile)
-        dexPendingLiteralWarnings(
+        val pendingWarnings = dexPendingLiteralWarnings(
             outputBytes = inputFile.readBytes(),
             rules = rules,
             affectedPath = affectedPath,
         )
+
+        val recomputeWarnings = if (rules.isNotEmpty()) {
+            HashSwitchKeyRecomputer().recompute(inputFile, affectedPath).getOrThrow()
+        } else {
+            emptyList()
+        }
+
+        pendingWarnings + recomputeWarnings
     }
 
     private class DexRuleRewriterModule(
