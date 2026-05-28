@@ -29,10 +29,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install mkdocs
+        run: pip install -r docs/requirements.txt
       - name: Build docs site
-        run: ./ci/documentation/build.sh
-        env:
-          DOCS_SITE_DIR: site
+        run: mkdocs build --clean --strict --config-file docs/mkdocs.yml --site-dir site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

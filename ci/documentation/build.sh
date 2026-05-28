@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
+# TODO: add markdown linter MBS-10625
+
 set -euf -o pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/_docs_env.sh"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+# shellcheck source=ci/_environment.sh
+source "$SCRIPT_DIR"/../_environment.sh
 
-SITE_DIR="${DOCS_SITE_DIR:-/tmp/avito-github-mkdocs}"
-if [[ "$SITE_DIR" != /* ]]; then
-    SITE_DIR="$REPO_ROOT/$SITE_DIR"
-fi
-
-cd "$REPO_ROOT"
-
-"$VENV_DIR/bin/mkdocs" build --clean --strict --config-file "$REPO_ROOT/docs/mkdocs.yml" --site-dir "$SITE_DIR"
+docker run --rm \
+    -p 8000:8000 \
+    --volume "$SCRIPT_DIR/../..":/app \
+    -w="/app" \
+    "${DOCUMENTATION_IMAGE}" \
+    mkdocs build --clean --strict --config-file docs/mkdocs.yml --site-dir /tmp/avito-github-mkdocs
