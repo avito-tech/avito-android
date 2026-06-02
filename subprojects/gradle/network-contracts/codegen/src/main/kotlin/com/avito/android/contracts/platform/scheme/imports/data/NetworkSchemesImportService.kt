@@ -12,10 +12,16 @@ import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.GradleException
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import java.io.Serializable
 
 internal abstract class NetworkSchemesImportService : SchemesImportService<NetworkSchemesImportService.Parameters> {
 
@@ -42,17 +48,43 @@ internal abstract class NetworkSchemesImportService : SchemesImportService<Netwo
     interface Parameters : SchemesImportService.Parameters {
 
         val httpClient: Property<Provider<HttpClientService>>
-        val additionalParams: MapProperty<String, String>
+        val additionalParams: MapProperty<String, ParamType>
     }
 }
 
 private suspend fun HttpClient.fetchApiScheme(
     apiPath: String,
-    additionalProperties: Map<String, String>
+    additionalProperties: Map<String, ParamType>,
 ): HttpResponse = post {
     url(path = "getSchemaForPath/")
     contentType(ContentType.Application.Json)
     setBody(
-        mapOf("path" to apiPath) + additionalProperties
+        buildJsonObject {
+            put("path", JsonPrimitive(apiPath))
+            additionalProperties.forEach { (key, value) ->
+                put(key, value.asJsonElement())
+            }
+        }
     )
+}
+
+private fun ParamType.asJsonElement(): JsonElement {
+    return when (this) {
+        is ParamType.Primitive -> when (value) {
+            is String -> JsonPrimitive(value)
+            is Number -> JsonPrimitive(value)
+            is Boolean -> JsonPrimitive(value)
+            else -> throw IllegalArgumentException("Unsupported primitive type")
+        }
+
+        is ParamType.ListType -> JsonArray(value.map { it.asJsonElement() })
+        is ParamType.MapType -> JsonObject(value.mapValues { it.value.asJsonElement() })
+    }
+}
+
+public sealed interface ParamType : Serializable {
+
+    public data class Primitive(val value: Serializable?) : ParamType
+    public data class ListType(val value: List<ParamType>) : ParamType
+    public data class MapType(val value: Map<String, ParamType>) : ParamType
 }

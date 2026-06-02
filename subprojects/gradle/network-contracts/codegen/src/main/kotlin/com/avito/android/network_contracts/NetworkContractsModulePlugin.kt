@@ -8,12 +8,14 @@ import com.avito.android.contracts.platform.internal.analytics.NetworkContractsA
 import com.avito.android.contracts.platform.internal.http.HttpClientService
 import com.avito.android.contracts.platform.scheme.collect.CollectApiSchemesTask
 import com.avito.android.contracts.platform.scheme.imports.data.NetworkSchemesImportService
+import com.avito.android.contracts.platform.scheme.imports.data.ParamType
 import com.avito.android.contracts.platform.scheme.imports.data.SchemesImportService
 import com.avito.android.contracts.platform.scheme.validation.analyzer.rules.EmptyCodegenTomlFileDiagnosticRule
 import com.avito.android.contracts.platform.scheme.validation.analyzer.rules.EmptySchemesDiagnosticRule
 import com.avito.android.contracts.platform.scheme.validation.analyzer.rules.RemoteCompatibilityDiagnosticRule
 import com.avito.android.network_contracts.NetworkContractsModulePlugin.Companion.VARIANT_NAME
 import com.avito.android.network_contracts.validation.service.ValidationApiSchemesServiceImpl
+import com.avito.git.gitStateProvider
 import com.avito.kotlin.dsl.toOptional
 import com.avito.kotlin.dsl.withType
 import org.gradle.api.Plugin
@@ -62,7 +64,13 @@ public class NetworkContractsModulePlugin : Plugin<Project> {
                         HttpClientService.provideHttpClientService(target, extension.name)
                     }
                 )
-                it.additionalParams.set(networkContractsExtension.importParameters)
+                @Suppress("DEPRECATION")
+                it.additionalParams.putAll(
+                    networkContractsExtension.importParameters.map {
+                        it.mapValues { entry -> ParamType.Primitive(entry.value) }
+                    }
+                )
+                it.additionalParams.putAll(networkContractsExtension.importTypedParameters)
             }
             extension.importService.set(importService)
         }
@@ -137,6 +145,7 @@ private fun Project.configureNetworkContractsValidationTasks(
                 it.modulePath.set(project.path)
                 it.kind.set(extension.kind)
                 it.variantName.set(variantConfiguration.name)
+                it.branch.set(project.gitStateProvider().map { it.currentBranch.name })
             }
             configuration.onlyIf.set(project.provider { schemesMetadata.isPresent })
         }

@@ -2,6 +2,7 @@ package com.avito.android.network_contracts
 
 import com.avito.android.contracts.platform.extension.configurations.codegen.OutputTransformerConfiguration
 import com.avito.android.contracts.platform.output.OutputType
+import com.avito.android.contracts.platform.scheme.imports.data.ParamType
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
@@ -56,7 +57,10 @@ public abstract class NetworkContractsModuleExtension(
     public val validationByCodegen: Property<Boolean> = objects.property<Boolean>()
         .convention(true)
 
+    @Deprecated("Use importTypedParameters instead")
     public val importParameters: MapProperty<String, String> = objects.mapProperty()
+
+    public val importTypedParameters: MapProperty<String, ParamType> = objects.mapProperty()
 
     internal companion object {
         internal const val NAME = "networkContracts"
