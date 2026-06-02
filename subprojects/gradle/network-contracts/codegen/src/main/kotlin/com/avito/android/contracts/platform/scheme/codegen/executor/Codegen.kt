@@ -1,13 +1,11 @@
 package com.avito.android.contracts.platform.scheme.codegen.executor
 
 import com.avito.android.Result
-import com.avito.android.contracts.platform.scheme.codegen.Arch
 import com.avito.android.contracts.platform.scheme.codegen.config.CodegenConfig
 import com.avito.android.contracts.platform.scheme.codegen.config.args
 import com.avito.android.contracts.platform.scheme.codegen.config.envVars
 import com.avito.logger.Logger
 import com.avito.utils.ProcessRunner
-import org.gradle.api.file.FileCollection
 import java.io.File
 
 internal interface Codegen {
@@ -48,7 +46,7 @@ internal interface Codegen {
                 )
                 append(envVariables)
 
-                append("./${codegenFile.name}")
+                append("${codegenFile.path}")
 
                 val arguments = config.args.joinToString(
                     separator = " ",
@@ -59,29 +57,9 @@ internal interface Codegen {
                 append(" $extraArgs")
             }
 
-            logger.info("Codegen Command is about to run:")
-            logger.info(rawCommand)
+            logger.debug("Codegen Command is about to run: $rawCommand")
 
             return run(rawCommand, timeout = config.timeout)
-        }
-    }
-
-    companion object {
-        internal fun create(
-            arch: Arch,
-            codegenBinaryFiles: FileCollection,
-            logger: Logger,
-            config: CodegenConfig,
-        ): Codegen {
-            val codegenFile = findCodegenBinaryFileForArch(arch, codegenBinaryFiles)
-            return Impl(codegenFile, logger, config)
-        }
-
-        private fun findCodegenBinaryFileForArch(
-            arch: Arch,
-            codegenBinaryFiles: FileCollection,
-        ): File {
-            return codegenBinaryFiles.first { it.name.contains(arch.binarySuffix) }
         }
     }
 }

@@ -4,12 +4,10 @@ import com.avito.android.Result
 import com.avito.android.contracts.platform.output.OutputTransformer
 import com.avito.android.contracts.platform.output.OutputType
 import com.avito.android.contracts.platform.scheme.codegen.config.CodegenConfig
-import com.avito.android.contracts.platform.scheme.codegen.executor.Codegen
-import com.avito.android.contracts.platform.shared.throwGradleError
+import com.avito.android.contracts.platform.scheme.codegen.executor.CodegenBinaryManager
 import com.avito.android.isFailure
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
-import com.avito.utils.ProcessRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
@@ -32,7 +30,6 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.os.OperatingSystem
-import java.io.File
 import java.time.Duration
 
 @CacheableTask
@@ -121,8 +118,8 @@ public abstract class CodegenTask : DefaultTask() {
 
     @TaskAction
     internal fun generate() {
-        val arch = findOperatingSystemArchitecture(outputDirectory.get().asFile)
-        check(arch !is Arch.Unknown) { "Unsupported OS system: ${arch.rawValue}" }
+        val currentOs = OperatingSystem.current()
+        check(currentOs.isLinux || currentOs.isMacOsX) { "Unsupported OS system: $currentOs" }
 
         val generators = generators.get()
         val config = CodegenConfig(
@@ -143,7 +140,10 @@ public abstract class CodegenTask : DefaultTask() {
             mappings = mappings.get().orEmpty(),
             generators = generators,
         )
-        val codegen = Codegen.create(arch, codegenExecutableFiles, logger, config)
+        val codegenBinaryManager = CodegenBinaryManager(codegenExecutableFiles, logger)
+        val codegenResult = codegenBinaryManager.createCodegenInstance(config)
+
+        val codegen = codegenResult.getOrElse { throw GradleException("Unable to create codegen binary instance", it) }
 
         if (generators.size > 1) {
             val updateResult = codegen.update()
@@ -166,24 +166,6 @@ public abstract class CodegenTask : DefaultTask() {
         }
     }
 
-    private fun findOperatingSystemArchitecture(processWorkingDirectory: File): Arch {
-        val current = OperatingSystem.current()
-        return when {
-            current.isMacOsX -> {
-                val processRunner = ProcessRunner.create(processWorkingDirectory)
-
-                when (val archResult = processRunner.getOsxArchProcessor()) {
-                    is Result.Success -> archResult.value
-                    is Result.Failure -> throwGradleError(archResult.throwable.message.toString())
-                }
-            }
-
-            current.isLinux -> Arch.LinuxAmd64
-
-            else -> Arch.Unknown(current.name)
-        }
-    }
-
     private fun throwCodegenException(result: Result.Failure<String>): Nothing {
         val causeMessage = result.throwable.cause?.message.orEmpty()
         val message = errorOutputTransformer.orNull?.transform(causeMessage) ?: result.throwable.message
@@ -194,8 +176,3 @@ public abstract class CodegenTask : DefaultTask() {
         public const val NAME: String = "codegen"
     }
 }
-
-private fun ProcessRunner.getOsxArchProcessor() =
-    run("/usr/bin/uname -m")
-        .map(String::trim)
-        .map(Arch.Companion::getArch)

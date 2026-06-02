@@ -1,22 +1,26 @@
 package com.avito.android.contracts.platform.scheme.codegen
 
-internal sealed class Arch(val rawValue: String, val binarySuffix: String) {
+public sealed class OsPlatform(
+    public val arch: CpuArch
+) {
 
-    @Suppress("ClassName")
-    object X86_64 : Arch("x86_64", "darwin_amd64")
+    public class Darwin(arch: CpuArch) : OsPlatform(arch)
+    public class Linux(arch: CpuArch) : OsPlatform(arch)
+    public data object Unknown : OsPlatform(CpuArch.UNKNOWN)
+}
 
-    object Arm64 : Arch("arm64", "darwin_arm64")
+public enum class CpuArch {
+    X86_64,
+    ARM64,
+    UNKNOWN,
+    ;
 
-    object LinuxAmd64 : Arch("x86_64", "linux_amd64")
+    public companion object {
 
-    class Unknown(name: String) : Arch(name, "")
-
-    companion object {
-        fun getArch(value: String) = when (value) {
-            X86_64.rawValue -> X86_64
-            Arm64.rawValue -> Arm64
-            LinuxAmd64.rawValue -> LinuxAmd64
-            else -> Unknown(value)
+        public fun current(): CpuArch = when (System.getProperty("os.arch")) {
+            "x86_64", "amd64" -> X86_64
+            "aarch64", "arm64" -> ARM64
+            else -> UNKNOWN
         }
     }
 }
