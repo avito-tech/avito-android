@@ -24,12 +24,15 @@ import com.avito.runner.scheduler.suite.config.RunStatus
 import com.avito.runner.scheduler.suite.filter.Filter
 import com.avito.test.model.DeviceName
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 
 internal class InstrumentationConfigurator(
     private val extension: InstrumentationTestsPluginExtension,
     private val configuration: InstrumentationConfiguration,
     private val instrumentationArgsResolver: InstrumentationArgsResolver,
     private val reportResolver: ReportResolver,
+    private val providerFactory: ProviderFactory,
     loggerFactory: LoggerFactory,
 ) : InstrumentationTaskConfigurator {
 
@@ -101,10 +104,11 @@ internal class InstrumentationConfigurator(
 
     private fun getRunnerReportConfig(
         jobSlug: String?,
-    ): RunnerReportConfig {
+    ): Provider<RunnerReportConfig> {
         return when (val config = checkNotNull(reportResolver.getReport())) {
             ReportConfig.NoOp,
-            is ReportConfig.ReportViewer.SendFromDevice -> RunnerReportConfig.None
+            is ReportConfig.ReportViewer.SendFromDevice ->
+                providerFactory.provider { RunnerReportConfig.None }
 
             is ReportConfig.ReportViewer.SendFromRunner -> {
                 val dslReportConfig = if (jobSlug != null) {
@@ -112,16 +116,18 @@ internal class InstrumentationConfigurator(
                 } else {
                     config
                 }
-                RunnerReportConfig.ReportViewer(
-                    reportApiUrl = dslReportConfig.reportApiUrl,
-                    reportViewerUrl = dslReportConfig.reportViewerUrl,
-                    fileStorageUrl = dslReportConfig.fileStorageUrl,
-                    coordinates = ReportCoordinates(
-                        planSlug = dslReportConfig.planSlug,
-                        jobSlug = dslReportConfig.jobSlug,
-                        runId = reportResolver.getRunId()
+                reportResolver.getRunId().map { runId ->
+                    RunnerReportConfig.ReportViewer(
+                        reportApiUrl = dslReportConfig.reportApiUrl,
+                        reportViewerUrl = dslReportConfig.reportViewerUrl,
+                        fileStorageUrl = dslReportConfig.fileStorageUrl,
+                        coordinates = ReportCoordinates(
+                            planSlug = dslReportConfig.planSlug,
+                            jobSlug = dslReportConfig.jobSlug,
+                            runId = runId
+                        )
                     )
-                )
+                }
             }
         }
     }

@@ -108,11 +108,13 @@ internal class AppBuildTimeListenerTest {
 
         val listener = AppBuildTimeListener(
             sender = buildMetricSender,
-            metadata = AppBuildTimeMetadata(
-                userName = "ivanivanov",
-                branchName = "A-1234_test",
-                repoName = "test"
-            ),
+            metadataProvider = {
+                AppBuildTimeMetadata(
+                    userName = "ivanivanov",
+                    branchName = "A-1234_test",
+                    repoName = "test"
+                )
+            },
             environment = BuildEnvironment.LOCAL,
         )
         listener.onBuildFinished(result)
@@ -125,11 +127,13 @@ internal class AppBuildTimeListenerTest {
 
         val listener = AppBuildTimeListener(
             sender = buildMetricSender,
-            metadata = AppBuildTimeMetadata(
-                userName = "ivanivanov",
-                branchName = "A-1234_test",
-                repoName = "test"
-            ),
+            metadataProvider = {
+                AppBuildTimeMetadata(
+                    userName = "ivanivanov",
+                    branchName = "A-1234_test",
+                    repoName = "test"
+                )
+            },
             environment = BuildEnvironment.LOCAL,
             )
         listener.onBuildFinished(result)

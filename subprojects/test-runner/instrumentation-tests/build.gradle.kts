@@ -37,6 +37,7 @@ dependencies {
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(project(":subprojects:common:truth-extensions"))
+    gradleTestImplementation(project(":subprojects:gradle:git"))
 }
 
 gradlePlugin {

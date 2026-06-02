@@ -1,7 +1,6 @@
 package com.avito.git
 
 import com.avito.git.executor.GradleCompatibleExecutor
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.process.ExecOperations
@@ -15,12 +14,7 @@ internal abstract class GitStateValueSource : ValueSource<GitState, GitStateValu
     @get:Inject
     abstract val execOperations: ExecOperations
 
-    interface Params : ValueSourceParameters {
-        val strategy: Property<String>
-        val gitBranch: Property<String>
-        val targetBranch: Property<String>
-        val originalCommitHash: Property<String>
-    }
+    interface Params : ValueSourceParameters, GitStateParameters
 
     override fun obtain(): GitState {
         val git = GitImpl(executor = GradleCompatibleExecutor(

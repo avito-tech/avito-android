@@ -9,7 +9,7 @@ import com.avito.android.plugin.build_metrics.internal.di.NotCompatibleWithConfi
 import com.avito.android.plugin.build_metrics.internal.gradle.requestedtasks.BuildExecutionHistory
 import com.avito.android.plugin.build_metrics.internal.result.BuildResultFlowAction
 import com.avito.android.stats.statsdConfig
-import com.avito.git.gitStateProvider
+import com.avito.git.gitInfoService
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerCoordinates
@@ -45,8 +45,9 @@ public abstract class BuildMetricsPlugin : Plugin<Project> {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
 
+        project.gitInfoService()
+
         val buildMetricsExtension = project.extensions.create<BuildMetricsExtension>("buildMetrics").apply {
-            branchName.convention(project.gitStateProvider().map { it.currentBranch.name })
             repoName.convention(project.repoName)
         }
 

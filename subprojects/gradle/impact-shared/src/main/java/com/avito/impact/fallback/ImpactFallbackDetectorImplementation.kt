@@ -1,9 +1,9 @@
 package com.avito.impact.fallback
 
-import com.avito.git.GitState
-import com.avito.git.gitStateProvider
+import com.avito.git.GitInfoBuildService
+import com.avito.git.gitInfoService
 import com.avito.impact.changes.ChangesDetector
-import com.avito.impact.changes.newChangesDetector
+import com.avito.impact.changes.newLazyChangesDetector
 import com.avito.impact.platformModules
 import com.avito.impact.plugin.ImpactAnalysisExtension
 import com.avito.impact.supportedByImpactAnalysisProjects
@@ -16,12 +16,14 @@ import java.io.File
 internal class ImpactFallbackDetectorImplementation(
     private val configuration: ImpactAnalysisExtension,
     private val project: Project,
-    private val gitState: Provider<GitState>,
+    private val gitInfo: Provider<GitInfoBuildService>,
 ) : ImpactFallbackDetector {
 
     private val logger = project.logger
 
     override val isFallback: ImpactFallbackDetector.Result by lazy {
+
+        val gitState = gitInfo.get().getGitStateOrNull()
 
         val isAnalysisNeededResult = isAnalysisNeeded(
             config = configuration,
@@ -47,9 +49,9 @@ internal class ImpactFallbackDetectorImplementation(
         val unsupportedChangesFound = hasUnsupportedChanges(
             rootDir = project.rootDir,
             excludedDirectories = excludedDirectories,
-            changesDetector = newChangesDetector(
+            changesDetector = newLazyChangesDetector(
                 rootDir = project.rootDir,
-                targetCommit = gitState.orNull?.targetBranch?.commit,
+                targetCommit = { gitState?.targetBranch?.commit },
             )
         )
 
@@ -110,7 +112,7 @@ internal class ImpactFallbackDetectorImplementation(
             return ImpactFallbackDetectorImplementation(
                 configuration,
                 project = project,
-                gitState = project.gitStateProvider(),
+                gitInfo = project.gitInfoService(),
             )
         }
     }

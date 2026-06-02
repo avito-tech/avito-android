@@ -3,7 +3,6 @@ package com.avito.impact.fallback
 import com.avito.git.GitState
 import com.avito.impact.configuration.isBranchProtected
 import com.avito.impact.plugin.ImpactAnalysisExtension
-import org.gradle.api.provider.Provider
 
 internal sealed class IsAnalysisNeededResult {
     object Run : IsAnalysisNeededResult()
@@ -12,14 +11,14 @@ internal sealed class IsAnalysisNeededResult {
 
 internal fun isAnalysisNeeded(
     config: ImpactAnalysisExtension,
-    gitState: Provider<GitState>
+    gitState: GitState?
 ): IsAnalysisNeededResult {
 
     if (config.skipAnalysis) {
         return IsAnalysisNeededResult.Skip("skipAnalysis=true in plugin config")
     }
 
-    val git: GitState = gitState.orNull
+    val git: GitState = gitState
         ?: return IsAnalysisNeededResult.Skip("impossible to get diff, git is not available on host machine")
 
     val currentBranch = git.currentBranch

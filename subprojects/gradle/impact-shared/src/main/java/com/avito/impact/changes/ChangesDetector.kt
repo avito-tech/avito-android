@@ -116,6 +116,44 @@ public fun newChangesDetector(
     }
 }
 
+/**
+ * [targetCommit] is invoked on the first [ChangesDetector.computeChanges] call,
+ * not eagerly. Use when the supplier reads a Gradle [com.avito.git.GitInfoBuildService].
+ */
+public fun newLazyChangesDetector(
+    rootDir: File,
+    targetCommit: () -> String?,
+): ChangesDetector {
+    val ignoreFile = File(rootDir, ".tia_ignore")
+    val settings = readIgnoreSettings(ignoreFile)
+    return LazyChangesDetector(rootDir, targetCommit, settings)
+}
+
+private class LazyChangesDetector(
+    private val rootDir: File,
+    private val targetCommit: () -> String?,
+    private val ignoreSettings: IgnoreSettings,
+) : ChangesDetector {
+
+    private val delegate: ChangesDetector by lazy {
+        val commit = targetCommit()
+        if (commit.isNullOrBlank()) {
+            ChangesDetectorStub("targetCommit branch was not set")
+        } else {
+            GitChangesDetector(
+                projectRootDir = rootDir,
+                targetCommit = commit,
+                ignoreSettings = ignoreSettings,
+            )
+        }
+    }
+
+    override fun computeChanges(
+        targetDirectory: File,
+        excludedDirectories: Iterable<File>
+    ): Result<List<ChangedFile>> = delegate.computeChanges(targetDirectory, excludedDirectories)
+}
+
 private fun readIgnoreSettings(settings: File): IgnoreSettings {
     val patterns: Set<String> = if (settings.exists()) {
         settings.readLines()

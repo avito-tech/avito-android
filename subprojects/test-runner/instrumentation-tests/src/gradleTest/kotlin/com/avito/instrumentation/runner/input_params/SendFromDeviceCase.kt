@@ -16,8 +16,12 @@ class SendFromDeviceCase(
         "${projectDir.canonicalPath}/outputs/$commit.teamcity-$buildType/$configurationName"
     ) {
 
+        // The SendFromDevice report runId is git-independent (MBSA-2359): the eager
+        // testInstrumentationRunnerArguments value must not read git at configuration time,
+        // so the identifier is always "local" (the output dir above still uses the
+        // execution-time commit via the lazy GitInfoBuildService path).
         private val runId = RunId(
-            identifier = commit,
+            identifier = "local",
             buildTypeId = "teamcity-$buildType"
         ).toReportViewerFormat()
 

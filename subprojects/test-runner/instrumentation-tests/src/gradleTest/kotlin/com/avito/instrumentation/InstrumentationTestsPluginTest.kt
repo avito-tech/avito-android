@@ -245,7 +245,7 @@ internal class InstrumentationTestsPluginTest {
         )
 }
 
-internal fun instrumentationConfiguration(): String = """
+internal fun instrumentationConfiguration(report: String = "ReportConfig.NoOp"): String = """
     |import com.avito.instrumentation.reservation.request.Device
     |import com.avito.instrumentation.configuration.KubernetesViaCredentials
     |import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -253,7 +253,7 @@ internal fun instrumentationConfiguration(): String = """
     |
     |instrumentation {
     |    outputDir.set(project.file("outputs"))
-    |    report.set(ReportConfig.NoOp)
+    |    report.set($report)
     |    environments {
     |       register<KubernetesViaCredentials>("test") {
     |           url.set("http://stub")

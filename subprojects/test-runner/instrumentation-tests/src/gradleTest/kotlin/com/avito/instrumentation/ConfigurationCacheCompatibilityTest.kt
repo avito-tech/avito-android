@@ -1,5 +1,6 @@
 package com.avito.instrumentation
 
+import com.avito.git.Git
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -53,6 +54,55 @@ internal class ConfigurationCacheCompatibilityTest {
         ).generateIn(projectDir)
 
         runTask(projectDir).assertThat().buildSuccessful()
+
+        runTask(projectDir).assertThat().buildSuccessful().configurationCachedReused()
+    }
+
+    /**
+     * Proves the MBSA-2353 runId fix: with a ReportViewer (SendFromRunner) config the
+     * task's runId derives from the git commit. A `git commit` between two builds must
+     * NOT invalidate the configuration cache — the runId is read lazily from
+     * GitInfoBuildService at task-graph time, so CC stores the recipe, not a baked value.
+     */
+    @Test
+    fun `git commit between builds - instrumentation task CC reused`(@TempDir projectDir: File) {
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app",
+                    plugins = plugins {
+                        id(instrumentationPluginId)
+                    },
+                    buildGradleExtra = instrumentationConfiguration(
+                        report = """
+                            |ReportConfig.ReportViewer.SendFromRunner(
+                            |    reportApiUrl = "http://stub",
+                            |    reportViewerUrl = "http://stub",
+                            |    fileStorageUrl = "http://stub",
+                            |    planSlug = "AvitoAndroid",
+                            |    jobSlug = "FunctionalTests"
+                            |)
+                        """.trimMargin()
+                    ),
+                    useKts = true,
+                )
+            )
+        ).generateIn(projectDir)
+
+        val notes = File(projectDir, "notes.txt").apply { writeText("v1") }
+        val git = Git.create(projectDir)
+        git.init().getOrThrow()
+        git.checkout(branchName = "feature", create = true).getOrThrow()
+        git.addAll().getOrThrow()
+        git.commit("initial").getOrThrow()
+
+        runTask(projectDir).assertThat().buildSuccessful()
+
+        notes.writeText("v2")
+        git.commit("between builds").getOrThrow()
 
         runTask(projectDir).assertThat().buildSuccessful().configurationCachedReused()
     }

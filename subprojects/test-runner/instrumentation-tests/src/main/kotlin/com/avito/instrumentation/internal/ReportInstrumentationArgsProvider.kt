@@ -1,12 +1,12 @@
 package com.avito.instrumentation.internal
 
-import com.avito.android.plugins.configuration.RunIdResolver
 import com.avito.instrumentation.configuration.report.ReportConfig
 import com.avito.instrumentation_args.InstrumentationArgsProvider
+import com.avito.reportviewer.model.RunId
 
 internal class ReportInstrumentationArgsProvider(
     private val reportResolver: ReportResolver,
-    private val runIdResolver: RunIdResolver,
+    private val runIdProvider: () -> RunId,
 ) : InstrumentationArgsProvider {
 
     override fun provideInstrumentationArgs(): Map<String, String> {
@@ -18,7 +18,7 @@ internal class ReportInstrumentationArgsProvider(
                 result["avito.report.transport"] = "backend"
                 result["planSlug"] = report.planSlug
                 result["jobSlug"] = report.jobSlug
-                result["runId"] = runIdResolver.getRunId().toReportViewerFormat()
+                result["runId"] = runIdProvider().toReportViewerFormat()
                 result["fileStorageUrl"] = report.fileStorageUrl
                 result["reportViewerUrl"] = report.reportViewerUrl
                 result["reportApiUrl"] = report.reportApiUrl

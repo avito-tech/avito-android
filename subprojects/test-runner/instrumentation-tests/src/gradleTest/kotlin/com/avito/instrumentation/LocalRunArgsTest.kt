@@ -72,9 +72,10 @@ internal class LocalRunArgsTest {
         val dumpDir = projectDir.toPath() / "outputs" / dumpDirName
 
         val instrumentationArgs = LocalRunArgsChecker { dumpDir.toFile() }.readDump()
-        val commit = projectDir.git("rev-parse HEAD").trim()
+        // The SendFromDevice report runId is a stable, git-independent value (MBSA-2359):
+        // it must not read git at configuration time, so the identifier is always "local".
         val runId = RunId(
-            identifier = commit,
+            identifier = "local",
             buildTypeId = "teamcity-$buildType"
         ).toReportViewerFormat()
 

@@ -36,10 +36,30 @@ public fun Project.gitState(): Property<GitState> =
         }
     }
 
+/**
+ * Reads git state at configuration time. The result is tracked by the configuration
+ * cache, so any git operation that changes it invalidates CC. Prefer [gitInfoService]
+ * and read git state at task-execution time; migration is tracked in MBSA-2353.
+ */
 public fun Project.gitStateProvider(): Provider<GitState> =
     project.providers.of(GitStateValueSource::class.java) {
-        it.parameters.strategy.set(project.getOptionalStringProperty("avito.git.state", default = "local"))
-        it.parameters.gitBranch.set(project.getOptionalStringProperty("gitBranch"))
-        it.parameters.targetBranch.set(project.getOptionalStringProperty("targetBranch"))
-        it.parameters.originalCommitHash.set(project.getOptionalStringProperty("originalCommitHash"))
+        configureGitStateParameters(it.parameters)
     }
+
+/**
+ * CC-safe replacement for [gitStateProvider]. See [GitInfoBuildService].
+ */
+public fun Project.gitInfoService(): Provider<GitInfoBuildService> =
+    project.gradle.sharedServices.registerIfAbsent(
+        GitInfoBuildService.NAME,
+        GitInfoBuildService::class.java,
+    ) { spec ->
+        configureGitStateParameters(spec.parameters)
+    }
+
+private fun Project.configureGitStateParameters(parameters: GitStateParameters) {
+    parameters.strategy.set(getOptionalStringProperty("avito.git.state", default = "local"))
+    parameters.gitBranch.set(getOptionalStringProperty("gitBranch"))
+    parameters.targetBranch.set(getOptionalStringProperty("targetBranch"))
+    parameters.originalCommitHash.set(getOptionalStringProperty("originalCommitHash"))
+}

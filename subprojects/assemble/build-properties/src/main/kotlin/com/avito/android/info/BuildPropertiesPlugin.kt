@@ -1,6 +1,7 @@
 package com.avito.android.info
 
 import com.avito.android.addPreBuildTasks
+import com.avito.git.gitInfoService
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.WriteProperties
@@ -28,10 +29,26 @@ public open class BuildPropertiesPlugin : Plugin<Project> {
 
     private fun registerLegacyPropertiesTask(project: Project) {
         val extension = project.extensions.create<BuildInfoExtension>("buildInfo")
+        val gitInfo = project.gitInfoService()
 
         val task = project.tasks.register<WriteProperties>("generateAppBuildProperties") {
-            property("GIT_COMMIT", extension.gitCommit.orEmpty())
-            property("GIT_BRANCH", extension.gitBranch.orEmpty())
+            // Explicit values (set via the legacy `buildInfo { gitCommit = ... }` API) win.
+            // When unset, resolve from GitInfoBuildService at task-execution time so a
+            // `git commit` doesn't invalidate the configuration cache. See MBSA-2353.
+            val explicitCommit = extension.gitCommit
+            val explicitBranch = extension.gitBranch
+            property(
+                "GIT_COMMIT",
+                gitInfo.map { service ->
+                    explicitCommit ?: service.getGitStateOrNull()?.currentBranch?.commit.orEmpty()
+                }
+            )
+            property(
+                "GIT_BRANCH",
+                gitInfo.map { service ->
+                    explicitBranch ?: service.getGitStateOrNull()?.currentBranch?.name.orEmpty()
+                }
+            )
             property("BUILD_NUMBER", extension.buildNumber.orEmpty())
             destinationFile.set(project.file("src/main/assets/app-build-info.properties"))
         }

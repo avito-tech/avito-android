@@ -8,6 +8,7 @@ import com.avito.android.plugin.build_metrics.internal.di.CompatibleWithConfigur
 import com.avito.android.plugin.build_metrics.internal.result.BuildResult
 import com.avito.android.plugin.build_metrics.internal.result.BuildStatus
 import com.avito.android.stats.StatsDConfig
+import com.avito.git.GitInfoBuildService
 import com.avito.logger.GradleLoggerCoordinates
 import com.avito.logger.LoggerService
 import org.gradle.api.Project
@@ -24,6 +25,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.services.ServiceReference
 import org.gradle.caching.internal.controller.operations.LoadOperationDetails
 import org.gradle.caching.internal.controller.operations.StoreOperationDetails
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
@@ -71,6 +73,10 @@ internal abstract class BuildOperationsResultProvider : BuildService<BuildOperat
         val loggerService: Property<LoggerService>
         val loggerCoordinates: Property<GradleLoggerCoordinates>
         val branchName: Property<String>
+
+        @get:ServiceReference(GitInfoBuildService.NAME)
+        val gitInfoService: Property<GitInfoBuildService>
+
         val repoName: Property<String>
         val requestedTasks: ListProperty<String>
         val bootstrapRequestedTaskNames: SetProperty<String>

@@ -4,7 +4,7 @@ import com.android.build.api.variant.Variant
 import com.avito.android.plugins.configuration.BuildEnvResolver
 import com.avito.android.plugins.configuration.GitResolver
 import com.avito.android.plugins.configuration.RunIdResolver
-import com.avito.git.gitStateProvider
+import com.avito.git.gitInfoService
 import com.avito.instrumentation.configuration.ExecutionEnvironment
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationTestsPluginExtension
@@ -13,6 +13,7 @@ import com.avito.instrumentation_args.InstrumentationArgsResolver
 import com.avito.instrumentation_args.LocalRunInteractor
 import com.avito.instrumentation_args.SetupLocalInstrumentationArgsUseCase
 import com.avito.logger.GradleLoggerPlugin
+import com.avito.reportviewer.model.RunId
 import com.avito.utils.gradle.envArgs
 import org.gradle.api.Project
 
@@ -21,7 +22,7 @@ internal class ConfiguratorsFactory(
     private val extension: InstrumentationTestsPluginExtension,
     private val buildCacheEnabled: Boolean,
 ) {
-    private val gitResolver = GitResolver(project.gitStateProvider())
+    private val gitResolver = GitResolver(project.gitInfoService().map { it.getGitState() })
 
     // todo envArgs should be lazy, see [com.avito.kotlin.dsl.ProjectProperty]
     private val buildEnvResolver = BuildEnvResolver(project.provider { project.envArgs })
@@ -31,7 +32,7 @@ internal class ConfiguratorsFactory(
         buildEnvResolver = buildEnvResolver
     )
 
-    private val reportResolver = ReportResolver(extension, runIdResolver)
+    private val reportResolver = ReportResolver(extension, runIdResolver, project.providers)
 
     private val androidVariantConfiguratorFactory = AndroidVariantConfiguratorFactory(extension)
 
@@ -53,7 +54,13 @@ internal class ConfiguratorsFactory(
         additionalArgsProviders = listOf(
             ReportInstrumentationArgsProvider(
                 reportResolver = reportResolver,
-                runIdResolver = runIdResolver,
+                // The SendFromDevice report runId is injected into AGP's eager
+                // testInstrumentationRunnerArguments DSL at configuration time, and is only ever
+                // produced for local SendFromDevice runs (CI uses SendFromRunner). It is report
+                // metadata, not a build input, so it must not pull git into the configuration
+                // cache (which would invalidate CC on every branch switch / commit). Use a stable,
+                // git-independent value. See MBSA-2359.
+                runIdProvider = { RunId(identifier = "local", buildTypeId = project.envArgs.build.type) },
             ),
         ),
     )
@@ -94,6 +101,7 @@ internal class ConfiguratorsFactory(
                 configuration = configuration,
                 instrumentationArgsResolver = instrumentationArgsResolver,
                 reportResolver = reportResolver,
+                providerFactory = project.providers,
                 loggerFactory = loggerFactory,
             )
 

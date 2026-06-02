@@ -11,11 +11,10 @@ import com.avito.utils.rewriteNewLineList
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.Property
 
 internal class FindChangedTestsAction(
     private val rootDir: Directory,
-    private val targetCommit: Property<String>,
+    private val targetCommit: String,
     private val androidTestDir: DirectoryProperty,
     private val changedTestsFile: RegularFile,
     loggerFactory: LoggerFactory,
@@ -37,7 +36,7 @@ internal class FindChangedTestsAction(
 
         val changesDetector: ChangesDetector = GitChangesDetector(
             projectRootDir = rootDir.asFile,
-            targetCommit = targetCommit.get(),
+            targetCommit = targetCommit,
             ignoreSettings = IgnoreSettings(emptySet()),
         )
 

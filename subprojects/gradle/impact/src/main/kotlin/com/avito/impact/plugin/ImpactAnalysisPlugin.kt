@@ -1,7 +1,7 @@
 package com.avito.impact.plugin
 
-import com.avito.git.gitStateProvider
-import com.avito.impact.changes.newChangesDetector
+import com.avito.git.gitInfoService
+import com.avito.impact.changes.newLazyChangesDetector
 import com.avito.impact.configuration.InternalModule
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.impactFallbackDetector
@@ -24,11 +24,11 @@ public class ImpactAnalysisPlugin : Plugin<Project> {
 
         rootProject.extensions.create<ImpactAnalysisExtension>("impactAnalysis")
 
-        val gitState = rootProject.gitStateProvider()
+        val gitInfo = rootProject.gitInfoService()
 
-        val changesDetector = newChangesDetector(
+        val changesDetector = newLazyChangesDetector(
             rootDir = rootProject.rootDir,
-            targetCommit = gitState.orNull?.targetBranch?.commit,
+            targetCommit = { gitInfo.get().getGitState().targetBranch?.commit },
         )
 
         rootProject.subprojects.forEach { subProject ->

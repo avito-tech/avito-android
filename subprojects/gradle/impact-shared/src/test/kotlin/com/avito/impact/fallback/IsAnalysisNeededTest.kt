@@ -8,7 +8,6 @@ import com.avito.impact.plugin.ImpactAnalysisExtension
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
-import org.gradle.api.internal.provider.Providers
 import org.junit.jupiter.api.Test
 
 class IsAnalysisNeededTest {
@@ -146,7 +145,7 @@ class IsAnalysisNeededTest {
         gitState: GitState?
     ): IsAnalysisNeededResult = isAnalysisNeeded(
         config = config,
-        gitState = if (gitState == null) Providers.notDefined() else Providers.of(gitState)
+        gitState = gitState
     )
 
     private fun gitState(current: Branch, target: Branch?): GitState = GitStateStub(

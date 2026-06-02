@@ -121,11 +121,17 @@ internal class CompatibleWithConfigurationCacheDI(
                 add(
                     AppBuildTimeListener(
                         sender = sender,
-                        metadata = AppBuildTimeMetadata(
-                            userName = parameters.userName.get(),
-                            branchName = parameters.branchName.get(),
-                            repoName = parameters.repoName.orNull.orEmpty(),
-                        ),
+                        // Resolve metadata lazily at build-finish (execution time). Calling
+                        // getGitState() at configuration time here would re-introduce a git read
+                        // on the config path and invalidate the CC on branch switch. See MBSA-2359.
+                        metadataProvider = {
+                            AppBuildTimeMetadata(
+                                userName = parameters.userName.get(),
+                                branchName = parameters.branchName.orNull
+                                    ?: parameters.gitInfoService.get().getGitState().currentBranch.name,
+                                repoName = parameters.repoName.orNull.orEmpty(),
+                            )
+                        },
                         environment = parameters.environment.get(),
                     )
                 )

@@ -6,7 +6,7 @@ import com.avito.android.contracts.platform.extension.defaultNetwork
 import com.avito.android.contracts.platform.internal.http.HttpClientService
 import com.avito.android.contracts.platform.scheme.fixation.UpsertService
 import com.avito.android.network_contracts.fixation.service.NetworkContractsUpsertService
-import com.avito.git.gitStateProvider
+import com.avito.git.gitInfoService
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -21,6 +21,8 @@ public class NetworkContractsRootPlugin : Plugin<Project> {
 
         val schemesContractExtension = target.extensions.getByType<ContractsRootExtension>()
 
+        target.gitInfoService()
+
         val networkContractsUpsertService = UpsertService.provideUpsertService(
             project = target,
             klass = NetworkContractsUpsertService::class.java
@@ -30,7 +32,6 @@ public class NetworkContractsRootPlugin : Plugin<Project> {
                     target.getMandatoryStringProperty("avito.networkContracts.fixation.author")
                 }
             )
-            it.branchName.set(target.gitStateProvider().map { it.currentBranch.name })
             it.httpClient.set(
                 target.provider {
                     HttpClientService.provideHttpClientService(target, NetworkContractsVariantConstants.NAME)

@@ -16,7 +16,7 @@ import java.time.Instant
 
 internal class AppBuildTimeListener(
     private val sender: BuildMetricSender,
-    private val metadata: AppBuildTimeMetadata,
+    private val metadataProvider: () -> AppBuildTimeMetadata,
     private val environment: BuildEnvironment,
 ) : BuildOperationsResultListener {
 
@@ -26,6 +26,12 @@ internal class AppBuildTimeListener(
         val packageAppTasks = result
             .tasksExecutions
             .filter { it.type == PackageApplication::class.java }
+
+        if (packageAppTasks.isEmpty()) return
+
+        // Resolve metadata (incl. the git branch name) lazily, at build-finish (execution
+        // time), so it never reads git during configuration. See MBSA-2359 / MBSA-2360.
+        val metadata = metadataProvider()
 
         packageAppTasks.forEach { task ->
             val duration = Duration

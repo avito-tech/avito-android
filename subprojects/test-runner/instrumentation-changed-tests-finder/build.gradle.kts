@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":subprojects:gradle:impact-shared")) {
         because("ChangesDetector reuse")
     }
+    implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:logger:gradle-logger"))
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
