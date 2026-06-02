@@ -35,6 +35,9 @@ public abstract class RemoteCompatibilityDiagnosticRule @Inject constructor() : 
     public abstract val variantName: Property<String>
 
     @get:Internal
+    public abstract val branchName: Property<String>
+
+    @get:Internal
     public abstract val validationService: Property<ValidationApiSchemesService>
 
     @get:Internal
@@ -72,6 +75,7 @@ public abstract class RemoteCompatibilityDiagnosticRule @Inject constructor() : 
         runBlocking {
             val result = runCatching {
                 validationService.validate(
+                    branch = branchName.get(),
                     schemes = apiSchemes,
                 )
             }

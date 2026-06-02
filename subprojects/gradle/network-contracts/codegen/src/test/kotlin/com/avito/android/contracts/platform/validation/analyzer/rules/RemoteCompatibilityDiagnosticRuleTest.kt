@@ -49,7 +49,7 @@ class RemoteCompatibilityDiagnosticRuleTest {
             kind = "test",
             variantName = "test",
         )
-        whenever(validationService.validate(any())).thenReturn(emptyList())
+        whenever(validationService.validate(any(), any())).thenReturn(emptyList())
 
         rule.analyze()
 
@@ -80,6 +80,7 @@ class RemoteCompatibilityDiagnosticRuleTest {
         whenever(
             validationService.validate(
                 any(),
+                any()
             )
         ).thenReturn(listOf(RemoteValidationError(message = "validation error", type = "test")))
 
@@ -111,7 +112,7 @@ class RemoteCompatibilityDiagnosticRuleTest {
                 variantName = "test",
             )
 
-        whenever(validationService.validate(any())).thenThrow(RuntimeException("from test"))
+        whenever(validationService.validate(any(), any())).thenThrow(RuntimeException("from test"))
 
         rule.analyze()
 
@@ -153,6 +154,7 @@ private fun File.createSchema(content: String = ""): File {
 private class RemoteCompatibilityRuleImpl(
     override val schemes: ConfigurableFileCollection,
     override val validationService: Property<ValidationApiSchemesService>,
+    override val branchName: Property<String>,
     override val modulePath: Property<String>,
     override val kind: Property<String>,
     override val variantName: Property<String>,
@@ -171,6 +173,7 @@ private class RemoteCompatibilityRuleImpl(
     ) : this(
         schemes = objects.fileCollection().apply { setFrom(schemes) },
         validationService = objects.property<ValidationApiSchemesService>().apply { set(validationService) },
+        branchName = objects.property<String>().apply { set(branchName) },
         modulePath = objects.property<String>().apply { set(modulePath) },
         kind = objects.property<String>().apply { set(kind) },
         variantName = objects.property<String>().apply { set(variantName) },

@@ -145,7 +145,7 @@ private fun Project.configureNetworkContractsValidationTasks(
                 it.modulePath.set(project.path)
                 it.kind.set(extension.kind)
                 it.variantName.set(variantConfiguration.name)
-                it.branch.set(project.gitStateProvider().map { it.currentBranch.name })
+                it.branchName.set(project.gitStateProvider().map { it.currentBranch.name })
             }
             configuration.onlyIf.set(project.provider { schemesMetadata.isPresent })
         }
