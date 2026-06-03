@@ -14,6 +14,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -70,10 +71,11 @@ private suspend fun HttpClient.fetchApiScheme(
 
 private fun ParamType.asJsonElement(): JsonElement {
     return when (this) {
-        is ParamType.Primitive -> when (value) {
-            is String -> JsonPrimitive(value)
-            is Number -> JsonPrimitive(value)
-            is Boolean -> JsonPrimitive(value)
+        is ParamType.Primitive -> when {
+            value is String -> JsonPrimitive(value)
+            value is Number -> JsonPrimitive(value)
+            value is Boolean -> JsonPrimitive(value)
+            value == null -> JsonNull
             else -> throw IllegalArgumentException("Unsupported primitive type")
         }
 

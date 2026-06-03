@@ -92,7 +92,7 @@ public abstract class CodegenTask : DefaultTask() {
     internal abstract val tmpKeyFile: RegularFileProperty
 
     @get:InputFiles
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
     internal abstract val codegenExecutableFiles: ConfigurableFileCollection
 
     @get:InputDirectory
