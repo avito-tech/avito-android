@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.charset.StandardCharsets
+import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
 internal class StringTransformPluginGradleTest {
@@ -1106,6 +1107,62 @@ internal class StringTransformPluginGradleTest {
             }
             """),
         )
+    }
+
+    @Test
+    fun `plugin apk transform - preserves STORED compression for native library - when useLegacyPackaging is false`() {
+        givenProject(
+            """
+            android {
+                packaging {
+                    jniLibs {
+                        useLegacyPackaging = false
+                    }
+                }
+            }
+
+            transformStrings {
+                create("alpha") {
+                    variant("release")
+                    rules {
+                        exact("samplevalue", "changedvalue")
+                    }
+                }
+            }
+            """.trimIndent()
+        ) { _ ->
+            val nativeLibDir = resolve("src/main/jniLibs/arm64-v8a")
+            nativeLibDir.mkdirs()
+            nativeLibDir.resolve("libnative.so").writeBytes(ByteArray(1024) { it.toByte() })
+        }
+
+        gradlew(
+            projectDir,
+            ":app:transformStrings",
+            useTestFixturesClasspath = true,
+        ).assertThat().buildSuccessful()
+
+        // Precondition: verify input APK has .so as STORED
+        val inputApkDir = File(projectDir, "app/build/outputs/apk/release")
+        val inputApk = inputApkDir.listFiles()?.singleOrNull { it.extension == "apk" }
+        assertThat(inputApk).isNotNull()
+        ZipFile(inputApk!!).use { zip ->
+            val soEntry = zip.getEntry("lib/arm64-v8a/libnative.so")
+            assertThat(soEntry).isNotNull()
+            assertThat(soEntry.method).isEqualTo(ZipEntry.STORED)
+        }
+
+        // Verify: output APK preserves STORED compression for .so
+        val outputApk = File(
+            projectDir,
+            "app/build/outputs/transformStrings/alpha/release/apk/transformed-unsigned.apk"
+        )
+        assertThat(outputApk.exists()).isTrue()
+        ZipFile(outputApk).use { zip ->
+            val soEntry = zip.getEntry("lib/arm64-v8a/libnative.so")
+            assertThat(soEntry).isNotNull()
+            assertThat(soEntry.method).isEqualTo(ZipEntry.STORED)
+        }
     }
 
     @Test

@@ -60,7 +60,7 @@ internal class AabTransformOrchestrator(
             step("input-aab-validation") {
                 validateInputAab(inputAab)
             }
-            step("bundle-unpack") {
+            var compressionManifest = step("bundle-unpack") {
                 if (localStateRoot.exists()) {
                     localStateRoot.deleteRecursively()
                 }
@@ -115,10 +115,12 @@ internal class AabTransformOrchestrator(
             }
             recordWarnings("residual-text-transform", unsupportedBinaryWarnings)
 
-            step("rename") {
+            val renameResult = step("rename") {
                 pathRenamer.rename(workspace, rules)
-                    .onSuccess { warnings -> recordWarnings("rename", warnings) }
             }
+            recordWarnings("rename", renameResult.warnings)
+            compressionManifest = compressionManifest.remapKeys(renameResult.pathMapping)
+
             step("metadata-cleanup") {
                 metadataCleaner.clean(workspace)
             }
@@ -126,7 +128,20 @@ internal class AabTransformOrchestrator(
                 if (rebuiltAab.exists()) {
                     rebuiltAab.delete()
                 }
-                bundleArchiver.packFromWorkspace(workspace, rebuiltAab)
+                val finalRelPaths = workspace.walkTopDown()
+                    .filter(File::isFile)
+                    .map { it.relativeTo(workspace).invariantSeparatorsPath }
+                    .toSet()
+                val missingStoredWarnings =
+                    compressionManifest.storedEntriesMissing(finalRelPaths).map { relPath ->
+                        OperationWarning(
+                            message = "Original STORED entry was dropped before repack " +
+                                "and will not be emitted: $relPath",
+                            affectedPath = relPath,
+                        )
+                    }
+                recordWarnings("bundle-repack", missingStoredWarnings)
+                bundleArchiver.packFromWorkspace(workspace, rebuiltAab, compressionManifest)
             }
             step("output-publication") {
                 outputPublisher.publish(rebuiltAab, publishedAab)

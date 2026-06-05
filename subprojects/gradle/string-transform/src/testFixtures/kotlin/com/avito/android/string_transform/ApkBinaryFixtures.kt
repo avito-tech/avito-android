@@ -6,7 +6,10 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.file.Files
 
-internal fun createApkFixture(entries: Map<String, ByteArray>): ByteArray {
+internal fun createApkFixture(
+    entries: Map<String, ByteArray>,
+    storedPaths: Set<String> = emptySet(),
+): ByteArray {
     val orderedEntries = linkedMapOf<String, ByteArray>()
     val remaining = entries.toMutableMap()
 
@@ -20,7 +23,7 @@ internal fun createApkFixture(entries: Map<String, ByteArray>): ByteArray {
 
     val tempFile = Files.createTempFile("apk-fixture-", ".apk").toFile()
     return try {
-        createZip(archive = tempFile, entries = orderedEntries)
+        createZip(archive = tempFile, entries = orderedEntries, storedPaths = storedPaths)
         tempFile.readBytes()
     } finally {
         tempFile.delete()

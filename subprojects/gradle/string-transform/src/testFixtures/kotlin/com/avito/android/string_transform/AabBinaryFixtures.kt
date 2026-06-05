@@ -201,13 +201,30 @@ internal fun createDexBytes(token: String = "samplevalue"): ByteArray {
     }
 }
 
-internal fun createZip(archive: File, entries: Map<String, ByteArray>) {
+internal fun createZip(
+    archive: File,
+    entries: Map<String, ByteArray>,
+    storedPaths: Set<String> = emptySet(),
+) {
     archive.parentFile.mkdirs()
     ZipOutputStream(FileOutputStream(archive)).use { zip ->
         entries.forEach { (path, content) ->
-            zip.putNextEntry(ZipEntry(path))
-            zip.write(content)
-            zip.closeEntry()
+            if (path in storedPaths) {
+                val crc = java.util.zip.CRC32().apply { update(content) }
+                val entry = ZipEntry(path).apply {
+                    method = ZipEntry.STORED
+                    size = content.size.toLong()
+                    compressedSize = content.size.toLong()
+                    this.crc = crc.value
+                }
+                zip.putNextEntry(entry)
+                zip.write(content)
+                zip.closeEntry()
+            } else {
+                zip.putNextEntry(ZipEntry(path))
+                zip.write(content)
+                zip.closeEntry()
+            }
         }
     }
 }

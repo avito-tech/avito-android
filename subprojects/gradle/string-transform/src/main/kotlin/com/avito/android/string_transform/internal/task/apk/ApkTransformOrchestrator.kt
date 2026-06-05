@@ -56,7 +56,7 @@ internal class ApkTransformOrchestrator(
             step("input-apk-validation") {
                 validateInputApk(inputApk)
             }
-            step("apk-unpack") {
+            var compressionManifest = step("apk-unpack") {
                 if (localStateRoot.exists()) {
                     localStateRoot.deleteRecursively()
                 }
@@ -111,10 +111,12 @@ internal class ApkTransformOrchestrator(
             }
             recordWarnings("residual-text-transform", unsupportedBinaryWarnings)
 
-            step("rename") {
+            val renameResult = step("rename") {
                 pathRenamer.rename(workspace, rules)
-                    .onSuccess { warnings -> recordWarnings("rename", warnings) }
             }
+            recordWarnings("rename", renameResult.warnings)
+            compressionManifest = compressionManifest.remapKeys(renameResult.pathMapping)
+
             step("metadata-cleanup") {
                 metadataCleaner.clean(workspace)
             }
@@ -122,7 +124,20 @@ internal class ApkTransformOrchestrator(
                 if (rebuiltApk.exists()) {
                     rebuiltApk.delete()
                 }
-                apkArchiver.packFromWorkspace(workspace, rebuiltApk)
+                val finalRelPaths = workspace.walkTopDown()
+                    .filter(File::isFile)
+                    .map { it.relativeTo(workspace).invariantSeparatorsPath }
+                    .toSet()
+                val missingStoredWarnings =
+                    compressionManifest.storedEntriesMissing(finalRelPaths).map { relPath ->
+                        OperationWarning(
+                            message = "Original STORED entry was dropped before repack " +
+                                "and will not be emitted: $relPath",
+                            affectedPath = relPath,
+                        )
+                    }
+                recordWarnings("apk-repack", missingStoredWarnings)
+                apkArchiver.packFromWorkspace(workspace, rebuiltApk, compressionManifest)
             }
             step("output-publication") {
                 outputPublisher.publish(rebuiltApk, publishedApk)

@@ -19,7 +19,7 @@ internal class WorkspacePathRenamerTest {
             .resolve("payload-before.txt")
             .writeText("content")
 
-        val warnings = renamer.rename(
+        val result = renamer.rename(
             workspaceDirectory = dir,
             rules = listOf(NormalizedRule(from = "before", to = "after")),
         ).getOrThrow()
@@ -27,7 +27,7 @@ internal class WorkspacePathRenamerTest {
         assertThat(dir.resolve("after").isDirectory).isTrue()
         assertThat(dir.resolve("after/payload-after.txt").isFile).isTrue()
         assertThat(dir.resolve("before").exists()).isFalse()
-        assertThat(warnings).isEmpty()
+        assertThat(result.warnings).isEmpty()
     }
 
     @Test
@@ -36,18 +36,87 @@ internal class WorkspacePathRenamerTest {
     ) {
         dir.resolve("before").mkdirs()
 
-        val warnings = renamer.rename(
+        val result = renamer.rename(
             workspaceDirectory = dir,
             rules = listOf(NormalizedRule(from = "before", to = "after/name")),
         ).getOrThrow()
 
         assertThat(dir.resolve("before").exists()).isTrue()
         assertThat(dir.resolve("after").exists()).isFalse()
-        assertThat(warnings).containsExactly(
+        assertThat(result.warnings).containsExactly(
             OperationWarning(
                 message = "Rename rule 'before' -> 'after/name' is ignored for paths " +
                     "because target contains unsupported filename characters.",
             )
         )
+    }
+
+    @Test
+    fun `rename - returns pathMapping for renamed file`(
+        @TempDir dir: File,
+    ) {
+        dir.resolve("hello.txt").writeText("data")
+
+        val result = renamer.rename(
+            workspaceDirectory = dir,
+            rules = listOf(NormalizedRule(from = "hello", to = "world")),
+        ).getOrThrow()
+
+        assertThat(result.pathMapping).containsExactly("hello.txt", "world.txt")
+    }
+
+    @Test
+    fun `rename - maps both directory and file segments - when STORED entry is under renamed directory`(
+        @TempDir dir: File,
+    ) {
+        dir.resolve("lib/old-abi")
+            .apply { mkdirs() }
+            .resolve("old-name.so")
+            .writeText("native")
+
+        val result = renamer.rename(
+            workspaceDirectory = dir,
+            rules = listOf(NormalizedRule(from = "old", to = "new")),
+        ).getOrThrow()
+
+        assertThat(dir.resolve("lib/new-abi/new-name.so").isFile).isTrue()
+        assertThat(dir.resolve("lib/old-abi").exists()).isFalse()
+        assertThat(result.pathMapping).containsExactly(
+            "lib/old-abi/old-name.so", "lib/new-abi/new-name.so"
+        )
+    }
+
+    @Test
+    fun `rename - returns empty pathMapping - when no paths change`(
+        @TempDir dir: File,
+    ) {
+        dir.resolve("stable.txt").writeText("content")
+
+        val result = renamer.rename(
+            workspaceDirectory = dir,
+            rules = listOf(NormalizedRule(from = "missing", to = "replacement")),
+        ).getOrThrow()
+
+        assertThat(result.pathMapping).isEmpty()
+        assertThat(result.warnings).isEmpty()
+    }
+
+    @Test
+    fun `rename - preserves warning about unsupported chars alongside valid pathMapping`(
+        @TempDir dir: File,
+    ) {
+        dir.resolve("alpha.txt").writeText("data")
+
+        val result = renamer.rename(
+            workspaceDirectory = dir,
+            rules = listOf(
+                NormalizedRule(from = "bad", to = "bad/slash"),
+                NormalizedRule(from = "alpha", to = "beta"),
+            ),
+        ).getOrThrow()
+
+        assertThat(result.warnings).hasSize(1)
+        assertThat(result.warnings[0].message).contains("unsupported filename characters")
+        assertThat(result.pathMapping).containsExactly("alpha.txt", "beta.txt")
     }
 }

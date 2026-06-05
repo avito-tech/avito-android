@@ -10,7 +10,7 @@ internal class WorkspacePathRenamer {
     fun rename(
         workspaceDirectory: File,
         rules: List<NormalizedRule>,
-    ): Result<List<OperationWarning>> = Result.tryCatch {
+    ): Result<RenameResult> = Result.tryCatch {
         val warnings = mutableListOf<OperationWarning>()
         val validRules = rules.filter { rule ->
             val isValid = rule.to.none(::isUnsupportedPathCharacter)
@@ -23,13 +23,13 @@ internal class WorkspacePathRenamer {
             isValid
         }
 
+        val pathMapping = buildPathMapping(workspaceDirectory, validRules)
+
         workspaceDirectory.walkBottomUp()
             .filter { it != workspaceDirectory }
             .toList()
             .forEach { path ->
-                val renamed = validRules.fold(path.name) { current, rule ->
-                    current.replace(rule.from, rule.to)
-                }
+                val renamed = transformSegment(path.name, validRules)
                 if (renamed != path.name) {
                     val target = path.resolveSibling(renamed)
                     check(!target.exists()) {
@@ -39,7 +39,34 @@ internal class WorkspacePathRenamer {
                 }
             }
 
-        warnings
+        RenameResult(warnings = warnings, pathMapping = pathMapping)
+    }
+
+    private fun buildPathMapping(
+        workspaceDirectory: File,
+        validRules: List<NormalizedRule>,
+    ): Map<String, String> {
+        val mapping = mutableMapOf<String, String>()
+
+        workspaceDirectory.walkBottomUp()
+            .filter { it.isFile }
+            .toList()
+            .forEach { file ->
+                val oldRel = file.relativeTo(workspaceDirectory).invariantSeparatorsPath
+                val newRel = oldRel.split("/")
+                    .joinToString("/") { segment -> transformSegment(segment, validRules) }
+                if (newRel != oldRel) {
+                    mapping[oldRel] = newRel
+                }
+            }
+
+        return mapping
+    }
+
+    private fun transformSegment(segment: String, rules: List<NormalizedRule>): String {
+        return rules.fold(segment) { current, rule ->
+            current.replace(rule.from, rule.to)
+        }
     }
 
     private fun isUnsupportedPathCharacter(char: Char): Boolean {
