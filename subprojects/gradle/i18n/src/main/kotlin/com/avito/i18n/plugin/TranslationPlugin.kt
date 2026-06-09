@@ -1,5 +1,6 @@
 package com.avito.i18n.plugin
 
+import com.android.build.api.variant.AndroidComponentsExtension
 import com.avito.android.isAndroid
 import com.avito.i18n.plugin.service.LocalizationService
 import com.avito.kotlin.dsl.isRoot
@@ -26,7 +27,19 @@ public class TranslationPlugin : Plugin<Project> {
         }
         val service = LocalizationService.provideService(target)
 
+        verifyStringsFilesExist(target, translationExtension)
         configureTranslationTask(target, translationExtension, service)
+    }
+
+    private fun verifyStringsFilesExist(target: Project, translationExtension: TranslationExtension) {
+        val androidComponents = target.extensions.getByType(AndroidComponentsExtension::class.java)
+        androidComponents.finalizeDsl {
+            target.resolveStringsFiles(translationExtension).forEach { file ->
+                check(file.exists()) {
+                    missingStringsFileMessage(target.path, file)
+                }
+            }
+        }
     }
 
     private fun configureTranslationTask(
@@ -35,24 +48,7 @@ public class TranslationPlugin : Plugin<Project> {
         localizationService: Provider<LocalizationService>
     ) {
         target.tasks.register<TranslationFileTask>(TRANSLATION_TASK_NAME) {
-            val mainResDir = checkNotNull(target.mainResDir) {
-                "'mainResDir' not found!"
-            }
-            val resDirsToTranslate = translationExtension.flavorNamesToTranslate.get()
-                .map { flavorName -> target.getResDirByName(flavorName) }
-                .takeUnless { it.isEmpty() }
-                ?: listOf(mainResDir)
-
-            val filesToTranslate = resDirsToTranslate.filterNotNull()
-                .map { resDir -> File(resDir, DEFAULT_STRING_FILE) }
-
-            filesToTranslate.forEach { file ->
-                check(file.exists()) {
-                    "File '${file.path}' not found!"
-                }
-            }
-
-            defaultStringsFiles.setFrom(filesToTranslate)
+            defaultStringsFiles.setFrom(target.resolveStringsFiles(translationExtension))
             service.set(localizationService)
             locales.set(translationExtension.locales)
             namespace.set(translationExtension.namespace)
@@ -61,6 +57,26 @@ public class TranslationPlugin : Plugin<Project> {
             usesService(localizationService)
         }
     }
+
+    private fun Project.resolveStringsFiles(translationExtension: TranslationExtension): List<File> {
+        val mainResDir = checkNotNull(mainResDir) {
+            "'mainResDir' not found!"
+        }
+        val resDirsToTranslate = translationExtension.flavorNamesToTranslate.get()
+            .map { flavorName -> getResDirByName(flavorName) }
+            .takeUnless { it.isEmpty() }
+            ?: listOf(mainResDir)
+
+        return resDirsToTranslate.filterNotNull()
+            .map { resDir -> File(resDir, DEFAULT_STRING_FILE) }
+    }
+
+    private fun missingStringsFileMessage(modulePath: String, file: File): String =
+        "Module '$modulePath' applies the i18n plugin (com.avito.android.i18n) " +
+            "but '$DEFAULT_STRING_FILE' is missing: '${file.path}'.\n" +
+            "Fix it by either:\n" +
+            "  - removing the i18n plugin from the module's build.gradle, or\n" +
+            "  - restoring the '$DEFAULT_STRING_FILE' file."
 
     private fun Project.getComponentName(): String {
         return path
