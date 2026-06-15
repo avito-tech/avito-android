@@ -16,15 +16,31 @@ internal class StringElement : BaseElement {
     override val hash: String
         get() = _node.getAttribute("hash").ifEmpty { _hash }
 
-    val value: String
-        get() = _node.childNodes.takeIf { it.length > 0 }?.item(0)?.nodeValue ?: ""
+    val isInlineMarkup: Boolean
+        get() = _node.hasElementChildren()
 
-    constructor(document: Document, name: String, value: String, hash: String) : super() {
-        val escapedValue = value.escapeSingleQuotes()
+    val value: String
+        get() {
+            val children = _node.childNodes
+            if (children.length == 0) return ""
+            return if (isInlineMarkup) {
+                _node.innerXml()
+            } else {
+                children.item(0)?.nodeValue ?: ""
+            }
+        }
+
+    constructor(document: Document, name: String, value: String, hash: String, content: StringContent) : super() {
         _node = document.createElement("string").apply {
             setAttribute("name", name)
             setAttribute("hash", hash.ifEmpty { value.hashSha1() })
-            appendChild(document.createTextNode(escapedValue))
+            when (content) {
+                is StringContent.Markup -> {
+                    setAttribute(MARKUP_ATTRIBUTE, "true")
+                    appendChild(document.createTextNode(content.xml))
+                }
+                is StringContent.Literal -> appendChild(document.createTextNode(content.text))
+            }
         }
         document.resourcesNode.appendChild(_node)
     }

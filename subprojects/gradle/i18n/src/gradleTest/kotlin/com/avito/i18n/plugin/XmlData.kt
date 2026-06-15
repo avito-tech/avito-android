@@ -90,3 +90,27 @@ val TRANSLATED_FILE_CONTENT_WITH_EMPTY_STRINGS = """
         <string hash="3c72027a032b4dd679f37190087323a78c0c2817" name="params_string">smarap %s gnirts %d</string>
     </resources>
 """.trimIndent()
+
+@Language("xml")
+val ORIGINAL_FILE_CONTENT_WITH_MARKUP = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <resources>
+        <string name="underlined_text"><u>Подробнее</u></string>
+    </resources>
+""".trimIndent()
+
+@Language("xml")
+val TRANSLATED_FILE_CONTENT_WITH_MARKUP = """
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <resources>
+        <string hash="c9951cd6766cfbca5046fe13139fa1927e926241" name="underlined_text"><u>More</u></string>
+    </resources>
+""".trimIndent()
+
+@Language("xml")
+val ORIGINAL_FILE_CONTENT_WITH_CDATA = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <resources>
+        <string name="html_text"><![CDATA[<b>Текст</b>]]></string>
+    </resources>
+""".trimIndent()

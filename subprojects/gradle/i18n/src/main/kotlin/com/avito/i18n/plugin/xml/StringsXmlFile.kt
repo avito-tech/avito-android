@@ -5,9 +5,6 @@ import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.xml.sax.InputSource
 import java.io.StringReader
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
@@ -22,25 +19,17 @@ internal class StringsXmlFile {
         get() = _elements
 
     constructor() {
-        val builder = createDocumentBuilder()
+        val builder = newDocumentBuilder()
         document = builder.newDocument()
         rootNode = document.createElement(RESOURCES_TAG)
         document.appendChild(rootNode)
     }
 
     constructor(inputSource: InputSource) {
-        val builder = createDocumentBuilder()
+        val builder = newDocumentBuilder()
         document = builder.parse(inputSource)
         rootNode = document.getElementsByTagName(RESOURCES_TAG).item(0)
         parseDocument()
-    }
-
-    private fun createDocumentBuilder(): DocumentBuilder {
-        val factory = DocumentBuilderFactory.newInstance()
-        factory.isNamespaceAware = true
-        factory.isValidating = false
-        return factory
-            .newDocumentBuilder()
     }
 
     private fun parseDocument() {
@@ -66,13 +55,18 @@ internal class StringsXmlFile {
         else -> null
     }
 
-    fun appendString(name: String, value: String, hash: String = ""): StringsXmlFile {
-        _elements += StringElement(document, name, value, hash)
+    fun appendString(name: String, value: String, hash: String = "", asMarkup: Boolean = false): StringsXmlFile {
+        _elements += StringElement(document, name, value, hash, value.toStringContent(asMarkup))
         return this
     }
 
-    fun appendPlurals(name: String, values: Map<String, String>, hash: String = ""): StringsXmlFile {
-        _elements += PluralsElement(document, name, values, hash)
+    fun appendPlurals(
+        name: String,
+        values: Map<String, String>,
+        hash: String = "",
+        markupQuantities: Set<String> = emptySet(),
+    ): StringsXmlFile {
+        _elements += PluralsElement(document, name, values, hash, markupQuantities)
         return this
     }
 
@@ -92,7 +86,7 @@ internal class StringsXmlFile {
 
     fun write(result: StreamResult) {
         document.xmlStandalone = true
-        val transformer = TransformerFactory.newInstance()
+        val transformer = transformerFactory.get()
             .newTransformer(StreamSource(StringReader(XSL_STYLE)))
         transformer.transform(DOMSource(document), result)
     }
@@ -107,6 +101,20 @@ internal class StringsXmlFile {
                     <xsl:copy>
                         <xsl:apply-templates select="@*|node()"/>
                     </xsl:copy>
+                </xsl:template>
+
+                <xsl:template match="string[@$MARKUP_ATTRIBUTE='true']">
+                    <string>
+                        <xsl:apply-templates select="@*[name()!='$MARKUP_ATTRIBUTE']"/>
+                        <xsl:value-of select="." disable-output-escaping="yes"/>
+                    </string>
+                </xsl:template>
+
+                <xsl:template match="item[@$MARKUP_ATTRIBUTE='true']">
+                    <item>
+                        <xsl:apply-templates select="@*[name()!='$MARKUP_ATTRIBUTE']"/>
+                        <xsl:value-of select="." disable-output-escaping="yes"/>
+                    </item>
                 </xsl:template>
 
             </xsl:stylesheet>

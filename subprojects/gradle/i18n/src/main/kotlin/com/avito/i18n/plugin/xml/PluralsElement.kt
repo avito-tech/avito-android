@@ -21,10 +21,21 @@ internal class PluralsElement : BaseElement {
     val items: Map<String, String>
         get() = _items
 
-    constructor(document: Document, name: String, values: Map<String, String>, hash: String) : super() {
+    private val _inlineMarkupQuantities = mutableSetOf<String>()
+
+    val inlineMarkupQuantities: Set<String>
+        get() = _inlineMarkupQuantities
+
+    constructor(
+        document: Document,
+        name: String,
+        values: Map<String, String>,
+        hash: String,
+        markupQuantities: Set<String>,
+    ) : super() {
         _node = document.createElement("plurals").apply {
             setAttribute("name", name)
-            createItems(document, values)
+            createItems(document, values, markupQuantities)
             setAttribute("hash", hash.ifEmpty { _hash })
         }
         document.resourcesNode.appendChild(_node)
@@ -40,7 +51,14 @@ internal class PluralsElement : BaseElement {
         for (i in 0..<nodes.length) {
             val item = nodes.item(i)
             if (item.nodeType == Node.ELEMENT_NODE && item is Element && item.tagName == "item") {
-                _items += item.getAttribute("quantity") to item.childNodes.item(0)?.nodeValue.orEmpty()
+                val quantity = item.getAttribute("quantity")
+                val itemValue = if (item.hasElementChildren()) {
+                    _inlineMarkupQuantities += quantity
+                    item.innerXml()
+                } else {
+                    item.childNodes.item(0)?.nodeValue.orEmpty()
+                }
+                _items += quantity to itemValue
             }
         }
     }
@@ -49,13 +67,22 @@ internal class PluralsElement : BaseElement {
         return map { it.value }.joinToString("").hashSha1()
     }
 
-    private fun Node.createItems(document: Document, values: Map<String, String>) {
+    private fun Node.createItems(document: Document, values: Map<String, String>, markupQuantities: Set<String>) {
         for ((key, value) in values) {
-            val escapedValue = value.escapeSingleQuotes()
             val element = document.createElement("item")
             element.setAttribute("quantity", key)
-            element.appendChild(document.createTextNode(escapedValue))
-            _items += key to escapedValue
+            when (val content = value.toStringContent(asMarkup = key in markupQuantities)) {
+                is StringContent.Markup -> {
+                    element.setAttribute(MARKUP_ATTRIBUTE, "true")
+                    element.appendChild(document.createTextNode(content.xml))
+                    _inlineMarkupQuantities += key
+                    _items += key to content.xml
+                }
+                is StringContent.Literal -> {
+                    element.appendChild(document.createTextNode(content.text))
+                    _items += key to content.text
+                }
+            }
             appendChild(element)
         }
     }

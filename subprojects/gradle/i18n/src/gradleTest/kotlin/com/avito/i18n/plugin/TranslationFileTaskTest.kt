@@ -243,6 +243,47 @@ class TranslationFileTaskTest {
             .contains(TRANSLATED_FILE_CONTENT_WITH_EMPTY_STRINGS)
     }
 
+    @Test
+    fun `run update translations with markup string - sends markup and writes it back inline`(
+        @TempDir projectDir: File
+    ) {
+        generateTestProject(projectDir, ORIGINAL_FILE_CONTENT_WITH_MARKUP)
+
+        val requestCapturer = mockDispatcher.captureRequest { path.contains(PATH) }
+        createFakeResponse(RESPONSE_BODY_WITH_MARKUP)
+        runTranslationTask(projectDir)
+
+        requestCapturer.checks.singleRequestCaptured()
+            .bodyContains("<u>Подробнее</u>")
+
+        val enFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
+
+        assertThat(enFile.exists())
+            .isTrue()
+        assertThat(enFile.readText())
+            .contains(TRANSLATED_FILE_CONTENT_WITH_MARKUP)
+    }
+
+    @Test
+    fun `run update translations with CDATA string - sends content and keeps it literal`(
+        @TempDir projectDir: File
+    ) {
+        generateTestProject(projectDir, ORIGINAL_FILE_CONTENT_WITH_CDATA)
+
+        val requestCapturer = mockDispatcher.captureRequest { path.contains(PATH) }
+        createFakeResponse(RESPONSE_BODY_WITH_CDATA)
+        runTranslationTask(projectDir)
+
+        requestCapturer.checks.singleRequestCaptured()
+            .bodyContains("<b>Текст</b>")
+
+        val enFile = File(projectDir, "$MODULE_NAME/${MAIN_RES_PATH}values-en/strings.xml")
+        val translated = enFile.readText()
+
+        assertThat(translated).contains("&lt;b&gt;Matn&lt;/b&gt;")
+        assertThat(translated).doesNotContain("<b>Matn</b>")
+    }
+
     private fun generateTestProject(
         @TempDir projectDir: File,
         stringsFileContent: String,

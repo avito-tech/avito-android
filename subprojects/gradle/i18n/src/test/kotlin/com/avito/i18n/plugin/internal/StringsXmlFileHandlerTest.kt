@@ -7,8 +7,66 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.xml.sax.InputSource
 import java.io.StringReader
+import java.io.StringWriter
+import javax.xml.transform.stream.StreamResult
 
 class StringsXmlFileHandlerTest {
+
+    @Test
+    fun `updateTargetWithTranslations - untranslated markup string - no double escaping`() {
+        val sourceXml = """
+            <resources><string name="x"><u>Подробнее</u></string></resources>
+        """.trimIndent().toStringsXml()
+        val targetXml = """
+            <resources><string name="x"><u>don\'t</u></string></resources>
+        """.trimIndent().toStringsXml()
+
+        val result = StringsXmlFileHelper.updateTargetWithTranslations(
+            sourceStringsXmlFile = sourceXml,
+            targetStringsXmlFile = targetXml,
+            translatedTextUnits = emptyList(),
+            languageTag = "en"
+        )
+
+        val stringElement = result.elements.single() as StringElement
+        assertThat(stringElement.value).isEqualTo("""<u>don\'t</u>""")
+        assertThat(result.serialize()).contains("""<u>don\'t</u>""")
+        assertThat(result.serialize()).doesNotContain("&lt;u&gt;")
+    }
+
+    @Test
+    fun `updateTargetWithTranslations - untranslated plurals - keeps per-quantity form`() {
+        val sourceXml = """
+            <resources>
+                <plurals name="p">
+                    <item quantity="one"><b>%d</b> file</item>
+                    <item quantity="other"><![CDATA[<b>%d</b> files]]></item>
+                </plurals>
+            </resources>
+        """.trimIndent().toStringsXml()
+        val targetXml = """
+            <resources>
+                <plurals name="p">
+                    <item quantity="one"><b>%d</b> fayl</item>
+                    <item quantity="other">&lt;b&gt;%d&lt;/b&gt; fayllar</item>
+                </plurals>
+            </resources>
+        """.trimIndent().toStringsXml()
+
+        val result = StringsXmlFileHelper.updateTargetWithTranslations(
+            sourceStringsXmlFile = sourceXml,
+            targetStringsXmlFile = targetXml,
+            translatedTextUnits = emptyList(),
+            languageTag = "en"
+        )
+
+        val plurals = result.elements.single() as PluralsElement
+        assertThat(plurals.inlineMarkupQuantities).containsExactly("one")
+
+        val xml = result.serialize()
+        assertThat(xml).contains("<b>%d</b> fayl</item>")
+        assertThat(xml).contains("&lt;b&gt;%d&lt;/b&gt; fayllar")
+    }
 
     @Test
     fun `updateTargetWithTranslations - when translation exists for string element - should use translated text`() {
@@ -162,5 +220,11 @@ class StringsXmlFileHandlerTest {
 
     private fun String.toStringsXml(): StringsXmlFile {
         return StringsXmlFile(InputSource(StringReader(this)))
+    }
+
+    private fun StringsXmlFile.serialize(): String {
+        val writer = StringWriter()
+        write(StreamResult(writer))
+        return writer.toString()
     }
 }

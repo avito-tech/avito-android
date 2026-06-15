@@ -42,7 +42,8 @@ internal object StringsXmlFileHelper {
                 newTargetXmlFile.appendTranslationText(
                     translationText = translatedText,
                     name = sourceElementName,
-                    hash = elementHash
+                    hash = elementHash,
+                    sourceElement = elementFromSource
                 )
             }
         }
@@ -67,27 +68,36 @@ internal object StringsXmlFileHelper {
             is StringElement -> appendString(
                 name = name,
                 value = element.value,
-                hash = hash
+                hash = hash,
+                asMarkup = element.isInlineMarkup
             )
             is PluralsElement -> appendPlurals(
                 name = name,
                 values = element.items,
-                hash = hash
+                hash = hash,
+                markupQuantities = element.inlineMarkupQuantities
             )
         }
     }
 
-    private fun StringsXmlFile.appendTranslationText(translationText: TranslationText, name: String, hash: String) {
+    private fun StringsXmlFile.appendTranslationText(
+        translationText: TranslationText,
+        name: String,
+        hash: String,
+        sourceElement: BaseElement?,
+    ) {
         when (translationText) {
             is TranslationText.Text -> appendString(
                 name = name,
                 value = translationText.text,
-                hash = hash
+                hash = hash,
+                asMarkup = (sourceElement as? StringElement)?.isInlineMarkup ?: false
             )
             is TranslationText.Plural -> appendPlurals(
                 name = name,
                 values = translationText.plural.toMap(),
-                hash = hash
+                hash = hash,
+                markupQuantities = (sourceElement as? PluralsElement)?.inlineMarkupQuantities ?: emptySet()
             )
         }
     }
