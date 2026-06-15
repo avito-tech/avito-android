@@ -5,6 +5,7 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -23,8 +24,8 @@ public abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     @PathSensitive(PathSensitivity.RELATIVE)
     public lateinit var apk: File
 
-    @Input
-    public lateinit var meta: ReleaseAnalysisMeta
+    @get:Input
+    public abstract val meta: Property<ReleaseAnalysisMeta>
 
     @Input
     public lateinit var host: String
@@ -36,7 +37,7 @@ public abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     public fun doWork() {
         try {
             val result = createClient().releaseAnalysis(
-                meta = meta,
+                meta = meta.get(),
                 apk = MultipartBody.Part.createFormData(
                     "build_after",
                     apk.name,

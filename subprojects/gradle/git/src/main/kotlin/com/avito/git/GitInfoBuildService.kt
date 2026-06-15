@@ -25,12 +25,23 @@ public abstract class GitInfoBuildService : BuildService<GitInfoBuildService.Par
     public fun getGitState(): GitState = cached
 
     /**
-     * Like [getGitState] but returns null instead of throwing when git is unavailable
-     * (no repo, detached/unborn HEAD, shallow clone missing the ref). Preserves the
-     * nullable contract of the legacy `gitStateProvider().orNull` for callers that
-     * degrade gracefully when git can't be read.
+     * Like [getGitState] but never throws: returns [GitStateResult.Available] with the state, or
+     * [GitStateResult.Unavailable] carrying the cause when git can't be read (no repo, detached /
+     * unborn HEAD, shallow clone missing the ref, unknown strategy). Callers degrade gracefully
+     * while keeping access to the actual reason instead of a contextless null.
      */
-    public fun getGitStateOrNull(): GitState? = runCatching { cached }.getOrNull()
+    public fun getGitStateResult(): GitStateResult =
+        runCatching { cached }.fold(
+            onSuccess = { GitStateResult.Available(it) },
+            onFailure = { GitStateResult.Unavailable(it) },
+        )
+
+    @Deprecated(
+        "Ambiguous null collapses every failure mode. Use getGitStateResult() to handle the cause.",
+        ReplaceWith("getGitStateResult()"),
+    )
+    public fun getGitStateOrNull(): GitState? =
+        (getGitStateResult() as? GitStateResult.Available)?.state
 
     private fun compute(): GitState {
         val git = GitImpl(executor = GradleCompatibleExecutor(execOperations))

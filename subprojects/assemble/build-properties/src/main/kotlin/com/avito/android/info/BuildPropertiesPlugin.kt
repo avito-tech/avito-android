@@ -1,6 +1,7 @@
 package com.avito.android.info
 
 import com.avito.android.addPreBuildTasks
+import com.avito.git.GitStateResult
 import com.avito.git.gitInfoService
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -40,13 +41,19 @@ public open class BuildPropertiesPlugin : Plugin<Project> {
             property(
                 "GIT_COMMIT",
                 gitInfo.map { service ->
-                    explicitCommit ?: service.getGitStateOrNull()?.currentBranch?.commit.orEmpty()
+                    explicitCommit ?: when (val result = service.getGitStateResult()) {
+                        is GitStateResult.Available -> result.state.currentBranch.commit
+                        is GitStateResult.Unavailable -> ""
+                    }
                 }
             )
             property(
                 "GIT_BRANCH",
                 gitInfo.map { service ->
-                    explicitBranch ?: service.getGitStateOrNull()?.currentBranch?.name.orEmpty()
+                    explicitBranch ?: when (val result = service.getGitStateResult()) {
+                        is GitStateResult.Available -> result.state.currentBranch.name
+                        is GitStateResult.Unavailable -> ""
+                    }
                 }
             )
             property("BUILD_NUMBER", extension.buildNumber.orEmpty())

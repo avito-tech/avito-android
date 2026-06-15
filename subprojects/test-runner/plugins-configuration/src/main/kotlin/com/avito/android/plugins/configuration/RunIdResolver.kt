@@ -10,6 +10,17 @@ public class RunIdResolver(
 
     public fun getRunId(): RunId {
 
+        if (buildEnvResolver.isLocal()) {
+            // Local builds: a stable, git-independent runId. getRunId() is read eagerly at
+            // configuration time by some callers (e.g. AGP testInstrumentationRunnerArguments),
+            // so reading git here would invalidate the configuration cache on every commit /
+            // branch switch. The identifier is local-only report metadata. See MBSA-2360.
+            return RunId(
+                identifier = "local",
+                buildTypeId = buildEnvResolver.getBuildType()
+            )
+        }
+
         val gitCommitHash = checkNotNull(gitResolver.getGitCommit().orNull) {
             "Failed to create runId. Git commit is null"
         }

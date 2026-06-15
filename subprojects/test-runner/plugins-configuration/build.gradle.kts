@@ -9,4 +9,6 @@ dependencies {
     implementation(gradleApi())
     api(project(":subprojects:gradle:build-environment"))
     api(project(":subprojects:gradle:git"))
+
+    testImplementation(project(":subprojects:gradle:test-project"))
 }

@@ -12,4 +12,8 @@ public class BuildEnvResolver(private val envArgs: Provider<EnvArgs>) {
     public fun getBuildType(): String {
         return envArgs.get().build.type
     }
+
+    public fun isLocal(): Boolean {
+        return envArgs.get().build.isLocal
+    }
 }

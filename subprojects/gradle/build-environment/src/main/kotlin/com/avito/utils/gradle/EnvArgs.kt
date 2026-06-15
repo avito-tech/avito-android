@@ -22,6 +22,9 @@ public interface EnvArgs {
         public abstract val number: String
         public abstract val type: String
 
+        /** True for local developer builds (not running on TeamCity). */
+        public val isLocal: Boolean get() = this is Local
+
         internal class Local(id: Id) : Build() {
             override val id = id.id
             override val url = "No url. This is local build"

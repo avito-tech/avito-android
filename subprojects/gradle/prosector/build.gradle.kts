@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:statsd-config"))
+    implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:logger:slf4j-gradle-logger"))

@@ -107,6 +107,56 @@ internal class ConfigurationCacheCompatibilityTest {
         runTask(projectDir).assertThat().buildSuccessful().configurationCachedReused()
     }
 
+    /**
+     * Guards the MBSA-2359 fix for the eager-args path: with SendFromDevice the report runId is
+     * baked into AGP's `testInstrumentationRunnerArguments` at configuration time. It must be a
+     * stable, git-independent value, so a `git commit` between two builds must NOT invalidate the
+     * configuration cache. (Sibling guard to the SendFromRunner case above, which covers the lazy
+     * task-graph path.)
+     */
+    @Test
+    fun `git commit between builds - SendFromDevice CC reused`(@TempDir projectDir: File) {
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.gradle-logger")
+            },
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app",
+                    plugins = plugins {
+                        id(instrumentationPluginId)
+                    },
+                    buildGradleExtra = instrumentationConfiguration(
+                        report = """
+                            |ReportConfig.ReportViewer.SendFromDevice(
+                            |    reportApiUrl = "http://stub",
+                            |    reportViewerUrl = "http://stub",
+                            |    fileStorageUrl = "http://stub",
+                            |    planSlug = "AvitoAndroid",
+                            |    jobSlug = "FunctionalTests"
+                            |)
+                        """.trimMargin()
+                    ),
+                    useKts = true,
+                )
+            )
+        ).generateIn(projectDir)
+
+        val notes = File(projectDir, "notes.txt").apply { writeText("v1") }
+        val git = Git.create(projectDir)
+        git.init().getOrThrow()
+        git.checkout(branchName = "feature", create = true).getOrThrow()
+        git.addAll().getOrThrow()
+        git.commit("initial").getOrThrow()
+
+        runTask(projectDir).assertThat().buildSuccessful()
+
+        notes.writeText("v2")
+        git.commit("between builds").getOrThrow()
+
+        runTask(projectDir).assertThat().buildSuccessful().configurationCachedReused()
+    }
+
     private fun runHelp(projectDir: File): TestResult {
         return gradlew(
             projectDir,

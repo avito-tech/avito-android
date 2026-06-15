@@ -1,6 +1,7 @@
 package com.avito.impact.fallback
 
 import com.avito.git.GitInfoBuildService
+import com.avito.git.GitStateResult
 import com.avito.git.gitInfoService
 import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.changes.newLazyChangesDetector
@@ -23,7 +24,13 @@ internal class ImpactFallbackDetectorImplementation(
 
     override val isFallback: ImpactFallbackDetector.Result by lazy {
 
-        val gitState = gitInfo.get().getGitStateOrNull()
+        val gitState = when (val result = gitInfo.get().getGitStateResult()) {
+            is GitStateResult.Available -> result.state
+            is GitStateResult.Unavailable -> {
+                logger.info("Impact analysis: git state unavailable, falling back", result.cause)
+                null
+            }
+        }
 
         val isAnalysisNeededResult = isAnalysisNeeded(
             config = configuration,

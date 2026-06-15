@@ -39,8 +39,6 @@ internal class ProsectorPluginTest {
             "app",
             "test.pkg",
             server.url("/"),
-            "",
-            "",
             "12.0"
         )
         val result = gradlew(":app:tasks")
@@ -55,8 +53,6 @@ internal class ProsectorPluginTest {
             "app",
             "test.pkg",
             server.url("https://nonexisting.host"),
-            "",
-            "",
             "12.0"
         )
 
@@ -66,13 +62,11 @@ internal class ProsectorPluginTest {
     }
 
     @Test
-    fun `release analysis meta passed correctly`() {
+    fun `release analysis meta - branch and commit resolved from git`() {
         createTestAndroidProject(
             "app",
             "test.pkg",
             server.url("/"),
-            "MBS-2222",
-            "356c1ad1dfb24e30fd0ffc4974892a34ff208859",
             "13.1"
         )
 
@@ -92,8 +86,12 @@ internal class ProsectorPluginTest {
 
         assertThat(meta.taskType).isEqualTo(TaskType.RELEASE_ANALYSIS)
         assertThat(meta.appPackage).isEqualTo("test.pkg.debug")
-        assertThat(meta.buildInfo.branchName).isEqualTo("MBS-2222")
-        assertThat(meta.buildInfo.commit).isEqualTo("356c1ad1dfb24e30fd0ffc4974892a34ff208859")
+        // Branch and commit are resolved from git by GitInfoBuildService at task-execution time (the
+        // prosector extension carries no branch/commit). TestProjectGenerator initializes the project
+        // on the "master" branch; the commit is the resolved HEAD sha — proving the values come from
+        // git, not from config.
+        assertThat(meta.buildInfo.branchName).isEqualTo("master")
+        assertThat(meta.buildInfo.commit).matches("[0-9a-f]{40}")
         assertThat(meta.buildInfo.versionName).isEqualTo("13.1")
         assertThat(meta.buildInfo.buildType).isEqualTo("debug")
     }
@@ -104,8 +102,6 @@ internal class ProsectorPluginTest {
         appModuleName: String,
         testPackageId: String,
         host: HttpUrl,
-        branchName: String,
-        commitHash: String,
         versionName: String
     ) {
         TestProjectGenerator(
@@ -121,8 +117,6 @@ internal class ProsectorPluginTest {
                     buildGradleExtra = """
                          prosector {
                             host = "$host"
-                            branchName = "$branchName"
-                            commitHash = "$commitHash"
                          }
                          afterEvaluate {
                             prosectorUploadDebug {
