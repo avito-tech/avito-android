@@ -5,6 +5,7 @@ package com.avito.android.rule
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -25,7 +26,7 @@ import org.junit.runners.model.Statement
  *
  * Inherit your screen rule:
  *
- * class MyFeatureScreenRule : InHouseFragmentScreenRule<NavigationActivity>(
+ * class MyFeatureScreenRule : InHouseFragmentScenarioScreenRule<NavigationActivity>(
  *    activityClass = NavigationActivity::class.java,
  *    navHostId = R.id.nav_host_fragment,
  *    startDestinationKey = "start_destination_key",
@@ -40,13 +41,12 @@ import org.junit.runners.model.Statement
  *
  *     @Test
  *     fun someTest() {
- *         screenRule.launchFragment(destination = "path?arg1=foo&arg2=bar")
+ *         screenRule.launchFragment(destination = ProductDetailRoute(productId = 1))
  *         // ...
  *     }
  * }
  */
-@Deprecated("Use InHouseFragmentScenarioScreenRule instead")
-public abstract class InHouseFragmentScreenRule<A : AppCompatActivity>(
+public abstract class InHouseFragmentScenarioScreenRule<A : AppCompatActivity>(
     activityClass: Class<A>,
     @param:IdRes private val navHostId: Int,
     private val startDestinationKey: String,
@@ -75,7 +75,7 @@ public abstract class InHouseFragmentScreenRule<A : AppCompatActivity>(
      *   extras that NavigationActivity needs before the nav graph is inflated.
      */
     public fun launchFragment(
-        destination: String,
+        destination: Parcelable,
         startIntent: Intent? = null,
     ): ActivityScenario<A> {
         val intent = (startIntent ?: Intent()).putExtra(startDestinationKey, destination)
