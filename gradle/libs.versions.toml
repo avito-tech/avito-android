@@ -35,11 +35,13 @@ navigation = "2.8.9"
 dagger = "2.52"
 anvil-ksp = "0.4.1"
 dependencyAnalysis = "3.5.1"
+shadow = "8.1.1"
 
 [plugins]
 anvil = { id = "dev.zacsweers.anvil", version.ref="anvil-ksp" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
 ksp = { id = "com.google.devtools.ksp", version.ref="kspVersion" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 
 [libraries]
 versionsGradle = "com.github.ben-manes:gradle-versions-plugin:0.39.0"

@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.kotlin-serialization")
     id("convention.unit-testing")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.shadow)
     application
 }
 
