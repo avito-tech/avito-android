@@ -8,6 +8,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
@@ -22,6 +23,10 @@ internal abstract class ExtractModuleDescriptionTask : DefaultTask() {
 
     @get:Input
     public abstract val moduleType: Property<ModuleType>
+
+    @get:Input
+    @get:Optional
+    public abstract val sharedBetweenApps: Property<Boolean>
 
     @get:Input
     public abstract val directDependencies: MapProperty<ConfigurationType, Set<String>>
@@ -49,6 +54,7 @@ internal abstract class ExtractModuleDescriptionTask : DefaultTask() {
             module = ModuleWithType(
                 path = modulePath.get(),
                 type = moduleType.get(),
+                sharedBetweenApps = sharedBetweenApps.getOrElse(false),
             ),
             directDependencies = mutableMapOf<ConfigurationType, Set<String>>().apply {
                 putAll(directDependencies.get())

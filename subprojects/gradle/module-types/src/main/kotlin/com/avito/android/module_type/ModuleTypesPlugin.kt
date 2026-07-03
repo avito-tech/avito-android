@@ -48,6 +48,7 @@ public class ModuleTypesPlugin : Plugin<Project> {
             "module",
             ModuleTypeExtension::class.java,
         )
+        extension.sharedBetweenApps.convention(false)
         project.registerExtractModuleDescriptionTask(extension)
     }
 
@@ -74,6 +75,7 @@ public class ModuleTypesPlugin : Plugin<Project> {
         ) { task ->
             task.modulePath.set(project.path)
             task.moduleType.set(extension.type)
+            task.sharedBetweenApps.set(extension.sharedBetweenApps)
             task.outputFile.set(
                 project.layout.buildDirectory.file(ExtractModuleDescriptionTask.outputPath)
             )

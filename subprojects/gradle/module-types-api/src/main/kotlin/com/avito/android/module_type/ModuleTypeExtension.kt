@@ -6,4 +6,6 @@ import org.gradle.api.provider.Property
 public abstract class ModuleTypeExtension : ExtensionAware {
 
     public abstract val type: Property<ModuleType>
+
+    public abstract val sharedBetweenApps: Property<Boolean>
 }

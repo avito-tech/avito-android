@@ -30,3 +30,18 @@ public data object StubApplication : ApplicationDeclaration {
     override val name: String
         get() = "stub"
 }
+
+public data object AppA : ApplicationDeclaration {
+    override val name: String
+        get() = "AppA"
+}
+
+public data object AppB : ApplicationDeclaration {
+    override val name: String
+        get() = "AppB"
+}
+
+public data object AppC : ApplicationDeclaration {
+    override val name: String
+        get() = "AppC"
+}

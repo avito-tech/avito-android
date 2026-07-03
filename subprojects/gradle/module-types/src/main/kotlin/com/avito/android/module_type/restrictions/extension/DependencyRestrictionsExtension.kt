@@ -38,9 +38,17 @@ public abstract class DependencyRestrictionsExtension @Inject constructor(
         reason: String,
         commonApp: ApplicationDeclaration,
         action: Action<BetweenDifferentAppsRestrictionExtension> = Action {}
+    ): Unit = betweenDifferentApps(reason, commonApp, emptySet(), action)
+
+    public fun betweenDifferentApps(
+        reason: String,
+        commonApp: ApplicationDeclaration,
+        sharingApps: Set<ApplicationDeclaration>,
+        action: Action<BetweenDifferentAppsRestrictionExtension> = Action {}
     ) {
         val restriction = objects.newInstance(BetweenDifferentAppsRestrictionExtension::class.java, defaultSeverity)
         restriction.commonApp.set(commonApp)
+        restriction.sharingApps.set(sharingApps)
         restriction.reason.set(reason)
         action.execute(restriction)
         betweenDifferentAppsRestriction.set(restriction)

@@ -4,5 +4,6 @@ import java.io.Serializable
 
 public data class ModuleWithType(
     val path: String,
-    val type: ModuleType
+    val type: ModuleType,
+    val sharedBetweenApps: Boolean = false
 ) : Serializable

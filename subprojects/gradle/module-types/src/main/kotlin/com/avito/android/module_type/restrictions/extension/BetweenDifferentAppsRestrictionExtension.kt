@@ -6,6 +6,7 @@ import com.avito.android.module_type.restrictions.BetweenDifferentAppsRestrictio
 import com.avito.android.module_type.restrictions.exclusion.BetweenDifferentAppsExclusion
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import javax.inject.Inject
 
 public abstract class BetweenDifferentAppsRestrictionExtension @Inject constructor(
@@ -14,6 +15,8 @@ public abstract class BetweenDifferentAppsRestrictionExtension @Inject construct
 ) : BaseDependencyRestrictionExtension<BetweenDifferentAppsRestriction>(objectFactory, defaultSeverity) {
 
     internal abstract val commonApp: Property<ApplicationDeclaration>
+
+    internal abstract val sharingApps: SetProperty<ApplicationDeclaration>
 
     public fun appExclusion(
         app: ApplicationDeclaration,
@@ -47,6 +50,7 @@ public abstract class BetweenDifferentAppsRestrictionExtension @Inject construct
         return BetweenDifferentAppsRestriction(
             reason = reason.get(),
             commonApp = commonApp.get(),
+            sharingApps = sharingApps.get(),
             exclusions = exclusions.get(),
             severity = severity.get(),
         )
