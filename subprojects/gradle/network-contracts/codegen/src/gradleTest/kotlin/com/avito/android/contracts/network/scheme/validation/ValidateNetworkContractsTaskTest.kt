@@ -274,6 +274,7 @@ class ValidateNetworkContractsTaskTest {
             tempDir,
             *names.toTypedArray(),
             "-Pavito.clickstream.serviceUrl=stub",
+            "-Pavito.networkContracts.analytics.enabled=false",
             expectFailure = failed,
             dryRun = dryRun,
             configurationCache = true,

@@ -1,5 +1,7 @@
 package com.avito.android.contracts.platform.scheme.imports
 
+import com.avito.android.contracts.platform.analytics.trackSchemesImported
+import com.avito.android.contracts.platform.internal.analytics.NetworkContractsAnalyticsService
 import com.avito.android.contracts.platform.scheme.imports.data.SchemesImportService
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
@@ -27,6 +29,9 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
     @get:Internal
     internal abstract val loggerFactory: Property<LoggerFactory>
 
+    @get:Internal
+    internal abstract val analyticsTrackerService: Property<NetworkContractsAnalyticsService>
+
     private val logger: Logger by lazy { loggerFactory.get().create("ApiSchemesImportTask") }
 
     @TaskAction
@@ -39,14 +44,21 @@ public abstract class ApiSchemesImportTask : DefaultTask() {
         }
 
         val facade = ApiSchemesImportFacade(importService.get())
-
         val rootDirectory = outputDirectory.get().asFile
 
-        val generatedFiles = runBlocking {
-            facade.importSchemes(apiPath.get(), rootDirectory)
+        val result = runCatching {
+            val generatedFiles = runBlocking {
+                facade.importSchemes(apiPath.get(), rootDirectory)
+            }
+            logGeneratedFiles(generatedFiles)
         }
 
-        logGeneratedFiles(generatedFiles)
+        analyticsTrackerService.get().tracker.trackSchemesImported(
+            success = result.isSuccess,
+            errorMessage = result.exceptionOrNull()?.message,
+        )
+
+        result.onFailure { exception -> throw exception }
     }
 
     private fun logGeneratedFiles(generatedFiles: List<File>) {

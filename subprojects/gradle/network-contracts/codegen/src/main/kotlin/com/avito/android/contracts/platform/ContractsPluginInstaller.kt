@@ -205,6 +205,7 @@ internal class ContractsPluginInstaller(
             it.importService.set(variantConfiguration.importService)
 
             it.loggerFactory.set(GradleLoggerPlugin.provideLoggerFactory(project))
+            it.analyticsTrackerService.set(NetworkContractsAnalyticsService.provideService(project))
         }
     }
 

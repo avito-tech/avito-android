@@ -8,5 +8,8 @@ import retrofit2.http.POST
 public interface ClickStreamApi {
 
     @POST("1/json")
-    public fun sendEvents(@Body envelope: ClickStreamEventRequest): Call<ResponseBody>
+    public fun sendEventsLegacy(@Body envelope: ClickStreamEventRequest): Call<ResponseBody>
+
+    @POST("0/json")
+    public fun sendEvents(@Body request: InfraClickStreamEventRequest): Call<ResponseBody>
 }

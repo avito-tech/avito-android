@@ -104,6 +104,7 @@ internal object SendTeamcityBuildsMetricsMain {
                         serviceUrl = clickstreamServiceUrl,
                         readTimeOutInSeconds = 10,
                         connectTimeOutInSeconds = 10,
+                        useLegacyEndpoint = true,
                     )
                 )
             )

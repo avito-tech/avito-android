@@ -215,6 +215,7 @@ internal class UpdateRemoteApiSchemesTaskTest {
             ContractsTaskNamesBuilder.updateSchemesTask("all"),
             "-Pavito.networkContracts.fixation.author=$author",
             "-Pavito.clickstream.serviceUrl=stub",
+            "-Pavito.networkContracts.analytics.enabled=false",
             useTestFixturesClasspath = true,
             expectFailure = failure,
             dryRun = dryRun

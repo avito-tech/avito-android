@@ -2,6 +2,7 @@ package com.avito.android.clickstream.config
 
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope
+import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalLongProperty
 import org.gradle.api.Project
@@ -17,6 +18,7 @@ ProjectProperty.lazy(scope = PropertyScope.ROOT_PROJECT) { project ->
                 ?: DEFAULT_READ_TIMEOUT,
             connectTimeOutInSeconds = project.getOptionalLongProperty("avito.clickstream.connectTimeOutInSeconds")
                 ?: DEFAULT_CONNECT_TIMEOUT,
+            useLegacyEndpoint = project.getBooleanProperty("avito.clickstream.useLegacyEndpoint", true)
         )
     )
 }

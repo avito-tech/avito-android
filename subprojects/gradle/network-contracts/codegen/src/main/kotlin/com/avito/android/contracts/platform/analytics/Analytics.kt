@@ -50,3 +50,15 @@ internal fun EventsTracker.trackFixationDuration(
     )
     trackEvent(event)
 }
+
+internal fun EventsTracker.trackSchemesImported(
+    success: Boolean,
+    errorMessage: String?,
+) {
+    trackEvent(
+        NetworkContractsSchemesImportedEvent(
+            status = if (success) "success" else "failure",
+            errorMessage = errorMessage,
+        )
+    )
+}

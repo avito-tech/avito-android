@@ -3,6 +3,8 @@ package com.avito.android.clickstream
 import com.avito.android.Result
 import com.avito.android.clickstream.api.ClickStreamApi
 import com.avito.android.clickstream.api.ClickStreamEventRequest
+import com.avito.android.clickstream.api.InfraClickStreamEvent
+import com.avito.android.clickstream.api.InfraClickStreamEventRequest
 import com.avito.android.clickstream.config.ClickStreamConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -33,7 +35,26 @@ public class ClickStreamSenderImpl(
     }
 
     override fun sendEvents(envelope: ClickStreamEventRequest): Result<Unit> = Result.tryCatch {
-        val response = clickStreamApi.sendEvents(envelope).execute()
+        val call = if (config.useLegacyEndpoint) {
+            clickStreamApi.sendEventsLegacy(envelope)
+        } else {
+            clickStreamApi.sendEvents(envelope.toInfra())
+        }
+
+        val response = call.execute()
         if (!response.isSuccessful) throw HttpException(response)
+    }
+
+    private fun ClickStreamEventRequest.toInfra(): InfraClickStreamEventRequest {
+        return InfraClickStreamEventRequest(
+            srcId = meta.srcId,
+            events = events.map { event ->
+                InfraClickStreamEvent(
+                    eid = event.eventId,
+                    version = event.version,
+                    params = event.params,
+                )
+            }
+        )
     }
 }

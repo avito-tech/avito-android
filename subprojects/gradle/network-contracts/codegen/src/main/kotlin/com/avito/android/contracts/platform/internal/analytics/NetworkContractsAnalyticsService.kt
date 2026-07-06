@@ -8,7 +8,6 @@ import com.avito.android.clickstream.event.ClickStreamEvent
 import com.avito.android.contracts.platform.analytics.ActionEnvironment
 import com.avito.android.contracts.platform.analytics.toActionEnvironment
 import com.avito.kotlin.dsl.getBooleanProperty
-import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -45,7 +44,7 @@ public interface NetworkContractsAnalyticsService : BuildService<NetworkContract
                         .set(
                             project.getBooleanProperty(
                                 name = "avito.networkContracts.analytics.enabled",
-                                default = project.buildEnvironment is BuildEnvironment.CI
+                                default = true
                             )
                         )
 
