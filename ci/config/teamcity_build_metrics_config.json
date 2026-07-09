@@ -2,11 +2,18 @@
     "sources": [
         {
             "configurationId": "AvitoAndroid_Build",
-            "fetchIntervalInHours": "3"
+            "fetchIntervalInHours": "3",
+            "metricsPrefix": "apps.mobile.statistic.android"
         },
         {
             "configurationId": "AvitoAndroid_Checks_AvitoNightlyRegressAutotests",
-            "fetchIntervalInHours": "10"
+            "fetchIntervalInHours": "10",
+            "metricsPrefix": "apps.mobile.statistic.android"
+        },
+        {
+            "configurationId": "MobileApps_Beduin_BeduinV2dsl_PrCheck",
+            "fetchIntervalInHours": "3",
+            "metricsPrefix": "beduin.v2.scenarios.statistic"
         }
     ]
 }

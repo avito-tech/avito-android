@@ -18,6 +18,7 @@ spec:
             labels:
                 app: gradle-remote-cache
                 service: gradle-remote-cache
+                gradle-remote-cache-node: "true"
         spec:
             volumes:
                 -   name: node-config
@@ -26,7 +27,23 @@ spec:
                 -   name: create-config
                     image: busybox:1.33.1
                     # Scheme: https://docs.gradle.com/build-cache-node/schema/build-cache-node-config-schema-2.json
-                    command: [ 'sh','-c','mkdir -p /data/conf; printf "%s\n" "version: 2" "cache:" "  targetSize: 500000" "  maxArtifactSize: 200" "  credentials:" "    anonymousLevel: \"READWRITE\"" "    users: []" > /data/conf/config.yaml' ]
+                    # targetSize (MiB) = unique writes per week x retention window (weeks) x ~1.5 headroom
+                    # unique writes = daily growth of artifacts-v2 on a live node (sum file sizes by mtime day);
+                    # retention window = PR lifetime / interval between key-invalidating toolchain bumps (2-4 weeks)
+                    command:
+                        - sh
+                        - -c
+                        - |
+                            mkdir -p /data/conf
+                            cat > /data/conf/config.yaml << 'EOF'
+                            version: 2
+                            cache:
+                              targetSize: 500000
+                              maxArtifactSize: 200
+                              credentials:
+                                anonymousLevel: "READWRITE"
+                                users: []
+                            EOF
                     volumeMounts:
                         -   name: node-config
                             mountPath: /data
@@ -38,6 +55,11 @@ spec:
                         requests:
                             memory: 6Gi
                             cpu: 1000m
+                            # ephemeral-storage = targetSize x (1 + perEntryOverhead / avgArtifactSize) + ~5 GiB slack
+                            # perEntryOverhead = db.mv.db size / entry count (0.5-3.5 KiB) + ~2 KiB fs block rounding
+                            # avgArtifactSize = artifacts-v2 size / entry count (measure on a similar live node)
+                            # slack covers db compaction transient (~db size) + in-flight uploads
+                            ephemeral-storage: 520Gi
                         limits:
                             memory: 12Gi
                             cpu: 2000m
@@ -49,6 +71,15 @@ spec:
                     volumeMounts:
                         -   name: node-config
                             mountPath: /data
+            affinity:
+                podAntiAffinity:
+                    preferredDuringSchedulingIgnoredDuringExecution:
+                        -   weight: 100
+                            podAffinityTerm:
+                                labelSelector:
+                                    matchLabels:
+                                        gradle-remote-cache-node: "true"
+                                topologyKey: kubernetes.io/hostname
             tolerations:
                 -   key: pool
                     operator: Equal

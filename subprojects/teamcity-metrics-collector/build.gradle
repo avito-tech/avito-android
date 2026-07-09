@@ -27,7 +27,6 @@ tasks.register("sendTeamcityBuildsMetrics", JavaExec) {
         "--metricsSourcesConfigPath", project.providers.gradleProperty("metricsSourcesConfigPath").getOrNull(),
         "--graphiteHost", project.providers.gradleProperty("graphite.host").getOrNull(),
         "--graphitePort", project.providers.gradleProperty("graphite.port").getOrNull(),
-        "--metricsPrefix", project.providers.gradleProperty("buildMetrics.prefix").getOrNull(),
         "--clickstreamServiceUrl", project.providers.gradleProperty("clickstream.url").getOrNull(),
         "--bitbucketUrl", project.providers.gradleProperty("bitbucket.url").getOrNull(),
         "--bitbucketToken", project.providers.gradleProperty("bitbucket.token").getOrNull(),

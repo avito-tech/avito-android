@@ -2,22 +2,22 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-    name: gradle-remote-cache-github
+    name: gradle-remote-cache-beduin
     namespace: gradle-remote-cache
     labels:
-        app: gradle-remote-cache-github
-        service: gradle-remote-cache-github
+        app: gradle-remote-cache-beduin
+        service: gradle-remote-cache-beduin
 spec:
     selector:
         matchLabels:
-            app: gradle-remote-cache-github
-            service: gradle-remote-cache-github
+            app: gradle-remote-cache-beduin
+            service: gradle-remote-cache-beduin
     replicas: 1
     template:
         metadata:
             labels:
-                app: gradle-remote-cache-github
-                service: gradle-remote-cache-github
+                app: gradle-remote-cache-beduin
+                service: gradle-remote-cache-beduin
                 gradle-remote-cache-node: "true"
         spec:
             volumes:
@@ -38,7 +38,7 @@ spec:
                             cat > /data/conf/config.yaml << 'EOF'
                             version: 2
                             cache:
-                              targetSize: 60000
+                              targetSize: 36864
                               maxArtifactSize: 100
                               credentials:
                                 anonymousLevel: "READWRITE"
@@ -48,26 +48,26 @@ spec:
                         -   name: node-config
                             mountPath: /data
             containers:
-                -   name: gradle-remote-cache-github
+                -   name: gradle-remote-cache-beduin
                     image: "{{ .Values.docker.registry }}/{{ .Values.docker.image }}:{{ .Values.docker.image_tag}}"
                     imagePullPolicy: IfNotPresent
                     resources:
                         requests:
-                            memory: 3Gi
+                            memory: 4Gi
                             cpu: 500m
                             # ephemeral-storage = targetSize x (1 + perEntryOverhead / avgArtifactSize) + ~5 GiB slack
                             # perEntryOverhead = db.mv.db size / entry count (0.5-3.5 KiB) + ~2 KiB fs block rounding
                             # avgArtifactSize = artifacts-v2 size / entry count (measure on a similar live node)
                             # slack covers db compaction transient (~db size) + in-flight uploads
-                            ephemeral-storage: 65Gi
+                            ephemeral-storage: 43Gi
                         limits:
-                            memory: 5Gi
+                            memory: 6Gi
                             cpu: 1500m
                     ports:
                         -   containerPort: 5071
                     env:
                         -   name: JAVA_OPTS
-                            value: "-Xms3g -Xmx3g -XX:MaxDirectMemorySize=1g"
+                            value: "-Xms3g -Xmx4g -XX:MaxDirectMemorySize=1g"
                     volumeMounts:
                         -   name: node-config
                             mountPath: /data
@@ -89,14 +89,14 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-    name: gradle-remote-cache-github
+    name: gradle-remote-cache-beduin
     namespace: gradle-remote-cache
     labels:
-        name: gradle-remote-cache-github
-        service: gradle-remote-cache-github
+        name: gradle-remote-cache-beduin
+        service: gradle-remote-cache-beduin
 spec:
     selector:
-        app: gradle-remote-cache-github
+        app: gradle-remote-cache-beduin
     ports:
         -   protocol: TCP
             port: 80
@@ -105,7 +105,7 @@ spec:
 kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
-    name: gradle-remote-cache-github
+    name: gradle-remote-cache-beduin
     namespace: gradle-remote-cache
     annotations:
         kubernetes.io/ingress.class: service
@@ -114,13 +114,13 @@ metadata:
         nginx.org/client-max-body-size: 200m
 spec:
     rules:
-        -   host: {{ .Values.hosts.gradle_cache_url }}
+        -   host: {{ .Values.hosts.beduin_cache_url }}
             http:
                 paths:
                     -   path: "/"
                         pathType: Prefix
                         backend:
                             service:
-                                name: gradle-remote-cache-github
+                                name: gradle-remote-cache-beduin
                                 port:
                                     number: 80

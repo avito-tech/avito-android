@@ -16,15 +16,22 @@ import java.time.Instant
 internal class SendTeamcityBuildMetricsAction(
     private val teamcityBuildsProvider: TeamcityBuildsProvider,
     private val previousMetricsSendingTimeProvider: PreviousMetricsSendingTimeProvider,
-    private val graphiteSender: GraphiteSender,
+    private val graphiteSenderFactory: (prefix: String) -> GraphiteSender,
     private val clickstreamTracker: ClickStreamEventTracker,
     private val bitbucketInfoSaturator: BitbucketInfoSaturator,
 ) {
+
+    private val sendersByPrefix = mutableMapOf<String, GraphiteSender>()
+
+    private fun senderFor(prefix: String): GraphiteSender {
+        return sendersByPrefix.getOrPut(prefix) { graphiteSenderFactory(prefix) }
+    }
 
     fun execute(metricsSources: List<TeamcityMetricsSource>) {
         val since = previousMetricsSendingTimeProvider.getPreviousSendingTime()
         val until = Instant.now()
         metricsSources.forEach { metricsSource ->
+            val graphiteSender = senderFor(metricsSource.metricsPrefix)
             var buildCount = 0
             teamcityBuildsProvider.provide(
                 metricsSource = metricsSource,

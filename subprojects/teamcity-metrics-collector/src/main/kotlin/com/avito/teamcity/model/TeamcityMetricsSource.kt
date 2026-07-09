@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 internal data class TeamcityMetricsSource(
     val configurationId: String,
     val fetchIntervalInHours: Long,
+    val metricsPrefix: String,
 )

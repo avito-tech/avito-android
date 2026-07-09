@@ -41,6 +41,7 @@ class TeamcityBuildsProviderPrefetchTest {
                 metricsSource = TeamcityMetricsSource(
                     configurationId = "TestBuildType",
                     fetchIntervalInHours = 0,
+                    metricsPrefix = "some.namespace",
                 ),
                 since = Instant.parse("2026-02-10T12:00:00Z"),
                 until = Instant.parse("2026-02-10T13:00:00Z"),

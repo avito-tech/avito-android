@@ -49,9 +49,6 @@ internal object SendTeamcityBuildsMetricsMain {
         private val graphitePort: Int by option(type = ArgType.Int)
             .required()
 
-        private val metricsPrefix: String by option(type = ArgType.String)
-            .required()
-
         private val clickstreamServiceUrl: String by option(type = ArgType.String)
             .required()
 
@@ -61,14 +58,14 @@ internal object SendTeamcityBuildsMetricsMain {
         private val bitbucketToken: String by option(type = ArgType.String)
             .required()
 
-        private val graphiteSender by lazy {
+        private val graphiteSenderFactory: (String) -> GraphiteSender = { prefix ->
             GraphiteSender.create(
                 config = GraphiteConfig(
                     isEnabled = true,
                     enableDetailedLogs = true,
                     host = graphiteHost,
                     port = graphitePort,
-                    metricPrefix = SeriesName.create(metricsPrefix, true),
+                    metricPrefix = SeriesName.create(prefix, true),
                     ignoreExceptions = false,
                 ),
                 loggerFactory = PrintlnLoggerFactory,
@@ -119,7 +116,7 @@ internal object SendTeamcityBuildsMetricsMain {
 
         override fun execute() {
             val action = SendTeamcityBuildMetricsAction(
-                graphiteSender = graphiteSender,
+                graphiteSenderFactory = graphiteSenderFactory,
                 teamcityBuildsProvider = teamcityBuildsProvider,
                 previousMetricsSendingTimeProvider = previousMetricsSendingTimeProvider,
                 clickstreamTracker = clickstreamTracker,

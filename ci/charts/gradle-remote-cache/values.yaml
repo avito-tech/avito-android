@@ -13,3 +13,5 @@ hosts:
     gradle_cache_url: gradle-remote-cache-github.example.com
     # -- url for local cache
     avito_cache_url: gradle-remote-cache.example.com
+    # -- url for beduin cache
+    beduin_cache_url: gradle-remote-cache-beduin.example.com
