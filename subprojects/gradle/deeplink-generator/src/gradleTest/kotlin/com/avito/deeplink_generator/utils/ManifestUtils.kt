@@ -49,14 +49,31 @@ fun validateManifest(
     manifestValidator.invoke(manifest)
 }
 
+/**
+ * Manifest merger 31.13+ (AGP 8.13) fails the merge on an input manifest containing <uses-sdk>
+ * unless [com.android.manifmerger.ManifestMerger2.Invoker.Feature.USES_SDK_IN_MANIFEST_LENIENT_HANDLING]
+ * is enabled by the merging task.
+ */
+fun File.writeManifestWithUsesSdk() {
+    File(this, "src/main/AndroidManifest.xml").writeText(
+        """
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+            <uses-sdk android:minSdkVersion="21" />
+        </manifest>
+        """.trimIndent()
+    )
+}
+
 fun libModule(
     name: String = "lib",
     buildScriptLinks: List<String> = listOf("1/feed"),
     codeLinks: List<String> = listOf("1/feed ru.avito"),
+    mutator: File.() -> Unit = {},
 ) = AndroidLibModule(
     name = name,
     enableKotlinAndroidPlugin = false,
     plugins = plugins { id("com.avito.android.deeplink-generator") },
+    mutator = mutator,
     imports = listOf(
         "import com.avito.deeplink_generator.MergePublicDeeplinkManifestTask",
         "import java.io.File",

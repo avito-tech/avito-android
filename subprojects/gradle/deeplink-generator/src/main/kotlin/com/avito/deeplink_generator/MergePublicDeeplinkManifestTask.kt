@@ -61,6 +61,8 @@ public abstract class MergePublicDeeplinkManifestTask : DefaultTask() {
                 NullLogger(),
                 ManifestMerger2.MergeType.LIBRARY
             )
+                // Input is AGP's processed manifest with <uses-sdk>: an error in merger 31.13+ unless lenient
+                .withFeatures(ManifestMerger2.Invoker.Feature.USES_SDK_IN_MANIFEST_LENIENT_HANDLING)
                 .addFlavorAndBuildTypeManifests(publicDeeplinkManifest)
                 .merge()
 

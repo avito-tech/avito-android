@@ -59,10 +59,6 @@ public class ShadowR8TaskCreator(creationConfig: ConsumableCreationConfig) {
 //            newDirName = "proguard_guard",
 //            insertAfterDir = "intermediates"
 //        )
-        baseDexDir.insertDirIntoPath(
-            newDirName = "proguard_guard",
-            insertAfterDir = "intermediates"
-        )
         featureDexDir.insertDirIntoPath(
             newDirName = "proguard_guard",
             insertAfterDir = "intermediates"

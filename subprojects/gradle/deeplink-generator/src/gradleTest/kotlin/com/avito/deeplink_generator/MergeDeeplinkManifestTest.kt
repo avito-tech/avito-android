@@ -1,6 +1,7 @@
 package com.avito.deeplink_generator
 
 import com.avito.deeplink_generator.model.Deeplink
+import com.avito.deeplink_generator.utils.writeManifestWithUsesSdk
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.gradlew
@@ -102,6 +103,26 @@ internal class MergeDeeplinkManifestTest {
     }
 
     @Test
+    fun `assemble single library with uses-sdk in manifest - merge succeeds`(@TempDir projectDir: File) {
+        TestProjectGenerator(
+            name = "rootapp",
+            modules = listOf(
+                libModule(mutator = { writeManifestWithUsesSdk() })
+            )
+        ).generateIn(projectDir)
+
+        gradlew(projectDir, ":feed:assembleRelease").assertThat().buildSuccessful()
+
+        validateManifest(
+            manifestProjectDir = File(projectDir, "feed"),
+            manifestValidator = { manifest ->
+                manifest.assertContainsActivity("com.avito.deeplink_generator.SomeActivity")
+                manifest.assertContainsDeeplink(Deeplink("ru.avito", "1", "/feed"))
+            }
+        )
+    }
+
+    @Test
     fun `assemble app with several libraries - app manifest contains merged information about links`(
         @TempDir projectDir: File
     ) {
@@ -165,10 +186,15 @@ internal class MergeDeeplinkManifestTest {
             manifestValidator.invoke(manifest)
         }
 
-        fun libModule(name: String = "feed", vararg deeplinks: String = arrayOf("1/feed")) = AndroidLibModule(
+        fun libModule(
+            name: String = "feed",
+            vararg deeplinks: String = arrayOf("1/feed"),
+            mutator: File.() -> Unit = {},
+        ) = AndroidLibModule(
             name = name,
             enableKotlinAndroidPlugin = false,
             plugins = plugins { id("com.avito.android.deeplink-generator") },
+            mutator = mutator,
             buildGradleExtra = """
                         deeplinkGenerator {
                            activityIntentFilterClass.set("com.avito.deeplink_generator.SomeActivity")

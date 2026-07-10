@@ -6,6 +6,7 @@ import com.avito.deeplink_generator.utils.assertContainsDeeplink
 import com.avito.deeplink_generator.utils.assertContainsIntentFilter
 import com.avito.deeplink_generator.utils.libModule
 import com.avito.deeplink_generator.utils.validateManifest
+import com.avito.deeplink_generator.utils.writeManifestWithUsesSdk
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.gradlew
@@ -84,6 +85,29 @@ internal class MergePublicDeeplinkManifestTest {
             manifestValidator = { manifest ->
                 manifest.assertContainsActivity("com.avito.deeplink_generator.SomeActivity")
                 manifest.assertContainsIntentFilter()
+                manifest.assertContainsDeeplink(Deeplink("ru.avito", "1", "/feed"))
+            }
+        )
+    }
+
+    @Test
+    fun `assemble single library with uses-sdk in manifest - merge succeeds`(@TempDir projectDir: File) {
+        TestProjectGenerator(
+            name = "rootapp",
+            modules = listOf(
+                libModule(mutator = { writeManifestWithUsesSdk() })
+            ),
+            gradleProperties = mapOf(
+                "avito.deeplinks.filter.enabled" to "true",
+            )
+        ).generateIn(projectDir)
+
+        gradlew(projectDir, ":lib:assembleRelease").assertThat().buildSuccessful()
+
+        validateManifest(
+            manifestProjectDir = File(projectDir, "lib"),
+            manifestValidator = { manifest ->
+                manifest.assertContainsActivity("com.avito.deeplink_generator.SomeActivity")
                 manifest.assertContainsDeeplink(Deeplink("ru.avito", "1", "/feed"))
             }
         )

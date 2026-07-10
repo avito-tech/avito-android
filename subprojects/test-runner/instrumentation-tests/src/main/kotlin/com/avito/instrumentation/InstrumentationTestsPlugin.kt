@@ -1,5 +1,6 @@
 package com.avito.instrumentation
 
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.BasePlugin
 import com.avito.android.stats.statsdConfig
@@ -45,7 +46,10 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
 
             androidComponents.finalizeDsl { androidExtension ->
-                factory.setupLocalInstrumentationArgsUseCase.setupLocalRunParams(androidExtension)
+                // AGP 8.10 unbound DslExtensionT from CommonExtension; the runtime type is always one
+                factory.setupLocalInstrumentationArgsUseCase.setupLocalRunParams(
+                    androidExtension as CommonExtension<*, *, *, *, *, *>
+                )
             }
 
             extension.configurationsContainer.all { configuration ->
