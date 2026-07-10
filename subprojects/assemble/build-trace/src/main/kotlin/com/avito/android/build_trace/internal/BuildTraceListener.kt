@@ -7,7 +7,6 @@ import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
-import com.avito.android.trace.TraceReportFileAdapter
 import com.avito.graph.OperationsPath
 import com.avito.logger.LoggerFactory
 import org.gradle.BuildResult
@@ -26,6 +25,15 @@ internal class BuildTraceListener(
 
     private val eventProvider = TraceEventProvider()
     private val events: MutableList<TraceEvent> = Collections.synchronizedList(mutableListOf())
+    private val reportWriter = BuildTraceReportWriter(output)
+    private val shutdownHook = Thread(
+        { reportWriter.write(TraceReport(traceEvents = snapshotEvents())) },
+        "build-trace-shutdown-hook",
+    )
+
+    init {
+        Runtime.getRuntime().addShutdownHook(shutdownHook)
+    }
 
     override fun afterExecute(task: Task, state: TaskExecution) {
         events.add(eventProvider.taskExecutionEvent(task, state))
@@ -44,13 +52,26 @@ internal class BuildTraceListener(
     }
 
     private fun writeReport(criticalPath: OperationsPath<TaskOperation>) {
-        output.parentFile.mkdirs()
-
         val report = TraceReport(
-            traceEvents = enrichCriticalPath(events, criticalPath)
+            traceEvents = enrichCriticalPath(snapshotEvents(), criticalPath)
         )
-        TraceReportFileAdapter(output).write(report)
+        reportWriter.write(report)
+        removeShutdownHook()
         logger.info("Build trace: ${output.path}")
+    }
+
+    private fun snapshotEvents(): List<TraceEvent> {
+        return synchronized(events) {
+            events.toList()
+        }
+    }
+
+    private fun removeShutdownHook() {
+        try {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook)
+        } catch (_: IllegalStateException) {
+            // JVM shutdown has already started; the idempotent hook will observe the finalized report.
+        }
     }
 
     private fun enrichCriticalPath(

@@ -6,9 +6,11 @@ import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
@@ -63,6 +65,73 @@ internal class BuildTraceTest {
             .taskWithOutcome(":customTask", TaskOutcome.SUCCESS)
 
         assertThat(reportFile().exists()).isFalse()
+    }
+
+    @Test
+    fun `task fails - build finishes - trace contains failed task`() {
+        setupTasks(
+            """
+            tasks.register("failingTask") {
+                doLast {
+                    error("boom")
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = gradlew(
+            projectDir,
+            ":failingTask",
+            "--rerun-tasks",
+            expectFailure = true,
+        )
+
+        result.assertThat()
+            .buildFailed()
+            .taskWithOutcome(":failingTask", TaskOutcome.FAILED)
+
+        val taskEvent = TraceReportFileAdapter(reportFile()).read().traceEvents
+            .first { it.eventName == ":failingTask" }
+
+        assertThat(taskEvent.args.orEmpty()["state"].toString()).startsWith("FAILED")
+    }
+
+    @Test
+    fun `task completed - gradle process receives sigterm - trace contains completed task`() {
+        setupTasks(
+            """
+            tasks.register("recordedTask")
+            tasks.register("terminateTask") {
+                dependsOn("recordedTask")
+                doLast {
+                    ProcessBuilder(
+                        "kill",
+                        "-TERM",
+                        ProcessHandle.current().pid().toString(),
+                    ).start().waitFor()
+                }
+            }
+            """.trimIndent()
+        )
+
+        assertThrows<IllegalStateException> {
+            GradleRunner.create()
+                .withTestKitDir(File(projectDir, "test-kit"))
+                .withProjectDir(projectDir)
+                .withArguments(
+                    ":terminateTask",
+                    "--rerun-tasks",
+                    "--stacktrace",
+                    "-Pinjected.from.gradle_testkit=true",
+                    "-Pandroid.builder.sdkDownload=false",
+                )
+                .withPluginClasspath()
+                .build()
+        }
+
+        val trace = TraceReportFileAdapter(reportFile()).read()
+
+        assertThat(trace.traceEvents.map { it.eventName }).contains(":recordedTask")
     }
 
     private fun setupTasks(

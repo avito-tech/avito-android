@@ -37,4 +37,40 @@ SUDO_ENV_ARGS="$SUDO_ENV_ARGS LD_PRELOAD=$JEMALLOC_PATH"
 # https://jemalloc.net/jemalloc.3.html#tuning
 SUDO_ENV_ARGS="$SUDO_ENV_ARGS MALLOC_CONF=${MALLOC_CONF:-narenas:2}"
 
-sudo --set-home --preserve-env $SUDO_ENV_ARGS -u ${BUILD_USER} "$@"
+function hasRunningChildProcesses() {
+    for process in /proc/[0-9]*; do
+        local pid=${process##*/}
+        if [[ "$pid" != "1" && "$pid" != "$$" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Derived from teamcity.force.kill.process.on.cancel.build.timeout.sec=10, leaving a 2-second safety margin.
+readonly TERMINATION_GRACE_PERIOD_SECONDS=${BUILDER_TERMINATION_GRACE_PERIOD_SECONDS:-8}
+
+function waitForChildProcesses() {
+    local deadline=$((SECONDS + TERMINATION_GRACE_PERIOD_SECONDS))
+    while hasRunningChildProcesses; do
+        if ((SECONDS >= deadline)); then
+            return 1
+        fi
+        sleep 0.1
+    done
+}
+
+function terminate() {
+    trap - TERM
+    kill -TERM -1 2>/dev/null || true
+    if ! waitForChildProcesses; then
+        echo "Processes did not stop within ${TERMINATION_GRACE_PERIOD_SECONDS} seconds; killing them"
+        kill -KILL -1 2>/dev/null || true
+    fi
+    exit 143
+}
+
+trap terminate TERM
+
+sudo --set-home --preserve-env $SUDO_ENV_ARGS -u ${BUILD_USER} "$@" <&0 &
+wait $!

@@ -22,7 +22,9 @@ public class TraceReportFileAdapter(
     }
 
     public fun write(report: TraceReport) {
-        file.writeText(gson.toJson(report))
+        file.bufferedWriter().use { writer ->
+            gson.toJson(report, writer)
+        }
     }
 
     public fun read(): TraceReport {
