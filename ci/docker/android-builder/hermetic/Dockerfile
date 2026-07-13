@@ -1,5 +1,5 @@
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/avito/debian-minbase:12.7
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:12.12
 
 ARG ARTIFACTORY_URL
 ENV DEBIAN_FRONTEND=noninteractive
