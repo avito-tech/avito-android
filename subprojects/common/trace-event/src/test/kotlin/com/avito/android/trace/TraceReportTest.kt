@@ -59,7 +59,10 @@ internal class TraceReportTest {
             )
         )
         val report = TraceReport(
-            traceEvents = events
+            traceEvents = events,
+            metadata = mapOf(
+                TraceReport.REPORT_SOURCE_METADATA_KEY to TraceReport.BUILD_FINISHED_REPORT_SOURCE
+            )
         )
         val file = createTempFile(directory = tempDir).toFile()
         TraceReportFileAdapter(file).write(report)
@@ -67,5 +70,6 @@ internal class TraceReportTest {
         val deserialized = TraceReportFileAdapter(file).read()
 
         assertThat(deserialized).isEqualTo(report)
+        assertThat(file.readText()).contains("\"metadata\"")
     }
 }

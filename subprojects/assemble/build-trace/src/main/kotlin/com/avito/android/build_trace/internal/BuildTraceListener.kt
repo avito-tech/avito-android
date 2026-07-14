@@ -7,6 +7,9 @@ import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
+import com.avito.android.trace.TraceReport.Companion.BUILD_FINISHED_REPORT_SOURCE
+import com.avito.android.trace.TraceReport.Companion.REPORT_SOURCE_METADATA_KEY
+import com.avito.android.trace.TraceReport.Companion.SHUTDOWN_HOOK_REPORT_SOURCE
 import com.avito.graph.OperationsPath
 import com.avito.logger.LoggerFactory
 import org.gradle.BuildResult
@@ -14,6 +17,7 @@ import org.gradle.api.Task
 import java.io.File
 import java.time.Instant
 import java.util.Collections
+import kotlin.concurrent.thread
 
 internal class BuildTraceListener(
     private val output: File,
@@ -26,10 +30,21 @@ internal class BuildTraceListener(
     private val eventProvider = TraceEventProvider()
     private val events: MutableList<TraceEvent> = Collections.synchronizedList(mutableListOf())
     private val reportWriter = BuildTraceReportWriter(output)
-    private val shutdownHook = Thread(
-        { reportWriter.write(TraceReport(traceEvents = snapshotEvents())) },
-        "build-trace-shutdown-hook",
-    )
+
+    @Volatile
+    private var criticalPath: OperationsPath<TaskOperation>? = null
+
+    private val shutdownHook = thread(
+        start = false,
+        name = "build-trace-shutdown-hook",
+    ) {
+        reportWriter.write(
+            TraceReport(
+                traceEvents = snapshotEvents(),
+                metadata = mapOf(REPORT_SOURCE_METADATA_KEY to SHUTDOWN_HOOK_REPORT_SOURCE),
+            )
+        )
+    }
 
     init {
         Runtime.getRuntime().addShutdownHook(shutdownHook)
@@ -43,17 +58,23 @@ internal class BuildTraceListener(
         events.add(eventProvider.initWithConfigurationEvent(profile))
         events.add(eventProvider.executionStartEvent(profile))
         events.add(eventProvider.executionFinishEvent(profile))
+        val path = criticalPath
+        if (path == null) {
+            removeShutdownHook()
+        } else {
+            writeReport(path)
+        }
     }
 
     override fun onCriticalPathReady(path: OperationsPath<TaskOperation>) {
-        logger.info("Start onCriticalPathReady ${Instant.now()}")
-        writeReport(path)
-        logger.info("End onCriticalPathReady ${Instant.now()}")
+        logger.info("Critical path ready ${Instant.now()}")
+        criticalPath = path
     }
 
     private fun writeReport(criticalPath: OperationsPath<TaskOperation>) {
         val report = TraceReport(
-            traceEvents = enrichCriticalPath(snapshotEvents(), criticalPath)
+            traceEvents = enrichCriticalPath(snapshotEvents(), criticalPath),
+            metadata = mapOf(REPORT_SOURCE_METADATA_KEY to BUILD_FINISHED_REPORT_SOURCE),
         )
         reportWriter.write(report)
         removeShutdownHook()

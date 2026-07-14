@@ -1,6 +1,9 @@
 package com.avito.android.build_trace
 
 import com.avito.android.trace.TraceReport
+import com.avito.android.trace.TraceReport.Companion.BUILD_FINISHED_REPORT_SOURCE
+import com.avito.android.trace.TraceReport.Companion.REPORT_SOURCE_METADATA_KEY
+import com.avito.android.trace.TraceReport.Companion.SHUTDOWN_HOOK_REPORT_SOURCE
 import com.avito.android.trace.TraceReportFileAdapter
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -45,6 +48,9 @@ internal class BuildTraceTest {
         requireNotNull(taskEvent)
 
         assertThat(taskEvent.args.orEmpty()["CRITICAL_PATH"]).isEqualTo(true)
+        assertThat(trace.metadata.orEmpty()[REPORT_SOURCE_METADATA_KEY]).isEqualTo(BUILD_FINISHED_REPORT_SOURCE)
+        assertThat(trace.traceEvents.map { it.eventName })
+            .containsAtLeast("init + configuration", "execution start", "execution end")
     }
 
     @Test
@@ -114,7 +120,7 @@ internal class BuildTraceTest {
             """.trimIndent()
         )
 
-        assertThrows<IllegalStateException> {
+        val failure = assertThrows<IllegalStateException> {
             GradleRunner.create()
                 .withTestKitDir(File(projectDir, "test-kit"))
                 .withProjectDir(projectDir)
@@ -129,9 +135,46 @@ internal class BuildTraceTest {
                 .build()
         }
 
+        assertThat(failure).hasMessageThat().startsWith("An error occurred executing build with args")
+        assertThat(failure).hasCauseThat().isInstanceOf(org.gradle.tooling.GradleConnectionException::class.java)
+
         val trace = TraceReportFileAdapter(reportFile()).read()
 
         assertThat(trace.traceEvents.map { it.eventName }).contains(":recordedTask")
+        assertThat(trace.metadata.orEmpty()[REPORT_SOURCE_METADATA_KEY]).isEqualTo(SHUTDOWN_HOOK_REPORT_SOURCE)
+    }
+
+    @Test
+    fun `critical path listener fails - build finishes - shutdown hook does not write trace`() {
+        setupTasks(
+            """
+            com.avito.android.critical_path.CriticalPathRegistry.addListener(
+                rootProject,
+                object : com.avito.android.critical_path.CriticalPathListener {
+                    override fun onCriticalPathReady(
+                        path: com.avito.graph.OperationsPath<com.avito.android.critical_path.TaskOperation>,
+                    ) {
+                        error("critical path listener failed")
+                    }
+                },
+            )
+            tasks.register("customTask")
+            """.trimIndent()
+        )
+
+        val result = gradlew(
+            projectDir,
+            ":customTask",
+            "--no-daemon",
+            "--rerun-tasks",
+            expectFailure = true,
+        )
+
+        result.assertThat()
+            .buildFailed()
+            .outputContains("critical path listener failed")
+
+        assertThat(reportFile().exists()).isFalse()
     }
 
     private fun setupTasks(

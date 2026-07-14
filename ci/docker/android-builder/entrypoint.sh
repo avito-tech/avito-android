@@ -41,7 +41,14 @@ function hasRunningChildProcesses() {
     for process in /proc/[0-9]*; do
         local pid=${process##*/}
         if [[ "$pid" != "1" && "$pid" != "$$" ]]; then
-            return 0
+            local processStat
+            if ! read -r processStat 2>/dev/null < "$process/stat"; then
+                continue
+            fi
+            local stateAndRemainingFields=${processStat##*) }
+            if [[ "${stateAndRemainingFields%% *}" != "Z" ]]; then
+                return 0
+            fi
         fi
     done
     return 1
