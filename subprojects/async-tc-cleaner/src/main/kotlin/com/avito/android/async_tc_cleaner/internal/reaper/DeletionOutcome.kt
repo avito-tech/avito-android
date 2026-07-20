@@ -8,22 +8,26 @@ internal data class DeletionOutcome(
     val failures: Long = 0,
     val failureSamples: List<String> = emptyList(),
 ) {
-    operator fun plus(other: DeletionOutcome) =
-        DeletionOutcome(
-            bytesFreed + other.bytesFreed,
-            entriesDeleted + other.entriesDeleted,
-            failures + other.failures,
-            (failureSamples + other.failureSamples).limitFailureSamples(),
-        )
+    operator fun plus(other: DeletionOutcome): DeletionOutcome = DeletionOutcome(
+        bytesFreed = bytesFreed + other.bytesFreed,
+        entriesDeleted = entriesDeleted + other.entriesDeleted,
+        failures = failures + other.failures,
+        failureSamples = FailureSamplesUtil.capped(failureSamples + other.failureSamples),
+    )
 
     companion object {
         val EMPTY = DeletionOutcome(0, 0)
 
-        fun failure(path: Path, error: Throwable): DeletionOutcome = DeletionOutcome(
+        fun deleted(sizeBytes: Long): DeletionOutcome = DeletionOutcome(
+            bytesFreed = sizeBytes,
+            entriesDeleted = 1,
+        )
+
+        fun failure(reportedPath: Path, error: Throwable): DeletionOutcome = DeletionOutcome(
             bytesFreed = 0,
             entriesDeleted = 0,
             failures = 1,
-            failureSamples = listOf(failureSample(path, error)),
+            failureSamples = listOf(FailureSamplesUtil.format(reportedPath, error)),
         )
     }
 }

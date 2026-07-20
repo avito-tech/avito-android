@@ -24,13 +24,13 @@ internal class Claimer(
             return ClaimStats(oldDirPresent = false)
         }
 
-        val stream = oldDir.directoryStream().getOrElse { e ->
+        val oldDirStream = oldDir.directoryStream().getOrElse { e ->
             logger.warn("Failed to list old dir for claim: dir=$oldDir", e)
             return ClaimStats(oldDirPresent = true, unreadable = 1)
         }
         var stats = ClaimStats(oldDirPresent = true)
 
-        stream.use {
+        oldDirStream.use {
             try {
                 for (entry in it) {
                     currentCoroutineContext().ensureActive()

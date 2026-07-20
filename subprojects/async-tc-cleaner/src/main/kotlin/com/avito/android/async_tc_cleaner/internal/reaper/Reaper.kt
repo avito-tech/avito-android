@@ -67,7 +67,22 @@ internal class Reaper(
         val start = TimeSource.Monotonic.markNow()
         if (!prepareStagingDir()) return
         val claimStats = claimer.claimEligible()
-        val deleteStats = deleter.deleteAll()
+        val deleteStats = stagingDir.directoryStream().fold(
+            onSuccess = { stagingDirStream ->
+                stagingDirStream.use { deleter.deleteAll(it) }
+            },
+            onFailure = { e ->
+                logger.warn("Failed to open staging dir: $stagingDir", e)
+                DeleteStats(
+                    failed = 1,
+                    outcome = DeletionOutcome(
+                        0,
+                        0,
+                        failureSamples = listOf(FailureSamplesUtil.format(stagingDir, e)),
+                    ),
+                )
+            }
+        )
         val sweep = claimStats.toSweep(deleteStats, start.elapsedNow())
         logSweepSummary(sweep, deleteStats.failureSamples)
         observer.onSweep(sweep)

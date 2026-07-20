@@ -1,6 +1,5 @@
 package com.avito.android.async_tc_cleaner.internal.reaper
 
-import com.avito.android.Result
 import com.avito.android.async_tc_cleaner.internal.config.Config
 import com.avito.android.async_tc_cleaner.internal.observability.ReapObserver
 import com.avito.logger.PrintlnLoggerFactory
@@ -25,8 +24,14 @@ import kotlin.time.Duration.Companion.seconds
 class RaceConditionsTest {
 
     private val logger = PrintlnLoggerFactory.create("race")
-    private val deleter = JvmTreeDeleter()
+    private val deleter = SinglePassTreeDeleter()
     private val excluded = setOf(".old", ".reaper-staging")
+
+    private suspend fun delete(root: Path): DeletionOutcome = root.parent.directoryStream()
+        .getOrElse { e -> error(e) }
+        .use { stream ->
+            deleter.delete(StagedDir(stream, root.fileName, root))
+        }
 
     @Test
     fun `R1 - concurrent deletion of the same tree never throws and converges`(@TempDir tmp: Path) {
@@ -40,9 +45,9 @@ class RaceConditionsTest {
         }
         competitor.start()
         start.countDown()
-        assertDoesNotThrow { runBlocking { deleter.delete(root) } }
+        assertDoesNotThrow { runBlocking { delete(root) } }
         competitor.join()
-        runBlocking { deleter.delete(root) }
+        runBlocking { delete(root) }
         assertFalse(Files.exists(root), "tree must be gone after both deleters + a follow-up sweep")
     }
 
@@ -52,9 +57,9 @@ class RaceConditionsTest {
         val expectedBytes = totalSize(entry)
         val seen = AtomicLong(-1)
         val verifyingDelete = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> {
-                seen.set(totalSize(root))
-                return deleter.delete(root)
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome {
+                seen.set(totalSize(stagedDir.reportedPath))
+                return deleter.delete(stagedDir)
             }
         }
         reaper(config(work), Recorder(), verifyingDelete).runOnce()
@@ -99,7 +104,7 @@ class RaceConditionsTest {
         Files.createSymbolicLink(tmp.resolve("tree/sub/dirlink"), sentinelDir)
         Files.createSymbolicLink(tmp.resolve("tree/sub/filelink"), extFile)
 
-        deleter.delete(tmp.resolve("tree"))
+        delete(tmp.resolve("tree"))
 
         assertFalse(Files.exists(tmp.resolve("tree")))
         assertTrue(Files.exists(sentinelDir) && Files.exists(sentinelFile), "symlinked dir target survives")
@@ -114,7 +119,7 @@ class RaceConditionsTest {
         Files.write(root.resolve("c"), ByteArray(333))
         val expected = totalSize(tmp.resolve("t"))
 
-        val outcome = deleter.delete(tmp.resolve("t")).getOrThrow()
+        val outcome = delete(tmp.resolve("t"))
 
         assertEquals(expected, outcome.bytesFreed)
         assertFalse(Files.exists(tmp.resolve("t")))
@@ -137,11 +142,11 @@ class RaceConditionsTest {
     fun `R8 - production claim prevents double-claim under a race`(@TempDir work: Path) {
         Files.createDirectories(work.resolve(".old/dead/inner"))
         val start = CountDownLatch(1)
-        val claimedRoots = ConcurrentHashMap.newKeySet<Path>()
+        val claimedRoots = ConcurrentHashMap.newKeySet<String>()
         val deleting = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> {
-                claimedRoots.add(root)
-                return Result.Success(DeletionOutcome.EMPTY)
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome {
+                claimedRoots.add(stagedDir.stagedEntryRelativePath.toString())
+                return DeletionOutcome.EMPTY
             }
         }
         val racers = (0 until 2).map {
@@ -173,7 +178,7 @@ class RaceConditionsTest {
         Files.write(tmp.resolve("tree/vanish/inner/g"), ByteArray(10))
         Files.move(tmp.resolve("tree/vanish"), tmp.resolve("moved-away"))
 
-        assertDoesNotThrow { runBlocking { deleter.delete(tmp.resolve("tree")) } }
+        assertDoesNotThrow { runBlocking { delete(tmp.resolve("tree")) } }
 
         assertFalse(Files.exists(tmp.resolve("tree")), "root removed despite the vanished subtree")
         assertTrue(Files.exists(tmp.resolve("moved-away/inner/g")), "the moved-away subtree is untouched")
@@ -200,7 +205,7 @@ class RaceConditionsTest {
             reaped += entry
         }
 
-        override fun onError(entry: String, error: Throwable) = Unit
+        override fun onError(entryName: String, error: Throwable) = Unit
     }
 
     private fun config(workDir: Path) = Config(
@@ -210,7 +215,6 @@ class RaceConditionsTest {
         stagingDirName = ".reaper-staging",
         pollInterval = 50.milliseconds,
         shutdownTimeout = 25.seconds,
-        rmzPath = "/usr/local/bin/rmz",
         node = "n",
         pod = "p",
         statsd = null,

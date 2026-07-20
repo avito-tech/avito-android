@@ -20,7 +20,7 @@ internal class StatsdMetricsReapObserver internal constructor(
         sender.send(StatsMetric.count(metric("reaped_entries_total"), entriesDeleted))
     }
 
-    override fun onError(entry: String, error: Throwable) {
+    override fun onError(entryName: String, error: Throwable) {
         sender.send(StatsMetric.count(metric("errors")))
     }
 

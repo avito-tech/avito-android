@@ -7,8 +7,18 @@ class ReapStatsTest {
 
     @Test
     fun `failure samples accumulate but cap at five keeping the first seen`() {
-        val a = DeleteStats(failed = 3, failureSamples = listOf("s1", "s2", "s3"))
-        val b = DeleteStats(failed = 4, failureSamples = listOf("s4", "s5", "s6", "s7"))
+        val a = DeleteStats(
+            failed = 3,
+            outcome = DeletionOutcome(
+                0, 0, failureSamples = listOf("s1", "s2", "s3")
+            )
+        )
+        val b = DeleteStats(
+            failed = 4,
+            outcome = DeletionOutcome(
+                0, 0, failureSamples = listOf("s4", "s5", "s6", "s7")
+            )
+        )
 
         val sum = a + b
 

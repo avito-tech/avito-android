@@ -1,6 +1,5 @@
 package com.avito.android.async_tc_cleaner.internal.reaper
 
-import com.avito.android.Result
 import com.avito.android.async_tc_cleaner.internal.config.Config
 import com.avito.android.async_tc_cleaner.internal.observability.ReapObserver
 import com.avito.android.async_tc_cleaner.internal.observability.ReapSweep
@@ -27,8 +26,8 @@ class ReaperTest {
             reaped += entry
         }
 
-        override fun onError(entry: String, error: Throwable) {
-            errors += entry
+        override fun onError(entryName: String, error: Throwable) {
+            errors += entryName
         }
 
         override fun onSweep(summary: ReapSweep) {
@@ -43,7 +42,6 @@ class ReaperTest {
         stagingDirName = ".reaper-staging",
         pollInterval = 1.seconds,
         shutdownTimeout = 25.seconds,
-        rmzPath = "/usr/local/bin/rmz",
         node = "test-node",
         pod = "test-pod",
         statsd = null,
@@ -56,7 +54,7 @@ class ReaperTest {
     private fun reaper(
         cfg: Config,
         observer: ReapObserver,
-        deleter: TreeDeleter = JvmTreeDeleter(),
+        deleter: TreeDeleter = SinglePassTreeDeleter(),
     ) = Reaper(
         config = cfg,
         observer = observer,
@@ -120,7 +118,8 @@ class ReaperTest {
         Files.createDirectories(work.resolve(".old/dead"))
         val recorder = Recorder()
         val failingDelete = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> = error("failed")
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome =
+                error("failed")
         }
 
         reaper(config(work), recorder, failingDelete).runOnce()
@@ -137,9 +136,8 @@ class ReaperTest {
         Files.createDirectories(work.resolve(".old/dead"))
         val recorder = Recorder()
         val incompleteDelete = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> = Result.Success(
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome =
                 DeletionOutcome(bytesFreed = 0, entriesDeleted = 0, failures = 1, failureSamples = listOf("sample"))
-            )
         }
 
         reaper(config(work), recorder, incompleteDelete).runOnce()

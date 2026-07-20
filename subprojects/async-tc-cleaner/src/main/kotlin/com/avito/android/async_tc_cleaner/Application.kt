@@ -6,10 +6,8 @@ import com.avito.android.async_tc_cleaner.internal.observability.CleanerLoggerFa
 import com.avito.android.async_tc_cleaner.internal.observability.NoOpReapObserver
 import com.avito.android.async_tc_cleaner.internal.observability.ReapObserver
 import com.avito.android.async_tc_cleaner.internal.observability.StatsdMetricsReapObserver
-import com.avito.android.async_tc_cleaner.internal.reaper.JvmTreeDeleter
 import com.avito.android.async_tc_cleaner.internal.reaper.Reaper
-import com.avito.android.async_tc_cleaner.internal.reaper.RmzDeleter
-import com.avito.android.async_tc_cleaner.internal.reaper.TreeDeleter
+import com.avito.android.async_tc_cleaner.internal.reaper.SinglePassTreeDeleter
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import kotlinx.coroutines.Job
@@ -18,7 +16,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
-import java.io.File
 import kotlin.time.Duration
 
 public fun main(): Unit = runBlocking {
@@ -40,7 +37,7 @@ internal suspend fun runCleaner(config: Config, loggerFactory: LoggerFactory) {
         config = config,
         observer = createReapObserver(config, loggerFactory, logger),
         logger = logger,
-        deleter = createTreeDeleter(config, logger),
+        deleter = SinglePassTreeDeleter(),
     )
 
     coroutineScope {
@@ -48,16 +45,6 @@ internal suspend fun runCleaner(config: Config, loggerFactory: LoggerFactory) {
         registerShutdownHook(sweepingJob, config.shutdownTimeout, logger)
         sweepingJob.join()
     }
-}
-
-private fun createTreeDeleter(config: Config, logger: Logger): TreeDeleter {
-    val rmzPath = config.rmzPath
-    if (File(rmzPath).canExecute()) {
-        logger.info("Deleting trees with rmz: rmz=$rmzPath")
-        return RmzDeleter(rmzPath = rmzPath)
-    }
-    logger.info("rmz not found at $rmzPath; deleting trees in-process with the JVM")
-    return JvmTreeDeleter()
 }
 
 private fun createReapObserver(config: Config, loggerFactory: LoggerFactory, logger: Logger): ReapObserver {

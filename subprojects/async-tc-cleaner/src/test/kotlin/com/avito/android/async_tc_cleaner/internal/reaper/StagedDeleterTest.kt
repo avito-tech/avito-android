@@ -1,6 +1,5 @@
 package com.avito.android.async_tc_cleaner.internal.reaper
 
-import com.avito.android.Result
 import com.avito.android.async_tc_cleaner.internal.observability.ReapObserver
 import com.avito.logger.PrintlnLoggerFactory
 import kotlinx.coroutines.CancellationException
@@ -20,7 +19,7 @@ import java.util.UUID
 class StagedDeleterTest {
 
     private val logger = PrintlnLoggerFactory.create("test")
-    private val jvm = JvmTreeDeleter()
+    private val jvm = SinglePassTreeDeleter()
 
     private class Recorder : ReapObserver {
         val reaped = mutableListOf<String>()
@@ -29,16 +28,20 @@ class StagedDeleterTest {
             reaped += entry
         }
 
-        override fun onError(entry: String, error: Throwable) {
-            errors += entry
+        override fun onError(entryName: String, error: Throwable) {
+            errors += entryName
         }
     }
 
-    private fun deleter(
+    private suspend fun deleteAll(
         stagingDir: Path,
         observer: ReapObserver,
         treeDeleter: TreeDeleter = jvm,
-    ) = StagedDeleter(stagingDir, treeDeleter, observer, logger)
+    ): DeleteStats = stagingDir.directoryStream()
+        .getOrElse { e -> error(e) }
+        .use { stream ->
+            StagedDeleter(stagingDir, treeDeleter, observer, logger).deleteAll(stream)
+        }
 
     private fun staged(stagingDir: Path, name: String, fileBytes: Int = 0): Path {
         val dir = Files.createDirectories(stagingDir.resolve(name))
@@ -50,7 +53,7 @@ class StagedDeleterTest {
     fun `empty staging yields zero stats and no observer calls`(@TempDir staging: Path) = runTest {
         val recorder = Recorder()
 
-        val stats = deleter(staging, recorder).deleteAll()
+        val stats = deleteAll(staging, recorder)
 
         assertEquals(DeleteStats(), stats)
         assertTrue(recorder.reaped.isEmpty() && recorder.errors.isEmpty())
@@ -63,7 +66,7 @@ class StagedDeleterTest {
         Files.write(dir.resolve("b"), ByteArray(50))
         val recorder = Recorder()
 
-        val stats = deleter(staging, recorder).deleteAll()
+        val stats = deleteAll(staging, recorder)
 
         assertEquals(1, stats.reaped)
         assertEquals(1, stats.attempted)
@@ -78,7 +81,7 @@ class StagedDeleterTest {
         staged(staging, "my.dotted.name.${UUID.randomUUID()}", fileBytes = 5)
         val recorder = Recorder()
 
-        deleter(staging, recorder).deleteAll()
+        deleteAll(staging, recorder)
 
         assertEquals(listOf("my.dotted.name"), recorder.reaped, "only the uuid suffix is stripped")
     }
@@ -88,10 +91,11 @@ class StagedDeleterTest {
         staged(staging, "dead.${UUID.randomUUID()}", fileBytes = 5)
         val recorder = Recorder()
         val failing = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> = Result.Failure(IOException("boom"))
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome =
+                throw IOException("boom")
         }
 
-        val stats = deleter(staging, recorder, failing).deleteAll()
+        val stats = deleteAll(staging, recorder, failing)
 
         assertEquals(1, stats.attempted)
         assertEquals(1, stats.failed)
@@ -104,20 +108,18 @@ class StagedDeleterTest {
         staged(staging, "partial.${UUID.randomUUID()}", fileBytes = 5)
         val recorder = Recorder()
         val reportsFailure = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> {
-                jvm.delete(root) // remove the tree so the only signal is the reported failure, not a remnant
-                return Result.Success(
-                    DeletionOutcome(
-                        bytesFreed = 5,
-                        entriesDeleted = 2,
-                        failures = 1,
-                        failureSamples = listOf("unlink x"),
-                    )
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome {
+                jvm.delete(stagedDir)
+                return DeletionOutcome(
+                    bytesFreed = 5,
+                    entriesDeleted = 2,
+                    failures = 1,
+                    failureSamples = listOf("unlink x"),
                 )
             }
         }
 
-        val stats = deleter(staging, recorder, reportsFailure).deleteAll()
+        val stats = deleteAll(staging, recorder, reportsFailure)
 
         assertEquals(1, stats.incomplete)
         assertEquals(1L, stats.failures)
@@ -131,10 +133,11 @@ class StagedDeleterTest {
         staged(staging, "stuck.${UUID.randomUUID()}", fileBytes = 5)
         val recorder = Recorder()
         val noop = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> = Result.Success(DeletionOutcome.EMPTY)
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome =
+                DeletionOutcome.EMPTY
         }
 
-        val stats = deleter(staging, recorder, noop).deleteAll()
+        val stats = deleteAll(staging, recorder, noop)
 
         assertEquals(1, stats.incomplete)
         assertEquals(0L, stats.failures)
@@ -147,11 +150,12 @@ class StagedDeleterTest {
         staged(staging, "x.${UUID.randomUUID()}", fileBytes = 5)
         val recorder = Recorder()
         val cancelling = object : TreeDeleter {
-            override suspend fun delete(root: Path): Result<DeletionOutcome> = throw CancellationException("stop")
+            override suspend fun delete(stagedDir: StagedDir): DeletionOutcome =
+                throw CancellationException("stop")
         }
 
         assertThrows<CancellationException> {
-            runBlocking { deleter(staging, recorder, cancelling).deleteAll() }
+            runBlocking { deleteAll(staging, recorder, cancelling) }
         }
         assertTrue(recorder.errors.isEmpty(), "cancellation is not a delete failure")
     }

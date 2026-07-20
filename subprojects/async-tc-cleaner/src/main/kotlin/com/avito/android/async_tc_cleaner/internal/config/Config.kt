@@ -11,7 +11,6 @@ internal data class Config(
     val stagingDirName: String,
     val pollInterval: Duration,
     val shutdownTimeout: Duration,
-    val rmzPath: String,
     val node: String,
     val pod: String,
     val statsd: StatsdSettings?,

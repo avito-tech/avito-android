@@ -2,14 +2,14 @@ package com.avito.android.async_tc_cleaner.internal.observability
 
 internal interface ReapObserver {
     fun onReaped(entry: String, bytesFreed: Long, entriesDeleted: Long, durationMs: Long)
-    fun onError(entry: String, error: Throwable)
+    fun onError(entryName: String, error: Throwable)
     fun onSweep(summary: ReapSweep) = Unit
     fun onSweepFailed(error: Throwable) = Unit
 }
 
 internal object NoOpReapObserver : ReapObserver {
     override fun onReaped(entry: String, bytesFreed: Long, entriesDeleted: Long, durationMs: Long) = Unit
-    override fun onError(entry: String, error: Throwable) = Unit
+    override fun onError(entryName: String, error: Throwable) = Unit
 }
 
 internal data class ReapSweep(

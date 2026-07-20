@@ -19,17 +19,9 @@ class EnvBasedConfigFactoryTest {
         assertEquals(".reaper-staging", config.stagingDirName)
         assertEquals(45.seconds, config.pollInterval)
         assertEquals(25.seconds, config.shutdownTimeout)
-        assertEquals("/usr/local/bin/rmz", config.rmzPath)
         assertNull(config.reaperEnabledToggleFile)
         assertNull(config.statsd)
         assertNull(config.elastic)
-    }
-
-    @Test
-    fun `parses rmz path override`() {
-        val config = create(mapOf("WORK_DIR" to "/work", "RMZ_PATH" to "/opt/tools/rmz")).getOrThrow()
-
-        assertEquals("/opt/tools/rmz", config.rmzPath)
     }
 
     @Test

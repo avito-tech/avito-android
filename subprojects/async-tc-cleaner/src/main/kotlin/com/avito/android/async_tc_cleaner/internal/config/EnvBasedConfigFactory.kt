@@ -30,7 +30,6 @@ internal class EnvBasedConfigFactory(
                     stagingDirName = stagingDirName,
                     pollInterval = seconds("POLL_INTERVAL_SECONDS", default = 45, min = 1),
                     shutdownTimeout = seconds("SHUTDOWN_TIMEOUT_SECONDS", default = 25, min = 1),
-                    rmzPath = env("RMZ_PATH") ?: "/usr/local/bin/rmz",
                     node = env("NODE_NAME") ?: "unknown",
                     pod = env("POD_NAME") ?: "unknown",
                     statsd = statsd(),

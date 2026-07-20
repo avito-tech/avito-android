@@ -7,11 +7,13 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.io.IOException
 import java.nio.file.DirectoryIteratorException
-import java.nio.file.Files
 import java.nio.file.LinkOption
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
+import java.nio.file.SecureDirectoryStream
+import java.nio.file.attribute.BasicFileAttributeView
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.TimeSource
+import kotlin.time.measureTimedValue
 
 internal class StagedDeleter(
     private val stagingDir: Path,
@@ -20,60 +22,90 @@ internal class StagedDeleter(
     private val logger: Logger,
 ) {
 
-    suspend fun deleteAll(): DeleteStats {
-        val stream = stagingDir.directoryStream().getOrElse { e ->
-            logger.warn("Failed to list staging dir: dir=$stagingDir", e)
-            return DeleteStats(
-                failed = 1,
-                failureSamples = listOf(failureSample(stagingDir, e)),
-            )
-        }
+    suspend fun deleteAll(stagingDirStream: SecureDirectoryStream<Path>): DeleteStats {
         var stats = DeleteStats()
-
-        stream.use {
-            try {
-                for (staged in it) {
-                    currentCoroutineContext().ensureActive()
-                    stats += deleteStagedEntry(staged)
-                }
-            } catch (e: DirectoryIteratorException) {
-                logger.warn("Failed to iterate staging dir: dir=$stagingDir", e.cause ?: e)
-                stats += DeleteStats(
-                    failed = 1,
-                    failureSamples = listOf(failureSample(stagingDir, e.cause ?: e)),
+        try {
+            for (stagedDir in stagingDirStream) {
+                currentCoroutineContext().ensureActive()
+                stats += deleteStagedEntry(
+                    stagingDirStream = stagingDirStream,
+                    stagedEntryRelativePath = stagedDir.fileName
                 )
             }
+        } catch (e: DirectoryIteratorException) {
+            logger.warn("Failed to iterate staging dir: dir=$stagingDir", e.cause ?: e)
+            stats += DeleteStats(
+                failed = 1,
+                outcome = DeletionOutcome(
+                    0,
+                    0,
+                    failureSamples = listOf(
+                        FailureSamplesUtil.format(
+                            path = stagingDir,
+                            error = e.cause ?: e
+                        )
+                    )
+                ),
+            )
         }
         return stats
     }
 
-    private suspend fun deleteStagedEntry(staged: Path): DeleteStats {
-        val name = staged.fileName.toString().substringBeforeLast('.')
-        val context = reapContext(name, staged)
+    private suspend fun deleteStagedEntry(
+        stagingDirStream: SecureDirectoryStream<Path>,
+        stagedEntryRelativePath: Path,
+    ): DeleteStats {
+        val stagedDirAbsolutePath = stagingDir.resolve(stagedEntryRelativePath)
+        val name = stagedEntryRelativePath.toString().substringBeforeLast('.')
+        val context = "entry=$name, staged=$stagedDirAbsolutePath"
 
-        val start = TimeSource.Monotonic.markNow()
         logger.info("Reap started: $context")
-
-        val deletionResult = try {
-            deleter.delete(staged)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Result.Failure(e)
+        val (result, duration) = measureTimedValue {
+            return@measureTimedValue try {
+                Result.Success(
+                    deleter.delete(
+                        StagedDir(
+                            stagingDirStream = stagingDirStream,
+                            stagedEntryRelativePath = stagedEntryRelativePath,
+                            reportedPath = stagedDirAbsolutePath
+                        )
+                    )
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Result.Failure<DeletionOutcome>(e)
+            }
         }
 
-        val durationMs = start.elapsedNow().inWholeMilliseconds
-        return deletionResult.fold(
+        val durationMs = duration.inWholeMilliseconds
+        return result.fold(
             onSuccess = { outcome ->
-                val remnant = Files.exists(staged, LinkOption.NOFOLLOW_LINKS)
+                val remnant = existsInStaging(stagingDirStream, stagedEntryRelativePath)
                 if (outcome.failures > 0L || remnant) {
-                    onDeleteIncomplete(name, context, staged, durationMs, outcome, remnant)
+                    onDeleteIncomplete(name, context, stagedDirAbsolutePath, durationMs, outcome, remnant)
                 } else {
                     onDeleteSucceeded(name, context, durationMs, outcome)
                 }
             },
-            onFailure = { error -> onDeleteFailed(name, context, staged, durationMs, error) },
+            onFailure = { error -> onDeleteFailed(name, context, stagedDirAbsolutePath, durationMs, error) },
         )
+    }
+
+    private fun existsInStaging(
+        stagingStream: SecureDirectoryStream<Path>,
+        stagedEntryRelativePath: Path,
+    ): Boolean = try {
+        stagingStream.getFileAttributeView(
+            stagedEntryRelativePath,
+            BasicFileAttributeView::class.java,
+            LinkOption.NOFOLLOW_LINKS,
+        ).readAttributes()
+        true
+    } catch (_: NoSuchFileException) {
+        false
+    } catch (_: IOException) {
+        true
     }
 
     private fun onDeleteFailed(
@@ -88,7 +120,13 @@ internal class StagedDeleter(
         return DeleteStats(
             attempted = 1,
             failed = 1,
-            failureSamples = listOf(failureSample(staged, error)),
+            outcome = DeletionOutcome(
+                bytesFreed = 0,
+                entriesDeleted = 0,
+                failureSamples = listOf(
+                    FailureSamplesUtil.format(staged, error)
+                )
+            ),
         )
     }
 
@@ -101,7 +139,7 @@ internal class StagedDeleter(
         remnant: Boolean,
     ): DeleteStats {
         val samples = if (remnant) {
-            (outcome.failureSamples + "$staged (staged root still present)").limitFailureSamples()
+            FailureSamplesUtil.capped(outcome.failureSamples + "$staged (staged root still present)")
         } else {
             outcome.failureSamples
         }
@@ -110,14 +148,14 @@ internal class StagedDeleter(
                 "entriesDeleted=${outcome.entriesDeleted}, failures=${outcome.failures}, remnant=$remnant, " +
                 "failureSamples=${samples.joinToString("; ")}"
         )
-        observer.onError(name, IOException(reapIncompleteReason(staged, outcome.failures, remnant, samples)))
+        observer.onError(
+            entryName = name,
+            error = IOException(reapIncompleteReason(staged, outcome.failures, remnant, samples)),
+        )
         return DeleteStats(
             attempted = 1,
             incomplete = 1,
-            bytesFreed = outcome.bytesFreed,
-            entriesDeleted = outcome.entriesDeleted,
-            failures = outcome.failures,
-            failureSamples = samples,
+            outcome = outcome.copy(failureSamples = samples),
         )
     }
 
@@ -135,12 +173,9 @@ internal class StagedDeleter(
         return DeleteStats(
             attempted = 1,
             reaped = 1,
-            bytesFreed = outcome.bytesFreed,
-            entriesDeleted = outcome.entriesDeleted,
+            outcome = outcome,
         )
     }
-
-    private fun reapContext(name: String, staged: Path): String = "entry=$name, staged=$staged"
 
     private fun reapIncompleteReason(
         staged: Path,
