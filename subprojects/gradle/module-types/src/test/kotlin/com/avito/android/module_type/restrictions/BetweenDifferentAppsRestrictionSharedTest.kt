@@ -104,11 +104,21 @@ class BetweenDifferentAppsRestrictionSharedTest {
     }
 
     @Test
-    fun `shared depends on non shared product of same app - restricted`() {
+    fun `shared depends on non shared module of same app - not restricted`() {
         Truth.assertThat(
             isRestricted(
                 module(":A", AppA, sharedBetweenApps = true),
                 module(":B", AppA)
+            )
+        ).isEqualTo(false)
+    }
+
+    @Test
+    fun `shared depends on non shared module of another app - restricted`() {
+        Truth.assertThat(
+            isRestricted(
+                module(":A", AppA, sharedBetweenApps = true),
+                module(":B", AppB)
             )
         ).isEqualTo(true)
     }

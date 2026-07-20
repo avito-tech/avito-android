@@ -5,6 +5,7 @@ package com.avito.android.module_type.internal
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.android.module_type.ModuleWithType
+import com.avito.android.module_type.Severity
 import com.avito.android.module_type.restrictions.extension.BetweenDifferentAppsRestrictionExtension
 import com.avito.android.module_type.restrictions.extension.BetweenFunctionalTypesExtension
 import com.avito.android.module_type.restrictions.extension.ToWiringRestrictionExtension
@@ -55,11 +56,59 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
                 add(toWiringRestriction.get().getRestriction())
             }
         }
-        val violations = ModulesRestrictionsFinder(readModules(), restrictions).violations()
+        val modules = readModules()
+        val violations = ModulesRestrictionsFinder(modules, restrictions).violations()
 
         if (violations.isNotEmpty()) {
             throw buildProblem(violations).asRuntimeException()
         }
+
+        checkUnusedSharedBetweenAppsFlags(modules)
+    }
+
+    private fun checkUnusedSharedBetweenAppsFlags(modules: Set<ModuleDescription>) {
+        if (!betweenDifferentAppsRestriction.isPresent) return
+        val extension = betweenDifferentAppsRestriction.get()
+        if (extension.severity.get() != Severity.fail) return
+
+        val unusedFlags = UnusedSharedBetweenAppsFinder(
+            moduleDescriptions = modules,
+            commonApp = extension.commonApp.get(),
+            sharingApps = extension.sharingApps.get(),
+        ).findUnusedFlags()
+
+        if (!unusedFlags.isEmpty) {
+            throw buildUnusedFlagsProblem(unusedFlags)
+                .asRuntimeException()
+        }
+    }
+
+    private fun buildUnusedFlagsProblem(unusedFlags: UnusedSharedBetweenAppsFinder.UnusedFlags): Problem {
+        val allModules = unusedFlags.unjustifiedModules + unusedFlags.redundantCommonModules
+        val description = buildString {
+            if (unusedFlags.unjustifiedModules.isNotEmpty()) {
+                appendLine(
+                    "These modules are marked with sharedBetweenApps, but no module of another " +
+                        "application depends on them directly:"
+                )
+                unusedFlags.unjustifiedModules.forEach { appendLine("  - $it") }
+            }
+            if (unusedFlags.redundantCommonModules.isNotEmpty()) {
+                appendLine(
+                    "These common modules are marked with sharedBetweenApps, but the flag is redundant: " +
+                        "common modules are available to every application without it:"
+                )
+                unusedFlags.redundantCommonModules.forEach { appendLine("  - $it") }
+            }
+        }
+        return Problem.Builder(
+            shortDescription = "Found unused sharedBetweenApps flags",
+            context = "In modules: ${allModules.joinToString()}"
+        )
+            .because(description)
+            .addSolution("Remove 'sharedBetweenApps.set(true)' from the module's build script")
+            .addSolution(solutionMessage.getOrElse("No solution help message"))
+            .build()
     }
 
     private fun readModules(): Set<ModuleDescription> {

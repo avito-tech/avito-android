@@ -25,8 +25,6 @@ public class BetweenDifferentAppsRestriction(
             return !module.sharedBetweenApps && module.type.app !in sharingApps
         }
 
-        if (module.sharedBetweenApps) return true
-
         return module.type.app != dependency.type.app
     }
 }
