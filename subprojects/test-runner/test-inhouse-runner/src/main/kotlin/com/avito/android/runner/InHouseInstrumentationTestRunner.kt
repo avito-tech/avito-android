@@ -83,14 +83,18 @@ public abstract class InHouseInstrumentationTestRunner(
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
 
+    private val statsDSender: StatsDSender by lazy {
+        StatsDSender.create(
+            config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
+            loggerFactory = loggerFactory
+        )
+    }
+
     private val httpClientBuilder: OkHttpClient.Builder by lazy {
         OkHttpClient.Builder()
             .eventListenerFactory {
                 StatsDHttpEventListener(
-                    statsDSender = StatsDSender.create(
-                        config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
-                        loggerFactory = loggerFactory
-                    ),
+                    statsDSender = statsDSender,
                     timeProvider = timeProvider,
                     requestMetadataProvider = TagRequestMetadataProvider(),
                     loggerFactory = loggerFactory
@@ -360,6 +364,9 @@ public abstract class InHouseInstrumentationTestRunner(
             VideoCaptureTestListener(
                 videoFeatureValue = runEnvironment.videoRecordingFeature,
                 testArtifactsProvider = testArtifactsProvider,
+                appCacheDir = targetContext.cacheDir,
+                statsDSender = statsDSender,
+                timeProvider = timeProvider,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
                 loggerFactory = loggerFactory,
                 transport = reportTransport,

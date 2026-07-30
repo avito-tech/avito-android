@@ -1,18 +1,14 @@
 package com.avito.android.test.report.video
 
-import android.media.MediaMetadataRetriever
-import android.os.ParcelFileDescriptor
-import android.os.ParcelFileDescriptor.MODE_READ_WRITE
-import androidx.test.platform.app.InstrumentationRegistry
+import android.os.Build
 import com.avito.android.Result
-import com.avito.android.util.executeMethod
-import com.avito.android.util.getFieldValue
+import com.avito.android.test.report.video.VideoCaptureMetrics.Reason
 import com.avito.android.waiter.waitFor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.TestArtifactsProvider
+import com.avito.time.TimeProvider
 import java.io.File
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 public interface VideoCapturer {
@@ -26,6 +22,12 @@ public interface VideoCapturer {
 
 internal class VideoCapturerImpl(
     private val testArtifactsProvider: TestArtifactsProvider,
+    private val appCacheDir: File,
+    private val shellCommandExecutor: ShellCommandExecutor,
+    private val videoValidator: VideoValidator,
+    private val metrics: VideoCaptureMetrics,
+    private val timeProvider: TimeProvider,
+    private val sdkInt: Int,
     loggerFactory: LoggerFactory
 ) : VideoCapturer {
 
@@ -48,10 +50,10 @@ internal class VideoCapturerImpl(
                         .rescue { failure ->
                             Result.Failure(IllegalStateException("Can't create video output file", failure))
                         }
-                        .flatMap { videoOutput ->
+                        .flatMap { recorderLogFile ->
                             Result.tryCatch {
-                                executeRecorderCommand("start $videoFile", videoOutput)
-                                state = State.Recording(videoFile, videoOutput)
+                                executeRecorderCommand("start $videoFile", recorderLogFile)
+                                state = State.Recording(videoFile, recorderLogFile)
                             }.rescue { failure ->
                                 Result.Failure(IllegalStateException("Can't start video capturing", failure))
                             }
@@ -61,41 +63,68 @@ internal class VideoCapturerImpl(
     }
 
     @Synchronized
-    override fun stop(): Result<File> =
-        when (val castHelperLocalState = state) {
+    override fun stop(): Result<File> {
+        val startedAt = timeProvider.nowInMillis()
+        return when (val castHelperLocalState = state) {
             is State.Recording -> {
-                val (videoFile, outputFile) = castHelperLocalState
-                val result = try {
-                    executeRecorderCommand("stop", outputFile)
-                    waitForVideoSaving(videoFile)
-                    Result.Success(videoFile)
-                } catch (t: Throwable) {
-                    if (videoFile.exists()) {
-                        videoFile.delete()
+                val (videoFile, recorderLogFile) = castHelperLocalState
+                val result = when (val saved = saveVideo(videoFile, recorderLogFile)) {
+                    is SaveResult.Saved -> {
+                        metrics.onStopSuccess(durationSince(startedAt))
+                        Result.Success(saved.video)
                     }
-                    val output = if (outputFile.exists()) {
-                        outputFile.readText().also {
-                            outputFile.delete()
+                    is SaveResult.Failed -> {
+                        metrics.onStopError(saved.reason, durationSince(startedAt))
+                        if (videoFile.exists()) {
+                            videoFile.delete()
                         }
-                    } else {
-                        "empty"
+                        val recorderLog = if (recorderLogFile.exists()) {
+                            recorderLogFile.readText().also {
+                                recorderLogFile.delete()
+                            }
+                        } else {
+                            "empty"
+                        }
+                        Result.Failure(
+                            IllegalStateException(
+                                "Failed when stopping video record. Output: $recorderLog",
+                                saved.error
+                            )
+                        )
                     }
-                    Result.Failure(IllegalStateException("Failed when stopping video record. Output: $output", t))
                 }
                 this.state = State.Idling
                 result
             }
-            else -> Result.Failure(IllegalStateException("Can't stop video capturing. Capturer isn't recording"))
+            else -> {
+                metrics.onStopError(Reason.NOT_RECORDING, durationSince(startedAt))
+                Result.Failure(IllegalStateException("Can't stop video capturing. Capturer isn't recording"))
+            }
         }
+    }
+
+    private fun saveVideo(video: File, recorderLogFile: File): SaveResult =
+        try {
+            executeRecorderCommand("stop", recorderLogFile)
+            SaveResult.Saved(awaitSavedVideo(video))
+        } catch (e: VideoIsNotReadableException) {
+            SaveResult.Failed(Reason.NOT_READABLE, e)
+        } catch (e: VideoCopyFailedException) {
+            SaveResult.Failed(Reason.COPY_FAILED, e)
+        } catch (t: Throwable) {
+            SaveResult.Failed(Reason.SHELL_FAILED, t)
+        }
+
+    private fun durationSince(startedAt: Long): Long = timeProvider.nowInMillis() - startedAt
 
     @Synchronized
     override fun abort() {
         when (val castHelperLocalState = state) {
             is State.Recording -> {
-                val (videoFile, outputFile) = castHelperLocalState
+                val (videoFile, recorderLogFile) = castHelperLocalState
 
                 try {
-                    executeRecorderCommand("abort", outputFile)
+                    executeRecorderCommand("abort", recorderLogFile)
                 } catch (t: Throwable) {
                     logger.warn("Can't abort capture", t)
                 } finally {
@@ -111,9 +140,9 @@ internal class VideoCapturerImpl(
         }
     }
 
-    private fun executeRecorderCommand(command: String, output: File) {
+    private fun executeRecorderCommand(command: String, recorderLogFile: File) {
         val recordingScript = createRecorderBinary().getOrThrow()
-        execute("sh $recordingScript $command", output)
+        shellCommandExecutor.execute("sh $recordingScript $command", recorderLogFile)
     }
 
     private fun createRecorderBinary() = testArtifactsProvider
@@ -136,73 +165,62 @@ internal class VideoCapturerImpl(
         }
     }
 
-    private fun waitForVideoSaving(video: File) {
+    /**
+     * screenrecord writes the file asynchronously, so we wait until the video becomes readable.
+     *
+     * Before Android 16 the app reads a shell-written file directly, so we keep the old behavior
+     * and don't pay for copying. Since Android 16 direct reading is denied, see [copyToAppStorage].
+     */
+    private fun awaitSavedVideo(video: File): File {
+        val needsCopy = sdkInt >= Build.VERSION_CODES.BAKLAVA
+        val readableVideo = if (needsCopy) File(appVideoDir(), video.name) else video
         waitFor(
             timeoutMs = TimeUnit.SECONDS.toMillis(2),
             frequencyMs = 200,
-            allowedExceptions = setOf(RuntimeException::class.java)
+            allowedExceptions = setOf(VideoIsNotReadableException::class.java)
         ) {
-            val retriever = MediaMetadataRetriever()
-            retriever.setDataSource(video.absolutePath)
+            if (needsCopy) {
+                copyToAppStorage(video, readableVideo)
+            }
 
-            if (retriever.frameAtTime == null) {
-                throw RuntimeException("Unable to get frame from video")
+            if (!videoValidator.isReadable(readableVideo)) {
+                throw VideoIsNotReadableException(readableVideo)
             }
         }
+        return readableVideo
     }
 
     /**
-     * Вызываем executeShellCommand напрямую из UiAutomationConnection т.к uiAutomation
-     * содержит в себе логику перенаправления output из процесса, который запускается
-     * внутри UIAutomation сервиса, в PIPE. Жизненный цикл этих PIPE's привязан к жизненному циклу
-     * процесса Instrumentation и из за этого может происходить гонка между процессом, запущенным
-     * от имени UiAutomation сервиса (например, запись видео) и проходом тестов.
+     * Reads the video by shell instead of reading the file from the app process.
      *
-     * В этом методе мы делаем то же самое что и uiAutomation.executeShellCommand(), но даем возможность
-     * прокинуть любой файловый дескриптор (а не только пайп), что позволяет избежать проблемы, описанной выше.
+     * screenrecord runs as the shell uid, so com.android.shell owns the MediaStore row.
+     * Since Android 16 the ENABLE_OWNED_PHOTOS compat change (310703690, enabled for
+     * targetSdk >= 36) denies reading such videos even in the app's own Android/media/<pkg>:
+     * MediaProvider requires READ_MEDIA_VIDEO and opening the file fails with EACCES
+     * ("Permission to access file ... is denied" in logcat).
      *
-     * https://android.googlesource.com/platform/frameworks/base.git/+/master/core/java/android/app/UiAutomationConnection.java
+     * That's why the file is read by its creator: `cat` output comes to a pipe, the app reads it
+     * to the end and stores it in the internal storage. The copy is available to the app without
+     * MediaProvider on any api and regardless of the compat change. The original file is left
+     * untouched, it remains a test artifact on the device.
      */
-    private fun execute(command: String, output: File) {
-        // connect
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        val connection = automation.getFieldValue<Any>("mUiAutomationConnection")
-
-        val outputDescriptor = ParcelFileDescriptor.open(
-            output,
-            MODE_READ_WRITE
-        )
-        val inputDescriptor: ParcelFileDescriptor? = null
-
-        /**
-         * Начиная с версии Андроид 27 изменилась сигнатура метода executeShellCommand внутри класса
-         * UiAutomationConnection. Появился еще 1 аргумент, который позволяет задать input для запускаемого процесса.
-         *
-         * Вот так выглядит метод до 27:
-         * https://chromium.googlesource.com/android_tools/+/e429db7f48cd615b0b408cda259ffbc17d3945bb/sdk/sources/android-23/android/app/UiAutomationConnection.java#230
-         *
-         * А вот так после:
-         * https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-8.1.0_r14/core/java/android/app/UiAutomationConnection.java#305
-         */
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O_MR1) {
-            connection.executeMethod(
-                "executeShellCommand",
-                command,
-                outputDescriptor
-            )
-        } else {
-            connection.executeMethod(
-                "executeShellCommand",
-                command,
-                outputDescriptor,
-                inputDescriptor
-            )
-        }
+    private fun copyToAppStorage(video: File, copy: File) {
         try {
-            outputDescriptor.close()
-        } catch (ignore: IOException) {
-            // ignore
+            shellCommandExecutor.execute("cat ${video.absolutePath}").use { input ->
+                copy.outputStream().use { target -> input.copyTo(target) }
+            }
+        } catch (t: Throwable) {
+            throw VideoCopyFailedException(video, copy, t)
         }
+    }
+
+    private fun appVideoDir(): File = File(appCacheDir, VIDEO_DIR_NAME).apply { mkdirs() }
+
+    private sealed interface SaveResult {
+
+        data class Saved(val video: File) : SaveResult
+
+        data class Failed(val reason: Reason, val error: Throwable) : SaveResult
     }
 
     private sealed class State {
@@ -211,7 +229,7 @@ internal class VideoCapturerImpl(
 
         data class Recording(
             val video: File,
-            val output: File
+            val recorderLogFile: File
         ) : State()
     }
 }
@@ -219,6 +237,11 @@ internal class VideoCapturerImpl(
 private const val TAG = "VideoCapturer"
 
 private const val RECORDER_BINARY_NAME = "recorder"
+
+/**
+ * Directory in the app internal storage for video copies, see [VideoCapturerImpl.copyToAppStorage]
+ */
+private const val VIDEO_DIR_NAME = "video"
 
 /**
  * Зачем это тут?
@@ -321,3 +344,9 @@ abort)
     ;;
 esac
 """
+
+internal class VideoIsNotReadableException(video: File) :
+    RuntimeException("Unable to get frame from video ${video.absolutePath}")
+
+internal class VideoCopyFailedException(video: File, copy: File, cause: Throwable) :
+    RuntimeException("Unable to copy video ${video.absolutePath} to ${copy.absolutePath}", cause)

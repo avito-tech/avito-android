@@ -1,5 +1,7 @@
 package com.avito.android.test.report.video
 
+import android.os.Build
+import com.avito.android.stats.StatsDSender
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.android.test.report.transport.Transport
@@ -10,15 +12,29 @@ import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
+import com.avito.time.TimeProvider
+import java.io.File
 
 public class VideoCaptureTestListener(
     videoFeatureValue: VideoFeatureValue,
     testArtifactsProvider: TestArtifactsProvider,
+    appCacheDir: File,
+    statsDSender: StatsDSender,
+    timeProvider: TimeProvider,
     loggerFactory: LoggerFactory,
     private val transport: Transport,
     private val shouldRecord: Boolean,
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
-    private val videoCapturer: VideoCapturer = VideoCapturerImpl(testArtifactsProvider, loggerFactory)
+    private val videoCapturer: VideoCapturer = VideoCapturerImpl(
+        testArtifactsProvider = testArtifactsProvider,
+        appCacheDir = appCacheDir,
+        shellCommandExecutor = UiAutomationShellCommandExecutor(),
+        videoValidator = MediaMetadataVideoValidator(),
+        metrics = VideoCaptureMetrics(statsDSender, Build.VERSION.SDK_INT),
+        timeProvider = timeProvider,
+        sdkInt = Build.VERSION.SDK_INT,
+        loggerFactory = loggerFactory
+    )
 ) : TestLifecycleListener {
 
     private val logger = loggerFactory.create<VideoCaptureTestListener>()
