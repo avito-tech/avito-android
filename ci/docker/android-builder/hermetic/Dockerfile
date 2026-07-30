@@ -55,10 +55,10 @@ COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 
 # See an explanation for zip files in README in parent dir
 # Use different image layers to cache better more stable parts
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-19_0.zip $ANDROID_HOME
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build_tools_linux_36_0_0.zip $ANDROID_HOME
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_36_0_2.zip $ANDROID_HOME
-RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform-tools-linux-36_0_0.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmdline-tools/cmdline-tools-linux-22_0.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/build-tools/build_tools_linux_37_0_0.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platforms/platforms_37_0_2.zip $ANDROID_HOME
+RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/platform-tools/platform_tools_linux_37_0_0.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/ndk/ndk-linux-25_2_9519653.zip $ANDROID_HOME
 RUN unzip_from_url.sh ${ANDROID_SDK_BASE_URL}/cmake/cmake_3_22_1.zip $ANDROID_HOME
 

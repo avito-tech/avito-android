@@ -41,7 +41,7 @@ RUN \
 ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/cmdline-tools/bin
 # https://developer.android.com/studio/index.html#command-tools
-ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
+ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-15859902_latest.zip
 
 COPY unzip_from_url.sh /usr/local/bin/unzip_from_url.sh
 

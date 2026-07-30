@@ -1,5 +1,5 @@
-build-tools;36.0.0
-platforms;android-36
+build-tools;37.0.0
+platforms;android-37.0
 extras;google;google_play_services
 extras;google;m2repository
 ndk;25.2.9519653
