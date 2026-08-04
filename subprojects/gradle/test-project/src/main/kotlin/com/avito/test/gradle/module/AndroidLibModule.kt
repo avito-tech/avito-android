@@ -1,6 +1,8 @@
 package com.avito.test.gradle.module
 
 import com.avito.test.gradle.buildToolsVersion
+import com.avito.test.gradle.compileSdkMinorVersion
+import com.avito.test.gradle.compileSdkVersion
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -12,7 +14,6 @@ import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.module
 import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
-import com.avito.test.gradle.sdkVersion
 import com.avito.test.gradle.targetSdk
 import java.io.File
 
@@ -70,7 +71,8 @@ public class AndroidLibModule(
                 |
                 |android {
                 |   namespace = "$packageName"
-                |   compileSdkVersion($sdkVersion)
+                |   compileSdk = $compileSdkVersion
+                |   compileSdkMinor = $compileSdkMinorVersion
                 |   buildToolsVersion("$buildToolsVersion")
                 |   
                 |   defaultConfig {

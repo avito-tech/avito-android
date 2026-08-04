@@ -1,6 +1,8 @@
 package com.avito.test.gradle.module
 
 import com.avito.test.gradle.buildToolsVersion
+import com.avito.test.gradle.compileSdkMinorVersion
+import com.avito.test.gradle.compileSdkVersion
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.files.InstrumentationTest
@@ -12,7 +14,6 @@ import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.minSdkVersion
 import com.avito.test.gradle.module
 import com.avito.test.gradle.plugin.PluginsSpec
-import com.avito.test.gradle.sdkVersion
 import java.io.File
 
 /**
@@ -93,7 +94,8 @@ public class AndroidTestModule(
             |android {
             |   namespace = "$packageName"
             |
-            |   compileSdkVersion($sdkVersion)
+            |   compileSdk = $compileSdkVersion
+            |   compileSdkMinor = $compileSdkMinorVersion
             |   buildToolsVersion = "$buildToolsVersion"
             |   defaultConfig {
             |       minSdk($minSdkVersion)
@@ -114,7 +116,8 @@ public class AndroidTestModule(
             |android {
             |   namespace = "$packageName"
             |
-            |   compileSdkVersion $sdkVersion
+            |   compileSdk = $compileSdkVersion
+            |   compileSdkMinor = $compileSdkMinorVersion
             |   buildToolsVersion "$buildToolsVersion"
             |   defaultConfig {
             |       minSdk $minSdkVersion
@@ -137,7 +140,9 @@ public class AndroidTestModule(
         com.avito.test.gradle.plugin.plugins {
             id("com.android.test")
             id("org.jetbrains.kotlin.android")
-            if (enableKotlinAndroidPlugin) { id("kotlin-android") }
+            if (enableKotlinAndroidPlugin) {
+                id("kotlin-android")
+            }
         }
             .plus(plugins)
 }

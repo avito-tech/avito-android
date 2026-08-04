@@ -168,6 +168,13 @@ This check forces the same revision:
                 compileSdkVersion = 30,
                 revision = 3
             )
+            // Since API 36.1 platforms are distributed with a minor version, i.e. `android-36.1`.
+            // Keep it in sync with `compileSdkMinorVersion` of the Android Gradle plugin.
+            version(
+                compileSdkVersion = 36,
+                compileSdkMinorVersion = 1,
+                revision = 2
+            )
         }
     }
     ```

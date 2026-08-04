@@ -93,6 +93,25 @@ internal class CheckAndroidSdkVersionTest {
     }
 
     @Test
+    fun `no SDK platform with specified minor version - fail`() {
+        givenAndroidSdkPlatform(version = 36, revision = 1)
+
+        val result = runCheck(
+            extension = """
+                    version(
+                        compileSdkVersion = 36,
+                        compileSdkMinorVersion = 1,
+                        revision = 1
+                    )
+                    """,
+            expectFailure = true
+        )
+        result.assertThat()
+            .buildFailed()
+            .outputContains("Android SDK platform 36.1 is not found")
+    }
+
+    @Test
     fun `an old platform revision - fail`() {
         givenAndroidSdkPlatform(version = 29, revision = 4)
 
@@ -149,6 +168,37 @@ internal class CheckAndroidSdkVersionTest {
     }
 
     @Test
+    fun `platform directory with an implicit minor version - success`() {
+        givenAndroidSdkPlatform(version = 37, revision = 2, directoryName = "android-37.0")
+
+        val result = runCheck(
+            extension = """
+                    version(
+                        compileSdkVersion = 37,
+                        revision = 2
+                    )
+                    """
+        )
+        result.assertThat().buildSuccessful()
+    }
+
+    @Test
+    fun `platform directory with a configured minor version - success`() {
+        givenAndroidSdkPlatform(version = 37, revision = 2, directoryName = "android-37.1")
+
+        val result = runCheck(
+            extension = """
+                    version(
+                        compileSdkVersion = 37,
+                        compileSdkMinorVersion = 1,
+                        revision = 2
+                    )
+                    """
+        )
+        result.assertThat().buildSuccessful()
+    }
+
+    @Test
     fun `warning - a newer platform revision`() {
         givenAndroidSdkPlatform(version = 29, revision = 6)
 
@@ -185,10 +235,14 @@ internal class CheckAndroidSdkVersionTest {
         ).runChecks(expectFailure)
     }
 
-    private fun givenAndroidSdkPlatform(version: Int, revision: Int) {
+    private fun givenAndroidSdkPlatform(
+        version: Int,
+        revision: Int,
+        directoryName: String = "android-$version"
+    ) {
         requireNotNull(androidHome)
             .dir("platforms")
-            .dir("android-$version")
+            .dir(directoryName)
             .file("source.properties", """Pkg.Revision=$revision""".trimIndent())
     }
 }

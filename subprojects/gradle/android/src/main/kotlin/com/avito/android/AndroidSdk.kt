@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.android.sdklib.AndroidVersion
 import com.avito.utils.ExistingDirectoryImpl
 import com.avito.utils.ProcessRunner
 import org.gradle.api.Project
@@ -20,7 +21,8 @@ public open class BaseAndroidSdk(
 
     public fun buildTools(buildToolsVersion: String): File = File(androidHome, "/build-tools/$buildToolsVersion")
 
-    public fun platform(compileSdkVersion: Int): File = File(androidHome, "platforms/android-$compileSdkVersion")
+    public fun platform(compileSdkVersion: Int, compileSdkMinor: Int = 0): File =
+        File(androidHome, "platforms/${AndroidVersion(compileSdkVersion, compileSdkMinor).platformHashString}")
 }
 
 public class AndroidSdk(

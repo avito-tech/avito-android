@@ -11,6 +11,10 @@ dependencies {
     api(project(":subprojects:common:result"))
 
     implementation(gradleApi())
+    implementation(libs.androidToolsCommon) {
+        because("com.android.sdklib.AndroidVersion")
+        excludeTransitiveAgpDependencies()
+    }
     implementation(project(":subprojects:common:files"))
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:gradle:gradle-extensions"))

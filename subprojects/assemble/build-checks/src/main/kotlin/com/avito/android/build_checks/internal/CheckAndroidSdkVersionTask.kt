@@ -42,7 +42,7 @@ internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
     }
 
     private fun checkVersion(version: AndroidSdkVersion) {
-        val localRevision = localRevision(version.compileSdkVersion)
+        val localRevision = localRevision(version)
         val expectedRevision = version.revision
         val strict = version.strict
 
@@ -81,25 +81,27 @@ internal abstract class CheckAndroidSdkVersionTask @Inject constructor(
         }
     }
 
-    private fun localRevision(compileSdkVersion: Int): Int {
-        val sourceProperties: File = platformSourceProperties(compileSdkVersion)
+    private fun localRevision(version: AndroidSdkVersion): Int {
+        val sourceProperties: File = platformSourceProperties(version)
         return requireNotNull(sourceProperties.loadProperties().getProperty("Pkg.Revision", null))
             .toInt()
     }
 
-    private fun platformSourceProperties(compileSdkVersion: Int): File {
-        return File(platformDir(compileSdkVersion), "source.properties")
+    private fun platformSourceProperties(version: AndroidSdkVersion): File {
+        return File(platformDir(version), "source.properties")
     }
 
-    private fun platformDir(compileSdkVersion: Int): File {
+    private fun platformDir(version: AndroidSdkVersion): File {
         val sdk = AndroidSdk.fromProject(
             rootDir = projectRootDir.asFile,
         )
-        val dir = sdk.platform(compileSdkVersion)
+        val dir = sdk.platform(version.compileSdkVersion, version.compileSdkMinorVersion)
+
+        val platformVersion = dir.name.removePrefix("android-")
 
         require(dir.exists()) {
             """========= ERROR =========
-               Android SDK platform $compileSdkVersion is not found in ${dir.canonicalPath}.
+               Android SDK platform $platformVersion is not found in ${dir.canonicalPath}.
                
                How to fix: install it or update in SDK Manager
                 """.trimIndent()

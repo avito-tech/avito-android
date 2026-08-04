@@ -25,10 +25,11 @@ endif
 
 ## Step 3: Update `libs.versions.toml`
 
-Update compileSdk and buildTools (if you updated the version in android-builder)
+Update compileSdk/compileSdkMinor and buildTools (if you updated the version in android-builder)
 ```properties
-buildTools = "36.0.0"
-compileSdk = "36"
+buildTools = "37.0.0"
+compileSdk = "37"
+compileSdkMinor = "0"
 ```
 
 ## Step 4: Fix possible compilation errors
@@ -40,7 +41,7 @@ Set the maximum supported sdk in `com.avito.android.util.DeviceSettingsChecker`:
 ```kotlin
 public class DeviceSettingsChecker(
     // ...
-    private val maximumSupportedSdk: Int = Build.VERSION_CODES.BAKLAVA,
+    private val maximumSupportedSdk: Int = Build.VERSION_CODES.CINNAMON_BUN,
     // ...
 )
 ```

@@ -28,15 +28,21 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
 
             public data class AndroidSdkVersion(
                 val compileSdkVersion: Int,
+                val compileSdkMinorVersion: Int = 0,
                 val revision: Int,
                 val strict: Boolean,
             ) : Serializable
 
             internal val versions = mutableSetOf<AndroidSdkVersion>()
 
-            public fun version(compileSdkVersion: Int, revision: Int, strict: Boolean = false) {
+            public fun version(
+                compileSdkVersion: Int,
+                compileSdkMinorVersion: Int = 0,
+                revision: Int,
+                strict: Boolean = false,
+            ) {
                 versions.add(
-                    AndroidSdkVersion(compileSdkVersion, revision, strict)
+                    AndroidSdkVersion(compileSdkVersion, compileSdkMinorVersion, revision, strict)
                 )
             }
 

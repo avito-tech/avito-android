@@ -1,6 +1,8 @@
 package com.avito.test.gradle.module
 
 import com.avito.test.gradle.buildToolsVersion
+import com.avito.test.gradle.compileSdkMinorVersion
+import com.avito.test.gradle.compileSdkVersion
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -13,7 +15,6 @@ import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.module
 import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
-import com.avito.test.gradle.sdkVersion
 import java.io.File
 
 public class AndroidAppModule(
@@ -207,7 +208,8 @@ public class AndroidAppModule(
             """
             |android {
             |   $namespace
-            |   compileSdkVersion($sdkVersion)
+            |   compileSdk = $compileSdkVersion
+            |   compileSdkMinor = $compileSdkMinorVersion
             |   buildToolsVersion = "$buildToolsVersion"
             |   defaultConfig {
             |       applicationId = "$packageName"
@@ -232,7 +234,8 @@ public class AndroidAppModule(
             """
             |android {
             |   $namespace
-            |   compileSdkVersion $sdkVersion
+            |   compileSdk = $compileSdkVersion
+            |   compileSdkMinor = $compileSdkMinorVersion
             |   buildToolsVersion "$buildToolsVersion"
             |   defaultConfig {
             |       applicationId "$packageName"

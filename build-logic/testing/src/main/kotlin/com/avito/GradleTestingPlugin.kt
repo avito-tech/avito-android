@@ -121,6 +121,7 @@ class GradleTestingPlugin : Plugin<Project> {
 
                 systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
                 systemProperty("compileSdkVersion", libs.versions.compileSdk.get().toInt())
+                systemProperty("compileSdkMinor", libs.versions.compileSdkMinor.get())
                 systemProperty("buildToolsVersion", libs.versions.buildTools.get())
                 systemProperty("targetSdk", libs.versions.targetSdk.get().toInt())
                 systemProperty("minSdk", libs.versions.minSdk.get().toInt())

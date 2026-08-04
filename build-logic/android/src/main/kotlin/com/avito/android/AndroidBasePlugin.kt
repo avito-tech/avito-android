@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.tasks.VerifyLibraryResourcesTask
 import org.gradle.api.JavaVersion
@@ -9,6 +10,11 @@ import org.gradle.api.Project
 class AndroidBasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
+            extensions.configure(CommonExtension::class.java) { android ->
+                android.compileSdk = libs.versions.compileSdk.get().toInt()
+                android.compileSdkMinor = libs.versions.compileSdkMinor.get().toIntOrNull()
+            }
+
             extensions.configure(BaseExtension::class.java) { androidBase ->
                 with(androidBase) {
                     sourceSets { sourceSets ->
@@ -18,7 +24,6 @@ class AndroidBasePlugin : Plugin<Project> {
                     }
 
                     buildToolsVersion(libs.versions.buildTools.get())
-                    compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
                     defaultConfig {
                         it.minSdk = libs.versions.minSdk.get().toInt()

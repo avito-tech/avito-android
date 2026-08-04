@@ -19,7 +19,9 @@ import java.util.Properties
 /**
  * @see [convention.gradle-testing.gradle.kts]
  */
-internal val sdkVersion: Int by lazy { System.getProperty("compileSdkVersion").toInt() }
+internal val compileSdkVersion: Int by lazy { System.getProperty("compileSdkVersion").toInt() }
+internal val compileSdkMinorVersion: Int by lazy { System.getProperty("compileSdkMinor").toInt() }
+
 internal val targetSdk: Int by lazy { System.getProperty("targetSdk").toInt() }
 internal val minSdkVersion: Int by lazy { System.getProperty("minSdk").toInt() }
 internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
