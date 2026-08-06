@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.kotlinx.cli)
 
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.truth)
     integTestImplementation(libs.junit.jupiter)
 }
 

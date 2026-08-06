@@ -3,6 +3,7 @@ package ru.avito.image_builder.internal.cli
 import kotlinx.cli.ArgType
 import kotlinx.cli.delimiter
 import kotlinx.cli.required
+import ru.avito.image_builder.internal.command.ApiLevel
 import ru.avito.image_builder.internal.command.EmceeWorkerBuilder
 import ru.avito.image_builder.internal.command.EmulatorType
 import ru.avito.image_builder.internal.command.ImageTagger
@@ -16,9 +17,9 @@ internal class PublishEmceeWorker(
     description: String,
 ) : BaseEmceeBuildImage(name, description) {
 
-    private val apis: List<Int> by option(
-        type = ArgType.Int,
-        description = "Space separated list of API versions, e.g. '27 35'"
+    private val apis: List<ApiLevel> by option(
+        type = ApiLevelArg,
+        description = "Space separated list of API versions, e.g. '27 35 37.0'"
     ).required()
         .delimiter(" ")
 
@@ -56,4 +57,12 @@ internal class PublishEmceeWorker(
         )
         buildOrPublishImage(docker, builder)
     }
+}
+
+private object ApiLevelArg : ArgType<ApiLevel>(hasParameter = true) {
+
+    override val description: kotlin.String
+        get() = "{ Api level, e.g. 30 or 37.0 }"
+
+    override fun convert(value: kotlin.String, name: kotlin.String): ApiLevel = ApiLevel.parse(value)
 }

@@ -1,5 +1,6 @@
 package ru.avito.image_builder.internal.command.emulator
 
+import ru.avito.image_builder.internal.command.ApiLevel
 import ru.avito.image_builder.internal.command.EmulatorType
 import ru.avito.image_builder.internal.docker.ContainerId
 import ru.avito.image_builder.internal.docker.Docker
@@ -13,11 +14,11 @@ internal class EmulatorPreparer(
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)
 
-    fun prepareEmulators(imageId: ImageId, apisAndTypes: Map<Int, EmulatorType>, emulatorLocale: String): ImageId {
+    fun prepareEmulators(imageId: ImageId, apisAndTypes: Map<ApiLevel, EmulatorType>, emulatorLocale: String): ImageId {
         val containerId = runContainer(imageId)
 
         apisAndTypes.forEach { (api, type) ->
-            val architecture = if (api < 28) "x86" else "x86_64"
+            val architecture = if (api.sdkInt < 28) "x86" else "x86_64"
             prepareEmulator(containerId, api, type, architecture, emulatorLocale)
         }
 
@@ -49,7 +50,7 @@ internal class EmulatorPreparer(
 
     private fun prepareEmulator(
         containerId: ContainerId,
-        api: Int,
+        api: ApiLevel,
         type: EmulatorType,
         architecture: String,
         emulatorLocale: String

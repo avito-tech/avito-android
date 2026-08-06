@@ -25,7 +25,7 @@ internal class EmceeWorkerBuilder(
     private val tagger: ImageTagger,
     private val emulatorPreparer: EmulatorPreparer,
     private val emulatorLocale: String,
-    private val apisAndTypes: Map<Int, EmulatorType>,
+    private val apisAndTypes: Map<ApiLevel, EmulatorType>,
 ) : ImageBuilder {
 
     private val log: Logger = Logger.getLogger(this::class.java.simpleName)

@@ -2,6 +2,7 @@
 kotlin = "1.8.20"
 kotlinxCli = "0.3.5"
 junit5 = "5.10.0"
+truth = "1.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -11,3 +12,4 @@ nebula = { id = "nebula.integtest", version = "9.6.3" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom" }
 kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinxCli" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit5" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
