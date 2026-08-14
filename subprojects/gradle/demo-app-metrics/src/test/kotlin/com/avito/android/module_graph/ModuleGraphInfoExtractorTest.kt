@@ -5,6 +5,7 @@ import com.avito.android.module_graph.extractor.ModuleGraphInfoExtractor
 import com.avito.android.module_graph.models.GradleDependency
 import com.avito.android.module_graph.models.ModuleGraphEdge
 import com.avito.android.module_graph.models.ModuleGraphInfo
+import com.avito.android.module_graph.models.ModuleLinesOfCode
 import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.ModuleType
 import com.google.common.truth.Truth.assertThat
@@ -53,12 +54,18 @@ class ModuleGraphInfoExtractorTest {
                         type = "Api",
                     )
                 ),
-                sizes = mapOf(
+                applications = listOf(":avito-app"),
+                linesOfCode = mapOf(
+                    ":avito-app" to ModuleLinesOfCode(main = 10, test = 1, androidTest = 1),
+                    ":avito:feature-1" to ModuleLinesOfCode(main = 10),
+                    ":avito:lib-1" to ModuleLinesOfCode(main = 10),
+                ),
+                transitiveLinesOfCode = mapOf(
                     ":avito-app" to 32,
                     ":avito:feature-1" to 20,
                     ":avito:lib-1" to 10,
                 ),
-                modulesToDemoApps = mapOf(
+                impactedApplications = mapOf(
                     ":avito-app" to listOf(":avito-app"),
                     ":avito:feature-1" to listOf(":avito-app"),
                     ":avito:lib-1" to listOf(":avito-app"),
@@ -118,13 +125,20 @@ class ModuleGraphInfoExtractorTest {
                         type = "Api",
                     )
                 ),
-                sizes = mapOf(
+                applications = listOf(":avito-app", ":avito:demo-1"),
+                linesOfCode = mapOf(
+                    ":avito-app" to ModuleLinesOfCode(main = 10, test = 1, androidTest = 1),
+                    ":avito:demo-1" to ModuleLinesOfCode(main = 10, test = 1, androidTest = 1),
+                    ":avito:feature-1" to ModuleLinesOfCode(main = 10),
+                    ":avito:lib-1" to ModuleLinesOfCode(main = 10),
+                ),
+                transitiveLinesOfCode = mapOf(
                     ":avito-app" to 32,
                     ":avito:demo-1" to 32,
                     ":avito:feature-1" to 20,
                     ":avito:lib-1" to 10,
                 ),
-                modulesToDemoApps = mapOf(
+                impactedApplications = mapOf(
                     ":avito-app" to listOf(":avito-app"),
                     ":avito:demo-1" to listOf(":avito:demo-1"),
                     ":avito:feature-1" to listOf(":avito-app", ":avito:demo-1"),
@@ -168,11 +182,16 @@ class ModuleGraphInfoExtractorTest {
                         type = "Implementation",
                     ),
                 ),
-                sizes = mapOf(
+                applications = listOf(":avito-app"),
+                linesOfCode = mapOf(
+                    ":avito-app" to ModuleLinesOfCode(main = 10, test = 1, androidTest = 1),
+                    ":avito:feature-1" to ModuleLinesOfCode(main = 10),
+                ),
+                transitiveLinesOfCode = mapOf(
                     ":avito-app" to 22,
                     ":avito:feature-1" to 10,
                 ),
-                modulesToDemoApps = mapOf(
+                impactedApplications = mapOf(
                     ":avito-app" to listOf(":avito-app"),
                     ":avito:feature-1" to listOf(":avito-app"),
                 )
@@ -241,13 +260,20 @@ class ModuleGraphInfoExtractorTest {
                         type = "Api",
                     ),
                 ),
-                sizes = mapOf(
+                applications = listOf(":avito-app"),
+                linesOfCode = mapOf(
+                    ":avito-app" to ModuleLinesOfCode(main = 10, test = 1, androidTest = 1),
+                    ":avito:feature-1" to ModuleLinesOfCode(main = 10),
+                    ":avito:feature-2" to ModuleLinesOfCode(main = 10),
+                    ":avito:lib-1" to ModuleLinesOfCode(main = 10),
+                ),
+                transitiveLinesOfCode = mapOf(
                     ":avito-app" to 42,
                     ":avito:feature-1" to 20,
                     ":avito:feature-2" to 20,
                     ":avito:lib-1" to 10,
                 ),
-                modulesToDemoApps = mapOf(
+                impactedApplications = mapOf(
                     ":avito-app" to listOf(":avito-app"),
                     ":avito:feature-1" to listOf(":avito-app"),
                     ":avito:feature-2" to listOf(":avito-app"),

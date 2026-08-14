@@ -58,7 +58,7 @@ internal abstract class UploadModuleGraphAppDependenciesTask : DefaultTask() {
     private fun ModuleGraphInfo.toRequest(): UploadModuleGraphAppDependenciesRequest {
         return UploadModuleGraphAppDependenciesRequest(
             dumpInfo = DumpInfo.fromExtension(dumpInfoConfiguration.get()),
-            modulesToDemoApps = modulesToDemoApps.flatMap { (module, demoApps) ->
+            modulesToDemoApps = impactedApplications.flatMap { (module, demoApps) ->
                 demoApps.map {
                     ModuleDemoAppDependency(
                         module = module,

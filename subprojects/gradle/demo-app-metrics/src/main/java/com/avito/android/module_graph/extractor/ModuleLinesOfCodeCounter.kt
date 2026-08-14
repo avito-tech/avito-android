@@ -21,10 +21,20 @@ public class ModuleLinesOfCodeCounterImpl(
         if (!projectDir.resolve("$modulePath/src/$sourceSetDirName").exists()) {
             return 0
         }
-        val clockResult = ProcessRunner
-            .create(projectDir)
-            .run(command = "cloc $modulePath/src/$sourceSetDirName --json", Duration.ofSeconds(10))
-            .getOrThrow()
+        val processRunner = ProcessRunner.create(projectDir)
+        val timeout = Duration.ofSeconds(10)
+        val clockResult = processRunner
+            .run(command = "cloc $modulePath/src/$sourceSetDirName --json", timeout)
+            .getOrElse { cause ->
+                processRunner.run(command = "cloc --version", timeout).getOrElse {
+                    throw IllegalStateException(
+                        "cloc not found. Install it and make it available on PATH, " +
+                            "for example: brew install cloc",
+                        cause,
+                    )
+                }
+                throw cause
+            }
 
         val output = defaultJson.decodeFromString<ClocOutput>(clockResult)
         return output.kotlin.code + output.xml.code

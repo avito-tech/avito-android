@@ -3,6 +3,7 @@ package com.avito.android.module_graph.extractor
 import com.avito.android.module_graph.models.GradleDependency
 import com.avito.android.module_graph.models.ModuleGraphEdge
 import com.avito.android.module_graph.models.ModuleGraphInfo
+import com.avito.android.module_graph.models.ModuleLinesOfCode
 import com.avito.android.module_graph.models.ModulesGraph
 import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.ModuleType
@@ -24,10 +25,20 @@ public class ModuleGraphInfoExtractor(
         )
 
         val moduleGraph = createGraph(dependencies)
-        val moduleNames = moduleGraph.vertexSet().filter { isInternalModule(it) }
+        val moduleNames = moduleGraph.vertexSet().filter { isInternalModule(it) }.sorted()
+        val applicationNames = moduleNames.filter { isDemoOrUserApp(it) }
 
-        val modulesToMainSourceSetLinesOfCode = moduleNames.associateWith { moduleName ->
-            linesOfCodeCounter.count(projectDir, moduleName, "main")
+        val modulesToLinesOfCode = moduleNames.associateWith { moduleName ->
+            val isApplication = isDemoOrUserApp(moduleName)
+            ModuleLinesOfCode(
+                main = linesOfCodeCounter.count(projectDir, moduleName, "main"),
+                test = if (isApplication) linesOfCodeCounter.count(projectDir, moduleName, "test") else null,
+                androidTest = if (isApplication) {
+                    linesOfCodeCounter.count(projectDir, moduleName, "androidTest")
+                } else {
+                    null
+                },
+            )
         }
 
         val modulesToDependencyModules = moduleNames.associateWith { moduleName ->
@@ -49,12 +60,11 @@ public class ModuleGraphInfoExtractor(
         val modulesToSizeInLinesOfCode =
             modulesToDependencyModules.mapValues { (moduleName, moduleDependencies) ->
                 var size = moduleDependencies.sumOf {
-                    modulesToMainSourceSetLinesOfCode.getValue(it)
+                    modulesToLinesOfCode.getValue(it).main
                 }
                 if (isDemoOrUserApp(moduleName)) {
-                    val testLinesOfCodeCount = linesOfCodeCounter.count(projectDir, moduleName, "test")
-                    val androidTestLinesOfCodeCount = linesOfCodeCounter.count(projectDir, moduleName, "androidTest")
-                    size += testLinesOfCodeCount + androidTestLinesOfCodeCount
+                    val applicationLinesOfCode = modulesToLinesOfCode.getValue(moduleName)
+                    size += applicationLinesOfCode.test.orZero() + applicationLinesOfCode.androidTest.orZero()
                 }
                 size
             }
@@ -79,8 +89,10 @@ public class ModuleGraphInfoExtractor(
 
         return ModuleGraphInfo(
             dependencies = internalModuleEdges,
-            sizes = modulesToSizeInLinesOfCode,
-            modulesToDemoApps = modulesToImpactedApps,
+            applications = applicationNames,
+            linesOfCode = modulesToLinesOfCode,
+            transitiveLinesOfCode = modulesToSizeInLinesOfCode,
+            impactedApplications = modulesToImpactedApps,
         )
     }
 
@@ -128,3 +140,5 @@ public class ModuleGraphInfoExtractor(
         return type in listOf(FunctionalType.UserApp, FunctionalType.DemoApp)
     }
 }
+
+private fun Int?.orZero(): Int = this ?: 0

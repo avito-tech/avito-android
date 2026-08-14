@@ -58,7 +58,7 @@ internal abstract class UploadModuleSizesTask : DefaultTask() {
     private fun ModuleGraphInfo.toRequest(): UploadModuleSizesRequest {
         return UploadModuleSizesRequest(
             dumpInfo = DumpInfo.fromExtension(dumpInfoConfiguration.get()),
-            sizes = sizes,
+            sizes = transitiveLinesOfCode,
         )
     }
 

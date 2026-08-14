@@ -67,13 +67,20 @@ internal val MODULE_GRAPH_INFO_JSON = """
                        "type": "Implementation"
                    }
                ],
-               "sizes": {
+               "applications": [":demo-app-1", ":demo-app-2"],
+               "linesOfCode": {
+                    ":demo-app-1": {"main": 10, "test": 10, "androidTest": 10},
+                    ":demo-app-2": {"main": 10, "test": 5, "androidTest": 5},
+                    ":module-1": {"main": 10},
+                    ":module-2": {"main": 10}
+               },
+               "transitiveLinesOfCode": {
                     ":demo-app-1": 30,
                     ":demo-app-2": 20,
                     ":module-1": 10,
                     ":module-2": 10
                },
-               "modulesToDemoApps": {
+               "impactedApplications": {
                     ":module-1": [
                       ":demo-app-1"
                     ],

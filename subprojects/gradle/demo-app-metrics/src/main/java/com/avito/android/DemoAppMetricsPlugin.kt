@@ -28,6 +28,8 @@ public class DemoAppMetricsPlugin : Plugin<Project> {
         project.tasks.register<GenerateModuleGraphTask>(GenerateModuleGraphTask.NAME) {
             outputFile.set(project.layout.buildDirectory.file("module-graph.json"))
             infoExtractorService.set(ModuleGraphInfoExtractorService.provideService(project))
+            // Module sources used for LOC are not declared as task inputs.
+            outputs.upToDateWhen { false }
         }
     }
 

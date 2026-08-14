@@ -3,6 +3,7 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.kotlin-serialization")
     id("convention.test-fixtures")
+    id("convention.gradle-testing")
 }
 dependencies {
     implementation(project(":subprojects:gradle:module-types-api"))
@@ -11,8 +12,12 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(libs.jdgraphtCore)
     implementation(libs.kotlinGradle)
+    runtimeOnly(project(":subprojects:gradle:module-types")) {
+        because("Need to run gradleTest. Adding to gradleTestRuntime doesn't work")
+    }
 
     testImplementation(testFixtures(project(":subprojects:gradle:module-types")))
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
     testFixturesImplementation(testFixtures(project(":subprojects:gradle:module-types")))
     testFixturesImplementation(libs.kotlinx.serialization.json)
 }

@@ -5,8 +5,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class ModuleGraphInfo(
     val dependencies: List<ModuleGraphEdge>,
-    val sizes: Map<String, Int>,
-    val modulesToDemoApps: Map<String, List<String>>,
+    val applications: List<String>,
+    val linesOfCode: Map<String, ModuleLinesOfCode>,
+    val transitiveLinesOfCode: Map<String, Int>,
+    val impactedApplications: Map<String, List<String>>,
+)
+
+@Serializable
+public data class ModuleLinesOfCode(
+    val main: Int,
+    val test: Int? = null,
+    val androidTest: Int? = null,
 )
 
 @Serializable
