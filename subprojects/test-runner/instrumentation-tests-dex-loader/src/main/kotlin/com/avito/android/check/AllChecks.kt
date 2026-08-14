@@ -10,6 +10,7 @@ public class AllChecks(
 
     private val testSignatureChecks: List<TestSignatureCheck> = listOf(
         ClassAndMethodDuplicateAnnotationCheck(onViolation),
+        CommandUuidFormatCheck(onViolation),
         ExternalIdDuplicateCheck(onViolation),
         DataSetDuplicateCheck(onViolation)
     )

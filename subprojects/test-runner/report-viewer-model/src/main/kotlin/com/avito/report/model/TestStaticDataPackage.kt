@@ -21,6 +21,7 @@ public data class TestStaticDataPackage(
     override val groupList: List<String>,
     override val isRegression: Boolean,
     override val regions: List<String> = emptyList(),
+    override val commandUuid: String? = null,
 ) : TestStaticData {
 
     override fun equals(other: Any?): Boolean {

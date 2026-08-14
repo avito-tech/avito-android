@@ -39,4 +39,6 @@ public interface TestStaticData {
     public val isRegression: Boolean
 
     public val regions: List<String>
+
+    public val commandUuid: String?
 }

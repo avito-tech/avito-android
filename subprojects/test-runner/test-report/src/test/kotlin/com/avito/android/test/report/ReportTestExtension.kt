@@ -77,6 +77,7 @@ internal class ReportTestExtension(
         groupList: List<String> = emptyList(),
         isRegression: Boolean = false,
         regions: List<String> = emptyList(),
+        commandUuid: String? = null,
     ) {
         initTestCase(
             testMetadata = TestMetadata(
@@ -94,6 +95,7 @@ internal class ReportTestExtension(
                 groupList = groupList,
                 isRegression = isRegression,
                 regions = regions,
+                commandUuid = commandUuid,
             )
         )
     }

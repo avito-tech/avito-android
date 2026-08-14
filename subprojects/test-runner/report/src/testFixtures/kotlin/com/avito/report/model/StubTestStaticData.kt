@@ -21,6 +21,7 @@ public fun TestStaticDataPackage.Companion.createStubInstance(
     groupList: List<String> = emptyList(),
     isRegression: Boolean = false,
     regions: List<String> = emptyList(),
+    commandUuid: String? = null,
 ): TestStaticDataPackage = TestStaticDataPackage(
     name = name,
     device = deviceName,
@@ -37,4 +38,5 @@ public fun TestStaticDataPackage.Companion.createStubInstance(
     groupList = groupList,
     isRegression = isRegression,
     regions = regions,
+    commandUuid = commandUuid,
 )

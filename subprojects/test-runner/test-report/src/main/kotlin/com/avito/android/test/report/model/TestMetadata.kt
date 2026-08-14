@@ -22,6 +22,7 @@ public data class TestMetadata(
     val groupList: List<String>,
     val isRegression: Boolean,
     val regions: List<String>,
+    val commandUuid: String?,
 ) : Serializable {
     internal companion object
 }

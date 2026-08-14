@@ -3,6 +3,7 @@ package com.avito.android.runner.annotation.resolver
 import android.os.Build
 import com.avito.android.test.annotations.Behavior
 import com.avito.android.test.annotations.CaseId
+import com.avito.android.test.annotations.CommandUuid
 import com.avito.android.test.annotations.DataSetNumber
 import com.avito.android.test.annotations.Description
 import com.avito.android.test.annotations.E2EStub
@@ -23,6 +24,7 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.test.annotations.UnitTest
+import com.avito.android.test.annotations.normalizeCommandUuid
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
@@ -47,6 +49,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
         var groupList: List<String> = emptyList()
         var isRegression: Boolean = false
         var regions: List<String> = emptyList()
+        var commandUuid: String? = null
 
         val annotationTypes = arrayOf(
             FeatureId::class.java,
@@ -68,6 +71,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
             ScreenshotTest::class.java,
             Regression::class.java,
             Regions::class.java,
+            CommandUuid::class.java,
         )
 
         val testAnnotations = Annotations.getAnnotationsSubset(test.testClass, test.testMethod, *annotationTypes)
@@ -92,6 +96,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
                     is GroupList -> groupList = annotation.value.toList()
                     is Regression -> isRegression = true
                     is Regions -> regions = annotation.value.map { it.uppercase() }
+                    is CommandUuid -> commandUuid = normalizeCommandUuid(annotation.value)
                 }
             }
 
@@ -111,6 +116,7 @@ public class TestMetadataAnnotationResolver : TestMetadataResolver {
                 groupList = groupList,
                 isRegression = isRegression,
                 regions = regions,
+                commandUuid = commandUuid,
             )
         )
     }

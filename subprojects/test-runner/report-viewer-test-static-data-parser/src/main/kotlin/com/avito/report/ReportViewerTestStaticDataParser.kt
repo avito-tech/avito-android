@@ -4,6 +4,7 @@ import com.avito.android.AnnotationData
 import com.avito.android.TestInApk
 import com.avito.android.test.annotations.Behavior
 import com.avito.android.test.annotations.CaseId
+import com.avito.android.test.annotations.CommandUuid
 import com.avito.android.test.annotations.DataSetNumber
 import com.avito.android.test.annotations.Description
 import com.avito.android.test.annotations.E2EStub
@@ -25,6 +26,7 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.test.annotations.UnitTest
+import com.avito.android.test.annotations.normalizeCommandUuid
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.TestStaticData
@@ -124,6 +126,8 @@ public interface ReportViewerTestStaticDataParser {
                 .any { it.name == Regression::class.java.canonicalName },
 
             regions = determineRegions(testInApk.annotations),
+
+            commandUuid = determineCommandUuid(testInApk.annotations),
         )
 
         private fun determineFlakiness(annotations: List<AnnotationData>, api: Int): Flakiness {
@@ -169,6 +173,12 @@ public interface ReportViewerTestStaticDataParser {
                 ?: emptyList()
         }
 
+        private fun determineCommandUuid(annotations: List<AnnotationData>): String? {
+            val annotation = annotations.find { it.name == CommandUuid::class.java.canonicalName }
+
+            return normalizeCommandUuid(annotation?.getStringValue(COMMAND_UUID_VALUE_KEY))
+        }
+
         private fun determineKind(annotations: List<AnnotationData>): Kind =
             annotations.find { it.name in annotationsToKindMap.keys }
                 ?.let { annotationsToKindMap[it.name] }
@@ -193,5 +203,7 @@ private const val FLAKY_REASON_KEY = "reason"
 private const val FLAKY_SDKS_KEY = "onSdks"
 
 private const val GROUP_LIST_VALUE_KEY = "value"
+
+private const val COMMAND_UUID_VALUE_KEY = "value"
 
 private const val REGIONS_VALUE_KEY = "value"

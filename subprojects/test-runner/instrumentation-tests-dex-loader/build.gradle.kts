@@ -13,6 +13,7 @@ dependencies {
 
     testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:common:resources"))
+    testImplementation(project(":subprojects:test-runner:test-annotations"))
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
 }

@@ -82,14 +82,7 @@ internal class TestSuiteLoaderImpl(
     private fun Method.hasTestAnnotation() =
         annotationExtractor.hasAnnotation(this, AnnotationType(TEST_ANNOTATION))
 
-    private fun String.toJavaType() = if (startsWith(DEX_OBJECT_TYPE_PREFIX) && endsWith(';')) {
-        substring(1, length - 1).replace('/', '.')
-    } else {
-        throw IllegalStateException("Invalid dex object type")
-    }
-
     internal companion object {
-        private const val DEX_OBJECT_TYPE_PREFIX = 'L'
         private const val TEST_ANNOTATION = "Lorg/junit/Test;"
         private const val KOTLIN_METADATA_ANNOTATION = "Lkotlin/Metadata;"
 

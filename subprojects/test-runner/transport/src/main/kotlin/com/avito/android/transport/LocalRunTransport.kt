@@ -65,6 +65,7 @@ internal class LocalRunTransport(
                 groupList = state.testMetadata.groupList,
                 isRegression = state.testMetadata.isRegression,
                 regions = state.testMetadata.regions,
+                commandUuid = state.testMetadata.commandUuid,
             )
 
             AndroidTest.Completed.create(
