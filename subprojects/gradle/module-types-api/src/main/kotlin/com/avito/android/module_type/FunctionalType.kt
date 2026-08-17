@@ -1,151 +1,156 @@
 package com.avito.android.module_type
 
 /**
- * Описывает тип модуля исходя из его содержимого
+ * Describes a module based on its contents.
  */
 public enum class FunctionalType {
 
-    @Deprecated("См. https://links.k.avito.ru/android-modules-2/#abstract")
+    @Deprecated("See https://links.k.avito.ru/android-modules-2/#abstract")
     Abstract,
 
     /**
-     * Модуль с интерфейсом к реализации функциональности и фейковой реализацией для демо-приложений.
+     * A module that exposes an interface to a feature implementation and provides a fake implementation
+     * for demo applications.
      *
-     * См. [:public](https://links.k.avito.ru/android-modules-2/#public)
+     * See [:public](https://links.k.avito.ru/android-modules-2/#public).
      */
     Public,
 
     /**
-     * Модуль с реализацией функциональности.
-     * Может использоваться как для реализации фичи, так и для реализации общей библиотеки.
+     * A module that implements functionality.
+     * It can implement either a feature or a shared library.
      *
-     * См. [:impl](https://links.k.avito.ru/android-modules-2/#impl)
+     * See [:impl](https://links.k.avito.ru/android-modules-2/#impl).
      */
     Impl,
 
-    @Deprecated("Отказываемся в рамках TDR https://links.k.avito.ru/android-tdr-no-fake")
+    @Deprecated("Deprecated by TDR https://links.k.avito.ru/android-tdr-no-fake")
     Fake,
 
     /**
-     * Модуль с реализацией функциональности.
-     * Может быть подключен в качестве зависимости только к дебажной сборке.
+     * A module that implements functionality.
+     * It can only be added as a dependency of a debug build.
      *
-     * См. [:debug](https://links.k.avito.ru/android-modules-2/#debug)
+     * See [:debug](https://links.k.avito.ru/android-modules-2/#debug).
      */
     Debug,
 
     /**
-     * Модуль с DI-компонентами, связывающими код из Public и Impl.
+     * A module with DI components that connect code from Public and Impl modules.
      *
-     * Реализован на случай использования стратегии
-     * [@MergeComponent в отдельном модуле](https://cf.avito.ru/pages/viewpage.action?pageId=261393720)
+     * Supports the strategy of placing @MergeComponent in a separate module.
      */
-    @Deprecated("Стратегия @MergeComponent в отдельном модуле не используется, используется @ContributesSubcomponent")
+    @Deprecated("The separate @MergeComponent module strategy is no longer used; use @ContributesSubcomponent")
     ImplWiring,
 
     /**
-     * Модуль с DI-компонентами, связывающими код из Public и Fake.
+     * A module with DI components that connect code from Public and Fake modules.
      *
-     * Реализован на случай использования стратегии
-     * [@MergeComponent в отдельном модуле](https://cf.avito.ru/pages/viewpage.action?pageId=261393720)
+     * Supports the strategy of placing @MergeComponent in a separate module.
      */
-    @Deprecated("Стратегия @MergeComponent в отдельном модуле не используется, используется @ContributesSubcomponent")
+    @Deprecated("The separate @MergeComponent module strategy is no longer used; use @ContributesSubcomponent")
     FakeWiring,
 
     /**
-     * Модуль приложения, предназначенного для конечного пользователя.
+     * An application module intended for end users.
      */
     UserApp,
 
     /**
-     * Модуль демонстрационного приложения, используемого для разработки и тестирования.
+     * A demo application module used for development and testing.
      *
-     * См. [:demo](https://links.k.avito.ru/android-modules-2/#demo)
+     * See [:demo](https://links.k.avito.ru/android-modules-2/#demo).
      */
     DemoApp,
 
     /**
-     * Модуль с общими сущностями, для которых не целесообразно делать разделение на интерфейс и реализацию.
-     * Является костылем, рекомендуется избегать.
+     * A module with shared entities for which separating interface and implementation is impractical.
+     * This is a workaround and should be avoided.
      *
-     * См. [Утилитные модули](https://links.k.avito.ru/android-modules-2/#util)
+     * See [utility modules](https://links.k.avito.ru/android-modules-2/#util).
      */
     Util,
 
     /**
-     * Deprecated: создавайте [логические модули](https://links.k.avito.ru/android-modules-2).
+     * Deprecated: create [logical modules](https://links.k.avito.ru/android-modules-2) instead.
      *
-     * "Feature" модули: обособленная функциональность приложения,
-     * с которой взаимодействуем опосредованно, через навигацию.
+     * A Feature module contains a self-contained part of the application that is accessed indirectly
+     * through navigation.
      *
-     * Как правило это отдельный "экран": поиск, мессенджер, карточка объявления и т.п.
+     * It usually represents a separate screen, such as search, messenger, or an item details page.
      *
-     * Рассмотрим отличие от [Library] на примере профиля.
-     * Если могу открыть по диплинку и посмотреть\отредактировать профиль - это фича.
-     * Если это набор классов для получения информации \ редактирования профиля - это библиотека, ее используем в фичах.
+     * For example, a profile that can be opened by a deep link and viewed or edited is a feature.
+     * A set of classes for retrieving or editing profile data is a library used by features.
      *
      * [Features](https://links.k.avito.ru/android-modules-1/#avito-app)
      */
-    @Deprecated("Feature-модули устарели, создавайте логические модули")
+    @Deprecated("Feature modules are deprecated; create logical modules instead")
     Feature,
 
     /**
-     * Deprecated: создавайте [логические модули](https://links.k.avito.ru/android-modules-2).
+     * Deprecated: create [logical modules](https://links.k.avito.ru/android-modules-2) instead.
      *
-     * Переиспользуемая библиотека, подключается в [Feature] модули или в другие библиотеки.
-     * Пока для простоты считаем библиотеками все кроме feature модулей.
+     * A reusable library added to [Feature] modules or other libraries.
+     * For simplicity, every module other than a feature module is considered a library.
      *
      * [Modules types](https://links.k.avito.ru/android-modules-1/#types)
      */
-    @Deprecated("Library-модули устарели, создавайте логические модули")
+    @Deprecated("Library modules are deprecated; create logical modules instead")
     Library,
 
     /**
-     * Модуль с кастомными lint проверками, добавляем в lint конфигурации
+     * A module with custom lint checks added to lint configurations.
      */
     Lint,
 
     /**
-     * Модуль с кастомным detekt кодом, добавляем в detekt конфигурации
+     * A module with custom detekt code added to detekt configurations.
      */
     Detekt,
 
     /**
-     * Модуль c ksp, kapt кодом
+     * A module with KSP or KAPT code.
      */
     CodeGenerators,
 
     /**
-     * Модуль с dependency constraints, добавляем как platform зависимость.
+     * A module with dependency constraints added as a platform dependency.
      *
      * [Platform plugin](https://docs.gradle.org/current/userguide/java_platform_plugin.html)
      */
     Platform,
 
     /**
-     * Модуль с тестовыми фикстурами для unit и instrumentation-тестов
+     * A module that logically groups other modules.
+     * It is typically created by platform teams to address modularity concerns rather than by users
+     * of the platform.
+     */
+    Composition,
+
+    /**
+     * A module with test fixtures for unit and instrumentation tests.
      *
      * [test fixtures](https://links.k.avito.ru/android-modules-1/#text-fixtures)
-     * См. [:test](https://links.k.avito.ru/android-modules-2/#test)
+     * See [:test](https://links.k.avito.ru/android-modules-2/#test).
      */
     Test,
 
     /**
-     * Модуль с тестовыми фикстурами для unit и instrumentation-тестов для Debug модуля
+     * A module with unit and instrumentation test fixtures for a Debug module.
      *
      * [test fixtures](https://links.k.avito.ru/android-modules-1/#text-fixtures)
-     * См. [:test-debug](https://links.k.avito.ru/android-modules-2/#test-debug)
+     * See [:test-debug](https://links.k.avito.ru/android-modules-2/#test-debug).
      */
     TestDebug,
 
-    @Deprecated("Заменяем на TestPublic в рамках TDR https://links.k.avito.ru/android-tdr-no-fake")
+    @Deprecated("Replaced by TestPublic according to TDR https://links.k.avito.ru/android-tdr-no-fake")
     TestFake,
 
     /**
-     * Модуль с тестовыми фикстурами для unit и instrumentation-тестов для Public-модуля
+     * A module with unit and instrumentation test fixtures for a Public module.
      *
      * [test fixtures](https://links.k.avito.ru/android-modules-1/#text-fixtures)
-     * См. [:test-public](https://links.k.avito.ru/android-modules-2/#test-public)
+     * See [:test-public](https://links.k.avito.ru/android-modules-2/#test-public).
      */
     TestPublic,
 }
