@@ -12,7 +12,7 @@ class KotlinJvmPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
             plugins.apply(KotlinJvmBasePlugin::class.java)
-            val javaTarget = JavaLanguageVersion.of(libs.versions.java.get()).toString()
+            val javaTarget = JavaLanguageVersion.of(libs.versions.javaTarget.get()).toString()
 
             tasks.withType(JavaCompile::class.java) {
                 it.sourceCompatibility = javaTarget

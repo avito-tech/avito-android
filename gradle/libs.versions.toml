@@ -1,5 +1,7 @@
 [versions]
 java = "17"
+# Bytecode target of published artifacts; must not follow the toolchain `java` version
+javaTarget = "17"
 kotlin = "2.1.20"
 kotlinLanguageVersion = "2.1"
 kspVersion = "2.1.20-2.0.1"
