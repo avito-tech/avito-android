@@ -9,9 +9,11 @@ import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -89,6 +91,44 @@ internal class QAppsPluginIntegrationTest {
 
             testCollection
         }
+    }
+
+    @Test
+    fun `no apkDirectory override - upload unsigned - packages and uploads the final apk`(
+        @TempDir projectDir: File,
+    ) {
+        TestProjectGenerator(
+            modules = listOf(
+                AndroidAppModule(
+                    "app",
+                    enableKotlinAndroidPlugin = false,
+                    plugins = plugins {
+                        id("com.avito.android.qapps")
+                    },
+                    versionCode = 111,
+                    versionName = "12.3",
+                    packageName = "com.qapps.app",
+                    buildGradleExtra = """
+                         qapps {
+                            serviceUrl.set("${mockWebServer.url("/")}")
+                            branchName.set("My-feature-branch")
+                            comment.set("my awesome apk")
+                         }
+                    """.trimIndent(),
+                    useKts = true
+                )
+            )
+        ).generateIn(projectDir)
+
+        val runResult = runUpload(projectDir)
+
+        runResult.assertThat()
+            .buildSuccessful()
+            .taskWithOutcome(":app:packageDebug", TaskOutcome.SUCCESS)
+
+        val request = mockWebServer.takeRequest()
+        assertThat(request.path).isEqualTo("/qapps/api/os/android/upload")
+        assertThat(request.body.readUtf8()).contains("filename=\"app-debug.apk\"")
     }
 
     private fun multipartBodyFormData(key: String, value: String) =

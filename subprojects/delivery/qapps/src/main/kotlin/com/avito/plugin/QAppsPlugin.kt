@@ -1,11 +1,16 @@
 package com.avito.plugin
 
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.avito.android.signer.SignServicePlugin
 import com.avito.android.signer.signedApkDir
 import com.avito.android.withAndroidApp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 
 public class QAppsPlugin : Plugin<Project> {
@@ -15,6 +20,11 @@ public class QAppsPlugin : Plugin<Project> {
         val extension = project.extensions.create<QAppsExtension>("qapps")
 
         project.withAndroidApp { appExtension ->
+            val finalApkDirs = mutableMapOf<String, Provider<Directory>>()
+            project.extensions.getByType<ApplicationAndroidComponentsExtension>().onVariants { variant ->
+                finalApkDirs[variant.name] = variant.artifacts.get(SingleArtifact.APK)
+            }
+
             appExtension.applicationVariants.all { variant ->
 
                 project.tasks.register<QAppsUploadTask>(
@@ -22,15 +32,11 @@ public class QAppsPlugin : Plugin<Project> {
                 ) {
                     description = "Upload unsigned ${variant.name} to qapps"
                     configure(extension, variant)
-
-                    val packageTaskProvider = variant.packageApplicationProvider
-
-                    val apkProvider = packageTaskProvider.flatMap { it.outputDirectory }
-
-                    apkDirectory.convention(apkProvider)
-
-                    // todo remove, somehow implicit dependency not working
-                    dependsOn(packageTaskProvider)
+                    apkDirectory.convention(
+                        requireNotNull(finalApkDirs[variant.name]) {
+                            "No AGP variant '${variant.name}' to resolve the final APK from"
+                        }
+                    )
                 }
 
                 if (project.plugins.hasPlugin(SignServicePlugin::class.java)) {
