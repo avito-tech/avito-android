@@ -33,6 +33,11 @@ public abstract class CodeOwnershipExtension(
 
     public abstract val ownersDir: DirectoryProperty
 
+    /**
+     * Generates constants with team uuids in [ownersDir]. Units are not included.
+     */
+    public val generateCommandUuids: Property<Boolean> = objects.property<Boolean>().convention(false)
+
     @get:Nested
     public abstract val externalDependencies: ExternalDependenciesExtension
 

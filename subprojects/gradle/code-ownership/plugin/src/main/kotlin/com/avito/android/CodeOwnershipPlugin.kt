@@ -74,6 +74,7 @@ public class CodeOwnershipPlugin : Plugin<Project> {
             bitbucketCodeOwnershipExclusionsFile.set(
                 project.layout.projectDirectory.dir(".bitbucket").file("CodeOwnersExclusions.csv")
             )
+            generateCommandUuids.set(codeOwnershipExtension.generateCommandUuids)
         }
     }
 

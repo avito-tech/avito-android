@@ -7,8 +7,6 @@ import com.avito.android.model.Type
 import com.avito.android.model.Unit
 import com.avito.android.model.network.AvitoOwner
 import com.avito.android.model.network.AvitoOwnersClient
-import com.avito.android.model.network.OwnerType
-import com.avito.android.utils.cyrillicToLatinAlphabet
 import com.avito.utils.ProcessRunner
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
@@ -38,7 +36,6 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.time.Duration
-import java.util.Locale
 
 @CacheableTask
 internal abstract class GenerateOwnersTask : DefaultTask() {
@@ -60,6 +57,9 @@ internal abstract class GenerateOwnersTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val bitbucketCodeOwnershipExclusionsFile: RegularFileProperty
 
+    @get:Input
+    internal abstract val generateCommandUuids: Property<Boolean>
+
     @TaskAction
     fun generate() {
         val moduleDir = moduleDir.orNull?.asFile
@@ -79,8 +79,10 @@ internal abstract class GenerateOwnersTask : DefaultTask() {
         val unitClassName = Unit::class.asClassName()
         val teamClassName = Team::class.asClassName()
 
+        val resolvedUnits = OwnersResolver().resolve(remoteOwners)
+
         val ownersEnum = createOwnersEnumBuilder(ownersClassName, typeClassName)
-            .addRemoteOwnersToEnum(remoteOwners, unitClassName, teamClassName)
+            .addRemoteOwnersToEnum(resolvedUnits, unitClassName, teamClassName)
             .build()
 
         writeIntoFile(
@@ -94,6 +96,17 @@ internal abstract class GenerateOwnersTask : DefaultTask() {
         )
 
         generateCodeOwnershipFile(remoteOwners)
+
+        generateCommandUuidsFile(resolvedUnits, moduleDir)
+    }
+
+    private fun generateCommandUuidsFile(resolvedUnits: List<ResolvedUnit>, moduleDir: File) {
+        if (!generateCommandUuids.getOrElse(false)) return
+
+        writeIntoFile(
+            fileSpec = CommandUuidsGenerator().generate(resolvedUnits.flatMap { unit -> unit.teams }),
+            moduleDir = moduleDir
+        )
     }
 
     private fun generateCodeOwnershipFile(remoteOwners: List<AvitoOwner>) {
@@ -169,82 +182,65 @@ internal abstract class GenerateOwnersTask : DefaultTask() {
     }
 
     private fun TypeSpec.Builder.addRemoteOwnersToEnum(
-        remoteOwners: List<AvitoOwner>,
+        resolvedUnits: List<ResolvedUnit>,
         unitClassName: ClassName,
         teamClassName: ClassName
     ): TypeSpec.Builder {
-        val allUnits = mutableListOf<String>()
-        val allTeams = mutableListOf<String>()
+        resolvedUnits.forEach { unit ->
+            val unitConstantName = unit.normalizedName + UNIT_SUFFIX
 
-        remoteOwners.forEachIndexed { _, owner ->
-            if (owner.type == OwnerType.Unit) {
-                val originalUnitName = owner.name.normalizeName()
-                val finalUnitName = originalUnitName + "_Unit"
+            val unitEnumParamsCode = CodeBlock.builder()
+                .unindent()
+                .addStatement(
+                    """
+                        
+                        %1L(
+                            name = %2S,
+                            id = %3S
+                        ),
+                        chatChannels = setOf(%4L)
+                        """.trimIndent(),
+                    unitClassName.simpleName,
+                    unit.owner.name,
+                    unit.owner.id,
+                    unit.owner.channels.joinToString(separator = ", ", transform = { "\"$it\"" })
+                )
+                .indent()
 
-                allUnits.add(finalUnitName)
+            addEnumConstant(
+                unitConstantName,
+                TypeSpec.anonymousClassBuilder()
+                    .addSuperclassConstructorParameter(unitEnumParamsCode.build())
+                    .build()
+            )
 
-                val unitEnumParamsCode = CodeBlock.builder()
+            unit.teams.forEach { team ->
+                val teamEnumParamsCode = CodeBlock.builder()
                     .unindent()
                     .addStatement(
                         """
                             
                             %1L(
                                 name = %2S,
-                                id = %3S
+                                id = %3S,
+                                unit = %4L,
                             ),
-                            chatChannels = setOf(%4L)
-                            """.trimIndent(),
-                        unitClassName.simpleName,
-                        owner.name,
-                        owner.id,
-                        owner.channels.joinToString(separator = ", ", transform = { "\"$it\"" })
+                            chatChannels = setOf(%5L)
+                        """.trimIndent(),
+                        teamClassName.simpleName,
+                        team.owner.name,
+                        team.owner.id,
+                        unitConstantName,
+                        team.owner.channels.joinToString(separator = ", ", transform = { "\"$it\"" })
                     )
                     .indent()
 
                 addEnumConstant(
-                    finalUnitName,
+                    team.normalizedName + TEAM_SUFFIX,
                     TypeSpec.anonymousClassBuilder()
-                        .addSuperclassConstructorParameter(unitEnumParamsCode.build())
+                        .addSuperclassConstructorParameter(teamEnumParamsCode.build())
                         .build()
                 )
-
-                owner.children.map { child ->
-                    val originalTeamName = child.name.normalizeName()
-                    val finalTeamName =
-                        if (originalTeamName in allTeams) {
-                            "$originalUnitName$originalTeamName"
-                        } else {
-                            originalTeamName
-                        }
-                    allTeams.add(finalTeamName)
-
-                    val teamEnumParamsCode = CodeBlock.builder()
-                        .unindent()
-                        .addStatement(
-                            """
-                                
-                                %1L(
-                                    name = %2S,
-                                    id = %3S,
-                                    unit = %4L,
-                                ),
-                                chatChannels = setOf(%5L)
-                            """.trimIndent(),
-                            teamClassName.simpleName,
-                            child.name,
-                            child.id,
-                            finalUnitName,
-                            child.channels.joinToString(separator = ", ", transform = { "\"$it\"" })
-                        )
-                        .indent()
-
-                    addEnumConstant(
-                        finalTeamName + "_Team",
-                        TypeSpec.anonymousClassBuilder()
-                            .addSuperclassConstructorParameter(teamEnumParamsCode.build())
-                            .build()
-                    )
-                }
             }
         }
 
@@ -307,32 +303,13 @@ internal abstract class GenerateOwnersTask : DefaultTask() {
         }
     }
 
-    private fun String.normalizeName(): String {
-        val words = replace("&", "_And_")
-            .replace("Ƞ", "Eta")
-            .replace("Ω", "Omega")
-            .replace("\t", "")
-            .replace(".", "")
-            .replace("(", "")
-            .replace(")", "")
-            .split(" ", "/", "\\", "_", "-")
-        return words.joinToString("_") {
-            val sb = StringBuilder()
-            it.forEachIndexed { index, c ->
-                val currentChar = c.toString()
-                val cyrillicChar: String? = cyrillicToLatinAlphabet[currentChar]
-                val newChar = cyrillicChar ?: currentChar
-                sb.append(if (index == 0) newChar.uppercase(Locale.ROOT) else newChar)
-            }
-            sb.toString()
-        }
-    }
-
     companion object {
         const val MODULE_FIELD = "module"
         const val OWNER_IDS_FIELD = "ownerIds"
         const val OWNER_CHAT_CHANNELS = "chatChannels"
         const val OWNER_TYPE = "type"
+        const val UNIT_SUFFIX = "_Unit"
+        const val TEAM_SUFFIX = "_Team"
 
         val COMMENT = """
             !!! This file is autogenerated. Do not modify it by hands. !!!
