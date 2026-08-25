@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.test.espresso.AppNotIdleException
 import androidx.test.espresso.FailureHandler
@@ -60,6 +61,7 @@ public class ReportFriendlyFailureHandler : FailureHandler {
                 exception.initCause(error)
                 exception
             }
+
             error.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } -> {
                 val exception = createExceptionWithPrivateStringConstructor<AppNotIdleException>(
                     "Main thread is busy. " +
@@ -68,6 +70,7 @@ public class ReportFriendlyFailureHandler : FailureHandler {
                 exception.initCause(error)
                 exception
             }
+
             error is PerformException ->
                 // RecyclerView descendant checks implemented via ViewActions (gross)
                 if (error.actionDescription.startsWith("Check descendant view")) {
@@ -80,6 +83,7 @@ public class ReportFriendlyFailureHandler : FailureHandler {
                         .withViewDescription(minimizeViewDescription(error.viewDescription))
                         .build()
                 }
+
             error is AssertionError -> AssertionFailedError(error.normalizedMessage()).apply { initCause(error.cause) }
             error is NoMatchingRootException -> error.toNormalizedException()
             error is NoMatchingViewException -> error.toNormalizedException()
@@ -87,10 +91,11 @@ public class ReportFriendlyFailureHandler : FailureHandler {
         }
     }
 
-    private inline fun <reified T : Exception> T.toNormalizedException(): T {
-        val exception = createExceptionWithPrivateStringConstructor<T>(this.normalizedMessage())
-        exception.stackTrace = this.stackTrace
-        return exception
+    @SuppressLint("DiscouragedPrivateApi")
+    private fun <T : Exception> T.toNormalizedException(): T = apply {
+        Throwable::class.java.getDeclaredField("detailMessage")
+            .apply { this.isAccessible = true }
+            .set(this@toNormalizedException, normalizedMessage())
     }
 
     private fun Throwable.normalizedMessage(): String {
