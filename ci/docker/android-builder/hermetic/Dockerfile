@@ -1,5 +1,5 @@
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/avito/debian-minbase:12.12
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:13.0
 
 ARG ARTIFACTORY_URL
 ENV DEBIAN_FRONTEND=noninteractive
@@ -20,7 +20,7 @@ RUN \
     build-essential \
     acl \
     sudo \
-    openjdk-17-jdk \
+    openjdk-21-jdk \
     shellcheck bats && \
   apt-get clean && \
   apt-get purge
@@ -30,7 +30,7 @@ ENV JEMALLOC_PATH=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 RUN test -f "$JEMALLOC_PATH" || (echo "jemalloc not found at $JEMALLOC_PATH" && exit 1)
 
 ENV LANG C.UTF-8
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-21-openjdk-amd64/
 
 # ------------------- Kotlin --------------------
 
@@ -38,7 +38,7 @@ ENV KOTLIN_VERSION=2.1.20
 ENV KOTLIN_SHA256=a118197b0de55ffab2bc8d5cd03a5e39033cfb53383d6931bc761dec0784891a
 RUN \
    curl ${ARTIFACTORY_URL}android-build-env/kotlin/kotlin-compiler-${KOTLIN_VERSION}.zip \
-    --progress-bar --location --output kotlin.zip \
+    --progress-bar --location --fail --output kotlin.zip \
     && echo "${KOTLIN_SHA256}  kotlin.zip" | sha256sum -c - \
     && unzip kotlin.zip -d /opt \
     && rm -f kotlin.zip \

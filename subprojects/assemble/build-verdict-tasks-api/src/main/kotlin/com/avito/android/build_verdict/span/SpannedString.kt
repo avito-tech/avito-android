@@ -1,7 +1,5 @@
 package com.avito.android.build_verdict.span
 
-import java.net.URL
-
 public data class SpannedString(
     val plain: String,
     val html: String
@@ -20,11 +18,6 @@ public data class SpannedString(
 
         @JvmStatic
         public fun link(url: String, text: String): SpannedString {
-            return link(URL(url), text)
-        }
-
-        @JvmStatic
-        public fun link(url: URL, text: String): SpannedString {
             return SpannedString(
                 plain = "$text: $url",
                 html = """<a href="$url" target="_blank">$text</a>"""

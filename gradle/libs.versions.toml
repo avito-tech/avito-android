@@ -1,5 +1,5 @@
 [versions]
-java = "17"
+java = "21"
 # Bytecode target of published artifacts; must not follow the toolchain `java` version
 javaTarget = "17"
 kotlin = "2.1.20"

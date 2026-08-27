@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.net.URI
 import java.net.URL
 import java.time.Duration
 import aws.sdk.kotlin.services.s3.S3Client as AWS_S3Client
@@ -37,7 +38,7 @@ class S3ClientImplTest {
 
         config = S3ClientConfig(
             region = "us-east-1",
-            endpointUrl = URL("https://example.com/test-bucket"),
+            endpointUrl = URI("https://example.com/test-bucket").toURL(),
             accessKeyId = "test-access-key",
             secretAccessKey = "test-secret-key",
             httpClientConfig = S3ClientConfig.HttpClientConfig(
@@ -106,6 +107,21 @@ class S3ClientImplTest {
         val success = result as Result.Success
 
         assertThat(success.value.toString()).isEqualTo("${config.endpointUrl}/$key")
+    }
+
+    @Test
+    fun `putObject - returns encoded URL when key contains characters illegal in URI`() = runTest {
+        // brackets and spaces are legal in S3 keys and come from parameterized test names
+        val key = "prefix/TestClass_method[api22] param.txt"
+
+        val result = s3Client.putObject(key, testFile)
+        result.printToConsole()
+
+        assertThat(result).isInstanceOf(Result.Success::class.java)
+        val success = result as Result.Success
+
+        assertThat(success.value.toString())
+            .isEqualTo("${config.endpointUrl}/prefix/TestClass_method%5Bapi22%5D%20param.txt")
     }
 
     @Test

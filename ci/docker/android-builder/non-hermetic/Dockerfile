@@ -16,13 +16,13 @@ RUN \
     build-essential \
     acl \
     sudo \
-    openjdk-17-jdk \
+    openjdk-21-jdk \
     shellcheck bats && \
   apt-get clean && \
   apt-get purge
 
 ENV LANG C.UTF-8
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-21-openjdk-amd64/
 
 # ------------------- Kotlin --------------------
 

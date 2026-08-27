@@ -5,6 +5,7 @@ import aws.smithy.kotlin.runtime.content.asByteStream
 import com.avito.android.Result
 import com.avito.s3.listener.OperationsListener
 import java.io.File
+import java.net.URI
 import java.net.URL
 import java.time.Duration
 import java.time.Instant
@@ -30,7 +31,12 @@ internal class S3ClientImpl(
                 this.body = objekt.asByteStream()
             }
         )
-        URL("$endpointUrl/$key")
+        encodedObjectUrl(key)
+    }
+
+    private fun encodedObjectUrl(key: String): URL {
+        val base = endpointUrl.toURI()
+        return URI(base.scheme, base.authority, "${base.path}/$key", null, null).toURL()
     }
 
     private suspend fun <T> executeS3Operation(s3OperationType: OperationType, block: suspend () -> T): Result<T> {
