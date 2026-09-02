@@ -44,12 +44,8 @@ internal abstract class UploadABTestsTask : DefaultTask() {
     fun upload() {
         val abTests = deserializeABTests()
         val logger = loggerFactory.get().create("ABTests")
-        if (abTests.isEmpty()) {
-            logger.info("No AB tests found")
-        } else {
-            logger.info("Found ${abTests.size} AB tests. Uploading...")
-            upload(abTests)
-        }
+        logger.info("Found ${abTests.size} AB tests. Uploading...")
+        upload(abTests)
     }
 
     private fun deserializeABTests(): List<ABTest> {

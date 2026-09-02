@@ -44,17 +44,13 @@ internal abstract class UploadLintIssuesTask : DefaultTask() {
         val lintIssues = lintIssueParser.parseXmlReport(outputXmlFiles.get().files)
 
         val logger = loggerFactory.get().create("LintIssues")
-        if (lintIssues.isNotEmpty()) {
-            logger.info("Uploading ${lintIssues.size} lint issues")
-            api.dumpLintIssues(
-                LintIssuesRequestBody(
-                    dumpInfo = DumpInfo.fromExtension(dumpConfiguration),
-                    lintIssues = lintIssues
-                )
-            ).executeWithHttpFailure(errorMessage = "Upload lint issues request failed")
-        } else {
-            logger.info("Nothing to upload. No lint issues found")
-        }
+        logger.info("Uploading ${lintIssues.size} lint issues")
+        api.dumpLintIssues(
+            LintIssuesRequestBody(
+                dumpInfo = DumpInfo.fromExtension(dumpConfiguration),
+                lintIssues = lintIssues
+            )
+        ).executeWithHttpFailure(errorMessage = "Upload lint issues request failed")
     }
 
     companion object {

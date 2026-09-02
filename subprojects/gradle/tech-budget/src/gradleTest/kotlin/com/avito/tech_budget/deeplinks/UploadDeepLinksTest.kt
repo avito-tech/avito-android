@@ -65,6 +65,20 @@ internal class UploadDeepLinksTest {
     }
 
     @Test
+    fun `upload deepLinks - nothing collected - still uploads empty dump`(@TempDir projectDir: File) {
+        generateProject(projectDir, deepLinksJson = EMPTY_DEEP_LINKS_JSON)
+
+        val request = mockDispatcher.captureRequest { path.contains("dumpDeepLinks") }
+
+        uploadDeepLinks(projectDir)
+            .assertThat()
+            .buildSuccessful()
+            .outputContains("Found 0 deepLinks")
+
+        request.checks.singleRequestCaptured()
+    }
+
+    @Test
     fun `upload deepLinks - upload error - build failure`(@TempDir projectDir: File) {
         mockDispatcher.registerMock(
             Mock(
@@ -94,7 +108,8 @@ internal class UploadDeepLinksTest {
     private fun generateProject(
         projectDir: File,
         includeCodeOwnership: Boolean = true,
-        configureDeeplinksTask: Boolean = true
+        configureDeeplinksTask: Boolean = true,
+        deepLinksJson: String = DEEP_LINKS_JSON
     ) = TestProjectGenerator(
         plugins = plugins {
             id("com.avito.android.gradle-logger")
@@ -119,7 +134,7 @@ internal class UploadDeepLinksTest {
         modules = listOf()
     ).generateIn(projectDir).also {
         if (configureDeeplinksTask) {
-            projectDir.file("links.json", DEEP_LINKS_JSON)
+            projectDir.file("links.json", deepLinksJson)
         }
     }
 
@@ -171,7 +186,10 @@ internal class UploadDeepLinksTest {
                   "version": 1,
                   "owners": ["MessengerID"]
               }
-          ]     
+          ]
         """.trimIndent()
+
+        @Language("json")
+        private val EMPTY_DEEP_LINKS_JSON = "[]"
     }
 }

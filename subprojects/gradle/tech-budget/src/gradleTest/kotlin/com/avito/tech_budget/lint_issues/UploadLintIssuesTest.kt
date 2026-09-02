@@ -29,11 +29,16 @@ internal class UploadLintIssuesTest {
     }
 
     @Test
-    fun `when no issues - then log information`(@TempDir projectDir: File) {
+    fun `when no issues - then still upload empty dump`(@TempDir projectDir: File) {
         generateProject(projectDir, containsIssues = false)
+
+        val request = mockDispatcher.captureRequest { path.contains("dumpLintIssues") }
+
         uploadLintIssues(projectDir).assertThat()
             .buildSuccessful()
-            .outputContains("Nothing to upload. No lint issues found")
+            .outputContains("Uploading 0 lint issues")
+
+        request.checks.singleRequestCaptured()
     }
 
     @Test

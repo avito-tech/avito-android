@@ -44,12 +44,8 @@ internal abstract class UploadPerfScreenOwnersTask : DefaultTask() {
     fun uploadPerfOwners() {
         val perfOwners = deserializePerfOwners()
         val logger = loggerFactory.get().create("Perf Screen Owners")
-        if (perfOwners.isEmpty()) {
-            logger.info("No perf owners found")
-        } else {
-            logger.info("Found ${perfOwners.size} perf screens. Uploading...")
-            upload(perfOwners)
-        }
+        logger.info("Found ${perfOwners.size} perf screens. Uploading...")
+        upload(perfOwners)
     }
 
     private fun deserializePerfOwners(): List<PerformanceScreenInfo> {

@@ -18,21 +18,29 @@ internal class UploadWarningsBatcher(
     private val requestErrors = CopyOnWriteArrayList<Throwable>()
 
     fun send(dumpInfo: DumpInfo, warnings: List<Warning>) {
-
-        val batches = warnings.chunked(batchSize)
-        val uploadJobs = batches.map { batch ->
-            warningsUploadExecutor.submit {
-                sendWarningsBatch(dumpInfo, batch)
-            }
+        if (warnings.isEmpty()) {
+            sendWarningsBatch(dumpInfo, emptyList())
+        } else {
+            sendInParallel(dumpInfo, warnings.chunked(batchSize))
         }
-        uploadJobs.forEach { it.get() }
+
         warningsUploadExecutor.shutdownNow()
+
         if (requestErrors.isNotEmpty()) {
             throw CompositeException(
                 message = "${requestErrors.size} errors occurred during dumpWarnings request.",
                 throwables = requestErrors.toTypedArray()
             )
         }
+    }
+
+    private fun sendInParallel(dumpInfo: DumpInfo, batches: List<List<Warning>>) {
+        val uploadJobs = batches.map { batch ->
+            warningsUploadExecutor.submit {
+                sendWarningsBatch(dumpInfo, batch)
+            }
+        }
+        uploadJobs.forEach { it.get() }
     }
 
     private fun sendWarningsBatch(dumpInfo: DumpInfo, batch: List<Warning>) {

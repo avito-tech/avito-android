@@ -34,11 +34,16 @@ internal class UploadWarningsTest {
     }
 
     @Test
-    fun `compile without warnings - logs information about empty warnings`(@TempDir projectDir: File) {
+    fun `compile without warnings - still uploads empty dump`(@TempDir projectDir: File) {
         generateProject(projectDir, reports = emptyList())
+
+        val request = mockDispatcher.captureRequest { path.contains("dumpDetektIssues") }
+
         uploadWarnings(projectDir).assertThat()
             .buildSuccessful()
-            .outputContains("No warnings found")
+            .outputContains("Found 0 warnings")
+
+        request.checks.singleRequestCaptured()
     }
 
     @Test

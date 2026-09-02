@@ -44,6 +44,20 @@ internal class UploadPerfOwnersTest {
     }
 
     @Test
+    fun `upload PerfOwners - nothing collected - still uploads empty dump`(@TempDir projectDir: File) {
+        generateProject(projectDir, screenOwnersJson = EMPTY_SCREEN_OWNERS_JSON)
+
+        val request = mockDispatcher.captureRequest { path.contains("dumpPerformanceScreenInfos") }
+
+        uploadPerfOwners(projectDir)
+            .assertThat()
+            .buildSuccessful()
+            .outputContains("Found 0 perf screens")
+
+        request.checks.singleRequestCaptured()
+    }
+
+    @Test
     fun `upload PerfOwners - request failed`(@TempDir projectDir: File) {
         generateProject(projectDir)
 
@@ -83,7 +97,8 @@ internal class UploadPerfOwnersTest {
     private fun generateProject(
         projectDir: File,
         includeCodeOwnership: Boolean = true,
-        configurePerfOwnersTask: Boolean = true
+        configurePerfOwnersTask: Boolean = true,
+        screenOwnersJson: String = SCREEN_OWNERS_JSON
     ) = TestProjectGenerator(
         plugins = plugins {
             id("com.avito.android.gradle-logger")
@@ -108,7 +123,7 @@ internal class UploadPerfOwnersTest {
         modules = listOf()
     ).generateIn(projectDir).also {
         if (configurePerfOwnersTask) {
-            projectDir.file("screen_owners.json", SCREEN_OWNERS_JSON)
+            projectDir.file("screen_owners.json", screenOwnersJson)
         }
     }
 
@@ -157,5 +172,8 @@ internal class UploadPerfOwnersTest {
                 "screenInfos": $SCREEN_OWNERS_JSON
             }
         """.trimIndent()
+
+        @Language("json")
+        private val EMPTY_SCREEN_OWNERS_JSON = "[]"
     }
 }

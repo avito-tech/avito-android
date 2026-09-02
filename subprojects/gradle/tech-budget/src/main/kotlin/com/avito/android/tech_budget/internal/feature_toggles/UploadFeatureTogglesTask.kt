@@ -44,12 +44,8 @@ internal abstract class UploadFeatureTogglesTask : DefaultTask() {
     fun upload() {
         val featureToggles = deserializeFeatureToggles()
         val logger = loggerFactory.get().create("FeatureToggles")
-        if (featureToggles.isEmpty()) {
-            logger.info("No Feature Toggles found")
-        } else {
-            logger.info("Found ${featureToggles.size} Feature Toggles. Uploading...")
-            upload(featureToggles)
-        }
+        logger.info("Found ${featureToggles.size} Feature Toggles. Uploading...")
+        upload(featureToggles)
     }
 
     private fun deserializeFeatureToggles(): List<FeatureToggle> {

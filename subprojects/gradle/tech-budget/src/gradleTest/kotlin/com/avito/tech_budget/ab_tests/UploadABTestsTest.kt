@@ -65,6 +65,20 @@ internal class UploadABTestsTest {
     }
 
     @Test
+    fun `upload ABTests - nothing collected - still uploads empty dump`(@TempDir projectDir: File) {
+        generateProject(projectDir, abTestsJson = EMPTY_AB_TESTS_JSON)
+
+        val request = mockDispatcher.captureRequest { path.contains("dumpABTests") }
+
+        uploadABTests(projectDir)
+            .assertThat()
+            .buildSuccessful()
+            .outputContains("Found 0 AB tests")
+
+        request.checks.singleRequestCaptured()
+    }
+
+    @Test
     fun `upload ABTests - upload error - build failure`(@TempDir projectDir: File) {
         mockDispatcher.registerMock(
             Mock(
@@ -94,7 +108,8 @@ internal class UploadABTestsTest {
     private fun generateProject(
         projectDir: File,
         includeCodeOwnership: Boolean = true,
-        configureABTestsTask: Boolean = true
+        configureABTestsTask: Boolean = true,
+        abTestsJson: String = AB_TESTS_JSON
     ) = TestProjectGenerator(
         plugins = plugins {
             id("com.avito.android.gradle-logger")
@@ -120,7 +135,7 @@ internal class UploadABTestsTest {
         modules = listOf()
     ).generateIn(projectDir).also {
         if (configureABTestsTask) {
-            projectDir.file("links.json", AB_TESTS_JSON)
+            projectDir.file("links.json", abTestsJson)
         }
     }
 
@@ -170,7 +185,10 @@ internal class UploadABTestsTest {
                "groups": [ "test", "control" ],
                "owners": [ "SpeedID"]
             }
-          ]     
+          ]
         """.trimIndent()
+
+        @Language("json")
+        private val EMPTY_AB_TESTS_JSON = "[]"
     }
 }

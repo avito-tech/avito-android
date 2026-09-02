@@ -44,12 +44,8 @@ internal abstract class UploadDeepLinksTask : DefaultTask() {
     fun uploadDeeplinks() {
         val deeplinks = deserializeDeeplinks()
         val logger = loggerFactory.get().create("DeepLinks")
-        if (deeplinks.isEmpty()) {
-            logger.info("No deepLinks found")
-        } else {
-            logger.info("Found ${deeplinks.size} deepLinks. Uploading...")
-            upload(deeplinks)
-        }
+        logger.info("Found ${deeplinks.size} deepLinks. Uploading...")
+        upload(deeplinks)
     }
 
     private fun deserializeDeeplinks(): List<DeepLink> {

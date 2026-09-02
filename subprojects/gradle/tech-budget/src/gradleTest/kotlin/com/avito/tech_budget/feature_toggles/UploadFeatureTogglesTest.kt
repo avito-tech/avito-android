@@ -65,6 +65,20 @@ internal class UploadFeatureTogglesTest {
     }
 
     @Test
+    fun `upload FeatureToggles - nothing collected - still uploads empty dump`(@TempDir projectDir: File) {
+        generateProject(projectDir, featureTogglesJson = EMPTY_FEATURE_TOGGLES_JSON)
+
+        val request = mockDispatcher.captureRequest { path.contains("dumpFeatureToggles") }
+
+        uploadFeatureToggles(projectDir)
+            .assertThat()
+            .buildSuccessful()
+            .outputContains("Found 0 Feature Toggles")
+
+        request.checks.singleRequestCaptured()
+    }
+
+    @Test
     fun `upload FeatureToggles - upload error - build failure`(@TempDir projectDir: File) {
         mockDispatcher.registerMock(
             Mock(
@@ -94,7 +108,8 @@ internal class UploadFeatureTogglesTest {
     private fun generateProject(
         projectDir: File,
         includeCodeOwnership: Boolean = true,
-        configureFeatureTogglesTask: Boolean = true
+        configureFeatureTogglesTask: Boolean = true,
+        featureTogglesJson: String = FEATURE_TOGGLES_JSON
     ) = TestProjectGenerator(
         plugins = plugins {
             id("com.avito.android.gradle-logger")
@@ -119,7 +134,7 @@ internal class UploadFeatureTogglesTest {
         modules = listOf()
     ).generateIn(projectDir).also {
         if (configureFeatureTogglesTask) {
-            projectDir.file("links.json", FEATURE_TOGGLES_JSON)
+            projectDir.file("links.json", featureTogglesJson)
         }
     }
 
@@ -171,7 +186,10 @@ internal class UploadFeatureTogglesTest {
               "key": "send_log_errors_non_fatal_analytics",
               "owners": [ "SpeedID" ]
             }
-          ]     
+          ]
         """.trimIndent()
+
+        @Language("json")
+        private val EMPTY_FEATURE_TOGGLES_JSON = "[]"
     }
 }

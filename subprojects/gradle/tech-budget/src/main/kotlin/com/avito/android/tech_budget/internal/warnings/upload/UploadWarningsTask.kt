@@ -53,12 +53,8 @@ internal abstract class UploadWarningsTask : DefaultTask() {
         val warnings = logToWarningConverter.convert(inputReports.get())
 
         val logger = loggerFactory.get().create("Warnings")
-        if (warnings.isEmpty()) {
-            logger.info("No warnings found")
-        } else {
-            logger.info("Found ${warnings.size} warnings. Uploading...")
-            uploadCollectedWarnings(warnings)
-        }
+        logger.info("Found ${warnings.size} warnings. Uploading...")
+        uploadCollectedWarnings(warnings)
     }
 
     private fun uploadCollectedWarnings(warnings: List<Warning>) {
