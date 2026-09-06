@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)
+    implementation(libs.mockitoCore)
     implementation(libs.okhttpLogging)
     implementation(libs.gson)
     implementation(libs.androidx.navigationComponent)

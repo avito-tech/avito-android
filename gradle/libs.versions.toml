@@ -135,8 +135,9 @@ hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 hamcrestLibrary = { module = "org.hamcrest:hamcrest-library", version.ref = "hamcrest" }
 jsonPathAssert = "com.jayway.jsonpath:json-path-assert:2.4.0"
 jsonAssert = "org.skyscreamer:jsonassert:1.5.0"
-mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:3.3.3"
+mockitoKotlin = "org.mockito.kotlin:mockito-kotlin:4.1.0"
+mockitoCore = "org.mockito:mockito-core:5.23.0"
+mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:5.23.0"
 freeReflection = "com.github.tiann:FreeReflection:3.2.0"
 antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
 okhttpMock = "com.github.gmazzo:okhttp-mock:1.5.0"

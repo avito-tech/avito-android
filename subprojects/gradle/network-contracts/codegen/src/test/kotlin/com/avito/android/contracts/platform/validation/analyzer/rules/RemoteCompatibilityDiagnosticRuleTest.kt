@@ -8,12 +8,6 @@ import com.avito.android.contracts.platform.scheme.validation.analyzer.rules.Rem
 import com.avito.android.contracts.platform.scheme.validation.data.RemoteValidationError
 import com.avito.android.contracts.platform.scheme.validation.data.ValidationApiSchemesService
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.argumentCaptor
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.gradle.api.file.ConfigurableFileCollection
@@ -24,6 +18,12 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)

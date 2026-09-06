@@ -1,7 +1,7 @@
 package com.avito.android.util
 
 import com.avito.android.test.waitFor
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.verify
 import org.mockito.verification.VerificationMode
 
 public fun <T> waitForVerify(mock: T, that: T.() -> Unit) {

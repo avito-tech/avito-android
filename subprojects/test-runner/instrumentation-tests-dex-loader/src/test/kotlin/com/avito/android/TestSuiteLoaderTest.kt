@@ -2,9 +2,6 @@ package com.avito.android
 
 import com.avito.truth.ResultSubject.Companion.assertThat
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import org.jf.dexlib2.iface.Annotation
 import org.jf.dexlib2.iface.AnnotationElement
 import org.jf.dexlib2.iface.ClassDef
@@ -17,6 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.junit.jupiter.MockitoSettings
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
 import java.io.File
 

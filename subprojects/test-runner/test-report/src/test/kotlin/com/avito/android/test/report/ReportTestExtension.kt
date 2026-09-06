@@ -17,14 +17,14 @@ import com.avito.report.model.IncidentTypeDeterminer
 import com.avito.report.model.Kind
 import com.avito.test.model.TestName
 import com.avito.time.TimeProvider
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import okhttp3.ResponseBody
 import okhttp3.mock.MockInterceptor
 import okhttp3.mock.Rule
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.io.File
 
 internal class ReportTestExtension(
