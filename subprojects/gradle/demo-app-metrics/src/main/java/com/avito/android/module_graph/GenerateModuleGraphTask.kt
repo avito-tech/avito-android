@@ -47,9 +47,15 @@ public abstract class GenerateModuleGraphTask @Inject constructor(
 
     @TaskAction
     public fun traverse() {
+        val moduleTypes = modulesToModuleTypes.get()
+        check(moduleTypes.isNotEmpty()) {
+            "No module contributed to the module graph. Modules report their own dependencies, " +
+                "so $PLUGIN_ID has to be applied to them, not to the root project alone."
+        }
+
         val moduleGraphInfoExtractor = ModuleGraphInfoExtractor(
             dependencies = dependencies.get(),
-            modulesToModuleTypes = modulesToModuleTypes.get(),
+            modulesToModuleTypes = moduleTypes,
             linesOfCodeCounter = infoExtractorService.get().linesOfCodeCounter,
             projectDir = projectDir.asFile,
         )
@@ -60,5 +66,7 @@ public abstract class GenerateModuleGraphTask @Inject constructor(
 
     public companion object {
         public const val NAME: String = "generateModuleGraph"
+
+        private const val PLUGIN_ID: String = "com.avito.android.demo-app-metrics"
     }
 }

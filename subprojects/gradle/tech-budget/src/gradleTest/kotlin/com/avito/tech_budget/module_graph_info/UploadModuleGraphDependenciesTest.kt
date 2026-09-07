@@ -52,7 +52,8 @@ class UploadModuleGraphDependenciesTest {
         uploadModuleGraphDependencies(projectDir, expectFailure = true)
             .assertThat()
             .buildFailed()
-            .outputContains("UploadModuleGraphDependencies request failed")
+            .outputContains("UploadModuleGraphDependencies request failed. HTTP 500")
+            .outputContains("\"message\": \"string\"")
     }
 
     private fun uploadModuleGraphDependencies(

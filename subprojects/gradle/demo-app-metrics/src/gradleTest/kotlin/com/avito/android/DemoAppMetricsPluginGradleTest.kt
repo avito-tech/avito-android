@@ -79,6 +79,26 @@ internal class DemoAppMetricsPluginGradleTest {
             )
     }
 
+    @Test
+    fun `generateModuleGraph - fails when plugin is applied to the root project only`(
+        @TempDir projectDir: File,
+    ) {
+        TestProjectGenerator(
+            name = "module-graph-fixture",
+            plugins = plugins {
+                id("com.avito.android.module-types")
+                id("com.avito.android.demo-app-metrics")
+            },
+            modules = listOf(KotlinModule(name = "library", useKts = true)),
+            useKts = true,
+        ).generateIn(projectDir)
+
+        gradlew(projectDir, "generateModuleGraph", expectFailure = true)
+            .assertThat()
+            .buildFailed()
+            .outputContains("No module contributed to the module graph")
+    }
+
     private fun generateProject(projectDir: File) {
         TestProjectGenerator(
             name = "module-graph-fixture",
