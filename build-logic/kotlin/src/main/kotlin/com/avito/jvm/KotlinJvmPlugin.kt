@@ -15,15 +15,17 @@ class KotlinJvmPlugin : Plugin<Project> {
             val javaTarget = JavaLanguageVersion.of(libs.versions.javaTarget.get()).toString()
 
             tasks.withType(JavaCompile::class.java) {
-                it.sourceCompatibility = javaTarget
-                it.targetCompatibility = javaTarget
+                it.options.release.set(javaTarget.toInt())
             }
 
             tasks.withType(KotlinCompile::class.java).configureEach {
                 it.kotlinOptions {
                     jvmTarget = javaTarget
+                    freeCompilerArgs = freeCompilerArgs + "-Xjdk-release=$javaTarget"
                 }
             }
+
+            registerPublishedJvmVersionGuard(expectedJvmVersion = javaTarget)
         }
     }
 }

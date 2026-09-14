@@ -19,6 +19,8 @@ class KotlinJvmAndroidPlugin : Plugin<Project> {
                     jvmTarget = "1.8"
                 }
             }
+
+            registerPublishedJvmVersionGuard(expectedJvmVersion = "8")
         }
     }
 }
