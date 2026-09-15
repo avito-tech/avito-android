@@ -1,7 +1,7 @@
 package com.avito.jvm
 
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 
 internal fun Project.registerPublishedJvmVersionGuard(expectedJvmVersion: String) {
@@ -16,7 +16,7 @@ internal fun Project.registerPublishedJvmVersionGuard(expectedJvmVersion: String
             task.moduleFiles.from(metadataTasks.map { it.outputFile })
         }
 
-        tasks.withType(PublishToMavenRepository::class.java).configureEach { publish ->
+        tasks.withType(AbstractPublishToMaven::class.java).configureEach { publish ->
             publish.dependsOn(check)
         }
     }
