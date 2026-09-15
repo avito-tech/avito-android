@@ -1,8 +1,14 @@
 ARG DOCKER_REGISTRY
 ARG ARTIFACTORY_URL
 
-FROM ${DOCKER_REGISTRY}/android/openjdk:17-bullseye AS build
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:13.0 AS build
+
 ARG ARTIFACTORY_URL
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends openjdk-21-jdk-headless ca-certificates git \
+ && rm -rf /var/lib/apt/lists/*
 RUN mkdir /app
 COPY . /app
 WORKDIR /app
@@ -11,7 +17,16 @@ RUN ./gradlew :subprojects:instant-feedback:shadowJar \
     -PartifactoryUrl="${ARTIFACTORY_URL}" \
     --no-build-cache
 
-FROM ${DOCKER_REGISTRY}/android/openjdk:17-bullseye
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:13.0
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      openjdk-21-jre-headless ca-certificates ca-certificates-java \
+ && update-ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir /app
 WORKDIR /app
 COPY --from=build /app/subprojects/instant-feedback/build/libs/instant-feedback-all.jar app.jar

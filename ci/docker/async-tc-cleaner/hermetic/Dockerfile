@@ -1,13 +1,13 @@
 ARG DOCKER_REGISTRY
 ARG ARTIFACTORY_URL
 
-FROM ${DOCKER_REGISTRY}/avito/debian-minbase:bookworm AS build
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:13.0 AS build
 
 ARG ARTIFACTORY_URL
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends openjdk-17-jdk-headless ca-certificates git \
+ && apt-get install -y --no-install-recommends openjdk-21-jdk-headless ca-certificates git \
  && rm -rf /var/lib/apt/lists/*
 RUN mkdir /app
 COPY . /app
@@ -17,13 +17,13 @@ RUN ./gradlew :subprojects:async-tc-cleaner:shadowJar \
     -PartifactoryUrl="${ARTIFACTORY_URL}" \
     --no-build-cache
 
-FROM ${DOCKER_REGISTRY}/avito/debian-minbase:bookworm
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:13.0
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      openjdk-17-jre-headless ca-certificates ca-certificates-java \
+      openjdk-21-jre-headless ca-certificates ca-certificates-java \
  && update-ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
