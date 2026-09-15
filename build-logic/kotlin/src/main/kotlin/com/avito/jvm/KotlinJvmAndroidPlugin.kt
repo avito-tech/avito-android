@@ -7,10 +7,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
- * JVM libraries consumed on the Android classpath (test runner, device-side helpers).
- * Bytecode stays at Java 8 until every consumer (avito-android release branches, AndroidWorker)
- * compiles with a higher `jvmTarget`; `--release`/`-Xjdk-release` keep JDK 9+ API of the JDK 21 toolchain
- * out of the class files, the same way `convention.kotlin-jvm` does for `javaTarget`.
+ * JVM libraries consumed on the Android classpath: bytecode stays at Java 8 until every consumer
+ * compiles with a higher `jvmTarget`; `--release`/`-Xjdk-release` keep newer JDK API out of the class files.
  */
 class KotlinJvmAndroidPlugin : Plugin<Project> {
     override fun apply(project: Project) {

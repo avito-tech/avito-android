@@ -12,13 +12,9 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 /**
- * Verifies that every Gradle module metadata file (`module.json`) of the project's publications
- * advertises the bytecode level the module's JVM convention promises to consumers
- * (`org.gradle.jvm.version` attribute).
- *
- * Gradle derives the attribute from the compile tasks' target, so a drift between the convention
- * and the real compilation settings (or a plugin that silently changes the target) is caught
- * before an artifact reaches Artifactory / Sonatype.
+ * Verifies that `org.gradle.jvm.version` in every published Gradle module metadata file
+ * equals the bytecode level promised by the module's JVM convention.
+ * Catches a drifted compile target before the artifact is published.
  */
 public abstract class CheckPublishedJvmVersionTask : DefaultTask() {
 

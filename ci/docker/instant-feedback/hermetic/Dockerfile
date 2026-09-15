@@ -23,7 +23,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      openjdk-21-jre-headless ca-certificates ca-certificates-java \
+      openjdk-21-jdk-headless ca-certificates ca-certificates-java \
  && update-ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
