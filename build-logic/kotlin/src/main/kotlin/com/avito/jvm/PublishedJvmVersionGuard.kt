@@ -13,7 +13,7 @@ internal fun Project.registerPublishedJvmVersionGuard(expectedJvmVersion: String
             task.description =
                 "Checks that published Gradle module metadata advertises org.gradle.jvm.version=$expectedJvmVersion"
             task.expectedJvmVersion.set(expectedJvmVersion)
-            task.moduleFiles.from(metadataTasks.map { it.outputFile })
+            task.moduleFiles.from(metadataTasks)
         }
 
         tasks.withType(AbstractPublishToMaven::class.java).configureEach { publish ->

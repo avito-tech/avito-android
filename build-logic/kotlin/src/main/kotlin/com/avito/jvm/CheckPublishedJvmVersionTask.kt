@@ -47,12 +47,14 @@ public abstract class CheckPublishedJvmVersionTask : DefaultTask() {
     }
 
     private fun checkModuleFile(file: File, expected: String): List<String> {
-        val module = JsonSlurper().parse(file) as Map<*, *>
+        val module = JsonSlurper().parse(file) as? Map<*, *>
+            ?: error("Expected a JSON object at the top level of $file")
         val variants = module["variants"] as? List<*> ?: emptyList<Any>()
         return variants.mapNotNull { variant ->
-            variant as Map<*, *>
-            val name = variant["name"].toString()
-            val attributes = variant["attributes"] as? Map<*, *> ?: emptyMap<Any, Any>()
+            val variantMap = variant as? Map<*, *>
+                ?: error("Expected a JSON object for a variant in $file, got ${variant?.javaClass?.name}")
+            val name = variantMap["name"].toString()
+            val attributes = variantMap["attributes"] as? Map<*, *> ?: emptyMap<Any, Any>()
             val actual = attributes[JVM_VERSION_ATTRIBUTE]?.toString()
             when {
                 actual == null && name in variantsWithJvmVersion ->
