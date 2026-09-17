@@ -3,7 +3,6 @@ package com.avito.android
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.tasks.VerifyLibraryResourcesTask
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -28,12 +27,6 @@ class AndroidBasePlugin : Plugin<Project> {
                     defaultConfig {
                         it.minSdk = libs.versions.minSdk.get().toInt()
                         it.targetSdk = libs.versions.targetSdk.get().toInt()
-                    }
-
-                    compileOptions {
-                        val javaTarget = JavaVersion.toVersion(libs.versions.javaTarget.get())
-                        it.sourceCompatibility = javaTarget
-                        it.targetCompatibility = javaTarget
                     }
 
                     lintOptions { lint ->
