@@ -1,6 +1,11 @@
 # See also details in README.md
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}/android/openjdk:17-bullseye as BUILD
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:bookworm as BUILD
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get install --no-install-recommends --yes openjdk-17-jdk-headless && \
+    apt-get clean && apt-get purge
 
 RUN mkdir /app
 COPY . /app
@@ -11,27 +16,20 @@ WORKDIR /app
 # We can't mount /var/run/docker.sock.
 RUN ./gradlew build -x integrationTest
 
-FROM ${DOCKER_REGISTRY}/android/openjdk:17-bullseye
+FROM ${DOCKER_REGISTRY}/avito/debian-minbase:bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir /app
 WORKDIR /app
 COPY --from=BUILD /app/build/libs/image-builder.jar image-builder.jar
 
 RUN apt-get update && \
-	apt-get install --no-install-recommends --yes \
-	                   apt-transport-https \
-                       ca-certificates \
-                       software-properties-common && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
-    add-apt-repository \
-       "deb [arch=amd64] https://download.docker.com/linux/debian \
-       $(lsb_release -cs) \
-       stable"
-
-RUN apt-get update && \
     apt-get install --no-install-recommends --yes \
-     docker-buildx-plugin \
-     docker-ce && \
+                       openjdk-17-jdk-headless \
+                       ca-certificates \
+                       docker-buildx-plugin \
+                       docker-ce && \
     apt-get clean && apt-get purge
 
 ENTRYPOINT ["java", "-jar", "image-builder.jar"]
