@@ -24,11 +24,6 @@ gradlePlugin {
             implementationClass = "com.avito.jvm.KotlinJvmPlugin"
         }
 
-        create("kotlin-jvm-android") {
-            id = "convention.kotlin-jvm-android"
-            implementationClass = "com.avito.jvm.KotlinJvmAndroidPlugin"
-        }
-
         create("ksp") {
             id = "convention.ksp"
             implementationClass = "com.avito.KspPlugin"
