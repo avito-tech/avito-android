@@ -1,10 +1,10 @@
 package com.avito.android
 
 import com.avito.KotlinBasePlugin
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -21,9 +21,10 @@ class KotlinAndroidBasePlugin : Plugin<Project> {
                 }
             }
 
+            val javaTarget = libs.versions.javaTarget.get()
             tasks.withType(KotlinCompile::class.java).configureEach {
-                it.kotlinOptions {
-                    jvmTarget = JavaVersion.VERSION_1_8.toString()
+                it.compilerOptions {
+                    jvmTarget.set(JvmTarget.fromTarget(javaTarget))
                 }
             }
         }

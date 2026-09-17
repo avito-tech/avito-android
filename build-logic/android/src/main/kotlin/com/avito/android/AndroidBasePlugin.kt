@@ -31,8 +31,9 @@ class AndroidBasePlugin : Plugin<Project> {
                     }
 
                     compileOptions {
-                        it.sourceCompatibility = JavaVersion.VERSION_1_8
-                        it.targetCompatibility = JavaVersion.VERSION_1_8
+                        val javaTarget = JavaVersion.toVersion(libs.versions.javaTarget.get())
+                        it.sourceCompatibility = javaTarget
+                        it.targetCompatibility = javaTarget
                     }
 
                     lintOptions { lint ->
