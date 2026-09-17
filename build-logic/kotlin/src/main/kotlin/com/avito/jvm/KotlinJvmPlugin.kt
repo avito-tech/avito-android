@@ -25,8 +25,6 @@ class KotlinJvmPlugin : Plugin<Project> {
                     freeCompilerArgs.add("-Xjdk-release=$javaTarget")
                 }
             }
-
-            registerPublishedJvmVersionGuard(expectedJvmVersion = javaTarget)
         }
     }
 }

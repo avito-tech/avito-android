@@ -15,7 +15,7 @@ class KotlinJvmAndroidPlugin : Plugin<Project> {
         with(project) {
             plugins.apply(KotlinJvmBasePlugin::class.java)
             tasks.withType(JavaCompile::class.java).configureEach {
-                it.options.release.set(JAVA_TARGET)
+                it.options.release.set(8)
             }
 
             tasks.withType(KotlinCompile::class.java).configureEach {
@@ -24,12 +24,6 @@ class KotlinJvmAndroidPlugin : Plugin<Project> {
                     freeCompilerArgs.add("-Xjdk-release=${JvmTarget.JVM_1_8.target}")
                 }
             }
-
-            registerPublishedJvmVersionGuard(expectedJvmVersion = JAVA_TARGET.toString())
         }
-    }
-
-    private companion object {
-        const val JAVA_TARGET = 8
     }
 }
