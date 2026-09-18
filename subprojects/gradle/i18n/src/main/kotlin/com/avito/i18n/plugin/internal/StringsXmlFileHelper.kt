@@ -22,6 +22,7 @@ internal object StringsXmlFileHelper {
         for (elementFromSource in sourceStringsXmlFile.elements) {
             val sourceElementName = elementFromSource.name ?: continue
             val elementHash = elementFromSource.hash
+            val isSourceFormatted = elementFromSource.isFormatted()
 
             val translatedText = findTranslationTextForLanguageTag(
                 nameToTranslatedTextUnitMap = nameToTranslatedTextUnitMap,
@@ -35,7 +36,8 @@ internal object StringsXmlFileHelper {
                     newTargetXmlFile.appendElement(
                         element = elementFromTargetXmlFile,
                         name = sourceElementName,
-                        hash = elementHash
+                        hash = elementHash,
+                        formatted = isSourceFormatted
                     )
                 }
             } else {
@@ -43,7 +45,8 @@ internal object StringsXmlFileHelper {
                     translationText = translatedText,
                     name = sourceElementName,
                     hash = elementHash,
-                    sourceElement = elementFromSource
+                    sourceElement = elementFromSource,
+                    formatted = isSourceFormatted
                 )
             }
         }
@@ -63,13 +66,19 @@ internal object StringsXmlFileHelper {
         return translationTextForLanguageCode
     }
 
-    private fun StringsXmlFile.appendElement(element: BaseElement, name: String, hash: String) {
+    private fun StringsXmlFile.appendElement(
+        element: BaseElement,
+        name: String,
+        hash: String,
+        formatted: Boolean,
+    ) {
         when (element) {
             is StringElement -> appendString(
                 name = name,
                 value = element.value,
                 hash = hash,
-                asMarkup = element.isInlineMarkup
+                asMarkup = element.isInlineMarkup,
+                formatted = formatted
             )
             is PluralsElement -> appendPlurals(
                 name = name,
@@ -85,13 +94,15 @@ internal object StringsXmlFileHelper {
         name: String,
         hash: String,
         sourceElement: BaseElement?,
+        formatted: Boolean,
     ) {
         when (translationText) {
             is TranslationText.Text -> appendString(
                 name = name,
                 value = translationText.text,
                 hash = hash,
-                asMarkup = (sourceElement as? StringElement)?.isInlineMarkup ?: false
+                asMarkup = (sourceElement as? StringElement)?.isInlineMarkup ?: false,
+                formatted = formatted
             )
             is TranslationText.Plural -> appendPlurals(
                 name = name,
@@ -101,4 +112,6 @@ internal object StringsXmlFileHelper {
             )
         }
     }
+
+    private fun BaseElement.isFormatted(): Boolean = (this as? StringElement)?.isFormatted ?: true
 }

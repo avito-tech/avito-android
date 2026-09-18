@@ -235,4 +235,18 @@ internal object StringsXmlFileHandlerTestData {
             error = null
         )
     )
+
+    fun translatedTextUnit(key: String, text: String): TranslatedTextUnit = TranslatedTextUnit(
+        key = key,
+        component = "test",
+        namespace = "test",
+        status = 1,
+        translatedTexts = listOf(
+            TranslatedTextWithLang(
+                lang = LANGUAGE_TAG,
+                translationText = TranslationText.Text(text)
+            )
+        ),
+        error = null
+    )
 }

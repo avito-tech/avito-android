@@ -1,5 +1,6 @@
 package com.avito.i18n.plugin.internal
 
+import com.avito.i18n.plugin.xml.MARKUP_ATTRIBUTE
 import com.avito.i18n.plugin.xml.PluralsElement
 import com.avito.i18n.plugin.xml.StringElement
 import com.avito.i18n.plugin.xml.StringsXmlFile
@@ -216,6 +217,91 @@ class StringsXmlFileHandlerTest {
         val pluralElement = translatedPlural as PluralsElement
         assertThat(pluralElement.items["one"]).isEqualTo("1 translated plural")
         assertThat(pluralElement.items["other"]).isEqualTo("%d translated plurals")
+    }
+
+    @Test
+    fun `updateTargetWithTranslations - source is not formatted - translation keeps the attribute`() {
+        val sourceXml = """
+            <resources><string name="test_key" formatted="false">50% value</string></resources>
+        """.trimIndent().toStringsXml()
+        val targetXml = "<resources></resources>".toStringsXml()
+
+        val result = StringsXmlFileHelper.updateTargetWithTranslations(
+            sourceStringsXmlFile = sourceXml,
+            targetStringsXmlFile = targetXml,
+            translatedTextUnits = listOf(
+                StringsXmlFileHandlerTestData.translatedTextUnit(key = "test_key", text = "50% translated value")
+            ),
+            languageTag = StringsXmlFileHandlerTestData.LANGUAGE_TAG
+        )
+
+        val stringElement = result.elements.single() as StringElement
+        assertThat(stringElement.isFormatted).isFalse()
+        assertThat(result.serialize()).contains("""formatted="false"""")
+    }
+
+    @Test
+    fun `updateTargetWithTranslations - source is not formatted and translation is missing - keeps the attribute`() {
+        val sourceXml = """
+            <resources><string name="test_key" formatted="false">50% value</string></resources>
+        """.trimIndent().toStringsXml()
+        val targetXml = """
+            <resources><string name="test_key">50% target value</string></resources>
+        """.trimIndent().toStringsXml()
+
+        val result = StringsXmlFileHelper.updateTargetWithTranslations(
+            sourceStringsXmlFile = sourceXml,
+            targetStringsXmlFile = targetXml,
+            translatedTextUnits = emptyList(),
+            languageTag = StringsXmlFileHandlerTestData.LANGUAGE_TAG
+        )
+
+        val stringElement = result.elements.single() as StringElement
+        assertThat(stringElement.value).isEqualTo("50% target value")
+        assertThat(stringElement.isFormatted).isFalse()
+    }
+
+    @Test
+    fun `updateTargetWithTranslations - source is not formatted and has markup - keeps both`() {
+        val sourceXml = """
+            <resources><string name="test_key" formatted="false"><u>50% value</u></string></resources>
+        """.trimIndent().toStringsXml()
+        val targetXml = """
+            <resources><string name="test_key"><u>50% target value</u></string></resources>
+        """.trimIndent().toStringsXml()
+
+        val result = StringsXmlFileHelper.updateTargetWithTranslations(
+            sourceStringsXmlFile = sourceXml,
+            targetStringsXmlFile = targetXml,
+            translatedTextUnits = emptyList(),
+            languageTag = StringsXmlFileHandlerTestData.LANGUAGE_TAG
+        )
+
+        val xml = result.serialize()
+        assertThat(xml).contains("""formatted="false"""")
+        assertThat(xml).contains("<u>50% target value</u>")
+        assertThat(xml).doesNotContain(MARKUP_ATTRIBUTE)
+    }
+
+    @Test
+    fun `updateTargetWithTranslations - source is formatted - attribute from translation is dropped`() {
+        val sourceXml = """
+            <resources><string name="test_key">%1${'$'}s value</string></resources>
+        """.trimIndent().toStringsXml()
+        val targetXml = """
+            <resources><string name="test_key" formatted="false">%1${'$'}s target value</string></resources>
+        """.trimIndent().toStringsXml()
+
+        val result = StringsXmlFileHelper.updateTargetWithTranslations(
+            sourceStringsXmlFile = sourceXml,
+            targetStringsXmlFile = targetXml,
+            translatedTextUnits = emptyList(),
+            languageTag = StringsXmlFileHandlerTestData.LANGUAGE_TAG
+        )
+
+        val stringElement = result.elements.single() as StringElement
+        assertThat(stringElement.isFormatted).isTrue()
+        assertThat(result.serialize()).doesNotContain("formatted")
     }
 
     private fun String.toStringsXml(): StringsXmlFile {

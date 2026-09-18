@@ -19,6 +19,9 @@ internal class StringElement : BaseElement {
     val isInlineMarkup: Boolean
         get() = _node.hasElementChildren()
 
+    val isFormatted: Boolean
+        get() = _node.getAttribute(FORMATTED_ATTRIBUTE) != FALSE_VALUE
+
     val value: String
         get() {
             val children = _node.childNodes
@@ -30,10 +33,20 @@ internal class StringElement : BaseElement {
             }
         }
 
-    constructor(document: Document, name: String, value: String, hash: String, content: StringContent) : super() {
+    constructor(
+        document: Document,
+        name: String,
+        value: String,
+        hash: String,
+        content: StringContent,
+        formatted: Boolean,
+    ) : super() {
         _node = document.createElement("string").apply {
             setAttribute("name", name)
             setAttribute("hash", hash.ifEmpty { value.hashSha1() })
+            if (!formatted) {
+                setAttribute(FORMATTED_ATTRIBUTE, FALSE_VALUE)
+            }
             when (content) {
                 is StringContent.Markup -> {
                     setAttribute(MARKUP_ATTRIBUTE, "true")

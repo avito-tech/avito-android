@@ -55,8 +55,21 @@ internal class StringsXmlFile {
         else -> null
     }
 
-    fun appendString(name: String, value: String, hash: String = "", asMarkup: Boolean = false): StringsXmlFile {
-        _elements += StringElement(document, name, value, hash, value.toStringContent(asMarkup))
+    fun appendString(
+        name: String,
+        value: String,
+        hash: String = "",
+        asMarkup: Boolean = false,
+        formatted: Boolean = true,
+    ): StringsXmlFile {
+        _elements += StringElement(
+            document = document,
+            name = name,
+            value = value,
+            hash = hash,
+            content = value.toStringContent(asMarkup),
+            formatted = formatted,
+        )
         return this
     }
 

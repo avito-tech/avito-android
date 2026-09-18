@@ -17,6 +17,10 @@ internal const val RESOURCES_TAG = "resources"
 
 internal const val MARKUP_ATTRIBUTE = "__markup"
 
+internal const val FORMATTED_ATTRIBUTE = "formatted"
+
+internal const val FALSE_VALUE = "false"
+
 private const val FRAGMENT_WRAPPER_TAG = "fragment"
 private const val DISALLOW_DOCTYPE_FEATURE = "http://apache.org/xml/features/disallow-doctype-decl"
 
