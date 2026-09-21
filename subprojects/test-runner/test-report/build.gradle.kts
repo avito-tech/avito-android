@@ -6,6 +6,9 @@ plugins {
 dependencies {
     api(project(":subprojects:test-runner:test-report-dsl"))
     api(project(":subprojects:test-runner:file-storage"))
+    api(project(":subprojects:android-test:websocket-reporter")) {
+        because("public ReportViewerWebsocketReporter implements WebSocketReporter")
+    }
 
     implementation(project(":subprojects:common:reflection-extensions"))
     implementation(project(":subprojects:common:time"))
@@ -19,7 +22,6 @@ dependencies {
     implementation(project(":subprojects:test-runner:test-annotations"))
     implementation(project(":subprojects:common:throwable-utils"))
     implementation(project(":subprojects:android-test:resource-manager-exceptions"))
-    implementation(project(":subprojects:android-test:websocket-reporter"))
     implementation(libs.okio)
     implementation(libs.kotson)
     implementation(libs.okhttp)
