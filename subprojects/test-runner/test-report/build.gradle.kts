@@ -7,7 +7,10 @@ dependencies {
     api(project(":subprojects:test-runner:test-report-dsl"))
     api(project(":subprojects:test-runner:file-storage"))
     api(project(":subprojects:android-test:websocket-reporter")) {
-        because("public ReportViewerWebsocketReporter implements WebSocketReporter")
+        because(
+            "Public ReportViewerWebsocketReporter implements WebSocketReporter, " +
+                "so consumers need the interface on their compile classpath without declaring an extra dependency"
+        )
     }
 
     implementation(project(":subprojects:common:reflection-extensions"))
