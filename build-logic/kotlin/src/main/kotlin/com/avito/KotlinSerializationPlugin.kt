@@ -14,9 +14,8 @@ class KotlinSerializationPlugin : Plugin<Project> {
             dependencies.add("implementation", libs.kotlinx.serialization.json)
 
             tasks.withType(KotlinCompile::class.java).configureEach {
-                it.kotlinOptions {
-                    freeCompilerArgs = freeCompilerArgs +
-                        "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+                it.compilerOptions {
+                    optIn.add("kotlinx.serialization.ExperimentalSerializationApi")
                 }
             }
         }

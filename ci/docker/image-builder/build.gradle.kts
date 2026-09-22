@@ -29,7 +29,7 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    compilerOptions.freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
 }
 
 tasks {

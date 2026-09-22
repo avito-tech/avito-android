@@ -172,7 +172,7 @@ A problem occurred evaluating project ':app'.
   <body>
     <h2>FAILURE: Build completed with 2 failures.</h2>
     <h3>1: Task failed with an exception</h3>
-    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 8
+    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 9
 A problem occurred evaluating project ':app'.
 	&gt; A problem occurred evaluating project ':app'.
 		&gt; Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.</pre>

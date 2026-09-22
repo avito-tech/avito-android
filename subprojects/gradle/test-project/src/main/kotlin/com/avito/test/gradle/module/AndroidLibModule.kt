@@ -34,7 +34,10 @@ public class AndroidLibModule(
 
     init {
         val kotlinImports = if (enableKotlinAndroidPlugin) {
-            listOf("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+            listOf(
+                "import org.jetbrains.kotlin.gradle.dsl.JvmTarget",
+                "import org.jetbrains.kotlin.gradle.tasks.KotlinCompile"
+            )
         } else {
             emptyList()
         }
@@ -132,15 +135,15 @@ public class AndroidLibModule(
             if (useKts) {
                 """
                 |tasks.withType(KotlinCompile::class.java).configureEach {
-                |   kotlinOptions {
-                |       jvmTarget = JavaVersion.VERSION_1_8.toString()
+                |   compilerOptions {
+                |       jvmTarget.set(JvmTarget.JVM_1_8)
                 |    }
                 |}""".trimMargin()
             } else {
                 """
                 |tasks.withType(KotlinCompile).configureEach {
-                |   kotlinOptions {
-                |       jvmTarget = JavaVersion.VERSION_1_8.toString()
+                |   compilerOptions {
+                |       jvmTarget.set(JvmTarget.JVM_1_8)
                 |    }
                 |}""".trimMargin()
             }

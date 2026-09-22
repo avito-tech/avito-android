@@ -102,7 +102,7 @@ internal object PlainTextVerdictCases {
             |
             |1: Task failed with an exception.
             |-----------
-            |Build file '${dir.canonicalPath}/app/build.gradle' line: 8
+            |Build file '${dir.canonicalPath}/app/build.gradle' line: 9
             |A problem occurred evaluating project ':app'.
             |	> A problem occurred evaluating project ':app'.
             |		> Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.
