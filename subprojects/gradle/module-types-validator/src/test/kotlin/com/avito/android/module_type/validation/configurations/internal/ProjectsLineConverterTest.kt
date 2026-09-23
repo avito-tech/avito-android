@@ -19,7 +19,7 @@ class ProjectsLineConverterTest {
     @Test
     fun `input project line - return project info`() {
         val converter = ProjectsLineConverter()
-        val line = "project :lib-c:impl"
+        val line = ":lib-c:impl"
 
         assertThat(converter.convert(line)).isEqualTo(
             ProjectConvertedData(
@@ -34,7 +34,7 @@ class ProjectsLineConverterTest {
     @Test
     fun `input project line with level 2 - return project info`() {
         val converter = ProjectsLineConverter()
-        val line = "|    +--- project :lib-a:public"
+        val line = "    :lib-a:public"
 
         assertThat(converter.convert(line)).isEqualTo(
             ProjectConvertedData(
@@ -49,7 +49,7 @@ class ProjectsLineConverterTest {
     @Test
     fun `input project line with composite implementation - return project info`() {
         val converter = ProjectsLineConverter()
-        val line = "project :lib-a:impl-a"
+        val line = ":lib-a:impl-a"
 
         assertThat(converter.convert(line)).isEqualTo(
             ProjectConvertedData(
@@ -64,7 +64,7 @@ class ProjectsLineConverterTest {
     @Test
     fun `input project line without logical module - return project info without logical module`() {
         val converter = ProjectsLineConverter()
-        val line = "project :lib-a"
+        val line = ":lib-a"
 
         assertThat(converter.convert(line)).isEqualTo(
             ProjectConvertedData(

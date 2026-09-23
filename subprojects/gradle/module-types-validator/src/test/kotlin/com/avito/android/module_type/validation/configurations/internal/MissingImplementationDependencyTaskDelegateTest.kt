@@ -56,6 +56,25 @@ class MissingImplementationDependencyTaskDelegateTest {
     }
 
     @Test
+    fun `demo app -- Fake in androidTest configuration -- success`() {
+        val result = MissingImplementationDependencyTaskDelegate().validate(
+            appModulePath = INPUT_APP_MODULE_PATH,
+            appModuleBuildFilePath = INPUT_APP_MODULE_BUILD_FILE_PATH,
+            appModuleType = FunctionalType.DemoApp,
+            projectsTaskOutputText = INPUT_PROJECTS_TASK_OUTPUT_TEXT_WITH_IMPLS,
+            appDependenciesText = """
+                debugCompileClasspath
+                :avito:feature-two:public
+
+                debugAndroidTestCompileClasspath
+                :avito:feature-two:fake
+                    :avito:feature-two:public
+            """.trimIndent(),
+        )
+        assertThat(result).isEqualTo(Result.success(Unit))
+    }
+
+    @Test
     fun `demo app -- one Fake for Public -- error message with this Fake`() {
         val result = MissingImplementationDependencyTaskDelegate().validate(
             appModulePath = INPUT_APP_MODULE_PATH,
@@ -136,25 +155,11 @@ class MissingImplementationDependencyTaskDelegateTest {
         """.trimIndent()
 
         private val INPUT_APP_DEPENDENCIES = """
-            ------------------------------------------------------------
-            Project ':lib-c:demo'
-            ------------------------------------------------------------
-
-            apiDependenciesMetadata
-            No dependencies
-
-            implementationDependenciesMetadata
-            +--- project :avito:feature-one:impl
-            |    +--- project :avito:feature-one:public
-            |    \--- project :avito:feature-two:public
-            |         \--- project :avito:feature-two:abstract
-            \--- org.jetbrains.kotlin:kotlin-stdlib:1.7.10
-                 +--- org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
-                 \--- org.jetbrains:annotations:13.0
-
-            (*) - dependencies omitted (listed previously)
-
-            A web-based, searchable dependency report is available by adding the --scan option.
+            debugCompileClasspath
+            :avito:feature-one:impl
+                :avito:feature-one:public
+                :avito:feature-two:public
+                    :avito:feature-two:abstract
         """.trimIndent()
     }
 }

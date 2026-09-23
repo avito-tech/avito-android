@@ -95,32 +95,16 @@ class ForbiddenDemoDependenciesTaskDelegateTest {
 
     private companion object {
         val INPUT_APP_DEPENDENCIES_WITHOUT_FORBIDDEN = """
-            ------------------------------------------------------------
-            Project ':feature:demo'
-            ------------------------------------------------------------
-
-            implementationDependenciesMetadata
-            \--- project :feature:impl
-                 \--- project :feature:public
-
-            (*) - dependencies omitted (listed previously)
-
-            A web-based, searchable dependency report is available by adding the --scan option.
+            debugRuntimeClasspath
+            :feature:impl
+                :feature:public
         """.trimIndent()
 
         val INPUT_APP_DEPENDENCIES_WITH_FORBIDDEN = """
-            ------------------------------------------------------------
-            Project ':feature:demo'
-            ------------------------------------------------------------
-
-            implementationDependenciesMetadata
-            \--- project :feature:impl
-                 +--- project :feature:public
-                 \--- project :heavy-module
-
-            (*) - dependencies omitted (listed previously)
-
-            A web-based, searchable dependency report is available by adding the --scan option.
+            debugRuntimeClasspath
+            :feature:impl
+                :feature:public
+                :heavy-module
         """.trimIndent()
     }
 }

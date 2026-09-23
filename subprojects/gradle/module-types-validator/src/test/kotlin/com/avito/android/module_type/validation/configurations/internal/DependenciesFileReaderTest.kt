@@ -12,7 +12,7 @@ class DependenciesFileReaderTest {
     fun `return correct dependencies`() {
         val dependenciesFileReader = DependenciesFileReader(INPUT_TEXT, "lib-c:demo")
         val dependencies = dependenciesFileReader.readProjectDependencies()
-        assertThat(dependencies).hasSize(8)
+        assertThat(dependencies).hasSize(10)
         assertThat(dependencies).contains(
             ProjectDependencyInfo(
                 modulePath = ":lib-a:public",
@@ -23,32 +23,44 @@ class DependenciesFileReaderTest {
         )
     }
 
+    @Test
+    fun `return dependencies grouped by configuration`() {
+        val dependenciesFileReader = DependenciesFileReader(INPUT_TEXT, "lib-c:demo")
+        val configurations = dependenciesFileReader.readDependenciesByConfiguration()
+
+        assertThat(configurations).hasSize(2)
+        assertThat(configurations[0]).hasSize(8)
+        assertThat(configurations[1]).containsExactly(
+            ProjectDependencyInfo(
+                modulePath = ":lib-test:impl",
+                fullPath = "lib-c:demo -> :lib-test:impl",
+                logicalModule = ":lib-test",
+                functionalType = FunctionalType.Impl
+            ),
+            ProjectDependencyInfo(
+                modulePath = ":lib-test:public",
+                fullPath = "lib-c:demo -> :lib-test:impl -> :lib-test:public",
+                logicalModule = ":lib-test",
+                functionalType = FunctionalType.Public
+            )
+        ).inOrder()
+    }
+
     companion object {
         private val INPUT_TEXT = """
-            
-            ------------------------------------------------------------
-            Project ':lib-c:demo'
-            ------------------------------------------------------------
+            debugCompileClasspath
+            :lib-c:impl
+                :lib-b:public
+            :lib-b:fake
+                :lib-a:public
+                :utils
+                :lib-b:public
+            :lib-a:impl
+                :lib-a:public
 
-            apiDependenciesMetadata
-            No dependencies
-
-            implementationDependenciesMetadata
-            +--- project :lib-c:impl
-            |    \--- project :lib-b:public
-            +--- project :lib-b:fake
-            |    +--- project :lib-a:public
-            |    +--- project :utils
-            |    \--- project :lib-b:public
-            +--- project :lib-a:impl
-            |    \--- project :lib-a:public
-            \--- org.jetbrains.kotlin:kotlin-stdlib:1.7.10
-                 +--- org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10
-                 \--- org.jetbrains:annotations:13.0
-
-            (*) - dependencies omitted (listed previously)
-
-            A web-based, searchable dependency report is available by adding the --scan option.
+            debugAndroidTestCompileClasspath
+            :lib-test:impl
+                :lib-test:public
         """.trimIndent()
     }
 }

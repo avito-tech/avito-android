@@ -198,7 +198,7 @@ internal object DependenciesValidationProjectGenerator {
         return KotlinModule(
             name = "demo",
             packageName = "$logicalModuleName.demo",
-            imports = listOf("import com.avito.android.module_type.*", "import kotlin.collections.SetsKt"),
+            imports = listOf("import com.avito.android.module_type.*"),
             plugins = plugins {
                 id("com.avito.android.module-types")
                 id("com.avito.android.module-types-validator")
@@ -214,9 +214,6 @@ internal object DependenciesValidationProjectGenerator {
                         FunctionalType.${FunctionalType.DemoApp.name}
                     )
                     validation { 
-                        missingImplementations {
-                            configurationNames.set(SetsKt.setOf("implementation"))
-                        }
                         forbiddenDemoDependencies {
                             forbiddenDependencies(file("${'$'}rootDir/baselines/forbidden-demo-dependencies.txt"))
                             ${if (allowForbiddenDemoDependency) "allow(\":heavy-module\")" else ""}
