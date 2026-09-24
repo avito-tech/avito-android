@@ -1,5 +1,6 @@
 package com.avito.android.contracts.platform
 
+import com.android.build.api.variant.AndroidComponentsExtension
 import com.avito.android.contracts.platform.dependency.codegenDependencyConfiguration
 import com.avito.android.contracts.platform.extension.ContractsModuleExtension
 import com.avito.android.contracts.platform.extension.ContractsRootExtension
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -82,35 +83,47 @@ internal class ContractsPluginInstaller(
 
         val validationTask = project.tasks.withType<ValidateNetworkContractsTask>()
 
-        kotlinTargetExtension.target.compilations
-            .all { compilation ->
-                // configure codegen task only for Android/Kotlin modules and include only baseVariant/main sourceSet
-                val codegenTask = when {
-                    compilation.isAndroidBaseVariantCompilation() -> registerCodegenTask(
-                        kind = extension.kind,
-                        projectName = extension.projectName,
-                        variant = compilation.androidVariant.name,
-                        target = target,
-                        codegenConfiguration = extension.codegen,
-                        schemesDirectory = extension.schemesBaseDirectory,
-                        generators = extension.codegen.generators,
-                        crtEnv = networkConfiguration.crtEnvName,
-                        ketEnv = networkConfiguration.keyEnvName,
-                    )
+        if (kotlinTargetExtension.target is KotlinAndroidTarget) {
+            val androidComponents = target.extensions.getByType(AndroidComponentsExtension::class.java)
+            androidComponents.onVariants { variant ->
+                // codegen is not supported for variants with product flavors
+                if (variant.productFlavors.isNotEmpty()) return@onVariants
 
-                    compilation.isJvmMainCompilation() -> registerCodegenTask(
-                        kind = extension.kind,
-                        projectName = extension.projectName,
-                        target = target,
-                        codegenConfiguration = extension.codegen,
-                        schemesDirectory = extension.schemesBaseDirectory,
-                        generators = extension.codegen.generators,
-                        crtEnv = networkConfiguration.crtEnvName,
-                        ketEnv = networkConfiguration.keyEnvName,
-                    )
+                val codegenTask = registerCodegenTask(
+                    kind = extension.kind,
+                    projectName = extension.projectName,
+                    variant = variant.name,
+                    target = target,
+                    codegenConfiguration = extension.codegen,
+                    schemesDirectory = extension.schemesBaseDirectory,
+                    generators = extension.codegen.generators,
+                    crtEnv = networkConfiguration.crtEnvName,
+                    ketEnv = networkConfiguration.keyEnvName,
+                )
 
-                    else -> return@all
+                // java, not kotlin: kotlin-android plugin compiles only java directories of the Variant API,
+                // built-in Kotlin of AGP compiles both
+                variant.sources.java?.addGeneratedSourceDirectory(codegenTask, CodegenTask::outputDirectory)
+                codegenTask.configure {
+                    it.mustRunAfter(validationTask)
                 }
+            }
+            return
+        }
+
+        kotlinTargetExtension.target.compilations
+            .matching { it.isJvmMainCompilation() }
+            .all { compilation ->
+                val codegenTask = registerCodegenTask(
+                    kind = extension.kind,
+                    projectName = extension.projectName,
+                    target = target,
+                    codegenConfiguration = extension.codegen,
+                    schemesDirectory = extension.schemesBaseDirectory,
+                    generators = extension.codegen.generators,
+                    crtEnv = networkConfiguration.crtEnvName,
+                    ketEnv = networkConfiguration.keyEnvName,
+                )
 
                 compilation.defaultSourceSet.kotlin.srcDirs(codegenTask.flatMap { it.outputDirectory })
                 codegenTask.configure {
@@ -322,15 +335,6 @@ private fun Project.registerValidationTask(
             builder.invoke(task)
         }
     }
-}
-
-@OptIn(ExperimentalContracts::class)
-private fun KotlinCompilation<*>.isAndroidBaseVariantCompilation(): Boolean {
-    contract {
-        returns(true) implies (this@isAndroidBaseVariantCompilation is KotlinJvmAndroidCompilation)
-    }
-    return this is KotlinJvmAndroidCompilation &&
-        this.androidVariant.baseName == this.androidVariant.name
 }
 
 @OptIn(ExperimentalContracts::class)

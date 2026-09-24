@@ -2,11 +2,8 @@
 
 package com.avito.android.tech_budget.internal.detekt
 
-import com.android.build.gradle.api.ApplicationVariant
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.LibraryVariant
-import com.android.build.gradle.api.TestVariant
-import com.android.build.gradle.api.UnitTestVariant
+import com.android.build.api.variant.Component
+import com.avito.android.tech_budget.internal.detekt.tasks.TechBudgetDetektTask
 import com.avito.kotlin.dsl.getBooleanProperty
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.CustomDetektReport
@@ -53,36 +50,25 @@ internal fun Detekt.setupWithDefaults(block: Detekt.() -> Unit = {}) {
     block.invoke(this)
 }
 
-internal fun Detekt.enableAndroidTypeResolution(
-    variant: BaseVariant,
-    additionalVariantSources: FileCollection?,
+internal fun TechBudgetDetektTask.enableAndroidTypeResolution(
+    component: Component,
     bootClasspath: FileCollection
 ) {
-    logger.lifecycle("Detekt applied for variant ${variant.name}")
+    logger.lifecycle("Detekt applied for variant ${component.name}")
 
-    val javaDestinations = project.files(
-        variant.javaCompileProvider?.map { it.destinationDirectory }
+    val componentSources = project.files(
+        listOfNotNull(component.sources.java?.all, component.sources.kotlin?.all)
     )
-
-    val variantClasspath = project.files(
-        variant.getCompileClasspath(null)?.filter { it.exists() }
-    )
-
-    @Suppress("DEPRECATION")
-    fun BaseVariant.extractSources(): Collection<File> {
-        return sourceSets.flatMap { it.javaDirectories + it.kotlinDirectories }
-    }
-
-    val variantSources = project.files(variant.extractSources())
 
     val classpath = project.files(
         bootClasspath,
-        javaDestinations,
-        variantClasspath,
+        projectClassesDirectories,
+        projectClassesJars,
+        component.compileClasspath.filter { it.exists() },
     )
 
     enableTypeResolution(
-        sources = additionalVariantSources?.plus(variantSources) ?: variantSources,
+        sources = componentSources,
         classpath = classpath
     )
 }
@@ -134,34 +120,3 @@ internal fun Detekt.enableTypeResolution(
 
     ignoreFailures = project.getBooleanProperty("com.avito.android.detekt.ignoreFailures", false)
 }
-
-/**
- * Retrieves the base variant associated with a given variant.
- *
- * When called on a variant, this property will return:
- * - The base variant (like `debug`, `release`)
- * if the variant is a test variant (e.g., `UnitTestVariant`, `TestVariant`).
- * - The variant itself in all other cases.
- *
- * For example:
- *  * When called on a `UnitTestVariant` like `debugUnitTest`, `baseVariant` will return the `debug` variant.
- *  * When called on a non-test variant like `release`, it will return `release` itself.
- *
- * @return The base variant associated with the current variant.
- *     It returns the variant itself if it's not a test variant.
- */
-internal val BaseVariant.baseVariant: BaseVariant
-    get() {
-        return when {
-            this is UnitTestVariant && testedVariant is BaseVariant -> testedVariant as BaseVariant
-            this is TestVariant -> testedVariant
-            else -> this
-        }
-    }
-
-internal val BaseVariant.unitTestVariant: UnitTestVariant?
-    get() = when (this) {
-        is ApplicationVariant -> unitTestVariant
-        is LibraryVariant -> unitTestVariant
-        else -> null
-    }
