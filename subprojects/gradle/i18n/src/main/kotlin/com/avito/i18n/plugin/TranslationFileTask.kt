@@ -4,6 +4,8 @@ import com.avito.android.Problem
 import com.avito.android.asPlainText
 import com.avito.i18n.plugin.internal.StringsFileTranslator
 import com.avito.i18n.plugin.internal.TranslationApiInteractor
+import com.avito.i18n.plugin.internal.feedback.TranslationFeedbackService
+import com.avito.i18n.plugin.internal.feedback.TranslationOutcome
 import com.avito.i18n.plugin.service.LocalizationService
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -36,10 +38,29 @@ internal abstract class TranslationFileTask : DefaultTask() {
     @get:Internal
     abstract val service: Property<LocalizationService>
 
+    @get:Internal
+    abstract val feedbackService: Property<TranslationFeedbackService>
+
     @TaskAction
     fun doTranslateFile() {
+        val result = runCatching { translateAll() }
+
+        result.fold(
+            onSuccess = { translatedUnits -> if (translatedUnits > 0) sendInstantFeedback(errorText = null) },
+            onFailure = { error ->
+                runCatching { sendInstantFeedback(errorText = error.shortText()) }
+                    .onFailure { logger.warn("Instant feedback: outcome not recorded: ${it.message}") }
+            },
+        )
+
+        result.getOrThrow()
+    }
+
+    private fun translateAll(): Int {
+        var translatedUnits = 0
+
         defaultStringsFiles.forEach { stringsFile ->
-            StringsFileTranslator(
+            translatedUnits += StringsFileTranslator(
                 defaultStringsFile = stringsFile,
                 locales = locales.get(),
                 apiInteractor = TranslationApiInteractor(
@@ -62,5 +83,29 @@ internal abstract class TranslationFileTask : DefaultTask() {
                     )
                 }
         }
+
+        return translatedUnits
+    }
+
+    private fun sendInstantFeedback(errorText: String?) {
+        feedbackService.get().record(
+            TranslationOutcome(
+                module = componentName.get(),
+                locales = locales.get(),
+                errorText = errorText,
+            )
+        )
+    }
+
+    private fun Throwable.shortText(): String {
+        val reported = cause ?: this
+        val firstLine = reported.message.orEmpty().lineSequence().firstOrNull().orEmpty().trim()
+        val name = reported.javaClass.simpleName
+        val text = if (firstLine.isEmpty()) name else "$name: $firstLine"
+        return text.take(MAX_ERROR_TEXT_LENGTH)
+    }
+
+    private companion object {
+        const val MAX_ERROR_TEXT_LENGTH = 200
     }
 }

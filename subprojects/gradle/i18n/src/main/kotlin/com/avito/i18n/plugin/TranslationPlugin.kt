@@ -1,7 +1,9 @@
 package com.avito.i18n.plugin
 
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.avito.android.feedback.InstantFeedbackService
 import com.avito.android.isAndroid
+import com.avito.i18n.plugin.internal.feedback.TranslationFeedbackService
 import com.avito.i18n.plugin.service.LocalizationService
 import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Plugin
@@ -26,9 +28,13 @@ public class TranslationPlugin : Plugin<Project> {
             it.componentName.set(target.getComponentName())
         }
         val service = LocalizationService.provideService(target)
+        val translationFeedbackService = TranslationFeedbackService.provide(
+            project = target,
+            feedbackService = InstantFeedbackService.provide(target),
+        )
 
         verifyStringsFilesExist(target, translationExtension)
-        configureTranslationTask(target, translationExtension, service)
+        configureTranslationTask(target, translationExtension, service, translationFeedbackService)
     }
 
     private fun verifyStringsFilesExist(target: Project, translationExtension: TranslationExtension) {
@@ -45,7 +51,8 @@ public class TranslationPlugin : Plugin<Project> {
     private fun configureTranslationTask(
         target: Project,
         translationExtension: TranslationExtension,
-        localizationService: Provider<LocalizationService>
+        localizationService: Provider<LocalizationService>,
+        translationFeedbackService: Provider<TranslationFeedbackService>,
     ) {
         target.tasks.register<TranslationFileTask>(TRANSLATION_TASK_NAME) {
             defaultStringsFiles.setFrom(target.resolveStringsFiles(translationExtension))
@@ -54,7 +61,9 @@ public class TranslationPlugin : Plugin<Project> {
             namespace.set(translationExtension.namespace)
             sourceLocale.set(translationExtension.sourceLocale)
             componentName.set(translationExtension.componentName)
+            feedbackService.set(translationFeedbackService)
             usesService(localizationService)
+            usesService(translationFeedbackService)
         }
     }
 

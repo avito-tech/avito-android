@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:instant-feedback"))
     implementation(project(":subprojects:gradle:mtls"))
 
     implementation(libs.okhttp)

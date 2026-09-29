@@ -16,7 +16,11 @@ internal class StringsFileTranslator(
     private val apiInteractor: TranslationApiInteractor,
 ) {
 
-    fun translate(): Result<Unit> {
+    /**
+     * @return number of translated text units across all locales.
+     */
+    fun translate(): Result<Int> {
+        var translatedUnits = 0
         val resPath = defaultStringsFile.parentFile.parentFile
         val sourceStringXmlFile = runCatching {
             StringsXmlFile(InputSource(FileReader(defaultStringsFile)))
@@ -63,20 +67,35 @@ internal class StringsFileTranslator(
                 return Result.failure(e)
             }
 
-            val updatedTargetFile = StringsXmlFileHelper.updateTargetWithTranslations(
-                sourceStringsXmlFile = sourceStringXmlFile,
-                targetStringsXmlFile = targetStringXmlFile,
-                translatedTextUnits = translatedTextUnits,
-                languageTag = languageTag
-            )
+            translatedUnits += translatedTextUnits.size
 
-            if (targetFile.exists()) {
-                targetFile.delete()
-            } else {
-                targetFile.parentFile.mkdirs()
+            runCatching {
+                val updatedTargetFile = StringsXmlFileHelper.updateTargetWithTranslations(
+                    sourceStringsXmlFile = sourceStringXmlFile,
+                    targetStringsXmlFile = targetStringXmlFile,
+                    translatedTextUnits = translatedTextUnits,
+                    languageTag = languageTag
+                )
+
+                if (targetFile.exists()) {
+                    targetFile.delete()
+                } else {
+                    targetFile.parentFile.mkdirs()
+                }
+                updatedTargetFile.write(StreamResult(targetFile))
+            }.getOrElse { e ->
+                return Result.failure(
+                    Problem.Builder(
+                        shortDescription = "Failed to write translated strings file",
+                        context = "Writing '${targetFile.name}' for locale '$languageTag' at ${targetFile.path}"
+                    )
+                        .because(e.message ?: "Unknown error")
+                        .throwable(e)
+                        .build()
+                        .asRuntimeException()
+                )
             }
-            updatedTargetFile.write(StreamResult(targetFile))
         }
-        return Result.success(Unit)
+        return Result.success(translatedUnits)
     }
 }
