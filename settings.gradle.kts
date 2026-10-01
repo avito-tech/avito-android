@@ -13,6 +13,22 @@ pluginManagement {
     apply(from = "build-logic-settings/scan-plugin/buildScan-disableAutoApplyFix.settings.gradle.kts")
     apply(from = "build-logic-settings/dependency-plugin/pluginManagement-shared.settings.gradle.kts")
     includeBuild("build-logic-settings")
+
+    /**
+     * Overrides the R8 bundled into AGP: https://r8.googlesource.com/r8#replacing-r8-in-agp
+     * Settings classloader is a parent of every project classloader, so its R8 wins regardless of classpath order.
+     * Version catalog accessors don't exist in settings yet, so the `r8` version is read from the catalog file.
+     */
+    buildscript {
+        dependencies {
+            val r8VersionMatch = Regex("""^r8 = "([^"\r\n]+)"$""", RegexOption.MULTILINE)
+                .find(settings.rootDir.resolve("gradle/libs.versions.toml").readText())
+            val r8Version = requireNotNull(r8VersionMatch) {
+                "gradle/libs.versions.toml must declare `r8 = \"<version>\"`"
+            }.groupValues[1]
+            classpath("com.android.tools:r8:$r8Version")
+        }
+    }
 }
 plugins {
     id("scan-settings")

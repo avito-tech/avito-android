@@ -11,6 +11,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.Test
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
+import org.gradle.plugin.devel.tasks.PluginUnderTestMetadata
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -35,6 +36,12 @@ class GradleTestingPlugin : Plugin<Project> {
 
             plugins.withId("java-gradle-plugin") {
                 extensions.getByType(GradlePluginDevelopmentExtension::class.java).testSourceSets(gradleTest)
+                val r8 = configurations.detachedConfiguration(dependencies.create(libs.r8.get()))
+                tasks.withType(PluginUnderTestMetadata::class.java).configureEach { task ->
+                    // TestKit loads this classpath into one parent classloader, so the first R8 on it wins:
+                    // keep it ahead of AGP, which bundles its own R8
+                    task.pluginClasspath.setFrom(r8, task.pluginClasspath.from.toList())
+                }
             }
             // make idea to treat gradleTest as test sources
             extensions.configure(IdeaModel::class.java) {
@@ -115,6 +122,7 @@ class GradleTestingPlugin : Plugin<Project> {
                 systemProperty("rootDir", "${project.rootDir}")
                 systemProperty("buildDir", "$buildDir")
                 systemProperty("kotlinVersion", project.getKotlinPluginVersion())
+                systemProperty("r8Version", libs.versions.r8.get())
 
                 systemProperty("artifactoryUrl", artifactoryUrl.getOrElse(""))
                 systemProperty("isTest", true)

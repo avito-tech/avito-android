@@ -64,7 +64,7 @@ public class DependencyResolutionPlugin implements Plugin<Settings> {
                         ),
                         new Filters(
                             List.of(
-                                new IncludeModuleByRegex("com\\.android.*", "(?!r8).*"),
+                                new IncludeGroupByRegex("com\\.android.*"),
                                 new IncludeModuleByRegex("com\\.google\\.android.*", "(?!annotations).*"),
                                 new IncludeGroupByRegex("androidx\\..*"),
                                 new IncludeGroup("com.google.testing.platform")
@@ -114,21 +114,6 @@ public class DependencyResolutionPlugin implements Plugin<Settings> {
                         new Filters(
                             List.of(
                                 new IncludeGroup("org.jetbrains.teamcity")
-                            )
-                        )
-                    ),
-                    new ExclusiveContent(
-                        new ForRepositories(
-                            List.of(MavenRepositoryFactory.createFactory(
-                                artifactRepositories,
-                                artifactoryUrl,
-                                "r8-releases",
-                                "https://storage.googleapis.com/r8-releases/raw"
-                            ))
-                        ),
-                        new Filters(
-                            List.of(
-                                new IncludeModule("com.android.tools", "r8")
                             )
                         )
                     )

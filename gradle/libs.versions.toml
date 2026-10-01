@@ -4,6 +4,10 @@ kotlin = "2.1.20"
 kotlinLanguageVersion = "2.1"
 kspVersion = "2.1.20-2.0.1"
 agp = "8.13.2"
+# Overrides the R8/D8 bundled into AGP;
+# settings.gradle.kts reads this line, keep the `r8 = "<version>"` format
+# https://developer.android.com/build/kotlin-support
+r8 = "9.4.27"
 # Keep in sync with AGP-compatible aapt2 proto artifact.
 aapt2Proto = "8.13.2-14304508"
 # formula: 23 + agp version
@@ -50,6 +54,7 @@ kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.r
 kspGradle = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 androidGradleApi = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
+r8 = { module = "com.android.tools:r8", version.ref = "r8" }
 aapt2Proto = { module = "com.android.tools.build:aapt2-proto", version.ref = "aapt2Proto" }
 detektGradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 dependencyGuard = "com.dropbox.dependency-guard:dependency-guard:0.5.0"
