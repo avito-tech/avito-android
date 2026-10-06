@@ -18,7 +18,7 @@ internal class LocalRunArgsChecker(private val dumpDir: () -> File) : Instrument
     })
 
     override fun dumpArgs(args: Map<String, String>) {
-        getDumpFile().writer().use { gson.toJson(args, it) }
+        getDumpFile().writer().use { gson.toJson(maskPemValues(args), it) }
     }
 
     @Suppress("unchecked_cast")

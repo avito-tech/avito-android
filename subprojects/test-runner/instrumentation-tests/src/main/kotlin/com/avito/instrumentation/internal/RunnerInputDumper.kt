@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal
 
 import com.avito.runner.config.RunnerInputParams
+import com.avito.runner.model.InstrumentationParameters
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.GsonBuilder
 import java.io.File
@@ -42,7 +43,20 @@ internal class RunnerInputDumper(private val dumpDir: File) {
     }
 
     private fun excludeSensitiveInfo(input: RunnerInputParams): RunnerInputParams {
-        return input.copy(kubernetesCredentials = KubernetesCredentials.Empty)
+        val configuration = input.instrumentationConfiguration
+        return input.copy(
+            kubernetesCredentials = KubernetesCredentials.Empty,
+            instrumentationConfiguration = configuration.copy(
+                instrumentationParams = configuration.instrumentationParams.withMaskedPemValues(),
+                targets = configuration.targets.map { target ->
+                    target.copy(instrumentationParams = target.instrumentationParams.withMaskedPemValues())
+                },
+            ),
+        )
+    }
+
+    private fun InstrumentationParameters.withMaskedPemValues(): InstrumentationParameters {
+        return InstrumentationParameters(maskPemValues(this))
     }
 
     /**
