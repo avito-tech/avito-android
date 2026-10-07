@@ -124,7 +124,6 @@ public abstract class TransformVariantMappingTask : DefaultTask() {
             step("output-publication") {
                 outputPublisher.publish(transformedMapping, publishedMapping)
             }
-            Unit
         }
     }
 

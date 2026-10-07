@@ -128,15 +128,18 @@ internal class TestProjectGeneratorTest {
         TestProjectGenerator(
             modules = listOf(
                 parent
-            )
+            ),
+            buildGradleExtra = """println("R8 version: " + com.android.tools.r8.Version.getVersionString())"""
         ).generateIn(projectDir)
 
-        gradlew(
+        val result = gradlew(
             projectDir,
             "assembleDebug",
             useModuleClasspath = false
-        ).assertThat()
-            .buildSuccessful()
+        )
+        result.assertThat().buildSuccessful()
+        assertThat(result.output).contains("R8 version: ${System.getProperty("r8Version")}")
+        assertThat(result.output).doesNotContain("Unexpected error during rewriting of Kotlin metadata")
     }
 
     @Test
@@ -172,14 +175,17 @@ internal class TestProjectGeneratorTest {
             modules = listOf(
                 parent
             ),
-            useKts = true
+            useKts = true,
+            buildGradleExtra = """println("R8 version: " + com.android.tools.r8.Version.getVersionString())"""
         ).generateIn(projectDir)
 
-        gradlew(
+        val result = gradlew(
             projectDir,
             "assembleDebug",
             useModuleClasspath = false
-        ).assertThat()
-            .buildSuccessful()
+        )
+        result.assertThat().buildSuccessful()
+        assertThat(result.output).contains("R8 version: ${System.getProperty("r8Version")}")
+        assertThat(result.output).doesNotContain("Unexpected error during rewriting of Kotlin metadata")
     }
 }

@@ -86,7 +86,7 @@ public abstract class UpdateRemoteApiSchemesTask : DefaultTask() {
             .map { schema -> schema.inputStream().use { Json.decodeFromStream<ApiSchemesMetadata>(it) } }
 
         runBlocking {
-            upsertService.get()?.sendContracts(
+            upsertService.get().sendContracts(
                 schemes = schemesMetadata,
             )
         }

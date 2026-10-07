@@ -14,7 +14,7 @@ public object BuildMetadata {
         check(!isEmpty) {
             "Can't load implementation version for $this. Value: \"$version\". Check manifest options for Jar"
         }
-        return version!!
+        return version
     }
 
     /**

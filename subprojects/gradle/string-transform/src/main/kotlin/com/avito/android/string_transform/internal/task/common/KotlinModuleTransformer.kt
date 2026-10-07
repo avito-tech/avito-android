@@ -15,7 +15,6 @@ internal class KotlinModuleTransformer {
     ): Result<Unit> = Result.tryCatch {
         val originalBytes = inputFile.readBytes()
         val metadata = KotlinModuleMetadata.read(originalBytes)
-            ?: error("Unsupported kotlin_module format: ${inputFile.path}")
 
         val module = metadata.kmModule
         var changed = false

@@ -146,7 +146,6 @@ internal class AabTransformOrchestrator(
             step("output-publication") {
                 outputPublisher.publish(rebuiltAab, publishedAab)
             }
-            Unit
         }
     }
 

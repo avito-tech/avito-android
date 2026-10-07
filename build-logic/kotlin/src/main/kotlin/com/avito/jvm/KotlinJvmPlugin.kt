@@ -7,6 +7,8 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.jar.Attributes
 
 class KotlinJvmPlugin : Plugin<Project> {
@@ -21,6 +23,12 @@ class KotlinJvmPlugin : Plugin<Project> {
                 kotlin.explicitApi()
                 kotlin.jvmToolchain {
                     it.languageVersion.set(javaVersion)
+                }
+            }
+
+            tasks.withType(KotlinCompile::class.java).configureEach { task ->
+                task.compilerOptions {
+                    apiVersion.set(KotlinVersion.fromVersion(libs.versions.kotlinJvmApiCompatibilityVersion.get()))
                 }
             }
 

@@ -4,6 +4,14 @@ plugins {
     id("convention.gradle-testing")
 }
 
+tasks.processResources {
+    val r8Version = libs.versions.r8.get()
+    inputs.property("r8Version", r8Version)
+    filesMatching("com/avito/test/gradle/r8-version.txt") {
+        expand("r8Version" to r8Version)
+    }
+}
+
 dependencies {
     api(gradleTestKit())
 

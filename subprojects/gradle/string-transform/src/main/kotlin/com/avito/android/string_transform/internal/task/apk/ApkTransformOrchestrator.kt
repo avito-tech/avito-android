@@ -142,7 +142,6 @@ internal class ApkTransformOrchestrator(
             step("output-publication") {
                 outputPublisher.publish(rebuiltApk, publishedApk)
             }
-            Unit
         }
     }
 

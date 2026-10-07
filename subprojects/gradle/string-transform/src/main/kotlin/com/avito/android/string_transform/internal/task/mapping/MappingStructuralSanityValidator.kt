@@ -24,7 +24,6 @@ internal class MappingStructuralSanityValidator {
                 e,
             )
         }
-        Unit
     }
 
     private fun validateLineShape(mappingFile: File) {

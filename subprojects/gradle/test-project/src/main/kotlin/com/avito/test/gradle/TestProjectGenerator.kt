@@ -26,6 +26,11 @@ internal val targetSdk: Int by lazy { System.getProperty("targetSdk").toInt() }
 internal val minSdkVersion: Int by lazy { System.getProperty("minSdk").toInt() }
 internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
 internal val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
+internal val r8Version: String by lazy {
+    checkNotNull(TestProjectGenerator::class.java.getResourceAsStream("r8-version.txt")) {
+        "Missing bundled R8 version"
+    }.bufferedReader().use { it.readText().trim() }
+}
 internal val rootDir: String by lazy { System.getProperty("rootDir") }
 
 internal val artifactoryUrl: String? by lazy {
@@ -99,6 +104,12 @@ public class TestProjectGenerator(
 
             val buildGradleContent = """
                     |${imports()}
+                    |buildscript {
+                    |    ${repositories()}
+                    |    dependencies {
+                    |        classpath("com.android.tools:r8:$r8Version")
+                    |    }
+                    |}
                     |${plugins()}
                     |
                     |subprojects {
