@@ -8,6 +8,6 @@ internal class ExtensionInstrumentationArgsProvider(
 ) : InstrumentationArgsProvider {
 
     override fun provideInstrumentationArgs(): Map<String, String> {
-        return extension.instrumentationParams
+        return extension.instrumentationParams + extension.lazyInstrumentationParams.get()
     }
 }

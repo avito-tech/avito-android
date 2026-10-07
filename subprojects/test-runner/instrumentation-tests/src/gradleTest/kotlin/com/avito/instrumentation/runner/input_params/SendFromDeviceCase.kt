@@ -29,6 +29,7 @@ class SendFromDeviceCase(
             "configuration" to configurationName,
             "override" to "overrideInConfiguration",
             "expectedCustomParam" to "value",
+            "lazyCustomParam" to "lazyValue",
             "avito.report.transport" to "backend",
             "fileStorageUrl" to "http://stub",
             "reportViewerUrl" to "http://stub",

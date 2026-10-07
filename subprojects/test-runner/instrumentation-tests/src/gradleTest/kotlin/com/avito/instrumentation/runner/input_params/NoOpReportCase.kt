@@ -15,6 +15,7 @@ class NoOpReportCase(override val projectDir: File) : Case() {
             "configuration" to configurationName,
             "override" to "overrideInConfiguration",
             "expectedCustomParam" to "value",
+            "lazyCustomParam" to "lazyValue",
             "avito.report.transport" to "noop",
         )
 

@@ -217,6 +217,53 @@ internal class InstrumentationTestsPluginTest {
             }
     }
 
+    @Test
+    fun `lazy instrumentation params - not resolved - instrumentation task is not requested`(
+        @TempDir projectDir: File
+    ) {
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                "app",
+                plugins = plugins {
+                    id(instrumentationPluginId)
+                },
+                buildGradleExtra = unavailableLazyParamConfiguration(),
+                useKts = true,
+            )
+        )
+
+        runGradle(projectDir, ":app:assembleDebug").assertThat().buildSuccessful()
+    }
+
+    @Test
+    fun `lazy instrumentation params - resolved - instrumentation task is requested`(@TempDir projectDir: File) {
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                "app",
+                plugins = plugins {
+                    id(instrumentationPluginId)
+                },
+                buildGradleExtra = unavailableLazyParamConfiguration(),
+                useKts = true,
+            )
+        )
+
+        runGradle(projectDir, ":app:instrumentationTwoTest", "-PrunOnlyFailedTests=false", expectFailure = true)
+            .assertThat()
+            .buildFailed()
+            .outputContains(UNAVAILABLE_LAZY_PARAM_MESSAGE)
+    }
+
+    private fun unavailableLazyParamConfiguration(): String = """
+        |${instrumentationConfiguration()}
+        |
+        |instrumentation {
+        |    lazyInstrumentationParams.put("credentials", provider<String> { error("$UNAVAILABLE_LAZY_PARAM_MESSAGE") })
+        |}
+        |""".trimMargin()
+
     private fun createProject(projectDir: File, module: Module) {
         TestProjectGenerator(
             plugins = plugins {
@@ -226,7 +273,7 @@ internal class InstrumentationTestsPluginTest {
         ).generateIn(projectDir)
     }
 
-    private fun runGradle(projectDir: File, vararg args: String) =
+    private fun runGradle(projectDir: File, vararg args: String, expectFailure: Boolean = false) =
         ciRun(
             projectDir, *args,
             "-PdeviceName=LOCAL",
@@ -241,8 +288,13 @@ internal class InstrumentationTestsPluginTest {
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
-            dryRun = true
+            dryRun = true,
+            expectFailure = expectFailure,
         )
+
+    private companion object {
+        const val UNAVAILABLE_LAZY_PARAM_MESSAGE = "Lazy instrumentation param is unavailable"
+    }
 }
 
 internal fun instrumentationConfiguration(report: String = "ReportConfig.NoOp"): String = """

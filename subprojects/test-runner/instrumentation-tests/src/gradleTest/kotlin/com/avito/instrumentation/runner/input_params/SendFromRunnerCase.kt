@@ -26,6 +26,7 @@ class SendFromRunnerCase(
             "configuration" to configurationName,
             "override" to "overrideInConfiguration",
             "expectedCustomParam" to "value",
+            "lazyCustomParam" to "lazyValue",
             "avito.report.transport" to "legacy",
             "fileStorageUrl" to "http://stub",
         )

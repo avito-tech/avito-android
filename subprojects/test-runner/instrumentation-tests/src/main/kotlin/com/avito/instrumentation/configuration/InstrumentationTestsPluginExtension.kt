@@ -8,6 +8,7 @@ import org.gradle.api.PolymorphicDomainObjectContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 import javax.inject.Inject
@@ -41,6 +42,13 @@ public abstract class InstrumentationTestsPluginExtension @Inject constructor(
 
     // todo MapProperty
     public var instrumentationParams: Map<String, String> = emptyMap()
+
+    /**
+     * Same as [instrumentationParams], but resolved only when an instrumentation task is configured,
+     * so values that are expensive or may be unavailable (e.g. credentials) don't affect other builds.
+     * Overrides [instrumentationParams] on key conflicts.
+     */
+    public abstract val lazyInstrumentationParams: MapProperty<String, String>
 
     // https://developer.android.com/studio/command-line/logcat#filteringOutput
     public var logcatTags: Collection<String> = emptyList()

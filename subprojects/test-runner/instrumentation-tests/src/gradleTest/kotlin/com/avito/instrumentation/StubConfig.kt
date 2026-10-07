@@ -22,6 +22,7 @@ internal fun kotlinStubConfig(reportConfig: ReportConfig) = """
   |    instrumentationParams = mapOf(
   |        "override" to "overrideInPlugin"
   |    )
+  |    lazyInstrumentationParams.put("lazyCustomParam", provider { "lazyValue" })
   |    report.set(${
     when (reportConfig) {
         ReportConfig.NoOp -> "ReportConfig.NoOp"
