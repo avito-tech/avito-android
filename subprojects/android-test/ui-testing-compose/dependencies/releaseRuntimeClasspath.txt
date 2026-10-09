@@ -108,7 +108,7 @@ org.ccil.cowan.tagsoup:tagsoup:1.2.1
 org.hamcrest:hamcrest-core:2.2
 org.hamcrest:hamcrest-library:2.2
 org.hamcrest:hamcrest:2.2
-org.jetbrains.kotlin:kotlin-stdlib:2.1.20
+org.jetbrains.kotlin:kotlin-stdlib:2.4.20
 org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1
 org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.8.1
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1

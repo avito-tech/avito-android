@@ -7,7 +7,7 @@ androidx.test:core:1.7.0
 androidx.test:monitor:1.8.0
 androidx.tracing:tracing:1.1.0
 com.google.guava:listenablefuture:1.0
-org.jetbrains.kotlin:kotlin-stdlib:2.1.20
+org.jetbrains.kotlin:kotlin-stdlib:2.4.20
 org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.8.1
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1
 org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1

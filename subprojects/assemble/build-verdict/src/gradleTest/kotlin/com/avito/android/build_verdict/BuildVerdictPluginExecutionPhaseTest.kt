@@ -56,8 +56,6 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         val result = gradlew(
             temp,
             "assembleDebug",
-            // K2 KAPT reports errors but doesn't fail the task - forcing K1 to validate verdicts.
-            "-Pkapt.use.k2=false",
             expectFailure = true
         )
         result.assertThat()
@@ -68,8 +66,8 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
             expectedPlainTextVerdict = plainTextVerdicts.kaptStubGeneratingFails(),
             expectedHtmlVerdict = htmlVerdicts.kaptStubGeneratingFails(),
             expectedErrorLogs = listOf(
-                "$temp/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration",
-                "$temp/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration"
+                "$temp/app/src/main/kotlin/Uncompiled.kt:1:1 Syntax error: Expecting a top level declaration.",
+                "$temp/app/src/main/kotlin/Uncompiled.kt:1:11 Syntax error: Expecting a top level declaration."
             )
         )
     }

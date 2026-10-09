@@ -27,6 +27,6 @@ org.jetbrains.kotlin:kotlin-metadata-jvm:2.2.20
 org.jetbrains.kotlin:kotlin-reflect:2.1.20
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21
-org.jetbrains.kotlin:kotlin-stdlib:2.2.20
+org.jetbrains.kotlin:kotlin-stdlib:2.4.20
 org.jetbrains:annotations:13.0
 org.jspecify:jspecify:1.0.0

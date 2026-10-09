@@ -16,32 +16,20 @@ class CompileTasksMetricsTest : BaseTasksMetricsTest(
 ) {
 
     @Test
-    fun `execute compile - metrics exist - ksp1`() {
-        check(useKsp2 = false)
+    fun `KSP2 project - compile - metrics exist`() {
+        check()
     }
 
     @Test
-    fun `execute compile with repeatedly - metrics exist - ksp1`() {
-        check(useKsp2 = false)
-        check(useKsp2 = false)
-    }
-
-    @Test
-    fun `execute compile - metrics exist - ksp2`() {
-        check(useKsp2 = true)
-    }
-
-    @Test
-    fun `execute compile with repeatedly - metrics exist - ksp2`() {
-        check(useKsp2 = true)
-        check(useKsp2 = true)
+    fun `KSP2 project - compile repeatedly - metrics exist`() {
+        check()
+        check()
     }
 
     @Suppress("MaxLineLength")
-    private fun check(useKsp2: Boolean) {
+    private fun check() {
         val result = build(
             ":app:assembleDebug",
-            "-Pksp.useKSP2=$useKsp2",
         )
 
         result.assertThat()

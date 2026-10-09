@@ -6,13 +6,11 @@ import com.avito.android.plugin.build_metrics.internal.gradle.tasks.compile.KspJ
 import com.avito.android.plugin.build_metrics.internal.module
 import com.avito.android.plugin.build_metrics.internal.toTagValue
 import com.google.devtools.ksp.gradle.KspAATask
-import com.google.devtools.ksp.gradle.KspTaskJvm
 
 internal object KspAggregator : BaseCompileMetricAggregator {
     override val filter: (TaskExecutionResult) -> Boolean = { task ->
-        // KSP2 mode uses KspAATask (based on Kotlin Analysis API). KSP1 uses KspTaskJvm.
-        KspAATask::class.java.isAssignableFrom(task.type) ||
-            KspTaskJvm::class.java.isAssignableFrom(task.type)
+        // KSP2 mode uses KspAATask (based on Kotlin Analysis API). KSP1 is removed since KSP 2.3.
+        KspAATask::class.java.isAssignableFrom(task.type)
     }
     override val transform: (TaskExecutionResult) -> BaseCompileMetric = { task ->
         KspJvmMetric(

@@ -1,13 +1,14 @@
 package com.avito.instrumentation.impact
 
 import com.avito.instrumentation.impact.KotlinClassesFinder.Companion.KOTLIN_FILE_EXTENSION
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.FqName
@@ -64,12 +65,10 @@ internal class KotlinClassesFinderImpl : KotlinClassesFinder {
          *  Based on detekt by Artur Bosch
          *  todo internal
          */
+        @OptIn(CoreEnvironmentDeprecation::class)
         fun createKotlinCoreEnvironment(): Project {
-            val configuration = CompilerConfiguration()
-
-            configuration.put(
-                CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY,
-                PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+            val configuration = CompilerConfiguration.create(
+                messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
             )
 
             return KotlinCoreEnvironment.createForProduction(

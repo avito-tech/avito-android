@@ -2,9 +2,9 @@
 # JVM libraries also run inside Gradle 8.13, which embeds Kotlin stdlib 2.0.21.
 kotlinJvmApiCompatibilityVersion = "2.0"
 java = "21"
-kotlin = "2.1.20"
-kotlinLanguageVersion = "2.1"
-kspVersion = "2.1.20-2.0.1"
+kotlin = "2.4.20"
+kotlinLanguageVersion = "2.4"
+kspVersion = "2.3.11"
 agp = "8.13.2"
 # Overrides the R8/D8 bundled into AGP;
 # settings.gradle.kts reads this line, keep the `r8 = "<version>"` format

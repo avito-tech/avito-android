@@ -29,6 +29,10 @@ class KotlinJvmPlugin : Plugin<Project> {
             tasks.withType(KotlinCompile::class.java).configureEach { task ->
                 task.compilerOptions {
                     apiVersion.set(KotlinVersion.fromVersion(libs.versions.kotlinJvmApiCompatibilityVersion.get()))
+                    // Gradle's embedded stdlib is older than Kotlin's non-deprecated API versions.
+                    // Keep source warnings as errors while explicitly supporting that runtime.
+                    // TODO: remove after MBSA-2318
+                    freeCompilerArgs.add("-Xwarning-level=DEPRECATED_LANGUAGE_VERSION:disabled")
                 }
             }
 

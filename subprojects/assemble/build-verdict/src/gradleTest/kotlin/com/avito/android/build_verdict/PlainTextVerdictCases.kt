@@ -11,7 +11,7 @@ internal object PlainTextVerdictCases {
         override fun compileKotlinFails() = """
             |* What went wrong:
             |Execution failed for task ':app:compileDebugKotlin'.
-            |	> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers${'$'}GradleKotlinCompilerWorkAction
+            |	> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
             |		> Compilation error. See log for more details
             |
             |* Error logs:
@@ -62,12 +62,12 @@ internal object PlainTextVerdictCases {
         override fun kaptStubGeneratingFails() = """
             |* What went wrong:
             |Execution failed for task ':app:kaptGenerateStubsDebugKotlin'.
-            |	> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers${'$'}GradleKotlinCompilerWorkAction
+            |	> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
             |		> Compilation error. See log for more details
             |
             |* Error logs:
-            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Expecting a top level declaration
-            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Expecting a top level declaration
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:1 Syntax error: Expecting a top level declaration.
+            |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Syntax error: Expecting a top level declaration.
             """.trimMargin()
 
         override fun unitTestsFails() = """
