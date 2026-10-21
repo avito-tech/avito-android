@@ -70,6 +70,19 @@ internal object PlainTextVerdictCases {
             |e: file://${dir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Syntax error: Expecting a top level declaration.
             """.trimMargin()
 
+        override fun kspFails() = """
+            |* What went wrong:
+            |Execution failed for task ':app:kspDebugKotlin'.
+            |	> A failure occurred while executing com.google.devtools.ksp.gradle.KspAAWorkerAction
+            |		> KSP failed with exit code: PROCESSING_ERROR
+            |
+            |* Error logs:
+            |e: [ksp] ${dir.canonicalPath}/app/src/main/kotlin/com/app/DaggerComponent.kt:5: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.
+            |
+            |    CoffeeMaker is requested at
+            |        [DaggerComponent] DaggerComponent.maker()
+            """.trimMargin()
+
         override fun unitTestsFails() = """
             |* What went wrong:
             |Execution failed for task ':app:testDebugUnitTest'.

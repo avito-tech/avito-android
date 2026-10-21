@@ -8,6 +8,7 @@ internal object VerdictCases {
         fun compileKotlinFails(): String
         fun kaptFails(): String
         fun kaptStubGeneratingFails(): String
+        fun kspFails(): String
         fun unitTestsFails(): String
     }
 

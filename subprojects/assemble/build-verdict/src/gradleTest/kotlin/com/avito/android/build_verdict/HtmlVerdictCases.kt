@@ -120,6 +120,29 @@ e: file://${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt:1:11 Syntax
   </body>
 </html>""".trimIndent()
 
+        override fun kspFails() = """
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>BuildFailed</title>
+    <style>.logs {
+    color: red;
+}</style>
+  </head>
+  <body>
+    <h2>What went wrong:</h2>
+    <pre>Execution failed for task ':app:kspDebugKotlin'.
+	&gt; A failure occurred while executing com.google.devtools.ksp.gradle.KspAAWorkerAction
+		&gt; KSP failed with exit code: PROCESSING_ERROR
+</pre>
+    <h3>Error logs:</h3>
+    <pre class="logs">e: [ksp] ${tempDir.canonicalPath}/app/src/main/kotlin/com/app/DaggerComponent.kt:5: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.
+
+    CoffeeMaker is requested at
+        [DaggerComponent] DaggerComponent.maker()</pre>
+  </body>
+</html>""".trimIndent()
+
         override fun unitTestsFails() = """
 <html>
   <head>

@@ -1,10 +1,12 @@
 package com.avito.android.build_verdict
 
 import com.avito.android.build_verdict.internal.BuildVerdict
+import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -117,6 +119,122 @@ internal class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
                 "          DaggerComponent.maker()"
             )
         )
+    }
+
+    @Test
+    fun `ksp fails - build-verdict contains ksp info`() {
+        val kspVersion = System.getProperty("kspVersion")
+        val daggerVersion = System.getProperty("daggerVersion")
+        generateProject(
+            plugins = plugins {
+                id("com.avito.android.build-verdict")
+                id("com.google.devtools.ksp").version(kspVersion).apply(false)
+            },
+            module = AndroidAppModule(
+                name = appName,
+                plugins = plugins {
+                    id("com.google.devtools.ksp")
+                },
+                dependencies = setOf(
+                    GradleDependency.Safe.external("com.google.dagger:dagger:$daggerVersion"),
+                    GradleDependency.Raw("ksp(\"com.google.dagger:dagger-compiler:$daggerVersion\")"),
+                ),
+                mutator = { module ->
+                    dir("src/main/kotlin/") {
+                        kotlinClass("DaggerComponent", module.packageName) {
+                            """
+                        import dagger.Component
+                        class CoffeeMaker
+                        
+                        @Component
+                        interface DaggerComponent {
+                          fun maker(): CoffeeMaker
+                        }
+                        """.trimIndent()
+                        }
+                    }
+                }
+            )
+        )
+
+        val result = gradlew(
+            temp,
+            "assembleDebug",
+            expectFailure = true
+        )
+        result.assertThat()
+            .buildFailed()
+
+        try {
+            @Suppress("MaxLineLength")
+            assertBuildVerdict(
+                failedTask = "kspDebugKotlin",
+                expectedPlainTextVerdict = plainTextVerdicts.kspFails(),
+                expectedHtmlVerdict = htmlVerdicts.kspFails(),
+                expectedErrorLogs = listOf(
+                    "e: [ksp] ${temp.canonicalPath}/app/src/main/kotlin/com/app/DaggerComponent.kt:5: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.",
+                    "",
+                    "    CoffeeMaker is requested at",
+                    "        [DaggerComponent] DaggerComponent.maker()"
+                )
+            )
+        } catch (e: Throwable) {
+            throw RuntimeException(result.output, e)
+        }
+    }
+
+    @Test
+    fun `ksp non-error messages stop stdout capture until the next error`() {
+        generateProject(
+            buildGradleExtra = """
+                tasks.register("kspFailure") {
+                    doLast {
+                        println('stdout before error')
+                        println('e: [ksp] First error\n\nDependency trace:\n    first detail')
+                        ['w', 'i', 'v'].each { level ->
+                            println(level + ': [ksp] Non-error message')
+                            println('non-error continuation')
+                            logger.error('task logger error ' + level)
+                            System.err.println('stderr error ' + level)
+                            println('e: [ksp] Next error ' + level)
+                            println('    next detail ' + level)
+                        }
+                        throw new GradleException('KSP failed')
+                    }
+                }
+                tasks.register("plainFailure") {
+                    mustRunAfter("kspFailure")
+                    doLast {
+                        println('stdout of another task')
+                        logger.error('plain task error')
+                        throw new GradleException('Task failed')
+                    }
+                }
+            """.trimIndent()
+        )
+
+        gradlew(temp, "kspFailure", "plainFailure", "--continue", expectFailure = true)
+            .assertThat()
+            .buildFailed()
+
+        assertBuildVerdictFileExist(true)
+        val verdict = gson.fromJson(jsonBuildVerdict.readText(), BuildVerdict.Execution::class.java)
+        assertThat(verdict.failedTasks).hasSize(2)
+        val tasks = verdict.failedTasks.associateBy { it.name }
+        val expectedKspLogs = buildList {
+            addAll(listOf("e: [ksp] First error", "", "Dependency trace:", "    first detail"))
+            listOf("w", "i", "v").forEach { level ->
+                add("task logger error $level")
+                add("stderr error $level")
+                add("e: [ksp] Next error $level")
+                add("    next detail $level")
+            }
+        }
+
+        assertThat(tasks.getValue("kspFailure").errorLogs)
+            .isEqualTo(expectedKspLogs.joinToString("\n"))
+        assertThat(tasks.getValue("plainFailure").errorLogs)
+            .isEqualTo("plain task error")
     }
 
     @Test

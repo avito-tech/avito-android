@@ -6,6 +6,7 @@ import com.avito.android.build_verdict.internal.Error.Single
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.Module
+import com.avito.test.gradle.plugin.PluginsSpec
 import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertWithMessage
 import com.google.gson.Gson
@@ -59,11 +60,12 @@ internal abstract class BaseBuildVerdictTest {
         buildGradleExtra: String = "",
         imports: List<String> = emptyList(),
         useKts: Boolean = false,
+        plugins: PluginsSpec = plugins {
+            id("com.avito.android.build-verdict")
+        },
     ) {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.build-verdict")
-            },
+            plugins = plugins,
             modules = listOf(module),
             imports = imports,
             buildGradleExtra = buildGradleExtra,

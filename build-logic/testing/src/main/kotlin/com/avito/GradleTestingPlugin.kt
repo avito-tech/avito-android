@@ -122,6 +122,8 @@ class GradleTestingPlugin : Plugin<Project> {
                 systemProperty("rootDir", "${project.rootDir}")
                 systemProperty("buildDir", "$buildDir")
                 systemProperty("kotlinVersion", project.getKotlinPluginVersion())
+                systemProperty("kspVersion", libs.versions.kspVersion.get())
+                systemProperty("daggerVersion", libs.versions.dagger.get())
                 systemProperty("r8Version", libs.versions.r8.get())
 
                 systemProperty("artifactoryUrl", artifactoryUrl.getOrElse(""))
