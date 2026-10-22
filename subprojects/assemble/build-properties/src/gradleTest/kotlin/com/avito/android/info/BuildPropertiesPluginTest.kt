@@ -56,13 +56,14 @@ class BuildPropertiesPluginTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
+                    useKts = true,
                     plugins = plugins {
                         id("com.avito.android.build-properties")
                     },
                     buildGradleExtra = """
                         buildInfo {
-                            gitCommit = "commit"
-                            gitBranch = "branch"
+                            gitCommit = com.avito.android.info.GitValue.Explicit("commit")
+                            gitBranch = com.avito.android.info.GitValue.Explicit("branch")
                             buildNumber = "build_number"
                         }
                     """.trimIndent()
