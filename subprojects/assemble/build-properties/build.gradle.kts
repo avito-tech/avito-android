@@ -8,10 +8,8 @@ dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(project(":subprojects:gradle:git"))
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
-    gradleTestImplementation(project(":subprojects:gradle:git"))
 }
 
 gradlePlugin {

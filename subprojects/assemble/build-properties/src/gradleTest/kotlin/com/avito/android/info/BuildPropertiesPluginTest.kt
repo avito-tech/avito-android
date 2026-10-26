@@ -62,8 +62,6 @@ class BuildPropertiesPluginTest {
                     },
                     buildGradleExtra = """
                         buildInfo {
-                            gitCommit = com.avito.android.info.GitValue.Explicit("commit")
-                            gitBranch = com.avito.android.info.GitValue.Explicit("branch")
                             buildNumber = "build_number"
                         }
                     """.trimIndent()
@@ -75,8 +73,7 @@ class BuildPropertiesPluginTest {
 
         val properties = readProperties("app/src/main/assets/app-build-info.properties")
 
-        assertThat(properties.getProperty("GIT_COMMIT")).isEqualTo("commit")
-        assertThat(properties.getProperty("GIT_BRANCH")).isEqualTo("branch")
+        assertThat(properties.stringPropertyNames()).containsExactly("BUILD_NUMBER")
         assertThat(properties.getProperty("BUILD_NUMBER")).isEqualTo("build_number")
     }
 
