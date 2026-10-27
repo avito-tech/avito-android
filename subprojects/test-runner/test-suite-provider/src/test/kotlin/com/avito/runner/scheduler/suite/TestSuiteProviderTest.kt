@@ -1,10 +1,17 @@
 package com.avito.runner.scheduler.suite
 
+import com.avito.android.AnnotationData
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.report.ReportViewerTestStaticDataParser
+import com.avito.runner.scheduler.suite.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.config.createStub
 import com.avito.runner.scheduler.suite.filter.FilterFactory
+import com.avito.runner.scheduler.suite.filter.ImpactAnalysisMode
+import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.runner.scheduler.suite.filter.StubFilterFactory
+import com.avito.runner.scheduler.suite.filter.StubFilterFactoryFactory
+import com.avito.runner.scheduler.suite.filter.createStubInstance
 import com.avito.test.model.DeviceName
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -26,6 +33,50 @@ internal class TestSuiteProviderTest {
         )
 
         assertThat(result.skippedTests).isEmpty()
+    }
+
+    @Test
+    fun `targets split by impact analysis - every test runs once and is not skipped on other target`() {
+        val changedTarget = DeviceName("api30PRChanged")
+        val mainTarget = DeviceName("api30PR")
+        val testSuiteProvider = createTestSuiteProvider(
+            targets = listOf(
+                ReportViewerTestStaticDataParser.TargetDevice(name = mainTarget, api = 30),
+                ReportViewerTestStaticDataParser.TargetDevice(name = changedTarget, api = 30),
+            ),
+            filterFactory = StubFilterFactoryFactory.create(
+                filter = InstrumentationFilterData.createStub(
+                    impactAnalysisModeByTarget = mapOf(
+                        changedTarget.name to ImpactAnalysisMode.CHANGED,
+                        mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
+                    )
+                ),
+                impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                    mode = ImpactAnalysisMode.ALL,
+                    changedTests = listOf("com.Changed"),
+                )
+            )
+        )
+
+        val result = testSuiteProvider.getTestSuite(
+            tests = listOf(
+                TestInApk.createStubInstance(className = "com.Changed", methodName = "test"),
+                TestInApk.createStubInstance(className = "com.NotChanged", methodName = "test"),
+                TestInApk.createStubInstance(
+                    className = "com.Ignored",
+                    methodName = "test",
+                    annotations = listOf(AnnotationData("org.junit.Ignore", emptyMap()))
+                ),
+            )
+        )
+
+        assertThat(result.testsToRun.map { it.name.name to it.device }).containsExactly(
+            "com.Changed.test" to changedTarget,
+            "com.NotChanged.test" to mainTarget,
+        )
+        assertThat(result.skippedTests.map { (test, _) -> test.name.name to test.device }).containsExactly(
+            "com.Ignored.test" to mainTarget,
+        )
     }
 
     private fun createTestSuiteProvider(

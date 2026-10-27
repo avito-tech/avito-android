@@ -18,6 +18,14 @@ public interface TestsFilter {
 
             override fun toString(): String = "test has been excluded because: $reason"
 
+            /**
+             * The test runs on another target of the same run, so it is not a skipped test.
+             */
+            public class NotForTarget(name: String, target: String, mode: ImpactAnalysisMode) : Excluded(
+                byFilter = name,
+                reason = "test is not for target=$target with impact analysis mode=$mode"
+            )
+
             public class HasSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
                 byFilter = name,
                 reason = "test has SkipSdk with value sdk=$sdk"

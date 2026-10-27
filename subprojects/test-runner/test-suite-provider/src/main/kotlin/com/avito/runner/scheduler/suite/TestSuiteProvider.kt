@@ -44,7 +44,7 @@ public interface TestSuiteProvider {
             }
 
             val skippedTests =
-                source.filter { (_, verdict) -> verdict !is TestsFilter.Result.Included }
+                source.filter { (_, verdict) -> verdict is Excluded && verdict !is Excluded.NotForTarget }
                     .map { (test, verdict) -> test to verdict as Excluded }
 
             val testsToRun =
