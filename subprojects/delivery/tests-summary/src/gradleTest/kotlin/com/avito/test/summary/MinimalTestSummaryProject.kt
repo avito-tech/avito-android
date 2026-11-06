@@ -33,6 +33,9 @@ internal object MinimalTestSummaryProject {
                         alertino.reserveChannel.set(AlertinoRecipient("#someChannel"))
                         alertino.testSummaryDestination.set(File("${testSummaryDestination.absolutePath}"))
                         
+                        time.baseUrl.set("https://localhost")
+                        time.token.set(providers.environmentVariable("TIME_MESSENGER_TOKEN"))
+                        
                         reportViewer.url.set("someUrl")
                         reportViewer.reportsHost.set("someUrl")
                         reportViewer.reportCoordinates.set(

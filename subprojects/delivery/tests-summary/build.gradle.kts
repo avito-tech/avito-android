@@ -10,6 +10,7 @@ dependencies {
     implementation(libs.kotson)
     implementation(project(":subprojects:common:http-statsd"))
     implementation(project(":subprojects:common:math"))
+    implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:common:problem"))
     implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
@@ -21,6 +22,7 @@ dependencies {
     }
     implementation(project(":subprojects:logger:gradle-logger"))
 
+    testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(testFixtures(project(":subprojects:test-runner:report-viewer")))
 

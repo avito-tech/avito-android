@@ -18,7 +18,8 @@ internal class TestSummaryDestinationDeserializer : JsonDeserializer<TestSummary
         val jsonObject = json.asJsonObject
         return TestSummaryDestination(
             teamName = Team(jsonObject.get("teamName").asString),
-            channel = AlertinoRecipient(jsonObject.get("channel").asString)
+            channel = AlertinoRecipient(jsonObject.get("channel").asString),
+            timeChannelId = jsonObject.get("timeChannelId")?.takeUnless { it.isJsonNull }?.asString,
         )
     }
 }

@@ -14,6 +14,9 @@ public abstract class TestSummaryAppExtension @Inject constructor() : Named {
     @get:Nested
     public abstract val reportViewer: ReportViewerExtension
 
+    @get:Nested
+    public abstract val time: TimeExtension
+
     @get:Input
     public abstract val buildUrl: Property<String>
 

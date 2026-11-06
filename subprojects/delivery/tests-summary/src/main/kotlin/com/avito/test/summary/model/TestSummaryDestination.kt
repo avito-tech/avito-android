@@ -6,4 +6,5 @@ import com.avito.report.model.Team
 internal data class TestSummaryDestination(
     val teamName: Team,
     val channel: AlertinoRecipient,
+    val timeChannelId: String? = null,
 )

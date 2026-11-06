@@ -5,27 +5,21 @@ import com.avito.alertino.model.AlertinoRecipient
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Team
-import com.avito.reportviewer.ReportsApi
 import com.avito.reportviewer.model.ReportCoordinates
 import com.avito.test.summary.compose.TestSummaryComposer
 import com.avito.test.summary.compose.TestSummaryComposerImpl
 import com.avito.test.summary.model.CrossDeviceSuite
 import com.avito.test.summary.model.TestSummaryDestination
-import com.github.salomonbrys.kotson.fromJson
-import com.google.gson.Gson
-import java.io.File
 
 internal class AlertinoTestSummarySender(
     alertinoBaseUrl: String,
     private val alertinoTemplate: String,
     private val alertinoTemplatePlaceholder: String,
     reportViewerUrl: String,
-    private val reportsApi: ReportsApi,
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val globalSummaryChannel: AlertinoRecipient,
-    private val testSummaryDestination: File,
-    private val gson: Gson,
+    private val destinations: List<TestSummaryDestination>,
     loggerFactory: LoggerFactory
 ) : TestSummarySender {
 
@@ -34,30 +28,7 @@ internal class AlertinoTestSummarySender(
 
     private val testSummaryComposer: TestSummaryComposer = TestSummaryComposerImpl(reportViewerUrl)
 
-    override fun send() {
-        reportsApi.getTestsForRunCoordinates(reportCoordinates)
-            .map { ToCrossDeviceSuiteConverter.convert(it) }
-            .fold(
-                { suite -> send(suite, requireNotNull(reportsApi.tryGetId(reportCoordinates))) },
-                { logger.critical("Cannot get tests for RunId[$reportCoordinates]", it) }
-            )
-    }
-
-    private fun ReportsApi.tryGetId(reportCoordinates: ReportCoordinates): String? {
-        return getReport(reportCoordinates).fold(
-            onSuccess = { report ->
-                report.id
-            },
-            onFailure = {
-                // TODO handle throwable
-                null
-            }
-        )
-    }
-
-    private fun send(suite: CrossDeviceSuite, reportId: String) {
-        val destinations = gson.fromJson<List<TestSummaryDestination>>(testSummaryDestination.reader())
-
+    override fun send(suite: CrossDeviceSuite, reportId: String) {
         destinations.forEach { (team, channel) ->
             val unitSuite = suite.filterTeam(team)
 

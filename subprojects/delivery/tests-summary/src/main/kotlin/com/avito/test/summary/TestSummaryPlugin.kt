@@ -50,6 +50,7 @@ public class TestSummaryPlugin : Plugin<Project> {
 
                 this.reportViewerExtension.set(extension.reportViewer)
                 this.alertinoExtension.set(extension.alertino)
+                this.timeExtension.set(extension.time)
                 this.buildUrl.set(extension.buildUrl)
             }
         }

@@ -17,7 +17,7 @@ class TestSummaryDestinationJsonTest {
     private val json = """
         |[
         |{"teamName": "team1", "channel": "#channel1"},
-        |{"teamName": "team2", "channel": "#channel2"}
+        |{"teamName": "team2", "channel": "#channel2", "timeChannelId": "time-channel2"}
         |]
     """.trimMargin()
 
@@ -41,7 +41,8 @@ class TestSummaryDestinationJsonTest {
             ),
             TestSummaryDestination(
                 teamName = Team("team2"),
-                channel = AlertinoRecipient("#channel2")
+                channel = AlertinoRecipient("#channel2"),
+                timeChannelId = "time-channel2"
             ),
         )
     }
