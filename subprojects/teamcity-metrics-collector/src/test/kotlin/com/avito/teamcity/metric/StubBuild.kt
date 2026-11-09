@@ -24,6 +24,7 @@ import org.jetbrains.teamcity.rest.TriggeredInfo
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.Date
 
@@ -36,11 +37,14 @@ internal class StubParameter(
 @Suppress("OVERRIDE_DEPRECATION")
 internal class StubBuild(
     private val resultingParameters: List<Parameter> = emptyList(),
+    override val status: BuildStatus? = BuildStatus.SUCCESS,
+    override val isFailedToStart: Boolean = false,
+    override val canceledInfo: BuildCanceledInfo? = null,
+    private val duration: Duration = Duration.ofMinutes(10),
 ) : Build {
     override val id: BuildId get() = BuildId("1")
     override val buildConfigurationId: BuildConfigurationId get() = BuildConfigurationId("TestBuild")
     override val buildNumber: String get() = "1"
-    override val status: BuildStatus get() = BuildStatus.SUCCESS
     override val branch: Branch get() = object : Branch {
         override val name: String? get() = "main"
         override val isDefault: Boolean get() = true
@@ -49,7 +53,6 @@ internal class StubBuild(
     override val personal: Boolean get() = false
     override val name: String get() = "test"
     override val projectName: String get() = "TestProject"
-    override val canceledInfo: BuildCanceledInfo? get() = null
     override val comment: BuildCommentInfo? get() = null
     override val composite: Boolean? get() = false
     override val statusText: String? get() = null
@@ -67,11 +70,10 @@ internal class StubBuild(
     override val projectId: ProjectId get() = ProjectId("TestProject")
     override val buildProblems: Sequence<BuildProblemOccurrence> get() = emptySequence()
     override val isHistory: Boolean get() = false
-    override val isFailedToStart: Boolean get() = false
 
     private val start: ZonedDateTime = ZonedDateTime.parse("2026-02-06T09:00:00+03:00")
     override val startDateTime: ZonedDateTime get() = start
-    override val finishDateTime: ZonedDateTime get() = start.plusMinutes(10)
+    override val finishDateTime: ZonedDateTime get() = start.plus(duration)
     override val queuedDateTime: ZonedDateTime get() = start.minusSeconds(5)
     override val runningInfo: BuildRunningInfo? get() = null
 

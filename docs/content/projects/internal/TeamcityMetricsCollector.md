@@ -19,4 +19,6 @@ Metrics will look like:
 - `<-PmetricsPrefix>.teamcity.build;build_type=<-PmetricsSourceBuildType>,status=(success,failure,unknown)`
 - `<-PmetricsPrefix>.teamcity.queue;build_type=<-PmetricsSourceBuildType>`
 
+Sources with an `sla` block in the config additionally send two counters per pass, stamped with the current time: `<sla.metricsPrefix>.total` (finished PR builds) and `<sla.metricsPrefix>.bad` (those longer than `sla.thresholdMinutes`).
+
 

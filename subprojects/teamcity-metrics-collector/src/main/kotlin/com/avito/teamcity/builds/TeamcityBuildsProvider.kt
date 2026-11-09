@@ -49,7 +49,8 @@ internal interface TeamcityBuildsProvider {
                 val finishTime = requireNotNull(build.finishDateTime) {
                     "Can't be null. Because we don't fetch running builds"
                 }
-                finishTime.toInstant().isAfter(since)
+                val finishInstant = finishTime.toInstant()
+                !finishInstant.isBefore(since) && finishInstant.isBefore(until)
             }
         }
 
