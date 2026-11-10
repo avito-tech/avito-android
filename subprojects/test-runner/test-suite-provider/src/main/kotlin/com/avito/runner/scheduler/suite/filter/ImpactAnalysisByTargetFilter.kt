@@ -10,7 +10,9 @@ internal class ImpactAnalysisByTargetFilter(
     private val changedTests = changedTests.map { TestsFilter.Signatures.TestSignature(name = it) }.toSet()
 
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-        val mode = modeByTarget[test.deviceName.name] ?: return TestsFilter.Result.Included
+        val mode = requireNotNull(modeByTarget[test.deviceName.name]) {
+            "No impact analysis mode for target '${test.deviceName.name}'"
+        }
         val isChanged = test.matched(changedTests)
         val isIncluded = when (mode) {
             ImpactAnalysisMode.ALL -> true

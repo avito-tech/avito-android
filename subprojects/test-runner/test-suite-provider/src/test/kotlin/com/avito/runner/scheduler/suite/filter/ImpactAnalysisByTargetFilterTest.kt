@@ -9,6 +9,7 @@ import com.avito.test.model.DeviceName
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class ImpactAnalysisByTargetFilterTest {
 
@@ -19,14 +20,14 @@ internal class ImpactAnalysisByTargetFilterTest {
     private val otherTarget = DeviceName("api36")
 
     private val filter = StubFilterFactoryFactory.create(
-        filter = InstrumentationFilterData.createStub(
-            impactAnalysisModeByTarget = mapOf(
-                changedTarget.name to ImpactAnalysisMode.CHANGED,
-                mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
-            )
-        ),
+        filter = InstrumentationFilterData.createStub(),
         impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-            mode = ImpactAnalysisMode.ALL,
+            selection = ImpactAnalysisSelection.ByTarget(
+                mapOf(
+                    changedTarget.name to ImpactAnalysisMode.CHANGED,
+                    mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
+                )
+            ),
             changedTests = listOf("com.test.Changed"),
         )
     ).createFilter()
@@ -44,9 +45,9 @@ internal class ImpactAnalysisByTargetFilterTest {
     }
 
     @Test
-    fun `target without mode - not filtered by impact analysis`() {
-        assertThat(filter.filter(test(changed, otherTarget))).isInstanceOf<Included>()
-        assertThat(filter.filter(test(notChanged, otherTarget))).isInstanceOf<Included>()
+    fun `target without mode - configuration error`() {
+        val error = assertThrows<IllegalArgumentException> { filter.filter(test(changed, otherTarget)) }
+        assertThat(error).hasMessageThat().contains(otherTarget.name)
     }
 
     @Test

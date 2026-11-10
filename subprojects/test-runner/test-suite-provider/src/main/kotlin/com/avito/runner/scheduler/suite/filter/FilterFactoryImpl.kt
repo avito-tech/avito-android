@@ -20,8 +20,10 @@ internal class FilterFactoryImpl(
 
     override fun createFilter(): TestsFilter {
         val filters = mutableListOf<TestsFilter>()
-        // first, so that a test of another target is dropped instead of being reported as skipped by other filters
-        filters.addImpactAnalysisByTargetFilter()
+        val selection = impactAnalysisResult.selection
+        if (selection is ImpactAnalysisSelection.ByTarget) {
+            filters.add(ImpactAnalysisByTargetFilter(selection.modes, impactAnalysisResult.changedTests))
+        }
         filters.add(ExcludeBySkipOnSdkFilter())
         filters.addFlakyFilter()
         filters.addAnnotationFilters()
@@ -30,13 +32,6 @@ internal class FilterFactoryImpl(
         filters.addSourceReportSignatureFilters()
         filters.addImpactAnalysisFilter()
         return CompositionFilter(filters)
-    }
-
-    private fun MutableList<TestsFilter>.addImpactAnalysisByTargetFilter() {
-        val modeByTarget = filterData.fromImpactAnalysis.modeByTarget
-        if (modeByTarget.isNotEmpty()) {
-            add(ImpactAnalysisByTargetFilter(modeByTarget, impactAnalysisResult.changedTests))
-        }
     }
 
     private fun MutableList<TestsFilter>.addFlakyFilter() {
@@ -168,7 +163,9 @@ internal class FilterFactoryImpl(
     }
 
     private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
-        when (impactAnalysisResult.mode) {
+        val selection = impactAnalysisResult.selection
+        if (selection !is ImpactAnalysisSelection.Uniform) return
+        when (selection.mode) {
             ImpactAnalysisMode.ALL -> {
                 // empty
             }

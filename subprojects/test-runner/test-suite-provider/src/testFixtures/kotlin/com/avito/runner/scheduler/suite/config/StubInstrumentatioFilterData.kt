@@ -1,7 +1,6 @@
 package com.avito.runner.scheduler.suite.config
 
 import com.avito.runner.scheduler.suite.filter.Filter
-import com.avito.runner.scheduler.suite.filter.ImpactAnalysisMode
 import java.io.Serializable
 
 public fun <T : Serializable> emptyFilter(): Filter.Value<T> = Filter.Value(
@@ -15,7 +14,6 @@ public fun InstrumentationFilterData.Companion.createStub(
     previousStatuses: Filter.Value<RunStatus> = emptyFilter(),
     report: InstrumentationFilterData.FromRunHistory.ReportFilter? = null,
     excludeFlaky: Boolean = false,
-    impactAnalysisModeByTarget: Map<String, ImpactAnalysisMode> = emptyMap(),
 ): InstrumentationFilterData {
     return InstrumentationFilterData(
         name = "stub",
@@ -27,9 +25,6 @@ public fun InstrumentationFilterData.Companion.createStub(
         fromRunHistory = InstrumentationFilterData.FromRunHistory(
             previousStatuses = previousStatuses,
             reportFilter = report
-        ),
-        fromImpactAnalysis = InstrumentationFilterData.FromImpactAnalysis(
-            modeByTarget = impactAnalysisModeByTarget
         ),
     )
 }

@@ -9,6 +9,7 @@ import com.avito.runner.scheduler.suite.config.createStub
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisMode
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.runner.scheduler.suite.filter.ImpactAnalysisSelection
 import com.avito.runner.scheduler.suite.filter.StubFilterFactory
 import com.avito.runner.scheduler.suite.filter.StubFilterFactoryFactory
 import com.avito.runner.scheduler.suite.filter.createStubInstance
@@ -45,14 +46,14 @@ internal class TestSuiteProviderTest {
                 ReportViewerTestStaticDataParser.TargetDevice(name = changedTarget, api = 30),
             ),
             filterFactory = StubFilterFactoryFactory.create(
-                filter = InstrumentationFilterData.createStub(
-                    impactAnalysisModeByTarget = mapOf(
-                        changedTarget.name to ImpactAnalysisMode.CHANGED,
-                        mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
-                    )
-                ),
+                filter = InstrumentationFilterData.createStub(),
                 impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                    mode = ImpactAnalysisMode.ALL,
+                    selection = ImpactAnalysisSelection.ByTarget(
+                        mapOf(
+                            changedTarget.name to ImpactAnalysisMode.CHANGED,
+                            mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
+                        )
+                    ),
                     changedTests = listOf("com.Changed"),
                 )
             )
@@ -89,14 +90,14 @@ internal class TestSuiteProviderTest {
                 ReportViewerTestStaticDataParser.TargetDevice(name = changedTarget, api = 30),
             ),
             filterFactory = StubFilterFactoryFactory.create(
-                filter = InstrumentationFilterData.createStub(
-                    impactAnalysisModeByTarget = mapOf(
-                        mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
-                        changedTarget.name to ImpactAnalysisMode.CHANGED,
-                    )
-                ),
+                filter = InstrumentationFilterData.createStub(),
                 impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                    mode = ImpactAnalysisMode.ALL,
+                    selection = ImpactAnalysisSelection.ByTarget(
+                        mapOf(
+                            mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
+                            changedTarget.name to ImpactAnalysisMode.CHANGED,
+                        )
+                    ),
                     changedTests = emptyList(),
                 )
             )
