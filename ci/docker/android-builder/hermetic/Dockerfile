@@ -34,8 +34,8 @@ ENV JAVA_HOME /usr/lib/jvm/java-21-openjdk-amd64/
 
 # ------------------- Kotlin --------------------
 
-ENV KOTLIN_VERSION=2.1.20
-ENV KOTLIN_SHA256=a118197b0de55ffab2bc8d5cd03a5e39033cfb53383d6931bc761dec0784891a
+ENV KOTLIN_VERSION=2.4.20
+ENV KOTLIN_SHA256=59e9ca74c7904ef2c122b12114937673ccce68de820a663f0ed66ccf8799e0b7
 RUN \
    curl ${ARTIFACTORY_URL}android-build-env/kotlin/kotlin-compiler-${KOTLIN_VERSION}.zip \
     --progress-bar --location --fail --output kotlin.zip \
