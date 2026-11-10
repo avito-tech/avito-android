@@ -79,6 +79,48 @@ internal class TestSuiteProviderTest {
         )
     }
 
+    @Test
+    fun `no changed tests - changed target produces neither executions nor skipped tests`() {
+        val mainTarget = DeviceName("api30PR")
+        val changedTarget = DeviceName("api30PRChanged")
+        val testSuiteProvider = createTestSuiteProvider(
+            targets = listOf(
+                ReportViewerTestStaticDataParser.TargetDevice(name = mainTarget, api = 30),
+                ReportViewerTestStaticDataParser.TargetDevice(name = changedTarget, api = 30),
+            ),
+            filterFactory = StubFilterFactoryFactory.create(
+                filter = InstrumentationFilterData.createStub(
+                    impactAnalysisModeByTarget = mapOf(
+                        mainTarget.name to ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
+                        changedTarget.name to ImpactAnalysisMode.CHANGED,
+                    )
+                ),
+                impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                    mode = ImpactAnalysisMode.ALL,
+                    changedTests = emptyList(),
+                )
+            )
+        )
+
+        val result = testSuiteProvider.getTestSuite(
+            listOf(
+                simpleTestInApk,
+                TestInApk.createStubInstance(
+                    className = "com.Ignored",
+                    methodName = "test",
+                    annotations = listOf(AnnotationData("org.junit.Ignore", emptyMap()))
+                ),
+            )
+        )
+
+        assertThat(result.testsToRun.map { it.name.name to it.device }).containsExactly(
+            "com.MyTestClass.test" to mainTarget,
+        )
+        assertThat(result.skippedTests.map { (test, _) -> test.name.name to test.device }).containsExactly(
+            "com.Ignored.test" to mainTarget,
+        )
+    }
+
     private fun createTestSuiteProvider(
         targets: List<ReportViewerTestStaticDataParser.TargetDevice> = listOf(
             ReportViewerTestStaticDataParser.TargetDevice(
