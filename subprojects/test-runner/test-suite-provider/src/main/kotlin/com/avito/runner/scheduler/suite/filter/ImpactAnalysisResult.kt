@@ -8,7 +8,7 @@ public data class ImpactAnalysisResult(
     val changedTests: List<String>
 ) : Serializable {
 
-    @Deprecated("Use selection; ByTarget has no global mode")
+    /** Compatibility view for the legacy runner, which only uses Uniform. */
     public val mode: ImpactAnalysisMode
         get() = (selection as? ImpactAnalysisSelection.Uniform)?.mode
             ?: error("ByTarget has no global impact analysis mode")
