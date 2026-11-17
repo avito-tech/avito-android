@@ -4,6 +4,7 @@ package com.avito.android.module_type.internal
 
 import com.avito.android.Problem
 import com.avito.android.asRuntimeException
+import com.avito.android.module_type.FunctionalType
 import com.avito.android.module_type.ModuleWithType
 import com.avito.android.module_type.Severity
 import com.avito.android.module_type.restrictions.extension.BetweenDifferentAppsRestrictionExtension
@@ -47,8 +48,11 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
 
     @TaskAction
     fun checkDependencies() {
+        val functionalTypeRules = betweenFunctionalTypesRestrictions.getOrElse(emptyList())
+        checkAllFunctionalTypesHaveRules(functionalTypeRules)
+
         val restrictions: List<com.avito.android.module_type.restrictions.DependencyRestriction> = buildList {
-            addAll(betweenFunctionalTypesRestrictions.getOrElse(emptyList()).map { it.getRestriction() })
+            addAll(functionalTypeRules.map { it.getRestriction() })
             if (betweenDifferentAppsRestriction.isPresent) {
                 add(betweenDifferentAppsRestriction.get().getRestriction())
             }
@@ -64,6 +68,23 @@ internal abstract class CheckModuleDependenciesTask @Inject constructor(
         }
 
         checkUnusedSharedBetweenAppsFlags(modules)
+    }
+
+    private fun checkAllFunctionalTypesHaveRules(rules: List<BetweenFunctionalTypesExtension>) {
+        val configuredTypes = rules.map { it.fromType.get() }.toSet()
+        val missingTypes = FunctionalType.entries.filter { it !in configuredTypes }
+
+        if (missingTypes.isEmpty()) return
+
+        throw Problem.Builder(
+            shortDescription = "Missing betweenFunctionalTypes rules",
+            context = "In moduleTypes.dependencyRestrictions",
+        )
+            .because("Missing rules for: ${missingTypes.joinToString { it.name }}")
+            .addSolution("Register a betweenFunctionalTypes rule for each listed fromType.")
+            .addSolution(solutionMessage.getOrElse("No solution help message"))
+            .build()
+            .asRuntimeException()
     }
 
     private fun checkUnusedSharedBetweenAppsFlags(modules: Set<ModuleDescription>) {

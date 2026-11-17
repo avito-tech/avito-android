@@ -16,7 +16,18 @@ internal class ModuleTypesProjectGenerator(
 
     data class ModuleTypesProjectConfig(
         val defaultSeverity: Severity = Severity.fail,
+        val missingFunctionalTypeRule: FunctionalType? = null,
     )
+
+    private val additionalFunctionalTypeRules = FunctionalType.entries
+        .filter { it != FunctionalType.Library && it != config.missingFunctionalTypeRule }
+        .joinToString("\n") { type ->
+            """betweenFunctionalTypes(
+                fromType = FunctionalType.${type.name},
+                allowedTypes = emptyMap(),
+                reason = "No dependencies allowed"
+            )"""
+        }
 
     private val Any.javaCanonicalName
         get() = this::class.java.canonicalName
@@ -45,6 +56,7 @@ internal class ModuleTypesProjectGenerator(
                                 reason = "Is a test"
                             )
                         }
+                        $additionalFunctionalTypeRules
                         betweenDifferentApps(
                             reason = "Because betweenDifferentApps",
                             commonApp = CommonApp

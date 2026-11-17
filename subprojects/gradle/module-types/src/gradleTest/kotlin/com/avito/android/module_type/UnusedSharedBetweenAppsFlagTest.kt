@@ -18,6 +18,13 @@ internal class UnusedSharedBetweenAppsFlagTest : BaseModuleTypesTest() {
                 moduleTypes {
                     dependencyRestrictions {
                         defaultSeverity.set(com.avito.android.module_type.Severity.fail)
+                        FunctionalType.values().forEach { type ->
+                            betweenFunctionalTypes(
+                                fromType = type,
+                                allowedTypes = emptyMap(),
+                                reason = "No dependencies allowed"
+                            )
+                        }
                         betweenDifferentApps(
                             reason = "Because betweenDifferentApps",
                             commonApp = CommonApp,
