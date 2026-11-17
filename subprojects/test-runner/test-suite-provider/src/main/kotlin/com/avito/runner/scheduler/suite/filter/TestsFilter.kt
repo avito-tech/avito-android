@@ -7,46 +7,46 @@ import java.io.Serializable
 
 public interface TestsFilter {
 
-    public sealed class Result {
+    public sealed class Verdict {
 
-        public object Included : Result()
+        public object Included : Verdict()
 
-        public abstract class Excluded(
+        /** The test-target pair is outside this target's filter mode and is not reported as skipped. */
+        public class NotForTarget(name: String, target: String, mode: ChangedTestsFilterMode) : Verdict() {
+            public val byFilter: String = name
+            public val reason: String = "test is not for target=$target with changed tests filter mode=$mode"
+
+            override fun toString(): String = reason
+        }
+
+        public abstract class Skipped(
             public val byFilter: String,
             public val reason: String
-        ) : Result() {
+        ) : Verdict() {
 
-            override fun toString(): String = "test has been excluded because: $reason"
+            override fun toString(): String = "test has been skipped because: $reason"
 
-            /**
-             * The test runs on another target of the same run, so it is not a skipped test.
-             */
-            public class NotForTarget(name: String, target: String, mode: ImpactAnalysisMode) : Excluded(
-                byFilter = name,
-                reason = "test is not for target=$target with impact analysis mode=$mode"
-            )
-
-            public class HasSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
+            public class HasSkipSdkAnnotation(name: String, sdk: Int) : Skipped(
                 byFilter = name,
                 reason = "test has SkipSdk with value sdk=$sdk"
             )
 
-            public class HasFlakyAnnotation(name: String, sdk: Int) : Excluded(
+            public class HasFlakyAnnotation(name: String, sdk: Int) : Skipped(
                 byFilter = name,
                 reason = "test has Flaky with value sdk=$sdk"
             )
 
-            public class DoesNotHaveIncludeAnnotations(name: String, annotations: Set<String>) : Excluded(
+            public class DoesNotHaveIncludeAnnotations(name: String, annotations: Set<String>) : Skipped(
                 byFilter = name,
                 reason = "test doesn't have any of annotations=$annotations"
             )
 
-            public class HasExcludeAnnotations(name: String, annotations: Set<String>) : Excluded(
+            public class HasExcludeAnnotations(name: String, annotations: Set<String>) : Skipped(
                 byFilter = name,
                 reason = "test has any of excluded annotations=$annotations"
             )
 
-            public abstract class BySignatures(name: String, reason: String) : Excluded(name, reason) {
+            public abstract class BySignatures(name: String, reason: String) : Skipped(name, reason) {
                 public abstract val source: Signatures.Source
             }
 
@@ -78,7 +78,7 @@ public interface TestsFilter {
         val signatures: Filter.Value<TestSignature>
     ) {
         public enum class Source {
-            Code, ImpactAnalysis, PreviousRun, Report
+            Code, ChangedTests, PreviousRun, Report
         }
 
         public data class TestSignature(
@@ -89,5 +89,5 @@ public interface TestsFilter {
 
     public val name: String
 
-    public fun filter(test: Test): Result
+    public fun filter(test: Test): Verdict
 }

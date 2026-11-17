@@ -7,14 +7,14 @@ internal class ExcludeByFlakyFilter : TestsFilter {
 
     override val name = "ExcludeByFlakyFilter"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
         return if (test.flakiness is Flakiness.Flaky) {
-            TestsFilter.Result.Excluded.HasFlakyAnnotation(
+            TestsFilter.Verdict.Skipped.HasFlakyAnnotation(
                 name,
                 test.api
             )
         } else {
-            TestsFilter.Result.Included
+            TestsFilter.Verdict.Included
         }
     }
 

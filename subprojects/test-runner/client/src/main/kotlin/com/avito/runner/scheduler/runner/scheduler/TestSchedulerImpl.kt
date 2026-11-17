@@ -63,7 +63,7 @@ internal class TestSchedulerImpl(
             val skippedTests = testSuite.skippedTests
                 // do not report skip here, to prevent final test status rewrite (green from last run - ok)
                 .filter { (_, verdict) ->
-                    verdict !is TestsFilter.Result.Excluded.BySignatures ||
+                    verdict !is TestsFilter.Verdict.Skipped.BySignatures ||
                         verdict.source != TestsFilter.Signatures.Source.PreviousRun
                 }
                 .map { (test, verdict) ->

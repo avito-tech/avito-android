@@ -1,7 +1,7 @@
 package com.avito.instrumentation.configuration
 
 import com.avito.instrumentation.configuration.target.TargetConfiguration
-import com.avito.runner.scheduler.suite.filter.ImpactAnalysisMode
+import com.avito.runner.scheduler.suite.filter.ChangedTestsFilterMode
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
@@ -26,8 +26,8 @@ public abstract class InstrumentationConfiguration @Inject constructor(
     @Deprecated("Delete after 2024.27")
     public var runOnlyChangedTests: Boolean = false
 
-    public val impactAnalysisMode: Property<ImpactAnalysisMode> =
-        objects.property<ImpactAnalysisMode>().convention(ImpactAnalysisMode.ALL)
+    public val changedTestsFilterMode: Property<ChangedTestsFilterMode> =
+        objects.property<ChangedTestsFilterMode>().convention(ChangedTestsFilterMode.ALL)
 
     @Deprecated("Setup instrumentation.environment")
     public var kubernetesNamespace: String = "default"

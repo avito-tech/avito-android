@@ -2,7 +2,7 @@ package com.avito.runner.config
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
-import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.runner.scheduler.suite.filter.ChangedTestsFilterInput
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
 import java.io.Serializable
@@ -21,7 +21,7 @@ public data class RunnerInputParams(
     val projectName: String,
     val suppressFailure: Boolean,
     val suppressFlaky: Boolean,
-    val impactAnalysisResult: ImpactAnalysisResult,
+    val changedTestsFilterInput: ChangedTestsFilterInput,
     val outputDir: File,
     val macrobenchmarkOutputDir: File?,
     val verdictFile: File,

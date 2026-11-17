@@ -9,9 +9,9 @@ internal class CompositionFilter(
 
     override val name = "Composition"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
         return filters
             .map { it.filter(test) }
-            .firstOrNull { it is TestsFilter.Result.Excluded } ?: TestsFilter.Result.Included
+            .firstOrNull { it !is TestsFilter.Verdict.Included } ?: TestsFilter.Verdict.Included
     }
 }

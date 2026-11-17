@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Excluded
+import com.avito.runner.scheduler.suite.filter.TestsFilter.Verdict.Skipped
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -15,23 +15,23 @@ internal class CompositeTestRunFilterTest {
                     override val name: String
                         get() = TODO("Not yet implemented")
 
-                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HasSkipSdkAnnotation("", 21)
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
+                        return Skipped.HasSkipSdkAnnotation("", 21)
                     }
                 },
                 object : TestsFilter {
                     override val name: String
                         get() = TODO("Not yet implemented")
 
-                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HasExcludeAnnotations("", emptySet())
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
+                        return Skipped.HasExcludeAnnotations("", emptySet())
                     }
                 }
             )
         )
 
         assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
-            .isInstanceOf<Excluded.HasSkipSdkAnnotation>()
+            .isInstanceOf<Skipped.HasSkipSdkAnnotation>()
     }
 
     @Test
@@ -41,21 +41,21 @@ internal class CompositeTestRunFilterTest {
                 object : TestsFilter {
                     override val name: String = ""
 
-                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return TestsFilter.Result.Included
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
+                        return TestsFilter.Verdict.Included
                     }
                 },
                 object : TestsFilter {
                     override val name: String = ""
 
-                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HasExcludeAnnotations("", emptySet())
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
+                        return Skipped.HasExcludeAnnotations("", emptySet())
                     }
                 }
             )
         )
 
         assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
-            .isInstanceOf<Excluded>()
+            .isInstanceOf<Skipped>()
     }
 }

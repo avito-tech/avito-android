@@ -10,13 +10,13 @@ internal object StubFilterFactoryFactory {
 
     fun create(
         filter: InstrumentationFilterData = InstrumentationFilterData.createStub(),
-        impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
+        changedTestsFilterInput: ChangedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(),
         loggerFactory: LoggerFactory = PrintlnLoggerFactory,
         runResultsProvider: RunResultsProvider = StubRunResultsProvider()
     ): FilterFactory {
         return FilterFactory.create(
             filterData = filter,
-            impactAnalysisResult = impactAnalysisResult,
+            changedTestsFilterInput = changedTestsFilterInput,
             runResultsProvider = runResultsProvider,
             loggerFactory = loggerFactory
         )

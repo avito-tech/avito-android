@@ -18,7 +18,7 @@ internal class ExcludeFlakyTest {
         )
 
         assertThat(result)
-            .isEqualTo(TestsFilter.Result.Included)
+            .isEqualTo(TestsFilter.Verdict.Included)
     }
 
     @Test
@@ -29,7 +29,7 @@ internal class ExcludeFlakyTest {
             )
         )
 
-        assertThat(result).isInstanceOf<TestsFilter.Result.Excluded.HasFlakyAnnotation>()
+        assertThat(result).isInstanceOf<TestsFilter.Verdict.Skipped.HasFlakyAnnotation>()
     }
 
     @Test
@@ -46,7 +46,7 @@ internal class ExcludeFlakyTest {
             )
         )
 
-        assertThat(result).isInstanceOf<TestsFilter.Result.Excluded.HasFlakyAnnotation>()
+        assertThat(result).isInstanceOf<TestsFilter.Verdict.Skipped.HasFlakyAnnotation>()
     }
 
     @Test
@@ -64,7 +64,7 @@ internal class ExcludeFlakyTest {
         )
 
         assertThat(result)
-            .isEqualTo(TestsFilter.Result.Included)
+            .isEqualTo(TestsFilter.Verdict.Included)
     }
 
     @Test
@@ -81,6 +81,6 @@ internal class ExcludeFlakyTest {
         )
 
         assertThat(result)
-            .isEqualTo(TestsFilter.Result.Included)
+            .isEqualTo(TestsFilter.Verdict.Included)
     }
 }

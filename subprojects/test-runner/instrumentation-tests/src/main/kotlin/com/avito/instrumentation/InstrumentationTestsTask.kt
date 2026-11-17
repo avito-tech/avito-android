@@ -21,8 +21,8 @@ import com.avito.runner.model.InstrumentationParameters
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryProvider
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerResult
-import com.avito.runner.scheduler.suite.filter.ImpactAnalysisMode
-import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.runner.scheduler.suite.filter.ChangedTestsFilterInput
+import com.avito.runner.scheduler.suite.filter.ChangedTestsFilterMode
 import com.avito.test.model.DeviceName
 import com.avito.utils.BuildFailer
 import com.avito.utils.BuildMetadata
@@ -77,7 +77,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public abstract val testArtifactsDirectoryPackageName: Property<String>
 
     @get:Input
-    public abstract val impactAnalysisMode: Property<ImpactAnalysisMode>
+    public abstract val changedTestsFilterMode: Property<ChangedTestsFilterMode>
 
     @get:Optional
     @get:InputFile
@@ -229,8 +229,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             projectName = projectName.get(),
             suppressFailure = suppressFailure.get(),
             suppressFlaky = suppressFlaky.get(),
-            impactAnalysisResult = ImpactAnalysisResult.create(
-                mode = impactAnalysisMode.get(),
+            changedTestsFilterInput = ChangedTestsFilterInput.create(
+                mode = changedTestsFilterMode.get(),
                 changedTestsFile = changedTests.asFile.orNull
             ),
             outputDir = output,

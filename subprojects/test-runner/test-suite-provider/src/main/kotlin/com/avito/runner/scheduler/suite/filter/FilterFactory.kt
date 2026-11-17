@@ -14,13 +14,13 @@ public interface FilterFactory {
 
         public fun create(
             filterData: InstrumentationFilterData,
-            impactAnalysisResult: ImpactAnalysisResult,
+            changedTestsFilterInput: ChangedTestsFilterInput,
             loggerFactory: LoggerFactory,
             runResultsProvider: RunResultsProvider,
         ): FilterFactory {
             return FilterFactoryImpl(
                 filterData = filterData,
-                impactAnalysisResult = impactAnalysisResult,
+                changedTestsFilterInput = changedTestsFilterInput,
                 loggerFactory = loggerFactory,
                 runResultsProvider = runResultsProvider,
             )

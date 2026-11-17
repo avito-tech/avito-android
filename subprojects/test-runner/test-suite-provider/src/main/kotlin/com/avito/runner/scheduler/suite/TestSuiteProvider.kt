@@ -2,9 +2,10 @@ package com.avito.runner.scheduler.suite
 
 import com.avito.android.TestInApk
 import com.avito.report.ReportViewerTestStaticDataParser
+import com.avito.report.model.TestStaticData
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.TestsFilter
-import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Excluded
+import com.avito.runner.scheduler.suite.filter.TestsFilter.Verdict
 
 public interface TestSuiteProvider {
 
@@ -29,10 +30,13 @@ public interface TestSuiteProvider {
             tests: List<TestInApk>,
             filter: TestsFilter
         ): TestSuite {
-            val source = testStaticParser.getTestSuite(tests).map { rawParsedTest ->
+            val testsToRun = mutableListOf<TestStaticData>()
+            val skippedTests = mutableListOf<Pair<TestStaticData, Verdict.Skipped>>()
+
+            testStaticParser.getTestSuite(tests).forEach { rawParsedTest ->
                 val testStaticData = rawParsedTest.testStaticData
                 val target = rawParsedTest.target
-                testStaticData to filter.filter(
+                val verdict = filter.filter(
                     TestsFilter.Test(
                         name = testStaticData.name.name,
                         annotations = rawParsedTest.annotations,
@@ -41,15 +45,12 @@ public interface TestSuiteProvider {
                         flakiness = testStaticData.flakiness
                     )
                 )
+                when (verdict) {
+                    Verdict.Included -> testsToRun += testStaticData
+                    is Verdict.Skipped -> skippedTests += testStaticData to verdict
+                    is Verdict.NotForTarget -> Unit
+                }
             }
-
-            val skippedTests =
-                source.filter { (_, verdict) -> verdict is Excluded && verdict !is Excluded.NotForTarget }
-                    .map { (test, verdict) -> test to verdict as Excluded }
-
-            val testsToRun =
-                source.filter { (_, verdict) -> verdict is TestsFilter.Result.Included }
-                    .map { (test, _) -> test }
 
             return TestSuite(
                 appliedFilter = filter,

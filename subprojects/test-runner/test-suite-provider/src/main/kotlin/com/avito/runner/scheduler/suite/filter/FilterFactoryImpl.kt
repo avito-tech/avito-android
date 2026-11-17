@@ -11,7 +11,7 @@ import com.avito.test.model.TestCase
 
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilterData,
-    private val impactAnalysisResult: ImpactAnalysisResult,
+    private val changedTestsFilterInput: ChangedTestsFilterInput,
     private val runResultsProvider: RunResultsProvider,
     loggerFactory: LoggerFactory
 ) : FilterFactory {
@@ -20,9 +20,11 @@ internal class FilterFactoryImpl(
 
     override fun createFilter(): TestsFilter {
         val filters = mutableListOf<TestsFilter>()
-        val selection = impactAnalysisResult.selection
-        if (selection is ImpactAnalysisSelection.ByTarget) {
-            filters.add(ImpactAnalysisByTargetFilter(selection.modes, impactAnalysisResult.changedTests))
+        val targetFilterMode = changedTestsFilterInput.targetFilterMode
+        if (targetFilterMode is TargetFilterMode.ByTarget) {
+            filters.add(
+                ChangedTestsByTargetFilter(targetFilterMode.modesByTarget, changedTestsFilterInput.changedTests)
+            )
         }
         filters.add(ExcludeBySkipOnSdkFilter())
         filters.addFlakyFilter()
@@ -30,7 +32,7 @@ internal class FilterFactoryImpl(
         filters.addSourceCodeSignaturesFilters()
         filters.addSourcePreviousSignatureFilters()
         filters.addSourceReportSignatureFilters()
-        filters.addImpactAnalysisFilter()
+        filters.addChangedTestsFilter()
         return CompositionFilter(filters)
     }
 
@@ -162,22 +164,22 @@ internal class FilterFactoryImpl(
             }.toSet()
     }
 
-    private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
-        val selection = impactAnalysisResult.selection
-        if (selection !is ImpactAnalysisSelection.Uniform) return
-        when (selection.mode) {
-            ImpactAnalysisMode.ALL -> {
+    private fun MutableList<TestsFilter>.addChangedTestsFilter() {
+        val targetFilterMode = changedTestsFilterInput.targetFilterMode
+        if (targetFilterMode !is TargetFilterMode.Uniform) return
+        when (targetFilterMode.mode) {
+            ChangedTestsFilterMode.ALL -> {
                 // empty
             }
-            ImpactAnalysisMode.CHANGED -> includeImpactedTests(impactAnalysisResult.changedTests)
-            ImpactAnalysisMode.ALL_EXCEPT_CHANGED -> excludeImpactedTests(impactAnalysisResult.changedTests)
+            ChangedTestsFilterMode.CHANGED -> includeChangedTests(changedTestsFilterInput.changedTests)
+            ChangedTestsFilterMode.ALL_EXCEPT_CHANGED -> excludeChangedTests(changedTestsFilterInput.changedTests)
         }
     }
 
-    private fun MutableList<TestsFilter>.includeImpactedTests(tests: List<String>) {
+    private fun MutableList<TestsFilter>.includeChangedTests(tests: List<String>) {
         add(
             IncludeByTestSignaturesFilter(
-                source = TestsFilter.Signatures.Source.ImpactAnalysis,
+                source = TestsFilter.Signatures.Source.ChangedTests,
                 signatures = tests.map { name ->
                     TestSignature(
                         name = name
@@ -187,10 +189,10 @@ internal class FilterFactoryImpl(
         )
     }
 
-    private fun MutableList<TestsFilter>.excludeImpactedTests(tests: List<String>) {
+    private fun MutableList<TestsFilter>.excludeChangedTests(tests: List<String>) {
         add(
             ExcludeByTestSignaturesFilter(
-                source = TestsFilter.Signatures.Source.ImpactAnalysis,
+                source = TestsFilter.Signatures.Source.ChangedTests,
                 signatures = tests.map { name ->
                     TestSignature(
                         name = name

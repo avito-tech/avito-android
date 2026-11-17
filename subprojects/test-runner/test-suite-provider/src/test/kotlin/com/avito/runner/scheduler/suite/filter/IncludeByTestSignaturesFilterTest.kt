@@ -19,7 +19,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual).isInstanceOf<TestsFilter.Result.Included>()
+        assertThat(actual).isInstanceOf<TestsFilter.Verdict.Included>()
     }
 
     @Test
@@ -34,7 +34,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual).isInstanceOf<TestsFilter.Result.Included>()
+        assertThat(actual).isInstanceOf<TestsFilter.Verdict.Included>()
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual).isInstanceOf<TestsFilter.Result.Included>()
+        assertThat(actual).isInstanceOf<TestsFilter.Verdict.Included>()
     }
 
     @Test
@@ -64,7 +64,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual).isInstanceOf<TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature>()
+        assertThat(actual).isInstanceOf<TestsFilter.Verdict.Skipped.DoesNotMatchIncludeSignature>()
     }
 
     @Test
@@ -79,7 +79,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual).isInstanceOf<TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature>()
+        assertThat(actual).isInstanceOf<TestsFilter.Verdict.Skipped.DoesNotMatchIncludeSignature>()
     }
 
     private fun createIncludeTestSignatureFilter(

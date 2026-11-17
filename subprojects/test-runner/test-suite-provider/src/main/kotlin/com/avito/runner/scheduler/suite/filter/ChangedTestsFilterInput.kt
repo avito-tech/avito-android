@@ -3,33 +3,33 @@ package com.avito.runner.scheduler.suite.filter
 import java.io.File
 import java.io.Serializable
 
-public data class ImpactAnalysisResult(
-    val selection: ImpactAnalysisSelection,
+public data class ChangedTestsFilterInput(
+    val targetFilterMode: TargetFilterMode,
     val changedTests: List<String>
 ) : Serializable {
 
     /** Compatibility view for the legacy runner, which only uses Uniform. */
-    public val mode: ImpactAnalysisMode
-        get() = (selection as? ImpactAnalysisSelection.Uniform)?.mode
-            ?: error("ByTarget has no global impact analysis mode")
+    public val mode: ChangedTestsFilterMode
+        get() = (targetFilterMode as? TargetFilterMode.Uniform)?.mode
+            ?: error("ByTarget has no global changed tests filter mode")
 
-    public constructor(mode: ImpactAnalysisMode, changedTests: List<String>) :
-        this(ImpactAnalysisSelection.Uniform(mode), changedTests)
+    public constructor(mode: ChangedTestsFilterMode, changedTests: List<String>) :
+        this(TargetFilterMode.Uniform(mode), changedTests)
 
     public companion object {
 
         public fun create(
-            selection: ImpactAnalysisSelection,
+            targetFilterMode: TargetFilterMode,
             changedTestsFile: File?
-        ): ImpactAnalysisResult = ImpactAnalysisResult(
-            selection = selection,
+        ): ChangedTestsFilterInput = ChangedTestsFilterInput(
+            targetFilterMode = targetFilterMode,
             changedTests = parseFile(changedTestsFile)
         )
 
         public fun create(
-            mode: ImpactAnalysisMode,
+            mode: ChangedTestsFilterMode,
             changedTestsFile: File?
-        ): ImpactAnalysisResult = ImpactAnalysisResult(
+        ): ChangedTestsFilterInput = ChangedTestsFilterInput(
             mode = mode,
             changedTests = parseFile(changedTestsFile)
         )

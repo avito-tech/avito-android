@@ -6,7 +6,7 @@ import com.avito.instrumentation.internal.RunnerInputDumper
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.runner.config.Reservation
 import com.avito.runner.config.RunnerInputParams
-import com.avito.runner.scheduler.suite.filter.ImpactAnalysisMode
+import com.avito.runner.scheduler.suite.filter.ChangedTestsFilterMode
 import com.avito.test.model.DeviceName
 import com.avito.truth.isInstanceOf
 import com.avito.utils.gradle.KubernetesCredentials
@@ -192,12 +192,12 @@ abstract class Case {
                 Truth.assertThat(it.suppressFlaky)
                     .isTrue()
             },
-            Assertion("impact analysis result runOnlyChangedTests flag") {
-                Truth.assertThat(it.impactAnalysisResult.mode)
-                    .isEqualTo(ImpactAnalysisMode.ALL)
+            Assertion("changed tests filter input mode") {
+                Truth.assertThat(it.changedTestsFilterInput.mode)
+                    .isEqualTo(ChangedTestsFilterMode.ALL)
             },
-            Assertion("impact analysis result changed tests") {
-                Truth.assertThat(it.impactAnalysisResult.changedTests)
+            Assertion("changed tests filter input changed tests") {
+                Truth.assertThat(it.changedTestsFilterInput.changedTests)
                     .isEmpty()
             },
             Assertion("output dir") {

@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Excluded
+import com.avito.runner.scheduler.suite.filter.TestsFilter.Verdict.Skipped
 
 internal fun TestsFilter.Test.matched(annotations: Set<String>): Boolean {
     return this.annotations.any { testAnnotation -> annotations.contains(testAnnotation.name) }
@@ -12,10 +12,10 @@ internal data class IncludeAnnotationsFilter(
 
     override val name = "IncludeAnnotations"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
         return when {
-            test.matched(annotations) -> TestsFilter.Result.Included
-            else -> Excluded.DoesNotHaveIncludeAnnotations(name, annotations)
+            test.matched(annotations) -> TestsFilter.Verdict.Included
+            else -> Skipped.DoesNotHaveIncludeAnnotations(name, annotations)
         }
     }
 }
@@ -26,10 +26,10 @@ internal data class ExcludeAnnotationsFilter(
 
     override val name = "ExcludeAnnotations"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
         return when {
-            test.matched(annotations) -> Excluded.HasExcludeAnnotations(name, annotations)
-            else -> TestsFilter.Result.Included
+            test.matched(annotations) -> Skipped.HasExcludeAnnotations(name, annotations)
+            else -> TestsFilter.Verdict.Included
         }
     }
 }

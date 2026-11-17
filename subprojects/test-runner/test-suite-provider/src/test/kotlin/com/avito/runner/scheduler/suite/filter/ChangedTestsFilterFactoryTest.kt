@@ -1,11 +1,11 @@
 package com.avito.runner.scheduler.suite.filter
 
-import com.avito.runner.scheduler.suite.filter.TestsFilter.Result.Included
+import com.avito.runner.scheduler.suite.filter.TestsFilter.Verdict.Included
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 
-internal class ImpactAnalysisFilterFactoryTest {
+internal class ChangedTestsFilterFactoryTest {
 
     private val test1 = "com.test.Test1"
     private val test2 = "com.test.Test2"
@@ -15,8 +15,8 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `run all - filters nothing`() {
         val filter = StubFilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                mode = ImpactAnalysisMode.ALL
+            changedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(
+                mode = ChangedTestsFilterMode.ALL
             )
         ).createFilter()
 
@@ -26,8 +26,8 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `run all - filters nothing - even if impact provided`() {
         val filter = StubFilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                mode = ImpactAnalysisMode.ALL
+            changedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(
+                mode = ChangedTestsFilterMode.ALL
             )
         ).createFilter()
 
@@ -35,10 +35,10 @@ internal class ImpactAnalysisFilterFactoryTest {
     }
 
     @Test
-    fun `run all except changed - filtered impacted tests`() {
+    fun `run all except changed - filtered changed tests`() {
         val filter = StubFilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                mode = ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
+            changedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(
+                mode = ChangedTestsFilterMode.ALL_EXCEPT_CHANGED,
                 changedTests = listOf(test1)
             )
         ).createFilter()
@@ -49,8 +49,8 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `run all and changed is not empty - filter is empty`() {
         val filter = StubFilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                mode = ImpactAnalysisMode.ALL,
+            changedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(
+                mode = ChangedTestsFilterMode.ALL,
                 changedTests = listOf(test1)
             )
         ).createFilter()
@@ -59,10 +59,10 @@ internal class ImpactAnalysisFilterFactoryTest {
     }
 
     @Test
-    fun `run changed - filtered not impacted tests`() {
+    fun `run changed - filtered unchanged tests`() {
         val filter = StubFilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                mode = ImpactAnalysisMode.CHANGED,
+            changedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(
+                mode = ChangedTestsFilterMode.CHANGED,
                 changedTests = listOf(test1)
             )
         ).createFilter()

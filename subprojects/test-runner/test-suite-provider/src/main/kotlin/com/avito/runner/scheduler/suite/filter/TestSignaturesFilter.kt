@@ -13,10 +13,10 @@ internal data class IncludeByTestSignaturesFilter(
 ) : TestsFilter {
     override val name = "IncludeSignatures#$source"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
         return when {
-            test.matched(signatures) -> TestsFilter.Result.Included
-            else -> TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature(
+            test.matched(signatures) -> TestsFilter.Verdict.Included
+            else -> TestsFilter.Verdict.Skipped.DoesNotMatchIncludeSignature(
                 name = name,
                 source = source
             )
@@ -31,14 +31,14 @@ internal data class ExcludeByTestSignaturesFilter(
 
     override val name = "ExcludeSignatures#$source"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
         return when {
             test.matched(signatures) ->
-                TestsFilter.Result.Excluded.MatchesExcludeSignature(
+                TestsFilter.Verdict.Skipped.MatchesExcludeSignature(
                     name = name,
                     source = source
                 )
-            else -> TestsFilter.Result.Included
+            else -> TestsFilter.Verdict.Included
         }
     }
 }

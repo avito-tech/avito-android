@@ -3,16 +3,16 @@ package com.avito.runner.scheduler.suite.filter
 internal val includeAll = object : TestsFilter {
     override val name: String = "StubIncludeAll"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-        return TestsFilter.Result.Included
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
+        return TestsFilter.Verdict.Included
     }
 }
 
-public fun excludedFilter(reason: TestsFilter.Result.Excluded): TestsFilter {
+public fun excludedFilter(reason: TestsFilter.Verdict.Skipped): TestsFilter {
     return object : TestsFilter {
         override val name: String = "StubExclude"
 
-        override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+        override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
             return reason
         }
     }

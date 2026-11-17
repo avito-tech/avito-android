@@ -102,7 +102,7 @@ public class TestSchedulerFactoryProvider(private val loggerFactory: LoggerFacto
             testSuiteProvider = TestSuiteProvider.Impl(
                 filterFactory = FilterFactory.create(
                     filterData = params.instrumentationConfiguration.filter,
-                    impactAnalysisResult = params.impactAnalysisResult,
+                    changedTestsFilterInput = params.changedTestsFilterInput,
                     runResultsProvider = RunResultsProviderImpl(reportModule.report),
                     loggerFactory = loggerFactory
                 ),

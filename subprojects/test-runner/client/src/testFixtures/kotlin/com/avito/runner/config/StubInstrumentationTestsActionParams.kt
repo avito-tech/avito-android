@@ -6,7 +6,7 @@ import com.avito.k8s.model.toleration.TolerationEffect
 import com.avito.k8s.model.toleration.TolerationOperator
 import com.avito.runner.scheduler.runner.createStubInstance
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
-import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.runner.scheduler.suite.filter.ChangedTestsFilterInput
 import com.avito.runner.scheduler.suite.filter.createStubInstance
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
@@ -38,7 +38,7 @@ public fun RunnerInputParams.Companion.createStubInstance(
     projectName: String = "testProject",
     suppressFailure: Boolean = false,
     suppressFlaky: Boolean = false,
-    impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
+    changedTestsFilterInput: ChangedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(),
     deviceDebug: Boolean = false,
     outputDir: File = createTempDirectory("runnerOutput").toFile(),
     macrobenchmarkOutputDir: File = createTempDirectory("runnerMacrobenchmarkOutput").toFile(),
@@ -59,7 +59,7 @@ public fun RunnerInputParams.Companion.createStubInstance(
     projectName = projectName,
     suppressFailure = suppressFailure,
     suppressFlaky = suppressFlaky,
-    impactAnalysisResult = impactAnalysisResult,
+    changedTestsFilterInput = changedTestsFilterInput,
     outputDir = outputDir,
     macrobenchmarkOutputDir = macrobenchmarkOutputDir,
     verdictFile = verdictFile,

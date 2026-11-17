@@ -244,11 +244,11 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `filterData is empty and changedTest is not empty - contains impact analysis filter`() {
+    fun `filterData is empty and changedTest is not empty - contains changed tests filter`() {
         val factory = StubFilterFactoryFactory.create(
             filter = InstrumentationFilterData.createStub(),
-            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                mode = ImpactAnalysisMode.ALL_EXCEPT_CHANGED,
+            changedTestsFilterInput = ChangedTestsFilterInput.createStubInstance(
+                mode = ChangedTestsFilterMode.ALL_EXCEPT_CHANGED,
                 changedTests = listOf("com.stub.Test")
             )
         )
@@ -257,7 +257,7 @@ internal class FilterFactoryImplTest {
 
         assertThat(compositionFilter.filters).contains(
             ExcludeByTestSignaturesFilter(
-                source = Source.ImpactAnalysis,
+                source = Source.ChangedTests,
                 signatures = setOf(
                     TestSignature(
                         name = "com.stub.Test",

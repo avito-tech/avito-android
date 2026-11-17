@@ -7,7 +7,7 @@ internal class ExcludeBySkipOnSdkFilter : TestsFilter {
 
     override val name = "ExcludeBySkipOnSdkFilter"
 
-    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+    override fun filter(test: TestsFilter.Test): TestsFilter.Verdict {
         val testAnnotations = test.annotations
             .find {
                 it.name == SkipOnSdk::class.java.name
@@ -17,12 +17,12 @@ internal class ExcludeBySkipOnSdkFilter : TestsFilter {
         val skippedSdks = testAnnotations?.values?.get("sdk") as? Collection<Int>
 
         return if (skippedSdks?.contains(test.api) == true) {
-            TestsFilter.Result.Excluded.HasSkipSdkAnnotation(
+            TestsFilter.Verdict.Skipped.HasSkipSdkAnnotation(
                 name,
                 test.api
             )
         } else {
-            TestsFilter.Result.Included
+            TestsFilter.Verdict.Included
         }
     }
 
