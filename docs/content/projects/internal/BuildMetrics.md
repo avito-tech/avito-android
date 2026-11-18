@@ -19,6 +19,14 @@
     }
     ```
 
+    `environment` tells where the build runs and becomes the `env` tag of every metric:
+
+    | Value | When to use |
+    |---|---|
+    | `BuildEnvironment.CI` | builds on CI agents |
+    | `BuildEnvironment.LOCAL` | builds on a developer's machine |
+    | `BuildEnvironment.SANDBOX` | builds in isolated remote environments created on demand, for example the ones coding agents work in |
+
 2. Add mandatory gradle properties for statsd and graphite. See modules `subprojects:gradle:statsd-config`, `subprojects:gradle:graphite-config`
 
 ### How to disable plugin
