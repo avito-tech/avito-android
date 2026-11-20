@@ -29,4 +29,19 @@ internal class RunIdResolverTest {
 
         assertThat(runId.toReportViewerFormat()).startsWith("local")
     }
+
+    @Test
+    fun `getRunId on sandbox build - returns sandbox identifier without reading git`() {
+        val project = ProjectBuilder.builder().build()
+        project.extensions.extraProperties["avito.build"] = "sandbox"
+        project.extensions.extraProperties["sandboxBuildType"] = "checks"
+        val gitMustNotBeRead = GitResolver(
+            project.provider<GitState> { error("git must not be read at configuration time on a sandbox build") }
+        )
+        val buildEnvResolver = BuildEnvResolver(project.provider { project.envArgs })
+
+        val runId = RunIdResolver(gitMustNotBeRead, buildEnvResolver).getRunId()
+
+        assertThat(runId.toReportViewerFormat()).startsWith("sandbox")
+    }
 }

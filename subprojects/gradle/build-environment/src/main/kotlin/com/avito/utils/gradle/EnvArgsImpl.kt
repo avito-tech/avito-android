@@ -23,9 +23,18 @@ internal class EnvArgsImpl(project: Project) : EnvArgs, Serializable {
             )
         }
         "local" ->
-            EnvArgs.Build.Local(EnvArgs.Build.Local.Id.FOR_LOCAL_KUBERNETES_RUN)
+            EnvArgs.Build.Local(
+                id = EnvArgs.Build.generatedId,
+                type = "local-${System.getProperty("user.name")}",
+            )
+
+        "sandbox" ->
+            EnvArgs.Build.Sandbox(
+                id = EnvArgs.Build.generatedId,
+                type = "sandbox-${project.getMandatoryStringProperty("sandboxBuildType", allowBlank = false)}",
+            )
 
         else ->
-            throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
+            throw IllegalStateException("property avito.build must be 'teamcity', 'local' or 'sandbox'")
     }
 }

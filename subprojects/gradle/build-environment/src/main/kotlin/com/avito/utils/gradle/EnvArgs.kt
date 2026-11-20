@@ -18,34 +18,34 @@ public interface EnvArgs {
          * todo change to string after refactor [TestRunEnvironment.teamcityBuildId]
          */
         public abstract val id: Int
-        public abstract val url: String
-        public abstract val number: String
         public abstract val type: String
 
         /** True for local developer builds (not running on TeamCity). */
         public val isLocal: Boolean get() = this is Local
 
-        internal class Local(id: Id) : Build() {
-            override val id = id.id
-            override val url = "No url. This is local build"
-            override val number = "local"
-            override val type = "local-$userName"
+        /** True for builds in an isolated remote environment created on demand. */
+        public val isSandbox: Boolean get() = this is Sandbox
 
-            internal enum class Id(val id: Int) {
-                FOR_LOCAL_KUBERNETES_RUN(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt())
-            }
-
-            companion object {
-                private val userName: String? = System.getProperty("user.name")
-            }
-        }
+        public data class Local(
+            override val id: Int,
+            override val type: String,
+        ) : Build()
 
         public data class Teamcity(
             override val id: Int,
-            override val url: String,
-            override val number: String,
+            public val url: String,
+            public val number: String,
             override val type: String
         ) : Build()
+
+        public data class Sandbox(
+            override val id: Int,
+            override val type: String,
+        ) : Build()
+
+        internal companion object {
+            val generatedId: Int = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+        }
     }
 
     public val build: Build

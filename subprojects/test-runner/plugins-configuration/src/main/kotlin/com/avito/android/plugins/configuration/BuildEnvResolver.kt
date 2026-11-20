@@ -16,4 +16,8 @@ public class BuildEnvResolver(private val envArgs: Provider<EnvArgs>) {
     public fun isLocal(): Boolean {
         return envArgs.get().build.isLocal
     }
+
+    public fun isSandbox(): Boolean {
+        return envArgs.get().build.isSandbox
+    }
 }

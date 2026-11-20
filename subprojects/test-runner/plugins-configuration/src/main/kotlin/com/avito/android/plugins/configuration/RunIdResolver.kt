@@ -10,13 +10,18 @@ public class RunIdResolver(
 
     public fun getRunId(): RunId {
 
-        if (buildEnvResolver.isLocal()) {
-            // Local builds: a stable, git-independent runId. getRunId() is read eagerly at
+        val stableIdentifier = when {
+            buildEnvResolver.isLocal() -> "local"
+            buildEnvResolver.isSandbox() -> "sandbox"
+            else -> null
+        }
+        if (stableIdentifier != null) {
+            // Local and sandbox builds: a stable, git-independent runId. getRunId() is read eagerly at
             // configuration time by some callers (e.g. AGP testInstrumentationRunnerArguments),
             // so reading git here would invalidate the configuration cache on every commit /
-            // branch switch. The identifier is local-only report metadata. See MBSA-2360.
+            // branch switch. The identifier is report metadata of such builds only. See MBSA-2360.
             return RunId(
-                identifier = "local",
+                identifier = stableIdentifier,
                 buildTypeId = buildEnvResolver.getBuildType()
             )
         }
